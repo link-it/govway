@@ -117,6 +117,37 @@ public class PayloadProfile {
 		
 		return true;
 		
-
+	}
+	
+	@Override 
+	public String toString(){
+		StringBuilder bf = new StringBuilder();
+		if(this.name!=null){
+			bf.append("name");
+			bf.append(":");
+			bf.append(this.name);
+		}
+		if(this.maxSize!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("maxSize");
+			bf.append(":");
+			bf.append(this.maxSize);
+		}
+		if(this.attachments!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("attachments");
+			bf.append(":");
+			bf.append(this.attachments.size());
+		}
+		return bf.toString();
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
 	}
 }

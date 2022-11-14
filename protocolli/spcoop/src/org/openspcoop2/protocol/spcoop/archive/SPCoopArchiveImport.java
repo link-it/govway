@@ -450,7 +450,6 @@ public class SPCoopArchiveImport {
 					// Per non creare un buco di sicurezza per default, abilito l'autenticazione degli applicativi
 					portaDelegata.setAutenticazione(TipoAutenticazione.SSL.getValue());
 					
-					@SuppressWarnings("unused")
 					// Viene creata in automatico
 					MappingFruizionePortaDelegata mappingFruizione = subscriptionDefault.getMapping();
 
@@ -529,9 +528,11 @@ public class SPCoopArchiveImport {
 					if(acSICA.getManifesto().getElencoPartecipanti().getPartecipante(i)!=null) {
 						partecipante = acSICA.getManifesto().getElencoPartecipanti().getPartecipante(i).toString();
 					}
-					String codiceIPA = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(partecipante);
-					if(registryReader.existsSoggettoByCodiceIPA(codiceIPA)==false){
-						throw new ProtocolException("Il soggetto partecipante con Codice IPA ["+codiceIPA+"] non esiste.");
+					if(partecipante!=null) {
+						String codiceIPA = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(partecipante);
+						if(registryReader.existsSoggettoByCodiceIPA(codiceIPA)==false){
+							throw new ProtocolException("Il soggetto partecipante con Codice IPA ["+codiceIPA+"] non esiste.");
+						}
 					}
 				}
 			}

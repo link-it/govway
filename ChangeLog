@@ -1,5 +1,13 @@
 2022-11-14  Andrea Poli <apoli@link.it>
 
+	* [ProtocolloModIPA]
+	Risolto Bug OP-1491
+	Nella sezione 'sicurezza messaggio' di un applicativo con profilo di interoperabilità ModI, 
+	la configurazione relativa ai dati di accesso al keystore risultava eliminabile da console, 
+	ma l'operazione non comportava una effettiva pulizia nella base dati dove i dati rimanevano anche se non più visualizzati da console.
+
+2022-11-14  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Aggiunta funzionalità OP-1489
 	Nelle informazioni salvate durante la negoziazione di un token non venivano memorizzati gli eventuali parametri indicati nella form: audience, scope, client_id, resource (PDND).

@@ -249,7 +249,7 @@ public class ModIImbustamentoRest {
 			
 			String returnCode = null;
 			int returnCodeInt = -1;
-			if(msg.getTransportResponseContext()!=null) {
+			if(msg!=null && msg.getTransportResponseContext()!=null) {
 				returnCode = msg.getTransportResponseContext().getCodiceTrasporto();
 				if(returnCode!=null) {
 					try {
@@ -407,6 +407,10 @@ public class ModIImbustamentoRest {
 			Busta busta, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
 			Long now, String jti, ModIHeaderType headerType, boolean integritaCustom,
 			Map<String, Object> dynamicMap, RequestInfo requestInfo) throws Exception {
+		
+		if(busta==null) {
+			throw new Exception("Param busta is null");
+		}
 		
 		boolean integrita = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);

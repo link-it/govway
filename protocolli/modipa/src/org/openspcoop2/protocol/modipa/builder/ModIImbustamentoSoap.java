@@ -267,6 +267,10 @@ public class ModIImbustamentoSoap {
 	
 		OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
+		if(msg==null) {
+			throw new Exception("Param msg is null");
+		}
+		
 		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
 		SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope();
 		boolean bufferMessage_readOnly = true;

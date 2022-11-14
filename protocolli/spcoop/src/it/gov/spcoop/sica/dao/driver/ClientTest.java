@@ -196,7 +196,7 @@ public class ClientTest {
 
 		try{
 			
-			if(args.length<1){
+			if(args==null || args.length<1){
 				System.out.println("Error, java use:");
 				System.out.println("\t java -classpath CLASSPATH it.gov.spcoop.sica.dao.driver.ClientTest \"example/registroServizi/registroServiziXML\" [0/1/2/SICA]");
 				return;
@@ -901,11 +901,15 @@ public class ClientTest {
 				String namespaceImport = null;
 				try{
 					namespaceImport = wsdlUtilities.getImportNamespace(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				String location = null;
 				try{
 					location = wsdlUtilities.getImportLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				System.out.println("		  Import namespace=\""+namespaceImport+"\" location=\""+location+"\"");
 			}
 		}
@@ -922,11 +926,15 @@ public class ClientTest {
 				String namespaceImport = null;
 				try{
 					namespaceImport = xsdUtils.getImportNamespace(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				String location = null;
 				try{
 					location = xsdUtils.getImportSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				System.out.println("		  Import (types.schema) namespace=\""+namespaceImport+"\" schemaLocation=\""+location+"\"");
 			}
 		}
@@ -943,7 +951,9 @@ public class ClientTest {
 				String location = null;
 				try{
 					location = xsdUtils.getIncludeSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				System.out.println("		  Include (types.schema) schemaLocation=\""+location+"\"");
 			}
 		}
@@ -959,11 +969,15 @@ public class ClientTest {
 				String namespaceImport = null;
 				try{
 					namespaceImport = xsdUtils.getImportNamespace(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				String location = null;
 				try{
 					location = xsdUtils.getImportSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				System.out.println("		  Import namespace=\""+namespaceImport+"\" schemaLocation=\""+location+"\"");
 			}
 		}
@@ -979,7 +993,9 @@ public class ClientTest {
 				String location = null;
 				try{
 					location = xsdUtils.getIncludeSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				System.out.println("		  Include schemaLocation=\""+location+"\"");
 			}
 		}
@@ -2198,6 +2214,9 @@ public class ClientTest {
 	protected static class WSDL2JAVA{
 		private Exception error;
 		
+		public void setError(Exception error) {
+			this.error = error;
+		}
 		public Exception getError() {
 			return this.error;
 		}

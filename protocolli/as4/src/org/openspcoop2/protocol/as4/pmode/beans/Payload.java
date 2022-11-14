@@ -152,4 +152,68 @@ public class Payload {
 			
 		return true;
 	}
+	
+	@Override 
+	public String toString(){
+		StringBuilder bf = new StringBuilder();
+		if(this.name!=null){
+			bf.append("name");
+			bf.append(":");
+			bf.append(this.name);
+		}
+		if(this.cid!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("cid");
+			bf.append(":");
+			bf.append(this.cid);
+		}
+		if(this.inBody!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("inBody");
+			bf.append(":");
+			bf.append(this.inBody);
+		}
+		if(this.required!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("required");
+			bf.append(":");
+			bf.append(this.required);
+		}
+		if(this.schemaFile!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("schemaFile");
+			bf.append(":");
+			bf.append(this.schemaFile);
+		}
+		if(this.maxSize!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("maxSize");
+			bf.append(":");
+			bf.append(this.maxSize);
+		}
+		if(this.mimeType!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("mimeType");
+			bf.append(":");
+			bf.append(this.mimeType);
+		}
+		return bf.toString();
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
+	}
 }

@@ -194,7 +194,7 @@ public class SPCoopArchive extends BasicArchive {
 								for (PortType ptSearch : accordoServizioParteComune.getPortTypeList()) {
 									boolean found = false;
 									for (Operation opSearch : ptSearch.getAzioneList()) {
-										if(opSearch.equals(operationAsincronaRichiesta)){
+										if(opSearch!=null && opSearch.getNome().equals(operationAsincronaRichiesta)){
 											opOpenSPCoop.setCorrelataServizio(ptSearch.getNome());
 											found = true;
 											break;
@@ -474,7 +474,9 @@ public class SPCoopArchive extends BasicArchive {
 				if(archive!=null){
 					archive.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		return this.importArchive(bytes, mode, type, registryReader, configIntegrationReader,
 				validationDocuments, placeholder);

@@ -101,7 +101,9 @@ public class ClientTest {
 		}finally{
 			try{
 				con.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}

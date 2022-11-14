@@ -176,30 +176,31 @@ public class DomibusClient {
 				if(msgRespone.value==null){
 					System.out.println("Invocazione fallita: nessuna oggetto ritornato");
 				}
-				if(headerResponse.value==null){
+				else if(headerResponse.value==null){
 					System.out.println("Invocazione fallita: nessuna informazione as4 sull'oggetto ritornata");
 				}
-				
-				UserMessage msg = AS4StubUtils.convertTo(headerResponse.value);
-				System.out.println("Header: \n"+msg.toXml());
-				System.out.println("\n\n");
-				if(msgRespone.value.getPayload()==null || msgRespone.value.getPayload().size()<=0){
-					System.out.println("Nessun payload associato al messaggio");
-				}
-				else{
-					System.out.println("Invocazione effettuata: trovati "+msgRespone.value.getPayload().size()+" payload");
-					String payloadName = "payload";
-					for (int i = 0; i < msgRespone.value.getPayload().size(); i++) {
-						String ext = "bin";
-						if(msgRespone.value.getPayload().get(i).getContentType()!=null){
-							String baseType = ContentTypeUtilities.readBaseTypeFromContentType(msgRespone.value.getPayload().get(i).getContentType());
-							ext = MimeTypes.getInstance().getExtension(baseType);
+				else {
+					UserMessage msg = AS4StubUtils.convertTo(headerResponse.value);
+					System.out.println("Header: \n"+msg.toXml());
+					System.out.println("\n\n");
+					if(msgRespone.value.getPayload()==null || msgRespone.value.getPayload().size()<=0){
+						System.out.println("Nessun payload associato al messaggio");
+					}
+					else{
+						System.out.println("Invocazione effettuata: trovati "+msgRespone.value.getPayload().size()+" payload");
+						String payloadName = "payload";
+						for (int i = 0; i < msgRespone.value.getPayload().size(); i++) {
+							String ext = "bin";
+							if(msgRespone.value.getPayload().get(i).getContentType()!=null){
+								String baseType = ContentTypeUtilities.readBaseTypeFromContentType(msgRespone.value.getPayload().get(i).getContentType());
+								ext = MimeTypes.getInstance().getExtension(baseType);
+							}
+							File f = new File(payloadName+(i+1)+"."+ext);
+							byte [] content = Utilities.getAsByteArray(msgRespone.value.getPayload().get(i).getValue().getInputStream());
+							FileSystemUtilities.writeFile(f, content);
+							System.out.println("Payload["+i+"] contentType["+msgRespone.value.getPayload().get(i).getContentType()+"] id["
+									+msgRespone.value.getPayload().get(i).getPayloadId()+"] savedTo["+f.getName()+"]");
 						}
-						File f = new File(payloadName+(i+1)+"."+ext);
-						byte [] content = Utilities.getAsByteArray(msgRespone.value.getPayload().get(i).getValue().getInputStream());
-						FileSystemUtilities.writeFile(f, content);
-						System.out.println("Payload["+i+"] contentType["+msgRespone.value.getPayload().get(i).getContentType()+"] id["
-								+msgRespone.value.getPayload().get(i).getPayloadId()+"] savedTo["+f.getName()+"]");
 					}
 				}
 

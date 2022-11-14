@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.services.message.AS4ConnectorInMessage;
 import org.openspcoop2.protocol.as4.services.message.AS4ConnectorOutMessage;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.threads.RunnableLogger;
@@ -103,7 +104,7 @@ public class RicezioneBusteConnector extends AbstractRicezioneConnector{
 		RicezioneBusteExternalErrorGenerator generatoreErrore = null;
 		try{
 			generatoreErrore = 
-					new RicezioneBusteExternalErrorGenerator(protocolFactory.getLogger(),
+					new RicezioneBusteExternalErrorGenerator(protocolFactory!=null ? protocolFactory.getLogger() : LoggerWrapperFactory.getLogger(getClass()),
 							org.openspcoop2.pdd.services.connector.RicezioneBusteConnector.ID_MODULO, as4In.getRequestInfo(), null);
 		}catch(Exception e){
 			throw new Exception("Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e),e);
@@ -121,7 +122,7 @@ public class RicezioneBusteConnector extends AbstractRicezioneConnector{
 		
 		if(as4Out.getResponseStatus()!=200 && as4Out.getResponseStatus()!=202) {
 			if(as4Out.getMessage()!=null) {
-				if(ServiceBinding.SOAP.equals(as4Out.getMessage())) {
+				if(ServiceBinding.SOAP.equals(as4Out.getMessage().getServiceBinding())) {
 					OpenSPCoop2SoapMessage soapMsg = as4Out.getMessage().castAsSoap();
 					if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()) {
 						throw new Exception("Servizio Ricezione Buste terminato con codice '"+as4Out.getResponseStatus()+"' e con un soapFault: "+

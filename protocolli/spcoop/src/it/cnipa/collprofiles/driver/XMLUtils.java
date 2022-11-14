@@ -146,7 +146,9 @@ public class XMLUtils  {
 			try{
 				if(bin!=null)
 					bin.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -168,7 +170,9 @@ public class XMLUtils  {
 			try{
 				if(fin!=null)
 					fin.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

@@ -110,7 +110,9 @@ public class XMLUtils  {
 					fout.close();
 				if(tmp!=null)
 					tmp.delete();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 		}
 		
 	}
@@ -144,7 +146,9 @@ public class XMLUtils  {
 			try{
 				if(zipFile!=null)
 					zipFile.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 		
@@ -177,7 +181,9 @@ public class XMLUtils  {
 				if(bout!=null){
 					bout.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -428,7 +434,9 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -444,7 +452,9 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -571,7 +581,9 @@ public class XMLUtils  {
 			try{
 				if(zipOut!=null)
 					zipOut.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -622,7 +634,9 @@ public class XMLUtils  {
 					fout.close();
 				if(tmp!=null)
 					tmp.delete();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}
@@ -656,7 +670,9 @@ public class XMLUtils  {
 			try{
 				if(zipFile!=null)
 					zipFile.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 		
@@ -689,7 +705,9 @@ public class XMLUtils  {
 				if(bout!=null){
 					bout.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -921,7 +939,9 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -937,7 +957,9 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1061,7 +1083,9 @@ public class XMLUtils  {
 			try{
 				if(zipOut!=null)
 					zipOut.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1116,7 +1140,9 @@ public class XMLUtils  {
 					fout.close();
 				if(tmp!=null)
 					tmp.delete();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}
@@ -1150,7 +1176,9 @@ public class XMLUtils  {
 			try{
 				if(zipFile!=null)
 					zipFile.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 		
@@ -1183,7 +1211,9 @@ public class XMLUtils  {
 				if(bout!=null){
 					bout.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1305,7 +1335,9 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1321,7 +1353,9 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1404,7 +1438,9 @@ public class XMLUtils  {
 			try{
 				if(zipOut!=null)
 					zipOut.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1456,7 +1492,9 @@ public class XMLUtils  {
 					fout.close();
 				if(tmp!=null)
 					tmp.delete();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}
@@ -1490,7 +1528,9 @@ public class XMLUtils  {
 			try{
 				if(zipFile!=null)
 					zipFile.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 		
@@ -1523,7 +1563,9 @@ public class XMLUtils  {
 				if(bout!=null){
 					bout.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1791,7 +1833,9 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1807,7 +1851,9 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1946,7 +1992,9 @@ public class XMLUtils  {
 			try{
 				if(zipOut!=null)
 					zipOut.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 }

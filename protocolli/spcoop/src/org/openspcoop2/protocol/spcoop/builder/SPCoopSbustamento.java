@@ -343,8 +343,11 @@ public class SPCoopSbustamento {
 
 		} catch(Exception e) {
 			try{
-				reqByteSbustata.close();
-			}catch(Exception eis){}
+				if(reqByteSbustata!=null)
+					reqByteSbustata.close();
+			}catch(Exception eis){
+				// close
+			}
 			this.log.error("RimozioneHeaderSPCoop non riuscita: "+e.getMessage(),e);
 			throw new ProtocolException("RimozioneHeaderSPCoop non riuscita: "+e.getMessage(),e);		
 		}	

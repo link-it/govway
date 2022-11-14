@@ -107,11 +107,6 @@ public enum CausalePagamentoType implements IEnumeration , Serializable , Clonea
 	public String toString(){
 		return this.value+"";
 	}
-	public boolean equals(CausalePagamentoType object){
-		if(object==null)
-			return false;
-		return object.getValue().toString().equals(this.getValue().toString());	
-	}
 	public boolean equals(java.lang.Character object){
 		if(object==null)
 			return false;

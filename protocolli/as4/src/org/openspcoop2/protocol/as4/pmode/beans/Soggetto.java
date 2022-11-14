@@ -185,7 +185,7 @@ public class Soggetto  {
 						aps = mapByBinding.remove(binding);
 					}
 					else {
-						aps = apsCheck.clone();
+						aps = apsCheck.newInstance();
 						aps.setId(aps.getId()+"_"+binding);
 						aps.setEbmsBinding(binding);
 						aps.getAzioni().clear();

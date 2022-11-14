@@ -136,7 +136,7 @@ public class SPCoopArchiveExport {
                 if(accordo.getSoggettoReferente()!=null){
                         filename+="_"+accordo.getSoggettoReferente().getTipo()+accordo.getSoggettoReferente().getNome();
                 }
-                if(accordo.getVersione()!=null && !"".equals(accordo.getVersione())){
+                if(accordo.getVersione()!=null){
                         filename+="_"+accordo.getVersione();
                 }
                 filename += "." + Costanti.ESTENSIONE_ACCORDO_SERVIZIO_PARTE_COMUNE;
@@ -159,7 +159,7 @@ public class SPCoopArchiveExport {
                 if(accordo.getSoggettoReferente()!=null){
                         filename+="_"+accordo.getSoggettoReferente().getTipo()+accordo.getSoggettoReferente().getNome();
                 }
-                if(accordo.getVersione()!=null && !"".equals(accordo.getVersione())){
+                if(accordo.getVersione()!=null){
                         filename+="_"+accordo.getVersione();
                 }
                 filename += "." + Costanti.ESTENSIONE_ACCORDO_SERVIZIO_COMPOSTO;
@@ -203,7 +203,7 @@ public class SPCoopArchiveExport {
                 if(accordo.getSoggettoReferente()!=null){
                         filename+="_"+accordo.getSoggettoReferente().getTipo()+accordo.getSoggettoReferente().getNome();
                 }
-                if(accordo.getVersione()!=null && !"".equals(accordo.getVersione())){
+                if(accordo.getVersione()!=null){
                         filename+="_"+accordo.getVersione();
                 }
                 filename += "." + Costanti.ESTENSIONE_ACCORDO_COOPERAZIONE;

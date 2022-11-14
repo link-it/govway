@@ -173,7 +173,9 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 						if(is!=null){
 							is.close();
 						}
-					}catch(Exception e){} //?????? Close effettuato dentro xsdResolver ??? : riabilitato il close.
+					}catch(Exception e){
+						// close
+					} //?????? Close effettuato dentro xsdResolver ??? : riabilitato il close.
 				}
 			}
 		}
@@ -194,7 +196,9 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception e){} //?????? Close effettuato dentro xsdResolver ???? : riabilitato il close.
+			}catch(Exception e){
+				// close
+			} //?????? Close effettuato dentro xsdResolver ???? : riabilitato il close.
 		}
 		
 	}

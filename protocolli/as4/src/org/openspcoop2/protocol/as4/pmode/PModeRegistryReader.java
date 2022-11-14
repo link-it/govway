@@ -126,13 +126,15 @@ public class PModeRegistryReader {
 		
 		String[] list = this.as4Properties.getSecurityPoliciesFolder().list();
 		
-		for(String file: list) {
-			Policy policy = new Policy();
-			int lastIndexOf = file.lastIndexOf(".");
-			String fileWithoutExt = (lastIndexOf > 0) ? file.substring(0, lastIndexOf) : file; 
-			policy.setName(fileWithoutExt);
-			policy.setPolicy(file);
-			policies.add(policy);
+		if(list!=null) {
+			for(String file: list) {
+				Policy policy = new Policy();
+				int lastIndexOf = file.lastIndexOf(".");
+				String fileWithoutExt = (lastIndexOf > 0) ? file.substring(0, lastIndexOf) : file; 
+				policy.setName(fileWithoutExt);
+				policy.setPolicy(file);
+				policies.add(policy);
+			}
 		}
 		
 		return policies;
@@ -181,7 +183,9 @@ public class PModeRegistryReader {
 				List<IDServizio> listServizi = null;
 				try {
 					listServizi = this.registryReader.findIdAccordiServizioParteSpecifica(filtroRicercaServizi);
-				}catch(RegistryNotFound e) {}
+				}catch(RegistryNotFound e) {
+					// ignore
+				}
 				if(listServizi!=null && listServizi.size()>0) {
 					for (IDServizio idServizio : listServizi) {
 						AccordoServizioParteSpecifica asps = this.registryReader.getAccordoServizioParteSpecifica(idServizio);
@@ -265,7 +269,9 @@ public class PModeRegistryReader {
 		List<IDPortaApplicativa> idsPA = null;
 		try {
 			idsPA = this.configIntergrationReader.findIdPorteApplicative(filtroRicerca);
-		}catch(RegistryNotFound notFound) {}
+		}catch(RegistryNotFound notFound) {
+			// ignore
+		}
 		if(idsPA!=null && idsPA.size()>0) {
 			for (IDPortaApplicativa idPortaApplicativa : idsPA) {
 				PortaApplicativa pa = this.configIntergrationReader.getPortaApplicativa(idPortaApplicativa);

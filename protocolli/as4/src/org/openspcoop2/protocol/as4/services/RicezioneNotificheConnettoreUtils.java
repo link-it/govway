@@ -282,15 +282,21 @@ public class RicezioneNotificheConnettoreUtils extends BaseConnettoreUtils {
 			try {
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 			try {
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 			try {
 				if(connection!=null)
 					connection.close();
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 		}
 		
 		
@@ -398,7 +404,7 @@ public class RicezioneNotificheConnettoreUtils extends BaseConnettoreUtils {
 			rs = null;
 			pstmt = null;
 			
-			if(idRicevuta<=0) {
+			if(xml==null || "".equals(xml)) {
 				String msg = prefixError+" Query utilizzata ("+AS4Costanti.AS4_TABELLA_RICEVUTA_COLONNA_ID_RICEVUTA+"="+idRicevuta+"): "+query;
 				if(sendSuccess) {
 					this.log.error(msg);
@@ -422,15 +428,21 @@ public class RicezioneNotificheConnettoreUtils extends BaseConnettoreUtils {
 			try {
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 			try {
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 			try {
 				if(connection!=null)
 					connection.close();
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 		}
 		
 	}

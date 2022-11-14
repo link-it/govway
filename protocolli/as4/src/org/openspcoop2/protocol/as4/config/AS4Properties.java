@@ -93,7 +93,9 @@ public class AS4Properties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 		}
 		try{
 			this.reader = new AS4InstanceProperties(propertiesReader, this.log);
@@ -242,9 +244,9 @@ public class AS4Properties {
 	 * @return Valore della property
 	 * 
 	 */
-	private static Boolean generateIDasUUID = null;
+	private Boolean generateIDasUUID = null;
 	public Boolean generateIDasUUID(){
-		if(AS4Properties.generateIDasUUID==null){
+		if(this.generateIDasUUID==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.as4.id.uuid";
@@ -254,19 +256,19 @@ public class AS4Properties {
 
 				if (value != null){
 					value = value.trim();
-					AS4Properties.generateIDasUUID = Boolean.parseBoolean(value);
+					this.generateIDasUUID = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					AS4Properties.generateIDasUUID = defaultValue;
+					this.generateIDasUUID = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				AS4Properties.generateIDasUUID = defaultValue;
+				this.generateIDasUUID = defaultValue;
 			}
 		}
 
-		return AS4Properties.generateIDasUUID;
+		return this.generateIDasUUID;
 	}
 	
 	
@@ -280,60 +282,60 @@ public class AS4Properties {
 	 * @return True se la funzionalita' 'Riferimento ID Richiesta' richiede che venga fornito obbligatoriamente l'informazione sull'identificativo della richiesta tramite i meccanismi di integrazione
      * 
      */
-	private static Boolean isRiferimentoIDRichiesta_PD_Required= null;
-	private static Boolean isRiferimentoIDRichiesta_PD_RequiredRead= null;
+	private Boolean isRiferimentoIDRichiesta_PD_Required= null;
+	private Boolean isRiferimentoIDRichiesta_PD_RequiredRead= null;
     public Boolean isRiferimentoIDRichiesta_PD_Required(){
-    	if(AS4Properties.isRiferimentoIDRichiesta_PD_RequiredRead==null){
+    	if(this.isRiferimentoIDRichiesta_PD_RequiredRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pd.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.isRiferimentoIDRichiesta_PD_Required = Boolean.parseBoolean(value);
+					this.isRiferimentoIDRichiesta_PD_Required = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pd.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true'");
-					AS4Properties.isRiferimentoIDRichiesta_PD_Required = true;
+					this.isRiferimentoIDRichiesta_PD_Required = true;
 				}
 				
-				AS4Properties.isRiferimentoIDRichiesta_PD_RequiredRead = true;
+				this.isRiferimentoIDRichiesta_PD_RequiredRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pd.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
-				AS4Properties.isRiferimentoIDRichiesta_PD_Required = true;
+				this.isRiferimentoIDRichiesta_PD_Required = true;
 				
-				AS4Properties.isRiferimentoIDRichiesta_PD_RequiredRead = true;
+				this.isRiferimentoIDRichiesta_PD_RequiredRead = true;
 			}
     	}
     	
-    	return AS4Properties.isRiferimentoIDRichiesta_PD_Required;
+    	return this.isRiferimentoIDRichiesta_PD_Required;
 	}
 	
-	private static Boolean isRiferimentoIDRichiesta_PA_Required= null;
-	private static Boolean isRiferimentoIDRichiesta_PA_RequiredRead= null;
+	private Boolean isRiferimentoIDRichiesta_PA_Required= null;
+	private Boolean isRiferimentoIDRichiesta_PA_RequiredRead= null;
     public Boolean isRiferimentoIDRichiesta_PA_Required(){
-    	if(AS4Properties.isRiferimentoIDRichiesta_PA_RequiredRead==null){
+    	if(this.isRiferimentoIDRichiesta_PA_RequiredRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pa.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.isRiferimentoIDRichiesta_PA_Required = Boolean.parseBoolean(value);
+					this.isRiferimentoIDRichiesta_PA_Required = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pa.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true'");
-					AS4Properties.isRiferimentoIDRichiesta_PA_Required = true;
+					this.isRiferimentoIDRichiesta_PA_Required = true;
 				}
 				
-				AS4Properties.isRiferimentoIDRichiesta_PA_RequiredRead = true;
+				this.isRiferimentoIDRichiesta_PA_RequiredRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pa.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
-				AS4Properties.isRiferimentoIDRichiesta_PA_Required = true;
+				this.isRiferimentoIDRichiesta_PA_Required = true;
 				
-				AS4Properties.isRiferimentoIDRichiesta_PA_RequiredRead = true;
+				this.isRiferimentoIDRichiesta_PA_RequiredRead = true;
 			}
     	}
     	
-    	return AS4Properties.isRiferimentoIDRichiesta_PA_Required;
+    	return this.isRiferimentoIDRichiesta_PA_Required;
 	}
 	
 	
@@ -348,33 +350,33 @@ public class AS4Properties {
      * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
      * 
      */
-	private static BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
-	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead= null;
+	private BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
+	private Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead= null;
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
-    	if(AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
+    	if(this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.erroreApplicativo.faultApplicativo.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
 					Boolean b = Boolean.parseBoolean(value);
-					AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
 				}
 				
-				AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
+				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
 				
-				AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
 			}
     	}
     	
-    	return AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo;
+    	return this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo;
 	}
     
     /**
@@ -383,33 +385,33 @@ public class AS4Properties {
      * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
      * 
      */
-	private static BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
-	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdDRead= null;
+	private BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
+	private Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdDRead= null;
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
-    	if(AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
+    	if(this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.erroreApplicativo.faultPdD.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
 					Boolean b = Boolean.parseBoolean(value);
-					AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails)");
-					AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
 				}
 				
-				AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails), errore:"+e.getMessage());
-				AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
+				this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
 				
-				AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
 			}
     	}
     	
-    	return AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
+    	return this.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
     
 	private File getDirectory(String fileName) throws Exception {
@@ -453,103 +455,103 @@ public class AS4Properties {
 	
 	/* **** Domibus Configuration **** */
 	
-	private static byte[] payloadProfilesDefaultPayloads;
-	private static Boolean payloadProfilesDefaultPayloadsRead;
+	private byte[] payloadProfilesDefaultPayloads;
+	private Boolean payloadProfilesDefaultPayloadsRead;
 	public byte[] getPayloadProfilesDefaultPayloads() throws ProtocolException {
-		if(AS4Properties.payloadProfilesDefaultPayloadsRead==null){
+		if(this.payloadProfilesDefaultPayloadsRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloads"); 
 				if (value != null){
 					value = value.trim();
 					File f  = this.getFile(value);
-					payloadProfilesDefaultPayloads = FileSystemUtilities.readBytesFromFile(f);
+					this.payloadProfilesDefaultPayloads = FileSystemUtilities.readBytesFromFile(f);
 				}
 				
-				payloadProfilesDefaultPayloadsRead = true;
+				this.payloadProfilesDefaultPayloadsRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloads', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.payloadProfilesDefaultPayloads;
+		return this.payloadProfilesDefaultPayloads;
 	}
 	
-	private static byte[] payloadProfilesDefaultPayloadProfiles;
-	private static Boolean payloadProfilesDefaultPayloadProfilesRead;
+	private byte[] payloadProfilesDefaultPayloadProfiles;
+	private Boolean payloadProfilesDefaultPayloadProfilesRead;
 	public byte[] getPayloadProfilesDefaultPayloadProfiles() throws ProtocolException {
-		if(AS4Properties.payloadProfilesDefaultPayloadProfilesRead==null){
+		if(this.payloadProfilesDefaultPayloadProfilesRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloadProfiles"); 
 				if (value != null){
 					value = value.trim();
 					File f  = this.getFile(value);
-					payloadProfilesDefaultPayloadProfiles = FileSystemUtilities.readBytesFromFile(f);
+					this.payloadProfilesDefaultPayloadProfiles = FileSystemUtilities.readBytesFromFile(f);
 				}
 				
-				payloadProfilesDefaultPayloadProfilesRead = true;
+				this.payloadProfilesDefaultPayloadProfilesRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloadProfiles', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.payloadProfilesDefaultPayloadProfiles;
+		return this.payloadProfilesDefaultPayloadProfiles;
 	}
 	
-	private static byte[] propertiesDefaultProperty;
-	private static Boolean propertiesDefaultPropertyRead;
+	private byte[] propertiesDefaultProperty;
+	private Boolean propertiesDefaultPropertyRead;
 	public byte[] getPropertiesDefault() throws ProtocolException {
-		if(AS4Properties.propertiesDefaultPropertyRead==null){
+		if(this.propertiesDefaultPropertyRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.properties.defaultProperty"); 
 				if (value != null){
 					value = value.trim();
 					File f  = this.getFile(value);
-					propertiesDefaultProperty = FileSystemUtilities.readBytesFromFile(f);
+					this.propertiesDefaultProperty = FileSystemUtilities.readBytesFromFile(f);
 				}
 				
-				propertiesDefaultPropertyRead = true;
+				this.propertiesDefaultPropertyRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.properties.defaultProperty', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.propertiesDefaultProperty;
+		return this.propertiesDefaultProperty;
 	}
 	
-	private static byte[] propertiesDefaultPropertySet;
-	private static Boolean propertiesDefaultPropertySetRead;
+	private byte[] propertiesDefaultPropertySet;
+	private Boolean propertiesDefaultPropertySetRead;
 	public byte[] getPropertiesSetDefault() throws ProtocolException {
-		if(AS4Properties.propertiesDefaultPropertySetRead==null){
+		if(this.propertiesDefaultPropertySetRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.properties.defaultPropertySet"); 
 				if (value != null){
 					value = value.trim();
 					File f  = this.getFile(value);
-					propertiesDefaultPropertySet = FileSystemUtilities.readBytesFromFile(f);
+					this.propertiesDefaultPropertySet = FileSystemUtilities.readBytesFromFile(f);
 				}
 				
-				propertiesDefaultPropertySetRead = true;
+				this.propertiesDefaultPropertySetRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.properties.defaultPropertySet', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.propertiesDefaultPropertySet;
+		return this.propertiesDefaultPropertySet;
 	}
 	
-	private static File securityPoliciesFolder;
+	private File securityPoliciesFolder;
 	public File getSecurityPoliciesFolder() throws ProtocolException {
-		if(AS4Properties.securityPoliciesFolder==null){
+		if(this.securityPoliciesFolder==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.securityPolicies.folder"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.securityPoliciesFolder = this.getDirectory(value);
+					this.securityPoliciesFolder = this.getDirectory(value);
 				}else{
 					throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.securityPolicies.folder' non impostata");
 				}
@@ -559,18 +561,18 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.securityPoliciesFolder;
+		return this.securityPoliciesFolder;
 	}
 	
-	private static String securityPolicyDefault;
+	private String securityPolicyDefault;
 	public String getSecurityPolicyDefault() throws ProtocolException {
-		if(AS4Properties.securityPolicyDefault==null){
+		if(this.securityPolicyDefault==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.securityPolicies.default"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.securityPolicyDefault = value;
+					this.securityPolicyDefault = value;
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -578,22 +580,22 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.securityPolicyDefault;
+		return this.securityPolicyDefault;
 	}
 	
 	
 	
 	/* **** PModeTranslator **** */
 		
-	private static File pModeTranslatorPayloadProfilesFolder;
+	private File pModeTranslatorPayloadProfilesFolder;
 	public File getPModeTranslatorPayloadProfilesFolder() throws ProtocolException {
-		if(AS4Properties.pModeTranslatorPayloadProfilesFolder==null){
+		if(this.pModeTranslatorPayloadProfilesFolder==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pmode.pModeTranslatorPayloadProfilesFolder"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.pModeTranslatorPayloadProfilesFolder = this.getDirectory(value);
+					this.pModeTranslatorPayloadProfilesFolder = this.getDirectory(value);
 				}else{
 					throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.pModeTranslatorPayloadProfilesFolder' non impostata");
 				}
@@ -603,18 +605,18 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.pModeTranslatorPayloadProfilesFolder;
+		return this.pModeTranslatorPayloadProfilesFolder;
 	}
 	
-	private static File pModeTranslatorPropertiesFolder;
+	private File pModeTranslatorPropertiesFolder;
 	public File getPModeTranslatorPropertiesFolder() throws ProtocolException {
-		if(AS4Properties.pModeTranslatorPropertiesFolder==null){
+		if(this.pModeTranslatorPropertiesFolder==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pmode.pModeTranslatorPropertiesFolder"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.pModeTranslatorPropertiesFolder = this.getDirectory(value);
+					this.pModeTranslatorPropertiesFolder = this.getDirectory(value);
 				}else{
 					throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.pModeTranslatorPropertiesFolder' non impostata");
 				}
@@ -624,7 +626,7 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.pModeTranslatorPropertiesFolder;
+		return this.pModeTranslatorPropertiesFolder;
 	}
 
 
@@ -632,43 +634,43 @@ public class AS4Properties {
 	
 	/* **** Comunicazione HTTP verso Gateway **** */
 	
-	private static Boolean isDomibusGatewayRegistry= null;
-	private static Boolean isDomibusGatewayRegistryRead= null;
+	private Boolean isDomibusGatewayRegistry= null;
+	private Boolean isDomibusGatewayRegistryRead= null;
     public Boolean isDomibusGatewayRegistry() throws ProtocolException{
-    	if(AS4Properties.isDomibusGatewayRegistryRead==null){
+    	if(this.isDomibusGatewayRegistryRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.isDomibusGatewayRegistry = Boolean.parseBoolean(value);
+					this.isDomibusGatewayRegistry = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' non impostata");
 				}
 				
-				AS4Properties.isDomibusGatewayRegistryRead = true;
+				this.isDomibusGatewayRegistryRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.registry' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
-				AS4Properties.isDomibusGatewayRegistryRead = true;
+				this.isDomibusGatewayRegistryRead = true;
 				throw new ProtocolException(e);
 				
 			}
     	}
     	
-    	return AS4Properties.isDomibusGatewayRegistry;
+    	return this.isDomibusGatewayRegistry;
 	}
 	
 	
-	private static String domibusGatewayRegistrySoggettoDefault;
+	private String domibusGatewayRegistrySoggettoDefault;
 	public String getDomibusGatewayRegistrySoggettoDefault() throws ProtocolException {
-		if(AS4Properties.domibusGatewayRegistrySoggettoDefault==null){
+		if(this.domibusGatewayRegistrySoggettoDefault==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.default"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayRegistrySoggettoDefault = value;
+					this.domibusGatewayRegistrySoggettoDefault = value;
 				}
 				else {
 					throw new Exception("Proprieta' non impostata");
@@ -679,44 +681,44 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.domibusGatewayRegistrySoggettoDefault;
+		return this.domibusGatewayRegistrySoggettoDefault;
 	}
 	
-	private static List<String> domibusGatewayRegistrySoggettoCustom_Read = new ArrayList<String>();
-	private static HashMap<String,String> domibusGatewayRegistrySoggettoCustom = new HashMap<String,String>();
+	private List<String> domibusGatewayRegistrySoggettoCustom_Read = new ArrayList<String>();
+	private HashMap<String,String> domibusGatewayRegistrySoggettoCustom = new HashMap<String,String>();
 	public String getDomibusGatewayRegistrySoggettoCustom(String nome) throws ProtocolException {
-		if(AS4Properties.domibusGatewayRegistrySoggettoCustom_Read.contains(nome)==false){
+		if(this.domibusGatewayRegistrySoggettoCustom_Read.contains(nome)==false){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto."+nome); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayRegistrySoggettoCustom.put(nome, value);
+					this.domibusGatewayRegistrySoggettoCustom.put(nome, value);
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto."+nome+"', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				AS4Properties.domibusGatewayRegistrySoggettoCustom_Read.add(nome);
+				this.domibusGatewayRegistrySoggettoCustom_Read.add(nome);
 			}
     	}
-		return AS4Properties.domibusGatewayRegistrySoggettoCustom.get(nome);
+		return this.domibusGatewayRegistrySoggettoCustom.get(nome);
 	}
     
-	private static List<String> domibusGatewayRegistrySoggettoCustomList = new ArrayList<String>();
+	private List<String> domibusGatewayRegistrySoggettoCustomList = new ArrayList<String>();
 	public List<String> getDomibusGatewayRegistrySoggettoCustomList() throws ProtocolException {
-		if(domibusGatewayRegistrySoggettoCustomList==null){
+		if(this.domibusGatewayRegistrySoggettoCustomList==null){
 	    	try{  
 	    		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.");
-	    		domibusGatewayRegistrySoggettoCustomList = new ArrayList<String>();
+	    		this.domibusGatewayRegistrySoggettoCustomList = new ArrayList<String>();
 	    		Enumeration<?> keys = p.keys();
 	    		while (keys.hasMoreElements()) {
 					Object object = (Object) keys.nextElement();
 					if(object instanceof String) {
 						String key = (String) object;
 						String value = p.getProperty(key);
-						domibusGatewayRegistrySoggettoCustomList.add(value);
+						this.domibusGatewayRegistrySoggettoCustomList.add(value);
 					}
 				}
 				
@@ -725,19 +727,19 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return domibusGatewayRegistrySoggettoCustomList;
+		return this.domibusGatewayRegistrySoggettoCustomList;
 	}
     
 	
-	private static String domibusGatewayConfigDefaultUrl;
+	private String domibusGatewayConfigDefaultUrl;
 	public String getDomibusGatewayConfigDefaultUrl() throws ProtocolException {
-		if(AS4Properties.domibusGatewayConfigDefaultUrl==null){
+		if(this.domibusGatewayConfigDefaultUrl==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.url"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayConfigDefaultUrl = value;
+					this.domibusGatewayConfigDefaultUrl = value;
 				}
 				else {
 					throw new Exception("Proprieta' non impostata");
@@ -748,45 +750,45 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.domibusGatewayConfigDefaultUrl;
+		return this.domibusGatewayConfigDefaultUrl;
 	}
 	
-	private static Boolean isDomibusGatewayConfigDefaultHttpsEnabled= null;
-	private static Boolean isDomibusGatewayConfigDefaultHttpsEnabledRead= null;
+	private Boolean isDomibusGatewayConfigDefaultHttpsEnabled= null;
+	private Boolean isDomibusGatewayConfigDefaultHttpsEnabledRead= null;
     public Boolean isDomibusGatewayConfigDefaultHttpsEnabled(){
-    	if(AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabledRead==null){
+    	if(this.isDomibusGatewayConfigDefaultHttpsEnabledRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.https.enabled"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabled = Boolean.parseBoolean(value);
+					this.isDomibusGatewayConfigDefaultHttpsEnabled = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.config.default.https.enabled' non impostata, viene utilizzato il default=false");
-					AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabled = false;
+					this.isDomibusGatewayConfigDefaultHttpsEnabled = false;
 				}
 				
-				AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabledRead = true;
+				this.isDomibusGatewayConfigDefaultHttpsEnabledRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.config.default.https.enabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabled = false;
+				this.isDomibusGatewayConfigDefaultHttpsEnabled = false;
 				
-				AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabledRead = true;
+				this.isDomibusGatewayConfigDefaultHttpsEnabledRead = true;
 			}
     	}
     	
-    	return AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabled;
+    	return this.isDomibusGatewayConfigDefaultHttpsEnabled;
 	}
     
-    private static Properties domibusGatewayConfigDefaultHttpsProperties;
+    private Properties domibusGatewayConfigDefaultHttpsProperties;
 	public Properties getDomibusGatewayConfigDefaultHttpsProperties() throws ProtocolException {
-		if(AS4Properties.domibusGatewayConfigDefaultHttpsProperties==null){
+		if(this.domibusGatewayConfigDefaultHttpsProperties==null){
 	    	try{  
 	    		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.");
 				
 				if (p != null && p.size()>0){
-					AS4Properties.domibusGatewayConfigDefaultHttpsProperties = p;
+					this.domibusGatewayConfigDefaultHttpsProperties = p;
 				}
 				else {
 					throw new Exception("Proprieta' non impostate");
@@ -797,41 +799,41 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.domibusGatewayConfigDefaultHttpsProperties;
+		return this.domibusGatewayConfigDefaultHttpsProperties;
 	}
 	
-	private static List<String> domibusGatewayConfigCustomUrl_Read = new ArrayList<String>();
-	private static HashMap<String,String> domibusGatewayConfigCustomUrl = new HashMap<String,String>();
+	private List<String> domibusGatewayConfigCustomUrl_Read = new ArrayList<String>();
+	private HashMap<String,String> domibusGatewayConfigCustomUrl = new HashMap<String,String>();
 	public String getDomibusGatewayConfigCustomUrl(String nome) throws ProtocolException {
-		if(AS4Properties.domibusGatewayConfigCustomUrl_Read.contains(nome)==false){
+		if(this.domibusGatewayConfigCustomUrl_Read.contains(nome)==false){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".url"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayConfigCustomUrl.put(nome, value);
+					this.domibusGatewayConfigCustomUrl.put(nome, value);
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".url', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				AS4Properties.domibusGatewayConfigCustomUrl_Read.add(nome);
+				this.domibusGatewayConfigCustomUrl_Read.add(nome);
 			}
     	}
-		return AS4Properties.domibusGatewayConfigCustomUrl.get(nome);
+		return this.domibusGatewayConfigCustomUrl.get(nome);
 	}
 	
-	private static List<String> domibusGatewayConfigCustomHttsEnabled_Read = new ArrayList<String>();
-	private static HashMap<String,Boolean> domibusGatewayConfigCustomHttpsEnabled = new HashMap<String,Boolean>();
+	private List<String> domibusGatewayConfigCustomHttsEnabled_Read = new ArrayList<String>();
+	private HashMap<String,Boolean> domibusGatewayConfigCustomHttpsEnabled = new HashMap<String,Boolean>();
     public Boolean isDomibusGatewayConfigCustomHttpsEnabled(String nome) throws ProtocolException{
-    	if(AS4Properties.domibusGatewayConfigCustomHttsEnabled_Read.contains(nome)==false){
+    	if(this.domibusGatewayConfigCustomHttsEnabled_Read.contains(nome)==false){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".https.enabled"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayConfigCustomHttpsEnabled.put(nome, Boolean.parseBoolean(value));
+					this.domibusGatewayConfigCustomHttpsEnabled.put(nome, Boolean.parseBoolean(value));
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -839,22 +841,22 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
 	    	finally {
-	    		AS4Properties.domibusGatewayConfigCustomHttsEnabled_Read.add(nome);
+	    		this.domibusGatewayConfigCustomHttsEnabled_Read.add(nome);
 	    	}
     	}
     	
-    	return AS4Properties.domibusGatewayConfigCustomHttpsEnabled.get(nome);
+    	return this.domibusGatewayConfigCustomHttpsEnabled.get(nome);
 	}
     
-    private static List<String> domibusGatewayConfigCustomHttsProperties_Read = new ArrayList<String>();
-	private static HashMap<String,Properties> domibusGatewayConfigCustomHttpsProperties = new HashMap<String,Properties>();
+    private List<String> domibusGatewayConfigCustomHttsProperties_Read = new ArrayList<String>();
+	private HashMap<String,Properties> domibusGatewayConfigCustomHttpsProperties = new HashMap<String,Properties>();
 	public Properties getDomibusGatewayConfigCustomHttpsProperties(String nome) throws ProtocolException {
-		if(AS4Properties.domibusGatewayConfigCustomHttsProperties_Read.contains(nome)==false){
+		if(this.domibusGatewayConfigCustomHttsProperties_Read.contains(nome)==false){
 	    	try{  
 	    		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".https.property.");
 				
 				if (p != null && p.size()>0){
-					AS4Properties.domibusGatewayConfigCustomHttpsProperties.put(nome, p);
+					this.domibusGatewayConfigCustomHttpsProperties.put(nome, p);
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -862,10 +864,10 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
 	    	finally {
-	    		AS4Properties.domibusGatewayConfigCustomHttsProperties_Read.add(nome);
+	    		this.domibusGatewayConfigCustomHttsProperties_Read.add(nome);
 	    	}
     	}
-		return AS4Properties.domibusGatewayConfigCustomHttpsProperties.get(nome);
+		return this.domibusGatewayConfigCustomHttpsProperties.get(nome);
 	}
 	
 
@@ -875,43 +877,43 @@ public class AS4Properties {
 	
 	/* **** Comunicazione JMS verso Broker **** */
 	
-	private static Boolean domibusGatewayJMS_debug= null;
-	private static Boolean domibusGatewayJMS_debugRead= null;
+	private Boolean domibusGatewayJMS_debug= null;
+	private Boolean domibusGatewayJMS_debugRead= null;
     public Boolean isDomibusGatewayJMS_debug(){
-    	if(AS4Properties.domibusGatewayJMS_debugRead==null){
+    	if(this.domibusGatewayJMS_debugRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.debug"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayJMS_debug = Boolean.parseBoolean(value);
+					this.domibusGatewayJMS_debug = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.debug' non impostata, viene utilizzato il default=false");
-					AS4Properties.domibusGatewayJMS_debug = false;
+					this.domibusGatewayJMS_debug = false;
 				}
 				
-				AS4Properties.domibusGatewayJMS_debugRead = true;
+				this.domibusGatewayJMS_debugRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.debug' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabled = false;
+				this.isDomibusGatewayConfigDefaultHttpsEnabled = false;
 				
-				AS4Properties.domibusGatewayJMS_debug = false;
+				this.domibusGatewayJMS_debug = false;
 			}
     	}
     	
-    	return AS4Properties.domibusGatewayJMS_debug;
+    	return this.domibusGatewayJMS_debug;
 	}
 	
-	private static Integer domibusGatewayJMS_threadsPoolSize;
+	private Integer domibusGatewayJMS_threadsPoolSize;
 	public Integer getDomibusGatewayJMS_threadsPoolSize() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_threadsPoolSize==null){
+		if(this.domibusGatewayJMS_threadsPoolSize==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.threadsPool.size"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayJMS_threadsPoolSize = Integer.parseInt(value);
+					this.domibusGatewayJMS_threadsPoolSize = Integer.parseInt(value);
 				}
 				else {
 					throw new Exception("Proprieta' non impostata");
@@ -922,18 +924,18 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.domibusGatewayJMS_threadsPoolSize;
+		return this.domibusGatewayJMS_threadsPoolSize;
 	}
 	
-	private static Integer domibusGatewayJMS_threadCheckIntervalMs;
+	private Integer domibusGatewayJMS_threadCheckIntervalMs;
 	public Integer getDomibusGatewayJMS_threadCheckIntervalMs() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_threadCheckIntervalMs==null){
+		if(this.domibusGatewayJMS_threadCheckIntervalMs==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.thread.checkIntervalMs"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayJMS_threadCheckIntervalMs = Integer.parseInt(value);
+					this.domibusGatewayJMS_threadCheckIntervalMs = Integer.parseInt(value);
 				}
 				else {
 					throw new Exception("Proprieta' non impostata");
@@ -944,16 +946,16 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.domibusGatewayJMS_threadCheckIntervalMs;
+		return this.domibusGatewayJMS_threadCheckIntervalMs;
 	}
 	
-	private static Properties domibusGatewayJMS_jndiContext = null;
+	private Properties domibusGatewayJMS_jndiContext = null;
 	public Properties getDomibusGatewayJMS_jndiContext() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_jndiContext==null){
+		if(this.domibusGatewayJMS_jndiContext==null){
 	    	try{  
-	    		AS4Properties.domibusGatewayJMS_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.jndi.");
-	    		if (AS4Properties.domibusGatewayJMS_jndiContext == null || AS4Properties.domibusGatewayJMS_jndiContext.size()<0){
-	    			AS4Properties.domibusGatewayJMS_jndiContext = new Properties(); // context jndi vuoto
+	    		this.domibusGatewayJMS_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.jndi.");
+	    		if (this.domibusGatewayJMS_jndiContext == null || this.domibusGatewayJMS_jndiContext.size()<0){
+	    			this.domibusGatewayJMS_jndiContext = new Properties(); // context jndi vuoto
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -961,18 +963,18 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.domibusGatewayJMS_jndiContext;
+		return this.domibusGatewayJMS_jndiContext;
 	}
 	
-	private static String domibusGatewayJMS_connectionFactory;
+	private String domibusGatewayJMS_connectionFactory;
 	public String getDomibusGatewayJMS_connectionFactory() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_connectionFactory==null){
+		if(this.domibusGatewayJMS_connectionFactory==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.connectionFactory"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayJMS_connectionFactory = value;
+					this.domibusGatewayJMS_connectionFactory = value;
 				}
 				else {
 					throw new Exception("Proprieta' non impostata");
@@ -983,62 +985,62 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.domibusGatewayJMS_connectionFactory;
+		return this.domibusGatewayJMS_connectionFactory;
 	}
 	
-	private static Boolean domibusGatewayJMS_username_read;
-	private static String domibusGatewayJMS_username;
+	private Boolean domibusGatewayJMS_username_read;
+	private String domibusGatewayJMS_username;
 	public String getDomibusGatewayJMS_username() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_username_read==null){
+		if(this.domibusGatewayJMS_username_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.username"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayJMS_username = value;
+					this.domibusGatewayJMS_username = value;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.username', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				domibusGatewayJMS_username_read = true;
+				this.domibusGatewayJMS_username_read = true;
 			}
     	}
-		return AS4Properties.domibusGatewayJMS_username;
+		return this.domibusGatewayJMS_username;
 	}
 	
-	private static Boolean domibusGatewayJMS_password_read;
-	private static String domibusGatewayJMS_password;
+	private Boolean domibusGatewayJMS_password_read;
+	private String domibusGatewayJMS_password;
 	public String getDomibusGatewayJMS_password() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_password_read==null){
+		if(this.domibusGatewayJMS_password_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.password"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayJMS_password = value;
+					this.domibusGatewayJMS_password = value;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.password', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				domibusGatewayJMS_password_read = true;
+				this.domibusGatewayJMS_password_read = true;
 			}
     	}
-		return AS4Properties.domibusGatewayJMS_password;
+		return this.domibusGatewayJMS_password;
 	}
 	
-	private static String domibusGatewayJMS_queueReceiver;
+	private String domibusGatewayJMS_queueReceiver;
 	public String getDomibusGatewayJMS_queueReceiver() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_queueReceiver==null){
+		if(this.domibusGatewayJMS_queueReceiver==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.receiver"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayJMS_queueReceiver = value;
+					this.domibusGatewayJMS_queueReceiver = value;
 				}
 				else {
 					throw new Exception("Proprieta' non impostata");
@@ -1049,18 +1051,18 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.domibusGatewayJMS_queueReceiver;
+		return this.domibusGatewayJMS_queueReceiver;
 	}
 	
-	private static String domibusGatewayJMS_queueSender;
+	private String domibusGatewayJMS_queueSender;
 	public String getDomibusGatewayJMS_queueSender() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_queueSender==null){
+		if(this.domibusGatewayJMS_queueSender==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.sender"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayJMS_queueSender = value;
+					this.domibusGatewayJMS_queueSender = value;
 				}
 				else {
 					throw new Exception("Proprieta' non impostata");
@@ -1071,36 +1073,36 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.domibusGatewayJMS_queueSender;
+		return this.domibusGatewayJMS_queueSender;
 	}
 	
-	private static Boolean domibusGatewayJMS_AckProviderUrl_read;
-	private static String domibusGatewayJMS_AckProviderUrl;
+	private Boolean domibusGatewayJMS_AckProviderUrl_read;
+	private String domibusGatewayJMS_AckProviderUrl;
 	private String getDomibusGatewayJMS_AckProviderUrl() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_AckProviderUrl_read==null){
+		if(this.domibusGatewayJMS_AckProviderUrl_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.sender.provider.url"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayJMS_AckProviderUrl = value;
+					this.domibusGatewayJMS_AckProviderUrl = value;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.queue.sender.provider.url', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				domibusGatewayJMS_AckProviderUrl_read = true;
+				this.domibusGatewayJMS_AckProviderUrl_read = true;
 			}
     	}
-		return AS4Properties.domibusGatewayJMS_AckProviderUrl;
+		return this.domibusGatewayJMS_AckProviderUrl;
 	}
 	
-	private static Properties domibusGatewayJMS_jndiContextForAck = null;
+	private Properties domibusGatewayJMS_jndiContextForAck = null;
 	public Properties getDomibusGatewayJMS_jndiContextForAck() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_jndiContextForAck==null){
+		if(this.domibusGatewayJMS_jndiContextForAck==null){
 			if(this.getDomibusGatewayJMS_AckProviderUrl()!=null) {
-				domibusGatewayJMS_jndiContextForAck = new Properties();
+				this.domibusGatewayJMS_jndiContextForAck = new Properties();
 				Properties p = this.getDomibusGatewayJMS_jndiContext();
 				Enumeration<?> keys = p.keys();
 				while (keys.hasMoreElements()) {
@@ -1108,18 +1110,18 @@ public class AS4Properties {
 					if(object instanceof String) {
 						String key = (String) object;
 						if(!"java.naming.provider.url".equalsIgnoreCase(key)) {
-							domibusGatewayJMS_jndiContextForAck.put(key, p.get(key));
+							this.domibusGatewayJMS_jndiContextForAck.put(key, p.get(key));
 						}
 					}
 				}
-				domibusGatewayJMS_jndiContextForAck.put("java.naming.provider.url", this.getDomibusGatewayJMS_AckProviderUrl());
+				this.domibusGatewayJMS_jndiContextForAck.put("java.naming.provider.url", this.getDomibusGatewayJMS_AckProviderUrl());
 			}
 			else {
-				domibusGatewayJMS_jndiContextForAck = this.getDomibusGatewayJMS_jndiContext();
+				this.domibusGatewayJMS_jndiContextForAck = this.getDomibusGatewayJMS_jndiContext();
 			}
 			
     	}
-		return AS4Properties.domibusGatewayJMS_jndiContextForAck;
+		return this.domibusGatewayJMS_jndiContextForAck;
 	}
 	
 	
@@ -1130,80 +1132,80 @@ public class AS4Properties {
 	
 	/* **** Tracciamento delle Notifiche **** */
 	
-	private static Boolean isAckTraceEnabled= null;
+	private Boolean isAckTraceEnabled= null;
     public Boolean isAckTraceEnabled(){
-    	if(AS4Properties.isAckTraceEnabled==null){
+    	if(this.isAckTraceEnabled==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.enabled"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.isAckTraceEnabled = Boolean.parseBoolean(value);
+					this.isAckTraceEnabled = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.trace.enabled' non impostata, viene utilizzato il default=true");
-					AS4Properties.isAckTraceEnabled = true;
+					this.isAckTraceEnabled = true;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.trace.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
-				AS4Properties.isAckTraceEnabled = true;
+				this.isAckTraceEnabled = true;
 			}
     	}
     	
-    	return AS4Properties.isAckTraceEnabled;
+    	return this.isAckTraceEnabled;
 	}
     
-    private static Boolean ackTraceDatasource_read;
-	private static String ackTraceDatasource;
+    private Boolean ackTraceDatasource_read;
+	private String ackTraceDatasource;
 	public String getAckTraceDatasource() throws ProtocolException {
-		if(AS4Properties.ackTraceDatasource_read==null){
+		if(this.ackTraceDatasource_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.dataSource"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.ackTraceDatasource = value;
+					this.ackTraceDatasource = value;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.trace.dataSource', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				ackTraceDatasource_read = true;
+				this.ackTraceDatasource_read = true;
 			}
     	}
-		return AS4Properties.ackTraceDatasource;
+		return this.ackTraceDatasource;
 	}
 	
-	private static Boolean ackTraceTipoDatabase_read;
-	private static String ackTraceTipoDatabase;
+	private Boolean ackTraceTipoDatabase_read;
+	private String ackTraceTipoDatabase;
 	public String getAckTraceTipoDatabase() throws ProtocolException {
-		if(AS4Properties.ackTraceTipoDatabase_read==null){
+		if(this.ackTraceTipoDatabase_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.tipoDatabase"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.ackTraceTipoDatabase = value;
+					this.ackTraceTipoDatabase = value;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.trace.tipoDatabase', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				ackTraceTipoDatabase_read = true;
+				this.ackTraceTipoDatabase_read = true;
 			}
     	}
-		return AS4Properties.ackTraceTipoDatabase;
+		return this.ackTraceTipoDatabase;
 	}
 	
-	private static Properties ackTraceDatasource_jndiContext = null;
+	private Properties ackTraceDatasource_jndiContext = null;
 	public Properties getAckTraceDatasource_jndiContext() throws ProtocolException {
-		if(AS4Properties.ackTraceDatasource_jndiContext==null){
+		if(this.ackTraceDatasource_jndiContext==null){
 	    	try{  
-	    		AS4Properties.ackTraceDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.dataSource.property.");
-	    		if (AS4Properties.ackTraceDatasource_jndiContext == null || AS4Properties.ackTraceDatasource_jndiContext.size()<0){
-	    			AS4Properties.ackTraceDatasource_jndiContext = new Properties(); // context jndi vuoto
+	    		this.ackTraceDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.dataSource.property.");
+	    		if (this.ackTraceDatasource_jndiContext == null || this.ackTraceDatasource_jndiContext.size()<0){
+	    			this.ackTraceDatasource_jndiContext = new Properties(); // context jndi vuoto
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -1211,61 +1213,61 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.ackTraceDatasource_jndiContext;
+		return this.ackTraceDatasource_jndiContext;
 	}
 	
 	
-	private static Boolean ackDomibusDatasource_read;
-	private static String ackDomibusDatasource;
+	private Boolean ackDomibusDatasource_read;
+	private String ackDomibusDatasource;
 	public String getAckDomibusDatasource() throws ProtocolException {
-		if(AS4Properties.ackDomibusDatasource_read==null){
+		if(this.ackDomibusDatasource_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.dataSource"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.ackDomibusDatasource = value;
+					this.ackDomibusDatasource = value;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.domibus.dataSource', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				ackDomibusDatasource_read = true;
+				this.ackDomibusDatasource_read = true;
 			}
     	}
-		return AS4Properties.ackDomibusDatasource;
+		return this.ackDomibusDatasource;
 	}
 	
-	private static Boolean ackDomibusTipoDatabase_read;
-	private static String ackDomibusTipoDatabase;
+	private Boolean ackDomibusTipoDatabase_read;
+	private String ackDomibusTipoDatabase;
 	public String getAckDomibusTipoDatabase() throws ProtocolException {
-		if(AS4Properties.ackDomibusTipoDatabase_read==null){
+		if(this.ackDomibusTipoDatabase_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.tipoDatabase"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.ackDomibusTipoDatabase = value;
+					this.ackDomibusTipoDatabase = value;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.domibus.tipoDatabase', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				ackDomibusTipoDatabase_read = true;
+				this.ackDomibusTipoDatabase_read = true;
 			}
     	}
-		return AS4Properties.ackDomibusTipoDatabase;
+		return this.ackDomibusTipoDatabase;
 	}
 	
-	private static Properties ackDomibusDatasource_jndiContext = null;
+	private Properties ackDomibusDatasource_jndiContext = null;
 	public Properties getAckDomibusDatasource_jndiContext() throws ProtocolException {
-		if(AS4Properties.ackDomibusDatasource_jndiContext==null){
+		if(this.ackDomibusDatasource_jndiContext==null){
 	    	try{  
-	    		AS4Properties.ackDomibusDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.dataSource.property.");
-	    		if (AS4Properties.ackDomibusDatasource_jndiContext == null || AS4Properties.ackDomibusDatasource_jndiContext.size()<0){
-	    			AS4Properties.ackDomibusDatasource_jndiContext = new Properties(); // context jndi vuoto
+	    		this.ackDomibusDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.dataSource.property.");
+	    		if (this.ackDomibusDatasource_jndiContext == null || this.ackDomibusDatasource_jndiContext.size()<0){
+	    			this.ackDomibusDatasource_jndiContext = new Properties(); // context jndi vuoto
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -1273,14 +1275,14 @@ public class AS4Properties {
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.ackDomibusDatasource_jndiContext;
+		return this.ackDomibusDatasource_jndiContext;
 	}
 	
 	
 	
-	private static Boolean useConfigStaticInstance = null;
+	private Boolean useConfigStaticInstance = null;
 	private Boolean useConfigStaticInstance(){
-		if(AS4Properties.useConfigStaticInstance==null){
+		if(this.useConfigStaticInstance==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.as4.factory.config.staticInstance";
@@ -1290,24 +1292,24 @@ public class AS4Properties {
 
 				if (value != null){
 					value = value.trim();
-					AS4Properties.useConfigStaticInstance = Boolean.parseBoolean(value);
+					this.useConfigStaticInstance = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					AS4Properties.useConfigStaticInstance = defaultValue;
+					this.useConfigStaticInstance = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				AS4Properties.useConfigStaticInstance = defaultValue;
+				this.useConfigStaticInstance = defaultValue;
 			}
 		}
 
-		return AS4Properties.useConfigStaticInstance;
+		return this.useConfigStaticInstance;
 	}
 	
-	private static Boolean useErroreApplicativoStaticInstance = null;
+	private Boolean useErroreApplicativoStaticInstance = null;
 	private Boolean useErroreApplicativoStaticInstance(){
-		if(AS4Properties.useErroreApplicativoStaticInstance==null){
+		if(this.useErroreApplicativoStaticInstance==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.as4.factory.erroreApplicativo.staticInstance";
@@ -1317,24 +1319,24 @@ public class AS4Properties {
 
 				if (value != null){
 					value = value.trim();
-					AS4Properties.useErroreApplicativoStaticInstance = Boolean.parseBoolean(value);
+					this.useErroreApplicativoStaticInstance = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					AS4Properties.useErroreApplicativoStaticInstance = defaultValue;
+					this.useErroreApplicativoStaticInstance = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				AS4Properties.useErroreApplicativoStaticInstance = defaultValue;
+				this.useErroreApplicativoStaticInstance = defaultValue;
 			}
 		}
 
-		return AS4Properties.useErroreApplicativoStaticInstance;
+		return this.useErroreApplicativoStaticInstance;
 	}
 	
-	private static Boolean useEsitoStaticInstance = null;
+	private Boolean useEsitoStaticInstance = null;
 	private Boolean useEsitoStaticInstance(){
-		if(AS4Properties.useEsitoStaticInstance==null){
+		if(this.useEsitoStaticInstance==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.as4.factory.esito.staticInstance";
@@ -1344,35 +1346,35 @@ public class AS4Properties {
 
 				if (value != null){
 					value = value.trim();
-					AS4Properties.useEsitoStaticInstance = Boolean.parseBoolean(value);
+					this.useEsitoStaticInstance = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					AS4Properties.useEsitoStaticInstance = defaultValue;
+					this.useEsitoStaticInstance = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				AS4Properties.useEsitoStaticInstance = defaultValue;
+				this.useEsitoStaticInstance = defaultValue;
 			}
 		}
 
-		return AS4Properties.useEsitoStaticInstance;
+		return this.useEsitoStaticInstance;
 	}
 	
-	private static BasicStaticInstanceConfig staticInstanceConfig = null;
+	private BasicStaticInstanceConfig staticInstanceConfig = null;
 	public BasicStaticInstanceConfig getStaticInstanceConfig(){
-		if(AS4Properties.staticInstanceConfig==null){
-			staticInstanceConfig = new BasicStaticInstanceConfig();
+		if(this.staticInstanceConfig==null){
+			this.staticInstanceConfig = new BasicStaticInstanceConfig();
 			if(useConfigStaticInstance()!=null) {
-				staticInstanceConfig.setStaticConfig(useConfigStaticInstance());
+				this.staticInstanceConfig.setStaticConfig(useConfigStaticInstance());
 			}
 			if(useErroreApplicativoStaticInstance()!=null) {
-				staticInstanceConfig.setStaticErrorBuilder(useErroreApplicativoStaticInstance());
+				this.staticInstanceConfig.setStaticErrorBuilder(useErroreApplicativoStaticInstance());
 			}
 			if(useEsitoStaticInstance()!=null) {
-				staticInstanceConfig.setStaticEsitoBuilder(useEsitoStaticInstance());
+				this.staticInstanceConfig.setStaticEsitoBuilder(useEsitoStaticInstance());
 			}
 		}
-		return staticInstanceConfig;
+		return this.staticInstanceConfig;
 	}
 }

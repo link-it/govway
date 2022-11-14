@@ -260,7 +260,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 					}
 					AttachmentPart ap = MTOMUtilities.getAttachmentPart(this.msg, cid);
 					esito = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
-					if(esito==null || "".equals(esito)){
+					if(esito==null || esito.length<=0){
 						throw new Exception("Contenuto non presente");
 					}
 				}catch(Exception e){
@@ -560,7 +560,9 @@ public class SDIValidatoreServizioRiceviNotifica {
 				Object o = null;
 				try{
 					o = nodeEsitoIt.next();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				if(o!=null){
 					nodeEsito = (SOAPElement) o;
 				}
@@ -575,7 +577,9 @@ public class SDIValidatoreServizioRiceviNotifica {
 					Object o = null;
 					try{
 						o = nodeEsitoFileIt.next();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					if(o!=null){
 						nodeEsitoFile = (SOAPElement) o;
 					}
@@ -591,7 +595,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 							}
 							AttachmentPart ap = MTOMUtilities.getAttachmentPart(this.msg, cid);
 							scartoEsito = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
-							if(scartoEsito==null || "".equals(scartoEsito)){
+							if(scartoEsito==null || scartoEsito.length<=0){
 								throw new Exception("Contenuto non presente");
 							}
 						}catch(Exception e){

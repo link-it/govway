@@ -112,7 +112,7 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 		super.initStaticInstance();
 		if(this.staticInstanceConfig!=null && this.staticInstanceConfig.isStaticEsitoBuilder() && staticInstanceEsitoBuilder==null) {
 			if(EsitiProperties.isInitializedProtocol(this.getProtocolMapKey())) {
-				staticInstanceEsitoBuilder = new SPCoopEsitoBuilder(this);
+				initStaticInstanceEsitoBuilder(this);
 			}
 		}
 	}
@@ -133,6 +133,11 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 	}
 	
 	private static org.openspcoop2.protocol.sdk.builder.IEsitoBuilder staticInstanceEsitoBuilder = null;
+	private static synchronized void initStaticInstanceEsitoBuilder(SPCoopFactory spcoopFactory) throws ProtocolException {
+		if(staticInstanceEsitoBuilder==null) {
+			staticInstanceEsitoBuilder = new SPCoopEsitoBuilder(spcoopFactory);
+		}
+	}
 	@Override
 	public IEsitoBuilder createEsitoBuilder() throws ProtocolException {
 		return staticInstanceEsitoBuilder!=null ? staticInstanceEsitoBuilder : new SPCoopEsitoBuilder(this);

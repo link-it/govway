@@ -284,7 +284,7 @@ public class SICAtoOpenSPCoopUtilities {
 		
 		if(nome_accordo==null || "".equals(nome_accordo))
 			throw new SICAToOpenSPCoopUtilitiesException("Nome accordo non fornito");
-		if(versione==null || "".equals(versione))
+		if(versione==null)
 			throw new SICAToOpenSPCoopUtilitiesException("Versione non fornita");
 		
 		StringBuilder bf = new StringBuilder();
@@ -394,7 +394,7 @@ public class SICAtoOpenSPCoopUtilities {
 			throw new SICAToOpenSPCoopUtilitiesException("Soggetto organizzativo non fornito");
 		if(nome_accordo==null || "".equals(nome_accordo))
 			throw new SICAToOpenSPCoopUtilitiesException("Nome accordo non fornito");
-		if(versione==null || "".equals(versione))
+		if(versione==null)
 			throw new SICAToOpenSPCoopUtilitiesException("Versione non fornita");
 		
 		StringBuilder bf = new StringBuilder();
@@ -786,8 +786,9 @@ public class SICAtoOpenSPCoopUtilities {
 			IRegistryReader registryReader,
 			it.gov.spcoop.sica.dao.AccordoCooperazione accordoCooperazioneSICA,
 			SICAtoOpenSPCoopContext sicaToOpenspcoopContext,
-			Logger log) throws SICAToOpenSPCoopUtilitiesException{
+			Logger logParam) throws SICAToOpenSPCoopUtilitiesException{
 		
+		Logger log = logParam;
 		if(log==null){
 			log = LoggerWrapperFactory.getLogger(SICAtoOpenSPCoopUtilities.class);
 		}
@@ -906,8 +907,9 @@ public class SICAtoOpenSPCoopUtilities {
 			IRegistryReader registryReader,
 			org.openspcoop2.core.registry.AccordoCooperazione accordoCooperazioneOpenspcoop,
 			SICAtoOpenSPCoopContext sicaToOpenspcoopContext,
-			Logger log)throws SICAToOpenSPCoopUtilitiesException{
+			Logger logParam)throws SICAToOpenSPCoopUtilitiesException{
 				
+		Logger log = logParam;
 		if(log==null){
 			log = LoggerWrapperFactory.getLogger(SICAtoOpenSPCoopUtilities.class);
 		}

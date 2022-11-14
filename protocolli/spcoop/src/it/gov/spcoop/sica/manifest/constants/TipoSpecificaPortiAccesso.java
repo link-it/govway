@@ -63,13 +63,6 @@ public enum TipoSpecificaPortiAccesso implements IEnumeration , Serializable , C
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(TipoSpecificaPortiAccesso object){
-		if(object==null)
-			return false;
-		if(object.getValue()==null)
-			return false;
-		return object.getValue().equals(this.getValue());	
-	}
 	public boolean equals(String object){
 		if(object==null)
 			return false;

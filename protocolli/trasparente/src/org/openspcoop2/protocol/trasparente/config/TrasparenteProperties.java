@@ -85,7 +85,9 @@ public class TrasparenteProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 		}
 		try{
 			this.reader = new TrasparenteInstanceProperties(propertiesReader, this.log);
@@ -170,9 +172,9 @@ public class TrasparenteProperties {
 	 * @return Valore della property
 	 * 
 	 */
-	private static Boolean generateIDasUUID = null;
+	private Boolean generateIDasUUID = null;
 	public Boolean generateIDasUUID(){
-		if(TrasparenteProperties.generateIDasUUID==null){
+		if(this.generateIDasUUID==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.trasparente.id.uuid";
@@ -182,19 +184,19 @@ public class TrasparenteProperties {
 
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.generateIDasUUID = Boolean.parseBoolean(value);
+					this.generateIDasUUID = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					TrasparenteProperties.generateIDasUUID = defaultValue;
+					this.generateIDasUUID = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				TrasparenteProperties.generateIDasUUID = defaultValue;
+				this.generateIDasUUID = defaultValue;
 			}
 		}
 
-		return TrasparenteProperties.generateIDasUUID;
+		return this.generateIDasUUID;
 	}
 	
 	
@@ -207,60 +209,60 @@ public class TrasparenteProperties {
 	 * @return True se la funzionalita' 'Riferimento ID Richiesta' richiede che venga fornito obbligatoriamente l'informazione sull'identificativo della richiesta tramite i meccanismi di integrazione
      * 
      */
-	private static Boolean isRiferimentoIDRichiesta_PD_Required= null;
-	private static Boolean isRiferimentoIDRichiesta_PD_RequiredRead= null;
+	private Boolean isRiferimentoIDRichiesta_PD_Required= null;
+	private Boolean isRiferimentoIDRichiesta_PD_RequiredRead= null;
     public Boolean isRiferimentoIDRichiesta_PD_Required(){
-    	if(TrasparenteProperties.isRiferimentoIDRichiesta_PD_RequiredRead==null){
+    	if(this.isRiferimentoIDRichiesta_PD_RequiredRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.pd.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isRiferimentoIDRichiesta_PD_Required = Boolean.parseBoolean(value);
+					this.isRiferimentoIDRichiesta_PD_Required = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pd.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true'");
-					TrasparenteProperties.isRiferimentoIDRichiesta_PD_Required = true;
+					this.isRiferimentoIDRichiesta_PD_Required = true;
 				}
 				
-				TrasparenteProperties.isRiferimentoIDRichiesta_PD_RequiredRead = true;
+				this.isRiferimentoIDRichiesta_PD_RequiredRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pd.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
-				TrasparenteProperties.isRiferimentoIDRichiesta_PD_Required = true;
+				this.isRiferimentoIDRichiesta_PD_Required = true;
 				
-				TrasparenteProperties.isRiferimentoIDRichiesta_PD_RequiredRead = true;
+				this.isRiferimentoIDRichiesta_PD_RequiredRead = true;
 			}
     	}
     	
-    	return TrasparenteProperties.isRiferimentoIDRichiesta_PD_Required;
+    	return this.isRiferimentoIDRichiesta_PD_Required;
 	}
 	
-	private static Boolean isRiferimentoIDRichiesta_PA_Required= null;
-	private static Boolean isRiferimentoIDRichiesta_PA_RequiredRead= null;
+	private Boolean isRiferimentoIDRichiesta_PA_Required= null;
+	private Boolean isRiferimentoIDRichiesta_PA_RequiredRead= null;
     public Boolean isRiferimentoIDRichiesta_PA_Required(){
-    	if(TrasparenteProperties.isRiferimentoIDRichiesta_PA_RequiredRead==null){
+    	if(this.isRiferimentoIDRichiesta_PA_RequiredRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.pa.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isRiferimentoIDRichiesta_PA_Required = Boolean.parseBoolean(value);
+					this.isRiferimentoIDRichiesta_PA_Required = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pa.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true'");
-					TrasparenteProperties.isRiferimentoIDRichiesta_PA_Required = true;
+					this.isRiferimentoIDRichiesta_PA_Required = true;
 				}
 				
-				TrasparenteProperties.isRiferimentoIDRichiesta_PA_RequiredRead = true;
+				this.isRiferimentoIDRichiesta_PA_RequiredRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pa.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
-				TrasparenteProperties.isRiferimentoIDRichiesta_PA_Required = true;
+				this.isRiferimentoIDRichiesta_PA_Required = true;
 				
-				TrasparenteProperties.isRiferimentoIDRichiesta_PA_RequiredRead = true;
+				this.isRiferimentoIDRichiesta_PA_RequiredRead = true;
 			}
     	}
     	
-    	return TrasparenteProperties.isRiferimentoIDRichiesta_PA_Required;
+    	return this.isRiferimentoIDRichiesta_PA_Required;
 	}
 	
 	
@@ -273,32 +275,32 @@ public class TrasparenteProperties {
      * @return Indicazione se ritornare un soap fault personalizzato nel codice/actor/faultString per i messaggi di errore di protocollo (Porta Applicativa)
      * 
      */
-	private static Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault= null;
-	private static Boolean isPortaApplicativaBustaErrore_personalizzaElementiFaultRead= null;
+	private Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault= null;
+	private Boolean isPortaApplicativaBustaErrore_personalizzaElementiFaultRead= null;
     public Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault(){
-    	if(TrasparenteProperties.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead==null){
+    	if(this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.pa.bustaErrore.personalizzaElementiFault"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault = Boolean.parseBoolean(value);
+					this.isPortaApplicativaBustaErrore_personalizzaElementiFault = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pa.bustaErrore.personalizzaElementiFault' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					TrasparenteProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
+					this.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
 				}
 				
-				TrasparenteProperties.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
+				this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pa.bustaErrore.personalizzaElementiFault' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				TrasparenteProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
+				this.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
 				
-				TrasparenteProperties.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
+				this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
 			}
     	}
     	
-    	return TrasparenteProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault;
+    	return this.isPortaApplicativaBustaErrore_personalizzaElementiFault;
 	}
     
     
@@ -308,32 +310,32 @@ public class TrasparenteProperties {
      * @return Indicazione se deve essere aggiunto un errore-applicativo nei details di un messaggio di errore di protocollo (Porta Applicativa)
      * 
      */
-	private static Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo= null;
-	private static Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead= null;
+	private Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo= null;
+	private Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead= null;
     public Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo(){
-    	if(TrasparenteProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead==null){
+    	if(this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.pa.bustaErrore.aggiungiErroreApplicativo"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = Boolean.parseBoolean(value);
+					this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pa.bustaErrore.aggiungiErroreApplicativo' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					TrasparenteProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
+					this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
 				}
 				
-				TrasparenteProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
+				this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pa.bustaErrore.aggiungiErroreApplicativo' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				TrasparenteProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
+				this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
 				
-				TrasparenteProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
+				this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
 			}
     	}
     	
-    	return TrasparenteProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo;
+    	return this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo;
 	}
 	
     /**
@@ -342,27 +344,27 @@ public class TrasparenteProperties {
      * @return Indicazione se generare i details in caso di SOAPFault *_001 (senza buste Errore)
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultProtocolValidazione = null;
+	private Boolean isGenerazioneDetailsSOAPFaultProtocolValidazione = null;
     public boolean isGenerazioneDetailsSOAPFaultProtocolValidazione(){
-    	if(TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione==null){
+    	if(this.isGenerazioneDetailsSOAPFaultProtocolValidazione==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultProtocolValidazione = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.eccezioneIntestazione' non impostata, viene utilizzato il default=false");
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione = false;
+					this.isGenerazioneDetailsSOAPFaultProtocolValidazione = false;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.eccezioneIntestazione' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione = false;
+				this.isGenerazioneDetailsSOAPFaultProtocolValidazione = false;
 			}
     	}
     	
-    	return TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione;
+    	return this.isGenerazioneDetailsSOAPFaultProtocolValidazione;
 	}
     
     /**
@@ -371,27 +373,27 @@ public class TrasparenteProperties {
      * @return Indicazione se generare i details in caso di SOAPFault *_300
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento = null;
+	private Boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento = null;
     public boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento(){
-    	if(TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento==null){
+    	if(this.isGenerazioneDetailsSOAPFaultProtocolProcessamento==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultProtocolProcessamento = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.eccezioneProcessamento' non impostata, viene utilizzato il default=true");
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento = true;
+					this.isGenerazioneDetailsSOAPFaultProtocolProcessamento = true;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.eccezioneProcessamento' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
-				TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento = true;
+				this.isGenerazioneDetailsSOAPFaultProtocolProcessamento = true;
 			}
     	}
     	
-    	return TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento;
+    	return this.isGenerazioneDetailsSOAPFaultProtocolProcessamento;
 	}
     
     
@@ -401,27 +403,27 @@ public class TrasparenteProperties {
      * @return Indicazione se generare nei details in caso di SOAPFault *_300 lo stack trace
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = null;
+	private Boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = null;
     public boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace(){
-    	if(TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace==null){
+    	if(this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.stackTrace' non impostata, viene utilizzato il default=false");
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = false;
+					this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = false;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.stackTrace' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = false;
+				this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = false;
 			}
     	}
     	
-    	return TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace;
+    	return this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace;
 	}
     
     /**
@@ -430,27 +432,27 @@ public class TrasparenteProperties {
      * @return Indicazione se generare nei details in caso di SOAPFault informazioni generiche
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = null;
+	private Boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = null;
     public boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche(){
-    	if(TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche==null){
+    	if(this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.informazioniGeneriche' non impostata, viene utilizzato il default=true");
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = true;
+					this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = true;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.informazioniGeneriche' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
-				TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = true;
+				this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = true;
 			}
     	}
     	
-    	return TrasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche;
+    	return this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche;
 	}
     
     
@@ -463,27 +465,27 @@ public class TrasparenteProperties {
      * @return Indicazione se generare i details in Casi di errore 5XX
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationServerError = null;
+	private Boolean isGenerazioneDetailsSOAPFaultIntegrationServerError = null;
     public boolean isGenerazioneDetailsSOAPFaultIntegrationServerError(){
-    	if(TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError==null){
+    	if(this.isGenerazioneDetailsSOAPFaultIntegrationServerError==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.serverError"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultIntegrationServerError = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.serverError' non impostata, viene utilizzato il default=true");
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError = true;
+					this.isGenerazioneDetailsSOAPFaultIntegrationServerError = true;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.serverError' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
-				TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError = true;
+				this.isGenerazioneDetailsSOAPFaultIntegrationServerError = true;
 			}
     	}
     	
-    	return TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError;
+    	return this.isGenerazioneDetailsSOAPFaultIntegrationServerError;
 	}
     
     /**
@@ -492,27 +494,27 @@ public class TrasparenteProperties {
      * @return Indicazione se generare i details in Casi di errore 4XX
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationClientError = null;
+	private Boolean isGenerazioneDetailsSOAPFaultIntegrationClientError = null;
     public boolean isGenerazioneDetailsSOAPFaultIntegrationClientError(){
-    	if(TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError==null){
+    	if(this.isGenerazioneDetailsSOAPFaultIntegrationClientError==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.clientError"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultIntegrationClientError = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.clientError' non impostata, viene utilizzato il default=false");
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError = false;
+					this.isGenerazioneDetailsSOAPFaultIntegrationClientError = false;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.clientError' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError = false;
+				this.isGenerazioneDetailsSOAPFaultIntegrationClientError = false;
 			}
     	}
     	
-    	return TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError;
+    	return this.isGenerazioneDetailsSOAPFaultIntegrationClientError;
 	}
     
     /**
@@ -521,27 +523,27 @@ public class TrasparenteProperties {
      * @return Indicazione se generare nei details lo stack trace all'interno
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = null;
+	private Boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = null;
     public boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace(){
-    	if(TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace==null){
+    	if(this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.stackTrace' non impostata, viene utilizzato il default=false");
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = false;
+					this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = false;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.stackTrace' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = false;
+				this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = false;
 			}
     	}
     	
-    	return TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace;
+    	return this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace;
 	}
     
     /**
@@ -550,32 +552,32 @@ public class TrasparenteProperties {
      * @return Indicazione se generare nei details informazioni dettagliate o solo di carattere generale
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche= null;
-	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead= null;
+	private Boolean isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche= null;
+	private Boolean isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead= null;
     public Boolean isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche(){
-    	if(TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead==null){
+    	if(this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.informazioniGeneriche' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultAsGenericCode)");
-					TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = null;
+					this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = null;
 				}
 				
-				TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead = true;
+				this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.informazioniGeneriche' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultAsGenericCode), errore:"+e.getMessage());
-				TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = null;
+				this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = null;
 				
-				TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead = true;
+				this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead = true;
 			}
     	}
     	
-    	return TrasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche;
+    	return this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche;
 	}
     
     
@@ -589,33 +591,33 @@ public class TrasparenteProperties {
      * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
      * 
      */
-	private static BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
-	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead= null;
+	private BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
+	private Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead= null;
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
-    	if(TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
+    	if(this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.erroreApplicativo.faultApplicativo.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
 					Boolean b = Boolean.parseBoolean(value);
-					TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
 				}
 				
-				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
+				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
 				
-				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
 			}
     	}
     	
-    	return TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo;
+    	return this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo;
 	}
     
     /**
@@ -624,41 +626,41 @@ public class TrasparenteProperties {
      * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
      * 
      */
-	private static BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
-	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdDRead= null;
+	private BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
+	private Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdDRead= null;
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
-    	if(TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
+    	if(this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.erroreApplicativo.faultPdD.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
 					Boolean b = Boolean.parseBoolean(value);
-					TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails)");
-					TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
 				}
 				
-				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails), errore:"+e.getMessage());
-				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
+				this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
 				
-				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
 			}
     	}
     	
-    	return TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
+    	return this.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
 
     
     /* **** TESTSUITE PROTOCOL PROPERTIES **** */ 
     
-    private static Boolean utilizzaTestSuiteGenerazioneTracce = null;
+    private Boolean utilizzaTestSuiteGenerazioneTracce = null;
 	public Boolean isUtilizzaTestSuiteGenerazioneTracce(){
-		if(TrasparenteProperties.utilizzaTestSuiteGenerazioneTracce==null){
+		if(this.utilizzaTestSuiteGenerazioneTracce==null){
 			
 			Boolean defaultValue = false;
 			String propertyName = "org.openspcoop2.protocol.trasparente.generazioneTracce.testsuite.enabled";
@@ -668,24 +670,24 @@ public class TrasparenteProperties {
 
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.utilizzaTestSuiteGenerazioneTracce = Boolean.parseBoolean(value);
+					this.utilizzaTestSuiteGenerazioneTracce = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					TrasparenteProperties.utilizzaTestSuiteGenerazioneTracce = defaultValue;
+					this.utilizzaTestSuiteGenerazioneTracce = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				TrasparenteProperties.utilizzaTestSuiteGenerazioneTracce = defaultValue;
+				this.utilizzaTestSuiteGenerazioneTracce = defaultValue;
 			}
 		}
 
-		return TrasparenteProperties.utilizzaTestSuiteGenerazioneTracce;
+		return this.utilizzaTestSuiteGenerazioneTracce;
 	}
     
-	private static Boolean utilizzaTestSuiteProtocolProperties = null;
+	private Boolean utilizzaTestSuiteProtocolProperties = null;
 	public Boolean isUtilizzaTestSuiteProtocolProperties(){
-		if(TrasparenteProperties.utilizzaTestSuiteProtocolProperties==null){
+		if(this.utilizzaTestSuiteProtocolProperties==null){
 			
 			Boolean defaultValue = false;
 			String propertyName = "org.openspcoop2.protocol.trasparente.protocolProperties.testsuite.enabled";
@@ -695,26 +697,26 @@ public class TrasparenteProperties {
 
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.utilizzaTestSuiteProtocolProperties = Boolean.parseBoolean(value);
+					this.utilizzaTestSuiteProtocolProperties = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					TrasparenteProperties.utilizzaTestSuiteProtocolProperties = defaultValue;
+					this.utilizzaTestSuiteProtocolProperties = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				TrasparenteProperties.utilizzaTestSuiteProtocolProperties = defaultValue;
+				this.utilizzaTestSuiteProtocolProperties = defaultValue;
 			}
 		}
 
-		return TrasparenteProperties.utilizzaTestSuiteProtocolProperties;
+		return this.utilizzaTestSuiteProtocolProperties;
 	}
 	
 	
 	
-	private static Boolean useConfigStaticInstance = null;
+	private Boolean useConfigStaticInstance = null;
 	private Boolean useConfigStaticInstance(){
-		if(TrasparenteProperties.useConfigStaticInstance==null){
+		if(this.useConfigStaticInstance==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.trasparente.factory.config.staticInstance";
@@ -724,24 +726,24 @@ public class TrasparenteProperties {
 
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.useConfigStaticInstance = Boolean.parseBoolean(value);
+					this.useConfigStaticInstance = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					TrasparenteProperties.useConfigStaticInstance = defaultValue;
+					this.useConfigStaticInstance = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				TrasparenteProperties.useConfigStaticInstance = defaultValue;
+				this.useConfigStaticInstance = defaultValue;
 			}
 		}
 
-		return TrasparenteProperties.useConfigStaticInstance;
+		return this.useConfigStaticInstance;
 	}
 	
-	private static Boolean useErroreApplicativoStaticInstance = null;
+	private Boolean useErroreApplicativoStaticInstance = null;
 	private Boolean useErroreApplicativoStaticInstance(){
-		if(TrasparenteProperties.useErroreApplicativoStaticInstance==null){
+		if(this.useErroreApplicativoStaticInstance==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.trasparente.factory.erroreApplicativo.staticInstance";
@@ -751,24 +753,24 @@ public class TrasparenteProperties {
 
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.useErroreApplicativoStaticInstance = Boolean.parseBoolean(value);
+					this.useErroreApplicativoStaticInstance = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					TrasparenteProperties.useErroreApplicativoStaticInstance = defaultValue;
+					this.useErroreApplicativoStaticInstance = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				TrasparenteProperties.useErroreApplicativoStaticInstance = defaultValue;
+				this.useErroreApplicativoStaticInstance = defaultValue;
 			}
 		}
 
-		return TrasparenteProperties.useErroreApplicativoStaticInstance;
+		return this.useErroreApplicativoStaticInstance;
 	}
 	
-	private static Boolean useEsitoStaticInstance = null;
+	private Boolean useEsitoStaticInstance = null;
 	private Boolean useEsitoStaticInstance(){
-		if(TrasparenteProperties.useEsitoStaticInstance==null){
+		if(this.useEsitoStaticInstance==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.trasparente.factory.esito.staticInstance";
@@ -778,35 +780,35 @@ public class TrasparenteProperties {
 
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.useEsitoStaticInstance = Boolean.parseBoolean(value);
+					this.useEsitoStaticInstance = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					TrasparenteProperties.useEsitoStaticInstance = defaultValue;
+					this.useEsitoStaticInstance = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				TrasparenteProperties.useEsitoStaticInstance = defaultValue;
+				this.useEsitoStaticInstance = defaultValue;
 			}
 		}
 
-		return TrasparenteProperties.useEsitoStaticInstance;
+		return this.useEsitoStaticInstance;
 	}
 	
-	private static BasicStaticInstanceConfig staticInstanceConfig = null;
+	private BasicStaticInstanceConfig staticInstanceConfig = null;
 	public BasicStaticInstanceConfig getStaticInstanceConfig(){
-		if(TrasparenteProperties.staticInstanceConfig==null){
-			staticInstanceConfig = new BasicStaticInstanceConfig();
+		if(this.staticInstanceConfig==null){
+			this.staticInstanceConfig = new BasicStaticInstanceConfig();
 			if(useConfigStaticInstance()!=null) {
-				staticInstanceConfig.setStaticConfig(useConfigStaticInstance());
+				this.staticInstanceConfig.setStaticConfig(useConfigStaticInstance());
 			}
 			if(useErroreApplicativoStaticInstance()!=null) {
-				staticInstanceConfig.setStaticErrorBuilder(useErroreApplicativoStaticInstance());
+				this.staticInstanceConfig.setStaticErrorBuilder(useErroreApplicativoStaticInstance());
 			}
 			if(useEsitoStaticInstance()!=null) {
-				staticInstanceConfig.setStaticEsitoBuilder(useEsitoStaticInstance());
+				this.staticInstanceConfig.setStaticEsitoBuilder(useEsitoStaticInstance());
 			}
 		}
-		return staticInstanceConfig;
+		return this.staticInstanceConfig;
 	}
 }

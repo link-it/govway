@@ -52,10 +52,45 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CompletionModeType }
+     * Create an instance of {@link TransitionType }
      */
-    public CompletionModeType createCompletionModeType() {
-        return new CompletionModeType();
+    public TransitionType createTransitionType() {
+        return new TransitionType();
+    }
+
+    /**
+     * Create an instance of {@link EventTypeMessage }
+     */
+    public EventTypeMessage createEventTypeMessage() {
+        return new EventTypeMessage();
+    }
+
+    /**
+     * Create an instance of {@link TransitionsType }
+     */
+    public TransitionsType createTransitionsType() {
+        return new TransitionsType();
+    }
+
+    /**
+     * Create an instance of {@link Message }
+     */
+    public Message createMessage() {
+        return new Message();
+    }
+
+    /**
+     * Create an instance of {@link ConceptualBehavior }
+     */
+    public ConceptualBehavior createConceptualBehavior() {
+        return new ConceptualBehavior();
+    }
+
+    /**
+     * Create an instance of {@link StatesType }
+     */
+    public StatesType createStatesType() {
+        return new StatesType();
     }
 
     /**
@@ -73,31 +108,31 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatesType }
+     * Create an instance of {@link MessagesTypes }
      */
-    public StatesType createStatesType() {
-        return new StatesType();
+    public MessagesTypes createMessagesTypes() {
+        return new MessagesTypes();
     }
 
     /**
-     * Create an instance of {@link MessageBehavior }
+     * Create an instance of {@link CompletionModeTypeCompensateMessage }
      */
-    public MessageBehavior createMessageBehavior() {
-        return new MessageBehavior();
+    public CompletionModeTypeCompensateMessage createCompletionModeTypeCompensateMessage() {
+        return new CompletionModeTypeCompensateMessage();
     }
 
     /**
-     * Create an instance of {@link StateTypeNormal }
+     * Create an instance of {@link CompletionModeType }
      */
-    public StateTypeNormal createStateTypeNormal() {
-        return new StateTypeNormal();
+    public CompletionModeType createCompletionModeType() {
+        return new CompletionModeType();
     }
 
     /**
-     * Create an instance of {@link EventTypeMessage }
+     * Create an instance of {@link EventListType }
      */
-    public EventTypeMessage createEventTypeMessage() {
-        return new EventTypeMessage();
+    public EventListType createEventListType() {
+        return new EventListType();
     }
 
     /**
@@ -115,59 +150,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link StateTypeNormal }
+     */
+    public StateTypeNormal createStateTypeNormal() {
+        return new StateTypeNormal();
+    }
+
+    /**
+     * Create an instance of {@link MessageBehavior }
+     */
+    public MessageBehavior createMessageBehavior() {
+        return new MessageBehavior();
+    }
+
+    /**
      * Create an instance of {@link GuardType }
      */
     public GuardType createGuardType() {
         return new GuardType();
-    }
-
-    /**
-     * Create an instance of {@link ConceptualBehavior }
-     */
-    public ConceptualBehavior createConceptualBehavior() {
-        return new ConceptualBehavior();
-    }
-
-    /**
-     * Create an instance of {@link EventListType }
-     */
-    public EventListType createEventListType() {
-        return new EventListType();
-    }
-
-    /**
-     * Create an instance of {@link CompletionModeTypeCompensateMessage }
-     */
-    public CompletionModeTypeCompensateMessage createCompletionModeTypeCompensateMessage() {
-        return new CompletionModeTypeCompensateMessage();
-    }
-
-    /**
-     * Create an instance of {@link Message }
-     */
-    public Message createMessage() {
-        return new Message();
-    }
-
-    /**
-     * Create an instance of {@link MessagesTypes }
-     */
-    public MessagesTypes createMessagesTypes() {
-        return new MessagesTypes();
-    }
-
-    /**
-     * Create an instance of {@link TransitionType }
-     */
-    public TransitionType createTransitionType() {
-        return new TransitionType();
-    }
-
-    /**
-     * Create an instance of {@link TransitionsType }
-     */
-    public TransitionsType createTransitionsType() {
-        return new TransitionsType();
     }
 
 

@@ -144,7 +144,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						List<String> pddOperative = null;
 						try {
 							pddOperative = registryReader.findIdPorteDominio(true);
-						}catch(RegistryNotFound notFound) {}
+						}catch(RegistryNotFound notFound) {
+							// ignore
+						}
 						if(pddOperative==null || pddOperative.isEmpty() || !pddOperative.contains(soggetto.getPortaDominio())) {
 							dominio = PddTipologia.ESTERNO.toString();	
 						}
@@ -368,7 +370,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				try {
 					configurazioneMultitenant = configIntegrationReader.getConfigurazioneMultitenant();
 				}
-				catch(RegistryNotFound notFound) {}
+				catch(RegistryNotFound notFound) {
+					// ignore
+				}
 				catch(Exception e) {
 					throw new ProtocolException(e.getMessage(),e);
 				}
@@ -409,20 +413,69 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					certificateItemValue.setClearContent(true);
 				}
 				
+				StringProperty keyAliasMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID);
+				if(keyAliasMODIItemValue!=null) {
+					keyAliasMODIItemValue.setValue(null);
+				}
+				
+				StringProperty keyPasswordMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
+				if(keyPasswordMODIItemValue!=null) {
+					keyPasswordMODIItemValue.setValue(null);
+				}
+				
+				StringProperty keyCNIssuerMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_CN_ISSUER_ID);
+				if(keyCNIssuerMODIItemValue!=null) {
+					keyCNIssuerMODIItemValue.setValue(null);
+				}
+				
+				StringProperty keyCNSubjectMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_CN_SUBJECT_ID);
+				if(keyCNSubjectMODIItemValue!=null) {
+					keyCNSubjectMODIItemValue.setValue(null);
+				}
+				
+				StringProperty keystoreModeMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_ID);
+				if(keystoreModeMODIItemValue!=null) {
+					keystoreModeMODIItemValue.setValue(null);
+				}
+				
+				StringProperty keystorePasswordMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
+				if(keystorePasswordMODIItemValue!=null) {
+					keystorePasswordMODIItemValue.setValue(null);
+				}
+				
+				StringProperty keystorePathMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_ID);
+				if(keystorePathMODIItemValue!=null) {
+					keystorePathMODIItemValue.setValue(null);
+				}
+				
+				StringProperty keystoreTypeMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_ID);
+				if(keystoreTypeMODIItemValue!=null) {
+					keystoreTypeMODIItemValue.setValue(null);
+				}
+				
 				AbstractConsoleItem<?> profiloSicurezzaMessaggioAudienceItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_ID);
 				if(profiloSicurezzaMessaggioAudienceItem!=null) {
 					profiloSicurezzaMessaggioAudienceItem.setType(ConsoleItemType.HIDDEN);
+				}
+				StringProperty profiloSicurezzaMessaggioAudienceItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_ID);
+				if(profiloSicurezzaMessaggioAudienceItemValue!=null) {
+					profiloSicurezzaMessaggioAudienceItemValue.setValue(null);
 				}
 				
 				AbstractConsoleItem<?> profiloSicurezzaMessaggioX5UItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_APPLICATIVI_PROFILO_SICUREZZA_MESSAGGIO_REST_X5U_URL_ID);
 				if(profiloSicurezzaMessaggioX5UItem!=null) {
 					profiloSicurezzaMessaggioX5UItem.setType(ConsoleItemType.HIDDEN);
 				}
+				StringProperty profiloSicurezzaMessaggioX5UItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_APPLICATIVI_PROFILO_SICUREZZA_MESSAGGIO_REST_X5U_URL_ID);
+				if(profiloSicurezzaMessaggioX5UItemValue!=null) {
+					profiloSicurezzaMessaggioX5UItemValue.setValue(null);
+				}
 				
 				BaseConsoleItem subTitoloMODI_AUTH = ProtocolPropertiesUtils.getBaseConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_MODI_AUTH_SUBTITLE_ID);
 				if(subTitoloMODI_AUTH!=null) {
 					subTitoloMODI_AUTH.setType(ConsoleItemType.HIDDEN);
 				}
+				
 			}
 		
 			
@@ -437,7 +490,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						try {
 							configurazioneMultitenant = configIntegrationReader.getConfigurazioneMultitenant();
 						}
-						catch(RegistryNotFound notFound) {}
+						catch(RegistryNotFound notFound) {
+							// ignore
+						}
 						catch(Exception e) {
 							throw new ProtocolException(e.getMessage(),e);
 						}
@@ -651,7 +706,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						List<IDServizioApplicativo> list = null;
 						try {
 							list = configIntegrationReader.findIdServiziApplicativi(filtro);
-						}catch(RegistryNotFound notFound) {}
+						}catch(RegistryNotFound notFound) {
+							// ignore
+						}
 						catch(Throwable t) {
 							throw new ProtocolException("Errore non atteso durante la verfica del certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_LABEL_MSG_ERROR+": "+t.getMessage(),t);
 						}
@@ -790,7 +847,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						try {
 							gp = configIntegrationReader.getTokenPolicyValidazione(tokenPolicyName);
 						}
-						catch(RegistryNotFound notFound) {}
+						catch(RegistryNotFound notFound) {
+							// ignore
+						}
 						catch(RegistryException e) {
 							throw new ProtocolException(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_LABEL+" indicata '"+tokenPolicyName+"' non esiste? (errore: "+e.getMessage()+")",e);
 						}
@@ -835,7 +894,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 								String labelSoggetto = NamingUtils.getLabelSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 								throw new ProtocolException("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già l'identificativo client indicato");
 							}
-						}catch(RegistryNotFound notFound) {}
+						}catch(RegistryNotFound notFound) {
+							// ignore
+						}
 						catch(Exception e) {
 							throw new ProtocolException(e.getMessage(),e);
 						}
@@ -923,7 +984,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					int versione = -1;
 					try {
 						versione = Integer.valueOf(versioneS);
-					}catch(Exception e) {}
+					}catch(Exception e) {
+						// ignore
+					}
 					if(nome!=null && versione>0) {
 						if(!id.getNome().equals(nome) || id.getVersione().intValue()!=versione) {
 							
@@ -937,7 +1000,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 								List<IDResource> list = null;
 								try {
 									list = registryReader.findIdResourceAccordo(filtro);
-								}catch(RegistryNotFound notFound) {}
+								}catch(RegistryNotFound notFound) {
+									// ignore
+								}
 								if(list!=null && !list.isEmpty()) {
 									// ne dovrebbe esistere solo una.
 									IDResource idR = list.get(0);
@@ -957,7 +1022,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 								List<IDPortTypeAzione> list = null;
 								try {
 									list = registryReader.findIdAzionePortType(filtro);
-								}catch(RegistryNotFound notFound) {}
+								}catch(RegistryNotFound notFound) {
+									// ignore
+								}
 								if(list!=null && !list.isEmpty()) {
 									// ne dovrebbe esistere solo una.
 									IDPortTypeAzione idA = list.get(0);
@@ -985,7 +1052,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		if(ConsoleOperationType.CHANGE.equals(consoleOperationType) && id!=null) {
 			try {
 				aspc = registryReader.getAccordoServizioParteComune(id, false, false);
-			}catch(RegistryNotFound notFound) {}
+			}catch(RegistryNotFound notFound) {
+				// ignore
+			}
 			catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
@@ -1787,7 +1856,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				if(p!=null) {
 					tipologia = p;
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 		if(tipologia!=null) {
 			if(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
@@ -1804,7 +1875,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				if(p!=null) {
 					tipologia = p;
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 		if(tipologia!=null) {
 			if(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
@@ -2146,7 +2219,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 							filtro.setServiceBinding(idPortType!=null ? ServiceBinding.SOAP : ServiceBinding.REST);
 							filtro.setSoggetto(new IDSoggetto(this.protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault(), null));
 							list = registryReader.findIdAccordiServizioParteComune(filtro);
-						}catch(RegistryNotFound notFound) {}
+						}catch(RegistryNotFound notFound) {
+							// ignore
+						}
 						if(list!=null && !list.isEmpty()) {
 							for (IDAccordo idAccordoTrovato : list) {
 								String uri = IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordoTrovato);
@@ -2174,7 +2249,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 							AccordoServizioParteComune aspc = null;
 							try {
 								aspc = registryReader.getAccordoServizioParteComune(idAccordoSelected);
-							}catch(RegistryNotFound notFound) {}
+							}catch(RegistryNotFound notFound) {
+								// ignore
+							}
 							
 							if(idPortType!=null) {
 								// SOAP
@@ -3147,9 +3224,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		StringProperty profiloSicurezzaRichiestaConfigurazioneContentTypeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID);
 		if(!richiestaPersonalizzata && profiloSicurezzaRichiestaConfigurazioneContentTypeItemValue!=null) {
-			if(profiloSicurezzaRichiestaConfigurazioneContentTypeItemValue!=null) {
-				profiloSicurezzaRichiestaConfigurazioneContentTypeItemValue.setValue(null);
-			}
+			profiloSicurezzaRichiestaConfigurazioneContentTypeItemValue.setValue(null);
 		}
 		
 		BaseConsoleItem subTitleRisposta = ProtocolPropertiesUtils.getBaseConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_RISPOSTA_ID);
@@ -3187,9 +3262,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 		else {
 			if(profiloSicurezzaRispostaConfigurazioneItemValue!=null) {
-				if(profiloSicurezzaRispostaConfigurazioneItemValue!=null) {
-					profiloSicurezzaRispostaConfigurazioneItemValue.setValue(null);
-				}
+				profiloSicurezzaRispostaConfigurazioneItemValue.setValue(null);
 			}
 		}
 			
@@ -3199,9 +3272,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		StringProperty profiloSicurezzaRispostaConfigurazioneContentTypeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID);
 		if(!rispostaPersonalizzata && profiloSicurezzaRispostaConfigurazioneContentTypeItemValue!=null) {
-			if(profiloSicurezzaRispostaConfigurazioneContentTypeItemValue!=null) {
-				profiloSicurezzaRispostaConfigurazioneContentTypeItemValue.setValue(null);
-			}
+			profiloSicurezzaRispostaConfigurazioneContentTypeItemValue.setValue(null);
 		}
 		
 		AbstractConsoleItem<?> profiloSicurezzaRispostaConfigurazioneReturnCodeItem = 	
@@ -3210,11 +3281,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		StringProperty profiloSicurezzaRispostaConfigurazioneReturnCodeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID);
 		if(!rispostaPersonalizzata && profiloSicurezzaRispostaConfigurazioneReturnCodeItemValue!=null) {
-			if(profiloSicurezzaRispostaConfigurazioneReturnCodeItemValue!=null) {
-				if(profiloSicurezzaRispostaConfigurazioneReturnCodeItemValue!=null) {
-					profiloSicurezzaRispostaConfigurazioneReturnCodeItemValue.setValue(null);
-				}
-			}
+			profiloSicurezzaRispostaConfigurazioneReturnCodeItemValue.setValue(null);
 		}
 		
 		
@@ -5076,6 +5143,12 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			modalita = selectModeItemValue.getValue();
 		}
 		if(ridefinisci) {
+			
+			if(selectModeItemValue!=null && 
+					(selectModeItemValue.getValue()==null || "".equals(selectModeItemValue.getValue()))) {
+				selectModeItemValue.setValue(modalita);
+			}
+			
 			if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(modalita)) {
 				
 				permitCertificate = true;
@@ -5105,6 +5178,16 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				}
 				else {
 					modeItem.setNote(null);
+				}
+				
+				StringProperty keyPasswordMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
+				if(keyPasswordMODIItemValue!=null) {
+					keyPasswordMODIItemValue.setValue(null);
+				}
+				
+				StringProperty keystorePasswordMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
+				if(keystorePasswordMODIItemValue!=null) {
+					keystorePasswordMODIItemValue.setValue(null);
 				}
 			}
 			else if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {

@@ -52,17 +52,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OperationListType }
-     */
-    public OperationListType createOperationListType() {
-        return new OperationListType();
-    }
-
-    /**
      * Create an instance of {@link EgovDecllElement }
      */
     public EgovDecllElement createEgovDecllElement() {
         return new EgovDecllElement();
+    }
+
+    /**
+     * Create an instance of {@link OperationListType }
+     */
+    public OperationListType createOperationListType() {
+        return new OperationListType();
     }
 
     /**

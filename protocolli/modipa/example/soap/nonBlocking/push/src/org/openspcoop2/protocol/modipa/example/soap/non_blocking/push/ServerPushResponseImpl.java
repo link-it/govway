@@ -45,8 +45,12 @@ public class ServerPushResponseImpl implements SOAPCallbackClient {
 		
 		System.out.println("Ricevuta richiesta (correlationId: "+correlationId+")");
 		
+		if(bodyParam==null) {
+    		String descrizione = "Dati richiesta non forniti";
+    		throwFault(400, descrizione);
+    	}
 		MResponseType body = bodyParam.getReturn();
-		if(bodyParam==null || body==null) {
+		if(body==null) {
     		String descrizione = "Dati richiesta non forniti";
     		throwFault(400, descrizione);
     	}

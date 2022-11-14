@@ -33,7 +33,6 @@ import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.slf4j.Logger;
 
 /**
  * Classe che implementa, in base al protocollo ModI, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolVersionManager} 
@@ -44,14 +43,11 @@ import org.slf4j.Logger;
  */
 public class ModIProtocolVersionManager extends ModIProtocolManager implements IProtocolVersionManager  {
 	
-	protected ModIProperties modipaProperties = null;
-	protected Logger logger = null;
 	protected String versione;
 	private InstanceVersioneManager basicVersionManager;
 	public ModIProtocolVersionManager(IProtocolFactory<?> protocolFactory,String versione) throws ProtocolException{
 		super(protocolFactory);
 		this.versione = versione;
-		this.logger = this.getProtocolFactory().getLogger();
 		this.modipaProperties = ModIProperties.getInstance();
 		this.basicVersionManager = new InstanceVersioneManager(protocolFactory);
 	}

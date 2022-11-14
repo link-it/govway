@@ -51,8 +51,12 @@ public class ServerPushRequestImpl implements SOAPCallback {
 	public void mRequest(MRequest bodyParam, String replyTo, Holder<MRequestResponse> response, Holder<String> headerResponse)
 			throws ErrorMessageException {
 		
+		if(bodyParam==null) {
+    		String descrizione = "Dati richiesta non forniti";
+    		throwFault(400, descrizione);
+    	}
 		MType body = bodyParam.getM();
-		if(bodyParam==null || body==null) {
+		if(body==null) {
     		String descrizione = "Dati richiesta non forniti";
     		throwFault(400, descrizione);
     	}

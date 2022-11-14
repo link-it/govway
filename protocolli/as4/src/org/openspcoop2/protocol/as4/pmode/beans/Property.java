@@ -96,4 +96,44 @@ public class Property {
 			
 		return true;
 	}
+	
+	@Override 
+	public String toString(){
+		StringBuilder bf = new StringBuilder();
+		if(this.name!=null){
+			bf.append("name");
+			bf.append(":");
+			bf.append(this.name);
+		}
+		if(this.key!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("key");
+			bf.append(":");
+			bf.append(this.key);
+		}
+		if(this.datatype!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("datatype");
+			bf.append(":");
+			bf.append(this.datatype);
+		}
+		if(this.required!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("required");
+			bf.append(":");
+			bf.append(this.required);
+		}
+		return bf.toString();
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
+	}
 }

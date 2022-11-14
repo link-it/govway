@@ -207,9 +207,12 @@ public class IdentificazioneApplicativoMittenteUtils {
 			
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 								
-		String subject = certificate.getCertificate().getSubjectX500Principal().toString();
+		String subject = null;
+		if(certificate!=null && certificate.getCertificate()!=null) {
+			subject = certificate.getCertificate().getSubjectX500Principal().toString();
+		}
 		String issuer = null;
-		if(certificate.getCertificate().getIssuerX500Principal()!=null) {
+		if(certificate!=null && certificate.getCertificate()!=null && certificate.getCertificate().getIssuerX500Principal()!=null) {
 			issuer = certificate.getCertificate().getIssuerX500Principal().toString();
 		}
 		

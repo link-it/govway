@@ -342,7 +342,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 						}
 						AttachmentPart ap = MTOMUtilities.getAttachmentPart(this.msg, cid);
 						metadati = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
-						if(metadati==null || "".equals(metadati)){
+						if(metadati==null || metadati.length<=0){
 							throw new Exception("Contenuto non presente");
 						}
 					}catch(Exception e){
@@ -411,7 +411,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 						}
 						AttachmentPart ap = MTOMUtilities.getAttachmentPart(this.msg, cid);
 						fattura = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
-						if(fattura==null || "".equals(fattura)){
+						if(fattura==null || fattura.length<=0){
 							throw new Exception("Contenuto non presente");
 						}
 					}catch(Exception e){
@@ -463,14 +463,18 @@ public class SDIValidatoreServizioRicezioneFatture {
 						this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, SDICostanti.SDI_TIPO_FATTURA_XML);
 						formato = SDICostanti.SDI_TIPO_FATTURA_XML;
 					}
-				}catch(Throwable e){}
+				}catch(Throwable e){
+					// ignore
+				}
 				if(formato==null){
 					try{
 						if(it.gov.fatturapa.sdi.fatturapa.v1_1.utils.XMLUtils.isFattura(fattura)){
 							this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, SDICostanti.SDI_TIPO_FATTURA_XML);
 							formato = SDICostanti.SDI_TIPO_FATTURA_XML;
 						}
-					}catch(Throwable e){}
+					}catch(Throwable e){
+						// ignore
+					}
 				}
 				
 				// provo a vedere se e' un P7M (CaDES)
@@ -483,7 +487,9 @@ public class SDIValidatoreServizioRicezioneFatture {
 							this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_BASE64, infoP7M.isBase64Encoded()+"");
 							formato = SDICostanti.SDI_TIPO_FATTURA_P7M;
 						}
-					}catch(Throwable e){}
+					}catch(Throwable e){
+						// ignore
+					}
 				}
 				
 				if(formato==null){
@@ -919,7 +925,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 					}
 					AttachmentPart ap = MTOMUtilities.getAttachmentPart(this.msg, cid);
 					xml = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
-					if(xml==null || "".equals(xml)){
+					if(xml==null || xml.length<=0){
 						throw new Exception("Contenuto non presente");
 					}
 				}catch(Exception e){

@@ -1160,7 +1160,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		
 		StringProperty securityProfileItem = (StringProperty) 
 				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_EROGAZIONE_SECURITY_PROFILE_ID);
-		if(securityProfileItem==null || "".equals(securityProfileItem)) {
+		if(securityProfileItem==null || securityProfileItem.getValue()==null || "".equals(securityProfileItem.getValue())) {
 			throw new ProtocolException("Deve essere selezionato uno dei valori presenti nel parametro '"+AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_LABEL+"'");
 		}
 		

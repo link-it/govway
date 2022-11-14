@@ -53,8 +53,12 @@ public class ServerImpl implements SOAPPull {
 		
 		System.out.println("Ricevuta richiesta di elaborazione PULL");
 
+		if(bodyParam==null) {
+    		String descrizione = "Dati richiesta non forniti";
+    		throwFault(400, descrizione);
+    	}
 		MType body = bodyParam.getM();
-    	if(bodyParam==null || body==null) {
+    	if(body==null) {
     		String descrizione = "Dati richiesta non forniti";
     		throwFault(400, descrizione);
     	}

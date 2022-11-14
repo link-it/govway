@@ -52,115 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AccordoCooperazione }
-     */
-    public AccordoCooperazione createAccordoCooperazione() {
-        return new AccordoCooperazione();
-    }
-
-    /**
-     * Create an instance of {@link DocumentoConversazione }
-     */
-    public DocumentoConversazione createDocumentoConversazione() {
-        return new DocumentoConversazione();
-    }
-
-    /**
-     * Create an instance of {@link DocumentoInterfaccia }
-     */
-    public DocumentoInterfaccia createDocumentoInterfaccia() {
-        return new DocumentoInterfaccia();
-    }
-
-    /**
-     * Create an instance of {@link SpecificaCoordinamento }
-     */
-    public SpecificaCoordinamento createSpecificaCoordinamento() {
-        return new SpecificaCoordinamento();
-    }
-
-    /**
-     * Create an instance of {@link SpecificaLivelliServizio }
-     */
-    public SpecificaLivelliServizio createSpecificaLivelliServizio() {
-        return new SpecificaLivelliServizio();
-    }
-
-    /**
-     * Create an instance of {@link AccordoServizioParteSpecifica }
-     */
-    public AccordoServizioParteSpecifica createAccordoServizioParteSpecifica() {
-        return new AccordoServizioParteSpecifica();
-    }
-
-    /**
-     * Create an instance of {@link ElencoPartecipanti }
-     */
-    public ElencoPartecipanti createElencoPartecipanti() {
-        return new ElencoPartecipanti();
-    }
-
-    /**
-     * Create an instance of {@link DocumentoSicurezza }
-     */
-    public DocumentoSicurezza createDocumentoSicurezza() {
-        return new DocumentoSicurezza();
-    }
-
-    /**
-     * Create an instance of {@link ServizioComposto }
-     */
-    public ServizioComposto createServizioComposto() {
-        return new ServizioComposto();
-    }
-
-    /**
-     * Create an instance of {@link SpecificaPortiAccesso }
-     */
-    public SpecificaPortiAccesso createSpecificaPortiAccesso() {
-        return new SpecificaPortiAccesso();
-    }
-
-    /**
      * Create an instance of {@link DocumentoCoordinamento }
      */
     public DocumentoCoordinamento createDocumentoCoordinamento() {
         return new DocumentoCoordinamento();
-    }
-
-    /**
-     * Create an instance of {@link AccordoServizioParteComune }
-     */
-    public AccordoServizioParteComune createAccordoServizioParteComune() {
-        return new AccordoServizioParteComune();
-    }
-
-    /**
-     * Create an instance of {@link ElencoServiziComponenti }
-     */
-    public ElencoServiziComponenti createElencoServiziComponenti() {
-        return new ElencoServiziComponenti();
-    }
-
-    /**
-     * Create an instance of {@link SpecificaConversazione }
-     */
-    public SpecificaConversazione createSpecificaConversazione() {
-        return new SpecificaConversazione();
-    }
-
-    /**
-     * Create an instance of {@link SpecificaSicurezza }
-     */
-    public SpecificaSicurezza createSpecificaSicurezza() {
-        return new SpecificaSicurezza();
-    }
-
-    /**
-     * Create an instance of {@link SpecificaInterfaccia }
-     */
-    public SpecificaInterfaccia createSpecificaInterfaccia() {
-        return new SpecificaInterfaccia();
     }
 
     /**
@@ -171,24 +66,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DocumentoSemiformale }
+     * Create an instance of {@link ElencoServiziComponenti }
      */
-    public DocumentoSemiformale createDocumentoSemiformale() {
-        return new DocumentoSemiformale();
-    }
-
-    /**
-     * Create an instance of {@link DocumentoLivelloServizio }
-     */
-    public DocumentoLivelloServizio createDocumentoLivelloServizio() {
-        return new DocumentoLivelloServizio();
-    }
-
-    /**
-     * Create an instance of {@link ElencoAllegati }
-     */
-    public ElencoAllegati createElencoAllegati() {
-        return new ElencoAllegati();
+    public ElencoServiziComponenti createElencoServiziComponenti() {
+        return new ElencoServiziComponenti();
     }
 
     /**
@@ -199,10 +80,129 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DocumentoConversazione }
+     */
+    public DocumentoConversazione createDocumentoConversazione() {
+        return new DocumentoConversazione();
+    }
+
+    /**
+     * Create an instance of {@link DocumentoSemiformale }
+     */
+    public DocumentoSemiformale createDocumentoSemiformale() {
+        return new DocumentoSemiformale();
+    }
+
+    /**
+     * Create an instance of {@link SpecificaConversazione }
+     */
+    public SpecificaConversazione createSpecificaConversazione() {
+        return new SpecificaConversazione();
+    }
+
+    /**
+     * Create an instance of {@link SpecificaPortiAccesso }
+     */
+    public SpecificaPortiAccesso createSpecificaPortiAccesso() {
+        return new SpecificaPortiAccesso();
+    }
+
+    /**
+     * Create an instance of {@link DocumentoInterfaccia }
+     */
+    public DocumentoInterfaccia createDocumentoInterfaccia() {
+        return new DocumentoInterfaccia();
+    }
+
+    /**
+     * Create an instance of {@link SpecificaLivelliServizio }
+     */
+    public SpecificaLivelliServizio createSpecificaLivelliServizio() {
+        return new SpecificaLivelliServizio();
+    }
+
+    /**
+     * Create an instance of {@link AccordoServizioParteComune }
+     */
+    public AccordoServizioParteComune createAccordoServizioParteComune() {
+        return new AccordoServizioParteComune();
+    }
+
+    /**
+     * Create an instance of {@link SpecificaCoordinamento }
+     */
+    public SpecificaCoordinamento createSpecificaCoordinamento() {
+        return new SpecificaCoordinamento();
+    }
+
+    /**
+     * Create an instance of {@link ServizioComposto }
+     */
+    public ServizioComposto createServizioComposto() {
+        return new ServizioComposto();
+    }
+
+    /**
+     * Create an instance of {@link ElencoAllegati }
+     */
+    public ElencoAllegati createElencoAllegati() {
+        return new ElencoAllegati();
+    }
+
+    /**
+     * Create an instance of {@link ElencoPartecipanti }
+     */
+    public ElencoPartecipanti createElencoPartecipanti() {
+        return new ElencoPartecipanti();
+    }
+
+    /**
      * Create an instance of {@link SpecificaSemiformale }
      */
     public SpecificaSemiformale createSpecificaSemiformale() {
         return new SpecificaSemiformale();
+    }
+
+    /**
+     * Create an instance of {@link DocumentoSicurezza }
+     */
+    public DocumentoSicurezza createDocumentoSicurezza() {
+        return new DocumentoSicurezza();
+    }
+
+    /**
+     * Create an instance of {@link AccordoCooperazione }
+     */
+    public AccordoCooperazione createAccordoCooperazione() {
+        return new AccordoCooperazione();
+    }
+
+    /**
+     * Create an instance of {@link SpecificaSicurezza }
+     */
+    public SpecificaSicurezza createSpecificaSicurezza() {
+        return new SpecificaSicurezza();
+    }
+
+    /**
+     * Create an instance of {@link AccordoServizioParteSpecifica }
+     */
+    public AccordoServizioParteSpecifica createAccordoServizioParteSpecifica() {
+        return new AccordoServizioParteSpecifica();
+    }
+
+    /**
+     * Create an instance of {@link DocumentoLivelloServizio }
+     */
+    public DocumentoLivelloServizio createDocumentoLivelloServizio() {
+        return new DocumentoLivelloServizio();
+    }
+
+    /**
+     * Create an instance of {@link SpecificaInterfaccia }
+     */
+    public SpecificaInterfaccia createSpecificaInterfaccia() {
+        return new SpecificaInterfaccia();
     }
 
 

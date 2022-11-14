@@ -562,7 +562,10 @@ public class ModISecurityConfig {
 			
 			if(rest) {
 
-				String idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio = (fruizione ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI);
+				String idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio = 
+						//(fruizione ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI : 
+							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI;
+						//	);
 				String multipleHeaderUseJtiAuthorizationAsIdMessaggio = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio);
 				if(multipleHeaderUseJtiAuthorizationAsIdMessaggio!=null) {
 					this.multipleHeaderUseJtiAuthorizationAsIdMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION.equals(multipleHeaderUseJtiAuthorizationAsIdMessaggio);
@@ -706,7 +709,7 @@ public class ModISecurityConfig {
 					UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(protocolFactory, 
 							RuoloContesto.PORTA_APPLICATIVA,
 							rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
-									msg.getTransportRequestContext().getInterfaceName(),
+									msg!=null ? msg.getTransportRequestContext().getInterfaceName() : null,
 									new IDSoggetto(aspsParam.getTipoSoggettoErogatore(), aspsParam.getNomeSoggettoErogatore()),
 									tags, canale, 
 									requestInfo);		 

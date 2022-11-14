@@ -103,6 +103,29 @@ public class PropertySet {
 		
 		return true;
 		
-
+	}
+	
+	@Override 
+	public String toString(){
+		StringBuilder bf = new StringBuilder();
+		if(this.name!=null){
+			bf.append("name");
+			bf.append(":");
+			bf.append(this.name);
+		}
+		if(this.propertyRef!=null){
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			bf.append("propertyRef");
+			bf.append(":");
+			bf.append(this.propertyRef.size());
+		}
+		return bf.toString();
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
 	}
 }

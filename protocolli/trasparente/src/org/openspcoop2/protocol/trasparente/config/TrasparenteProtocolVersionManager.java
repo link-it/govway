@@ -31,7 +31,6 @@ import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.slf4j.Logger;
 
 /**
  * Classe che implementa, in base al protocollo Trasparente, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolVersionManager} 
@@ -43,8 +42,6 @@ import org.slf4j.Logger;
  */
 public class TrasparenteProtocolVersionManager extends TrasparenteProtocolManager implements IProtocolVersionManager  {
 	
-	protected TrasparenteProperties trasparenteProperties = null;
-	protected Logger logger = null;
 	protected String versione;
 	private InstanceVersioneManager basicVersionManager;
 	public TrasparenteProtocolVersionManager(IProtocolFactory<?> protocolFactory,String versione) throws ProtocolException{

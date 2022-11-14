@@ -63,11 +63,6 @@ public enum EsigibilitaIVAType implements IEnumeration , Serializable , Cloneabl
 	public String toString(){
 		return this.value+"";
 	}
-	public boolean equals(EsigibilitaIVAType object){
-		if(object==null)
-			return false;
-		return object.getValue().toString().equals(this.getValue().toString());	
-	}
 	public boolean equals(java.lang.Character object){
 		if(object==null)
 			return false;

@@ -624,7 +624,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						try{
 							SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMinute();
 							dataIntoIDEgov = dateformat.parse(split[3]+"_"+split[4]);
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 						if(dataIntoIDEgov!=null){
 							//System.out.println("DATA IDEGOV BUSTA ["+dataIntoIDEgov.toString()
 							//		+"]   MINIMA ["+oraRegistrazioneMinimaAccettata.toString()+"]");
@@ -852,7 +854,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				//Controllo Actor
 				try{
 					bf.append("Check ACTOR Atteso["+SPCoopCostanti.ACTOR_EGOV+"]==["+headerElement.getActor()+"]=["+SPCoopCostanti.ACTOR_EGOV.equals(headerElement.getActor())+"]\n");
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 
 				if( SPCoopCostanti.ACTOR_EGOV.equals(headerElement.getActor()) == false  ){
 					continue;
@@ -873,7 +877,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					//Controllo Namespace
 					try{
 						bf.append("Check NAMESPACE Atteso["+SPCoopCostanti.NAMESPACE_EGOV+"]==["+headerElement.getNamespaceURI()+"]=["+SPCoopCostanti.NAMESPACE_EGOV.equals(headerElement.getNamespaceURI())+"]\n");
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					if( SPCoopCostanti.NAMESPACE_EGOV.equals(headerElement.getNamespaceURI()) == false  ){
 						continue;
 					}
@@ -887,7 +893,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				String msgHeader = "";
 				try{
 					msgHeader = " header-soap: "+messageFactory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(header, false);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				throw new Exception("Header eGov non presente ("+bf.toString()+")"+msgHeader);
 			}
 			
@@ -1172,7 +1180,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 							}else{
 								try{
 									identificatore = SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue();
-								} catch(Exception e) {}
+								} catch(Exception e) {
+									// ignore
+								}
 							}
 							break;
 						}
@@ -1252,7 +1262,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(messageFactory, mittente);
 						Node idParteMittente = headerMittente.get(0);
 						errore.setMittente(SoapUtils.getNotEmptyChildNodes(messageFactory, idParteMittente).get(0).getNodeValue());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					try{
 						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(messageFactory, mittente);
 						Node idParteMittente = headerMittente.get(0);
@@ -1270,7 +1282,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 								errore.setTipoMittente(itValue); // senza traduzione
 							}
 						}
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					try{
 						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(messageFactory, mittente);
 						Node idParteMittente = headerMittente.get(0);
@@ -1282,7 +1296,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}
 						String itValue = hrefFindMitt.getNodeValue();
 						errore.setIndirizzoMittente(itValue);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				// Destinatario
@@ -1291,7 +1307,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(messageFactory, destinatario);
 						Node idParteDest = headerDest.get(0);
 						errore.setDestinatario(SoapUtils.getNotEmptyChildNodes(messageFactory, idParteDest).get(0).getNodeValue());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					try{
 						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(messageFactory, destinatario);
 						Node idParteDest = headerDest.get(0);
@@ -1309,7 +1327,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 								errore.setTipoDestinatario(itValue); // senza traduzione
 							}
 						}
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					try{
 						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(messageFactory, destinatario);
 						Node idParteDest = headerDest.get(0);
@@ -1321,14 +1341,18 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}
 						String itValue = hrefFindDest.getNodeValue();
 						errore.setIndirizzoDestinatario(itValue);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				// Servizio
 				if(servizio!=null){
 					try{
 						errore.setServizio(SoapUtils.getNotEmptyChildNodes(messageFactory, servizio).get(0).getNodeValue());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
@@ -1344,14 +1368,18 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 								errore.setTipoServizio(value); // senza traduzione
 							}
 						}
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				// Azione
 				if(azione!=null){
 					try{
 						errore.setAzione(SoapUtils.getNotEmptyChildNodes(messageFactory, azione).get(0).getNodeValue());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				// ProfiloDiCollaborazione
@@ -1359,7 +1387,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					try{
 						String profilovalue = SoapUtils.getNotEmptyChildNodes(messageFactory, profiloCollaborazione).get(0).getNodeValue();
 						errore.setProfiloDiCollaborazione(toProfilo(profilovalue), profilovalue);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
@@ -1375,7 +1405,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 								errore.setTipoServizioCorrelato(value); // senza traduzione
 							}
 						}
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
@@ -1384,14 +1416,18 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 							hrefFind = SoapUtils.getAttributeNode(messageFactory, profiloCollaborazione, "servizioCorrelato");
 						}
 						errore.setServizioCorrelato(hrefFind.getNodeValue());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				// Collaborazione
 				if(collaborazione!=null){
 					try{
 						errore.setCollaborazione(SoapUtils.getNotEmptyChildNodes(messageFactory, collaborazione).get(0).getNodeValue());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				// Messaggio
@@ -1404,7 +1440,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 							if(SoapUtils.matchLocalName(messageFactory, childMsg, "RiferimentoMessaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 								try{
 									errore.setRiferimentoMessaggio(SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue());
-								}catch(Exception e){}
+								}catch(Exception e){
+									// ignore
+								}
 							}
 							//else if((childMsg.getNodeName().equals(xmlns+"Scadenza"))){
 							else if(SoapUtils.matchLocalName(messageFactory, childMsg, "Scadenza", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
@@ -1412,7 +1450,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 									String scadenza = SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue();
 									Date scadenzaDate = validazioneData(scadenza);
 									errore.setScadenza(scadenzaDate);
-								}catch(Exception e){}
+								}catch(Exception e){
+									// ignore
+								}
 							}
 							//else if((childMsg.getNodeName().equals(xmlns+"OraRegistrazione"))){
 							else if(SoapUtils.matchLocalName(messageFactory, childMsg, "OraRegistrazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
@@ -1420,7 +1460,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 									String oraRegistrazione = SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue();
 									Date oraDate = validazioneData(oraRegistrazione);
 									errore.setOraRegistrazione(oraDate);
-								}catch(Exception e){}
+								}catch(Exception e){
+									// ignore
+								}
 								try{
 									Node hrefFind = null;
 									if(this.readQualifiedAttribute){
@@ -1430,10 +1472,14 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 									}
 									String tipoOraRegistrazioneValue = hrefFind.getNodeValue();
 									errore.setTipoOraRegistrazione(toTipoOra(tipoOraRegistrazioneValue), tipoOraRegistrazioneValue);
-								}catch(Exception e){}
+								}catch(Exception e){
+									// ignore
+								}
 							}
 						}
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				// Profilo Trasmissione
@@ -1449,7 +1495,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 							errore.setConfermaRicezione(true);
 						else
 							errore.setConfermaRicezione(false);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
@@ -1459,7 +1507,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}
 						String inoltro = hrefFind.getNodeValue();
 						errore.setInoltro(toInoltro(inoltro), inoltro);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				// Sequenza
@@ -1473,7 +1523,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}
 						Long test = Long.valueOf(hrefFind.getNodeValue());
 						errore.setSequenza(test.longValue());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				this.bustaErroreHeaderIntestazione = errore;
@@ -2517,7 +2569,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			}
 			inoltro = hrefFind.getNodeValue();
 			//log.info("Inoltro ["+inoltro+"]");
-		} catch(Exception e) {}
+		} catch(Exception e) {
+			// ignore
+		}
 		try{
 			Node hrefFind = null;
 			if(this.readQualifiedAttribute){
@@ -2527,7 +2581,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			}
 			confermaRicezione = hrefFind.getNodeValue();
 			//log.info("confermaRicezione ["+confermaRicezione+"]");
-		} catch(Exception e) {}
+		} catch(Exception e) {
+			// ignore
+		}
 
 		// Inoltro...
 		if(inoltro == null ){
@@ -2604,7 +2660,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			}
 			seq = hrefFind.getNodeValue();
 			//log.info("Sequenza ["+seq+"]");
-		} catch(Exception e) {}
+		} catch(Exception e) {
+			// ignore
+		}
 
 		if(seq == null ){
 			if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -4169,7 +4227,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						LinguaFind = SoapUtils.getAttributeNode(messageFactory, titolo, "Lingua");
 					}
 					Lingua = LinguaFind.getNodeValue();
-				} catch(Exception e) {}
+				} catch(Exception e) {
+					// ignore
+				}
 				if(Lingua == null)
 					Lingua = "it"; // default is it
 
@@ -4473,7 +4533,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				try{
 					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMinute();
 					dataIntoIDEgov = dateformat.parse(split[3]+"_"+split[4]);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				if(dataIntoIDEgov!=null){
 					//System.out.println("DATA IDEGOV BUSTA ["+dataIntoIDEgov.toString()
 					//		+"]   MINIMA ["+oraRegistrazioneMinimaAccettata.toString()+"]");

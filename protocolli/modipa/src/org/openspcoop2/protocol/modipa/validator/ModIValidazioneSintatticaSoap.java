@@ -203,6 +203,10 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			boolean buildSecurityTokenInRequest,
 			Map<String, Object> dynamicMapParameter, Busta datiRichiesta, RequestInfo requestInfo) throws Exception {
 		
+		if(msg==null) {
+			throw new Exception("Param msg is null");
+		}
+		
 		MessageSecurityContextParameters messageSecurityContextParameters = new MessageSecurityContextParameters();
 		messageSecurityContextParameters.setFunctionAsClient(false);
 		messageSecurityContextParameters.setPrefixWsuId(OpenSPCoop2Properties.getInstance().getPrefixWsuId()); // NOTA: deve essere lo stesso di govway usato in altri profili

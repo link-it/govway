@@ -56,8 +56,8 @@ public class APS {
 	private List<String> cnFruitori = new ArrayList<String>();
 	
 	private APS() {} // per clone
-	@Override
-	public APS clone() {
+	
+	public APS newInstance() {
 		APS aps = new APS();
 		aps.base = this.base;
 		aps.azioni = new HashMap<>();

@@ -94,6 +94,10 @@ public class AS4Sbustamento {
 			
 			OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
+			if(msg==null) {
+				throw new Exception("Message is null");
+			}
+			
 			Object o = msg.getContextProperty(AS4Costanti.AS4_CONTEXT_USER_MESSAGE);
 			if(o==null) {
 				throw new ProtocolException("UserMessage not found in context");
@@ -218,7 +222,9 @@ public class AS4Sbustamento {
 					String s = "";
 					try {
 						s = new String(contentRoot);
-					}catch(Throwable tInternal) {}
+					}catch(Throwable tInternal) {
+						// ignore
+					}
 					throw new Exception("ContentRoot (cid:"+contentIdRoot+") non è un xml valido (Envelope): "+s,e);
 				}
 				String namespace = envelope.getNamespaceURI();
@@ -303,7 +309,9 @@ public class AS4Sbustamento {
 					String s = "";
 					try {
 						s = new String(contentRoot);
-					}catch(Throwable tInternal) {}
+					}catch(Throwable tInternal) {
+						// ignore
+					}
 					throw new Exception("ContentRoot (messageType:"+messageType+") non è un contenuto valido: "+s,t);
 				}
 			}

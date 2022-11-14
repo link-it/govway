@@ -87,7 +87,9 @@ public class SDIProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 		}
 		try{
 			this.reader = new SDIInstanceProperties(propertiesReader, this.log);
@@ -218,9 +220,9 @@ public class SDIProperties {
 	 * @return Tipo Soggetto Sistema di Interscambio
 	 * 
 	 */
-	private static String tipoSoggettoSDI = null;
+	private String tipoSoggettoSDI = null;
 	public String getTipoSoggettoSDI() throws ProtocolException{
-		if(SDIProperties.tipoSoggettoSDI==null){
+		if(this.tipoSoggettoSDI==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.soggetto.tipo";
 			
@@ -229,7 +231,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.tipoSoggettoSDI = value;
+					this.tipoSoggettoSDI = value;
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -241,7 +243,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.tipoSoggettoSDI;
+		return this.tipoSoggettoSDI;
 	}
 	
 	/**
@@ -250,9 +252,9 @@ public class SDIProperties {
 	 * @return Nome Soggetto Sistema di Interscambio
 	 * 
 	 */
-	private static String nomeSoggettoSDI = null;
+	private String nomeSoggettoSDI = null;
 	public String getNomeSoggettoSDI() throws ProtocolException{
-		if(SDIProperties.nomeSoggettoSDI==null){
+		if(this.nomeSoggettoSDI==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.soggetto.nome";
 			
@@ -261,7 +263,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.nomeSoggettoSDI = value;
+					this.nomeSoggettoSDI = value;
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -273,7 +275,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.nomeSoggettoSDI;
+		return this.nomeSoggettoSDI;
 	}
 	
 	/**
@@ -282,9 +284,9 @@ public class SDIProperties {
 	 * @return Indicazione se abiltiare la Compatibilita' sulle Notifiche da inviare con  Namespace errato 'http://www.fatturapa.it/sdi/messaggi/v1.0'
 	 * 
 	 */
-	private static Boolean isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov = null;
+	private Boolean isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov = null;
 	public Boolean isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov() throws ProtocolException{
-		if(SDIProperties.isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov==null){
+		if(this.isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.generazione.messaggi.compatibilitaNamespaceSenzaGov";
 			
@@ -293,7 +295,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov = Boolean.parseBoolean(value);
+					this.isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -305,7 +307,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov;
+		return this.isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov;
 	}
 	
 	/**
@@ -314,9 +316,9 @@ public class SDIProperties {
 	 * @return Indicazione se abiltiare la Compatibilita' sulle Notifiche ricevute con  Namespace errato 'http://www.fatturapa.it/sdi/messaggi/v1.0'
 	 * 
 	 */
-	private static Boolean isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov = null;
+	private Boolean isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov = null;
 	public Boolean isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov==null){
+		if(this.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.messaggi.compatibilitaNamespaceSenzaGov";
 			
@@ -325,7 +327,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov = Boolean.parseBoolean(value);
+					this.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -337,7 +339,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov;
+		return this.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov;
 	}
 	
 	/**
@@ -346,9 +348,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare la validazione dei nomi di file
 	 * 
 	 */
-	private static Boolean isEnableValidazioneNomeFile = null;
+	private Boolean isEnableValidazioneNomeFile = null;
 	public Boolean isEnableValidazioneNomeFile() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneNomeFile==null){
+		if(this.isEnableValidazioneNomeFile==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.nomeFile.enable";
 			
@@ -357,7 +359,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneNomeFile = Boolean.parseBoolean(value);
+					this.isEnableValidazioneNomeFile = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -369,7 +371,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneNomeFile;
+		return this.isEnableValidazioneNomeFile;
 	}
 
 	/**
@@ -378,9 +380,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare la validazione xsd della fattura da inviare
 	 * 
 	 */
-	private static Boolean isEnableValidazioneXsdFatturaDaInviare = null;
+	private Boolean isEnableValidazioneXsdFatturaDaInviare = null;
 	public Boolean isEnableValidazioneXsdFatturaDaInviare() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneXsdFatturaDaInviare==null){
+		if(this.isEnableValidazioneXsdFatturaDaInviare==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.fatturaDaInviare";
 			
@@ -389,7 +391,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneXsdFatturaDaInviare = Boolean.parseBoolean(value);
+					this.isEnableValidazioneXsdFatturaDaInviare = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -401,7 +403,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneXsdFatturaDaInviare;
+		return this.isEnableValidazioneXsdFatturaDaInviare;
 	}
 	
 	/**
@@ -410,9 +412,9 @@ public class SDIProperties {
 	 * @return Indicazione se accedere al database delle tracce per aggiungere alle notifiche informazioni prese dalla fattura inviata precedentemente (es. IdTrasmittente (IdPaese + IdCodice), Applicativo che ha inviato la fattura).
 	 * 
 	 */
-	private static Boolean isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura = null;
+	private Boolean isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura = null;
 	public Boolean isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura() throws ProtocolException{
-		if(SDIProperties.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura==null){
+		if(this.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.notifiche.enrichInfoFromFattura";
 			
@@ -421,7 +423,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura = Boolean.parseBoolean(value);
+					this.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -433,7 +435,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura;
+		return this.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura;
 	}
 	
 	/**
@@ -442,9 +444,9 @@ public class SDIProperties {
 	 * @return Indicazione se il nome file associato alla fattura viene generato da GovWay o viene fornito dall'Applicativo mittente.
 	 * 
 	 */
-	private static Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFattura = null;
+	private Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFattura = null;
 	public Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFattura() throws ProtocolException{
-		if(SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFattura==null){
+		if(this.isEnable_fatturazioneAttiva_generazioneNomeFileFattura==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.nomeFile.gestione";
 			
@@ -453,7 +455,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFattura = Boolean.parseBoolean(value);
+					this.isEnable_fatturazioneAttiva_generazioneNomeFileFattura = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -465,12 +467,12 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFattura;
+		return this.isEnable_fatturazioneAttiva_generazioneNomeFileFattura;
 	}
 	
-	private static Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale = null;
+	private Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale = null;
 	public Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale() throws ProtocolException{
-		if(SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale==null){
+		if(this.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.nomeFile.gestioneOpzionale";
 			
@@ -479,9 +481,9 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale = Boolean.parseBoolean(value);
+					this.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale = Boolean.parseBoolean(value);
 				}else{
-					SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale = false;
+					this.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale = false;
 				}
 
 			}catch(java.lang.Exception e) {
@@ -491,7 +493,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale;
+		return this.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale;
 	}
 	
 	/**
@@ -500,9 +502,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare la validazione xsd della notifica da inviare
 	 * 
 	 */
-	private static Boolean isEnableValidazioneXsdNotificaDaInviare = null;
+	private Boolean isEnableValidazioneXsdNotificaDaInviare = null;
 	public Boolean isEnableValidazioneXsdNotificaDaInviare() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneXsdNotificaDaInviare==null){
+		if(this.isEnableValidazioneXsdNotificaDaInviare==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.notificaDaInviare";
 			
@@ -511,7 +513,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneXsdNotificaDaInviare = Boolean.parseBoolean(value);
+					this.isEnableValidazioneXsdNotificaDaInviare = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -523,12 +525,12 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneXsdNotificaDaInviare;
+		return this.isEnableValidazioneXsdNotificaDaInviare;
 	}
 	
-	private static Boolean isEnableAccessoNotificaDaInviare = null;
+	private Boolean isEnableAccessoNotificaDaInviare = null;
 	public Boolean isEnableAccessoNotificaDaInviare() throws ProtocolException{
-		if(SDIProperties.isEnableAccessoNotificaDaInviare==null){
+		if(this.isEnableAccessoNotificaDaInviare==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.access.notificaDaInviare";
 			
@@ -537,7 +539,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableAccessoNotificaDaInviare = Boolean.parseBoolean(value);
+					this.isEnableAccessoNotificaDaInviare = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -549,12 +551,12 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableAccessoNotificaDaInviare;
+		return this.isEnableAccessoNotificaDaInviare;
 	}
 	
-	private static Boolean isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare = null;
+	private Boolean isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare = null;
 	public Boolean isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare() throws ProtocolException{
-		if(SDIProperties.isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare==null){
+		if(this.isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.inputIdSDI.validationAsBigInteger.notificaDaInviare";
 			
@@ -563,7 +565,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare = Boolean.parseBoolean(value);
+					this.isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -575,7 +577,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare;
+		return this.isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare;
 	}
 	
 	/**
@@ -584,9 +586,9 @@ public class SDIProperties {
 	 * @return Indicazione se serializzare il File MetaDati come header HTTP 'GovWay-SDI-FileMetadati' codificato in BASE64
 	 * 
 	 */
-	private static Boolean isEnable_fatturazionePassiva_consegnaFileMetadati = null;
+	private Boolean isEnable_fatturazionePassiva_consegnaFileMetadati = null;
 	public Boolean isEnable_fatturazionePassiva_consegnaFileMetadati() throws ProtocolException{
-		if(SDIProperties.isEnable_fatturazionePassiva_consegnaFileMetadati==null){
+		if(this.isEnable_fatturazionePassiva_consegnaFileMetadati==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazionePassiva.consegnaFileMetadati";
 			
@@ -595,7 +597,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnable_fatturazionePassiva_consegnaFileMetadati = Boolean.parseBoolean(value);
+					this.isEnable_fatturazionePassiva_consegnaFileMetadati = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -607,7 +609,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnable_fatturazionePassiva_consegnaFileMetadati;
+		return this.isEnable_fatturazionePassiva_consegnaFileMetadati;
 	}
 	
 	/**
@@ -616,9 +618,9 @@ public class SDIProperties {
 	 * @return Indicazione se accedere al database delle tracce per aggiungere alla notifica decorrenza termini informazioni prese dalla fattura ricevuta precedentemente (es. CodiceDestinatario).
 	 * 
 	 */
-	private static Boolean isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura = null;
+	private Boolean isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura = null;
 	public Boolean isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura() throws ProtocolException{
-		if(SDIProperties.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura==null){
+		if(this.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazionePassiva.notifiche.enrichInfoFromFattura";
 			
@@ -627,7 +629,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura = Boolean.parseBoolean(value);
+					this.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -639,7 +641,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura;
+		return this.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura;
 	}
 	
 	/**
@@ -648,9 +650,9 @@ public class SDIProperties {
 	 * @return Indicazione se il nome file associato alla fattura viene generato da GovWay o viene fornito dall'Applicativo mittente.
 	 * 
 	 */
-	private static Boolean isEnable_fatturazionePassiva_generazioneNomeFileEsito = null;
+	private Boolean isEnable_fatturazionePassiva_generazioneNomeFileEsito = null;
 	public Boolean isEnable_fatturazionePassiva_generazioneNomeFileEsito() throws ProtocolException{
-		if(SDIProperties.isEnable_fatturazionePassiva_generazioneNomeFileEsito==null){
+		if(this.isEnable_fatturazionePassiva_generazioneNomeFileEsito==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazionePassiva.nomeFile.gestione";
 			
@@ -659,7 +661,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnable_fatturazionePassiva_generazioneNomeFileEsito = Boolean.parseBoolean(value);
+					this.isEnable_fatturazionePassiva_generazioneNomeFileEsito = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -671,7 +673,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnable_fatturazionePassiva_generazioneNomeFileEsito;
+		return this.isEnable_fatturazionePassiva_generazioneNomeFileEsito;
 	}
 	
 	public boolean isTracciamentoRequiredFromConfiguration() throws ProtocolException {
@@ -679,57 +681,57 @@ public class SDIProperties {
 				this.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura();
 	}
 	
-	private static Boolean tracciamentoDatasource_read;
-	private static String tracciamentoDatasource;
+	private Boolean tracciamentoDatasource_read;
+	private String tracciamentoDatasource;
 	public String getTracciamentoDatasource() throws ProtocolException {
-		if(SDIProperties.tracciamentoDatasource_read==null){
+		if(this.tracciamentoDatasource_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.tracce.dataSource"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.tracciamentoDatasource = value;
+					this.tracciamentoDatasource = value;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.dataSource', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				tracciamentoDatasource_read = true;
+				this.tracciamentoDatasource_read = true;
 			}
     	}
-		return SDIProperties.tracciamentoDatasource;
+		return this.tracciamentoDatasource;
 	}
 	
-	private static Boolean tracciamentoTipoDatabase_read;
-	private static String tracciamentoTipoDatabase;
+	private Boolean tracciamentoTipoDatabase_read;
+	private String tracciamentoTipoDatabase;
 	public String getTracciamentoTipoDatabase() throws ProtocolException {
-		if(SDIProperties.tracciamentoTipoDatabase_read==null){
+		if(this.tracciamentoTipoDatabase_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.tracce.tipoDatabase"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.tracciamentoTipoDatabase = value;
+					this.tracciamentoTipoDatabase = value;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.tipoDatabase', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
-				tracciamentoTipoDatabase_read = true;
+				this.tracciamentoTipoDatabase_read = true;
 			}
     	}
-		return SDIProperties.tracciamentoTipoDatabase;
+		return this.tracciamentoTipoDatabase;
 	}
 	
-	private static Properties tracciamentoDatasource_jndiContext = null;
+	private Properties tracciamentoDatasource_jndiContext = null;
 	public Properties getTracciamentoDatasource_jndiContext() throws ProtocolException {
-		if(SDIProperties.tracciamentoDatasource_jndiContext==null){
+		if(this.tracciamentoDatasource_jndiContext==null){
 	    	try{  
-	    		SDIProperties.tracciamentoDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.sdi.tracce.dataSource.property.");
-	    		if (SDIProperties.tracciamentoDatasource_jndiContext == null || SDIProperties.tracciamentoDatasource_jndiContext.size()<0){
-	    			SDIProperties.tracciamentoDatasource_jndiContext = new Properties(); // context jndi vuoto
+	    		this.tracciamentoDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.sdi.tracce.dataSource.property.");
+	    		if (this.tracciamentoDatasource_jndiContext == null || this.tracciamentoDatasource_jndiContext.size()<0){
+	    			this.tracciamentoDatasource_jndiContext = new Properties(); // context jndi vuoto
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -737,7 +739,7 @@ public class SDIProperties {
 				throw new ProtocolException(e);
 			}
     	}
-		return SDIProperties.tracciamentoDatasource_jndiContext;
+		return this.tracciamentoDatasource_jndiContext;
 	}
 	
 	
@@ -747,9 +749,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare l'accesso ai metadati
 	 * 
 	 */
-	private static Boolean isEnableAccessoMetadati = null;
+	private Boolean isEnableAccessoMetadati = null;
 	public Boolean isEnableAccessoMetadati() throws ProtocolException{
-		if(SDIProperties.isEnableAccessoMetadati==null){
+		if(this.isEnableAccessoMetadati==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMetadati.enable";
 			
@@ -758,7 +760,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableAccessoMetadati = Boolean.parseBoolean(value);
+					this.isEnableAccessoMetadati = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -770,7 +772,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableAccessoMetadati;
+		return this.isEnableAccessoMetadati;
 	}
 	
 	/**
@@ -779,9 +781,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare l'accesso alla fattura
 	 * 
 	 */
-	private static Boolean isEnableAccessoFattura = null;
+	private Boolean isEnableAccessoFattura = null;
 	public Boolean isEnableAccessoFattura() throws ProtocolException{
-		if(SDIProperties.isEnableAccessoFattura==null){
+		if(this.isEnableAccessoFattura==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiFattura.enable";
 			
@@ -790,7 +792,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableAccessoFattura = Boolean.parseBoolean(value);
+					this.isEnableAccessoFattura = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -802,7 +804,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableAccessoFattura;
+		return this.isEnableAccessoFattura;
 	}
 	
 	/**
@@ -811,9 +813,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare l'accesso ai messaggi
 	 * 
 	 */
-	private static Boolean isEnableAccessoMessaggi = null;
+	private Boolean isEnableAccessoMessaggi = null;
 	public Boolean isEnableAccessoMessaggi() throws ProtocolException{
-		if(SDIProperties.isEnableAccessoMessaggi==null){
+		if(this.isEnableAccessoMessaggi==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMessaggi.enable";
 			
@@ -822,7 +824,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableAccessoMessaggi = Boolean.parseBoolean(value);
+					this.isEnableAccessoMessaggi = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -834,7 +836,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableAccessoMessaggi;
+		return this.isEnableAccessoMessaggi;
 	}
 	
 	/**
@@ -843,9 +845,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare l'accesso ai metadati in warning mode
 	 * 
 	 */
-	private static Boolean isEnableAccessoMetadatiWarningMode = null;
+	private Boolean isEnableAccessoMetadatiWarningMode = null;
 	public Boolean isEnableAccessoMetadatiWarningMode() throws ProtocolException{
-		if(SDIProperties.isEnableAccessoMetadatiWarningMode==null){
+		if(this.isEnableAccessoMetadatiWarningMode==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMetadati.enable.throwError";
 			
@@ -854,7 +856,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableAccessoMetadatiWarningMode = !Boolean.parseBoolean(value);
+					this.isEnableAccessoMetadatiWarningMode = !Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -866,7 +868,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableAccessoMetadatiWarningMode;
+		return this.isEnableAccessoMetadatiWarningMode;
 	}
 	
 	/**
@@ -875,9 +877,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare l'accesso alla fattura in warning mode
 	 * 
 	 */
-	private static Boolean isEnableAccessoFatturaWarningMode = null;
+	private Boolean isEnableAccessoFatturaWarningMode = null;
 	public Boolean isEnableAccessoFatturaWarningMode() throws ProtocolException{
-		if(SDIProperties.isEnableAccessoFatturaWarningMode==null){
+		if(this.isEnableAccessoFatturaWarningMode==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiFattura.enable.throwError";
 			
@@ -886,7 +888,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableAccessoFatturaWarningMode = !Boolean.parseBoolean(value);
+					this.isEnableAccessoFatturaWarningMode = !Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -898,7 +900,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableAccessoFatturaWarningMode;
+		return this.isEnableAccessoFatturaWarningMode;
 	}
 	
 	/**
@@ -907,9 +909,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare l'accesso ai messaggi in warning mode
 	 * 
 	 */
-	private static Boolean isEnableAccessoMessaggiWarningMode = null;
+	private Boolean isEnableAccessoMessaggiWarningMode = null;
 	public Boolean isEnableAccessoMessaggiWarningMode() throws ProtocolException{
-		if(SDIProperties.isEnableAccessoMessaggiWarningMode==null){
+		if(this.isEnableAccessoMessaggiWarningMode==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMessaggi.enable.throwError";
 			
@@ -918,7 +920,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableAccessoMessaggiWarningMode = !Boolean.parseBoolean(value);
+					this.isEnableAccessoMessaggiWarningMode = !Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -930,7 +932,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableAccessoMessaggiWarningMode;
+		return this.isEnableAccessoMessaggiWarningMode;
 	}
 	
 	/**
@@ -939,9 +941,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare la validazione xsd dei metadati
 	 * 
 	 */
-	private static Boolean isEnableValidazioneXsdMetadati = null;
+	private Boolean isEnableValidazioneXsdMetadati = null;
 	public Boolean isEnableValidazioneXsdMetadati() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneXsdMetadati==null){
+		if(this.isEnableValidazioneXsdMetadati==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.metadati";
 			
@@ -950,7 +952,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneXsdMetadati = Boolean.parseBoolean(value);
+					this.isEnableValidazioneXsdMetadati = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -962,7 +964,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneXsdMetadati;
+		return this.isEnableValidazioneXsdMetadati;
 	}
 	
 	/**
@@ -971,9 +973,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare la validazione xsd della fattura
 	 * 
 	 */
-	private static Boolean isEnableValidazioneXsdFattura = null;
+	private Boolean isEnableValidazioneXsdFattura = null;
 	public Boolean isEnableValidazioneXsdFattura() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneXsdFattura==null){
+		if(this.isEnableValidazioneXsdFattura==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.fattura";
 			
@@ -982,7 +984,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneXsdFattura = Boolean.parseBoolean(value);
+					this.isEnableValidazioneXsdFattura = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -994,7 +996,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneXsdFattura;
+		return this.isEnableValidazioneXsdFattura;
 	}
 	
 	/**
@@ -1003,9 +1005,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare la validazione xsd dei messaggi
 	 * 
 	 */
-	private static Boolean isEnableValidazioneXsdMessaggi = null;
+	private Boolean isEnableValidazioneXsdMessaggi = null;
 	public Boolean isEnableValidazioneXsdMessaggi() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneXsdMessaggi==null){
+		if(this.isEnableValidazioneXsdMessaggi==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.messaggi";
 			
@@ -1014,7 +1016,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneXsdMessaggi = Boolean.parseBoolean(value);
+					this.isEnableValidazioneXsdMessaggi = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -1026,7 +1028,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneXsdMessaggi;
+		return this.isEnableValidazioneXsdMessaggi;
 	}
 	
 	/**
@@ -1035,9 +1037,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare la validazione dei campi interni ai metadati
 	 * 
 	 */
-	private static Boolean isEnableValidazioneCampiInterniMetadati = null;
+	private Boolean isEnableValidazioneCampiInterniMetadati = null;
 	public Boolean isEnableValidazioneCampiInterniMetadati() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneCampiInterniMetadati==null){
+		if(this.isEnableValidazioneCampiInterniMetadati==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiMetadati.enable";
 			
@@ -1046,7 +1048,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneCampiInterniMetadati = Boolean.parseBoolean(value);
+					this.isEnableValidazioneCampiInterniMetadati = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -1058,7 +1060,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneCampiInterniMetadati;
+		return this.isEnableValidazioneCampiInterniMetadati;
 	}
 	
 	/**
@@ -1067,9 +1069,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare la validazione dei campi interni alla fattura
 	 * 
 	 */
-	private static Boolean isEnableValidazioneCampiInterniFattura = null;
+	private Boolean isEnableValidazioneCampiInterniFattura = null;
 	public Boolean isEnableValidazioneCampiInterniFattura() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneCampiInterniFattura==null){
+		if(this.isEnableValidazioneCampiInterniFattura==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiFattura.enable";
 			
@@ -1078,7 +1080,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneCampiInterniFattura = Boolean.parseBoolean(value);
+					this.isEnableValidazioneCampiInterniFattura = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -1090,7 +1092,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneCampiInterniFattura;
+		return this.isEnableValidazioneCampiInterniFattura;
 	}
 	
 	/**
@@ -1099,9 +1101,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare la validazione dei campi interni ai messaggi
 	 * 
 	 */
-	private static Boolean isEnableValidazioneCampiInterniMessaggi = null;
+	private Boolean isEnableValidazioneCampiInterniMessaggi = null;
 	public Boolean isEnableValidazioneCampiInterniMessaggi() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneCampiInterniMessaggi==null){
+		if(this.isEnableValidazioneCampiInterniMessaggi==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiMessaggi.enable";
 			
@@ -1110,7 +1112,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneCampiInterniMessaggi = Boolean.parseBoolean(value);
+					this.isEnableValidazioneCampiInterniMessaggi = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -1122,7 +1124,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneCampiInterniMessaggi;
+		return this.isEnableValidazioneCampiInterniMessaggi;
 	}
 	
 		
@@ -1134,9 +1136,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare il salvataggio della fattura letta nel context
 	 * 
 	 */
-	private static Boolean isSaveFatturaInContext = null;
+	private Boolean isSaveFatturaInContext = null;
 	public Boolean isSaveFatturaInContext() throws ProtocolException{
-		if(SDIProperties.isSaveFatturaInContext==null){
+		if(this.isSaveFatturaInContext==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.parse.fattura.saveInContext";
 			
@@ -1145,7 +1147,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isSaveFatturaInContext = Boolean.parseBoolean(value);
+					this.isSaveFatturaInContext = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -1157,7 +1159,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isSaveFatturaInContext;
+		return this.isSaveFatturaInContext;
 	}
 	
 	/**
@@ -1166,9 +1168,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare il salvataggio dei messsaggi di servizio letti nel context
 	 * 
 	 */
-	private static Boolean isSaveMessaggiInContext = null;
+	private Boolean isSaveMessaggiInContext = null;
 	public Boolean isSaveMessaggiInContext() throws ProtocolException{
-		if(SDIProperties.isSaveMessaggiInContext==null){
+		if(this.isSaveMessaggiInContext==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.parse.messaggi.saveInContext";
 			
@@ -1177,7 +1179,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isSaveMessaggiInContext = Boolean.parseBoolean(value);
+					this.isSaveMessaggiInContext = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -1189,7 +1191,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isSaveMessaggiInContext;
+		return this.isSaveMessaggiInContext;
 	}
 	
 	
@@ -1200,9 +1202,9 @@ public class SDIProperties {
 	 * @return Indicazione se effettuare il salvataggio dei messsaggi di servizio letti nel context
 	 * 
 	 */
-	private static Boolean isNotificaATConsegnaSoloAttestato = null;
+	private Boolean isNotificaATConsegnaSoloAttestato = null;
 	public Boolean isNotificaATConsegnaSoloAttestato() throws ProtocolException{
-		if(SDIProperties.isNotificaATConsegnaSoloAttestato==null){
+		if(this.isNotificaATConsegnaSoloAttestato==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.notifica.attestazioneTrasmissioneImpossibilitaRecapito.consegnaSoloAttestato";
 			
@@ -1211,7 +1213,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isNotificaATConsegnaSoloAttestato = Boolean.parseBoolean(value);
+					this.isNotificaATConsegnaSoloAttestato = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -1223,7 +1225,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isNotificaATConsegnaSoloAttestato;
+		return this.isNotificaATConsegnaSoloAttestato;
 	}
 	
 	
@@ -1234,9 +1236,9 @@ public class SDIProperties {
 	 * @return Indicazione se viene ricreato il protocollo sdi, in tal caso e' possibile utilizzare l'opzione sbustamento informazioni protocollo disabilitato.
 	 * 
 	 */
-	private static Boolean isBehaviourCreaProtocolloSDI = null;
+	private Boolean isBehaviourCreaProtocolloSDI = null;
 	public Boolean isBehaviourCreaProtocolloSDI() throws ProtocolException{
-		if(SDIProperties.isBehaviourCreaProtocolloSDI==null){
+		if(this.isBehaviourCreaProtocolloSDI==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.behaviour.creaProtocolloSDI";
 			
@@ -1245,7 +1247,7 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isBehaviourCreaProtocolloSDI = Boolean.parseBoolean(value);
+					this.isBehaviourCreaProtocolloSDI = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -1257,28 +1259,28 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isBehaviourCreaProtocolloSDI;
+		return this.isBehaviourCreaProtocolloSDI;
 	}
 	
 	
 	// Utile per sonde applicative
 	
-	private static List<String> soggettiWhiteList = null;
+	private List<String> soggettiWhiteList = null;
 	public List<String> getSoggettiWhiteList() throws ProtocolException{
-		if(SDIProperties.soggettiWhiteList==null){
+		if(this.soggettiWhiteList==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.soggetti";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
-				SDIProperties.soggettiWhiteList = new ArrayList<String>();
+				this.soggettiWhiteList = new ArrayList<String>();
 				
 				if (value != null){
 					value = value.trim();
 					String [] tmp = value.split(",");
 					for (int i = 0; i < tmp.length; i++) {
-						SDIProperties.soggettiWhiteList.add(tmp[i]);
+						this.soggettiWhiteList.add(tmp[i]);
 					}
 				}
 
@@ -1289,25 +1291,25 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.soggettiWhiteList;
+		return this.soggettiWhiteList;
 	}
 	
-	private static List<String> serviziWhiteList = null;
+	private List<String> serviziWhiteList = null;
 	public List<String> getServiziWhiteList() throws ProtocolException{
-		if(SDIProperties.serviziWhiteList==null){
+		if(this.serviziWhiteList==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.servizi";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
-				SDIProperties.serviziWhiteList = new ArrayList<String>();
+				this.serviziWhiteList = new ArrayList<String>();
 				
 				if (value != null){
 					value = value.trim();
 					String [] tmp = value.split(",");
 					for (int i = 0; i < tmp.length; i++) {
-						SDIProperties.serviziWhiteList.add(tmp[i]);
+						this.serviziWhiteList.add(tmp[i]);
 					}
 				}
 
@@ -1318,25 +1320,25 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.serviziWhiteList;
+		return this.serviziWhiteList;
 	}
 	
-	private static List<String> azioniWhiteList = null;
+	private List<String> azioniWhiteList = null;
 	public List<String> getAzioniWhiteList() throws ProtocolException{
-		if(SDIProperties.azioniWhiteList==null){
+		if(this.azioniWhiteList==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.azioni";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
-				SDIProperties.azioniWhiteList = new ArrayList<String>();
+				this.azioniWhiteList = new ArrayList<String>();
 				
 				if (value != null){
 					value = value.trim();
 					String [] tmp = value.split(",");
 					for (int i = 0; i < tmp.length; i++) {
-						SDIProperties.azioniWhiteList.add(tmp[i]);
+						this.azioniWhiteList.add(tmp[i]);
 					}
 				}
 
@@ -1347,25 +1349,25 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.azioniWhiteList;
+		return this.azioniWhiteList;
 	}
 	
-	private static List<String> namespaceWhiteList = null;
+	private List<String> namespaceWhiteList = null;
 	public List<String> getNamespaceWhiteList() throws ProtocolException{
-		if(SDIProperties.namespaceWhiteList==null){
+		if(this.namespaceWhiteList==null){
 			
 			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.namespace";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
-				SDIProperties.namespaceWhiteList = new ArrayList<String>();
+				this.namespaceWhiteList = new ArrayList<String>();
 				
 				if (value != null){
 					value = value.trim();
 					String [] tmp = value.split(",");
 					for (int i = 0; i < tmp.length; i++) {
-						SDIProperties.namespaceWhiteList.add(tmp[i]);
+						this.namespaceWhiteList.add(tmp[i]);
 					}
 				}
 
@@ -1376,7 +1378,7 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.namespaceWhiteList;
+		return this.namespaceWhiteList;
 	}
 	
 	
@@ -1389,32 +1391,32 @@ public class SDIProperties {
      * @return Indicazione se ritornare un soap fault personalizzato nel codice/actor/faultString per i messaggi di errore di protocollo (Porta Applicativa)
      * 
      */
-	private static Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault= null;
-	private static Boolean isPortaApplicativaBustaErrore_personalizzaElementiFaultRead= null;
+	private Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault= null;
+	private Boolean isPortaApplicativaBustaErrore_personalizzaElementiFaultRead= null;
     public Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault(){
-    	if(SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead==null){
+    	if(this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.pa.bustaErrore.personalizzaElementiFault"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault = Boolean.parseBoolean(value);
+					this.isPortaApplicativaBustaErrore_personalizzaElementiFault = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.pa.bustaErrore.personalizzaElementiFault' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
+					this.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
 				}
 				
-				SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
+				this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.pa.bustaErrore.personalizzaElementiFault' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
+				this.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
 				
-				SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
+				this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
 			}
     	}
     	
-    	return SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault;
+    	return this.isPortaApplicativaBustaErrore_personalizzaElementiFault;
 	}
     
     
@@ -1424,32 +1426,32 @@ public class SDIProperties {
      * @return Indicazione se deve essere aggiunto un errore-applicativo nei details di un messaggio di errore di protocollo (Porta Applicativa)
      * 
      */
-	private static Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo= null;
-	private static Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead= null;
+	private Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo= null;
+	private Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead= null;
     public Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo(){
-    	if(SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead==null){
+    	if(this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.pa.bustaErrore.aggiungiErroreApplicativo"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = Boolean.parseBoolean(value);
+					this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.pa.bustaErrore.aggiungiErroreApplicativo' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
+					this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
 				}
 				
-				SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
+				this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.pa.bustaErrore.aggiungiErroreApplicativo' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
+				this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
 				
-				SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
+				this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
 			}
     	}
     	
-    	return SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo;
+    	return this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo;
 	}
 	
     /**
@@ -1458,27 +1460,27 @@ public class SDIProperties {
      * @return Indicazione se generare i details in caso di SOAPFault *_001 (senza buste Errore)
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultProtocolValidazione = null;
+	private Boolean isGenerazioneDetailsSOAPFaultProtocolValidazione = null;
     public boolean isGenerazioneDetailsSOAPFaultProtocolValidazione(){
-    	if(SDIProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione==null){
+    	if(this.isGenerazioneDetailsSOAPFaultProtocolValidazione==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultProtocolValidazione = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneIntestazione' non impostata, viene utilizzato il default=false");
-					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione = false;
+					this.isGenerazioneDetailsSOAPFaultProtocolValidazione = false;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneIntestazione' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				SDIProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione = false;
+				this.isGenerazioneDetailsSOAPFaultProtocolValidazione = false;
 			}
     	}
     	
-    	return SDIProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione;
+    	return this.isGenerazioneDetailsSOAPFaultProtocolValidazione;
 	}
     
     /**
@@ -1487,27 +1489,27 @@ public class SDIProperties {
      * @return Indicazione se generare i details in caso di SOAPFault *_300
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento = null;
+	private Boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento = null;
     public boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento(){
-    	if(SDIProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento==null){
+    	if(this.isGenerazioneDetailsSOAPFaultProtocolProcessamento==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultProtocolProcessamento = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneProcessamento' non impostata, viene utilizzato il default=true");
-					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento = true;
+					this.isGenerazioneDetailsSOAPFaultProtocolProcessamento = true;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneProcessamento' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
-				SDIProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento = true;
+				this.isGenerazioneDetailsSOAPFaultProtocolProcessamento = true;
 			}
     	}
     	
-    	return SDIProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento;
+    	return this.isGenerazioneDetailsSOAPFaultProtocolProcessamento;
 	}
     
     
@@ -1517,27 +1519,27 @@ public class SDIProperties {
      * @return Indicazione se generare nei details in caso di SOAPFault *_300 lo stack trace
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = null;
+	private Boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = null;
     public boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace(){
-    	if(SDIProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace==null){
+    	if(this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.stackTrace' non impostata, viene utilizzato il default=false");
-					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = false;
+					this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = false;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.stackTrace' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				SDIProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = false;
+				this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = false;
 			}
     	}
     	
-    	return SDIProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace;
+    	return this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace;
 	}
     
     /**
@@ -1546,27 +1548,27 @@ public class SDIProperties {
      * @return Indicazione se generare nei details in caso di SOAPFault informazioni generiche
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = null;
+	private Boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = null;
     public boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche(){
-    	if(SDIProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche==null){
+    	if(this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.informazioniGeneriche' non impostata, viene utilizzato il default=true");
-					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = true;
+					this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = true;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.informazioniGeneriche' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
-				SDIProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = true;
+				this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = true;
 			}
     	}
     	
-    	return SDIProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche;
+    	return this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche;
 	}
     
     
@@ -1579,27 +1581,27 @@ public class SDIProperties {
      * @return Indicazione se generare i details in Casi di errore 5XX
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationServerError = null;
+	private Boolean isGenerazioneDetailsSOAPFaultIntegrationServerError = null;
     public boolean isGenerazioneDetailsSOAPFaultIntegrationServerError(){
-    	if(SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError==null){
+    	if(this.isGenerazioneDetailsSOAPFaultIntegrationServerError==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.serverError"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultIntegrationServerError = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.serverError' non impostata, viene utilizzato il default=true");
-					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError = true;
+					this.isGenerazioneDetailsSOAPFaultIntegrationServerError = true;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.serverError' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
-				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError = true;
+				this.isGenerazioneDetailsSOAPFaultIntegrationServerError = true;
 			}
     	}
     	
-    	return SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError;
+    	return this.isGenerazioneDetailsSOAPFaultIntegrationServerError;
 	}
     
     /**
@@ -1608,27 +1610,27 @@ public class SDIProperties {
      * @return Indicazione se generare i details in Casi di errore 4XX
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationClientError = null;
+	private Boolean isGenerazioneDetailsSOAPFaultIntegrationClientError = null;
     public boolean isGenerazioneDetailsSOAPFaultIntegrationClientError(){
-    	if(SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError==null){
+    	if(this.isGenerazioneDetailsSOAPFaultIntegrationClientError==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.clientError"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultIntegrationClientError = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.clientError' non impostata, viene utilizzato il default=false");
-					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError = false;
+					this.isGenerazioneDetailsSOAPFaultIntegrationClientError = false;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.clientError' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError = false;
+				this.isGenerazioneDetailsSOAPFaultIntegrationClientError = false;
 			}
     	}
     	
-    	return SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError;
+    	return this.isGenerazioneDetailsSOAPFaultIntegrationClientError;
 	}
     
     /**
@@ -1637,27 +1639,27 @@ public class SDIProperties {
      * @return Indicazione se generare nei details lo stack trace all'interno
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = null;
+	private Boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = null;
     public boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace(){
-    	if(SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace==null){
+    	if(this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.stackTrace' non impostata, viene utilizzato il default=false");
-					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = false;
+					this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = false;
 				}
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.stackTrace' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = false;
+				this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = false;
 			}
     	}
     	
-    	return SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace;
+    	return this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace;
 	}
     
     /**
@@ -1666,32 +1668,32 @@ public class SDIProperties {
      * @return Indicazione se generare nei details informazioni dettagliate o solo di carattere generale
      * 
      */
-	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche= null;
-	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead= null;
+	private Boolean isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche= null;
+	private Boolean isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead= null;
     public Boolean isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche(){
-    	if(SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead==null){
+    	if(this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = Boolean.parseBoolean(value);
+					this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.informazioniGeneriche' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultAsGenericCode)");
-					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = null;
+					this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = null;
 				}
 				
-				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead = true;
+				this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.informazioniGeneriche' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultAsGenericCode), errore:"+e.getMessage());
-				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = null;
+				this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = null;
 				
-				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead = true;
+				this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead = true;
 			}
     	}
     	
-    	return SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche;
+    	return this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche;
 	}
     
     
@@ -1705,33 +1707,33 @@ public class SDIProperties {
      * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
      * 
      */
-	private static BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
-	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead= null;
+	private BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
+	private Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead= null;
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
-    	if(SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
+    	if(this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.erroreApplicativo.faultApplicativo.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
 					Boolean b = Boolean.parseBoolean(value);
-					SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
 				}
 				
-				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
+				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
 				
-				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
 			}
     	}
     	
-    	return SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo;
+    	return this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo;
 	}
     
     /**
@@ -1740,39 +1742,39 @@ public class SDIProperties {
      * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
      * 
      */
-	private static BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
-	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdDRead= null;
+	private BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
+	private Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdDRead= null;
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
-    	if(SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
+    	if(this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.erroreApplicativo.faultPdD.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
 					Boolean b = Boolean.parseBoolean(value);
-					SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 				}else{
 					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails)");
-					SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
+					this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
 				}
 				
-				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails), errore:"+e.getMessage());
-				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
+				this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
 				
-				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+				this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
 			}
     	}
     	
-    	return SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
+    	return this.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
     
     
-	private static Boolean useConfigStaticInstance = null;
+	private Boolean useConfigStaticInstance = null;
 	private Boolean useConfigStaticInstance(){
-		if(SDIProperties.useConfigStaticInstance==null){
+		if(this.useConfigStaticInstance==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.sdi.factory.config.staticInstance";
@@ -1782,24 +1784,24 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.useConfigStaticInstance = Boolean.parseBoolean(value);
+					this.useConfigStaticInstance = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					SDIProperties.useConfigStaticInstance = defaultValue;
+					this.useConfigStaticInstance = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				SDIProperties.useConfigStaticInstance = defaultValue;
+				this.useConfigStaticInstance = defaultValue;
 			}
 		}
 
-		return SDIProperties.useConfigStaticInstance;
+		return this.useConfigStaticInstance;
 	}
 	
-	private static Boolean useErroreApplicativoStaticInstance = null;
+	private Boolean useErroreApplicativoStaticInstance = null;
 	private Boolean useErroreApplicativoStaticInstance(){
-		if(SDIProperties.useErroreApplicativoStaticInstance==null){
+		if(this.useErroreApplicativoStaticInstance==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.sdi.factory.erroreApplicativo.staticInstance";
@@ -1809,24 +1811,24 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.useErroreApplicativoStaticInstance = Boolean.parseBoolean(value);
+					this.useErroreApplicativoStaticInstance = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					SDIProperties.useErroreApplicativoStaticInstance = defaultValue;
+					this.useErroreApplicativoStaticInstance = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				SDIProperties.useErroreApplicativoStaticInstance = defaultValue;
+				this.useErroreApplicativoStaticInstance = defaultValue;
 			}
 		}
 
-		return SDIProperties.useErroreApplicativoStaticInstance;
+		return this.useErroreApplicativoStaticInstance;
 	}
 	
-	private static Boolean useEsitoStaticInstance = null;
+	private Boolean useEsitoStaticInstance = null;
 	private Boolean useEsitoStaticInstance(){
-		if(SDIProperties.useEsitoStaticInstance==null){
+		if(this.useEsitoStaticInstance==null){
 			
 			Boolean defaultValue = true;
 			String propertyName = "org.openspcoop2.protocol.sdi.factory.esito.staticInstance";
@@ -1836,36 +1838,36 @@ public class SDIProperties {
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.useEsitoStaticInstance = Boolean.parseBoolean(value);
+					this.useEsitoStaticInstance = Boolean.parseBoolean(value);
 				}else{
 					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					SDIProperties.useEsitoStaticInstance = defaultValue;
+					this.useEsitoStaticInstance = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				SDIProperties.useEsitoStaticInstance = defaultValue;
+				this.useEsitoStaticInstance = defaultValue;
 			}
 		}
 
-		return SDIProperties.useEsitoStaticInstance;
+		return this.useEsitoStaticInstance;
 	}
 	
-	private static BasicStaticInstanceConfig staticInstanceConfig = null;
+	private BasicStaticInstanceConfig staticInstanceConfig = null;
 	public BasicStaticInstanceConfig getStaticInstanceConfig(){
-		if(SDIProperties.staticInstanceConfig==null){
-			staticInstanceConfig = new BasicStaticInstanceConfig();
+		if(this.staticInstanceConfig==null){
+			this.staticInstanceConfig = new BasicStaticInstanceConfig();
 			if(useConfigStaticInstance()!=null) {
-				staticInstanceConfig.setStaticConfig(useConfigStaticInstance());
+				this.staticInstanceConfig.setStaticConfig(useConfigStaticInstance());
 			}
 			if(useErroreApplicativoStaticInstance()!=null) {
-				staticInstanceConfig.setStaticErrorBuilder(useErroreApplicativoStaticInstance());
+				this.staticInstanceConfig.setStaticErrorBuilder(useErroreApplicativoStaticInstance());
 			}
 			if(useEsitoStaticInstance()!=null) {
-				staticInstanceConfig.setStaticEsitoBuilder(useEsitoStaticInstance());
+				this.staticInstanceConfig.setStaticEsitoBuilder(useEsitoStaticInstance());
 			}
 		}
-		return staticInstanceConfig;
+		return this.staticInstanceConfig;
 	}
     
 }

@@ -427,7 +427,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 					}
 					AttachmentPart ap = MTOMUtilities.getAttachmentPart(this.msg, cid);
 					xml = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
-					if(xml==null || "".equals(xml)){
+					if(xml==null || xml.length<=0){
 						throw new Exception("Contenuto non presente");
 					}
 				}catch(Exception e){
@@ -1430,7 +1430,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 				if(tmpZipFile!=null){
 					tmpZipFile.delete();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 			return; // esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 		}
 		
@@ -1482,12 +1484,16 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 				if(tmpZipFile!=null){
 					tmpZipFile.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(tmpZipFileDir!=null){
 					FileSystemUtilities.deleteDir(tmpZipFileDir);
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 		
 
@@ -1538,56 +1544,59 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			String idSdi = null;
 			String idSdiRifArchivio = null;
 						
-			// IdentificativoSdI
-			if(xmlObject.getIdentificativoSdI()!=null){
-				idSdi = xmlObject.getIdentificativoSdI()+"";
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
-			}
+			if(xmlObject!=null) {
 			
-			// NomeFile
-			if(xmlObject.getNomeFile()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
-			}
-			
-			// DataOraRicezione
-			if(xmlObject.getDataOraRicezione()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
-			}
-
-			// RiferimentoArchivio
-			if(xmlObject.getRiferimentoArchivio()!=null){
-				if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
-					idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
-					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
+				// IdentificativoSdI
+				if(xmlObject.getIdentificativoSdI()!=null){
+					idSdi = xmlObject.getIdentificativoSdI()+"";
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
 				}
-				if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
-					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+				
+				// NomeFile
+				if(xmlObject.getNomeFile()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
 				}
-			}
-		
-			// Destinatario
-			if(xmlObject.getDestinatario()!=null){
-				if(xmlObject.getDestinatario().getCodice()!=null){
-					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESTINATARIO_CODICE, xmlObject.getDestinatario().getCodice());
+				
+				// DataOraRicezione
+				if(xmlObject.getDataOraRicezione()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
 				}
-				if(xmlObject.getDestinatario().getDescrizione()!=null){
-					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESTINATARIO_DESCRIZIONE, xmlObject.getDestinatario().getDescrizione());
+	
+				// RiferimentoArchivio
+				if(xmlObject.getRiferimentoArchivio()!=null){
+					if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
+						idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
+						this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
+					}
+					if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
+						this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+					}
 				}
-			}
 			
-			// MessageId
-			if(xmlObject.getMessageId()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
-			}
-			
-			// Note
-			if(xmlObject.getNote()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
-			}
-			
-			// HashFileOriginale
-			if(xmlObject.getHashFileOriginale()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_HashFileOriginale, xmlObject.getHashFileOriginale());
+				// Destinatario
+				if(xmlObject.getDestinatario()!=null){
+					if(xmlObject.getDestinatario().getCodice()!=null){
+						this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESTINATARIO_CODICE, xmlObject.getDestinatario().getCodice());
+					}
+					if(xmlObject.getDestinatario().getDescrizione()!=null){
+						this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESTINATARIO_DESCRIZIONE, xmlObject.getDestinatario().getDescrizione());
+					}
+				}
+				
+				// MessageId
+				if(xmlObject.getMessageId()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
+				}
+				
+				// Note
+				if(xmlObject.getNote()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
+				}
+				
+				// HashFileOriginale
+				if(xmlObject.getHashFileOriginale()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_HashFileOriginale, xmlObject.getHashFileOriginale());
+				}
 			}
 			
 			validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);

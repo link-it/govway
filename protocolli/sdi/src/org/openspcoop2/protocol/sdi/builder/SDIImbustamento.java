@@ -539,7 +539,10 @@ public class SDIImbustamento {
 				try {
 					if(this.sdiProperties.isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare()) {
 						BigInteger bigInteger = new BigInteger(tmpIdentificativoSdi);
-						bigInteger.toString(); // validazione superata
+						String s = bigInteger.toString();
+						if(s!=null) {
+							// validazione superata
+						}
 					}
 					identificativoSdi = tmpIdentificativoSdi;
 				}catch(Exception e) {
