@@ -104,6 +104,9 @@ public class TracceExporter extends HttpServlet{
 	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+			if(context==null) {
+				throw new Exception("Context is null");
+			}
 			
 			ITransazioniService service = (ITransazioniService)context.getBean("transazioniService");
 			

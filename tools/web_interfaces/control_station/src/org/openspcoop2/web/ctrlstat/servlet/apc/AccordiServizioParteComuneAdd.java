@@ -165,7 +165,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 		try {
 			ApiHelper apcHelper = new ApiHelper(request, pd, session);
-			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			
 			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);
@@ -527,7 +527,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			org.openspcoop2.core.registry.Soggetto soggettoReferente = null;
 			try{
 				soggettoReferente = soggettiCore.getSoggettoRegistro(Long.valueOf(this.referente));
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			List<String> tipiSoggettiCompatibili = new ArrayList<String>();
 			if(soggettoReferente!=null){
 				String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoReferente.getTipo());

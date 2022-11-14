@@ -1117,7 +1117,9 @@ public class DocumentoExporter extends HttpServlet {
 			try{
 				if(zipOut!=null)
 					zipOut.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	private void writeWsdl(Logger log,String nomeFile, ZipOutputStream zipOut, boolean erogatore, AccordoServizioParteComune asConAllegati) throws IOException{

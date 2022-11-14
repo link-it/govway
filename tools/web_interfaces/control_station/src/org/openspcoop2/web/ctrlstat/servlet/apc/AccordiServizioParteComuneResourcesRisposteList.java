@@ -91,6 +91,9 @@ public final class AccordiServizioParteComuneResourcesRisposteList extends Actio
 					break;
 				}
 			}
+			if(risorsa==null) {
+				throw new Exception("Risorsa '"+nomeRisorsa+"' non trovata");
+			}
 
 			// Controllo i criteri di ricerca e recupero eventuali parametri
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);

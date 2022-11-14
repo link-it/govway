@@ -6,7 +6,7 @@
 	
 		<converter>
 		<converter-id>pluginAllarmeConverter</converter-id>
-		<converter-class>org.openspcoop2.web.monitor.allarmi.converter.PluginConverter</converter-class>
+		<converter-class>org.openspcoop2.web.monitor.allarmi.converter.AllarmiPluginConverter</converter-class>
 	</converter>
 
 	<managed-bean>

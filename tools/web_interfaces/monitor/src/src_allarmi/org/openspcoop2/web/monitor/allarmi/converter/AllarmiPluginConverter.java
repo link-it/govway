@@ -32,7 +32,7 @@ import org.openspcoop2.core.plugins.Plugin;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PluginConverter extends org.openspcoop2.web.monitor.core.converter.PluginConverter {
+public class AllarmiPluginConverter extends org.openspcoop2.web.monitor.core.converter.PluginConverter {
 	
 	@Override
 	public String getAsString(FacesContext context, UIComponent component, Object value) {

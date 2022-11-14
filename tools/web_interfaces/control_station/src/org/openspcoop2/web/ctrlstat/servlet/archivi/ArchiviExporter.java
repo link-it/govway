@@ -266,7 +266,7 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				
 				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport, gestioneFruitori);
-				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
+				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 					redirect = ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST;
 				}
@@ -403,7 +403,7 @@ public class ArchiviExporter extends HttpServlet {
 					if(idAccordo.getSoggettoReferente()!=null){
 						fileName+="_"+idAccordo.getSoggettoReferente().getTipo()+idAccordo.getSoggettoReferente().getNome();
 	                }
-	                if(idAccordo.getVersione()!=null && !"".equals(idAccordo.getVersione())){
+	                if(idAccordo.getVersione()!=null){
 	                	fileName+="_"+idAccordo.getVersione();
 	                }
 					fileName +="."+extSingleArchive;
@@ -433,7 +433,7 @@ public class ArchiviExporter extends HttpServlet {
 					IDServizio idServizio = ((IDServizio)identificativi.get(0));
 					fileName = prefix+"Servizio_"+idServizio.getTipo()+idServizio.getNome();
 					fileName+="_"+idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome();
-	                if(idServizio.getVersione()!=null && !"".equals(idServizio.getVersione())){
+	                if(idServizio.getVersione()!=null){
 	                	fileName+="_"+idServizio.getVersione();
 	                }
 					fileName +="."+extSingleArchive;
@@ -449,7 +449,7 @@ public class ArchiviExporter extends HttpServlet {
 					if(idAccordo.getSoggettoReferente()!=null){
 						fileName+="_"+idAccordo.getSoggettoReferente().getTipo()+idAccordo.getSoggettoReferente().getNome();
 	                }
-	                if(idAccordo.getVersione()!=null && !"".equals(idAccordo.getVersione())){
+	                if(idAccordo.getVersione()!=null){
 	                	fileName+="_"+idAccordo.getVersione();
 	                }
 					fileName +="."+extSingleArchive;

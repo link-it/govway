@@ -302,8 +302,10 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 			long dist = search.getDataFine().getTime()
 					- search.getDataInizio().getTime() +1;
 
-			long hour = Math.round(dist / 3600000);
-			long day = Math.round(hour / 24);
+			float f = (dist / 3600000l);
+			long hour = Math.round( f );
+			float fDay = (hour / 24l);
+			long day = Math.round( fDay );
 			// se distanza e' < 24h mi sposto di ora in ora
 			if (hour < 24) {
 				field = Calendar.HOUR_OF_DAY;
@@ -413,8 +415,10 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 				long dist =  search.getDataFine().getTime()
 						- search.getDataInizio().getTime() +1;
 
-				long hour = Math.round(dist / 3600000);
-				long day = Math.round(hour / 24);
+				float f = (dist / 3600000l);
+				long hour = Math.round( f );
+				float fDay = (hour / 24l);
+				long day = Math.round( fDay );
 				// se distanza e' < 24h mi sposto di ora in ora
 				if (hour < 24) {
 					lbl = CostantiGrafici.ORA_LABEL + CostantiGrafici.WHITE_SPACE;

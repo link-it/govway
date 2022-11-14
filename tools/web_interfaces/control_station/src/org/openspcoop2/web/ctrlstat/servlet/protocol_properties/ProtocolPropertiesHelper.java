@@ -1000,7 +1000,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			String id, String nome, String idProprietario, String nomeProprietario, String nomeParentProprietario, String urlChange,String tipoAccordo, boolean updateUrlChange) throws Exception{
 		AccordiServizioParteComuneHelper apcHelper = null;
 		AccordiServizioParteSpecificaHelper apsHelper = null;
-		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, this.session, this.request, false);
+		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, this.session, this.request, false).getValue();
 		List<Parameter> lstParam = new ArrayList<Parameter>();
 		String labelProprietario = nomeProprietario;
 		String tipoProtocollo = null;

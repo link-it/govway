@@ -858,8 +858,18 @@ public class ReportExporter extends HttpServlet{
 						else if(CostantiExporter.CLAIM_EMAIL.equals(tipoClaim)) {
 							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_eMail;
 						} else {
+							TipoCredenzialeMittente [] values = TipoCredenzialeMittente.values();
+							StringBuilder sb = new StringBuilder();
+							if(values!=null && values.length>0) {
+								for (TipoCredenzialeMittente tipoCredenzialeMittente : values) {
+									if(sb.length()>0) {
+										sb.append(",");
+									}
+									sb.append(tipoCredenzialeMittente);
+								}
+							}
 							throw new ParameterUncorrectException("Parametro '"+CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM+"' fornito possiede un valore '"+tipoClaim
-									+"' sconosciuto. I tipi supportati sono: "+ TipoCredenzialeMittente.values().toString());
+									+"' sconosciuto. I tipi supportati sono: "+ sb.toString());
 						}
 
 						statSearchForm.setTokenClaim(tokenClaim.name());
@@ -1086,8 +1096,18 @@ public class ReportExporter extends HttpServlet{
 			tipoVisualizzazione = tipoVisualizzazione.trim();
 			tipoVisualizzazioneEnum = TipoVisualizzazione.toEnumConstant(tipoVisualizzazione);
 			if(tipoVisualizzazioneEnum==null){
+				String [] values = TipoVisualizzazione.toArray();
+				StringBuilder sb = new StringBuilder();
+				if(values!=null && values.length>0) {
+					for (String tipo : values) {
+						if(sb.length()>0) {
+							sb.append(",");
+						}
+						sb.append(tipo);
+					}
+				}
 				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_INFORMAZIONE_VISUALIZZATA+"' fornito possiede un valore '"+tipoVisualizzazione
-						+"' sconosciuto. I tipi supportati sono: "+TipoVisualizzazione.toArray());
+						+"' sconosciuto. I tipi supportati sono: "+sb.toString());
 			}
 		}
 		statSearchForm.setTipoVisualizzazione(tipoVisualizzazioneEnum);
@@ -1115,8 +1135,18 @@ public class ReportExporter extends HttpServlet{
 					tmp[i] = tmp[i].trim();
 					TipoBanda tmpBanda = TipoBanda.toEnumConstant(tmp[i]); 
 					if(tmpBanda==null){
+						String [] values = TipoBanda.toArray();
+						StringBuilder sb = new StringBuilder();
+						if(values!=null && values.length>0) {
+							for (String tipo : values) {
+								if(sb.length()>0) {
+									sb.append(",");
+								}
+								sb.append(tipo);
+							}
+						}
 						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_BANDA_VISUALIZZATA+"' fornito possiede un valore '"+tmp[i]
-								+"' sconosciuto. I tipi supportati sono: "+TipoBanda.toArray());
+								+"' sconosciuto. I tipi supportati sono: "+sb.toString());
 					}	
 					if(i==0){
 						tipoBandaEnum = tmpBanda;
@@ -1165,8 +1195,18 @@ public class ReportExporter extends HttpServlet{
 					tmp[i] = tmp[i].trim();
 					TipoLatenza tmpLatenza = TipoLatenza.toEnumConstant(tmp[i]); 
 					if(tmpLatenza==null){
+						String [] values = TipoBanda.toArray();
+						StringBuilder sb = new StringBuilder();
+						if(values!=null && values.length>0) {
+							for (String tipo : values) {
+								if(sb.length()>0) {
+									sb.append(",");
+								}
+								sb.append(tipo);
+							}
+						}
 						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_LATENZA_VISUALIZZATA+"' fornito possiede un valore '"+tmp[i]
-								+"' sconosciuto. I tipi supportati sono: "+TipoBanda.toArray());
+								+"' sconosciuto. I tipi supportati sono: "+sb.toString());
 					}	
 					if(i==0){
 						tipoLatenzaEnum = tmpLatenza;

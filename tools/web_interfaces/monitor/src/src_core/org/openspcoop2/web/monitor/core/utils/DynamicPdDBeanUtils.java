@@ -545,7 +545,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 					servizi.add(new SelectItem(label));
 				}
 			}
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error("Si e' verificato un errore durante la ricerca dei servizi per il Soggetto Erogatore [" + (erogatore != null ? erogatore.getNomeSoggetto() : "Null")+ "]");
 		}
 		return servizi;

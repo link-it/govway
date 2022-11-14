@@ -158,7 +158,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			if(parentPD == null) 
 				parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 			
 			// prendo i dati hidden del pdold e li metto nel pd attuale
 			PageData pdOld = ServletUtils.getPageDataFromSession(request, session);

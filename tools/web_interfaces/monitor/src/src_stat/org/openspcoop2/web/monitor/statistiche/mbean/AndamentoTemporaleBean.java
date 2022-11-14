@@ -176,7 +176,9 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				}
 			}
 			
-			grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), Integer.MAX_VALUE, this.getSlice(), tempo);
+			if(list!=null) {
+				grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), Integer.MAX_VALUE, this.getSlice(), tempo);
+			}
 			break;
 		case LINE_CHART:
 			if(nuovaRicerca && list != null && list.size() > 0) {

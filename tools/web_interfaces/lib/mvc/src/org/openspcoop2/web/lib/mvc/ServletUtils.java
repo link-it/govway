@@ -39,6 +39,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
@@ -449,23 +450,24 @@ public class ServletUtils {
 		return(Boolean) session.getAttribute(Costanti.SESSION_ATTRIBUTE_CONFIGURAZIONI_PERSONALIZZATE);
 	}
 
-	public static Boolean getBooleanAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request) {
+	public static BooleanNullable getBooleanAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request) {
 		return getBooleanAttributeFromSession(attributeName,session,request,null);
 	}
-	public static Boolean getBooleanAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request, Boolean defaultValue) {
+	public static BooleanNullable getBooleanAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request, Boolean defaultValue) {
 		Boolean obj = getObjectFromSession(request, session, Boolean.class, attributeName);
 //		Object obj = session.getAttribute(attributeName);
 
 		if(obj == null) {
 			if(defaultValue==null) {
-				return null;
+				return BooleanNullable.NULL();
 			}
 			else {
-				return defaultValue;
+				return defaultValue ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 			}
 		}
-
-		return obj;
+		else {
+			return obj ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+		}
 	}
 
 	@SuppressWarnings("unchecked")

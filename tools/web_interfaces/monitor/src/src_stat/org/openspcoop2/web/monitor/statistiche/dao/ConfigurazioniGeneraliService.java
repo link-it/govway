@@ -1125,16 +1125,19 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		//		}
 
 		AccordoServizioParteComune aspc = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch().get(dettaglioPD.getIdAccordoServizioParteComune());
-		IPaginatedExpression gruppiExpr = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().newPaginatedExpression();
-		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, aspc.getNome());
-		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, aspc.getVersione());
-		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, aspc.getIdReferente().getNome());
-		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, aspc.getIdReferente().getTipo());
-		List<IdAccordoServizioParteComuneGruppo> lGruppi = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().findAllIds(gruppiExpr);
-		List<String> tags = new ArrayList<String>();
-		if(lGruppi!=null && !lGruppi.isEmpty()) {
-			for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
-				tags.add(gruppoCheck.getIdGruppo().getNome());
+		List<String> tags = null;
+		if(aspc!=null) {
+			IPaginatedExpression gruppiExpr = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().newPaginatedExpression();
+			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, aspc.getNome());
+			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, aspc.getVersione());
+			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, aspc.getIdReferente().getNome());
+			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, aspc.getIdReferente().getTipo());
+			List<IdAccordoServizioParteComuneGruppo> lGruppi = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().findAllIds(gruppiExpr);
+			tags = new ArrayList<String>();
+			if(lGruppi!=null && !lGruppi.isEmpty()) {
+				for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+					tags.add(gruppoCheck.getIdGruppo().getNome());
+				}
 			}
 		}
 		
@@ -1207,7 +1210,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				}
 					
 				String urlConnettoreFruitoreModI = null;
-				org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
+				org.openspcoop2.core.registry.Connettore connettore = fruitore!=null ? fruitore.getConnettore() : null;
 				if(connettore!=null && connettore.sizePropertyList()>0) {
 					for (Property p : connettore.getPropertyList()) {
 						if(CostantiDB.CONNETTORE_HTTP_LOCATION.equals(p.getNome())) {
@@ -1433,16 +1436,19 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore().getTipo());
 
 		AccordoServizioParteComune aspc = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch().get(dettaglioPA.getIdAccordoServizioParteComune());
-		IPaginatedExpression gruppiExpr = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().newPaginatedExpression();
-		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, aspc.getNome());
-		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, aspc.getVersione());
-		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, aspc.getIdReferente().getNome());
-		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, aspc.getIdReferente().getTipo());
-		List<IdAccordoServizioParteComuneGruppo> lGruppi = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().findAllIds(gruppiExpr);
-		List<String> tags = new ArrayList<String>();
-		if(lGruppi!=null && !lGruppi.isEmpty()) {
-			for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
-				tags.add(gruppoCheck.getIdGruppo().getNome());
+		List<String> tags = null;
+		if(aspc!=null) {
+			IPaginatedExpression gruppiExpr = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().newPaginatedExpression();
+			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, aspc.getNome());
+			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, aspc.getVersione());
+			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, aspc.getIdReferente().getNome());
+			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, aspc.getIdReferente().getTipo());
+			List<IdAccordoServizioParteComuneGruppo> lGruppi = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().findAllIds(gruppiExpr);
+			tags = new ArrayList<String>();
+			if(lGruppi!=null && !lGruppi.isEmpty()) {
+				for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+					tags.add(gruppoCheck.getIdGruppo().getNome());
+				}
 			}
 		}
 		

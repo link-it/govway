@@ -248,20 +248,20 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			
 			String tipoSoggettoFruitore = null;
 			String nomeSoggettoFruitore = null;
-			@SuppressWarnings("unused")
-			IDSoggetto idSoggettoFruitore = null;
+//			@SuppressWarnings("unused")
+//			IDSoggetto idSoggettoFruitore = null;
 			Parameter pTipoSoggettoFruitore = null;
 			Parameter pNomeSoggettoFruitore = null;
 			if(gestioneFruitori) {
 				tipoSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
 				nomeSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
-				idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
+				//idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
 				pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);
 				pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);
 			}
 			
 			List<Parameter> lstParm = new ArrayList<Parameter>();
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				if(gestioneFruitori) {
 					lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
@@ -502,11 +502,17 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 						endpointtype = connettore.getTipo();
 				}
 				autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
-				String userTmp = props.get(CostantiDB.CONNETTORE_USER);
+				String userTmp = null;
+				if(props!=null) {
+					userTmp = props.get(CostantiDB.CONNETTORE_USER);
+				}
 				if(userTmp!=null && !"".equals(userTmp)){
 					user = userTmp;
 				}
-				String passwordTmp = props.get(CostantiDB.CONNETTORE_PWD);
+				String passwordTmp = null;
+				if(props!=null) {
+						passwordTmp = props.get(CostantiDB.CONNETTORE_PWD);
+				}
 				if(passwordTmp!=null && !"".equals(passwordTmp)){
 					password = passwordTmp;
 				}
@@ -659,12 +665,12 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode);
 				
 				// http
-				if (url == null) {
+				if (url == null && props!=null) {
 					url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
 				}
 				
 				// jms
-				if (nome == null) {
+				if (nome == null && props!=null) {
 					nome = props.get(CostantiDB.CONNETTORE_JMS_NOME);
 					this.tipo = props.get(CostantiDB.CONNETTORE_JMS_TIPO);
 					initcont = props.get(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL);
@@ -674,7 +680,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					sendas = props.get(CostantiDB.CONNETTORE_JMS_SEND_AS);
 					
 				}
-				if (httpsurl == null) {
+				if (httpsurl == null && props!=null) {
 					httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
 					httpstipologia = props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE);
 					httpshostverify = Boolean.valueOf(props.get(CostantiDB.CONNETTORE_HTTPS_HOSTNAME_VERIFIER));
@@ -771,15 +777,17 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			
 			String canaleAPI = as != null ? as.getCanale() : null;  
 
-			List<PortType> portTypes = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
-			if (portTypes.size() > 0) {
-				ptList = new String[portTypes.size() + 1];
-				ptList[0] = "-";
-				int i = 1;
-				for (Iterator<PortType> iterator = portTypes.iterator(); iterator.hasNext();) {
-					PortType portType2 = iterator.next();
-					ptList[i] = portType2.getNome();
-					i++;
+			if(as!=null) {
+				List<PortType> portTypes = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
+				if (portTypes.size() > 0) {
+					ptList = new String[portTypes.size() + 1];
+					ptList[0] = "-";
+					int i = 1;
+					for (Iterator<PortType> iterator = portTypes.iterator(); iterator.hasNext();) {
+						PortType portType2 = iterator.next();
+						ptList[i] = portType2.getNome();
+						i++;
+					}
 				}
 			}
 			
@@ -795,7 +803,10 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, apsHelper, 
 					this.registryReader, this.configRegistryReader, idAps );
 					
-			List<ProtocolProperty> oldProtocolPropertyList = as.getProtocolPropertyList();
+			List<ProtocolProperty> oldProtocolPropertyList = null;
+			if(as!=null) {
+				oldProtocolPropertyList = as.getProtocolPropertyList();
+			}
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 			ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
 			

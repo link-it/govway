@@ -126,6 +126,9 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 					break;
 				}
 			}
+			if(risorsa==null) {
+				throw new Exception("Risorsa '"+nomeRisorsa+"' non trovata");
+			}
 			
 			if(risorsa.getResponseList() != null) {
 				for (int i = 0; i < risorsa.getResponseList().size(); i++) {
@@ -145,7 +148,7 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 			Parameter pIdRisorsa = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID, risorsa.getId()+"");
 			Parameter pNomeRisorsa = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa);
 			
-			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.LIST, as, tipoAccordo, labelASTitle, null, false);
 			
 			String labelRisorse = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_RISORSE : AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle;
@@ -238,8 +241,10 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 			ResourceResponse newResponse = new ResourceResponse();
 			newResponse.setStatus(status);
 			newResponse.setDescrizione(descr);
-			newResponse.setParameterList(resourceResponse.getParameterList());
-			newResponse.setRepresentationList(resourceResponse.getRepresentationList());
+			if(resourceResponse!=null) {
+				newResponse.setParameterList(resourceResponse.getParameterList());
+				newResponse.setRepresentationList(resourceResponse.getRepresentationList());
+			}
 						
 			res.addResponse(newResponse);
 

@@ -163,6 +163,9 @@ public final class AccordiCooperazioneChange extends Action {
 
 			// prelevo l'accordo
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(idAcc);
+			if(ac==null) {
+				throw new Exception("Accordo Cooperazione '"+idAcc+"' non trovato");
+			}
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(acCore);
 			IDAccordoCooperazione idAccordoOLD = idAccordoCooperazioneFactory.getIDAccordoFromValues(ac.getNome(),
 					BeanUtilities.getSoggettoReferenteID(ac.getSoggettoReferente()),ac.getVersione());

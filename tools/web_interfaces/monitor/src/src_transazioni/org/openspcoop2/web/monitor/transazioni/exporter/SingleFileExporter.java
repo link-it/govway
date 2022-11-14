@@ -1228,7 +1228,7 @@ public class SingleFileExporter implements IExporter{
 			
 			// haeder messaggio
 			List<DumpMultipartHeader> headersMultiPart = null;
-			DumpMessaggioMultipartInfo headersMultiPartInfoBody = dumpMessaggio.getMultipartInfoBody();
+			DumpMessaggioMultipartInfo headersMultiPartInfoBody = dumpMessaggio!=null ? dumpMessaggio.getMultipartInfoBody() : null;
 			
 			if(headersMultiPartInfoBody !=null) {
 				headersMultiPart = new ArrayList<DumpMultipartHeader>();
@@ -1319,7 +1319,7 @@ public class SingleFileExporter implements IExporter{
 			}
 			
 			//allegati
-			List<DumpAttachment> attachments = dumpMessaggio.getAttachments();
+			List<DumpAttachment> attachments = dumpMessaggio!=null ? dumpMessaggio.getAttachments() : null;
 			if(attachments!=null && attachments.size()>0){
 				try{
 					for (int i = 0; i < attachments.size(); i++) {

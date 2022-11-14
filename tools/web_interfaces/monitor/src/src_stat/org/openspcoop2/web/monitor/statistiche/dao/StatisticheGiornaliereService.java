@@ -583,6 +583,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				break;
 			}
+			if(dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
+			}
 			
 			List<Index> forceIndexes = null;
 			try{
@@ -2330,6 +2336,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				dao = this.statSettimanaleSearchDAO;
 				break;
 			}
+			if(dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
+			}
+			
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
@@ -2716,6 +2729,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				model = StatisticaSettimanale.model().STATISTICA_BASE;
 				this.dao = this.statSettimanaleSearchDAO;
 				break;
+			}
+			
+			if(this.dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
 			}
 			
 			IExpression gByExpr = this.createDistribuzioneErroriExpression(this.dao,	model, false);
@@ -4902,6 +4922,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				dao = this.statSettimanaleSearchDAO;
 				break;
 			}
+			if(dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
+			}
 			
 			List<Index> forceIndexes = null;
 			try{
@@ -4971,6 +4997,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				model = StatisticaSettimanale.model().STATISTICA_BASE;
 				this.dao = this.statSettimanaleSearchDAO;
 				break;
+			}
+			if(this.dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
 			}
 			
 			IExpression gByExpr = this.createDistribuzioneServizioExpression(this.dao, model, false);
@@ -5589,6 +5621,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				dao = this.statSettimanaleSearchDAO;
 				break;
 			}
+			if(dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
+			}
+			
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
@@ -5969,6 +6008,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				model = StatisticaSettimanale.model().STATISTICA_BASE;
 				this.dao = this.statSettimanaleSearchDAO;
 				break;
+			}
+			if(this.dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
 			}
 			
 			IExpression gByExpr = this.createDistribuzioneAzioneExpression(this.dao,	model, false);
@@ -7323,6 +7368,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				break;
 
 			}
+			if(this.dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
+			}
+			if(modelContenuti==null) {
+				throw new ServiceException("ModelContenuti unknown");
+			}
 			
 			List<Index> forceIndexes = null;
 			try{
@@ -7578,6 +7632,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			dao = this.statSettimanaleSearchDAO;
 			break;
 		}
+		if(dao==null) {
+			throw new ServiceException("DAO unknown");
+		}
+		if(model==null) {
+			throw new ServiceException("Model unknown");
+		}
+		if(modelContenuti==null) {
+			throw new ServiceException("ModelContenuti unknown");
+		}
 		
 		List<Index> forceIndexes = null;
 		try{
@@ -7731,6 +7794,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				this.dao = this.statSettimanaleSearchDAO;
 				break;
 
+			}
+			if(this.dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
+			}
+			if(modelContenuti==null) {
+				throw new ServiceException("ModelContenuti unknown");
 			}
 			
 			List<Index> forceIndexes = null;
@@ -7889,117 +7961,119 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<Date> listaDateUtilizzate = new ArrayList<Date>();
 
 			// Scorro i risultati per generare gli elementi del grafico.
-			for (Map<String, Object> row : list) {
-				String valoreRisorsa = (String) row.get(GenericJDBCUtilities.getAlias(modelContenuti.RISORSA_VALORE));
-
-				List<Res> res = null;
-				List<Date> datePerRes = null;
-
-				boolean nuovaEntry =true;
-				if(mapRisultati.containsKey(valoreRisorsa)){
-					nuovaEntry = false;
-					res = mapRisultati.get(valoreRisorsa);
-					datePerRes = mapDateUsate.get(valoreRisorsa);
-				}
-
-				if(nuovaEntry){
-					res = new ArrayList<Res>();
-					datePerRes = new ArrayList<Date>();
-				}
-
-
-				Date data = (Date) row.get(GenericJDBCUtilities.getAlias(model.DATA));
-
-				//salvo la data trovata
-				if(!listaDateUtilizzate.contains(data))
-					listaDateUtilizzate.add(data);
-
-				if(!datePerRes.contains(data))
-					datePerRes.add(data);
-
-				Res r = new Res();
-				r.setId(data != null ? data.getTime() : null);
-				r.setRisultato(data);
-
-				//collezione dei risultati
-				if(isLatenza){
-					Number obLT = StatsUtils.converToNumber(row.get("somma_latenza_totale"));
-					Number obLS = StatsUtils.converToNumber(row.get("somma_latenza_servizio"));
-					Number obLP = StatsUtils.converToNumber(row.get("somma_latenza_porta"));
-
-					if(obLT != null){
-						r.inserisciSomma(obLT);
+			if(list!=null) {
+				for (Map<String, Object> row : list) {
+					String valoreRisorsa = (String) row.get(GenericJDBCUtilities.getAlias(modelContenuti.RISORSA_VALORE));
+	
+					List<Res> res = null;
+					List<Date> datePerRes = null;
+	
+					boolean nuovaEntry =true;
+					if(mapRisultati.containsKey(valoreRisorsa)){
+						nuovaEntry = false;
+						res = mapRisultati.get(valoreRisorsa);
+						datePerRes = mapDateUsate.get(valoreRisorsa);
 					}
-					else{
-						if(isLatenza_totale){
-							r.inserisciSomma(0);
+	
+					if(nuovaEntry){
+						res = new ArrayList<Res>();
+						datePerRes = new ArrayList<Date>();
+					}
+	
+	
+					Date data = (Date) row.get(GenericJDBCUtilities.getAlias(model.DATA));
+	
+					//salvo la data trovata
+					if(!listaDateUtilizzate.contains(data))
+						listaDateUtilizzate.add(data);
+	
+					if(!datePerRes.contains(data))
+						datePerRes.add(data);
+	
+					Res r = new Res();
+					r.setId(data != null ? data.getTime() : null);
+					r.setRisultato(data);
+	
+					//collezione dei risultati
+					if(isLatenza){
+						Number obLT = StatsUtils.converToNumber(row.get("somma_latenza_totale"));
+						Number obLS = StatsUtils.converToNumber(row.get("somma_latenza_servizio"));
+						Number obLP = StatsUtils.converToNumber(row.get("somma_latenza_porta"));
+	
+						if(obLT != null){
+							r.inserisciSomma(obLT);
+						}
+						else{
+							if(isLatenza_totale){
+								r.inserisciSomma(0);
+							}
+						}
+	
+						if(obLS != null){
+							r.inserisciSomma(obLS);
+						}
+						else{
+							if(isLatenza_servizio){
+								r.inserisciSomma(0);
+							}
+						}
+	
+						if(obLP != null){
+							r.inserisciSomma(obLP);
+						}
+						else{
+							if(isLatenza_porta){
+								r.inserisciSomma(0);
+							}
 						}
 					}
-
-					if(obLS != null){
-						r.inserisciSomma(obLS);
-					}
-					else{
-						if(isLatenza_servizio){
-							r.inserisciSomma(0);
+					else if(isBanda){
+						Number obBandaComplessiva = StatsUtils.converToNumber(row.get("somma_banda_complessiva"));
+						Number obBandaInterna = StatsUtils.converToNumber(row.get("somma_banda_interna"));
+						Number obBandaEsterna = StatsUtils.converToNumber(row.get("somma_banda_esterna"));
+	
+						if(obBandaComplessiva != null){
+							r.inserisciSomma(obBandaComplessiva);
+						}
+						else{
+							if(isBanda_complessiva){
+								r.inserisciSomma(0);
+							}
+						}
+	
+						if(obBandaInterna != null){
+							r.inserisciSomma(obBandaInterna);
+						}
+						else{
+							if(isBanda_interna){
+								r.inserisciSomma(0);
+							}
+						}
+	
+						if(obBandaEsterna != null){
+							r.inserisciSomma(obBandaEsterna);
+						}
+						else{
+							if(isBanda_esterna){
+								r.inserisciSomma(0);
+							}
 						}
 					}
-
-					if(obLP != null){
-						r.inserisciSomma(obLP);
-					}
 					else{
-						if(isLatenza_porta){
-							r.inserisciSomma(0);
+						Number obSm = StatsUtils.converToNumber(row.get("somma"));
+						if(obSm!=null){
+							r.setSomma(obSm);
+						}else{
+							r.setSomma(0);
 						}
+					} 
+	
+					res.add(r);
+	
+					if(nuovaEntry){
+						mapRisultati.put(valoreRisorsa, res);
+						mapDateUsate.put(valoreRisorsa, datePerRes);
 					}
-				}
-				else if(isBanda){
-					Number obBandaComplessiva = StatsUtils.converToNumber(row.get("somma_banda_complessiva"));
-					Number obBandaInterna = StatsUtils.converToNumber(row.get("somma_banda_interna"));
-					Number obBandaEsterna = StatsUtils.converToNumber(row.get("somma_banda_esterna"));
-
-					if(obBandaComplessiva != null){
-						r.inserisciSomma(obBandaComplessiva);
-					}
-					else{
-						if(isBanda_complessiva){
-							r.inserisciSomma(0);
-						}
-					}
-
-					if(obBandaInterna != null){
-						r.inserisciSomma(obBandaInterna);
-					}
-					else{
-						if(isBanda_interna){
-							r.inserisciSomma(0);
-						}
-					}
-
-					if(obBandaEsterna != null){
-						r.inserisciSomma(obBandaEsterna);
-					}
-					else{
-						if(isBanda_esterna){
-							r.inserisciSomma(0);
-						}
-					}
-				}
-				else{
-					Number obSm = StatsUtils.converToNumber(row.get("somma"));
-					if(obSm!=null){
-						r.setSomma(obSm);
-					}else{
-						r.setSomma(0);
-					}
-				} 
-
-				res.add(r);
-
-				if(nuovaEntry){
-					mapRisultati.put(valoreRisorsa, res);
-					mapDateUsate.put(valoreRisorsa, datePerRes);
 				}
 			}
 
@@ -8428,6 +8502,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			modelContenuti = StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI;
 			dao = this.statSettimanaleSearchDAO;
 			break;
+		}
+		if(dao==null) {
+			throw new ServiceException("DAO unknown");
+		}
+		if(model==null) {
+			throw new ServiceException("Model unknown");
+		}
+		if(modelContenuti==null) {
+			throw new ServiceException("ModelContenuti unknown");
 		}
 
 		try{

@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateUtils;
@@ -1197,12 +1198,12 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.tipoRicercaSPCoop = tipoRicercaSPCoop;
 	}
 
-	public Boolean getTipologiaTransazioneSPCoop() {
+	public BooleanNullable getTipologiaTransazioneSPCoop() {
 		if ("spcoop".equals(this.tipoRicercaSPCoop))
-			return true;
+			return BooleanNullable.TRUE();
 		if ("im".equals(this.tipoRicercaSPCoop))
-			return false;
-		return null;// entrambe
+			return BooleanNullable.FALSE();
+		return BooleanNullable.NULL();// entrambe
 	}
 
 	public String getServizioApplicativo() {

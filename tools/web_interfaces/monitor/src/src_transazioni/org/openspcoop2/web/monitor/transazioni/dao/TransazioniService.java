@@ -3139,7 +3139,7 @@ public class TransazioniService implements ITransazioniService {
 				this.transazioniSearchDAO.newExpression());
 		
 		
-		if (this.searchForm.getTipologiaTransazioneSPCoop() == null) {
+		if (this.searchForm.getTipologiaTransazioneSPCoop() == null || this.searchForm.getTipologiaTransazioneSPCoop().getValue() == null ) {
 
 			// ENTRAMBE
 			// sb.append(" WHERE  ( 0=0 ");
@@ -3179,7 +3179,7 @@ public class TransazioniService implements ITransazioniService {
 			}
 			// sb.append(" ) ");
 
-		} else if (this.searchForm.getTipologiaTransazioneSPCoop()) {
+		} else if (this.searchForm.getTipologiaTransazioneSPCoop().getValue()) {
 
 			// //CASO SPCOOP
 			// sb.append(" WHERE ( 0=0 ");
@@ -3240,7 +3240,8 @@ public class TransazioniService implements ITransazioniService {
 
 		// condizioni presenti solo in tipoRicercaSPCoop==null oppure
 		// tipoRicercaSPCoop=true
-		if (this.searchForm.getTipologiaTransazioneSPCoop() == null	|| this.searchForm.getTipologiaTransazioneSPCoop()) {
+		if (this.searchForm.getTipologiaTransazioneSPCoop() == null || this.searchForm.getTipologiaTransazioneSPCoop().getValue() ==null || 
+				this.searchForm.getTipologiaTransazioneSPCoop().getValue()) {
 
 			if(Utility.isFiltroDominioAbilitato() && this.searchForm.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.searchForm.getSoggettoLocale()) && !"--".equals(this.searchForm.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.searchForm.getTipoSoggettoLocale();

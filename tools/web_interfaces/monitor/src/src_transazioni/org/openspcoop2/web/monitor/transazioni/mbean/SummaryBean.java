@@ -245,8 +245,10 @@ public class SummaryBean implements Serializable{
 				}
 			}
 			
-			this.protocollo = protocolFactory.getProtocol();
-			this.protocolloDefault = protocolFactory.getProtocol();
+			if(protocolFactory!=null) {
+				this.protocollo = protocolFactory.getProtocol();
+				this.protocolloDefault = protocolFactory.getProtocol();
+			}
 			
 			if(utenteNonHaSelezionatoUnProtocolloInAltoADestra && this.protocolliSupportati>1) {
 				this.protocollo = Costanti.VALUE_PARAMETRO_MODALITA_ALL; // default: tutti
@@ -1404,7 +1406,9 @@ public class SummaryBean implements Serializable{
 				}
 			}
 		}
-
+		if(state==null) {
+			return null;
+		}
 		String statoPeriodo = state.getStato();
 		return Utils.extractValoreStato(statoPeriodo);
 	}

@@ -85,6 +85,10 @@ public class ConfigurazioniExporter extends HttpServlet{
 	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+			if(context==null) {
+				throw new Exception("Param context is null");
+			}
+			
 			IConfigurazioniGeneraliService service = (IConfigurazioniGeneraliService)context.getBean("configurazioniGeneraliService");
 			ConfigurazioniGeneraliSearchForm sfInSession = (ConfigurazioniGeneraliSearchForm)context.getBean("configurazioniGeneraliSearchForm");
 			ConfigurazioniGeneraliSearchForm searchForm = (ConfigurazioniGeneraliSearchForm)sfInSession.clone();

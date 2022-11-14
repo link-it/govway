@@ -94,6 +94,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 	public void prepareApiList(List<AccordoServizioParteComuneSintetico> lista, ISearch ricerca, String tipoAccordo) throws Exception {
 		try {
 
+			if(lista==null) {
+				throw new Exception("Param lista is null");
+			}
+			
 			ServletUtils.addListElementIntoSession(this.request, this.session, ApiCostanti.OBJECT_NAME_APC_API,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo));
 			

@@ -376,7 +376,7 @@ public class DettagliDumpMultipart extends PdDBaseBean<Transazione, String, ITra
 			
 			InputStream is = null;
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			if(tmp.getBody()!=null) {
+			if(tmp!=null && tmp.getBody()!=null) {
 				byte[] contenutoBody = tmp.getBody();
 				is = new ByteArrayInputStream(contenutoBody);
 			}
@@ -394,10 +394,10 @@ public class DettagliDumpMultipart extends PdDBaseBean<Transazione, String, ITra
 			CopyStream.copy(is, baos);
 			
 			byte [] content = baos.toByteArray();
-			String contentType = tmp.getContentType();
+			String contentType = tmp!=null ? tmp.getContentType() : null;
 			
 			this.dumpMessaggioLength = content.length;
-			this.dumpMessaggio = DumpMessaggioUtils.getFromBytes(content, contentType, tmp.getFormatoMessaggio());
+			this.dumpMessaggio = DumpMessaggioUtils.getFromBytes(content, contentType, tmp!=null ? tmp.getFormatoMessaggio() : null);
 			
 		
 		}catch (Exception e) {

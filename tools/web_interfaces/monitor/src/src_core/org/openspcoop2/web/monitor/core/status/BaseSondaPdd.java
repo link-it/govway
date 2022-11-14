@@ -76,7 +76,7 @@ public abstract class BaseSondaPdd implements ISondaPdd{
 
 	@Override
 	public String getIdentificativo() {
-		return this.getIdentificativo();
+		return this.identificativo;
 	}
 
 	@Override

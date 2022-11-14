@@ -44,12 +44,7 @@ import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
-import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -87,11 +82,11 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
-			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
-			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
-			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
-			PddCore pddCore = new PddCore(apsCore);
-			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
+//			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
+//			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
+//			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
+//			PddCore pddCore = new PddCore(apsCore);
+//			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 			
 			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
@@ -105,7 +100,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				}
 			}
 						
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 			
 			//User utente = ServletUtils.getUserFromSession(session);
 			

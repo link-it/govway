@@ -106,6 +106,9 @@ public class AllarmeStatus extends BaseSondaPdd implements ISondaPdd{
 			ExternalContext externalContext = currentInstance.getExternalContext();
 			this.requestContextPath = externalContext.getRequestContextPath();
 			ApplicationContext context = FacesContextUtils.getWebApplicationContext(currentInstance);
+			if(context==null) {
+				throw new Exception("Context is null");
+			}
 			this.searchFormPaginaStatoAllarmi = (AllarmiSearchForm) context.getBean("searchFormAllarmi");
 			this.log.debug("Init Sonda AllarmeStatus completato.");
 

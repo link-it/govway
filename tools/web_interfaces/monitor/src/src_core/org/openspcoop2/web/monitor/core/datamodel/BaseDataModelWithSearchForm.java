@@ -161,7 +161,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 							//					searchForm.setPageIndex(pageIndex);
 							searchForm.setCurrentPage(pageIndex);
 							// Aggiorno valori paginazione
-							range = new SequenceRange(start,limit);
+							//range = new SequenceRange(start,limit);
 						}
 						else{
 							start = ((SequenceRange)range).getFirstRow();
@@ -182,10 +182,12 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 					searchForm.setCurrentSearchSize( this.currentSearchSize);
 					
 					this.wrappedKeys = new ArrayList<K>();
-					for (final T obj : bufferList) {
-						this.wrappedData.put(getId(obj), obj);
-						this.wrappedKeys.add(getId(obj));
-						visitor.process(context,getId(obj) , argument);
+					if(bufferList!=null) {
+						for (final T obj : bufferList) {
+							this.wrappedData.put(getId(obj), obj);
+							this.wrappedKeys.add(getId(obj));
+							visitor.process(context,getId(obj) , argument);
+						}
 					}
 					
 					searchForm.setWrappedKeys(this.wrappedKeys);
@@ -208,10 +210,12 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
 					
 					this.wrappedKeys = new ArrayList<K>();
-					for (final T obj : bufferList) {
-						this.wrappedData.put(getId(obj), obj);
-						this.wrappedKeys.add(getId(obj));
-						visitor.process(context,getId(obj) , argument);
+					if(bufferList!=null) {
+						for (final T obj : bufferList) {
+							this.wrappedData.put(getId(obj), obj);
+							this.wrappedKeys.add(getId(obj));
+							visitor.process(context,getId(obj) , argument);
+						}
 					}
 				}
 			}
@@ -623,9 +627,13 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 		if(this.getRowsToDisplay().intValue() == this.getNumeroMassimoRisultati().intValue())
 			return false;
 		
-		// si visualizza la selezione se sono almeno in pagina 2, oppure se sono in pagina 1 e presumo di avere almeno un'altra pagina  
-		if(this.getCurrentPage() > 1 || 
-				(this.getCurrentPage() == 1 && this.getCurrentSearchSize() == this.getRowsToDisplay()))
+		// si visualizza la selezione se sono almeno in pagina 2, oppure se sono in pagina 1 e presumo di avere almeno un'altra pagina
+		if(this.getCurrentPage()==null) {
+			return false;
+		}
+		int currentPage = this.getCurrentPage().intValue();
+		if(currentPage > 1 || 
+				(currentPage == 1 && this.getCurrentSearchSize()!=null && this.getRowsToDisplay()!=null && (this.getCurrentSearchSize().intValue() == this.getRowsToDisplay().intValue())))
 			return true;
 
 		return false;

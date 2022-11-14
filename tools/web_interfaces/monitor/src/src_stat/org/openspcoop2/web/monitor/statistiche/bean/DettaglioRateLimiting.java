@@ -20,6 +20,7 @@
 
 package org.openspcoop2.web.monitor.statistiche.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +40,10 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @version $Rev$, $Date$
  *
  */
-public class DettaglioRateLimiting {
+public class DettaglioRateLimiting implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private List<String> policyName = new ArrayList<String>();
 	private Map<String, AttivazionePolicy> policyMap = new HashMap<String, AttivazionePolicy>();
 	private Map<String, ConfigurazionePolicy> configPolicyMap = new HashMap<String, ConfigurazionePolicy>();

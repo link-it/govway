@@ -126,7 +126,7 @@ public final class UtentiChange extends Action {
 			
 			String scadenza = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SCADENZA);
 			
-			Boolean singlePdD = ServletUtils.getBooleanAttributeFromSession(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, session, request);
+			Boolean singlePdD = ServletUtils.getBooleanAttributeFromSession(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, session, request).getValue();
 			
 			List<String> protocolliRegistratiConsole = utentiCore.getProtocolli();
 			

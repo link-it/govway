@@ -105,8 +105,8 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 				List<String> canali = Utility.getCanali();
 				this.listCanali = new ArrayList<String>();
 				this.listCanali.add("--");
-				this.listCanali.addAll(canali);
 				if(canali!=null && !canali.isEmpty()) {
+					this.listCanali.addAll(canali);
 					this.mapCanaleToNodi = new HashMap<String, List<String>>();
 					for (String canale : canali) {
 						List<String> nodi = Utility.getNodi(canale);

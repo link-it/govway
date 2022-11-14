@@ -174,7 +174,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				if(gestioneFruitori) {
 					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));

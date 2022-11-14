@@ -150,7 +150,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String provider, String idPorta) throws Exception{
 		
 		boolean isModalitaCompleta = this.isModalitaCompleta();
-		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
+		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 		
 		boolean accessoDaListaAPS = false;
 		String accessoDaAPSParametro = null;
@@ -1319,6 +1319,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			boolean credenzialiToken, String tokenPolicySA, String tokenClientIdSA, boolean tokenWithHttpsEnabledByConfigSA, 
 			boolean dominioEsterno, String protocollo) throws Exception{
 		
+		if(dati==null) {
+			throw new Exception("Param dati is null");
+		}
+		
 		if(subtitleConfigurazione==null) {
 			subtitleConfigurazione = ConnettoriCostanti.LABEL_CONFIGURAZIONE_SSL_TITLE_CONFIGURAZIONE;
 		}
@@ -2339,6 +2343,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String protocollo, boolean forceHttps, boolean forceHttpsClient,
 			boolean visualizzaSezioneSAServer, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer, String[] listaSAServer) throws Exception {
 
+		if(dati==null) {
+			throw new Exception("Param dati is null");
+		}
 
 		Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 

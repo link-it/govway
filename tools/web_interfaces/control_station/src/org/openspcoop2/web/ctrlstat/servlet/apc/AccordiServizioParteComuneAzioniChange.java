@@ -249,7 +249,9 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE,
 					URLEncoder.encode( AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_AZIONI_CHANGE + "?" + request.getQueryString(), "UTF-8"));
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, protocollo);
-			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, tipoAccordo);
+			if(tipoAccordo!=null) {
+				propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, tipoAccordo);
+			}
 			
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati

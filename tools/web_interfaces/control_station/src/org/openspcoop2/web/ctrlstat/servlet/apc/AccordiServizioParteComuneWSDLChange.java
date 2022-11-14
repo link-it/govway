@@ -358,7 +358,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			boolean used = true;
 			
-			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			if(!isModalitaVistaApiCustom) {
 				label = MessageFormat.format("{0} di {1}", label, labelASTitle);
 			}

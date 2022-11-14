@@ -323,8 +323,12 @@ public abstract class BaseDataModel<K, T , D> extends SerializableDataModel {
 			return false;
 		
 		// si visualizza la selezione se sono almeno in pagina 2, oppure se sono in pagina 1 e presumo di avere almeno un'altra pagina  
-		if(this.getCurrentPage() > 1 || 
-				(this.getCurrentPage() == 1 && this.getCurrentSearchSize() == this.getRowsToDisplay()))
+		if(this.getCurrentPage()==null) {
+			return false;
+		}
+		int currentPage = this.getCurrentPage().intValue();
+		if(currentPage > 1 || 
+				(currentPage == 1 && this.getCurrentSearchSize()!=null && this.getRowsToDisplay()!=null && (this.getCurrentSearchSize().intValue() == this.getRowsToDisplay().intValue())))
 			return true;
 
 		return false;

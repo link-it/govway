@@ -69,7 +69,7 @@ public class DBLoginDAO implements ILoginDAO {
 
 	private static Logger log = LoggerWrapperFactory.getLogger(DBLoginDAO.class);
 
-	private org.openspcoop2.web.lib.users.DriverUsersDB utenteDAO;
+	private transient org.openspcoop2.web.lib.users.DriverUsersDB utenteDAO;
 
 	private ISoggettoServiceSearch soggettoDAO;
 
@@ -77,8 +77,8 @@ public class DBLoginDAO implements ILoginDAO {
 	
 	private transient DriverConfigurazioneDB driverConfigDB = null;
 
-	private ICrypt passwordManager;
-	private ICrypt passwordManager_backwardCompatibility;
+	private transient ICrypt passwordManager;
+	private transient ICrypt passwordManager_backwardCompatibility;
 	
 	public void setPasswordManager(CryptConfig config) throws UtilsException {
 		this.passwordManager = CryptFactory.getCrypt(log, config);

@@ -335,7 +335,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			int idServizio = Integer.parseInt(idAsps);
 			AccordoServizioParteSpecifica asps  =apsCore.getAccordoServizioParteSpecifica(idServizio);
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-			int soggInt = Integer.parseInt(idSoggettoErogatoreDelServizio);
+			int soggInt = idSoggettoErogatoreDelServizio!=null ? Integer.parseInt(idSoggettoErogatoreDelServizio) : -1;
 			
 			boolean isApplicativiServerEnabled = apsCore.isApplicativiServerEnabled(apsHelper);
 			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.

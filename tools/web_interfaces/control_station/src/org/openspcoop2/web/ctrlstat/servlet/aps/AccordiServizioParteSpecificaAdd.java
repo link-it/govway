@@ -1251,7 +1251,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String servletList = null;
 			String labelList = null;
 			
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				servletList = ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST;
 				if(gestioneFruitori) {

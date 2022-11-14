@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -147,7 +146,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 	private List<String> fruizioneAutenticazioneParametroList;
 	private String fruizioneAutorizzazione;
 	private String fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch;
-	private Properties parametersPOST;
+	//private Properties parametersPOST = null;
 
 	private boolean autenticazioneToken = false;
 	private String token_policy = null;
@@ -208,8 +207,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			
-			this.parametersPOST = null;
-
 			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
 			this.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
@@ -416,7 +413,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.FRUIZIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsHelper, 
-							this.parametersPOST, (this.endpointtype==null), this.endpointtype); // uso endpointtype per capire se è la prima volta che entro
+							null, //this.parametersPOST, 
+							(this.endpointtype==null), this.endpointtype); // uso endpointtype per capire se è la prima volta che entro
 
 			// prendo l'id del soggetto erogatore lo propago
 			// lo metto nel pd come campo hidden

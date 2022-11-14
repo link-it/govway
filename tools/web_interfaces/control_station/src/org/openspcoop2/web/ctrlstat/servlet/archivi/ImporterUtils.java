@@ -210,7 +210,9 @@ public class ImporterUtils {
 							for (int k = 0; k < idAccordi.size(); k++) {
 								listIdAccordiServizioParteComune.add(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordi.get(k)));
 							}
-						}catch(DriverRegistroServiziNotFound dNotFound){}
+						}catch(DriverRegistroServiziNotFound dNotFound){
+							// ignore
+						}
 					}
 					
 				}
@@ -262,7 +264,9 @@ public class ImporterUtils {
 							for (int k = 0; k < idAccordi.size(); k++) {
 								listIdAccordiCooperazione.add(IDAccordoCooperazioneFactory.getInstance().getUriFromIDAccordo(idAccordi.get(k)));
 							}
-						}catch(DriverRegistroServiziNotFound dNotFound){}
+						}catch(DriverRegistroServiziNotFound dNotFound){
+							// ignore
+						}
 					}
 					
 				}
@@ -335,7 +339,9 @@ public class ImporterUtils {
 					fout.flush();
 					fout.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -351,11 +357,15 @@ public class ImporterUtils {
 				if(fis!=null){
 					fis.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			if(deleteFile){
 				try{
 					f.delete();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}
 	}
@@ -431,7 +441,9 @@ public class ImporterUtils {
 		if(importInformationMissing_versioneInput!=null){
 			try{
 				versione = Integer.parseInt(importInformationMissing_versioneInput);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 
 		// importInformationMissing: accordoServizioParteComune

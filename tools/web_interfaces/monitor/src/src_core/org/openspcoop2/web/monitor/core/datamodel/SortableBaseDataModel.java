@@ -148,7 +148,7 @@ public abstract class SortableBaseDataModel<K, T, D, S extends AbstractCoreSearc
 							//					searchForm.setPageIndex(pageIndex);
 							searchForm.setCurrentPage(pageIndex);
 							// Aggiorno valori paginazione
-							range = new SequenceRange(start,limit);
+							//range = new SequenceRange(start,limit);
 						}
 						else{
 							start = ((SequenceRange)range).getFirstRow();
@@ -171,10 +171,12 @@ public abstract class SortableBaseDataModel<K, T, D, S extends AbstractCoreSearc
 					List<T> bufferList = findObjects(start, limit, this.getSortField(), this.getSortOrder());
 					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
 					searchForm.setCurrentSearchSize(this.currentSearchSize);
-					for (final T obj : bufferList) {
-						this.wrappedData.put(getId(obj), obj);
-						this.wrappedKeys.add(getId(obj));
-						visitor.process(context,getId(obj) , argument);
+					if(bufferList!=null) {
+						for (final T obj : bufferList) {
+							this.wrappedData.put(getId(obj), obj);
+							this.wrappedKeys.add(getId(obj));
+							visitor.process(context,getId(obj) , argument);
+						}
 					}
 					searchForm.setWrappedKeys(this.wrappedKeys);
 				}
@@ -197,10 +199,12 @@ public abstract class SortableBaseDataModel<K, T, D, S extends AbstractCoreSearc
 
 					List<T> bufferList = findObjects(start, limit, this.getSortField(), this.getSortOrder());
 					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
-					for (final T obj : bufferList) {
-						this.wrappedData.put(getId(obj), obj);
-						this.wrappedKeys.add(getId(obj));
-						visitor.process(context,getId(obj) , argument);
+					if(bufferList!=null) {
+						for (final T obj : bufferList) {
+							this.wrappedData.put(getId(obj), obj);
+							this.wrappedKeys.add(getId(obj));
+							visitor.process(context,getId(obj) , argument);
+						}
 					}
 				}
 			}

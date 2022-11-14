@@ -274,13 +274,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		List<MappingErogazionePortaApplicativa> listaMappingErogazione = null;
 		try{
 			listaMappingErogazione = this.apsCore.mappingServiziPorteAppList(idService,servizio.getId(), null);
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(listaMappingErogazione!=null && !listaMappingErogazione.isEmpty()) {
 			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : listaMappingErogazione) {
 				PortaApplicativa pa = null;
 				try {
 					pa = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(pa!=null) {
 					if(mappingErogazionePortaApplicativa.isDefault()) {
 						if(pa.getTrasformazioni()!=null && pa.getTrasformazioni().sizeRegolaList()>0) {
@@ -303,7 +307,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						try {
 							Search ricercaPolicies = new Search(true);
 							listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.APPLICATIVA, pa.getNome());
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// ignore
+						}
 						if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 							for (AttivazionePolicy ap : listaPolicies) {
 								if(ap.getFiltro()!=null && ap.getFiltro().getAzione()!=null) {
@@ -326,7 +332,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							try {
 								Search ricercaPolicies = new Search(true);
 								listaAllarmi = this.confCore.allarmiList(ricercaPolicies, RuoloPorta.APPLICATIVA, pa.getNome());
-							}catch(Exception e) {}
+							}catch(Exception e) {
+								// ignore
+							}
 							if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 								for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 									if(allarme.getFiltro()!=null && allarme.getFiltro().getAzione()!=null) {
@@ -367,13 +375,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				List<MappingFruizionePortaDelegata> listaMappingFruizione = null;
 				try{
 					listaMappingFruizione = this.apsCore.serviziFruitoriMappingList(idFruitore, idService, null);
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(listaMappingFruizione!=null && !listaMappingFruizione.isEmpty()) {
 					for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : listaMappingFruizione) {
 						PortaDelegata pd = null;
 						try {
 							pd = this.porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// ignore
+						}
 						if(pd!=null) {
 							if(mappingFruizionePortaDelegata.isDefault()) {
 								if(pd.getTrasformazioni()!=null && pd.getTrasformazioni().sizeRegolaList()>0) {
@@ -403,7 +415,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								try {
 									Search ricercaPolicies = new Search(true);
 									listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.DELEGATA, pd.getNome());
-								}catch(Exception e) {}
+								}catch(Exception e) {
+									// ignore
+								}
 								if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 									List<String> list = null;
 									for (AttivazionePolicy ap : listaPolicies) {
@@ -433,7 +447,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									try {
 										Search ricercaPolicies = new Search(true);
 										listaAllarmi = this.confCore.allarmiList(ricercaPolicies, RuoloPorta.DELEGATA, pd.getNome());
-									}catch(Exception e) {}
+									}catch(Exception e) {
+										// ignore
+									}
 									if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 										List<String> list = null;
 										for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
@@ -664,19 +680,25 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		List<MappingErogazionePortaApplicativa> listaMappingErogazione = null;
 		try{
 			listaMappingErogazione = this.apsCore.mappingServiziPorteAppList(idService,servizio.getId(), null);
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(listaMappingErogazione!=null && !listaMappingErogazione.isEmpty()) {
 			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : listaMappingErogazione) {
 				PortaApplicativa pa = null;
 				try {
 					pa = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(pa!=null && pa.sizeServizioApplicativoList()>0) {
 					for (PortaApplicativaServizioApplicativo pasa: pa.getServizioApplicativoList()) {
 						ServizioApplicativo sa = null;
 						try {
 							sa = this.saCore.getServizioApplicativo(pasa.getIdServizioApplicativo());
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// ignore
+						}
 						if(sa!=null && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
 							if(!nomiApplicativiServer.contains(sa.getNome())) {
 								nomiApplicativiServer.add(sa.getNome());
@@ -745,7 +767,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					List<MappingFruizionePortaDelegata> listaMappingFruizione = null;
 					try{
 						listaMappingFruizione = this.apsCore.serviziFruitoriMappingList(idFruitore, idService, null);
-					}catch(Exception e) {}
+					}catch(Exception e) {
+						// ignore
+					}
 					if(listaMappingFruizione!=null && !listaMappingFruizione.isEmpty()) {
 						// esiste fruizione
 						
@@ -1339,7 +1363,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							}
 						}
 					}
-				}catch(DriverRegistroServiziNotFound dNotFound){}
+				}catch(DriverRegistroServiziNotFound dNotFound){
+					// ignore
+				}
 			}
 
 			// Lettura accordo di servizio
@@ -1815,14 +1841,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								documento.getFile(), documento.getTipo(),labelServizio));
 					}
 				}else {
-					if(documentoUnivocoIndipendentementeTipo) {
-						this.pd.setMessage(MessageFormat.format(specificaMsg, documento.getRuolo(),
-								documento.getFile(),labelServizio));
-					}
-					else {
-						this.pd.setMessage(MessageFormat.format(specificaMsg, documento.getRuolo(),
-								documento.getFile(), documento.getTipo(),labelServizio));
-					}
+//					if(documentoUnivocoIndipendentementeTipo) {
+//						this.pd.setMessage(MessageFormat.format(specificaMsg, documento.getRuolo(),
+//								documento.getFile(),labelServizio));
+//					}
+//					else {
+					this.pd.setMessage(MessageFormat.format(specificaMsg, documento.getRuolo(),
+							documento.getFile(), documento.getTipo(),labelServizio));
+//					}
 				}
 				
 				return false;
@@ -1852,7 +1878,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				gestioneFruitori = true;
 			}
 		}
-		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
+		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 		if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 			if(gestioneFruitori) {
 				labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_FRUIZIONE;
@@ -1989,12 +2015,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								listaErrori.add(MessageFormat.format(allegatoMsg, documento.getFile(), documento.getTipo(), labelServizio));
 							}
 						}else {
-							if(documentoUnivocoIndipendentementeTipo) {
-								listaErrori.add(MessageFormat.format(specificaMsg, documento.getRuolo(), documento.getFile(), labelServizio));
-							}
-							else {
-								listaErrori.add(MessageFormat.format(specificaMsg, documento.getRuolo(), documento.getFile(), documento.getTipo(), labelServizio));
-							}
+//							if(documentoUnivocoIndipendentementeTipo) {
+//								listaErrori.add(MessageFormat.format(specificaMsg, documento.getRuolo(), documento.getFile(), labelServizio));
+//							}
+//							else {
+							listaErrori.add(MessageFormat.format(specificaMsg, documento.getRuolo(), documento.getFile(), documento.getTipo(), labelServizio));
+//							}
 						}
 	
 						continue;
@@ -2096,7 +2122,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				if(gestioneFruitori) {
 					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
@@ -2254,6 +2280,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			throws Exception {
 		try {
 
+			if(lista==null) {
+				throw new Exception("Lista is null");
+			}
+			
 			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS);
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -3114,8 +3144,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Parameter pId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id);
 			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
 			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
-			@SuppressWarnings("unused")
-			Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
+//			@SuppressWarnings("unused")
+//			Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
@@ -3407,7 +3437,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
 			
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 			String labelAzioni = this.getLabelAzioni(serviceBindingMessage); 
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
@@ -5236,7 +5266,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 			String labelAzioni = this.getLabelAzioni(serviceBindingMessage);
 			if(gestioneFruitori) {
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
@@ -9909,7 +9939,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
 		Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
 		Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
-		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
+		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 		String labelApsChange = null;
 		
 		List<Parameter> listParametersErogazioniChange = new ArrayList<>();

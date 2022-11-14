@@ -82,7 +82,9 @@ public class ReportFactory {
 			if(this.transazioniReportManager == null){
 				FacesContext currentInstance = FacesContext.getCurrentInstance();
 				ApplicationContext context = FacesContextUtils.getWebApplicationContext(currentInstance);
-				this.transazioniReportManager = (ILiveReport) context.getBean("transazioniReportManager");
+				if(context!=null) {
+					this.transazioniReportManager = (ILiveReport) context.getBean("transazioniReportManager");
+				}
 			}
 			log.debug("Init Report Manager Transazioni completato.");
 		}catch(Exception e){
@@ -103,7 +105,9 @@ public class ReportFactory {
 			if(this.statisticaReportManager == null){
 				FacesContext currentInstance = FacesContext.getCurrentInstance();
 				ApplicationContext context = FacesContextUtils.getWebApplicationContext(currentInstance);
-				this.statisticaReportManager = (ILiveReport) context.getBean("statisticaReportManager");
+				if(context!=null) {
+					this.statisticaReportManager = (ILiveReport) context.getBean("statisticaReportManager");
+				}
 			}
 			log.debug("Init Report Manager Statistiche completato.");
 		}catch(Exception e){

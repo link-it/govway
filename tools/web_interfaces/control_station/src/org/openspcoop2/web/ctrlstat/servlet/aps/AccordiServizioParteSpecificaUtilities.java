@@ -750,7 +750,9 @@ public class AccordiServizioParteSpecificaUtilities {
 							List<AttivazionePolicy> listaPolicies = null;
 							try {
 								listaPolicies = confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.DELEGATA, tmpPorta.getOldIDPortaDelegataForUpdate().getNome());
-							}catch(Exception e) {}
+							}catch(Exception e) {
+								// ignore
+							}
 							if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 								for (AttivazionePolicy ap : listaPolicies) {
 									if(ap.getFiltro()!=null && tmpPorta.getOldIDPortaDelegataForUpdate().getNome().equals(ap.getFiltro().getNomePorta())) {
@@ -772,7 +774,9 @@ public class AccordiServizioParteSpecificaUtilities {
 								List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 								try {
 									listaAllarmi = confCore.allarmiList(ricercaPolicies, RuoloPorta.DELEGATA, tmpPorta.getOldIDPortaDelegataForUpdate().getNome());
-								}catch(Exception e) {}
+								}catch(Exception e) {
+									// ignore
+								}
 								if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 									for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 										if(allarme.getFiltro()!=null && tmpPorta.getOldIDPortaDelegataForUpdate().getNome().equals(allarme.getFiltro().getNomePorta())) {
@@ -993,7 +997,9 @@ public class AccordiServizioParteSpecificaUtilities {
 							List<AttivazionePolicy> listaPolicies = null;
 							try {
 								listaPolicies = confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.APPLICATIVA, tmpPorta.getOldIDPortaApplicativaForUpdate().getNome());
-							}catch(Exception e) {}
+							}catch(Exception e) {
+								// ignore
+							}
 							if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 								for (AttivazionePolicy ap : listaPolicies) {
 									if(ap.getFiltro()!=null && tmpPorta.getOldIDPortaApplicativaForUpdate().getNome().equals(ap.getFiltro().getNomePorta())) {
@@ -1015,7 +1021,9 @@ public class AccordiServizioParteSpecificaUtilities {
 								List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 								try {
 									listaAllarmi = confCore.allarmiList(ricercaPolicies, RuoloPorta.APPLICATIVA, tmpPorta.getOldIDPortaApplicativaForUpdate().getNome());
-								}catch(Exception e) {}
+								}catch(Exception e) {
+									// ignore
+								}
 								if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 									for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 										if(allarme.getFiltro()!=null && tmpPorta.getOldIDPortaApplicativaForUpdate().getNome().equals(allarme.getFiltro().getNomePorta())) {
@@ -1059,7 +1067,9 @@ public class AccordiServizioParteSpecificaUtilities {
 													equalsConSuffissoConnettoriMultipli = true;
 													//System.out.println("TROVATO ("+portaApplicativaSA.getNome()+")!!!! suffix["+suffixConnettoreMultiplo+"]");
 												}
-											}catch(Throwable t) {}
+											}catch(Throwable t) {
+												// ignore
+											}
 										}
 									}
 								}
@@ -1224,7 +1234,9 @@ public class AccordiServizioParteSpecificaUtilities {
 						null, null, null,
 						null, null,
 						idServizioOLD, null);
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 			if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 				for (AttivazionePolicy ap : listaPolicies) {
 					if(ap.getFiltro()!=null) {
@@ -1277,7 +1289,9 @@ public class AccordiServizioParteSpecificaUtilities {
 							null, null, null,
 							null, null,
 							idServizioOLD, null);
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 					for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 						if(allarme.getFiltro()!=null) {
@@ -1869,6 +1883,10 @@ public class AccordiServizioParteSpecificaUtilities {
 	
 	public static AccordiServizioParteSpecificaPorteApplicativeMappingInfo getMappingInfo(String mappingPA, AccordoServizioParteSpecifica asps, 
 			AccordiServizioParteSpecificaCore apsCore) throws Exception {
+		
+		if(asps==null) {
+			throw new Exception("Param asps is null");
+		}
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 		
@@ -2671,7 +2689,9 @@ public class AccordiServizioParteSpecificaUtilities {
 			for (int i = 0; i < azioni.length; i++) {
 				configurazioneAzione.addAzione(azioni[i]);
 			}
-			fruitore.addConfigurazioneAzione(configurazioneAzione);
+			if(fruitore!=null) {
+				fruitore.addConfigurazioneAzione(configurazioneAzione);
+			}
 		}
 		
 		PortaDelegata portaDelegata = subscription.getPortaDelegata();

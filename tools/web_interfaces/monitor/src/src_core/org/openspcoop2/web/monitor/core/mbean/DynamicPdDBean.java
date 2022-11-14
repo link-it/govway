@@ -585,7 +585,8 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		List<SelectItem> listaSoggettiTmp = new ArrayList<>();
 		if(val==null || StringUtils.isEmpty((String)val)) {
 		}else{
-			if(TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum()) && 
+			if(this.search!=null &&
+					TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum()) && 
 					StringUtils.isNotEmpty(this.search.getRiconoscimento()) && 
 					this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 					listaSoggettiTmp = _getSoggetti(true, false, false, (String)val);
@@ -610,7 +611,8 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	}
 
 	public List<SelectItem> getSoggetti()  throws Exception{
-		if(TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum()) && 
+		if(this.search!=null &&
+				TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum()) && 
 				StringUtils.isNotEmpty(this.search.getRiconoscimento()) && 
 				this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 			

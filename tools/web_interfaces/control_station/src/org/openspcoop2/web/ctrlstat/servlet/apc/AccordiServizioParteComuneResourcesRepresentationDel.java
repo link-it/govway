@@ -92,7 +92,9 @@ public final class AccordiServizioParteComuneResourcesRepresentationDel extends 
 			try {
 				if(statusS!=null)
 					status = Integer.parseInt(statusS);
-			} catch(Exception e) {}
+			} catch(Exception e) {
+				// ignore
+			}
 			String isReq = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
 			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
 

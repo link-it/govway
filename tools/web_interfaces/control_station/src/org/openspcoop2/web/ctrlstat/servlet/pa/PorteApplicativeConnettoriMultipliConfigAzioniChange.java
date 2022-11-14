@@ -179,7 +179,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			}
 			
 			boolean isModalitaCompleta = porteApplicativeHelper.isModalitaCompleta();
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 			// setto la barra del titolo
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			

@@ -224,13 +224,15 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE,
 					URLEncoder.encode( AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_CHANGE + "?" + request.getQueryString(), "UTF-8"));
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, protocollo);
-			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, tipoAccordo);
+			if(tipoAccordo!=null) {
+				propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, tipoAccordo);
+			}
 			
 			
 			Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
 			Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id);
 			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri);
-			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.CHANGE, as, tipoAccordo, labelASTitle, null, false);
 			
 			String labelPortTypes = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES : AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + labelASTitle;
@@ -452,7 +454,9 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 			newPT.setProfiloCollaborazione(ProfiloCollaborazione.toEnumConstant(profcollpt));
 
 			// ricopio le operation che aveva quel porttye
-			newPT.setAzioneList(oldPt.getAzioneList());
+			if(oldPt!=null) {
+				newPT.setAzioneList(oldPt.getAzioneList());
+			}
 
 			// style
 			BindingStyle style = BindingStyle.toEnumConstant(servizioStyle);

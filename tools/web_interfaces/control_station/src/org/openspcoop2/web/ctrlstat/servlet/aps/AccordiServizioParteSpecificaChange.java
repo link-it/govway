@@ -913,7 +913,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						
 			// setto la barra del titolo
 			List<Parameter> lstParm = apsHelper.getTitoloAps(TipoOperazione.CHANGE, asps, gestioneFruitori, tmpTitle, null, true, tipoSoggettoFruitore, nomeSoggettoFruitore); 
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 			
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati

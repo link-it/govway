@@ -126,6 +126,15 @@ IStatisticaPersonalizzataService {
 	public StatistichePersonalizzateService() {
 
 		try {
+			// init Service Manager utils
+			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory.getInstance(StatistichePersonalizzateService.log)
+					.getServiceManager(
+							org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(),StatistichePersonalizzateService.log);
+			this.portTypeDAO = this.utilsServiceManager.getPortTypeServiceSearch();
+			this.accordoDAO = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch();
+			this.operationDAO = this.utilsServiceManager.getOperationServiceSearch();
+			this.serviziDAO = this.utilsServiceManager.getAccordoServizioParteSpecificaServiceSearch();
+			
 			// init Service Manager plugins
 			this.basePluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
 					.getInstance(StatistichePersonalizzateService.log).getServiceManager(
@@ -136,15 +145,6 @@ IStatisticaPersonalizzataService {
 			this.basicServiceLibraryReader = new BasicServiceLibraryReader( (this.basePluginsServiceManager),
 					(this.utilsServiceManager), true);
 			
-			// init Service Manager utils
-			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory.getInstance(StatistichePersonalizzateService.log)
-					.getServiceManager(
-							org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(),StatistichePersonalizzateService.log);
-			this.portTypeDAO = this.utilsServiceManager.getPortTypeServiceSearch();
-			this.accordoDAO = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch();
-			this.operationDAO = this.utilsServiceManager.getOperationServiceSearch();
-			this.serviziDAO = this.utilsServiceManager.getAccordoServizioParteSpecificaServiceSearch();
-
 			// init Service Manager plugins statistiche
 			this.statistichePluginsServiceManager = (IServiceManager) DAOFactory.getInstance(StatistichePersonalizzateService.log)
 					.getServiceManager(

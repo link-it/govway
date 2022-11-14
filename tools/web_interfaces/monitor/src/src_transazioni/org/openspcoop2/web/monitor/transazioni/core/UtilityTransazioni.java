@@ -1452,10 +1452,10 @@ public class UtilityTransazioni {
 		org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType transazione = new org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType();
 
 		// tipologia ricerca spcoop/im
-		if (searchForm.getTipologiaTransazioneSPCoop() == null)
+		if (searchForm.getTipologiaTransazioneSPCoop() == null || searchForm.getTipologiaTransazioneSPCoop().getValue() == null)
 			transazione
 					.setTipologiaTransazioni(TipologiaTransazioniType.PROXY_TRASPARENTE_INTEGRATION_MANAGER);
-		else if (searchForm.getTipologiaTransazioneSPCoop())
+		else if (searchForm.getTipologiaTransazioneSPCoop().getValue())
 			transazione
 					.setTipologiaTransazioni(TipologiaTransazioniType.PROXY_TRASPARENTE);
 		else

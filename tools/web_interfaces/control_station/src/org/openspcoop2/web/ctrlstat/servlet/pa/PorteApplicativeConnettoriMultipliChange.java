@@ -296,7 +296,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			}
 
 			boolean isModalitaCompleta = porteApplicativeHelper.isModalitaCompleta();
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();

@@ -142,27 +142,29 @@ public class BrowserInfo implements Serializable{
 			bf =BrowserFamily.SAFARI;
 		}
 
-		browserInfo.setBrowserName(info[0]);
-		try{
-			if(StringUtils.isNotEmpty(info[1])) {
-				String tmp = info[1];
-				while(tmp.indexOf(".") != tmp.lastIndexOf(".")) {
-					String pt1 = tmp.substring(0,tmp.lastIndexOf("."));
-					String pt2 = "";
-					// controllo che la stringa non finisca con un punto 
-					if(tmp.substring(tmp.lastIndexOf(".")).length() > 1) {
-						pt2 = tmp.substring(tmp.lastIndexOf(".") + 1);
+		if(info!=null) {
+			browserInfo.setBrowserName(info[0]);
+			try{
+				if(StringUtils.isNotEmpty(info[1])) {
+					String tmp = info[1];
+					while(tmp.indexOf(".") != tmp.lastIndexOf(".")) {
+						String pt1 = tmp.substring(0,tmp.lastIndexOf("."));
+						String pt2 = "";
+						// controllo che la stringa non finisca con un punto 
+						if(tmp.substring(tmp.lastIndexOf(".")).length() > 1) {
+							pt2 = tmp.substring(tmp.lastIndexOf(".") + 1);
+						}
+						tmp = pt1+pt2;
 					}
-					tmp = pt1+pt2;
+				
+					browserInfo.setVersion(StringUtils.isNotEmpty(tmp) ? Double.parseDouble(tmp) : null);
+				} else {
+					browserInfo.setVersion(null);
 				}
-			
-				browserInfo.setVersion(StringUtils.isNotEmpty(tmp) ? Double.parseDouble(tmp) : null);
-			} else {
+			}catch(NumberFormatException e){
+				// versione non riconosciuta
 				browserInfo.setVersion(null);
 			}
-		}catch(NumberFormatException e){
-			// versione non riconosciuta
-			browserInfo.setVersion(null);
 		}
 		browserInfo.setBrowserFamily(bf); 
 
