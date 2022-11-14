@@ -44,7 +44,8 @@ public class KeystoreConstants {
 	public static final String PROPERTY_PROVIDER = OLD_PREFIX+"provider";
 	public static final String PROVIDER_DEFAULT = org.apache.wss4j.common.crypto.Merlin.class.getName();
 	public static final String OLD_PROVIDER_DEFAULT = "org.apache.ws.security.components.crypto.Merlin";
-	public static final String PROVIDER_GOVWAY = org.openspcoop2.security.keystore.Merlin.class.getName();
+	public static final String PROVIDER_GOVWAY = org.openspcoop2.security.keystore.MerlinProvider.class.getName();
+	public static final String OLD_PROVIDER_GOVWAY = "org.openspcoop2.security.keystore.Merlin";
 
 	// ${PREFIX}.merlin.x509crl.file - The location of an (X509) CRL file to use.
 

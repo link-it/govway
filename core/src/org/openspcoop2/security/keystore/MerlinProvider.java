@@ -32,6 +32,9 @@ import javax.security.auth.callback.CallbackHandler;
 import org.apache.wss4j.common.crypto.PasswordEncryptor;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.ext.WSSecurityException.ErrorCode;
+import org.openspcoop2.core.config.MessageSecurity;
+import org.openspcoop2.core.config.MessageSecurityFlow;
+import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 
@@ -42,21 +45,21 @@ import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
+public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 
 	private static boolean useBouncyCastleProvider = false;
 	public static boolean isUseBouncyCastleProvider() {
 		return useBouncyCastleProvider;
 	}
 	public static void setUseBouncyCastleProvider(boolean useBouncyCastleProvider) {
-		Merlin.useBouncyCastleProvider = useBouncyCastleProvider;
+		MerlinProvider.useBouncyCastleProvider = useBouncyCastleProvider;
 	}
 	
-	public Merlin() {
+	public MerlinProvider() {
 		super();
 	}
 
-	public Merlin(Properties properties, ClassLoader loader, PasswordEncryptor passwordEncryptor)
+	public MerlinProvider(Properties properties, ClassLoader loader, PasswordEncryptor passwordEncryptor)
 			throws WSSecurityException, IOException {
 		super(properties, loader, passwordEncryptor);
 	}
@@ -313,7 +316,7 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 	public String getCryptoProvider() {
 		boolean useBC = (this.useBouncyCastleProviderDirective!=null && this.useBouncyCastleProviderDirective) 
 				||
-				(Merlin.useBouncyCastleProvider);
+				(MerlinProvider.useBouncyCastleProvider);
 		if(useBC) {
 			if(this.truststore!=null && this.truststore.getType()!=null && this.truststore.getType().equalsIgnoreCase("pkcs11")) {
 				useBC=false;
@@ -327,6 +330,29 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 		}
 		else {
 			return super.getCryptoProvider();
+		}
+	}
+	
+	public static void correctProviderName(MessageSecurity messageSecurity){
+		if(messageSecurity!=null) {
+			MessageSecurityFlow request = messageSecurity.getRequestFlow();
+			if(request!=null && request.sizeParameterList()>0) {
+				for (MessageSecurityFlowParameter param : request.getParameterList()) {
+					if(param.getNome()!=null && param.getNome().trim().endsWith(KeystoreConstants.PROPERTY_PROVIDER) && 
+							param.getValore()!=null && KeystoreConstants.OLD_PROVIDER_GOVWAY.equals(param.getValore().trim()) ) {
+						param.setValore(KeystoreConstants.PROVIDER_GOVWAY);
+					}
+				}
+			}
+			MessageSecurityFlow response = messageSecurity.getResponseFlow();
+			if(response!=null && response.sizeParameterList()>0) {
+				for (MessageSecurityFlowParameter param : response.getParameterList()) {
+					if(param.getNome()!=null && param.getNome().trim().endsWith(KeystoreConstants.PROPERTY_PROVIDER) && 
+							param.getValore()!=null && KeystoreConstants.OLD_PROVIDER_GOVWAY.equals(param.getValore().trim()) ) {
+						param.setValore(KeystoreConstants.PROVIDER_GOVWAY);
+					}
+				}
+			}
 		}
 	}
 }

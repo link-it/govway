@@ -584,7 +584,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 			if(propertiesReader.isUseBouncyCastleProviderForWss4jCryptoMerlin()) {
 				OpenSPCoop2Startup.log.info("Add Bouncycastle in keystore.Merlin provider");
-				org.openspcoop2.security.keystore.Merlin.setUseBouncyCastleProvider(true);
+				org.openspcoop2.security.keystore.MerlinProvider.setUseBouncyCastleProvider(true);
 			}
 						
 			StringBuilder sb = new StringBuilder();

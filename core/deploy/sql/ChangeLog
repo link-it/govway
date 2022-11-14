@@ -1,3 +1,7 @@
+2022-11-14  Andrea Poli <apoli@link.it>
+
+	Renaming security provider
+
 2022-11-03  Andrea Poli <apoli@link.it>
 
 	Aggiunte nuove colonne nella tabella transazioni per conservare motivazione errore o warning

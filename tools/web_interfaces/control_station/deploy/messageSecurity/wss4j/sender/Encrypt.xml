@@ -193,7 +193,7 @@
                    </condition>
            	</conditions>
            	
-           	<item type="hidden" name="encryptCryptoProviderKeyStore" value="org.openspcoop2.security.keystore.Merlin">
+           	<item type="hidden" name="encryptCryptoProviderKeyStore" value="org.openspcoop2.security.keystore.MerlinProvider">
 				<property name="org.apache.ws.security.crypto.provider" force="true" properties="encryptionPropRefId"/>
 			</item>
            	
@@ -231,7 +231,7 @@
            	</conditions>
            	 -->
            	
-           	<item type="hidden" name="encryptCryptoProviderTrustStore" value="org.openspcoop2.security.keystore.Merlin">
+           	<item type="hidden" name="encryptCryptoProviderTrustStore" value="org.openspcoop2.security.keystore.MerlinProvider">
 				<property name="org.apache.ws.security.crypto.provider" force="true" properties="encryptionPropRefId"/>
 			</item>
            	

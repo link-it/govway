@@ -1,0 +1,4 @@
+UPDATE pd_security_request set valore='org.openspcoop2.security.keystore.MerlinProvider' WHERE nome LIKE '%org.apache.ws.security.crypto.provider' AND valore LIKE 'org.openspcoop2.security.keystore.Merlin';
+UPDATE pa_security_request set valore='org.openspcoop2.security.keystore.MerlinProvider' WHERE nome LIKE '%org.apache.ws.security.crypto.provider' AND valore LIKE 'org.openspcoop2.security.keystore.Merlin';
+UPDATE pd_security_response set valore='org.openspcoop2.security.keystore.MerlinProvider' WHERE nome LIKE '%org.apache.ws.security.crypto.provider' AND valore LIKE 'org.openspcoop2.security.keystore.Merlin';
+UPDATE pa_security_response set valore='org.openspcoop2.security.keystore.MerlinProvider' WHERE nome LIKE '%org.apache.ws.security.crypto.provider' AND valore LIKE 'org.openspcoop2.security.keystore.Merlin';

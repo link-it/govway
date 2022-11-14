@@ -128,6 +128,7 @@ import org.openspcoop2.protocol.sdk.archive.IPositionArchiveObject;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
+import org.openspcoop2.security.keystore.MerlinProvider;
 import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -3058,6 +3059,9 @@ public class ImporterArchiveUtils {
 			org.openspcoop2.core.config.driver.utils.XMLDataConverter.
 				impostaInformazioniConfigurazione_PortaDelegata(pd);
 			
+			// --- correzione nomi provider per backward compatibility ----
+			MerlinProvider.correctProviderName(pd.getMessageSecurity());
+			
 			
 			// --- upload ---
 			if(this.importerEngine.existsPortaDelegata(idPortaDelegata)){
@@ -3335,6 +3339,9 @@ public class ImporterArchiveUtils {
 			// --- set dati obbligatori nel db ----
 			org.openspcoop2.core.config.driver.utils.XMLDataConverter.
 				impostaInformazioniConfigurazione_PortaApplicativa(pa);
+			
+			// --- correzione nomi provider per backward compatibility ----
+			MerlinProvider.correctProviderName(pa.getMessageSecurity());
 			
 			
 			// --- upload ---
