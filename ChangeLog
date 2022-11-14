@@ -1,3 +1,9 @@
+2022-11-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1489
+	Nelle informazioni salvate durante la negoziazione di un token non venivano memorizzati gli eventuali parametri indicati nella form: audience, scope, client_id, resource (PDND).
+
 2022-11-14  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor, GovWayConsole]

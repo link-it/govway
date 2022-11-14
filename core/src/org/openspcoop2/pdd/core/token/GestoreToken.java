@@ -3553,18 +3553,27 @@ public class GestoreToken {
 			}
 			if(bf.length()>0) {
 				TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE, bf.toString());
+				if(datiRichiesta!=null) {
+					datiRichiesta.setScope(scopes);
+				}
 			}
 		}
 		
 		String aud = dynamicParameters.getAudience();
 		if(aud!=null && !"".equals(aud)) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
+			if(datiRichiesta!=null) {
+				datiRichiesta.setAudience(aud);
+			}
 		}
 		
 		if(policyNegoziazioneToken.isPDND()) {
 			String formClientId = dynamicParameters.getFormClientId();
 			if(formClientId!=null && !"".equals(formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(formClientId)) {
 				TransportUtils.setParameter(pContent,Costanti.PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID, formClientId);
+				if(datiRichiesta!=null && datiRichiesta.getClientId()==null) { // dovrebbe essere null poiche' il tipo PDND non e' abilitabile per il tipo clientId/Secret
+					datiRichiesta.setClientId(formClientId);
+				}
 			}
 			
 			String formResource = dynamicParameters.getFormResource();
@@ -3577,6 +3586,7 @@ public class GestoreToken {
 		if(parameters!=null && !"".equals(parameters)) {
 			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(parameters);
 			if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
+				Map<String, String> mapParameters = new HashMap<>();
 				Enumeration<Object> keys = convertTextToProperties.keys();
 				while (keys.hasMoreElements()) {
 					String nome = (String) keys.nextElement();
@@ -3584,8 +3594,12 @@ public class GestoreToken {
 						String valore = convertTextToProperties.getProperty(nome);
 						if(valore!=null) {
 							TransportUtils.setParameter(pContent, nome, valore);
+							mapParameters.put(nome, valore);
 						}
 					}
+				}
+				if(datiRichiesta!=null && !mapParameters.isEmpty()) {
+					datiRichiesta.setParameters(mapParameters);
 				}
 			}
 		}

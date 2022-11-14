@@ -23,6 +23,8 @@ package org.openspcoop2.pdd.core.token;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**     
  * InformazioniNegoziazioneTokenSourceTransaction
@@ -48,7 +50,13 @@ public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop
 	private String clientToken;
 	private InformazioniJWTClientAssertion jwtClientAssertion;
 	private String username;
+	private List<String> scope;
+	private String audience;
+	private String resource;
+	private Map<String,String> parameters = null;
+
 	private String endpoint;
+	
 	private Date prepareRequest;
 	private Date sendRequest;
 	private Date receiveResponse;
@@ -103,12 +111,38 @@ public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop
 	public void setUsername(String username) {
 		this.username = username;
 	}
+	public List<String> getScope() {
+		return this.scope;
+	}
+	public void setScope(List<String> scope) {
+		this.scope = scope;
+	}
+	public String getAudience() {
+		return this.audience;
+	}
+	public void setAudience(String audience) {
+		this.audience = audience;
+	}
+	public String getResource() {
+		return this.resource;
+	}
+	public void setResource(String resource) {
+		this.resource = resource;
+	}
+	public Map<String, String> getParameters() {
+		return this.parameters;
+	}
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
+	}
+	
 	public String getEndpoint() {
 		return this.endpoint;
 	}
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
 	}
+	
 	public Date getPrepareRequest() {
 		return this.prepareRequest;
 	}
