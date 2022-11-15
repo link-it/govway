@@ -598,8 +598,8 @@ public class RestTest extends ConfigLoader {
 		long numeroRichieste = responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count();
 		logRateLimiting.debug("["+policyType+"] attese:"+maxConcurrentRequests+" conteggiate:"+numeroRichieste+"  ");
 		if(policyType!=null && (policyType.isInconsistent() || policyType.isApproximated())) {
-			assertTrue("RichiesteAttiveConteggiate200["+numeroRichieste+"] = (attese["+maxConcurrentRequests+"] OR attese-1["+(maxConcurrentRequests-1)+"])", 
-					( (numeroRichieste==maxConcurrentRequests) || (numeroRichieste==(maxConcurrentRequests-1)) ));
+			assertTrue("RichiesteAttiveConteggiate200["+numeroRichieste+"] = (attese["+maxConcurrentRequests+"] OR attese-1["+(maxConcurrentRequests-1)+"] OR attese+1["+(maxConcurrentRequests+1)+"])", 
+					( (numeroRichieste==maxConcurrentRequests) || (numeroRichieste==(maxConcurrentRequests-1)) || (numeroRichieste==(maxConcurrentRequests+1)) ));
 		}
 		else {
 			assertEquals(maxConcurrentRequests, numeroRichieste);

@@ -11,18 +11,17 @@ Sono stati risolti i seguenti bug:
 
 Per la console di gestione sono stati risolti i seguenti bug:
 
-- aggiunta protezione agli attacchi CSRF;
+- perfezionata la gestione delle vulnerabilità di tipo CSRF;
 
-- aggiunta gestione dell'header http "Content Security Policy (CSP);
+- perfezionata la gestione dell'header http "Content Security Policy (CSP)";
 
-- la segnalazione 'Visualizza Riferimenti' di un applicativo non funzionava se l'applicativo possedeva dei ruoli compatibili con le erogazioni associate;
+- la segnalazione 'Visualizza Riferimenti' di un applicativo non visualizzava applicativi con ruoli compatibili con le erogazioni associate;
 
 - l'associazione di credenziali di tipo basic/ssl/principal ai soggetti e agli applicativi viene adesso effettuata controllando l'univocità della credenziale su entrambi;
 
-- nella sezione 'sicurezza messaggio' di un applicativo con profilo di interoperabilità ModI, la configurazione relativa ai dati di accesso al keystore risultava eliminabile da console, ma l'operazione non comportava una effettiva pulizia nella base dati dove i dati rimanevano anche se non più visualizzabili.
+- nella sezione 'sicurezza messaggio' di un applicativo con profilo di interoperabilità ModI, la configurazione relativa ai dati di accesso al keystore risultava eliminabile da console, ma l'operazione non comportava una effettiva pulizia nella base dati dove i dati rimanevano, anche se non più visualizzabili.
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:
 
-- aggiunta protezione agli attacchi CSRF.
-
+- perfezionata la gestione delle vulnerabilità di tipo CSRF.
 
