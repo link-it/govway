@@ -40,7 +40,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
@@ -126,7 +126,7 @@ public class ErogazioniUtilities {
 			}
 		}
 		
-		List<AttivazionePolicy> list = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, pd.getNome());
+		List<AttivazionePolicy> list = confCore.attivazionePolicyList(new ConsoleSearch(true), RuoloPolicy.DELEGATA, pd.getNome());
 		if(list!=null && !list.isEmpty()) {
 			for (AttivazionePolicy attivazionePolicy : list) {
 				if(attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().isEnabled() && attivazionePolicy.getFiltro().getAzione()!=null) {
@@ -136,7 +136,7 @@ public class ErogazioniUtilities {
 		}
 		
 		if(confCore.isConfigurazioneAllarmiEnabled()) {
-			List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.DELEGATA, pd.getNome());
+			List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.DELEGATA, pd.getNome());
 			if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 				for (ConfigurazioneAllarmeBean allarme : listAllarmi) {
 					if(allarme.getFiltro()!=null && allarme.getFiltro().isEnabled() && allarme.getFiltro().getAzione()!=null) {
@@ -161,7 +161,7 @@ public class ErogazioniUtilities {
 			}
 		}
 		
-		List<AttivazionePolicy> list = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.APPLICATIVA, pa.getNome());
+		List<AttivazionePolicy> list = confCore.attivazionePolicyList(new ConsoleSearch(true), RuoloPolicy.APPLICATIVA, pa.getNome());
 		if(list!=null && !list.isEmpty()) {
 			for (AttivazionePolicy attivazionePolicy : list) {
 				if(attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().isEnabled() && attivazionePolicy.getFiltro().getAzione()!=null) {
@@ -171,7 +171,7 @@ public class ErogazioniUtilities {
 		}
 		
 		if(confCore.isConfigurazioneAllarmiEnabled()) {
-			List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.APPLICATIVA, pa.getNome());
+			List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.APPLICATIVA, pa.getNome());
 			if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 				for (ConfigurazioneAllarmeBean allarme : listAllarmi) {
 					if(allarme.getFiltro()!=null && allarme.getFiltro().isEnabled() && allarme.getFiltro().getAzione()!=null) {

@@ -113,6 +113,11 @@ public class PdDControlStation extends PortaDominio implements Serializable {
 	public boolean equals(Object object) {
 		return this.equals(object, true);
 	}
+	
+	@Override
+	public int hashCode(){
+		return this.getNome()!=null ? this.getNome().hashCode() : -1;
+	}
 
 	public String getProtocolloGestione() {
 		return this.protocolloGestione;

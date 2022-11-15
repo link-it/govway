@@ -42,7 +42,7 @@ import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAz
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -131,6 +131,9 @@ public class PorteApplicativeTrasformazioniRichiestaHeaderAdd extends Action {
 					regola = regolaTmp;
 					break;
 				}
+			}
+			if(regola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
 			}
 			
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
@@ -266,7 +269,7 @@ public class PorteApplicativeTrasformazioniRichiestaHeaderAdd extends Action {
 			TrasformazioneRegola trasformazioneAggiornata = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), regola.getNome());
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER; 
 			

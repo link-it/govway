@@ -34,17 +34,17 @@ import java.io.Serializable;
  * @version $Rev$, $Date$
  * 
  */
-public class Search extends org.openspcoop2.core.commons.Search implements Serializable {
+public class ConsoleSearch extends org.openspcoop2.core.commons.Search implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public Search() {
+	public ConsoleSearch() {
 		super();
 	}
-	public Search(boolean showAllResult, int initialLimit) {
+	public ConsoleSearch(boolean showAllResult, int initialLimit) {
 		super(showAllResult, initialLimit);
 	}
-	public Search(boolean showAllResult) {
+	public ConsoleSearch(boolean showAllResult) {
 		super(showAllResult);
 	}
 	

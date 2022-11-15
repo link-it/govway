@@ -56,7 +56,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.web.ctrlstat.core.CertificateChecker;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -164,7 +164,13 @@ public class SoggettiVerificaCertificati extends Action {
 //			listParameter.add(new Parameter(soggettiHelper.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome()),
 //							SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()])));
 			
-			String labelSoggetto = soggettiHelper.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome());
+			String labelSoggetto = null;
+			if(soggettoRegistry!=null) {
+				labelSoggetto = soggettiHelper.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome());
+			}
+			else {
+				labelSoggetto = tipoprov+"/"+nomeprov;
+			}
 			
 			if(arrivoDaLista) {
 				String labelVerifica = SoggettiCostanti.LABEL_SOGGETTI_VERIFICA_CERTIFICATI_DI + labelSoggetto;
@@ -192,15 +198,17 @@ public class SoggettiVerificaCertificati extends Action {
 			boolean ssl = false;
 			boolean sslManuale = false;
 			int countSsl = 0;
-			for (int i = 0; i < soggettoRegistry.sizeCredenzialiList(); i++) {
-				CredenzialiSoggetto c = soggettoRegistry.getCredenziali(i);
-				if(org.openspcoop2.core.registry.constants.CredenzialeTipo.SSL.equals(c.getTipo())) {
-					if(c.getCertificate()!=null) {
-						ssl = true;
-						countSsl++;
-					}
-					else {
-						sslManuale=true;
+			if(soggettoRegistry!=null) {
+				for (int i = 0; i < soggettoRegistry.sizeCredenzialiList(); i++) {
+					CredenzialiSoggetto c = soggettoRegistry.getCredenziali(i);
+					if(org.openspcoop2.core.registry.constants.CredenzialeTipo.SSL.equals(c.getTipo())) {
+						if(c.getCertificate()!=null) {
+							ssl = true;
+							countSsl++;
+						}
+						else {
+							sslManuale=true;
+						}
 					}
 				}
 			}
@@ -336,7 +344,7 @@ public class SoggettiVerificaCertificati extends Action {
 					
 					String userLogin = ServletUtils.getUserLoginFromSession(session);	
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+					ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 					
 					int idLista = Liste.SOGGETTI;
 					

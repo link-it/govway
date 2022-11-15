@@ -33,7 +33,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -74,7 +74,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniList extends Ac
 	
 			int idInt = Integer.parseInt(idPorta);
 			// Preparo la lista
-			Search ricerca = null;
+			ConsoleSearch ricerca = null;
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt); 

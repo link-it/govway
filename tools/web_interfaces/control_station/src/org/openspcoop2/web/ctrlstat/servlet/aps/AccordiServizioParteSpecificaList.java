@@ -34,7 +34,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -81,7 +81,7 @@ public final class AccordiServizioParteSpecificaList extends Action {
 			
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			int idLista = Liste.SERVIZI;
 						

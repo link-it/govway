@@ -42,7 +42,7 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -252,14 +252,16 @@ public class RuoliUtilities {
 		ConfigurazioneCore confCore = new ConfigurazioneCore(ruoliCore);
 		
 		// Nelle erogazioni
-		Search ricercaPolicies = new Search(true);
+		ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 		List<AttivazionePolicy> listaPolicies = null;
 		try {
 			listaPolicies = confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.APPLICATIVA, null,
 					null, null, null,
 					null, null,
 					null, oldIdRuolo.getNome());
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 			for (AttivazionePolicy attivazionePolicy : listaPolicies) {
 				_updateAttivazionePolicy(attivazionePolicy, oldIdRuolo.getNome(), ruoloNEW.getNome());
@@ -268,14 +270,16 @@ public class RuoliUtilities {
 		}
 		
 		// Nelle fruizioni
-		ricercaPolicies = new Search(true);
+		ricercaPolicies = new ConsoleSearch(true);
 		listaPolicies = null;
 		try {
 			listaPolicies = confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.DELEGATA, null,
 					null, null, null,
 					null, null,
 					null, oldIdRuolo.getNome());
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 			for (AttivazionePolicy attivazionePolicy : listaPolicies) {
 				_updateAttivazionePolicy(attivazionePolicy, oldIdRuolo.getNome(), ruoloNEW.getNome());
@@ -284,14 +288,16 @@ public class RuoliUtilities {
 		}
 		
 		// Globali
-		ricercaPolicies = new Search(true);
+		ricercaPolicies = new ConsoleSearch(true);
 		listaPolicies = null;
 		try {
 			listaPolicies = confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
 					null, null, null,
 					null, null,
 					null, oldIdRuolo.getNome());
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 			for (AttivazionePolicy attivazionePolicy : listaPolicies) {
 				_updateAttivazionePolicy(attivazionePolicy, oldIdRuolo.getNome(), ruoloNEW.getNome());

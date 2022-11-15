@@ -41,7 +41,7 @@ import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAz
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -136,6 +136,9 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 					break;
 				}
 			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 
 			for (int j = 0; j < oldRegola.getRichiesta().sizeParametroUrlList(); j++) {
 				TrasformazioneRegolaParametro parametro = oldRegola.getRichiesta().getParametroUrl(j);
@@ -143,6 +146,9 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 					oldParametro = parametro;
 					break;
 				}
+			}
+			if(oldParametro==null) {
+				throw new Exception("TrasformazioneRegolaParametro con id '"+idTrasformazioneRichiestaUrlParameter+"' non trovata");
 			}
 			
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
@@ -257,6 +263,9 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 					break;
 				}
 			}
+			if(regola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 			
 			TrasformazioneRegolaParametro parametroDaAggiornare = null;
 			for (int j = 0; j < regola.getRichiesta().sizeParametroUrlList(); j++) {
@@ -265,6 +274,9 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 					parametroDaAggiornare = parametro;
 					break;
 				}
+			}
+			if(parametroDaAggiornare==null) {
+				throw new Exception("TrasformazioneRegolaParametro con id '"+idTrasformazioneRichiestaUrlParameter+"' non trovata");
 			}
 			
 			parametroDaAggiornare.setNome(nome);
@@ -285,7 +297,7 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), regola.getNome());
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRI; 
 			

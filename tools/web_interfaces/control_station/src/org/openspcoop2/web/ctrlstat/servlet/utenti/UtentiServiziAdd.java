@@ -37,7 +37,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -87,7 +87,7 @@ public class UtentiServiziAdd extends Action {
 			UtentiCore utentiCore = new UtentiCore();
 			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(utentiCore);
 			User user = utentiCore.getUser(nomesu);
-			Search searchServizi = new Search(true);
+			ConsoleSearch searchServizi = new ConsoleSearch(true);
 			List<String> protocolli = user.getProtocolliSupportati();
 			if(protocollo == null) {
 				if(protocolli!=null && protocolli.size()>0) {
@@ -203,7 +203,7 @@ public class UtentiServiziAdd extends Action {
 			utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), user); 
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session,ConsoleSearch.class);
 	
 			int idLista = Liste.UTENTI_SERVIZI;
 	

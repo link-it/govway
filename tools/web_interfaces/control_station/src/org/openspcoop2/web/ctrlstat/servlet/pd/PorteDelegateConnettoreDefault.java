@@ -49,7 +49,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -576,6 +576,9 @@ public class PorteDelegateConnettoreDefault extends Action {
 					break;
 				}
 			}
+			if(fruitore==null) {
+				throw new Exception("Fruitore con id '"+idSoggettoFruitore.getTipo()+"/"+idSoggettoFruitore.getNome()+"' non trovato");
+			}
 			
 			ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
 			configurazioneAzione.setConnettore(connettore);
@@ -590,7 +593,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), asps);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 
 			List<PortaDelegata> lista = null;

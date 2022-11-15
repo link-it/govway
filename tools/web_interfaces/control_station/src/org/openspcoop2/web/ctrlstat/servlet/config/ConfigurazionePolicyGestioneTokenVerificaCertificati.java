@@ -53,7 +53,7 @@ import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.web.ctrlstat.core.CertificateChecker;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -510,7 +510,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 				// verifica richiesta dal link nella lista, torno alla lista
 				if(arrivoDaLista) {
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+					ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 					String infoTypeA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 					String infoTypeSession = ServletUtils.getObjectFromSession(request, session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);

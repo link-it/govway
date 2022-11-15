@@ -166,7 +166,7 @@ import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.SerialiableFormFile;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -519,7 +519,7 @@ public class ErogazioniApiHelper {
 	public static final void serviziUpdateCheckData(AccordoServizioParteComuneSintetico as, AccordoServizioParteSpecifica asps, boolean isErogazione, ErogazioniEnv env) throws Exception {
 		
 		 // Determino i soggetti compatibili
-        Search searchSoggetti = new Search(true);
+        ConsoleSearch searchSoggetti = new ConsoleSearch(true);
 		searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, env.tipo_protocollo);
 		String[] soggettiCompatibili = env.soggettiCore.soggettiRegistroList(null, searchSoggetti).stream()
 				.map( s -> s.getId().toString())
@@ -1196,7 +1196,7 @@ public class ErogazioniApiHelper {
          		.toArray(String[]::new);
 		
 		 // Determino i soggetti compatibili
-        Search searchSoggetti = new Search(true);
+        ConsoleSearch searchSoggetti = new ConsoleSearch(true);
 		searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, env.tipo_protocollo);
 		boolean fruizioniEscludiSoggettoFruitore = false;
 		
@@ -2756,8 +2756,17 @@ public class ErogazioniApiHelper {
 		
 		final ServizioApplicativo sa;
 		
-		if(gruppo != null && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, 
-				pa.getServizioApplicativoList().get(0), pa.getServizioApplicativoList())) {
+		boolean isConnettoreRidefinito = false;
+		try {
+			if(gruppo!=null) {
+				isConnettoreRidefinito = env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, 
+						pa.getServizioApplicativoList().get(0), pa.getServizioApplicativoList());
+			}
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		if(gruppo != null && isConnettoreRidefinito) {
 			sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), pa.getServizioApplicativoList().get(0).getNome()));
 		} else {
 			sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), paDefault.getServizioApplicativoList().get(0).getNome()));
@@ -3135,7 +3144,7 @@ public class ErogazioniApiHelper {
 			throws DriverRegistroServiziException, InstantiationException, IllegalAccessException, CoreException {
 		int idLista = Liste.SERVIZI_ALLEGATI;
 		
-		final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+		final ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
 		final List<Documento> lista = env.apsCore.serviziAllegatiList(asps.getId().intValue(), ricerca);
 		
 		if ( env.findall_404 && lista.isEmpty() ) {
@@ -5507,7 +5516,7 @@ public class ErogazioniApiHelper {
 	
 	
 	
-	public static final void setFiltroApiImplementata(String uriApiImplementata, int idLista, Search ricerca, ErogazioniEnv env) throws Exception {
+	public static final void setFiltroApiImplementata(String uriApiImplementata, int idLista, ConsoleSearch ricerca, ErogazioniEnv env) throws Exception {
 		//  tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo:versione
 		String pattern1 = "^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$";
 		String pattern2 = "^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$";

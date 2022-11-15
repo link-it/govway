@@ -52,7 +52,7 @@ public enum TipologiaConnettori implements Serializable {
 			case TIPOLOGIA_CONNETTORI_HTTP:
 				return "HTTP";
 			default:
-				return null;
+				return "";
 		}
 
 	}

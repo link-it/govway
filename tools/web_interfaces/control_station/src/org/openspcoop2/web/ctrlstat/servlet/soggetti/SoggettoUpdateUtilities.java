@@ -69,7 +69,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -183,7 +183,9 @@ public class SoggettoUpdateUtilities {
 				List<IDAccordoCooperazione> idAccordiCooperazione = null;
 				try{
 					idAccordiCooperazione = this.acCore.getAllIdAccordiCooperazione(filtroRicercaAccordi);
-				}catch(DriverRegistroServiziNotFound dNot){}
+				}catch(DriverRegistroServiziNotFound dNot){
+					// ignore
+				}
 				if(idAccordiCooperazione!=null){
 					for(int i=0; i<idAccordiCooperazione.size(); i++){
 						AccordoCooperazione ac = this.acCore.getAccordoCooperazione(idAccordiCooperazione.get(i));
@@ -269,7 +271,9 @@ public class SoggettoUpdateUtilities {
 				List<IDAccordo> idAccordoServizio = null;
 				try{
 					idAccordoServizio = this.apcCore.getAllIdAccordiServizio(filtroRicercaAccordi);
-				}catch(DriverRegistroServiziNotFound dNot){}
+				}catch(DriverRegistroServiziNotFound dNot){
+					// ignore
+				}
 				if(idAccordoServizio!=null){
 					for(int i=0; i<idAccordoServizio.size(); i++){
 						AccordoServizioParteComune as = this.apcCore.getAccordoServizioFull(idAccordoServizio.get(i));
@@ -291,7 +295,7 @@ public class SoggettoUpdateUtilities {
 					boolean find = false;
 					if(idAccordoServizio!=null){
 						for(int j=0; j<idAccordoServizio.size(); j++){
-							if(this.idAccordoFactory.getUriFromIDAccordo(idAccordoServizio.get(j)).equals(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as))){
+							if(this.idAccordoFactory.getUriFromIDAccordo(idAccordoServizio.get(j)).equals(IDAccordoFactory.getInstance().getUriFromAccordo(as))){
 								find = true;
 								break;
 							}
@@ -339,7 +343,9 @@ public class SoggettoUpdateUtilities {
 			List<IDServizio> idServizio = null;
 			try{
 				idServizio = this.apsCore.getAllIdServizi(filtroRicercaServizi);
-			}catch(DriverRegistroServiziNotFound dNot){}
+			}catch(DriverRegistroServiziNotFound dNot){
+				// ignore
+			}
 			if(idServizio!=null){
 				for(int i=0; i<idServizio.size(); i++){
 					AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idServizio.get(i));
@@ -653,7 +659,9 @@ public class SoggettoUpdateUtilities {
 					PortaDelegata portaDelegata = null;
 					try {
 						portaDelegata = this.porteDelegateCore.getPortaDelegata(idPD);
-					}catch(DriverConfigurazioneNotFound notFound) {}
+					}catch(DriverConfigurazioneNotFound notFound) {
+						// ignore
+					}
 					if(portaDelegata==null) {
 						try {
 							// backward compatibility: provare ad eliminare la v, che prima non veniva utilizzata
@@ -661,7 +669,9 @@ public class SoggettoUpdateUtilities {
 							String oldLocation = locationPrefix + oldLocationSuffix;
 							idPD.setNome(oldLocation);
 							portaDelegata = this.porteDelegateCore.getPortaDelegata(idPD);
-						}catch(DriverConfigurazioneNotFound notFound) {}
+						}catch(DriverConfigurazioneNotFound notFound) {
+							// ignore
+						}
 					}
 					if(portaDelegata!=null){
 
@@ -843,7 +853,9 @@ public class SoggettoUpdateUtilities {
 				// recupero le porte delegate per id_soggetto_erogatore
 				try {
 					tmpListPD = this.porteDelegateCore.porteDelegateWithSoggettoErogatoreList(this.sog.getId());
-				}catch(DriverConfigurazioneNotFound notFound) {}
+				}catch(DriverConfigurazioneNotFound notFound) {
+					// ignore
+				}
 				if(tmpListPD!=null && !tmpListPD.isEmpty()) {
 					for (PortaDelegata portaDelegata : tmpListPD) {
 						Long idPorta = portaDelegata.getId();
@@ -871,7 +883,9 @@ public class SoggettoUpdateUtilities {
 				// recupero le porte delegate per tipo/nome soggetto erogatore
 				try {
 					tmpListPD = this.porteDelegateCore.porteDelegateWithTipoNomeErogatoreList(this.sog.getOldTipoForUpdate(), this.sog.getOldNomeForUpdate());
-				}catch(DriverConfigurazioneNotFound notFound) {}
+				}catch(DriverConfigurazioneNotFound notFound) {
+					// ignore
+				}
 				if(tmpListPD!=null && !tmpListPD.isEmpty()) {
 					for (PortaDelegata portaDelegata : tmpListPD) {
 						Long idPorta = portaDelegata.getId();
@@ -918,7 +932,7 @@ public class SoggettoUpdateUtilities {
 				// verifico rate limiting per ogni porta delegata trovata
 				
 				// Controllo policy di Rate Limiting
-				Search ricercaPolicies = new Search(true);
+				ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 				List<AttivazionePolicy> listaPolicies = null;
 				String oldNomePorta = portaDelegata.getNome();
 				try {
@@ -926,7 +940,9 @@ public class SoggettoUpdateUtilities {
 						oldNomePorta = portaDelegata.getOldIDPortaDelegataForUpdate().getNome();
 					}
 					listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.DELEGATA, oldNomePorta);
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 					for (AttivazionePolicy ap : listaPolicies) {
 						if(ap.getFiltro()!=null && oldNomePorta.equals(ap.getFiltro().getNomePorta())) {
@@ -944,7 +960,7 @@ public class SoggettoUpdateUtilities {
 				
 				if(this.confCore.isConfigurazioneAllarmiEnabled()) {
 					// Controllo allarmi
-					Search ricercaAllarmi = new Search(true);
+					ConsoleSearch ricercaAllarmi = new ConsoleSearch(true);
 					List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 					oldNomePorta = portaDelegata.getNome();
 					try {
@@ -952,7 +968,9 @@ public class SoggettoUpdateUtilities {
 							oldNomePorta = portaDelegata.getOldIDPortaDelegataForUpdate().getNome();
 						}
 						listaAllarmi = this.confCore.allarmiList(ricercaAllarmi, RuoloPorta.DELEGATA, oldNomePorta);
-					}catch(Exception e) {}
+					}catch(Exception e) {
+						// ignore
+					}
 					if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 						for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 							if(allarme.getFiltro()!=null && oldNomePorta.equals(allarme.getFiltro().getNomePorta())) {
@@ -979,14 +997,16 @@ public class SoggettoUpdateUtilities {
 		List<AttivazionePolicy> listPolicyDaVerificare = new ArrayList<AttivazionePolicy>();
 		
 		IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-		Search ricercaPolicies = new Search(true);
+		ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 		List<AttivazionePolicy> listaPolicies = null;
 		try {
 			listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.DELEGATA, null,
 					filtroSoggettoFruitore, null, null,
 					null, null,
 					null, null);
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 			for (AttivazionePolicy ap : listaPolicies) {
 				if(listaPolicyPD.containsKey(ap.getIdActivePolicy())) {
@@ -997,14 +1017,16 @@ public class SoggettoUpdateUtilities {
 		}
 		
 		IDSoggetto filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-		ricercaPolicies = new Search(true);
+		ricercaPolicies = new ConsoleSearch(true);
 		listaPolicies = null;
 		try {
 			listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.DELEGATA, null,
 					null, null, null,
 					filtroSoggettoErogatore, null,
 					null, null);
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 			for (AttivazionePolicy ap : listaPolicies) {
 				if(listaPolicyPD.containsKey(ap.getIdActivePolicy())) {
@@ -1047,14 +1069,16 @@ public class SoggettoUpdateUtilities {
 			List<ConfigurazioneAllarmeBean> listAllarmiDaVerificare = new ArrayList<ConfigurazioneAllarmeBean>();
 			
 			filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-			Search ricercaAllarmi = new Search(true);
+			ConsoleSearch ricercaAllarmi = new ConsoleSearch(true);
 			List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 			try {
 				listaAllarmi = this.confCore.allarmiListByFilter(ricercaAllarmi, RuoloPorta.DELEGATA, null,
 						filtroSoggettoFruitore, null, null,
 						null, null,
 						null, null);
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 			if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 				for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 					if(listaAllarmiPD.containsKey(allarme.getNome())) {
@@ -1065,14 +1089,16 @@ public class SoggettoUpdateUtilities {
 			}
 			
 			filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-			ricercaAllarmi = new Search(true);
+			ricercaAllarmi = new ConsoleSearch(true);
 			listaAllarmi = null;
 			try {
 				listaAllarmi = this.confCore.allarmiListByFilter(ricercaAllarmi, RuoloPorta.DELEGATA, null,
 						null, null, null,
 						filtroSoggettoErogatore, null,
 						null, null);
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 			if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 				for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 					if(listaAllarmiPD.containsKey(allarme.getNome())) {
@@ -1150,7 +1176,7 @@ public class SoggettoUpdateUtilities {
 				// Tutte le porte applicativa di questo soggetto con nome "di default"
 				// devono essere cambiate
 				// Nome della Porta: 
-				List<PortaApplicativa> tmpList = this.porteApplicativeCore.porteAppList(this.sog.getId().intValue(), new Search(true));
+				List<PortaApplicativa> tmpList = this.porteApplicativeCore.porteAppList(this.sog.getId().intValue(), new ConsoleSearch(true));
 				for (PortaApplicativa portaApplicativa : tmpList) {
 					
 					IDPortaApplicativa oldIDPortaApplicativaForUpdate = null;
@@ -1371,11 +1397,13 @@ public class SoggettoUpdateUtilities {
 					// modifica nome Servizi Applicativi che riflette il nome della PA
 					
 					// Controllo policy di Rate Limiting
-					Search ricercaPolicies = new Search(true);
+					ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 					List<AttivazionePolicy> listaPolicies = null;
 					try {
 						listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.APPLICATIVA, nomeAttuale);
-					}catch(Exception e) {}
+					}catch(Exception e) {
+						// ignore
+					}
 					if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 						for (AttivazionePolicy ap : listaPolicies) {
 							if(ap.getFiltro()!=null && nomeAttuale.equals(ap.getFiltro().getNomePorta())) {
@@ -1395,11 +1423,13 @@ public class SoggettoUpdateUtilities {
 					
 					if(this.confCore.isConfigurazioneAllarmiEnabled()) {
 						// Controllo allarmi
-						Search ricercaAllarmi = new Search(true);
+						ConsoleSearch ricercaAllarmi = new ConsoleSearch(true);
 						List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 						try {
 							listaAllarmi = this.confCore.allarmiList(ricercaAllarmi, RuoloPorta.APPLICATIVA, nomeAttuale);
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// ignore
+						}
 						if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 							for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 								if(allarme.getFiltro()!=null && nomeAttuale.equals(allarme.getFiltro().getNomePorta())) {
@@ -1488,7 +1518,9 @@ public class SoggettoUpdateUtilities {
 						PortaApplicativa pa = null;
 						try {
 							pa = this.porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
-						}catch(DriverConfigurazioneNotFound notFound) {}
+						}catch(DriverConfigurazioneNotFound notFound) {
+							// ignore
+						}
 						if(pa!=null) {
 							
 							// soggetti virtuali
@@ -1511,14 +1543,16 @@ public class SoggettoUpdateUtilities {
 				List<AttivazionePolicy> listPolicyDaVerificare = new ArrayList<AttivazionePolicy>();
 				
 				IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-				Search ricercaPolicies = new Search(true);
+				ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 				List<AttivazionePolicy> listaPolicies = null;
 				try {
 					listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.APPLICATIVA, null,
 							filtroSoggettoFruitore, null, null,
 							null, null,
 							null, null);
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 					for (AttivazionePolicy ap : listaPolicies) {
 						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
@@ -1529,14 +1563,16 @@ public class SoggettoUpdateUtilities {
 				}
 				
 				IDSoggetto filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-				ricercaPolicies = new Search(true);
+				ricercaPolicies = new ConsoleSearch(true);
 				listaPolicies = null;
 				try {
 					listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.APPLICATIVA, null,
 							null, null, null,
 							filtroSoggettoErogatore, null,
 							null, null);
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 					for (AttivazionePolicy ap : listaPolicies) {
 						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
@@ -1569,14 +1605,16 @@ public class SoggettoUpdateUtilities {
 					List<ConfigurazioneAllarmeBean> listAllarmiDaVerificare = new ArrayList<ConfigurazioneAllarmeBean>();
 					
 					filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-					Search ricercaAllarmi = new Search(true);
+					ConsoleSearch ricercaAllarmi = new ConsoleSearch(true);
 					List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 					try {
 						listaAllarmi = this.confCore.allarmiListByFilter(ricercaAllarmi, RuoloPorta.APPLICATIVA, null,
 								filtroSoggettoFruitore, null, null,
 								null, null,
 								null, null);
-					}catch(Exception e) {}
+					}catch(Exception e) {
+						// ignore
+					}
 					if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 						for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 							if(listaAllarmiPA.containsKey(allarme.getNome())) {
@@ -1587,14 +1625,16 @@ public class SoggettoUpdateUtilities {
 					}
 					
 					filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-					ricercaAllarmi = new Search(true);
+					ricercaAllarmi = new ConsoleSearch(true);
 					listaAllarmi = null;
 					try {
 						listaAllarmi = this.confCore.allarmiListByFilter(ricercaAllarmi, RuoloPorta.APPLICATIVA, null,
 								null, null, null,
 								filtroSoggettoErogatore, null,
 								null, null);
-					}catch(Exception e) {}
+					}catch(Exception e) {
+						// ignore
+					}
 					if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
 						for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 							if(listaAllarmiPA.containsKey(allarme.getNome())) {
@@ -1814,14 +1854,16 @@ public class SoggettoUpdateUtilities {
 				
 				
 				IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-				Search ricercaPolicies = new Search(true);
+				ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 				List<AttivazionePolicy> listaPolicies = null;
 				try {
 					listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
 							filtroSoggettoFruitore, null, null,
 							null, null,
 							null, null);
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 					for (AttivazionePolicy ap : listaPolicies) {
 						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
@@ -1838,14 +1880,16 @@ public class SoggettoUpdateUtilities {
 				}
 				
 				IDSoggetto filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-				ricercaPolicies = new Search(true);
+				ricercaPolicies = new ConsoleSearch(true);
 				listaPolicies = null;
 				try {
 					listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
 							null, null, null,
 							filtroSoggettoErogatore, null,
 							null, null);
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 					for (AttivazionePolicy ap : listaPolicies) {
 						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {

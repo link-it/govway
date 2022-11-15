@@ -58,6 +58,9 @@ public class PorteDelegateUtilities {
 				break;
 			}
 		}
+		if(fruitore==null) {
+			throw new Exception("Fruitore con id '"+portaDelegata.getTipoSoggettoProprietario()+"/"+portaDelegata.getNomeSoggettoProprietario()+"' non trovata");
+		}
 		for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
 			ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
 			if(config!=null) {

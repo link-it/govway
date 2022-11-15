@@ -64,7 +64,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
@@ -344,7 +344,7 @@ public final class SoggettiChange extends Action {
 //				numPA = porteApplicativeCore.porteAppList(idSogg, new Search(true)).size();// soggettoConfig.sizePortaApplicativaList();
 //				numPD = porteDelegateCore.porteDelegateList(idSogg, new Search(true)).size();// soggettoConfig.sizePortaDelegataList();
 //				numSA = saCore.servizioApplicativoList(soggetto, new Search(true)).size();
-				Search searchForCount = new Search(true,1);
+				ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 				porteApplicativeCore.porteAppList(idSogg, searchForCount);
 				numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
 				porteDelegateCore.porteDelegateList(idSogg, searchForCount);
@@ -378,9 +378,9 @@ public final class SoggettiChange extends Action {
 						lista.add(tmp);
 						// aggiungo gli altri elementi
 						if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-							lista.addAll(pddCore.pddList(null, new Search(true)));
+							lista.addAll(pddCore.pddList(null, new ConsoleSearch(true)));
 						}else{
-							lista.addAll(pddCore.pddList(userLogin, new Search(true)));
+							lista.addAll(pddCore.pddList(userLogin, new ConsoleSearch(true)));
 						}
 						pddList = new String[lista.size()];
 						int i = 0;
@@ -662,7 +662,7 @@ public final class SoggettiChange extends Action {
 					
 					boolean multiTenant = soggettiCore.isMultitenant();
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+					ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 					
 					int idLista = Liste.SOGGETTI;
 					
@@ -1407,7 +1407,7 @@ public final class SoggettiChange extends Action {
 			soggettiHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 			
 			// preparo lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 						
 			if (!oldnomeprov.equals(this.nomeprov) || !oldtipoprov.equals(this.tipoprov)) {
 				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SOGGETTI);

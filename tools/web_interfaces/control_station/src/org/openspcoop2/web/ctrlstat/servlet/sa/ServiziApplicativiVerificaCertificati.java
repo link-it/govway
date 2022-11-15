@@ -80,7 +80,7 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.web.ctrlstat.core.CertificateChecker;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -675,7 +675,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					String userLogin = ServletUtils.getUserLoginFromSession(session);
 					
 					// preparo lista
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+					ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 					
 					int idLista = -1;
 					if(!useIdSogg){

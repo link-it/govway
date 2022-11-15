@@ -124,7 +124,7 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -288,7 +288,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				// Controllo che il soggvirt appartenga alla lista di soggetti
 				// disponibili
 				boolean trovatoSogg = false;
-				List<Soggetto> lista = this.soggettiCore.soggettiRegistroList("", new Search(true));
+				List<Soggetto> lista = this.soggettiCore.soggettiRegistroList("", new ConsoleSearch(true));
 				for (int i = 0; i < lista.size(); i++) {
 					Soggetto singleSogg = lista.get(i);
 					if (soggInt != singleSogg.getId()) {
@@ -3704,9 +3704,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setPostBack(true);
 		dati.addElement(de);
 
-		if (mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED) ||
-				mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED) ||
-				mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED) 
+		if (PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED.equals(mode) ||
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED.equals(mode) ||
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED.equals(mode) 
 				) {
 			de = new DataElement();
 			if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
@@ -3828,9 +3828,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setPostBack(true);
 		dati.addElement(de);
 
-		if (mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED) ||
-				mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED) ||
-				mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+		if (PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED.equals(mode) ||
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED.equals(mode) ||
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED.equals(mode)) {
 			de = new DataElement();
 			if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
@@ -4414,6 +4414,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	}
 	
 	public List<Parameter> getTitoloPA(Integer parentPA, String idsogg, String idAsps)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		if(idsogg==null) {
+			throw new Exception("Param idsogg is null");
+		}
 		String soggettoTitle = null;
 		if(this.core.isRegistroServiziLocale()){
 			Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
@@ -4747,6 +4750,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			ServletUtils.disabledPageDataSearch(this.pd);
 
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			if(myPA==null) {
+				throw new Exception("PortaApplicativa con id '"+idPorta+"' non trovata");
+			}
 			String idporta = myPA.getNome();
 			
 			// Prendo il nome e il tipo del servizio
@@ -5112,6 +5118,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					break;
 				}
 			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 			
 			String nomeTrasformazione = oldRegola.getNome();
 			
@@ -5347,6 +5356,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					break;
 				}
 			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 			
 			for (int j = 0; j < oldRegola.sizeRispostaList(); j++) {
 				TrasformazioneRegolaRisposta risposta = oldRegola.getRisposta(j);
@@ -5354,6 +5366,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					oldRisposta = risposta;
 					break;
 				}
+			}
+			if(oldRisposta==null) {
+				throw new Exception("TrasformazioneRegolaRisposta con id '"+idTrasformazioneRisposta+"' non trovata");
 			}
 			
 			String nomeRisposta = oldRisposta.getNome();
@@ -5503,6 +5518,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					break;
 				}
 			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 			
 			String nomeTrasformazione = oldRegola.getNome();
 			
@@ -5643,6 +5661,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					oldRegola = reg;
 					break;
 				}
+			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
 			}
 			
 			String nomeTrasformazione = oldRegola.getNome();
@@ -5807,6 +5828,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					oldRegola = reg;
 					break;
 				}
+			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
 			}
 	
 			String nomeTrasformazione = oldRegola.getNome();
@@ -5974,6 +5998,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					break;
 				}
 			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 
 			String nomeTrasformazione = oldRegola.getNome();
 
@@ -6118,6 +6145,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						regola = reg;
 						break;
 					}
+				}
+				if(regola==null) {
+					throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
 				}
 				
 //				String nometrasformazione = regola.getNome();
@@ -7061,7 +7091,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 				if(tipoSelettoreS!=null && org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyTipoSelettore.CONTENT_BASED.equals(tipoSelettoreS)) {
 					DataElementInfo dInfoPattern = new DataElementInfo(ModalitaIdentificazione.CONTENT_BASED.getLabel());
-					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+					if(org.openspcoop2.message.constants.ServiceBinding.REST.equals(serviceBinding)) {
 						dInfoPattern.setHeaderBody(PorteApplicativeCostanti.LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_REST);
 						dInfoPattern.setListBody(PorteApplicativeCostanti.LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_VALORI_REST);
 					}
@@ -7130,16 +7160,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS );
-				if(passiveHealthCheck) {
-					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS);
-					de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS_NOTE);
-					de.setType(DataElementType.NUMBER);
-					de.setMinValue(1);
-					de.reloadMinValue(false);
-				}
-				else {
-					de.setType(DataElementType.HIDDEN);
-				}
+//				if(passiveHealthCheck) {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS);
+				de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS_NOTE);
+				de.setType(DataElementType.NUMBER);
+				de.setMinValue(1);
+				de.reloadMinValue(false);
+//				}
+//				else {
+//					de.setType(DataElementType.HIDDEN);
+//				}
 				if(passiveHealthCheck_excludeForSeconds==null || "".equals(passiveHealthCheck_excludeForSeconds)){
 					de.setValue(HealthCheckCostanti.PASSIVE_HEALTH_CHECK_SECONDS_DEFAULT_VALUE+"");
 				}
@@ -7288,7 +7318,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				if(tipoSelettoreS!=null && org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.CONTENT_BASED.equals(tipoSelettoreS)) {
 					DataElementInfo dInfoPattern = new DataElementInfo(ModalitaIdentificazione.CONTENT_BASED.getLabel());
-					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+					if(org.openspcoop2.message.constants.ServiceBinding.REST.equals(serviceBinding)) {
 						dInfoPattern.setHeaderBody(PorteApplicativeCostanti.LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_REST);
 						dInfoPattern.setListBody(PorteApplicativeCostanti.LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_VALORI_REST);
 					}
@@ -7466,7 +7496,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						
 						if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							if(condizioneNonIdentificataConnettore==null || 
-									"".equals(condizioneNonIdentificataConnettore) || 
+									//"".equals(condizioneNonIdentificataConnettore) || 
 									CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA.equals(condizioneNonIdentificataConnettore)) {
 								de = new DataElement();
 								de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE+"__NOTE");
@@ -7575,7 +7605,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						
 						if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							if(connettoreNonTrovatoConnettore==null || 
-									"".equals(connettoreNonTrovatoConnettore) || 
+									//"".equals(connettoreNonTrovatoConnettore) || 
 									CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA.equals(connettoreNonTrovatoConnettore)) {
 								de = new DataElement();
 								de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE+"__NOTE");
@@ -7962,7 +7992,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		return true;
 	}
-	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, 
+	public void preparePorteAppConnettoriMultipliList(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa) throws Exception {
 		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
@@ -7973,7 +8003,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				false,
 				null);
 	}
-	public void preparePorteAppConnettoriMultipliList_fromAddConnettore(String nomePorta, Search ricerca, 
+	public void preparePorteAppConnettoriMultipliList_fromAddConnettore(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa,
 			String nomeConnettoreAdd) throws Exception {
@@ -7985,7 +8015,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				false, 
 				nomeConnettoreAdd);
 	}
-	public void preparePorteAppConnettoriMultipliList_fromChangeConnettore(String nomePorta, Search ricerca, 
+	public void preparePorteAppConnettoriMultipliList_fromChangeConnettore(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa,
 			String nomeConnettoreChanged) throws Exception {
@@ -7997,7 +8027,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				false,
 				nomeConnettoreChanged);
 	}
-	public void preparePorteAppConnettoriMultipliList_fromDeleteConnettore(String nomePorta, Search ricerca, 
+	public void preparePorteAppConnettoriMultipliList_fromDeleteConnettore(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa) throws Exception {
 		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
@@ -8009,7 +8039,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				null);
 	}
 	
-	private void _preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, 
+	private void _preparePorteAppConnettoriMultipliList(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa,
 			boolean fromAdd, 
@@ -8361,7 +8391,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				idServizioApplicativo.setNome(paSA.getNome());
 				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
 				org.openspcoop2.core.config.InvocazioneServizio is = sa.getInvocazioneServizio();
-				org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
+				org.openspcoop2.core.config.Connettore connettore = is!=null ? is.getConnettore() : null;
 				
 				if(showCambiaScheduling) {
 					if(is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
@@ -9367,7 +9397,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 			// Controllo che i campi DataElementType.SELECT abbiano uno dei valori ammessi
-			if (!getmsg.equals(CostantiConfigurazione.ABILITATO.toString()) && !getmsg.equals(CostantiConfigurazione.DISABILITATO.toString())) {
+			if (!CostantiConfigurazione.ABILITATO.toString().equals(getmsg) && !CostantiConfigurazione.DISABILITATO.toString().equals(getmsg)) {
 				this.pd.setMessage("Servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"' dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
 				return false;
 			}
@@ -9967,6 +9997,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						paSA = paSATmp;		
 						break;
 					}
+				}
+				if(paSA==null) {
+					throw new Exception("PortaApplicativaServizioApplicativo con nome '"+nomeSA+"' non trovato");
 				}
 
 				PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();

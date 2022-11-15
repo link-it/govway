@@ -54,7 +54,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -322,7 +322,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				de.setType(DataElementType.CHECKBOX);
 				
 				// controllo stato dell'API
-				Search searchForCount = new Search(true);
+				ConsoleSearch searchForCount = new ConsoleSearch(true);
 				switch (serviceBinding) {
 				case REST:
 					// caso REST: l'API e' abilitata se ha almeno una risorsa
@@ -546,7 +546,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		// reset delle cache richiesto dal link nella lista, torno alla lista
 		if(resetElementoCache) {
 			// preparo lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(this.request, this.session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(this.request, this.session, ConsoleSearch.class);
 			
 			int idLista = Liste.ACCORDI;
 			
@@ -634,7 +634,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 		de.setImage(image);
 		
-		Search searchForCount = new Search(true);
+		ConsoleSearch searchForCount = new ConsoleSearch(true);
 		switch (serviceBinding) {
 		case REST:
 			// caso REST: l'API e' abilitata se ha almeno una risorsa

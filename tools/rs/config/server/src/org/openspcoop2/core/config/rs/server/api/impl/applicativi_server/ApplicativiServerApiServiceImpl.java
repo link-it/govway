@@ -55,7 +55,7 @@ import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiGeneralInfo;
@@ -286,7 +286,7 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 			
 			int idLista = Liste.SERVIZIO_APPLICATIVO;
 
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
 			
 			if(profiloQualsiasi!=null && profiloQualsiasi) {
 				ricerca.clearFilter(idLista, Filtri.FILTRO_PROTOCOLLO);

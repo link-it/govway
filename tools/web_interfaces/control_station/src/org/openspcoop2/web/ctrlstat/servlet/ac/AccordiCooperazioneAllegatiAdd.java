@@ -42,7 +42,7 @@ import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviHelper;
@@ -221,7 +221,7 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 			acCore.performUpdateOperation(userLogin, acHelper.smista(), ac);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			List<Documento> lista = acCore.accordiCoopAllegatiList(idAccordoInt, ricerca);
 

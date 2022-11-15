@@ -86,7 +86,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -209,18 +209,18 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 		int alternativeSize = 80;
 		
-		@SuppressWarnings("unused")
-		Parameter pIdSogg = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
-		@SuppressWarnings("unused")
-		Parameter pIdPorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, idPorta);
+//		@SuppressWarnings("unused")
+//		Parameter pIdSogg = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+//		@SuppressWarnings("unused")
+//		Parameter pIdPorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, idPorta);
 		String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 		if(idAsps == null) idAsps = "";
-		@SuppressWarnings("unused")
-		Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+//		@SuppressWarnings("unused")
+//		Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 		String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 		if(idFruizione == null) idFruizione = "";
-		@SuppressWarnings("unused")
-		Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+//		@SuppressWarnings("unused")
+//		Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 		
 		DataElement de = null;
 		
@@ -1395,9 +1395,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		de.setPostBack(true);
 		dati.addElement(de);
 
-		if (mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED) ||
-				mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED) ||
-				mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+		if (PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED.equals(mode) ||
+				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED.equals(mode) ||
+				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED.equals(mode)) {
 			de = new DataElement();
 			if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
@@ -1537,9 +1537,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		de.setPostBack(true);
 		dati.addElement(de);
 
-		if (mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED) ||
-				mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED) ||
-				mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+		if (PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED.equals(mode) ||
+				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED.equals(mode) ||
+				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED.equals(mode)) {
 			de = new DataElement();
 			if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
@@ -3680,6 +3680,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	}
 	
 	public List<Parameter> getTitoloPD(Integer parentPD, String idSoggettoFruitore, String idAsps, String idFruizione)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		
+		if(parentPD==null) {
+			throw new Exception("Parameter parentPD is null");
+		}
+		if(idSoggettoFruitore==null) {
+			throw new Exception("Parameter idSoggettoFruitore is null");
+		}
+		
 		List<Parameter> lstParam = new ArrayList<>();
 		
 		String tipoSoggettoFruitore = null;
@@ -3816,7 +3824,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		return "";
 	}
 
-	public void preparePorteDelPropList(String nomePorta, Search ricerca, List<Proprieta> lista) throws Exception {
+	public void preparePorteDelPropList(String nomePorta, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
@@ -4551,8 +4559,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
 			String idporta = myPD.getNome();
-			@SuppressWarnings("unused")
-			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
+//			@SuppressWarnings("unused")
+//			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
 			
 			Trasformazioni trasformazioni = myPD.getTrasformazioni();
 			TrasformazioneRegola oldRegola = null;
@@ -4561,6 +4569,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					oldRegola = reg;
 					break;
 				}
+			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
 			}
 			
 			String nomeTrasformazione = oldRegola.getNome();
@@ -4780,8 +4791,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
 			String idporta = myPD.getNome();
-			@SuppressWarnings("unused")
-			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
+//			@SuppressWarnings("unused")
+//			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
 			
 			Trasformazioni trasformazioni = myPD.getTrasformazioni();
 			TrasformazioneRegola oldRegola = null;
@@ -4792,6 +4803,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					break;
 				}
 			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 			
 			for (int j = 0; j < oldRegola.sizeRispostaList(); j++) {
 				TrasformazioneRegolaRisposta risposta = oldRegola.getRisposta(j);
@@ -4799,6 +4813,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					oldRisposta = risposta;
 					break;
 				}
+			}
+			if(oldRisposta==null) {
+				throw new Exception("TrasformazioneRegolaRisposta con id '"+idTrasformazioneRisposta+"' non trovata");
 			}
 			
 			String nomeRisposta = oldRisposta.getNome();
@@ -4936,8 +4953,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
 			String idporta = myPD.getNome();
-			@SuppressWarnings("unused")
-			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
+//			@SuppressWarnings("unused")
+//			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
 			
 			Trasformazioni trasformazioni = myPD.getTrasformazioni();
 			TrasformazioneRegola oldRegola = null;
@@ -4946,6 +4963,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					oldRegola = reg;
 					break;
 				}
+			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
 			}
 			
 			String nomeTrasformazione = oldRegola.getNome();
@@ -5079,8 +5099,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
 			String idporta = myPD.getNome();
-			@SuppressWarnings("unused")
-			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
+//			@SuppressWarnings("unused")
+//			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
 			
 			Trasformazioni trasformazioni = myPD.getTrasformazioni();
 			TrasformazioneRegola oldRegola = null;
@@ -5089,6 +5109,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					oldRegola = reg;
 					break;
 				}
+			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
 			}
 			
 			String nomeTrasformazione = oldRegola.getNome();
@@ -5248,6 +5271,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					break;
 				}
 			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 			
 			String nomeTrasformazione = oldRegola.getNome();
 			
@@ -5404,6 +5430,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						break;
 					}
 				}
+				if(regola==null) {
+					throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+				}
 
 				String nometrasformazione = regola.getNome();
 				
@@ -5430,7 +5459,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		}
 	}
 	
-	public void preparePorteDelegateAutorizzazioneCustomPropList(String nomePorta, Search ricerca, List<Proprieta> lista) throws Exception {
+	public void preparePorteDelegateAutorizzazioneCustomPropList(String nomePorta, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
@@ -5623,7 +5652,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		}
 	}
 	
-	public void preparePorteDelegateAutorizzazioneContenutoCustomPropList(String nomePorta, Search ricerca, List<Proprieta> lista) throws Exception {
+	public void preparePorteDelegateAutorizzazioneContenutoCustomPropList(String nomePorta, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
@@ -5816,7 +5845,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		}
 	}
 	
-	public void preparePorteDelegateAutenticazioneCustomPropList(String nomePorta, Search ricerca, List<Proprieta> lista) throws Exception {
+	public void preparePorteDelegateAutenticazioneCustomPropList(String nomePorta, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);

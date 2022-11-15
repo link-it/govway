@@ -40,7 +40,7 @@ import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
 import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -193,7 +193,7 @@ public final class ConfigurazionePluginsArchiviJarAdd extends Action {
 			confCore.updatePluginClassLoader();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			int idLista = Liste.CONFIGURAZIONE_PLUGINS_ARCHIVI_JAR;
 

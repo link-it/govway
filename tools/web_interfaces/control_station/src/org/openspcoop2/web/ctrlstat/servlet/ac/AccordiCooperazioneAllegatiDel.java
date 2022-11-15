@@ -36,7 +36,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
@@ -132,7 +132,7 @@ public final class AccordiCooperazioneAllegatiDel extends Action {
 			acCore.performUpdateOperation(userLogin, acHelper.smista(), ac);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			List<Documento> lista = acCore.accordiCoopAllegatiList(ac.getId().intValue(), ricerca);
 

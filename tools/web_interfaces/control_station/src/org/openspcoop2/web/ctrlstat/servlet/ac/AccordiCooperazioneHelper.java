@@ -43,7 +43,7 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
@@ -403,7 +403,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					if (contaListe) {
 						// BugFix OP-674
 						//List<org.openspcoop2.core.registry.Documento> tmpLista = this.acCore.accordiCoopAllegatiList(accordoCooperazione.getId().intValue(), new Search(true));
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.acCore.accordiCoopAllegatiList(accordoCooperazione.getId().intValue(), searchForCount);
 						//int num = tmpLista.size();
 						int num = searchForCount.getNumEntries(Liste.ACCORDI_COOP_ALLEGATI);
@@ -738,7 +738,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			if(contaListe){
 				// BugFix OP-674
 				//int num = this.acCore.accordiCoopPartecipantiList(Long.parseLong(id), new Search(true)).size();
-				Search searchForCount = new Search(true,1);
+				ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 				this.acCore.accordiCoopPartecipantiList(Long.parseLong(id), searchForCount);
 				int num = searchForCount.getNumEntries(Liste.ACCORDI_COOP_PARTECIPANTI);
 				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_SOGGETTI_PARTECIPANTI +"("+num+")");
@@ -756,7 +756,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			if(contaListe){
 				// BugFix OP-674
 				//int num = this.acCore.accordiCoopAllegatiList(Integer.parseInt(id), new Search(true)).size();
-				Search searchForCount = new Search(true,1);
+				ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 				this.acCore.accordiCoopAllegatiList(Integer.parseInt(id), searchForCount);
 				int num = searchForCount.getNumEntries(Liste.ACCORDI_COOP_ALLEGATI);
 				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI +"("+num+")");

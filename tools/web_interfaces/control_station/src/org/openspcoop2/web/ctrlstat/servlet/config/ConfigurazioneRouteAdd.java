@@ -42,7 +42,7 @@ import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -114,7 +114,7 @@ public final class ConfigurazioneRouteAdd extends Action {
 
 			// Prendo la lista di registri e la metto in un array
 			// aggiungendo il campo "all"
-			List<AccessoRegistroRegistro> list = confCore.registriList(new Search(true));
+			List<AccessoRegistroRegistro> list = confCore.registriList(new ConsoleSearch(true));
 			String[] registriList = new String[list.size() + 1];
 			String[] registriListLabel = new String[list.size() + 1];
 			registriList[0] = "0";
@@ -216,7 +216,7 @@ public final class ConfigurazioneRouteAdd extends Action {
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), rt);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			List<RoutingTableDestinazione> lista = confCore.routingList(ricerca);
 

@@ -583,7 +583,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			//this.pd.setIndex(offset);
 			//this.pd.setPageSize(limit);
-			this.pd.setNumEntries(lista.size());
+			this.pd.setNumEntries(lista!=null ? lista.size() : 0);
 
 			// setto la barra del titolo
 			setTitleProprietaConnettoriCustom(this.pd, TipoOperazione.LIST, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, 
@@ -1335,7 +1335,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 		boolean tokenWithHttsSupportato = false;
 		boolean tokenModIPDND = false;
-		if(!connettore && dominioEsterno & protocollo!=null) {
+		if(!connettore && dominioEsterno && protocollo!=null) {
 			ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 			tokenWithHttsSupportato = protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportatoAutenticazioneApplicativiHttpsConToken();
 			if(tokenPolicySA!=null && StringUtils.isNotEmpty(tokenPolicySA)) {
@@ -2841,7 +2841,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					}
 				}
 				de.setValue(tmpUrl);
-				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)){
 					if (!this.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)) {
 						de.setType(DataElementType.TEXT_AREA);
 						de.setRequired(true);
@@ -3080,7 +3080,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
 								InvocazioneServizio is = sa.getInvocazioneServizio();
 								Connettore connettore = is.getConnettore();
-								if(connettore.getCustom()==null || !connettore.getCustom()){
+								if(connettore!=null && (connettore.getCustom()==null || !connettore.getCustom()) ){
 									// è cambiato il tipo
 									de.setType(DataElementType.HIDDEN);
 								}
@@ -3096,7 +3096,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							} else {
 								RispostaAsincrona ra = sa.getRispostaAsincrona();
 								Connettore connettore = ra.getConnettore();
-								if(connettore.getCustom()==null || !connettore.getCustom()){
+								if(connettore!=null && (connettore.getCustom()==null || !connettore.getCustom()) ){
 									// è cambiato il tipo
 									de.setType(DataElementType.HIDDEN);
 								}
@@ -5986,13 +5986,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 	}
 	
 	public String getLabelCredenzialeCertificato(String subject) {
-		int length = 60;
-		
-		if(subject.length() > length) {
-			subject = subject.substring(0, length - 3) + "...";
+		if(subject!=null) {
+			int length = 60;
+			
+			if(subject.length() > length) {
+				subject = subject.substring(0, length - 3) + "...";
+			}
 		}
-		
-		
+				
 		return subject;
 	}
 }

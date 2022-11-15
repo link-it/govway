@@ -50,7 +50,7 @@ import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.plugins.utils.handlers.ConfigurazioneHandlerBean;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -122,7 +122,7 @@ public class ConfigurazioneHandlersRispostaAdd extends Action {
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
 			List<String> tipiPluginGiaUtilizzati = null;
-			Search ricercaPluginUilizzati = new Search(true);
+			ConsoleSearch ricercaPluginUilizzati = new ConsoleSearch(true);
 			List<ConfigurazioneHandlerBean> listaEsistenti = confCore.handlersRispostaList(ricercaPluginUilizzati, fase, ruoloPorta, idPorta); 
 			if(listaEsistenti != null && listaEsistenti.size() > 0) {
 				tipiPluginGiaUtilizzati = new ArrayList<String>();
@@ -364,7 +364,7 @@ public class ConfigurazioneHandlersRispostaAdd extends Action {
 			// Preparo la lista
 			int idLista = Liste.CONFIGURAZIONE_HANDLERS_RISPOSTA;
 			
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 

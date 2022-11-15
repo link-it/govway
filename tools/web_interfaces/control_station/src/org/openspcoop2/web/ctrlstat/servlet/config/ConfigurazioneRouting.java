@@ -40,7 +40,7 @@ import org.openspcoop2.core.config.RouteRegistro;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDefault;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -100,7 +100,7 @@ public final class ConfigurazioneRouting extends Action {
 
 			// Prendo la lista di registri e la metto in un array
 			// aggiungendo il campo "all"
-			List<AccessoRegistroRegistro> list = confCore.registriList(new Search(true));
+			List<AccessoRegistroRegistro> list = confCore.registriList(new ConsoleSearch(true));
 			int totReg = list.size();
 			totReg++;
 			String[] registriList = new String[totReg];

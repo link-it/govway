@@ -123,11 +123,11 @@ public class PorteDelegateGestioneCanale extends Action {
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			
-			String postBackElementName = porteDelegateHelper.getPostBackElementName();
-			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO)){
-				}
-			}
+//			String postBackElementName = porteDelegateHelper.getPostBackElementName();
+//			if(postBackElementName != null ){
+//				if(postBackElementName.equalsIgnoreCase(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO)){
+//				}
+//			}
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idSoggFruitore, idAsps, idFruizione);

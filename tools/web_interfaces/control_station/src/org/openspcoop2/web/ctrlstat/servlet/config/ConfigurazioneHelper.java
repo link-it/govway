@@ -196,7 +196,7 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DAOConsoleFactory;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
@@ -8365,7 +8365,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return true;
 	}
 	
-	public void prepareConfigurazionePolicyList(Search ricerca, List<ConfigurazionePolicy> lista, int idLista) throws Exception{
+	public void prepareConfigurazionePolicyList(ConsoleSearch ricerca, List<ConfigurazionePolicy> lista, int idLista) throws Exception{
 		try {
 			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY);
 
@@ -8556,7 +8556,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return lstParamPorta;
 	}
 	
-	public List<TipoRisorsaPolicyAttiva> gestisciCriteriFiltroRisorsaPolicy(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws Exception {
+	public List<TipoRisorsaPolicyAttiva> gestisciCriteriFiltroRisorsaPolicy(ConsoleSearch ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws Exception {
 		
 		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
 		
@@ -8603,7 +8603,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return listaTipoRisorsa;
 	}
 	
-	public void prepareAttivazionePolicyList(Search ricerca, List<AttivazionePolicy> lista, List<TipoRisorsaPolicyAttiva> listaTipoRisorsa, 
+	public void prepareAttivazionePolicyList(ConsoleSearch ricerca, List<AttivazionePolicy> lista, List<TipoRisorsaPolicyAttiva> listaTipoRisorsa, 
 			int idLista,RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception{
 		try {
 			List<Parameter> lstParamSession = new ArrayList<Parameter>();
@@ -11585,7 +11585,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(policy.isApplicabilitaStatoAllarme()){
 			try{
 				// Permetto di creare policy legate solamente a allarmi globali
-				List<Allarme> listAllarmiGlobali = this.confCore.allarmiSenzaPluginList(new Search(true), null, null);
+				List<Allarme> listAllarmiGlobali = this.confCore.allarmiSenzaPluginList(new ConsoleSearch(true), null, null);
 				if(listAllarmiGlobali!=null && !listAllarmiGlobali.isEmpty()) {
 					allarmi_id = new ArrayList<String>();
 					allarmi_alias = new ArrayList<String>();
@@ -11999,7 +11999,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(policy.isApplicabilitaStatoAllarme()){
 			List<String> allarmi = null;
 			try{
-				List<Allarme> listAllarmiGlobali = this.confCore.allarmiSenzaPluginList(new Search(true), null, null);
+				List<Allarme> listAllarmiGlobali = this.confCore.allarmiSenzaPluginList(new ConsoleSearch(true), null, null);
 				if(listAllarmiGlobali!=null && !listAllarmiGlobali.isEmpty()) {
 					allarmi = new ArrayList<String>();
 					for (Allarme allarme : listAllarmiGlobali) {
@@ -16612,7 +16612,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MODIFICATA_CON_SUCCESSO_SENZA_RIAVVIO_RICHIESTO;
 	}
 
-	public void prepareGestorePolicyTokenList(Search ricerca, List<GenericProperties> lista, int idLista) throws Exception{
+	public void prepareGestorePolicyTokenList(ConsoleSearch ricerca, List<GenericProperties> lista, int idLista) throws Exception{
 		try {
 			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
 
@@ -17553,7 +17553,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		return configurazione;
 	}
-	public void prepareCanaleConfigurazioneList(Search ricerca, List<CanaleConfigurazione> lista) throws Exception {
+	public void prepareCanaleConfigurazioneList(ConsoleSearch ricerca, List<CanaleConfigurazione> lista) throws Exception {
 		try {
 			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CANALI);
 
@@ -17723,7 +17723,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			throw new Exception(e);
 		}
 	}
-	public void prepareCanaleNodoConfigurazioneList(Search ricerca, List<CanaleConfigurazioneNodo> lista) throws Exception { 
+	public void prepareCanaleNodoConfigurazioneList(ConsoleSearch ricerca, List<CanaleConfigurazioneNodo> lista) throws Exception { 
 		try {
 			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CANALI_NODI);
 
@@ -19101,7 +19101,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			throw new Exception(e);
 		}
 	}
-	public void prepareAllarmiList(Search ricerca, List<ConfigurazioneAllarmeBean> lista,
+	public void prepareAllarmiList(ConsoleSearch ricerca, List<ConfigurazioneAllarmeBean> lista,
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception{
 		try {
 			List<Parameter> lstParamSession = new ArrayList<Parameter>();
@@ -19695,7 +19695,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// Controllo alias
 			boolean existsAlias = false;
-			Search search = new Search(true);
+			ConsoleSearch search = new ConsoleSearch(true);
 			List<ConfigurazioneAllarmeBean> allarmiConAlias = this.confCore.allarmiList(search, porta ? allarme.getFiltro().getRuoloPorta(): null, 
 					porta ? allarme.getFiltro().getNomePorta() : null);
 			if(allarmiConAlias!=null && !allarmiConAlias.isEmpty()) {
@@ -23453,7 +23453,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	
-	public void prepareAllarmiHistoryList(Search ricerca, List<ConfigurazioneAllarmeHistoryBean> lista, ConfigurazioneAllarmeBean allarme,
+	public void prepareAllarmiHistoryList(ConsoleSearch ricerca, List<ConfigurazioneAllarmeHistoryBean> lista, ConfigurazioneAllarmeBean allarme,
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception{
 		try {
 			
@@ -23614,7 +23614,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	
-	public void prepareHandlersRichiestaList(Search ricerca, List<ConfigurazioneHandlerBean> lista, TipoPdD ruoloPorta, String idPortaS, ServiceBinding serviceBinding, String tipologia) throws Exception {
+	public void prepareHandlersRichiestaList(ConsoleSearch ricerca, List<ConfigurazioneHandlerBean> lista, TipoPdD ruoloPorta, String idPortaS, ServiceBinding serviceBinding, String tipologia) throws Exception {
 		String objectName = ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_HANDLERS_RICHIESTA;
 		String servletListURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RICHIESTA_LIST;
 		String servletChangeURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RICHIESTA_CHANGE;
@@ -23627,7 +23627,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		prepareHandlersList(ricerca, lista, ruoloPorta, idPortaS, serviceBinding, tipologia, objectName, servletListURL, servletChangeURL, labelHandler, labelHandlerDi, idLista, searchLabel);
 	}
 	
-	public void prepareHandlersRispostaList(Search ricerca, List<ConfigurazioneHandlerBean> lista, TipoPdD ruoloPorta, String idPortaS, ServiceBinding serviceBinding, String tipologia) throws Exception {
+	public void prepareHandlersRispostaList(ConsoleSearch ricerca, List<ConfigurazioneHandlerBean> lista, TipoPdD ruoloPorta, String idPortaS, ServiceBinding serviceBinding, String tipologia) throws Exception {
 		String objectName = ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_HANDLERS_RISPOSTA;
 		String servletListURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RISPOSTA_LIST;
 		String servletChangeURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RISPOSTA_CHANGE;
@@ -23640,7 +23640,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		prepareHandlersList(ricerca, lista, ruoloPorta, idPortaS, serviceBinding, tipologia, objectName, servletListURL, servletChangeURL, labelHandler, labelHandlerDi, idLista, searchLabel);
 	}
 	
-	public void prepareHandlersServizioList(Search ricerca, List<ConfigurazioneHandlerBean> lista, TipoPdD ruoloPorta, String idPortaS, ServiceBinding serviceBinding, String tipologia) throws Exception {
+	public void prepareHandlersServizioList(ConsoleSearch ricerca, List<ConfigurazioneHandlerBean> lista, TipoPdD ruoloPorta, String idPortaS, ServiceBinding serviceBinding, String tipologia) throws Exception {
 		String objectName = ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO;
 		String servletListURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO_LIST;
 		String servletChangeURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO_CHANGE;
@@ -23654,7 +23654,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	
-	private void prepareHandlersList(Search ricerca, List<ConfigurazioneHandlerBean> lista, TipoPdD ruoloPorta,
+	private void prepareHandlersList(ConsoleSearch ricerca, List<ConfigurazioneHandlerBean> lista, TipoPdD ruoloPorta,
 			String idPortaS, ServiceBinding serviceBinding, String tipologia, String objectName, String servletListURL,
 			String servletChangeURL, String labelHandler, String labelHandlerDi, int idLista, String searchLabel)
 			throws Exception {

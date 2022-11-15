@@ -42,7 +42,7 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -123,7 +123,7 @@ public final class RuoliChange extends Action {
 					
 					// preparo lista
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+					ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 					int idLista = Liste.RUOLI;
 					
@@ -275,7 +275,7 @@ public final class RuoliChange extends Action {
 			}
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			List<Ruolo> lista = null;
 			if(ruoliCore.isVisioneOggettiGlobale(userLogin)){

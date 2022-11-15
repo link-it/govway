@@ -46,7 +46,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -201,14 +201,14 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 						}
 						
 						// cancello per policy associate alla porta se esistono
-						List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, mypd.getNome());
+						List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new ConsoleSearch(true), RuoloPolicy.DELEGATA, mypd.getNome());
 						if(listAttivazione!=null && !listAttivazione.isEmpty()) {
 							listaOggettiDaEliminare.addAll(listAttivazione);
 						}
 						
 						if(confCore.isConfigurazioneAllarmiEnabled()) {
 							// cancello allarmi associati alla porta se esistono
-							List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.DELEGATA, mypd.getNome());
+							List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.DELEGATA, mypd.getNome());
 							if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 								listaOggettiDaEliminare.addAll(listAllarmi);
 							}
@@ -227,7 +227,7 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), asps);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			int idLista = Liste.SERVIZI_FRUITORI;
 

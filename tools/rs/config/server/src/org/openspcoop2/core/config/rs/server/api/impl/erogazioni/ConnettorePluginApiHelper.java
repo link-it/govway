@@ -38,7 +38,7 @@ import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -69,7 +69,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 
 	@Override
 	public boolean connettoreCheckData(ConnettorePlugin conn, ErogazioniEnv env, boolean erogazione) throws Exception {
-		Search ricerca = new Search(true);
+		ConsoleSearch ricerca = new ConsoleSearch(true);
 		ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_TIPO_PLUGIN_CLASSI, TipoPlugin.CONNETTORE.toString());
 
 		ConfigurazioneCore confCore = new ConfigurazioneCore(env.stationCore);

@@ -55,7 +55,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -566,7 +566,7 @@ public class AccordiServizioParteComuneUtilities {
 		return false;
 	}
 
-	public static List<AccordoServizioParteComuneSintetico> accordiList(AccordiServizioParteComuneCore core,String userLogin,Search ricerca,String tipoAccordo) throws DriverRegistroServiziException{
+	public static List<AccordoServizioParteComuneSintetico> accordiList(AccordiServizioParteComuneCore core,String userLogin,ConsoleSearch ricerca,String tipoAccordo) throws DriverRegistroServiziException{
 		List<AccordoServizioParteComuneSintetico> lista = null;
 		if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
 			if(core.isVisioneOggettiGlobale(userLogin)){
@@ -592,7 +592,7 @@ public class AccordiServizioParteComuneUtilities {
 		return lista;
 	}
 
-	public static List<AccordoServizioParteComuneSintetico> accordiListFromPermessiUtente(AccordiServizioParteComuneCore core,String userLogin,Search ricerca,boolean[] permessiUtente) throws DriverRegistroServiziException{
+	public static List<AccordoServizioParteComuneSintetico> accordiListFromPermessiUtente(AccordiServizioParteComuneCore core,String userLogin,ConsoleSearch ricerca,boolean[] permessiUtente) throws DriverRegistroServiziException{
 		List<AccordoServizioParteComuneSintetico> lista = null;
 		if(permessiUtente != null){
 			if(permessiUtente[0] && !permessiUtente[1]){
@@ -626,7 +626,7 @@ public class AccordiServizioParteComuneUtilities {
 		return lista;
 	}
 	
-	public static List<IDAccordoDB> idAccordiListFromPermessiUtente(AccordiServizioParteComuneCore core,String userLogin,Search ricerca,boolean[] permessiUtente, 
+	public static List<IDAccordoDB> idAccordiListFromPermessiUtente(AccordiServizioParteComuneCore core,String userLogin,ConsoleSearch ricerca,boolean[] permessiUtente, 
 			boolean soloAccordiConsistentiRest, boolean soloAccordiConsistentiSoap) throws DriverRegistroServiziException{
 		List<IDAccordoDB> lista = null;
 		if(permessiUtente != null){

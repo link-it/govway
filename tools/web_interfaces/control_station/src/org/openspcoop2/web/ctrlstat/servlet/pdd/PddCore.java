@@ -354,7 +354,7 @@ public class PddCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			// Bug: Le porte di dominio in pddList hanno il limit a 20 !!
-			//			List<PdDControlStation> list = driver.pddList(null, new org.openspcoop2.web.ctrlstat.core.Search());
+			//			List<PdDControlStation> list = driver.pddList(null, new org.openspcoop2.web.ctrlstat.core.ConsoleSearch());
 //			for (PdDControlStation pddControlStation : list) {
 //				if(pddControlStation.getTipo()!=null && PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
 //					return pddControlStation.getNome();
@@ -392,7 +392,7 @@ public class PddCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			// Bug: Le porte di dominio in pddList hanno il limit a 20 !!
-			//			List<PdDControlStation> list = driver.pddList(null, new org.openspcoop2.web.ctrlstat.core.Search());
+			//			List<PdDControlStation> list = driver.pddList(null, new org.openspcoop2.web.ctrlstat.core.ConsoleSearch());
 //			for (PdDControlStation pddControlStation : list) {
 //				if(pddControlStation.getTipo()!=null && PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
 //					return pddControlStation.getNome();

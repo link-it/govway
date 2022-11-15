@@ -36,7 +36,7 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -102,6 +102,9 @@ public class PorteDelegateTrasformazioniRispostaDel extends Action {
 					break;
 				}
 			}
+			if(regola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 				idRisp = Long.parseLong(idsToRemove.get(i));
@@ -126,7 +129,7 @@ public class PorteDelegateTrasformazioniRispostaDel extends Action {
 			porteDelegateHelper.makeMenu();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE; 
 			

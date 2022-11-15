@@ -37,7 +37,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -91,6 +91,9 @@ public final class PorteApplicativeConnettoriMultipliProprietaDel extends Action
 					break;
 				}
 			}
+			if(oldPaSA==null) {
+				throw new Exception("PortaApplicativaServizioApplicativo con nome '"+nomeSAConnettore+"' non trovato");
+			}
 			
 			long idPaSa = oldPaSA.getId();
 
@@ -124,7 +127,7 @@ public final class PorteApplicativeConnettoriMultipliProprietaDel extends Action
 			idPaSa = oldPaSA.getId();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA;
 

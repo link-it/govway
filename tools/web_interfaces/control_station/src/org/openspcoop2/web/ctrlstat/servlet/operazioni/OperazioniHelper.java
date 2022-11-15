@@ -30,7 +30,7 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.monitor.MonitorCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -66,7 +66,7 @@ public class OperazioniHelper extends ConsoleHelper{
 		super(core, request, pd,  session);
 	}
 
-	public void prepareOperazioniList(Search ricerca, List<Operation> lista)throws Exception {
+	public void prepareOperazioniList(ConsoleSearch ricerca, List<Operation> lista)throws Exception {
 		try {
 
 			ArrayList<String> errors = new ArrayList<String>();
@@ -361,7 +361,7 @@ public class OperazioniHelper extends ConsoleHelper{
 
 			if(permessi.isUtenti()) {
 				utenteTmp = OperazioniCostanti.PARAMETRO_OPERAZIONI_UTENTE_ALL;
-				userList = this.utentiCore.userList(new Search(true));
+				userList = this.utentiCore.userList(new ConsoleSearch(true));
 			} else {
 				utenteTmp = user.getLogin();
 				userList = new ArrayList<User>();

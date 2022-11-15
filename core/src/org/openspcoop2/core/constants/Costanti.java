@@ -98,6 +98,7 @@ public class Costanti {
 		
 	public final static MapKey<String> EMESSI_DIAGNOSTICI_ERRORE = Map.newMapKey("EMESSI_DIAGNOSTICI_ERRORE");
 	public final static MapKey<String> REQUEST_INFO = Map.newMapKey("REQUEST_INFO");
+	public final static MapKey<String> REQUEST_INFO_IN_MEMORY = Map.newMapKey("REQUEST_INFO_IN_MEMORY");
 	public final static MapKey<String> EXTENDED_INFO_TRANSAZIONE = Map.newMapKey("EXTENDED_INFO_TRANSAZIONE");
 	public final static MapKey<String> CORS_PREFLIGHT_REQUEST_VIA_GATEWAY = Map.newMapKey("CORS_PREFLIGHT_REQUEST_VIA_GATEWAY");
 	public final static MapKey<String> CORS_PREFLIGHT_REQUEST_TRASPARENTE = Map.newMapKey("CORS_PREFLIGHT_REQUEST_TRASPARENTE");

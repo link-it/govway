@@ -57,7 +57,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
@@ -659,7 +659,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if (contaListe) {
 				// BugFix OP-674
 				//List<String> lista1 = this.soggettiCore.soggettiRuoliList(Long.parseLong(id),new Search(true));
-				Search searchForCount = new Search(true,1);
+				ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 				this.soggettiCore.soggettiRuoliList(Long.parseLong(id),searchForCount);
 				//int numRuoli = lista1.size();
 				int numRuoli = searchForCount.getNumEntries(Liste.SOGGETTI_RUOLI);
@@ -1232,7 +1232,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 					protocolloSel = protocolli.get(0);
 				}
 			}
-			if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
+			if( (filterProtocollo!=null && 
+					//!"".equals(filterProtocollo) &&
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
 					||
 				(filterProtocollo==null && protocolloSel!=null)
@@ -1264,7 +1265,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.addFilterApiContesto(filterApiContesto, true);
 			
 			if(profiloSelezionato &&
-					(filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					(filterApiContesto!=null && 
+					//!"".equals(filterApiContesto) &&
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto))
 					&&
 					!SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE.equals(filterTipoSoggetto)
@@ -1281,7 +1283,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String protocolloPerFiltroProprieta = protocolloSel;
 			// valorizzato con il protocollo nel menu in alto a destra oppure null, controllo se e' stato selezionato nel filtro di ricerca
 			if(protocolloPerFiltroProprieta == null) {
-				if("".equals(filterProtocollo) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
+				if(
+						//"".equals(filterProtocollo) || 
+						CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
 					protocolloPerFiltroProprieta = null;
 				} else {
 					protocolloPerFiltroProprieta = filterProtocollo;
@@ -1344,13 +1348,15 @@ public class SoggettiHelper extends ConnettoriHelper {
 				nomiPdd.add(pds.getNome());
 			}*/
 
-			Iterator<org.openspcoop2.core.registry.Soggetto> it = lista.listIterator();
-			while (it.hasNext()) {
-				Vector<DataElement> e = modalitaCompleta 
-						? this.creaEntry(modalitaCompleta, multiTenant, contaListe, showProtocolli, it) 
-								: this.creaEntryCustom(multiTenant, showProtocolli, it);
-
-				dati.addElement(e);
+			if(lista!=null) {
+				Iterator<org.openspcoop2.core.registry.Soggetto> it = lista.listIterator();
+				while (it.hasNext()) {
+					Vector<DataElement> e = modalitaCompleta 
+							? this.creaEntry(modalitaCompleta, multiTenant, contaListe, showProtocolli, it) 
+									: this.creaEntryCustom(multiTenant, showProtocolli, it);
+	
+					dati.addElement(e);
+				}
 			}
 
 			this.pd.setDati(dati);
@@ -1455,7 +1461,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		if(modalitaCompleta) {
 			
 			boolean showConnettore = this.core.isRegistroServiziLocale() &&
-					(modalitaCompleta || this.pddCore.isPddEsterna(nomePdD) || multiTenant );
+					(this.pddCore.isPddEsterna(nomePdD) || multiTenant );
 			
 			de = new DataElement();
 			if(showConnettore){
@@ -1480,7 +1486,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		if (contaListe) {
 			// BugFix OP-674
 			//List<String> lista1 = this.soggettiCore.soggettiRuoliList(elem.getId(),new Search(true));
-			Search searchForCount = new Search(true,1);
+			ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 			this.soggettiCore.soggettiRuoliList(elem.getId(),searchForCount);
 			//int numRuoli = lista1.size();
 			int numRuoli = searchForCount.getNumEntries(Liste.SOGGETTI_RUOLI);
@@ -1503,7 +1509,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (contaListe) {
 					// BugFix OP-674
 					//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
 					this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
 					//int numSA = lista1.size();
@@ -1530,7 +1536,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (contaListe) {
 					// BugFix OP-674
 					//List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
 					//int numPA = lista1.size();
 					int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
@@ -1555,7 +1561,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (contaListe) {
 					// BugFix OP-674
 					//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
 					//int numPD = lista1.size();
 					int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
@@ -1576,7 +1582,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setLabels(labels.toArray(new String[1]));
 		} else {
 			// setto le label delle colonne
-			int totEl = modalitaCompleta ? 4 : 2;
+			//int totEl = modalitaCompleta ? 4 : 2;
+			int totEl = 4;
 			if( showProtocolli ) {
 				totEl++;
 			}
@@ -1685,7 +1692,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		}
 
 		// Ruoli
-		List<String> listaRuoli = this.soggettiCore.soggettiRuoliList(elem.getId(),new Search(true));
+		List<String> listaRuoli = this.soggettiCore.soggettiRuoliList(elem.getId(),new ConsoleSearch(true));
 		for (int j = 0; j < listaRuoli.size(); j++) {
 			String ruolo = listaRuoli.get(j);
 			
@@ -1764,7 +1771,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String protocolloPerFiltroProprieta = protocolloSel;
 			// valorizzato con il protocollo nel menu in alto a destra oppure null, controllo se e' stato selezionato nel filtro di ricerca
 			if(protocolloPerFiltroProprieta == null) {
-				if("".equals(filterProtocollo) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
+				if(
+						//"".equals(filterProtocollo) || 
+						CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
 					protocolloPerFiltroProprieta = null;
 				} else {
 					protocolloPerFiltroProprieta = filterProtocollo;
@@ -1843,88 +1852,90 @@ public class SoggettiHelper extends ConnettoriHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, SoggettiCostanti.LABEL_SOGGETTI, search);
 			}
 
-			Iterator<org.openspcoop2.core.config.Soggetto> it = lista.listIterator();
-			while (it.hasNext()) {
-				org.openspcoop2.core.config.Soggetto elem = (org.openspcoop2.core.config.Soggetto) it.next();
-
-				Vector<DataElement> e = new Vector<DataElement>();
-				
-				//Soggetto
-				DataElement de = new DataElement();
-				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
-				de.setValue(elem.getTipo() + "/" + elem.getNome());
-				de.setIdToRemove(elem.getId().toString());
-				de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
-				e.addElement(de);
-
-				if(showProtocolli) {
-					de = new DataElement();
-					de.setValue(this.getLabelProtocollo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo())));
-					e.addElement(de);
-				}
-				
-				//Servizi Appicativi
-				if(this.isModalitaCompleta()) {
-					de = new DataElement();
-					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
-							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
-					if (contaListe) {
-						// BugFix OP-674
-						//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
-						Search searchForCount = new Search(true,1);
-						this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
-						this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
-						//int numSA = lista1.size();
-						int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
-						ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
-				}
-				
-				if(this.isModalitaCompleta()) {
-					//Porte Applicative
-					de = new DataElement();
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
-					if (contaListe) {
-						// BugFix OP-674
-						// List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
-						Search searchForCount = new Search(true,1);
-						this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
-						//int numPA = lista1.size();
-						int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
-						ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
+			if(lista!=null) {
+				Iterator<org.openspcoop2.core.config.Soggetto> it = lista.listIterator();
+				while (it.hasNext()) {
+					org.openspcoop2.core.config.Soggetto elem = (org.openspcoop2.core.config.Soggetto) it.next();
+	
+					Vector<DataElement> e = new Vector<DataElement>();
+					
+					//Soggetto
+					DataElement de = new DataElement();
+					de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+					de.setValue(elem.getTipo() + "/" + elem.getNome());
+					de.setIdToRemove(elem.getId().toString());
+					de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 					e.addElement(de);
 	
-					//Porte Delegate
-					de = new DataElement();
-					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
-					if (contaListe) {
-						// BugFix OP-674
-						//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
-						Search searchForCount = new Search(true,1);
-						this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
-						//int numPD = lista1.size();
-						int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
-						ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
+					if(showProtocolli) {
+						de = new DataElement();
+						de.setValue(this.getLabelProtocollo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo())));
+						e.addElement(de);
+					}
+					
+					//Servizi Appicativi
+					if(this.isModalitaCompleta()) {
+						de = new DataElement();
+						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
+						if (contaListe) {
+							// BugFix OP-674
+							//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
+							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
+							this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
+							this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
+							//int numSA = lista1.size();
+							int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+						e.addElement(de);
+					}
+					
+					if(this.isModalitaCompleta()) {
+						//Porte Applicative
+						de = new DataElement();
+						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
+								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""),
+								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
+								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
+						if (contaListe) {
+							// BugFix OP-674
+							// List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
+							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
+							this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
+							//int numPA = lista1.size();
+							int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+						e.addElement(de);
+		
+						//Porte Delegate
+						de = new DataElement();
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
+						if (contaListe) {
+							// BugFix OP-674
+							//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
+							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
+							this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
+							//int numPD = lista1.size();
+							int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+						e.addElement(de);
+					}
+	
+	
+					dati.addElement(e);
 				}
-
-
-				dati.addElement(e);
 			}
 
 			this.pd.setDati(dati);
@@ -2504,7 +2515,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
-	public void prepareSoggettiProprietaList(Soggetto soggettoRegistry, String id, Search ricerca,	List<Proprieta> lista) throws Exception {
+	public void prepareSoggettiProprietaList(Soggetto soggettoRegistry, String id, ConsoleSearch ricerca,	List<Proprieta> lista) throws Exception {
 		try {
 			List<Parameter> parametersServletSoggettoChange = new ArrayList<Parameter>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);

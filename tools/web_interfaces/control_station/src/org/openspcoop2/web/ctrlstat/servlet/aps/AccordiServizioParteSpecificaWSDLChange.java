@@ -65,7 +65,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -383,7 +383,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String[] accordiList = null;
 			String[] accordiListLabel = null;
 			// soggetti
-			List<Soggetto> list = soggettiCore.soggettiRegistroList("", new Search(true));
+			List<Soggetto> list = soggettiCore.soggettiRegistroList("", new ConsoleSearch(true));
 			List<String> tipiServizi = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 			if (list.size() > 0) {
 				soggettiList = new String[list.size()];
@@ -403,7 +403,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			permessi[0] = pu.isServizi();
 			permessi[1] = pu.isAccordiCooperazione();
 			List<IDAccordoDB> listIdAccordi =  
-					AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, superUser, new Search(true), permessi, false, false);
+					AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, superUser, new ConsoleSearch(true), permessi, false, false);
 
 			//				List<AccordoServizioParteComune> listAccordi = apcCore.accordiList("", new Search(true));
 			if (listIdAccordi.size() > 0) {
@@ -778,7 +778,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String canaleAPI = as != null ? as.getCanale() : null;  
 
 			if(as!=null) {
-				List<PortType> portTypes = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
+				List<PortType> portTypes = apcCore.accordiPorttypeList(as.getId().intValue(), new ConsoleSearch(true));
 				if (portTypes.size() > 0) {
 					ptList = new String[portTypes.size() + 1];
 					ptList[0] = "-";

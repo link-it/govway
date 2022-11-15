@@ -295,7 +295,8 @@ public class ScopeHelper extends ConsoleHelper{
 			String filterProtocollo = null;
 			String filterSoggetto = null;
 			boolean profiloSelezionato = false;
-			if(filterApiContesto!=null && !"".equals(filterApiContesto) &&
+			if(filterApiContesto!=null && 
+					//!"".equals(filterApiContesto) &&
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
 				
 				filterProtocollo = addFilterProtocol(ricerca, idLista, true);
@@ -309,7 +310,8 @@ public class ScopeHelper extends ConsoleHelper{
 					}
 				}
 				
-				if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
+				if( (filterProtocollo!=null && 
+						//!"".equals(filterProtocollo) &&
 						!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
 						||
 					(filterProtocollo==null && protocollo!=null)
@@ -331,7 +333,8 @@ public class ScopeHelper extends ConsoleHelper{
 			}
 			
 			String filterGruppo = null;
-			if(filterApiContesto!=null && !"".equals(filterApiContesto) &&
+			if(filterApiContesto!=null && 
+					//!"".equals(filterApiContesto) &&
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
 				
 				filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
@@ -343,7 +346,8 @@ public class ScopeHelper extends ConsoleHelper{
 			}
 			
 			if(profiloSelezionato &&
-					filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					filterApiContesto!=null && 
+					//!"".equals(filterApiContesto) &&
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
 				String filterApiImplementazione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
 				this.addFilterApiImplementazione(filterProtocollo, filterSoggetto, filterGruppo, filterApiContesto, filterApiImplementazione, false);

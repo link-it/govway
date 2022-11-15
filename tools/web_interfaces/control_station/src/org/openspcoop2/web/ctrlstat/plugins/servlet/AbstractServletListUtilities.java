@@ -31,7 +31,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.apache.struts.action.Action;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
@@ -73,7 +73,7 @@ public abstract class AbstractServletListUtilities extends Action {
 	
 	protected abstract UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper) throws Exception;
 	
-	protected void prepareList(TipoOperazione tipoOperazione, ConsoleHelper consoleHelper, Search ricerca, Object object, IExtendedListServlet extendedServlet, List<IExtendedBean> lista,
+	protected void prepareList(TipoOperazione tipoOperazione, ConsoleHelper consoleHelper, ConsoleSearch ricerca, Object object, IExtendedListServlet extendedServlet, List<IExtendedBean> lista,
 			Logger log, UrlParameters extendedFather)
 			throws Exception {
 		try {

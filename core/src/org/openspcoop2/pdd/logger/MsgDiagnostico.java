@@ -328,6 +328,10 @@ public class MsgDiagnostico {
 		}
 	}
 
+	public void updateRequestInfo(RequestInfo requestInfo) {
+		this.requestInfo = requestInfo;
+	}
+	
 	public void updatePorta(String porta, RequestInfo requestInfo) {
 		this.updatePorta(null, porta, requestInfo);
 	}

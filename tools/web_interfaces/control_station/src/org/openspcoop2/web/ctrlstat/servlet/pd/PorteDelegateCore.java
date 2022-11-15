@@ -67,7 +67,7 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -556,7 +556,7 @@ public class PorteDelegateCore extends ControlStationCore {
 					
 					AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(this);
 					Long idS = aspsCore.getIdAccordoServizioParteSpecifica(con, idServizio);
-					Search s = new Search(true);
+					ConsoleSearch s = new ConsoleSearch(true);
 					List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(con, idS, s);
 					if(listFruitori!=null && !listFruitori.isEmpty()) {
 					
@@ -605,7 +605,7 @@ public class PorteDelegateCore extends ControlStationCore {
 					
 					AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(this);
 					Long idS = aspsCore.getIdAccordoServizioParteSpecifica(con, idServizio);
-					Search s = new Search(true);
+					ConsoleSearch s = new ConsoleSearch(true);
 					List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(con, idS, s);
 					if(listFruitori!=null && !listFruitori.isEmpty()) {
 					
@@ -1158,7 +1158,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			}
 		}
 	}
-	public List<Proprieta> porteDelPropList(long idPortaDelegata, Search ricerca) throws DriverConfigurazioneException {
+	public List<Proprieta> porteDelPropList(long idPortaDelegata, ConsoleSearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelPropList";
 		DriverControlStationDB driver = null;
@@ -1670,7 +1670,7 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 	
-	public List<Proprieta> porteDelegateAutenticazioneCustomPropList(long idPortaDelegata, Search ricerca) throws DriverConfigurazioneException {
+	public List<Proprieta> porteDelegateAutenticazioneCustomPropList(long idPortaDelegata, ConsoleSearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateAutenticazioneCustomPropList";
 		DriverControlStationDB driver = null;
@@ -1691,7 +1691,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public List<Proprieta> porteDelegateAutorizzazioneCustomPropList(long idPortaDelegata, Search ricerca) throws DriverConfigurazioneException {
+	public List<Proprieta> porteDelegateAutorizzazioneCustomPropList(long idPortaDelegata, ConsoleSearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateAutorizzazioneCustomPropList";
 		DriverControlStationDB driver = null;
@@ -1712,7 +1712,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public List<Proprieta> porteDelegateAutorizzazioneContenutoCustomPropList(long idPortaDelegata, Search ricerca) throws DriverConfigurazioneException {
+	public List<Proprieta> porteDelegateAutorizzazioneContenutoCustomPropList(long idPortaDelegata, ConsoleSearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateAutorizzazioneContenutoCustomPropList";
 		DriverControlStationDB driver = null;

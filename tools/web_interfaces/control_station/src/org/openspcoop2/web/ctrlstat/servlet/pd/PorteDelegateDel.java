@@ -43,7 +43,7 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -158,14 +158,14 @@ public final class PorteDelegateDel extends Action {
 				}
 				
 				// cancello per policy associate alla porta se esistono
-				List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, pde.getNome());
+				List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new ConsoleSearch(true), RuoloPolicy.DELEGATA, pde.getNome());
 				if(listAttivazione!=null && !listAttivazione.isEmpty()) {
 					listPerformOperations.addAll(listAttivazione);
 				}
 				
 				if(confCore.isConfigurazioneAllarmiEnabled()) {
 					// cancello allarmi associati alla porta se esistono
-					List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.DELEGATA, pde.getNome());
+					List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.DELEGATA, pde.getNome());
 					if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 						listPerformOperations.addAll(listAllarmi);
 					}
@@ -181,7 +181,7 @@ public final class PorteDelegateDel extends Action {
 			porteDelegateHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			List<PortaDelegata> lista = null;
 			int idLista = -1;

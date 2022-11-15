@@ -127,6 +127,9 @@ public final class PorteDelegateWS extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(aspsCore);
 
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
+			if(pde==null) {
+				throw new Exception("PortaDelegata con id '"+idInt+"' non trovata");
+			}
 			String idporta = pde.getNome();
 			
 			AccordoServizioParteSpecifica asps = aspsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps));

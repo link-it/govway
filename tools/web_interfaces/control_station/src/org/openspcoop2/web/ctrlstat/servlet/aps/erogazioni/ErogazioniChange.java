@@ -34,7 +34,7 @@ import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -90,7 +90,7 @@ public final class ErogazioniChange extends Action {
 			
 			// Rimuovo eventuali salvataggi fatti accedendo in precedenza
 			ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			ricerca.setSearchString(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, "");
 			ricerca.clearFilter(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, Filtri.FILTRO_CONNETTORE_TIPO);
 			ricerca.clearFilter(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);

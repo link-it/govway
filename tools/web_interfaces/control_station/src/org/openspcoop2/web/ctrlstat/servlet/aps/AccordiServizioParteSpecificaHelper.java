@@ -96,7 +96,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -305,7 +305,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						List<AttivazionePolicy> listaPolicies = null;
 						try {
-							Search ricercaPolicies = new Search(true);
+							ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 							listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.APPLICATIVA, pa.getNome());
 						}catch(Exception e) {
 							// ignore
@@ -330,7 +330,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(this.confCore.isConfigurazioneAllarmiEnabled()) {
 							List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 							try {
-								Search ricercaPolicies = new Search(true);
+								ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 								listaAllarmi = this.confCore.allarmiList(ricercaPolicies, RuoloPorta.APPLICATIVA, pa.getNome());
 							}catch(Exception e) {
 								// ignore
@@ -413,7 +413,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								}
 								List<AttivazionePolicy> listaPolicies = null;
 								try {
-									Search ricercaPolicies = new Search(true);
+									ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 									listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.DELEGATA, pd.getNome());
 								}catch(Exception e) {
 									// ignore
@@ -445,7 +445,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								if(this.confCore.isConfigurazioneAllarmiEnabled()) {
 									List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 									try {
-										Search ricercaPolicies = new Search(true);
+										ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 										listaAllarmi = this.confCore.allarmiList(ricercaPolicies, RuoloPorta.DELEGATA, pd.getNome());
 									}catch(Exception e) {
 										// ignore
@@ -738,7 +738,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(listaMappingErogazione!=null && !listaMappingErogazione.isEmpty()) {
 				// esiste erogazione
 			
-				Search searchSoggetti = new Search(true);
+				ConsoleSearch searchSoggetti = new ConsoleSearch(true);
 				searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo);
 				searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
 				
@@ -773,7 +773,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					if(listaMappingFruizione!=null && !listaMappingFruizione.isEmpty()) {
 						// esiste fruizione
 						
-						Search searchSoggetti = new Search(true);
+						ConsoleSearch searchSoggetti = new ConsoleSearch(true);
 						searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo);
 						boolean gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore = false;
 						boolean filtraSoloEsterni = true;
@@ -2828,7 +2828,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							// BugFix OP-674
 							//List<PortaApplicativa> lista1 = this.apsCore.serviziPorteAppList(servizio.getTipo(),servizio.getNome(),asps.getVersione(),
 							//		asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
-							Search searchForCount = new Search(true,1);
+							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							this.apsCore.mappingServiziPorteAppList(idServizio, asps.getId(), searchForCount);
 							//int numPA = lista1.size();
 							int numPA = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_EROGAZIONE);
@@ -2916,7 +2916,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //										serv.getTipo(), serv.getNome(), asps.getId(), 
 //										serv.getTipoSoggettoErogatore(), serv.getNomeSoggettoErogatore(), asps.getIdSoggetto(), 
 //										ricerca);
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						IDServizio idServizioFromAccordo = this.idServizioFactory.getIDServizioFromAccordo(asps); 
 						//long idSoggetto = this.soggettiCore.getIdSoggetto(fru.getNome(), fru.getTipo());
 						this.apsCore.serviziFruitoriMappingList(fruitore.getId(), idFruitore , idServizioFromAccordo, searchForCount);
@@ -2965,7 +2965,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if (contaListe) {
 							// BugFix OP-674
 							//List<Fruitore> lista1 = this.apsCore.serviziFruitoriList(asps.getId().intValue(), new Search(true));
-							Search searchForCount = new Search(true,1);
+							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							this.apsCore.serviziFruitoriList(asps.getId().intValue(), searchForCount);
 							//int numFru = lista1.size();
 							int numFru = searchForCount.getNumEntries(Liste.SERVIZI_FRUITORI);
@@ -2993,7 +2993,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					if (contaListe) {
 						// BugFix OP-674
 						//List<org.openspcoop2.core.registry.Documento> tmpLista = this.apsCore.serviziAllegatiList(asps.getId().intValue(), new Search(true));
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.apsCore.serviziAllegatiList(asps.getId().intValue(), searchForCount);
 						//int numAllegati = tmpLista.size();
 						int numAllegati = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
@@ -3241,7 +3241,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //									serv.getTipo(), serv.getNome(), asps.getId(), 
 //									serv.getTipoSoggettoErogatore(), serv.getNomeSoggettoErogatore(), asps.getIdSoggetto(), 
 //									ricerca);
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						IDServizio idServizioFromAccordo = this.idServizioFactory.getIDServizioFromAccordo(asps); 
 						//long idSoggetto = this.soggettiCore.getIdSoggetto(fru.getNome(), fru.getTipo());
 						IDSoggetto idSoggettoFruitore = new IDSoggetto(fru.getNome(), fru.getTipo());
@@ -4183,7 +4183,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							);
 					List<AttivazionePolicy> listaPolicy = null;
 					if(contaListe || visualizzazioneTabs) {
-						Search searchPolicy = new Search(true);
+						ConsoleSearch searchPolicy = new ConsoleSearch(true);
 						listaPolicy = this.confCore.attivazionePolicyList(searchPolicy, RuoloPolicy.APPLICATIVA, paAssociata.getNome());
 					}
 					if(visualizzazioneTabs) {
@@ -4418,7 +4418,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								);
 						List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 						if(contaListe || visualizzazioneTabs) {
-							Search searchPolicy = new Search(true);
+							ConsoleSearch searchPolicy = new ConsoleSearch(true);
 							listaAllarmi = this.confCore.allarmiList(searchPolicy, RuoloPorta.APPLICATIVA, paAssociata.getNome());
 						}
 						if(visualizzazioneTabs) {
@@ -5816,7 +5816,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							);
 					List<AttivazionePolicy> listaPolicy = null;
 					if(contaListe || visualizzazioneTabs) {
-						Search searchPolicy = new Search(true);
+						ConsoleSearch searchPolicy = new ConsoleSearch(true);
 						listaPolicy = this.confCore.attivazionePolicyList(searchPolicy, RuoloPolicy.DELEGATA, pdAssociata.getNome());
 					}
 					if(visualizzazioneTabs) {
@@ -6027,7 +6027,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 						List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 						if(contaListe || visualizzazioneTabs) {
-							Search searchPolicy = new Search(true);
+							ConsoleSearch searchPolicy = new ConsoleSearch(true);
 							listaAllarmi = this.confCore.allarmiList(searchPolicy, RuoloPorta.DELEGATA, pdAssociata.getNome());
 						}
 						if(visualizzazioneTabs) {
@@ -7404,7 +7404,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				try{
 					// BugFix OP-674
 					//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
 					int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
 					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
@@ -7752,7 +7752,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					try{
 						// BugFix OP-674
 						//int num = this.apsCore.serviziFruitoriList(Integer.parseInt(id), new Search(true)).size();
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.apsCore.serviziFruitoriList(Integer.parseInt(id), searchForCount);
 						int num = searchForCount.getNumEntries(Liste.SERVIZI_FRUITORI);
 						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, (long) num);
@@ -7774,7 +7774,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					try{
 						// BugFix OP-674
 						//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
 						int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
 						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
@@ -9071,7 +9071,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //									asps.getServizio().getTipo(),asps.getServizio().getNome(), asps.getId(), 
 //									asps.getServizio().getTipoSoggettoErogatore(), asps.getServizio().getNomeSoggettoErogatore(), asps.getIdSoggetto(), 
 //									new Search(true)).size();
-							Search searchForCount = new Search(true,1);
+							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							IDServizio idServizioFromAccordo = this.idServizioFactory.getIDServizioFromAccordo(asps); 
 							//long idSoggetto = this.soggettiCore.getIdSoggetto(fruitore.getNome(), fruitore.getTipo());
 							IDSoggetto idSoggettoFr = new IDSoggetto(fruitore.getNome(), fruitore.getTipo());

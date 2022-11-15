@@ -63,7 +63,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
@@ -421,7 +421,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 					// profilo di collaborazione asincronoAsimmetrico
 					// che non sono già state correlate
 					ArrayList<String> operationCorrelateUniche = null;
-					List<Operation> operationCorrelate = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO, new Search(true));
+					List<Operation> operationCorrelate = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO, new ConsoleSearch(true));
 
 					if (operationCorrelate.size() > 0) {
 						operationCorrelateUniche = new ArrayList<String>();
@@ -541,7 +541,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 					// profilo di collaborazione asincronoAsimmetrico
 					// che non sono già state correlate
 					ArrayList<String> operationCorrelateUniche = null;
-					List<Operation> operationCorrelate = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO, new Search(true));
+					List<Operation> operationCorrelate = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO, new ConsoleSearch(true));
 
 					if (operationCorrelate.size() > 0) {
 						operationCorrelateUniche = new ArrayList<String>();
@@ -726,7 +726,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), pt);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			List<Operation> lista = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), ricerca);
 

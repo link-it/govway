@@ -46,7 +46,7 @@ import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -311,7 +311,7 @@ public final class PddChange extends Action {
 			// se tutto e' andato a buon fine scrivo le modifiche sulla pdd
 			pddCore.performUpdateOperation(userLogin, pddHelper.smista(), pdd);
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class); 
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session,ConsoleSearch.class); 
 
 			List<PdDControlStation> lista = null;
 			if(pddCore.isVisioneOggettiGlobale(userLogin)){

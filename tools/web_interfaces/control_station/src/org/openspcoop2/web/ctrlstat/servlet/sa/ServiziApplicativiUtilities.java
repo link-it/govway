@@ -40,7 +40,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -144,7 +144,7 @@ public class ServiziApplicativiUtilities {
 			List<String> tipiSoggettiCompatibiliGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(tipoProtocollo);
 			long providerTmp = -1;
 			
-			Search searchSoggetti = new Search(true);
+			ConsoleSearch searchSoggetti = new ConsoleSearch(true);
 			saHelper.setFilterSelectedProtocol(searchSoggetti, Liste.SOGGETTI);
 			
 			if(saCore.isRegistroServiziLocale()){

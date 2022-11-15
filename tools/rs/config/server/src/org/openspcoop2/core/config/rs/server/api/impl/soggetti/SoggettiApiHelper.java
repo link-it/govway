@@ -52,7 +52,7 @@ import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -159,7 +159,7 @@ public class SoggettiApiHelper {
 			if(!env.multitenant)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Per registrare un nuovo soggetto interno passare alla modalità multitenant");
 			
-			String nome_pdd = env.pddCore.pddList(null, new Search(true)).stream()	
+			String nome_pdd = env.pddCore.pddList(null, new ConsoleSearch(true)).stream()	
 					.filter(pdd -> PddTipologia.OPERATIVO.toString().equals(pdd.getTipo()))
 					.map( pdd -> pdd.getNome())
 					.findFirst().orElse("");
@@ -266,7 +266,7 @@ public class SoggettiApiHelper {
 			throw new RuntimeException(e);
 		}
 		
-		ret.setRuoli(soggettiCore.soggettiRuoliList(s.getId(), new Search()));
+		ret.setRuoli(soggettiCore.soggettiRuoliList(s.getId(), new ConsoleSearch()));
 	
 		if(s.sizeProprietaList()>0) {
 			for (org.openspcoop2.core.registry.Proprieta proprieta : s.getProprietaList()) {
@@ -313,7 +313,7 @@ public class SoggettiApiHelper {
 			}
 			
 			// Recupero il numero di ruoli.
-			Search searchForCount = new Search(true,1);
+			ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 			soggettiCore.soggettiRuoliList(s.getId(),searchForCount);
 			int numRuoli = searchForCount.getNumEntries(Liste.SOGGETTI_RUOLI);
 			ret.setCountRuoli(numRuoli);

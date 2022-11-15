@@ -82,7 +82,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -491,7 +491,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 				
 				List<IDAccordoDB> lista =  
-						AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, userLogin, new Search(true), permessi, 
+						AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, userLogin, new ConsoleSearch(true), permessi, 
 								soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
 				
 				if (lista.size() > 0) {
@@ -625,7 +625,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				provider = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_CAMBIO_EROGATORE);
 				
-				Search searchSoggetti = new Search(true);
+				ConsoleSearch searchSoggetti = new ConsoleSearch(true);
 				searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, tipoProtocollo);
 				boolean gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore = false;
 				if(gestioneFruitori) {
@@ -701,9 +701,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			}
 			else {
 				if(apsCore.isVisioneOggettiGlobale(userLogin)){
-					list = soggettiCore.soggettiRegistroList(null, new Search(true));
+					list = soggettiCore.soggettiRegistroList(null, new ConsoleSearch(true));
 				}else{
-					list = soggettiCore.soggettiRegistroList(userLogin, new Search(true));
+					list = soggettiCore.soggettiRegistroList(userLogin, new ConsoleSearch(true));
 				}
 			}
 			
@@ -796,7 +796,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 			}
 
-			List<PortType> portTypesTmp = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
+			List<PortType> portTypesTmp = apcCore.accordiPorttypeList(as.getId().intValue(), new ConsoleSearch(true));
 			List<PortType> portTypes = null;
 			
 			if(apsHelper.isModalitaCompleta()) {
@@ -1799,7 +1799,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				String superUser = ServletUtils.getUserLoginFromSession(session);
 				
-				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+				ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 				//				PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 				//				
@@ -2082,7 +2082,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// eseguo l'aggiornamento
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), oggettiDaAggiornare.toArray());
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			//				PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 			//				

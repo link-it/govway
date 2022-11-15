@@ -26,7 +26,7 @@ import java.util.Vector;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.lib.queue.ClassQueue;
 import org.openspcoop2.web.lib.queue.ClassQueueException;
 import org.openspcoop2.web.lib.queue.costanti.OperationStatus;
@@ -86,7 +86,7 @@ public class OperazioniCore extends ControlStationCore {
 		}
 	}
 
-	public List<Operation> operationsList(Search ricerca, 
+	public List<Operation> operationsList(ConsoleSearch ricerca, 
 			OperazioniFormBean formBean, String logAdm
 			) throws ClassQueueException {
 		Connection con = null;

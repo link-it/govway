@@ -75,7 +75,7 @@ import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -557,7 +557,7 @@ public final class Monitor extends Action {
 			} else if (formBean.getMethod().equals(MonitorMethods.STATO_CONSEGNE_ASINCRONE.getNome())) {
 
 				// Criteri di visualizzazione/ricerca
-				Search ricerca = new Search();
+				ConsoleSearch ricerca = new ConsoleSearch();
 
 				String newSearch = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
 				if ((newSearch != null) && newSearch.equals(MonitorCostanti.DEFAULT_VALUE_FALSE)) {
@@ -566,7 +566,7 @@ public final class Monitor extends Action {
 						filterConsegnaAsincrona = (FiltroStatoConsegnaAsincrona) oldfilter;
 					}
 
-					ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+					ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 				}
 
 				int idLista = Liste.MONITOR_MSG;
@@ -610,7 +610,7 @@ public final class Monitor extends Action {
 			} else if (formBean.getMethod().equals(MonitorMethods.LISTA_RICHIESTE_PENDENTI.getNome())) {
 
 				// Criteri di visualizzazione/ricerca
-				Search ricerca = new Search();
+				ConsoleSearch ricerca = new ConsoleSearch();
 
 				String newSearch = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
 				if ((newSearch != null) && newSearch.equals(MonitorCostanti.DEFAULT_VALUE_FALSE)) {
@@ -619,7 +619,7 @@ public final class Monitor extends Action {
 						filter = (FilterSearch) oldfilter;
 					}
 
-					ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+					ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 				}
 
 				int idLista = Liste.MONITOR_MSG;
@@ -693,7 +693,7 @@ public final class Monitor extends Action {
 							msg += "<br>Contenuto Messaggio: "+filter.getMessagePattern();
 						if (filter.getSoglia() > 0)
 							msg += "<br>Messaggi piu' vecchi di (minuti): "+filter.getSoglia();
-						if (filter.getStato() != null && !"".equals(filter.getStato()))
+						if (filter.getStato() != null && !"".equals(filter.getStato().getValue()))
 							msg += "<br>Stato: "+filter.getStato();
 						if (filter.getIdMessaggio() != null && !"".equals(filter.getIdMessaggio()))
 							msg += "<br>ID: "+filter.getIdMessaggio();
@@ -1202,7 +1202,7 @@ public final class Monitor extends Action {
 			}
 			else {
                 String user = ServletUtils.getUserLoginFromSession(session);
-                List<PdDControlStation> pdds = pddCore.pddList(user, new Search(true));
+                List<PdDControlStation> pdds = pddCore.pddList(user, new ConsoleSearch(true));
                 // String[] nomiPdD = new String[];
                 Vector<String> nomiPdD = new Vector<String>();
                 for (PdDControlStation pdd : pdds) {
@@ -1912,7 +1912,9 @@ public final class Monitor extends Action {
 								PortaApplicativa pa = null;
 								try {
 									pa = paCore.getPortaApplicativa(idPA);
-								}catch(DriverConfigurazioneNotFound notF) {}
+								}catch(DriverConfigurazioneNotFound notF) {
+									// ignore
+								}
 								if(pa!=null) {
 									if(pa.getBehaviour()!=null) {
 										if(pa.sizeServizioApplicativoList()>0) {
@@ -1938,7 +1940,9 @@ public final class Monitor extends Action {
 										ServizioApplicativo sa = null;
 										try {
 											sa = saCore.getServizioApplicativo(idSA);
-										} catch (Exception notFound) {}
+										} catch (Exception notFound) {
+											// ignore
+										}
 										if(sa!=null) {
 											if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
 												labelSA = sac1.getNome();
@@ -2273,7 +2277,7 @@ public final class Monitor extends Action {
 	}
 	
 	private void showMessaggi(PageData pd, MonitorHelper monitorHelper, long countMessaggi,  List<Messaggio> listaMessaggi, 
-			String methodName, Search ricerca, FilterSearch filterSearch, MonitorFormBean monitorFormBean)
+			String methodName, ConsoleSearch ricerca, FilterSearch filterSearch, MonitorFormBean monitorFormBean)
 			throws Exception {
 		try {
 			// index e pagesize non sono utilizzate
@@ -2359,7 +2363,7 @@ public final class Monitor extends Action {
 				parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_LABEL).append("=").append(soglia + "");
 			}
 			if(monitorCore.isShowJ2eeOptions()) {
-				if (filterSearch.getStato()!=null && !"".equals(filterSearch.getStato()) && !MonitorCostanti.DEFAULT_VALUE_PARAMETRO_STATO_NONE.equals(filterSearch.getStato())) {
+				if (filterSearch.getStato()!=null && !"".equals(filterSearch.getStato().getValue()) && !MonitorCostanti.DEFAULT_VALUE_PARAMETRO_STATO_NONE.equals(filterSearch.getStato().getValue())) {
 					if(parametriFiltro.length()>0) {
 						parametriFiltro.append(" and ");
 					}
@@ -2530,7 +2534,9 @@ public final class Monitor extends Action {
 									try {
 										pa = paCore.getPortaApplicativa(idPA);
 										mapPA.put(sac0.getNomePorta(),pa);
-									} catch (DriverConfigurazioneNotFound notFound) {}
+									} catch (DriverConfigurazioneNotFound notFound) {
+										// ignore
+									}
 								}
 								if(pa!=null) {
 									if(nomeErogazione==null) {
@@ -2589,7 +2595,9 @@ public final class Monitor extends Action {
 											try {
 												pa = paCore.getPortaApplicativa(idPA);
 												mapPA.put(sac.getNomePorta(),pa);
-											} catch (DriverConfigurazioneNotFound notFound) {}
+											} catch (DriverConfigurazioneNotFound notFound) {
+												// ignore
+											}
 										}
 										if(pa!=null && pa.getBehaviour() != null) {
 											if(pa.sizeServizioApplicativoList()>0) {
@@ -2617,7 +2625,9 @@ public final class Monitor extends Action {
 												try {
 													pa = paCore.getPortaApplicativa(idPA);
 													mapPA.put(sac.getNomePorta(),pa);
-												} catch (DriverConfigurazioneNotFound notFound) {}
+												} catch (DriverConfigurazioneNotFound notFound) {
+													// ignore
+												}
 											}
 											if(pa!=null) {
 												IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -2626,7 +2636,9 @@ public final class Monitor extends Action {
 												ServizioApplicativo sa = null;
 												try {
 													sa = saCore.getServizioApplicativo(idSA);
-												} catch (Exception notFound) {}
+												} catch (Exception notFound) {
+													// ignore
+												}
 												if(sa!=null) {
 													isServer = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo());
 													mapServer.put(keyPorta, isServer);
@@ -2642,7 +2654,9 @@ public final class Monitor extends Action {
 											try {
 												pa = paCore.getPortaApplicativa(idPA);
 												mapPA.put(sac.getNomePorta(),pa);
-											} catch (DriverConfigurazioneNotFound notFound) {}
+											} catch (DriverConfigurazioneNotFound notFound) {
+												// ignore
+											}
 										}
 										if(pa!=null) {
 											IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -2651,7 +2665,9 @@ public final class Monitor extends Action {
 											ServizioApplicativo sa = null;
 											try {
 												sa = saCore.getServizioApplicativo(idSA);
-											} catch (Exception notFound) {}
+											} catch (Exception notFound) {
+												// ignore
+											}
 											if(sa!=null) {
 												endpointConnettore = monitorHelper.getLabelConnettore(sa.getInvocazioneServizio(),false,false);
 												mapEndpointConnettori.put(keyPorta, endpointConnettore);

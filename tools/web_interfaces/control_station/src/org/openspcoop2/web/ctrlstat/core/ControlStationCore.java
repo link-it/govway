@@ -149,6 +149,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
@@ -337,12 +338,16 @@ public class ControlStationCore {
 			if(version!=null && !StringUtils.isEmpty(version)) {
 				pVersion = version;
 			}
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		
 		String buildVersion = null;
 		try {
 			buildVersion = VersionUtilities.readBuildVersion();
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(buildVersion!=null) {
 			pVersion = pVersion + " (build "+buildVersion+")";
 		}
@@ -3148,13 +3153,15 @@ public class ControlStationCore {
 					this.jmxPdD_aliases = new ArrayList<String>();
 					PddCore pddCore = new PddCore(this);
 					try{
-						List<PdDControlStation> pddList = pddCore.pddList(null, new Search(true));
+						List<PdDControlStation> pddList = pddCore.pddList(null, new ConsoleSearch(true));
 						for (PdDControlStation pddControlStation : pddList) {
 							if(PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
 								this.jmxPdD_aliases.add(pddControlStation.getNome());
 							}
 						}
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 			}
 			
@@ -5180,7 +5187,9 @@ public class ControlStationCore {
 										(policy.getFiltro()!=null) ? policy.getFiltro().getRuoloPorta() : null,
 										(policy.getFiltro()!=null) ? policy.getFiltro().getNomePorta() : null);
 								driver.deleteAttivazionePolicy(att); 
-							}catch(DriverControlStationNotFound notFound) {}
+							}catch(DriverControlStationNotFound notFound) {
+								// ignore
+							}
 						}
 						doSetDati = false;
 					}
@@ -5235,7 +5244,9 @@ public class ControlStationCore {
 										(allarme.getFiltro()!=null) ? allarme.getFiltro().getRuoloPorta() : null,
 										(allarme.getFiltro()!=null) ? allarme.getFiltro().getNomePorta() : null);
 								driver.deleteAllarme(all); 
-							}catch(DriverControlStationNotFound notFound) {}
+							}catch(DriverControlStationNotFound notFound) {
+								// ignore
+							}
 						}
 						doSetDati = false;
 					}
@@ -5696,15 +5707,19 @@ public class ControlStationCore {
 
 	// Gestione audit
 	private static AuditAppender auditManager = null;
-	private static Integer auditLock = 0;
+	private static Semaphore semaphoreAuditLock = new Semaphore("ControlStationCoreAudit");
 	public static void clearAuditManager(){
-		synchronized (ControlStationCore.auditLock) {
+		ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("clearAuditManager");
+		try {
 			ControlStationCore.auditManager = null;	
+		}finally {
+			ControlStationCore.semaphoreAuditLock.release("clearAuditManager");
 		}
 	}
 	private static synchronized void initializeAuditManager(String tipoDatabase) throws Exception{
-		if(ControlStationCore.auditManager==null){
-			synchronized (ControlStationCore.auditLock) {
+		ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("initializeAuditManager");
+		try {
+			if(ControlStationCore.auditManager==null){
 				ControlStationCore.auditManager= new AuditAppender();
 
 				Connection con = null;
@@ -5724,7 +5739,9 @@ public class ControlStationCore {
 					try{
 						if(con!=null)
 							con.close();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// close
+					}
 				}
 
 				try{
@@ -5733,13 +5750,16 @@ public class ControlStationCore {
 					throw new Exception("Inizializzazione auditManager non riuscita: "+e.getMessage(),e);
 				}
 			}
+		}finally {
+			ControlStationCore.semaphoreAuditLock.release("initializeAuditManager");
 		}
 	}
 	public static synchronized void updateAuditManagerConfiguration(String tipoDatabase) throws Exception{
 		if(ControlStationCore.auditManager==null){
 			throw new Exception("AuditManager non inizializzato");
 		}
-		synchronized (ControlStationCore.auditLock) {
+		ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("updateAuditManagerConfiguration");
+		try {
 			Connection con = null;
 			org.openspcoop2.web.lib.audit.dao.Configurazione configurazioneAuditing = null;
 			try{
@@ -5757,7 +5777,9 @@ public class ControlStationCore {
 				try{
 					if(con!=null)
 						con.close();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// close
+				}
 			}
 
 			try{
@@ -5765,6 +5787,8 @@ public class ControlStationCore {
 			}catch(Exception e){
 				throw new Exception("Aggiornamento configurazione auditManager non riuscita: "+e.getMessage(),e);
 			}
+		}finally {
+			ControlStationCore.semaphoreAuditLock.release("updateAuditManagerConfiguration");
 		}
 	}
 	private static void checkAuditDBAppender(org.openspcoop2.web.lib.audit.dao.Configurazione configurazioneAuditing,String tipoDatabase){
@@ -6235,7 +6259,9 @@ public class ControlStationCore {
 				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(this);
 				IDAccordo idAccordo = apcCore.getIdAccordoServizio(idAcc);
 				nomeAS = idAccordo.getNome();
-			}catch (Exception e) {}
+			}catch (Exception e) {
+				// ignore
+			}
 
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+pt.getNome()+"_"+nomeAS+">";
@@ -6952,7 +6978,7 @@ public class ControlStationCore {
 		return _listaTipiProtocollo;
 	}
 	public boolean existsAlmostOneOrganization(PddTipologia dominio, String userLogin, String protocollo) throws DriverRegistroServiziException{
-		Search s = new Search();
+		ConsoleSearch s = new ConsoleSearch();
 		s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
 		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
 		if(dominio!=null) {
@@ -6972,7 +6998,7 @@ public class ControlStationCore {
 		}
 	}
 	public boolean existsAlmostOneAPI(String userLogin, String protocollo) throws DriverRegistroServiziException{
-		Search s = new Search();
+		ConsoleSearch s = new ConsoleSearch();
 		s.setPageSize(Liste.ACCORDI, 1); // serve solo per il count
 		s.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
 		List<AccordoServizioParteComuneSintetico> lista = null;
@@ -6989,7 +7015,7 @@ public class ControlStationCore {
 		}
 	}
 	public boolean existsAlmostOneAccordoCooperazione(String userLogin, String protocollo) throws DriverRegistroServiziException{
-		Search s = new Search();
+		ConsoleSearch s = new ConsoleSearch();
 		s.setPageSize(Liste.ACCORDI_COOPERAZIONE, 1); // serve solo per il count
 		s.addFilter(Liste.ACCORDI_COOPERAZIONE, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
 		List<AccordoCooperazione> lista = null;
@@ -7007,7 +7033,7 @@ public class ControlStationCore {
 	}
 
 	public IDSoggetto getSoggettoOperativoDefault(String userLogin, String protocollo) throws DriverRegistroServiziException{
-		Search s = new Search();
+		ConsoleSearch s = new ConsoleSearch();
 		s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
 		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
 		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, PddTipologia.OPERATIVO.toString()); // imposto dominio
@@ -7030,7 +7056,7 @@ public class ControlStationCore {
 		return this.getSoggettiOperativi(null);
 	}
 	public List<org.openspcoop2.core.registry.Soggetto> getSoggettiOperativi(String protocollo) throws DriverRegistroServiziException{
-		Search s = new Search(true);
+		ConsoleSearch s = new ConsoleSearch(true);
 		if(protocollo!=null) {
 			s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
 		}
@@ -7056,7 +7082,7 @@ public class ControlStationCore {
 		return this.getSoggetti(null);
 	}
 	public List<org.openspcoop2.core.registry.Soggetto> getSoggetti(String protocollo) throws DriverRegistroServiziException{
-		Search s = new Search(true);
+		ConsoleSearch s = new ConsoleSearch(true);
 		if(protocollo!=null) {
 			s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
 		}

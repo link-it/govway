@@ -40,7 +40,7 @@ import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeUtilities;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -172,7 +172,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			ScopeEnv env = new ScopeEnv(context.getServletRequest(), context);
 			
 			int idLista = Liste.SCOPE;
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);
+			ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);
 			
 			
 			if (contesto != null)

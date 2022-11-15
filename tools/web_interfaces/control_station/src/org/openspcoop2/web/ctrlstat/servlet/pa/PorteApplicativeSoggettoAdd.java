@@ -41,7 +41,7 @@ import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -196,7 +196,7 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 			
 			PortaApplicativaAutorizzazioneSoggetti soggetti = pa.getSoggetti(); 
 			List<PortaApplicativaAutorizzazioneSoggetto> soggettoList = soggetti != null ? soggetti.getSoggettoList() : new ArrayList<PortaApplicativaAutorizzazioneSoggetto>();
-			if (list.size() > 0) {
+			if (list!=null && list.size() > 0) {
 				List<String> soggettiListTmp = new ArrayList<String>();
 				List<String> soggettiListLabelTmp = new ArrayList<String>();
 				for (IDSoggettoDB soggetto : list) {
@@ -325,7 +325,7 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_SOGGETTO;
 

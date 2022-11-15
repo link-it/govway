@@ -56,7 +56,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -195,7 +195,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			// e ne metto i nomi in un array di stringhe
 			// prendo la lista delle azioni correlate con profilo
 			// asincronoAsimmetrico
-			List<Azione> azioniCorrelate = apcCore.accordiAzioniList(idAccordo, CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.toString() , new Search(true));
+			List<Azione> azioniCorrelate = apcCore.accordiAzioniList(idAccordo, CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.toString() , new ConsoleSearch(true));
 			List<String> azioniCorrelateUniche = null;
 			String[] azioniList = null;
 			if (azioniCorrelate.size() > 0) {
@@ -347,7 +347,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			// controllo se ci sono azioni gia inserite
 			// in caso contrario setto in accordi il campo
 			// utilizzo_senza_azione
-			List<Azione> list = apcCore.accordiAzioniList(idAccordo, new Search(true));
+			List<Azione> list = apcCore.accordiAzioniList(idAccordo, new ConsoleSearch(true));
 			boolean modificaUtilizzoSenzaAzione = true;
 			if (list.size() > 0)
 				modificaUtilizzoSenzaAzione = false;
@@ -398,7 +398,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			int idLista = Liste.ACCORDI_AZIONI;
 

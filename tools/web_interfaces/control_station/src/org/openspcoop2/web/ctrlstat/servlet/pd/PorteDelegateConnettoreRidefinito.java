@@ -44,7 +44,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -174,9 +174,12 @@ public class PorteDelegateConnettoreRidefinito  extends Action {
 						portaDelegata.getServizio().getNome(), 
 						new IDSoggetto(portaDelegata.getSoggettoErogatore().getTipo(), portaDelegata.getSoggettoErogatore().getNome()), 
 						portaDelegata.getServizio().getVersione());
+				asps = apsCore.getServizio(idServizio);
 			}
 			
-			
+			if(asps==null) {
+				throw new Exception("AccordoServizioParteSpecifica non trovato");
+			}
 			
 			Soggetto soggFruitore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggFruitore));
 			Fruitore fru = null;
@@ -188,6 +191,9 @@ public class PorteDelegateConnettoreRidefinito  extends Action {
 						break;
 					}
 				}
+				if(fru==null) {
+					throw new Exception("Fruitore con id '"+idSoggettoFruitore.getTipo()+"/"+idSoggettoFruitore.getNome()+"' non trovato");
+				}
 			}
 			else {
 				for (Fruitore fruCheck : asps.getFruitoreList()) {
@@ -196,6 +202,9 @@ public class PorteDelegateConnettoreRidefinito  extends Action {
 						fru = fruCheck;
 						break;
 					}
+				}
+				if(fru==null) {
+					throw new Exception("Fruitore con id '"+soggFruitore.getTipo()+"/"+soggFruitore.getNome()+"' non trovato");
 				}
 			}
 			Long idSoggettoLong = fru.getIdSoggetto();
@@ -280,6 +289,9 @@ public class PorteDelegateConnettoreRidefinito  extends Action {
 					break;
 				}
 			}
+			if(fruitore==null) {
+				throw new Exception("Fruitore con id '"+idSoggettoFruitore.getTipo()+"/"+idSoggettoFruitore.getNome()+"' non trovato");
+			}
 			for (int i = 0; i < fruitore.sizeConfigurazioneAzioneList(); i++) {
 				ConfigurazioneServizioAzione confAz = fruitore.getConfigurazioneAzione(i);
 				if(confAz.getAzioneList().contains(portaDelegata.getAzione().getAzioneDelegata(0))) {
@@ -294,7 +306,7 @@ public class PorteDelegateConnettoreRidefinito  extends Action {
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), asps);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 
 			List<PortaDelegata> lista = null;

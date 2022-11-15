@@ -294,7 +294,8 @@ public class RuoliHelper extends ConsoleHelper{
 			String filterProtocollo = null;
 			String filterSoggetto = null;
 			boolean profiloSelezionato = false;
-			if(filterApiContesto!=null && !"".equals(filterApiContesto) &&
+			if(filterApiContesto!=null && 
+					//!"".equals(filterApiContesto) &&
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
 				
 				filterProtocollo = addFilterProtocol(ricerca, idLista, true);
@@ -308,7 +309,8 @@ public class RuoliHelper extends ConsoleHelper{
 					}
 				}
 				
-				if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
+				if( (filterProtocollo!=null && 
+						//!"".equals(filterProtocollo) &&
 						!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
 						||
 					(filterProtocollo==null && protocollo!=null)
@@ -336,7 +338,8 @@ public class RuoliHelper extends ConsoleHelper{
 			}
 			
 			String filterGruppo = null;
-			if(filterApiContesto!=null && !"".equals(filterApiContesto) &&
+			if(filterApiContesto!=null && 
+					//!"".equals(filterApiContesto) &&
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto) &&
 					!Filtri.FILTRO_API_CONTESTO_VALUE_APPLICATIVI.equals(filterApiContesto) &&
 					!Filtri.FILTRO_API_CONTESTO_VALUE_SOGGETTI.equals(filterApiContesto)) {
@@ -350,7 +353,8 @@ public class RuoliHelper extends ConsoleHelper{
 			}
 			
 			if(profiloSelezionato &&
-					filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					filterApiContesto!=null && 
+					//!"".equals(filterApiContesto) &&
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)  &&
 					!Filtri.FILTRO_API_CONTESTO_VALUE_APPLICATIVI.equals(filterApiContesto)) {
 				String filterApiImplementazione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
@@ -361,7 +365,8 @@ public class RuoliHelper extends ConsoleHelper{
 			}
 			
 			if(profiloSelezionato &&
-					filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					filterApiContesto!=null && 
+					//!"".equals(filterApiContesto) &&
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)  &&
 					Filtri.FILTRO_API_CONTESTO_VALUE_APPLICATIVI.equals(filterApiContesto)) {
 				String filterApplicativo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVIZIO_APPLICATIVO);

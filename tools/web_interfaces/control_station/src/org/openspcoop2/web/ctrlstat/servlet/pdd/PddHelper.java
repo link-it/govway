@@ -37,7 +37,7 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -288,7 +288,7 @@ public class PddHelper extends ConsoleHelper {
 		//if (clientAuth != null && clientAuth.equals("abilitato")) {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setValue(StringEscapeUtils.escapeHtml(subject));
-		if (clientAuth != null && clientAuth.equals(CostantiRegistroServizi.ABILITATO)) {
+		if (clientAuth != null && clientAuth.equals(CostantiRegistroServizi.ABILITATO.getValue())) {
 			de.setRequired(true);
 		}
 		//}  else {
@@ -553,7 +553,7 @@ public class PddHelper extends ConsoleHelper {
 				if (contaListe) {
 					// BugFix OP-674
 					//List<org.openspcoop2.core.config.Soggetto> lista1 = this.pddCore.pddSoggettiList(pdd.getId().intValue(), new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.pddCore.pddSoggettiList(pdd.getId().intValue(), searchForCount);
 					int numSog = 0;
 //					if (lista1 != null)
@@ -678,7 +678,7 @@ public class PddHelper extends ConsoleHelper {
 				if (contaListe) {
 					// BugFix OP-674
 					//List<org.openspcoop2.core.config.Soggetto> lista1 = this.pddCore.pddSoggettiList(pdd.getId().intValue(), new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.pddCore.pddSoggettiList(pdd.getId().intValue(), searchForCount);
 					int numSog = 0;
 //					if (lista1 != null)

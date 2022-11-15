@@ -93,7 +93,7 @@ import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.utils.rest.api.ApiUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -1642,7 +1642,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						}
 						// BugFix OP-674
 						//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.apcCore.accordiPorttypeOperationList(idPortType, searchForCount);
 						//int num = tmpLista.size();
 						int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE_AZIONI);
@@ -3691,7 +3691,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						if(contaListe){
 							// BugFix OP-674
 							// int num = this.apcCore.accordiAzioniList(Integer.parseInt(id), new Search(true)).size();
-							Search searchForCount = new Search(true,1);
+							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							this.apcCore.accordiResourceList(Integer.parseInt(id), searchForCount);
 							int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES);
 							de.setValue(AccordiServizioParteComuneCostanti.LABEL_RISORSE+" ("+num+")");
@@ -3712,7 +3712,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						if(contaListe){
 							// BugFix OP-674
 							// int num = this.apcCore.accordiAzioniList(Integer.parseInt(id), new Search(true)).size();
-							Search searchForCount = new Search(true,1);
+							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							this.apcCore.accordiAzioniList(Integer.parseInt(id), searchForCount);
 							int num = searchForCount.getNumEntries(Liste.ACCORDI_AZIONI);
 							de.setValue(AccordiServizioParteComuneCostanti.LABEL_AZIONI+" ("+num+")");
@@ -3732,7 +3732,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					if(contaListe){
 						// BugFix OP-674
 						//int num = this.apcCore.accordiPorttypeList(Integer.parseInt(id), new Search(true)).size();
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.apcCore.accordiPorttypeList(Integer.parseInt(id), searchForCount);
 						int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE);
 						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES+" ("+num+")");
@@ -3753,7 +3753,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				if(contaListe){
 					// BugFix OP-674
 					//int num = this.apcCore.accordiAllegatiList(Integer.parseInt(id), new Search(true)).size();
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.apcCore.accordiAllegatiList(Integer.parseInt(id), searchForCount);
 					int num = searchForCount.getNumEntries(Liste.ACCORDI_ALLEGATI);
 					de.setValue(AccordiServizioParteComuneCostanti.LABEL_ALLEGATI+" ("+num+")");
@@ -3772,7 +3772,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				if(contaListe){
 					// BugFix OP-674
 					//int num = this.apcCore.accordiComponentiList(Integer.parseInt(id), new Search(true)).size();
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.apcCore.accordiComponentiList(Integer.parseInt(id), searchForCount);
 					int num = searchForCount.getNumEntries(Liste.ACCORDI_COMPONENTI);
 					de.setValue(AccordiServizioParteComuneCostanti.LABEL_SERVIZI_COMPONENTI+" ("+num+")");
@@ -3794,7 +3794,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (tipoOperazione.equals(TipoOperazione.ADD) == false) {
 				// BugFix OP-674
 				//int num = this.apcCore.accordiErogatoriList(Integer.parseInt(id), new Search(true)).size();
-				Search searchForCount = new Search(true,1);
+				ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 				this.apcCore.accordiErogatoriList(Integer.parseInt(id), searchForCount);
 				int num = searchForCount.getNumEntries(Liste.ACCORDI_EROGATORI);
 				de.setValue(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI+" ("+num+")");
@@ -5545,7 +5545,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							if (contaListe) {
 								// BugFix OP-674		
 								//List<Resource> tmpLista = this.apcCore.accordiResourceList(accordoServizio.getId().intValue(), new Search(true));
-								Search searchForCount = new Search(true,1);
+								ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 								this.apcCore.accordiResourceList(accordoServizio.getId().intValue(), searchForCount);
 								int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES);
 								ServletUtils.setDataElementVisualizzaLabel(de,(long)num);
@@ -5585,7 +5585,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								if (contaListe) {
 									// BugFix OP-674
 									//List<Azione> tmpLista = this.apcCore.accordiAzioniList(accordoServizio.getId().intValue(), new Search(true));
-									Search searchForCount = new Search(true,1);
+									ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 									this.apcCore.accordiAzioniList(accordoServizio.getId().intValue(), searchForCount);
 									//int num = tmpLista.size();
 									int num = searchForCount.getNumEntries(Liste.ACCORDI_AZIONI);
@@ -5612,7 +5612,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							if (contaListe) {
 								// BugFix OP-674
 								//List<PortType> tmpLista = this.apcCore.accordiPorttypeList(accordoServizio.getId().intValue(), new Search(true));
-								Search searchForCount = new Search(true,1);
+								ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 								this.apcCore.accordiPorttypeList(accordoServizio.getId().intValue(), searchForCount);
 								//int num = tmpLista.size();
 								int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE);
@@ -5634,7 +5634,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						if (contaListe) {
 							// BugFix OP-674
 							//List<org.openspcoop2.core.registry.Soggetto> tmpLista = this.apcCore.accordiErogatoriList(accordoServizio.getId().intValue(), new Search(true));
-							Search searchForCount = new Search(true,1);
+							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							this.apcCore.accordiErogatoriList(accordoServizio.getId().intValue(), searchForCount);
 							//int num = tmpLista.size();
 							int num = searchForCount.getNumEntries(Liste.ACCORDI_EROGATORI);
@@ -5671,7 +5671,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					if (contaListe) {
 						// BugFix OP-674
 						//List<org.openspcoop2.core.registry.Documento> tmpLista = this.apcCore.accordiAllegatiList(accordoServizio.getId().intValue(), new Search(true));
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.apcCore.accordiAllegatiList(accordoServizio.getId().intValue(), searchForCount);
 						//int num = tmpLista.size();
 						int num = searchForCount.getNumEntries(Liste.ACCORDI_ALLEGATI);
@@ -6953,7 +6953,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					// BugFix OP-674
 					//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.apcCore.accordiResourceRepresentationsList(idRisorsa, true, null, searchForCount);
 					//int num = tmpLista.size();
 					int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES_REPRESENTATION_REQUEST);
@@ -6977,7 +6977,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					// BugFix OP-674
 					//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.apcCore.accordiResourceParametersList(idRisorsa, true, null, searchForCount);
 					//int num = tmpLista.size();
 					int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES_PARAMETERS_REQUEST);
@@ -7012,7 +7012,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					// BugFix OP-674
 					//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.apcCore.accordiResourceResponseList(idRisorsa, searchForCount);
 					//int num = tmpLista.size();
 					int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES_RESPONSE);
@@ -7471,7 +7471,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 	public void prepareAccordiResourcesRepresentationsList(String id, AccordoServizioParteComune as,
-			List<ResourceRepresentation> lista, Search ricerca, String tipoAccordo, boolean isRequest, Resource risorsa,
+			List<ResourceRepresentation> lista, ConsoleSearch ricerca, String tipoAccordo, boolean isRequest, Resource risorsa,
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws Exception {
 		try {
 			String uri = null;
@@ -7627,7 +7627,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 	
 	public void prepareAccordiResourcesParametersList(String id, AccordoServizioParteComune as,
-			List<ResourceParameter> lista, Search ricerca, String tipoAccordo, boolean isRequest, Resource risorsa,
+			List<ResourceParameter> lista, ConsoleSearch ricerca, String tipoAccordo, boolean isRequest, Resource risorsa,
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws Exception {
 		try {
 			String uri = null;
@@ -7927,7 +7927,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					// BugFix OP-674
 					//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.apcCore.accordiResourceRepresentationsList(idRisorsa, false, idResponse, searchForCount);
 					//int num = tmpLista.size();
 					int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES_REPRESENTATION_RESPONSE);
@@ -7953,7 +7953,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 						// BugFix OP-674
 						//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.apcCore.accordiResourceParametersList(idRisorsa, false, idResponse, searchForCount);
 						//int num = tmpLista.size();
 						int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES_PARAMETERS_RESPONSE);

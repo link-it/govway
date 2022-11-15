@@ -106,7 +106,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
@@ -280,7 +280,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			Search searchForCount = new Search(true,1);
+			ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 			driver.getDriverConfigurazioneDB().pluginsArchiviList(searchForCount);
 			return searchForCount.getNumEntries(Liste.CONFIGURAZIONE_PLUGINS_ARCHIVI);
 		} catch (Exception e) {
@@ -525,7 +525,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		DriverControlStationDB driver = null;
 
 		try {
-			ISearch ricercaPlugin = new Search(true);
+			ISearch ricercaPlugin = new ConsoleSearch(true);
 			ricercaPlugin.addFilter( Liste.CONFIGURAZIONE_PLUGINS_CLASSI, Filtri.FILTRO_TIPO_PLUGIN_CLASSI, TipoPlugin.ALLARME.toString());
 			ricercaPlugin.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_APPLICABILITA_NOME, applicabilita);
 			if(soloAbilitati) {
@@ -1397,7 +1397,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 
 	}
 	
-	public long countConfigurazionePolicy(Search ricerca)  throws DriverControlStationNotFound, DriverControlStationException {
+	public long countConfigurazionePolicy(ConsoleSearch ricerca)  throws DriverControlStationNotFound, DriverControlStationException {
 		String nomeMetodo = "countConfigurazionePolicy";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -1417,7 +1417,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public long countAttivazionePolicy(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationNotFound, DriverControlStationException{
+	public long countAttivazionePolicy(ConsoleSearch ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationNotFound, DriverControlStationException{
 		String nomeMetodo = "countAttivazionePolicy";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -1437,7 +1437,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<ConfigurazionePolicy> configurazionePolicyList(Search ricerca)  throws DriverControlStationNotFound, DriverControlStationException{
+	public List<ConfigurazionePolicy> configurazionePolicyList(ConsoleSearch ricerca)  throws DriverControlStationNotFound, DriverControlStationException{
 		String nomeMetodo = "configurazionePolicyList";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -1477,7 +1477,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<TipoRisorsaPolicyAttiva> attivazionePolicyTipoRisorsaList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException{
+	public List<TipoRisorsaPolicyAttiva> attivazionePolicyTipoRisorsaList(ConsoleSearch ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException{
 		String nomeMetodo = "attivazionePolicyTipoRisorsaList";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -1519,7 +1519,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<AttivazionePolicy> attivazionePolicyList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException{
+	public List<AttivazionePolicy> attivazionePolicyList(ConsoleSearch ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException{
 		String nomeMetodo = "attivazionePolicyList";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -1539,7 +1539,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 
-	public List<AttivazionePolicy> attivazionePolicyListByFilter(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta,
+	public List<AttivazionePolicy> attivazionePolicyListByFilter(ConsoleSearch ricerca, RuoloPolicy ruoloPorta, String nomePorta,
 			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
 			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
 			IDServizio filtroServizioAzione, String filtroRuolo)  throws DriverControlStationException{
@@ -2481,7 +2481,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		return inUsoMessage.toString();
 	}
 
-	public List<ConfigurazioneAllarmeBean> allarmiList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationException{ 
+	public List<ConfigurazioneAllarmeBean> allarmiList(ConsoleSearch ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationException{ 
 		String nomeMetodo = "allarmiList";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -2501,7 +2501,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<Allarme> allarmiSenzaPluginList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationException{ 
+	public List<Allarme> allarmiSenzaPluginList(ConsoleSearch ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationException{ 
 		String nomeMetodo = "allarmiSenzaPluginList";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -2861,7 +2861,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		
 		return parameters;
 	}
-	public List<ConfigurazioneAllarmeHistoryBean> allarmiHistoryList(Search ricerca, Long idAllarme) throws Exception {
+	public List<ConfigurazioneAllarmeHistoryBean> allarmiHistoryList(ConsoleSearch ricerca, Long idAllarme) throws Exception {
 		String nomeMetodo = "allarmiHistoryList";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -2900,7 +2900,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<ConfigurazioneAllarmeBean> allarmiListByFilter(Search ricerca, RuoloPorta ruoloPorta, String nomePorta,
+	public List<ConfigurazioneAllarmeBean> allarmiListByFilter(ConsoleSearch ricerca, RuoloPorta ruoloPorta, String nomePorta,
 			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
 			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
 			IDServizio filtroServizioAzione, String filtroRuolo)  throws DriverControlStationException{

@@ -66,7 +66,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
@@ -1429,7 +1429,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	
 	public boolean filterFruitoriRispettoAutenticazione(AccordoServizioParteSpecifica asps) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverRegistroServiziNotFound, DriverRegistroServiziException{
 		List<PortaApplicativa> lista = this.serviziPorteAppList(asps.getTipo(),asps.getNome(),asps.getVersione(),
-				asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
+				asps.getId().intValue(), asps.getIdSoggetto(), new ConsoleSearch(true));
 		if(lista.size()==1){
 			return true;
 		}

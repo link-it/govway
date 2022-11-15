@@ -38,7 +38,7 @@ import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -106,7 +106,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 				long idPolicyLong = Long.parseLong(idPolicyS);
 				String risorsaPolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA);
 				
-				Search ricercaPerRisorsa = new Search(true);
+				ConsoleSearch ricercaPerRisorsa = new ConsoleSearch(true);
 				ricercaPerRisorsa.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, risorsaPolicy);
 				List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricercaPerRisorsa, ruoloPorta, nomePorta);
 
@@ -160,7 +160,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 			confHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 			

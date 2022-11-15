@@ -75,7 +75,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
@@ -668,9 +668,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			List<Soggetto> listaSoggetti=null;
 			if(apcCore.isVisioneOggettiGlobale(userLogin)){
-				listaSoggetti = soggettiCore.soggettiList(null, new Search(true));
+				listaSoggetti = soggettiCore.soggettiList(null, new ConsoleSearch(true));
 			}else{
-				listaSoggetti = soggettiCore.soggettiList(userLogin, new Search(true));
+				listaSoggetti = soggettiCore.soggettiList(userLogin, new ConsoleSearch(true));
 			}
 			String[] providersList = null;
 			String[] providersListLabel = null;
@@ -695,9 +695,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			String[] accordiCooperazioneEsistentiLabel=null;
 			List<AccordoCooperazione> lista = null;
 			if(apcCore.isVisioneOggettiGlobale(userLogin)){
-				lista = acCore.accordiCooperazioneList(null, new Search(true));
+				lista = acCore.accordiCooperazioneList(null, new ConsoleSearch(true));
 			}else{
-				lista = acCore.accordiCooperazioneList(userLogin, new Search(true));
+				lista = acCore.accordiCooperazioneList(userLogin, new ConsoleSearch(true));
 			}
 			if (lista != null && lista.size() > 0) {
 				accordiCooperazioneEsistenti = new String[lista.size()+1];

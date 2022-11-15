@@ -49,7 +49,7 @@ import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiUtilities;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -250,7 +250,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);                        
 			int idLista = Liste.SOGGETTI;
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
 			
 			if(profiloQualsiasi!=null && profiloQualsiasi) {
 				ricerca.clearFilter(idLista, Filtri.FILTRO_PROTOCOLLO);

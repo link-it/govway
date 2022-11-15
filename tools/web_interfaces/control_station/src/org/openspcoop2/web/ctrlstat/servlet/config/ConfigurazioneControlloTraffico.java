@@ -38,7 +38,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaErogazione;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaFruizione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -88,13 +88,13 @@ public class ConfigurazioneControlloTraffico extends Action {
 			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
 			
 			// annullo eventuale ricerca precedente
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			if(ricerca!=null) {
 				ricerca.addFilter(Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY, Filtri.FILTRO_TIPO_POLICY, CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE);
 			}
 			
 			// conto policy
-			Search searchPolicyUtente = new Search(true);
+			ConsoleSearch searchPolicyUtente = new ConsoleSearch(true);
 			searchPolicyUtente.addFilter( Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY, Filtri.FILTRO_TIPO_POLICY, 
 					CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE);
 			long sizePolicy = confCore.countConfigurazionePolicy(searchPolicyUtente);

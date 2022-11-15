@@ -41,6 +41,7 @@ import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -105,7 +106,9 @@ public class ConsoleProperties {
 		    try{
 				if(properties!=null)
 				    properties.close();
-		    }catch(Exception er){}
+		    }catch(Exception er){
+		    	// close
+		    }
 		}
 
 		this.reader = new ConsoleInstanceProperties(propertiesReader, this.log, confDir, confPropertyName, confLocalPathPrefix);
@@ -168,15 +171,18 @@ public class ConsoleProperties {
 			return tmp.trim();
 		}
 	}
-	private Boolean readBooleanProperty(boolean required,String property) throws UtilsException{
+	private boolean readBooleanRequiredProperty(String property) throws UtilsException{
+		return readBooleanProperty(true,property).getValue();
+	}
+	private BooleanNullable readBooleanProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.readProperty(required, property);
 		if(tmp==null && !required) {
-			return null; // se e' required viene sollevata una eccezione dal metodo readProperty
+			return BooleanNullable.NULL(); // se e' required viene sollevata una eccezione dal metodo readProperty
 		}
 		if("true".equalsIgnoreCase(tmp)==false && "false".equalsIgnoreCase(tmp)==false){
 			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
 		}
-		return Boolean.parseBoolean(tmp);
+		return Boolean.parseBoolean(tmp) ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 	}
 	private Integer readIntegerProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.readProperty(required, property);
@@ -222,51 +228,51 @@ public class ConsoleProperties {
 	}
 	
 	public Boolean isSinglePdD() throws UtilsException{
-		return this.readBooleanProperty(true, "singlePdD");
+		return this.readBooleanRequiredProperty("singlePdD");
 	}
 	
 	public Boolean isToken_GenerazioneAutomaticaPorteDelegate_enabled() throws UtilsException{
-		return this.readBooleanProperty(true, "generazioneAutomaticaPorteDelegate.token.enabled");
+		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteDelegate.token.enabled");
 	}
 	
 	public Boolean isAutenticazione_GenerazioneAutomaticaPorteDelegate_enabled() throws UtilsException{
-		return this.readBooleanProperty(true, "generazioneAutomaticaPorteDelegate.autenticazione.enabled");
+		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteDelegate.autenticazione.enabled");
 	}
 	public String getAutenticazione_GenerazioneAutomaticaPorteDelegate() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteDelegate.autenticazione");
 	}
 	
 	public Boolean isAutorizzazione_GenerazioneAutomaticaPorteDelegate_enabled() throws UtilsException{
-		return this.readBooleanProperty(true, "generazioneAutomaticaPorteDelegate.autorizzazione.enabled");
+		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteDelegate.autorizzazione.enabled");
 	}
 	public String getAutorizzazione_GenerazioneAutomaticaPorteDelegate() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteDelegate.autorizzazione");
 	}
 	
 	public Boolean isToken_GenerazioneAutomaticaPorteApplicative_enabled() throws UtilsException{
-		return this.readBooleanProperty(true, "generazioneAutomaticaPorteApplicative.token.enabled");
+		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteApplicative.token.enabled");
 	}
 	
 	public Boolean isAutenticazione_GenerazioneAutomaticaPorteApplicative_enabled() throws UtilsException{
-		return this.readBooleanProperty(true, "generazioneAutomaticaPorteApplicative.autenticazione.enabled");
+		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteApplicative.autenticazione.enabled");
 	}
 	public String getAutenticazione_GenerazioneAutomaticaPorteApplicative() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteApplicative.autenticazione");
 	}
 	
 	public Boolean isAutorizzazione_GenerazioneAutomaticaPorteApplicative_enabled() throws UtilsException{
-		return this.readBooleanProperty(true, "generazioneAutomaticaPorteApplicative.autorizzazione.enabled");
+		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteApplicative.autorizzazione.enabled");
 	}
 	public String getAutorizzazione_GenerazioneAutomaticaPorteApplicative() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteApplicative.autorizzazione");
 	}
 	
 	public Boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto() throws UtilsException{
-		return this.readBooleanProperty(true, "accordi.portType.implementazioneUnicaPerSoggetto");
+		return this.readBooleanRequiredProperty("accordi.portType.implementazioneUnicaPerSoggetto");
 	}
 	
 	public Boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto() throws UtilsException{
-		return this.readBooleanProperty(true, "accordi.implementazioneUnicaPerSoggetto");
+		return this.readBooleanRequiredProperty("accordi.implementazioneUnicaPerSoggetto");
 	}
 	
 	public String getImportArchive_tipoPdD() throws UtilsException{
@@ -274,19 +280,19 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isExportArchive_configurazione_soloDumpCompleto() throws UtilsException{
-		return this.readBooleanProperty(true, "exportArchive.configurazione.soloDumpCompleto");
+		return this.readBooleanRequiredProperty("exportArchive.configurazione.soloDumpCompleto");
 	}
 	
 	public boolean isExportArchive_servizi_standard() throws UtilsException{
-		return this.readBooleanProperty(true, "exportArchive.servizi.standard");
+		return this.readBooleanRequiredProperty("exportArchive.servizi.standard");
 	}
 	
 	public boolean isGestoreConsistenzaDatiEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "gestoreConsistenzaDati");
+		return this.readBooleanRequiredProperty("gestoreConsistenzaDati");
 	}
 	
 	public boolean isGestoreConsistenzaDati_forceCheckMapping() throws UtilsException{
-		return this.readBooleanProperty(true, "gestoreConsistenzaDati.forceCheckMapping");
+		return this.readBooleanRequiredProperty("gestoreConsistenzaDati.forceCheckMapping");
 	}
 		
 	public PropertiesSourceConfiguration getMessageSecurityPropertiesSourceConfiguration() throws UtilsException {
@@ -302,7 +308,7 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isPolicyGestioneTokenVerificaCertificati() throws UtilsException{
-		return this.readBooleanProperty(true, "policyGestioneToken.verificaCertificati");
+		return this.readBooleanRequiredProperty("policyGestioneToken.verificaCertificati");
 	}
 	
 	public List<String> getPolicyGestioneTokenPDND() throws UtilsException{
@@ -325,19 +331,19 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isAttributeAuthorityVerificaCertificati() throws UtilsException{
-		return this.readBooleanProperty(true, "attributeAuthority.verificaCertificati");
+		return this.readBooleanRequiredProperty("attributeAuthority.verificaCertificati");
 	}
 	
 	public boolean isControlloTrafficoPolicyGlobaleGroupByApi() throws UtilsException{
-		return this.readBooleanProperty(true, "controlloTraffico.policyGlobale.groupBy.api");
+		return this.readBooleanRequiredProperty("controlloTraffico.policyGlobale.groupBy.api");
 	}
 	
 	public boolean isControlloTrafficoPolicyGlobaleFiltroApi() throws UtilsException{
-		return this.readBooleanProperty(true, "controlloTraffico.policyGlobale.filtro.api");
+		return this.readBooleanRequiredProperty("controlloTraffico.policyGlobale.filtro.api");
 	}
 	
 	public boolean isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore() throws UtilsException{
-		return this.readBooleanProperty(true, "controlloTraffico.policyGlobale.filtro.api.soggettoErogatore");
+		return this.readBooleanRequiredProperty("controlloTraffico.policyGlobale.filtro.api.soggettoErogatore");
 	}
 	
 	public List<PolicyGroupByActiveThreadsType> getControlloTrafficoPolicyRateLimitingTipiGestori() throws UtilsException{
@@ -354,19 +360,19 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isAuditingRegistrazioneElementiBinari() throws UtilsException{
-		return this.readBooleanProperty(true, "auditing.registrazioneElementiBinari");
+		return this.readBooleanRequiredProperty("auditing.registrazioneElementiBinari");
 	}
 	
 	public boolean isIntegrationManagerEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "integrationManager.enabled");
+		return this.readBooleanRequiredProperty("integrationManager.enabled");
 	}
 	
 	public boolean isIntegrationManagerTraceMessageBoxOperationEnabled() throws UtilsException{
-		Boolean b = this.readBooleanProperty(false, "integrationManager.traceMessageBoxOperation.enabled");
-		if(b==null) {
+		BooleanNullable b = this.readBooleanProperty(false, "integrationManager.traceMessageBoxOperation.enabled");
+		if(b==null || b.getValue()==null) {
 			return false;
 		}
-		return b;
+		return b.getValue();
 	}
 	
 	public Integer getSoggettiNomeMaxLength() throws UtilsException{
@@ -374,25 +380,25 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isSoggettiVerificaCertificati() throws UtilsException{
-		return this.readBooleanProperty(true, "soggetti.verificaCertificati");
+		return this.readBooleanRequiredProperty("soggetti.verificaCertificati");
 	}
 	public boolean isSoggettiVerificaCertificati_checkCertificatoSoggettoById_useApi() throws UtilsException{
-		return this.readBooleanProperty(true, "soggetti.verificaCertificati.checkCertificatoSoggettoById.useApi");
+		return this.readBooleanRequiredProperty("soggetti.verificaCertificati.checkCertificatoSoggettoById.useApi");
 	}
 	
 	public boolean isApplicativiVerificaCertificati() throws UtilsException{
-		return this.readBooleanProperty(true, "applicativi.verificaCertificati");
+		return this.readBooleanRequiredProperty("applicativi.verificaCertificati");
 	}
 	public boolean isApplicativiVerificaCertificati_checkCertificatoApplicativoById_useApi() throws UtilsException{
-		return this.readBooleanProperty(true, "applicativi.verificaCertificati.checkCertificatoApplicativoById.useApi");
+		return this.readBooleanRequiredProperty("applicativi.verificaCertificati.checkCertificatoApplicativoById.useApi");
 	}
 	
 	public boolean isApiResourcePathValidatorEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "api.resource.pathValidator");
+		return this.readBooleanRequiredProperty("api.resource.pathValidator");
 	}
 	
 	public boolean isApiResourceHttpMethodAndPathQualsiasiEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "api.resource.httpMethodAndPathQualsiasi.enabled");
+		return this.readBooleanRequiredProperty("api.resource.httpMethodAndPathQualsiasi.enabled");
 	}
 	
 	public List<String> getApiResourcePathQualsiasiSpecialChar() throws UtilsException{
@@ -409,11 +415,11 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isApiOpenAPIValidateUriReferenceAsUrl() throws UtilsException{
-		return this.readBooleanProperty(true, "api.openApi.openapi4j.validateUriReferenceAsUrl");
+		return this.readBooleanRequiredProperty("api.openApi.openapi4j.validateUriReferenceAsUrl");
 	}
 	
 	public boolean isApiRestResourceRepresentationMessageTypeOverride() throws UtilsException{
-		return this.readBooleanProperty(true, "api.resource.representation.messageTypeOverride");
+		return this.readBooleanRequiredProperty("api.resource.representation.messageTypeOverride");
 	}
 	
 	public Properties getApiYamlSnakeLimits() throws UtilsException{
@@ -449,14 +455,14 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isAccordiCooperazioneEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "accordiCooperazione.enabled");
+		return this.readBooleanRequiredProperty("accordiCooperazione.enabled");
 	}
 	
 	public boolean isErogazioniVerificaCertificati() throws UtilsException{
-		return this.readBooleanProperty(true, "erogazioni.verificaCertificati");
+		return this.readBooleanRequiredProperty("erogazioni.verificaCertificati");
 	}
 	public boolean isFruizioniVerificaCertificati() throws UtilsException{
-		return this.readBooleanProperty(true, "fruizioni.verificaCertificati");
+		return this.readBooleanRequiredProperty("fruizioni.verificaCertificati");
 	}
 
 	public List<String> getMessageEngines() throws UtilsException{
@@ -481,41 +487,41 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isSoggettiCredenzialiBasicCheckUniqueUsePassword() throws UtilsException{
-		return this.readBooleanProperty(true, "soggetti.credenzialiBasic.checkUnique.usePassword");
+		return this.readBooleanRequiredProperty("soggetti.credenzialiBasic.checkUnique.usePassword");
 	}
 	
 	public boolean isApplicativiCredenzialiBasicCheckUniqueUsePassword() throws UtilsException{
-		return this.readBooleanProperty(true, "applicativi.credenzialiBasic.checkUnique.usePassword");
+		return this.readBooleanRequiredProperty("applicativi.credenzialiBasic.checkUnique.usePassword");
 	}
 	
 	public boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials() throws UtilsException{
-		return this.readBooleanProperty(true, "soggettiApplicativi.credenzialiBasic.permitSameCredentials");
+		return this.readBooleanRequiredProperty("soggettiApplicativi.credenzialiBasic.permitSameCredentials");
 	}
 	public boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials() throws UtilsException{
-		return this.readBooleanProperty(true, "soggettiApplicativi.credenzialiSsl.permitSameCredentials");
+		return this.readBooleanRequiredProperty("soggettiApplicativi.credenzialiSsl.permitSameCredentials");
 	}
 	public boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials() throws UtilsException{
-		return this.readBooleanProperty(true, "soggettiApplicativi.credenzialiPrincipal.permitSameCredentials");
+		return this.readBooleanRequiredProperty("soggettiApplicativi.credenzialiPrincipal.permitSameCredentials");
 	}
 
 	public boolean isConnettoriAllTypesEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "connettori.allTypes.enabled");
+		return this.readBooleanRequiredProperty("connettori.allTypes.enabled");
 	}
 	
 	public boolean isConnettoriMultipliEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "connettoriMultipli.enabled");
+		return this.readBooleanRequiredProperty("connettoriMultipli.enabled");
 	}
 	
 	public boolean isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso() throws UtilsException{
-		return this.readBooleanProperty(true, "connettoriMultipli.consegnaCondizionale.stessoFiltro");
+		return this.readBooleanRequiredProperty("connettoriMultipli.consegnaCondizionale.stessoFiltro");
 	}
 	
 	public boolean isConnettoriMultipliConsegnaMultiplaEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "connettoriMultipli.consegnaMultipla.enabled");
+		return this.readBooleanRequiredProperty("connettoriMultipli.consegnaMultipla.enabled");
 	}
 	
 	public boolean isApplicativiServerEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "applicativiServer.enabled");
+		return this.readBooleanRequiredProperty("applicativiServer.enabled");
 	}
 	
 	public List<String> getConsegnaNotificaCode() throws UtilsException{
@@ -553,21 +559,21 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isModipaErogazioniVerificaCertificati() throws UtilsException{
-		return this.readBooleanProperty(true, "modipa.erogazioni.verificaCertificati");
+		return this.readBooleanRequiredProperty("modipa.erogazioni.verificaCertificati");
 	}
 	public boolean isModipaFruizioniVerificaCertificati() throws UtilsException{
-		return this.readBooleanProperty(true, "modipa.fruizioni.verificaCertificati");
+		return this.readBooleanRequiredProperty("modipa.fruizioni.verificaCertificati");
 	}
 	
 	public boolean isModipaFruizioniConnettoreCheckHttps() throws UtilsException{
-		return this.readBooleanProperty(true, "modipa.fruizioni.connettore.checkHttps");
+		return this.readBooleanRequiredProperty("modipa.fruizioni.connettore.checkHttps");
 	}
 	public boolean isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi() throws UtilsException{
-		return this.readBooleanProperty(true, "modipa.filtroRicerca.profiloQualsiasi.visualizzaDatiModi");
+		return this.readBooleanRequiredProperty("modipa.filtroRicerca.profiloQualsiasi.visualizzaDatiModi");
 	}
 	
 	public Boolean isConfigurazionePluginsEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "plugins.enabled");
+		return this.readBooleanRequiredProperty("plugins.enabled");
 	}
 	
 	public Integer getPluginsSeconds() throws Exception{
@@ -582,11 +588,11 @@ public class ConsoleProperties {
 	}
 	
 	public Boolean isConfigurazioneHandlersEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "handlers.enabled");
+		return this.readBooleanRequiredProperty("handlers.enabled");
 	}
 	
 	public Boolean isConfigurazioneAllarmiEnabled() throws UtilsException{
-		return this.readBooleanProperty(true, "allarmi.enabled");
+		return this.readBooleanRequiredProperty("allarmi.enabled");
 	}
 	
 	public String getAllarmiConfigurazione() throws Exception{
@@ -594,26 +600,26 @@ public class ConsoleProperties {
 	}
 	
 	public Boolean isShowAllarmiIdentificativoRuntime() throws UtilsException{
-		return this.readBooleanProperty(true, "allarmi.identificativoRuntime");
+		return this.readBooleanRequiredProperty("allarmi.identificativoRuntime");
 	}
 	public Boolean isShowAllarmiFormNomeSuggeritoCreazione() throws UtilsException{
-		return this.readBooleanProperty(true, "allarmi.form.nomeSuggeritoCreazione");
+		return this.readBooleanRequiredProperty("allarmi.form.nomeSuggeritoCreazione");
 	}
 	public Boolean isShowAllarmiFormStatoAllarme() throws UtilsException{
-		return this.readBooleanProperty(true, "allarmi.form.statoAllarme");
+		return this.readBooleanRequiredProperty("allarmi.form.statoAllarme");
 	}
 	public Boolean isShowAllarmiFormStatoAllarmeHistory() throws UtilsException{
-		return this.readBooleanProperty(true, "allarmi.form.statoAllarme.history");
+		return this.readBooleanRequiredProperty("allarmi.form.statoAllarme.history");
 	}
 	public Boolean isShowAllarmiSearchStatiAllarmi() throws UtilsException{
-		return this.readBooleanProperty(true, "allarmi.search.statoAllarme");
+		return this.readBooleanRequiredProperty("allarmi.search.statoAllarme");
 	}
 	public Boolean isShowAllarmiElenchiStatiAllarmi() throws UtilsException{
-		return this.readBooleanProperty(true, "allarmi.elenchi.statoAllarme");
+		return this.readBooleanRequiredProperty("allarmi.elenchi.statoAllarme");
 	}
 	
 	public Boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled() throws UtilsException{
-		return this.readBooleanProperty(true, "registrazioneMessaggi.multipartPayloadParsing.enabled");
+		return this.readBooleanRequiredProperty("registrazioneMessaggi.multipartPayloadParsing.enabled");
 	}
 	
 	public Boolean isClusterDinamico_enabled() throws UtilsException{
@@ -624,7 +630,7 @@ public class ConsoleProperties {
 		else {
 			//return getBackwardCompatibilityConfigurazioneNodiRuntime().isClusterDinamico();
 			// abbiamo cambiato il nome della proprietà nella gestione 'ConfigurazioneNodiRuntime'
-			return this.readBooleanProperty(true, "cluster_dinamico.enabled");
+			return this.readBooleanRequiredProperty("cluster_dinamico.enabled");
 		}
 	}
 
@@ -632,12 +638,12 @@ public class ConsoleProperties {
 		return this.readProperty(false, "hsm.config");
 	}
 	public boolean isHSMRequired() throws UtilsException{
-		Boolean b = this.readBooleanProperty(false, "hsm.required");
-		return b!=null ? b : false;
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.required");
+		return (b!=null && b.getValue()!=null) ? b.getValue() : false;
 	}
 	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
-		Boolean b = this.readBooleanProperty(false, "hsm.keyPassword");
-		return b!=null ? b : false;
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
+		return (b!=null && b.getValue()!=null) ? b.getValue() : false;
 	}
 	
 	public Integer getVerificaCertificati_warning_expirationDays() throws Exception{
@@ -652,8 +658,8 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isVerificaCertificati_sceltaClusterId() throws UtilsException{
-		Boolean b = this.readBooleanProperty(false, "verificaCertificati.sceltaClusterId");
-		return b!=null ? b : true;
+		BooleanNullable b = this.readBooleanProperty(false, "verificaCertificati.sceltaClusterId");
+		return (b!=null && b.getValue()!=null) ? b.getValue() : true;
 	}
 	
 	
@@ -671,11 +677,11 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isConsoleUtenzeModificaProfiloUtenteDaLinkAggiornaDB() throws UtilsException{
-		return this.readBooleanProperty(true, "console.utenze.modificaProfiloUtenteDaLink.aggiornaInfoSuDb");
+		return this.readBooleanRequiredProperty("console.utenze.modificaProfiloUtenteDaLink.aggiornaInfoSuDb");
 	}
 	
 	public boolean isConsoleUtenzeModificaProfiloUtenteDaFormAggiornaSessione() throws UtilsException{
-		return this.readBooleanProperty(true, "console.utenze.modificaProfiloUtenteDaForm.aggiornaInfoInSessione");
+		return this.readBooleanRequiredProperty("console.utenze.modificaProfiloUtenteDaForm.aggiornaInfoInSessione");
 	}
 	
 	// Applicativi
@@ -695,7 +701,7 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isConsoleApplicativiBasicPasswordEnableConstraints() throws UtilsException{
-		return this.readBooleanProperty(true, "console.applicativi.basic.password.enableConstraints");
+		return this.readBooleanRequiredProperty("console.applicativi.basic.password.enableConstraints");
 	}
 	
 	// Soggetti
@@ -715,7 +721,7 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isConsoleSoggettiBasicPasswordEnableConstraints() throws UtilsException{
-		return this.readBooleanProperty(true, "console.soggetti.basic.password.enableConstraints");
+		return this.readBooleanRequiredProperty("console.soggetti.basic.password.enableConstraints");
 	}
 
 
@@ -760,13 +766,13 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isVisualizzaLinkHomeHeader() throws UtilsException{
-		return this.readBooleanProperty(true, "console.header.home.link.enabled");
+		return this.readBooleanRequiredProperty("console.header.home.link.enabled");
 	}
 	
 	/* ----- Opzioni Accesso JMX della PdD ------- */
 	
 	public boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus() throws UtilsException{
-		return this.readBooleanProperty(true, "risorseJmxPdd.linkClearAllCaches.remoteCheckCacheStatus");
+		return this.readBooleanRequiredProperty("risorseJmxPdd.linkClearAllCaches.remoteCheckCacheStatus");
 	}
 	
 	public String getJmxPdD_externalConfiguration() throws UtilsException{
@@ -1367,67 +1373,67 @@ public class ConsoleProperties {
 	}
 	
 	public Boolean isConsoleConfigurazioniPersonalizzate() throws UtilsException{
-		return this.readBooleanProperty(true, "console.configurazioniPersonalizzate");
+		return this.readBooleanRequiredProperty("console.configurazioniPersonalizzate");
 	}
 	
 	public Boolean isConsoleGestioneSoggettiVirtuali() throws UtilsException{
-		return this.readBooleanProperty(true, "console.gestioneSoggettiVirtuali");
+		return this.readBooleanRequiredProperty("console.gestioneSoggettiVirtuali");
 	}
 	
 	public Boolean isConsoleGestioneSoggettiRouter() throws UtilsException{
-		return this.readBooleanProperty(true, "console.gestioneSoggettiRouter");
+		return this.readBooleanRequiredProperty("console.gestioneSoggettiRouter");
 	}
 	
 	public Boolean isConsoleGestioneWorkflowStatoDocumenti() throws UtilsException{
-		return this.readBooleanProperty(true, "console.gestioneWorkflowStatoDocumenti");
+		return this.readBooleanRequiredProperty("console.gestioneWorkflowStatoDocumenti");
 	}
 	
 	public Boolean isConsoleGestioneWorkflowStatoDocumenti_visualizzaStatoLista() throws UtilsException{
-		return this.readBooleanProperty(true, "console.gestioneWorkflowStatoDocumenti.visualizzaStatoLista");
+		return this.readBooleanRequiredProperty("console.gestioneWorkflowStatoDocumenti.visualizzaStatoLista");
 	}
 	
 	public Boolean isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale() throws UtilsException{
-		return this.readBooleanProperty(true, "console.gestioneWorkflowStatoDocumenti.finale.ripristinoStatoOperativo");
+		return this.readBooleanRequiredProperty("console.gestioneWorkflowStatoDocumenti.finale.ripristinoStatoOperativo");
 	}
 	
 	public Boolean isConsoleInterfacceAPI_visualizza() throws UtilsException{
-		return this.readBooleanProperty(true, "console.interfacceAPI.visualizza");
+		return this.readBooleanRequiredProperty("console.interfacceAPI.visualizza");
 	}
 	
 	public Boolean isConsoleAllegati_visualizza() throws UtilsException{
-		return this.readBooleanProperty(true, "console.allegati.visualizza");
+		return this.readBooleanRequiredProperty("console.allegati.visualizza");
 	}
 	
 	public Boolean isEnableAutoMappingWsdlIntoAccordo() throws UtilsException{
-		return this.readBooleanProperty(true, "console.gestioneWsdl.autoMappingInAccordo");
+		return this.readBooleanRequiredProperty("console.gestioneWsdl.autoMappingInAccordo");
 	}
 	
 	public Boolean isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes() throws UtilsException{
-		return this.readBooleanProperty(true, "console.gestioneWsdl.autoMappingInAccordo.estrazioneSchemiInWsdlTypes");
+		return this.readBooleanRequiredProperty("console.gestioneWsdl.autoMappingInAccordo.estrazioneSchemiInWsdlTypes");
 	}
 	
 	public Boolean isMenuVisualizzaFlagPrivato() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.visualizzaFlagPrivato");
+		return this.readBooleanRequiredProperty("menu.visualizzaFlagPrivato");
 	}
 	
 	public Boolean isMenuVisualizzaListaCompletaConnettori() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.visualizzaListaCompletaConnettori");
+		return this.readBooleanRequiredProperty("menu.visualizzaListaCompletaConnettori");
 	}
 	
 	public Boolean isMenuVisualizzaOpzioneDebugConnettore() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.visualizzaOpzioneDebugConnettore");
+		return this.readBooleanRequiredProperty("menu.visualizzaOpzioneDebugConnettore");
 	}
 	
 	public Boolean isMenuAccordiVisualizzaCorrelazioneAsincrona() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.accordi.visualizzaCorrelazioneAsincrona");
+		return this.readBooleanRequiredProperty("menu.accordi.visualizzaCorrelazioneAsincrona");
 	}
 	
 	public Boolean isMenuAccordiVisualizzazioneGestioneInformazioniProtocollo() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.accordi.visualizzazioneGestioneInformazioniProtocollo");
+		return this.readBooleanRequiredProperty("menu.accordi.visualizzazioneGestioneInformazioniProtocollo");
 	}
 	
 	public Boolean isMenuMTOMVisualizzazioneCompleta() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.mtom.visualizzazioneCompleta");
+		return this.readBooleanRequiredProperty("menu.mtom.visualizzazioneCompleta");
 	}
 	
 	public Integer getPortaCorrelazioneApplicativaMaxLength() throws UtilsException{
@@ -1435,19 +1441,19 @@ public class ConsoleProperties {
 	}
 	
 	public Boolean isMenuPortaDelegataLocalForward() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.porte.localForward");
+		return this.readBooleanRequiredProperty("menu.porte.localForward");
 	}
 	
 	public boolean isProprietaErogazioni_showModalitaStandard() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.proprietaErogazioni.showModalitaStandard");
+		return this.readBooleanRequiredProperty("menu.proprietaErogazioni.showModalitaStandard");
 	}
 	
 	public boolean isProprietaFruizioni_showModalitaStandard() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.proprietaFruizioni.showModalitaStandard");
+		return this.readBooleanRequiredProperty("menu.proprietaFruizioni.showModalitaStandard");
 	}
 	
 	public boolean isPortTypeObbligatorioImplementazioniSOAP() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.servizi.portTypeObbligatorio");
+		return this.readBooleanRequiredProperty("menu.servizi.portTypeObbligatorio");
 	}
 	
 	public Boolean isVisualizzazioneConfigurazioneDiagnosticaLog4J() throws UtilsException{
@@ -1463,27 +1469,27 @@ public class ConsoleProperties {
 	}
 	
 	public Boolean isElenchiVisualizzaCountElementi() throws UtilsException{
-		return this.readBooleanProperty(true, "elenchi.visualizzaCountElementi");
+		return this.readBooleanRequiredProperty("elenchi.visualizzaCountElementi");
 	}
 	
 	public boolean isElenchiAbilitaResetCacheSingoloElemento() throws UtilsException{
-		return this.readBooleanProperty(true, "elenchi.risultati.abilitaResetCacheSingoloElemento");
+		return this.readBooleanRequiredProperty("elenchi.risultati.abilitaResetCacheSingoloElemento");
 	}
 	
 	public Boolean isElenchiRicercaConservaCriteri() throws UtilsException{
-		return this.readBooleanProperty(true, "elenchi.ricerca.conservaCriteri");
+		return this.readBooleanRequiredProperty("elenchi.ricerca.conservaCriteri");
 	}
 	
 	public Boolean isElenchiAccordiVisualizzaColonnaAzioni() throws UtilsException{
-		return this.readBooleanProperty(true, "elenchi.accordi.visualizzaColonnaAzioni");
+		return this.readBooleanRequiredProperty("elenchi.accordi.visualizzaColonnaAzioni");
 	}
 	
 	public Boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona() throws UtilsException{
-		return this.readBooleanProperty(true, "elenchi.serviziApplicativi.asincroniNonSupportati.visualizzazioneRispostaAsincrona");
+		return this.readBooleanRequiredProperty("elenchi.serviziApplicativi.asincroniNonSupportati.visualizzazioneRispostaAsincrona");
 	}
 	
 	public Boolean isElenchiMenuVisualizzazionePulsantiImportExportPackage() throws UtilsException{
-		return this.readBooleanProperty(true, "elenchi_menu.visualizzazionePulsantiImportExportPackage");
+		return this.readBooleanRequiredProperty("elenchi_menu.visualizzazionePulsantiImportExportPackage");
 	}
 	
 	public Integer getElenchiMenuIdentificativiLunghezzaMassima() throws UtilsException{
@@ -1507,7 +1513,7 @@ public class ConsoleProperties {
 	}
 	
 	public Boolean isEnableServiziVisualizzaModalitaElenco() throws UtilsException{
-		return this.readBooleanProperty(true, "console.servizi.visualizzaModalitaElenco");
+		return this.readBooleanRequiredProperty("console.servizi.visualizzaModalitaElenco");
 	}
 	
 	public Integer getNumeroMassimoSoggettiOperativiMenuUtente() throws UtilsException{
@@ -1523,7 +1529,7 @@ public class ConsoleProperties {
 	}
 	
 	public boolean isSetSearchAfterAdd() throws UtilsException{
-		return this.readBooleanProperty(true, "console.setSearchAfterAdd");
+		return this.readBooleanRequiredProperty("console.setSearchAfterAdd");
 	}
 	
 	/* ----- Gestione vulnerabilita' console ------- */
@@ -1538,15 +1544,15 @@ public class ConsoleProperties {
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
 
 	public Boolean isGestioneCentralizzata_SincronizzazionePdd() throws UtilsException{
-		return this.readBooleanProperty(true, "sincronizzazionePdd");
+		return this.readBooleanRequiredProperty("sincronizzazionePdd");
 	}
 	
 	public Boolean isGestioneCentralizzata_SincronizzazioneRegistro() throws UtilsException{
-		return this.readBooleanProperty(true, "sincronizzazioneRegistro");
+		return this.readBooleanRequiredProperty("sincronizzazioneRegistro");
 	}
 	
 	public Boolean isGestioneCentralizzata_SincronizzazioneGestoreEventi() throws UtilsException{
-		return this.readBooleanProperty(true, "sincronizzazioneGE");
+		return this.readBooleanRequiredProperty("sincronizzazioneGE");
 	}
 	
 	public String getGestioneCentralizzata_NomeCodaSmistatore() throws UtilsException{
@@ -1686,35 +1692,35 @@ public class ConsoleProperties {
 	/* ---------------- Gestione govwayConsole locale ----------------------- */
 
 	public Boolean isSinglePdD_GestionePdd() throws UtilsException{
-		return this.readBooleanProperty(true, "singlePdD.pdd.enabled");
+		return this.readBooleanRequiredProperty("singlePdD.pdd.enabled");
 	}
 	
 	public Boolean isSinglePdD_RegistroServiziLocale() throws UtilsException{
-		return this.readBooleanProperty(true, "singlePdD.registroServizi.locale");
+		return this.readBooleanRequiredProperty("singlePdD.registroServizi.locale");
 	}
 	
 	public Boolean isSinglePdD_TracceConfigurazioneCustomAppender() throws UtilsException{
-		return this.readBooleanProperty(true, "tracce.configurazioneCustomAppender");
+		return this.readBooleanRequiredProperty("tracce.configurazioneCustomAppender");
 	}
 	
 	public Boolean isSinglePdD_TracceGestioneSorgentiDatiPrelevataDaDatabase() throws UtilsException{
-		return this.readBooleanProperty(true, "tracce.sorgentiDati.database");
+		return this.readBooleanRequiredProperty("tracce.sorgentiDati.database");
 	}
 	
 	public Boolean isSinglePdD_MessaggiDiagnosticiConfigurazioneCustomAppender() throws UtilsException{
-		return this.readBooleanProperty(true, "msgDiagnostici.configurazioneCustomAppender");
+		return this.readBooleanRequiredProperty("msgDiagnostici.configurazioneCustomAppender");
 	}
 	
 	public Boolean isSinglePdD_MessaggiDiagnosticiGestioneSorgentiDatiPrelevataDaDatabase() throws UtilsException{
-		return this.readBooleanProperty(true, "msgDiagnostici.sorgentiDati.database");
+		return this.readBooleanRequiredProperty("msgDiagnostici.sorgentiDati.database");
 	}
 	
 	public Boolean isSinglePdD_DumpConfigurazioneCustomAppender() throws UtilsException{
-		return this.readBooleanProperty(true, "dump.configurazioneCustomAppender");
+		return this.readBooleanRequiredProperty("dump.configurazioneCustomAppender");
 	}
 	
 	public Boolean isSinglePdD_DumpConfigurazioneRealtime() throws UtilsException{
-		return this.readBooleanProperty(true, "dump.configurazioneRealtime");
+		return this.readBooleanRequiredProperty("dump.configurazioneRealtime");
 	}
 	
 	
@@ -1858,7 +1864,9 @@ public class ConsoleProperties {
 											if(isZip!=null) {
 												isZip.close();
 											}
-										}catch(Exception e) {}
+										}catch(Exception e) {
+											// close
+										}
 									}
 								}
 							}
@@ -1872,7 +1880,9 @@ public class ConsoleProperties {
 						if(is!=null) {
 							is.close();
 						}
-					}catch(Exception e) {}
+					}catch(Exception e) {
+						// close
+					}
 				}
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(),e);
@@ -1926,7 +1936,7 @@ public class ConsoleProperties {
 	}
 
 	public boolean isLoginApplication() throws Exception{
-		return this.readBooleanProperty(true, "login.application");
+		return this.readBooleanRequiredProperty("login.application");
 	}
 
 	public Properties getLoginProperties() throws Exception{
@@ -1965,7 +1975,7 @@ public class ConsoleProperties {
 		if(this.isLoginApplication()) {
 			return true;
 		}
-		return this.readBooleanProperty(true, "logout.mostraButton.enabled");
+		return this.readBooleanRequiredProperty("logout.mostraButton.enabled");
 	}
 
 	public String getLogoutUrlDestinazione() throws Exception{

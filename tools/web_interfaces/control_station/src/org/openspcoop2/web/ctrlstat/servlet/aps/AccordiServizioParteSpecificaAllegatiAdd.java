@@ -44,7 +44,7 @@ import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -302,7 +302,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			apsCore.performUpdateOperation(userLogin, apsHelper.smista(), asps);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			List<Documento> lista = apsCore.serviziAllegatiList(idServizioInt, ricerca);
 

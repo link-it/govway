@@ -36,7 +36,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -76,7 +76,7 @@ public final class ConfigurazionePluginsClassiList extends Action {
 			confHelper.makeMenu();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			int idLista = Liste.CONFIGURAZIONE_PLUGINS_CLASSI;
 

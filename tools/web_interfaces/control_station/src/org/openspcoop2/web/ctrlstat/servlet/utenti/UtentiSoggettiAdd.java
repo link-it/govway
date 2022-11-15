@@ -37,7 +37,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -89,7 +89,7 @@ public class UtentiSoggettiAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(utentiCore);
 			User user = utentiCore.getUser(nomesu);
 
-			Search searchSoggetti = new Search(true);
+			ConsoleSearch searchSoggetti = new ConsoleSearch(true);
 			List<String> protocolli = user.getProtocolliSupportati();
 			
 			if(protocollo == null) {
@@ -200,7 +200,7 @@ public class UtentiSoggettiAdd extends Action {
 			utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), user); 
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session,ConsoleSearch.class);
 
 			int idLista = Liste.UTENTI_SOGGETTI;
 

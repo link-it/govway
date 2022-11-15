@@ -56,7 +56,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -137,6 +137,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
+			if(pa==null) {
+				throw new Exception("PortaApplicativa con id '"+idInt+"' non trovata");
+			}
 			String nomePorta = pa.getNome();
 			// long idPorta = pa.getId();
 			PortaApplicativaServizio pas = pa.getServizio();
@@ -165,7 +168,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				nomeAzione = paa.getNome();
 			
 			boolean behaviourDefined = false;
-			if(pa!=null && pa.getBehaviour()!=null && !"".equals(pa.getBehaviour())) {
+			if(pa!=null && pa.getBehaviour()!=null && pa.getBehaviour().getNome()!=null && !"".equals(pa.getBehaviour().getNome())) {
 				behaviourDefined = true;
 			}
 
@@ -224,6 +227,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				AccordoServizioParteSpecifica servSp = null;
 				if(porteApplicativeCore.isRegistroServiziLocale()){
 					servSp = apsCore.getAccordoServizioParteSpecifica(idServizio);
+					if(servSp==null) {
+						throw new Exception("AccordoServizioParteSpecifica con id '"+idServizio+"' non trovato");
+					}
 				}else{
 					IDSoggetto soggettoErogatoreServizio = null;
 					if(pa.getSoggettoVirtuale()!=null){
@@ -237,6 +243,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					try{
 						servSp = apsCore.getServizio(idServ);
 					}catch(DriverRegistroServiziNotFound dNot){
+					}
+					if(servSp==null) {
+						throw new Exception("AccordoServizioParteSpecifica con id '"+idServ+"' non trovato");
 					}
 				}
 				AccordoServizioParteComuneSintetico as = null;
@@ -376,6 +385,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				AccordoServizioParteSpecifica servSp = null;
 				if(porteApplicativeCore.isRegistroServiziLocale()){
 					servSp = apsCore.getAccordoServizioParteSpecifica(idServizio);
+					if(servSp==null) {
+						throw new Exception("AccordoServizioParteSpecifica con id '"+idServizio+"' non trovato");
+					}
 				}else{
 					IDSoggetto soggettoErogatoreServizio = null;
 					if(pa.getSoggettoVirtuale()!=null){
@@ -389,6 +401,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					try{
 						servSp = apsCore.getServizio(idServ);
 					}catch(DriverRegistroServiziNotFound dNot){
+					}
+					if(servSp==null) {
+						throw new Exception("AccordoServizioParteSpecifica con id '"+idServ+"' non trovato");
 					}
 				}
 				AccordoServizioParteComuneSintetico as = null;
@@ -492,7 +507,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO;
 

@@ -42,7 +42,7 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -163,7 +163,7 @@ public final class ConnettorePropList extends Action {
 				}
 			}
 
-			connettoriHelper.prepareConnettorePropList(lista, new Search(true), 0, tipoAccordo);
+			connettoriHelper.prepareConnettorePropList(lista, new ConsoleSearch(true), 0, tipoAccordo);
 	
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			

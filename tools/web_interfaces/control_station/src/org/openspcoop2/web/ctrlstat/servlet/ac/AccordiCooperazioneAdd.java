@@ -51,7 +51,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -203,9 +203,9 @@ public final class AccordiCooperazioneAdd extends Action {
 			 */
 			List<Soggetto> lista = null;
 			if(acCore.isVisioneOggettiGlobale(userLogin)){
-				lista = soggettiCore.soggettiRegistroList(null, new Search(true));
+				lista = soggettiCore.soggettiRegistroList(null, new ConsoleSearch(true));
 			}else{
-				lista = soggettiCore.soggettiRegistroList(userLogin, new Search(true));
+				lista = soggettiCore.soggettiRegistroList(userLogin, new ConsoleSearch(true));
 			}
 
 			List<String> soggettiListTmp = new ArrayList<String>();
@@ -443,7 +443,7 @@ public final class AccordiCooperazioneAdd extends Action {
 			acHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			List<AccordoCooperazione> listaAC = null;
 			if(acCore.isVisioneOggettiGlobale(userLogin)){

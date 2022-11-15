@@ -106,7 +106,7 @@ import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -247,9 +247,11 @@ public class ErogazioniDetailsUtilities {
 					break;
 				}
 			}
-			listaMappingFruzionePortaDelegata = apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFruitore, idServizio, null);	
-			for(MappingFruizionePortaDelegata mappingFruizione : listaMappingFruzionePortaDelegata) {
-				listaPorteDelegateAssociate.add(porteDelegateCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata()));
+			if(fruitore!=null) {
+				listaMappingFruzionePortaDelegata = apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFruitore, idServizio, null);	
+				for(MappingFruizionePortaDelegata mappingFruizione : listaMappingFruzionePortaDelegata) {
+					listaPorteDelegateAssociate.add(porteDelegateCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata()));
+				}
 			}
 		}
 		
@@ -1711,7 +1713,7 @@ public class ErogazioniDetailsUtilities {
 			boolean gestioneFruitore, String nomePorta,
 			StringBuilder sb,
 			String separator, String newLine) throws Exception {
-		Search searchPolicy = new Search(true);
+		ConsoleSearch searchPolicy = new ConsoleSearch(true);
 		ConfigurazioneCore confCore = new ConfigurazioneCore(soggettiCore);
 		List<AttivazionePolicy> listaPolicy = confCore.attivazionePolicyList(searchPolicy, 
 				gestioneFruitore ? RuoloPolicy.DELEGATA : RuoloPolicy.APPLICATIVA, nomePorta);
@@ -1970,7 +1972,7 @@ public class ErogazioniDetailsUtilities {
 		boolean visualizzaAllarmi = soggettiCore.isConfigurazioneAllarmiEnabled();
 		if(visualizzaAllarmi) {
 			List<ConfigurazioneAllarmeBean> listaAllarmi = null;
-			Search searchPolicy = new Search(true);
+			ConsoleSearch searchPolicy = new ConsoleSearch(true);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(soggettiCore);
 			listaAllarmi = confCore.allarmiList(searchPolicy, gestioneFruitore ? RuoloPorta.DELEGATA : RuoloPorta.APPLICATIVA , nomePorta);
 			if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
@@ -2124,6 +2126,16 @@ public class ErogazioniDetailsUtilities {
 			StringBuilder sb,
 			String separator, String newLine) throws Exception {
 				
+		if(paDefault==null) {
+			throw new Exception("Param paDefault is null");
+		}
+		if(paAssociata==null) {
+			throw new Exception("Param paAssociata is null");
+		}
+		if(saCore==null) {
+			throw new Exception("Param saCore is null");
+		}
+		
 		boolean connettoreMultiploEnabled = paAssociata.getBehaviour() != null;
 		
 		if(connettoreMultiploEnabled) {
@@ -2187,7 +2199,12 @@ public class ErogazioniDetailsUtilities {
 			Connettore connettore, String labelNomeConnettore,
 			boolean connettoreStatic,
 			StringBuilder sb,
-			String separator, String newLine) {
+			String separator, String newLine) throws Exception {
+		
+		if(connettore==null) {
+			throw new Exception("Param connettore is null");
+		}
+		
 		_printConnettore(consoleHelper,
 				connettore.mappingIntoConnettoreConfigurazione(), labelNomeConnettore,
 				null,
@@ -2201,7 +2218,7 @@ public class ErogazioniDetailsUtilities {
 			ServizioApplicativo sa, 
 			StringBuilder sb,
 			String separator, String newLine,
-			boolean printIntestazione) {
+			boolean printIntestazione) throws Exception {
 		_printConnettore(consoleHelper,
 				connettore, labelNomeConnettore,
 				sa,
@@ -2216,8 +2233,12 @@ public class ErogazioniDetailsUtilities {
 			boolean connettoreStatic,
 			StringBuilder sb,
 			String separator, String newLine,
-			boolean printIntestazione) {
+			boolean printIntestazione) throws Exception {
 
+		if(connettore==null) {
+			throw new Exception("Param connettore is null");
+		}
+		
 		TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
 		if(tipo==null) {
 			tipo = TipiConnettore.CUSTOM;

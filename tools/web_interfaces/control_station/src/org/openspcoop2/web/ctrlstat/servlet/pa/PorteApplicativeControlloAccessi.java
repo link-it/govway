@@ -61,7 +61,7 @@ import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -239,11 +239,11 @@ public class PorteApplicativeControlloAccessi extends Action {
 			AccordoServizioParteComuneSintetico aspc = apcCore.getAccordoServizioSintetico(porteApplicativeHelper.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 			ServiceBinding serviceBinding = porteApplicativeCore.toMessageServiceBinding(aspc.getServiceBinding()); 
 			
-			Search searchForCount = new Search(true,1);
+			ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 			porteApplicativeCore.porteAppSoggettoList(idInt, searchForCount);
 			int sizeSoggettiPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_SOGGETTO);
 
-			Search searchForCountSAAutorizzati = new Search(true,1);
+			ConsoleSearch searchForCountSAAutorizzati = new ConsoleSearch(true,1);
 			porteApplicativeCore.porteAppServiziApplicativiAutorizzatiList(idInt, searchForCountSAAutorizzati);
 			int numErogazioneApplicativiAutenticati = searchForCountSAAutorizzati.getNumEntries(Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO);
 			

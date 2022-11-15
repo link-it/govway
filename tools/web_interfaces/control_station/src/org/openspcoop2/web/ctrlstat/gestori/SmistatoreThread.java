@@ -249,7 +249,7 @@ public class SmistatoreThread extends Thread {
 				SmistatoreThread.log.info(CostantiControlStation.OPERATIONS_DELIMITER+"Smistatore: Ricevuta richiesta di operazione con ID: " + idOperazione);
 				SmistatoreThread.log.debug("Smistatore: Dati operazione ricevuta idTab[" + operazione.getIDTable() + "] operazione[" + operazione.getOperazione() + "] pdd[" + operazione.getPdd() + "] oggetto[" + operazione.getOggetto() + "]");
 
-				if ((operazione.getOperazione() == null) || ("".equals(operazione.getOperazione()))) {
+				if ((operazione.getOperazione() == null)) {
 					SmistatoreThread.log.error("Smistatore: Ricevuta richiesta con parametri scorretti.");
 					qs.commit();
 					continue;
@@ -261,7 +261,7 @@ public class SmistatoreThread extends Thread {
 					continue;
 				}
 
-				if ((operazione.getOggetto() == null) || ("".equals(operazione.getOggetto())) || (operazione.getIDTable() < 0)) {
+				if ( (operazione.getOggetto() == null) || (operazione.getIDTable() < 0)) {
 					SmistatoreThread.log.error("Smistatore: Ricevuta richiesta con parametri scorretti.");
 					qs.commit();
 					continue;

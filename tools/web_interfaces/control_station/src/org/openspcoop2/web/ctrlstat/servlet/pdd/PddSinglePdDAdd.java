@@ -38,7 +38,7 @@ import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -137,9 +137,9 @@ public final class PddSinglePdDAdd extends Action {
 			
 			List<PortaDominio> listaPddOperative = null;
 			if(pddCore.isVisioneOggettiGlobale(userLogin)){
-				listaPddOperative = pddCore.pddListSinglePdd(null,PddTipologia.OPERATIVO.toString(), new Search(true));
+				listaPddOperative = pddCore.pddListSinglePdd(null,PddTipologia.OPERATIVO.toString(), new ConsoleSearch(true));
 			}else{
-				listaPddOperative = pddCore.pddListSinglePdd(userLogin,PddTipologia.OPERATIVO.toString(), new Search(true));
+				listaPddOperative = pddCore.pddListSinglePdd(userLogin,PddTipologia.OPERATIVO.toString(), new ConsoleSearch(true));
 			}
 			if(listaPddOperative.size()>0)
 				pdd.setTipo(PddTipologia.ESTERNO.toString());
@@ -156,7 +156,7 @@ public final class PddSinglePdDAdd extends Action {
 
 			pddCore.performCreateOperation(userLogin, pddHelper.smista(), pdd);
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class); 
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session,ConsoleSearch.class); 
 
 			List<PdDControlStation> lista = null;
 			if(pddCore.isVisioneOggettiGlobale(userLogin)){

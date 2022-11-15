@@ -119,6 +119,10 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 			boolean isAutorizzazioneToken,
 			boolean isModiSicurezzaMessaggio) throws Exception {
 		
+		if(pa==null) {
+			throw new Exception("Param pa is null");
+		}
+		
 		this.idSoggettoToAdd = idSoggettoToAdd;
 		
 		CredenzialeTipo tipoAutenticazione = null;

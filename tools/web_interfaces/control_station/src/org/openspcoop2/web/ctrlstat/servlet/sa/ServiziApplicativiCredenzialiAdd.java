@@ -174,6 +174,9 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			
 			// Prendo il nome e il provider del servizioApplicativo
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativo);
+			if(sa==null) {
+				throw new Exception("ServizioApplicativo con id '"+idServizioApplicativo+"' non trovato");
+			}
 			String oldNome = sa.getNome();
 			IDSoggetto oldIdSoggetto = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
 			IDServizioApplicativo oldIdServizioApplicativo = new IDServizioApplicativo();

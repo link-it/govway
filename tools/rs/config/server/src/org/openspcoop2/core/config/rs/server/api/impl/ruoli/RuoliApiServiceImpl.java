@@ -42,7 +42,7 @@ import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliUtilities;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -180,7 +180,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			RuoliEnv rEnv = new RuoliEnv(context.getServletRequest(), context);
 						
 			int idLista = Liste.RUOLI;
-			Search ricerca =  Helper.setupRicercaPaginata(q, limit, offset, idLista);
+			ConsoleSearch ricerca =  Helper.setupRicercaPaginata(q, limit, offset, idLista);
 			
 			if (fonte != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_TIPOLOGIA, Enums.apiFonteToRegistroTipologia(fonte).toString());

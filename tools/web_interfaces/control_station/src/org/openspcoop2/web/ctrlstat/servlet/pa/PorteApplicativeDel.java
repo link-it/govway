@@ -49,7 +49,7 @@ import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -154,14 +154,14 @@ public final class PorteApplicativeDel extends Action {
 				}
 				
 				// cancello per policy associate alla porta se esistono
-				List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.APPLICATIVA, pa.getNome());
+				List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new ConsoleSearch(true), RuoloPolicy.APPLICATIVA, pa.getNome());
 				if(listAttivazione!=null && !listAttivazione.isEmpty()) {
 					listPerformOperations.addAll(listAttivazione);
 				}
 				
 				if(confCore.isConfigurazioneAllarmiEnabled()) {
 					// cancello allarmi associati alla porta se esistono
-					List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.APPLICATIVA, pa.getNome());
+					List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.APPLICATIVA, pa.getNome());
 					if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 						listPerformOperations.addAll(listAllarmi);
 					}
@@ -177,7 +177,7 @@ public final class PorteApplicativeDel extends Action {
 			porteApplicativeHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			List<PortaApplicativa> lista = null; 
 			int idLista = -1;

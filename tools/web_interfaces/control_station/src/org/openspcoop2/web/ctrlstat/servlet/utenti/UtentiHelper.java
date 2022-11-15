@@ -46,7 +46,7 @@ import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
@@ -342,7 +342,7 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SOGGETTI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
 					String nomeLink = UtentiCostanti.LABEL_UTENTI_SOGGETTI;
 					if(contaListe){
-						Search searchForCount = new Search(true,1);
+						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.utentiCore.utentiSoggettiList(nomesu, searchForCount);
 						int num = searchForCount.getNumEntries(Liste.UTENTI_SOGGETTI);
 						ServletUtils.setDataElementCustomLabel(de, nomeLink, (long) num);
@@ -393,7 +393,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SERVIZI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
 				String nomeLink = UtentiCostanti.LABEL_UTENTI_SERVIZI;
 				if(contaListe){
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.utentiCore.utentiServiziList(nomesu, searchForCount);
 					int num = searchForCount.getNumEntries(Liste.UTENTI_SERVIZI);
 					ServletUtils.setDataElementCustomLabel(de, nomeLink, (long) num);
@@ -2278,7 +2278,7 @@ public class UtentiHelper extends ConsoleHelper {
 		
 	}
 
-	public void prepareUtentiSoggettiList(Search ricerca, List<IDSoggetto> lista, User user) throws Exception{
+	public void prepareUtentiSoggettiList(ConsoleSearch ricerca, List<IDSoggetto> lista, User user) throws Exception{
 		try {
 			ServletUtils.addListElementIntoSession(this.request, this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI,
 					new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin()));
@@ -2366,7 +2366,7 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 	}
 	
-	public void prepareUtentiServiziList(Search ricerca, List<IDServizio> lista, User user) throws Exception{
+	public void prepareUtentiServiziList(ConsoleSearch ricerca, List<IDServizio> lista, User user) throws Exception{
 		try {
 			ServletUtils.addListElementIntoSession(this.request, this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI,
 					new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin()));

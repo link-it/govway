@@ -120,12 +120,12 @@ public class PorteApplicativeGestioneCanale extends Action {
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			
-			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
+			/*String postBackElementName = porteApplicativeHelper.getPostBackElementName();
 			if(postBackElementName != null ){
 				if(postBackElementName.equalsIgnoreCase(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO)){
+					// nop
 				}
-				
-			}
+			}*/
 
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 

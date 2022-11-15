@@ -51,7 +51,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -124,6 +124,9 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
+			if(pa==null) {
+				throw new Exception("PortaApplicativa con id '"+idInt+"' non trovata");
+			}
 			String nomePorta = pa.getNome();
 			
 			Trasformazioni trasformazioni = pa.getTrasformazioni();
@@ -133,6 +136,9 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 					oldRegola = reg;
 					break;
 				}
+			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
 			}
 			
 			String nomeTrasformazione = oldRegola.getNome();
@@ -406,7 +412,7 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 			
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI; 
 			

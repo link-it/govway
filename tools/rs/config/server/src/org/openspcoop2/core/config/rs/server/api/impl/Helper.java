@@ -65,7 +65,7 @@ import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -645,8 +645,8 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 	
 
 
-	public static final Search setupRicercaPaginata(String q, Integer limit, Integer offset, int idLista) {
-		Search ricerca = new Search();
+	public static final ConsoleSearch setupRicercaPaginata(String q, Integer limit, Integer offset, int idLista) {
+		ConsoleSearch ricerca = new ConsoleSearch();
 		
 		if (limit != null && limit != 0)
 			ricerca.setPageSize(idLista, limit);
@@ -663,8 +663,8 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		return ricerca;
 	}
 	
-	public static final Search setupRicercaPaginata(String q, Integer limit, Integer offset, int idLista, IDSoggetto idSoggetto, String tipo_protocollo) {
-		Search ricerca = setupRicercaPaginata( q, limit, offset, idLista );
+	public static final ConsoleSearch setupRicercaPaginata(String q, Integer limit, Integer offset, int idLista, IDSoggetto idSoggetto, String tipo_protocollo) {
+		ConsoleSearch ricerca = setupRicercaPaginata( q, limit, offset, idLista );
 		
 		ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, idSoggetto.toString());
 		ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLO, tipo_protocollo );

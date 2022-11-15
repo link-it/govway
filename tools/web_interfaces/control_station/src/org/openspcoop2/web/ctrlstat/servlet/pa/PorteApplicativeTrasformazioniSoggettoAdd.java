@@ -44,7 +44,7 @@ import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -192,6 +192,9 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 					break;
 				}
 			}
+			if(regola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 			
 			String nomeTrasformazione = regola.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
@@ -249,7 +252,7 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 			
 			List<TrasformazioneRegolaApplicabilitaSoggetto> soggettoList  = applicabilita != null ? applicabilita.getSoggettoList() : null; 
 			int sizeSoggettoList = soggettoList != null ? soggettoList.size() : 0;
-			if (list.size() > 0) {
+			if (list!=null && list.size() > 0) {
 				List<String> soggettiListTmp = new ArrayList<String>();
 				List<String> soggettiListLabelTmp = new ArrayList<String>();
 				for (IDSoggettoDB soggetto : list) {
@@ -412,7 +415,7 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO;
 

@@ -83,7 +83,9 @@ public class SerialiableFormFile implements FormFile, Serializable {
 			String ext = null;
 			try{
 				ext = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			MimeTypes mimeTypes = MimeTypes.getInstance();
 			if(ext!=null && mimeTypes.existsExtension(ext)){
 				mimeType = mimeTypes.getMimeType(ext);

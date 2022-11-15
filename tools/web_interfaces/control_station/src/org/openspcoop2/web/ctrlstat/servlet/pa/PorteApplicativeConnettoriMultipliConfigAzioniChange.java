@@ -42,7 +42,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -345,7 +345,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			}
 
 			// Preparo la lista
-			Search ricerca = null;
+			ConsoleSearch ricerca = null;
 						
 			porteApplicativeHelper.preparePorteApplicativeConnettoriMultipliConfigAzioniList(pa, configurazioneCondizionale, ricerca, lista);
 

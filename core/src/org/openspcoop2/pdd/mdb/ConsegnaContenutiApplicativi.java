@@ -441,6 +441,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
 				
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		boolean requestInfoForMemoryOptimization = false;
+		if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO_IN_MEMORY)) {
+			requestInfoForMemoryOptimization = (Boolean) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO_IN_MEMORY);
+		}
 		
 		/* Protocol Factory */
 		IProtocolFactory<?> protocolFactory = null;
@@ -1117,9 +1121,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
 		
 		// RequestInfo
-		if(requestInfo==null || idTransazione==null) {
+		if( requestInfo==null || (requestInfo!=null && requestInfoForMemoryOptimization) || idTransazione==null) {
 			// devo leggerlo dal messaggio
 			try {
+				RequestInfo _requestInfoForMemoryOptimization = null;
+				if(requestInfoForMemoryOptimization) {
+					_requestInfoForMemoryOptimization = requestInfo;
+				}
+				
 				if(tipoMessaggioDaNotificare_notificaAsincrona!=null) {
 					switch (tipoMessaggioDaNotificare_notificaAsincrona) {
 					case RICHIESTA:
@@ -1139,7 +1148,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				//Devo farlo dopo aver applicato la trasformazione
 				//correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
-				if(requestInfo==null) {
+				if(requestInfo==null || (requestInfo!=null && requestInfoForMemoryOptimization)) {
 					Object o = consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 					if(o==null) {
 						throw new Exception("RequestInfo non presente nel contesto");
@@ -1155,6 +1164,13 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					idTransazione = (String) o;
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE,idTransazione);
 				}
+				
+				if(requestInfoForMemoryOptimization && _requestInfoForMemoryOptimization!=null) {
+					requestInfo.setRequestConfig(_requestInfoForMemoryOptimization.getRequestConfig());
+					requestInfo.setRequestThreadContext(_requestInfoForMemoryOptimization.getRequestThreadContext());
+					msgDiag.updateRequestInfo(requestInfo);
+				}
+				
 			}catch(Exception e) {
 				msgDiag.logErroreGenerico(e, "LetturaMessaggioErrore (Recupero Dati)"); 
 				openspcoopstate.releaseResource();

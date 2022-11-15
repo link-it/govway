@@ -93,7 +93,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
@@ -148,7 +148,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 		
-		Search searchAccordi = new Search(true);
+		ConsoleSearch searchAccordi = new ConsoleSearch(true);
 		searchAccordi.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, tipoProtocollo);
 		List<AccordoServizioParteComuneSintetico> listaTmp =  
 				AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, 
@@ -196,7 +196,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			soloAccordiConsistentiSoap = true;
 		}
 		
-		Search searchAccordi = new Search(true);
+		ConsoleSearch searchAccordi = new ConsoleSearch(true);
 		searchAccordi.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, tipoProtocollo);
 		List<IDAccordoDB> listaTmp =  
 				AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, 
@@ -746,7 +746,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					
 						// Controllo policy di Rate Limiting
 						if(tmpPorta.getOldIDPortaDelegataForUpdate()!=null && tmpPorta.getOldIDPortaDelegataForUpdate().getNome()!=null) {
-							Search ricercaPolicies = new Search(true);
+							ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 							List<AttivazionePolicy> listaPolicies = null;
 							try {
 								listaPolicies = confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.DELEGATA, tmpPorta.getOldIDPortaDelegataForUpdate().getNome());
@@ -770,7 +770,7 @@ public class AccordiServizioParteSpecificaUtilities {
 						if(confCore.isConfigurazioneAllarmiEnabled()) {
 							// Controllo Allarmi
 							if(tmpPorta.getOldIDPortaDelegataForUpdate()!=null && tmpPorta.getOldIDPortaDelegataForUpdate().getNome()!=null) {
-								Search ricercaPolicies = new Search(true);
+								ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 								List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 								try {
 									listaAllarmi = confCore.allarmiList(ricercaPolicies, RuoloPorta.DELEGATA, tmpPorta.getOldIDPortaDelegataForUpdate().getNome());
@@ -993,7 +993,7 @@ public class AccordiServizioParteSpecificaUtilities {
 						
 						// Controllo policy di Rate Limiting
 						if(tmpPorta.getOldIDPortaApplicativaForUpdate()!=null && tmpPorta.getOldIDPortaApplicativaForUpdate().getNome()!=null) {
-							Search ricercaPolicies = new Search(true);
+							ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 							List<AttivazionePolicy> listaPolicies = null;
 							try {
 								listaPolicies = confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.APPLICATIVA, tmpPorta.getOldIDPortaApplicativaForUpdate().getNome());
@@ -1017,7 +1017,7 @@ public class AccordiServizioParteSpecificaUtilities {
 						if(confCore.isConfigurazioneAllarmiEnabled()) {
 							// Controllo Allarmi
 							if(tmpPorta.getOldIDPortaApplicativaForUpdate()!=null && tmpPorta.getOldIDPortaApplicativaForUpdate().getNome()!=null) {
-								Search ricercaPolicies = new Search(true);
+								ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 								List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 								try {
 									listaAllarmi = confCore.allarmiList(ricercaPolicies, RuoloPorta.APPLICATIVA, tmpPorta.getOldIDPortaApplicativaForUpdate().getNome());
@@ -1227,7 +1227,7 @@ public class AccordiServizioParteSpecificaUtilities {
 
 			IDServizio idServizioOLD =  asps.getOldIDServizioForUpdate();
 			
-			Search ricercaPolicies = new Search(true);
+			ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 			List<AttivazionePolicy> listaPolicies = null;
 			try {
 				listaPolicies = confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
@@ -1282,7 +1282,7 @@ public class AccordiServizioParteSpecificaUtilities {
 
 				IDServizio idServizioOLD =  asps.getOldIDServizioForUpdate();
 				
-				Search ricercaPolicies = new Search(true);
+				ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
 				List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 				try {
 					listaAllarmi = confCore.allarmiListByFilter(ricercaPolicies, null, null,
@@ -1555,14 +1555,14 @@ public class AccordiServizioParteSpecificaUtilities {
 					}
 					
 					// cancello per policy associate alla porta se esistono
-					List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.APPLICATIVA, paGenerataAutomcaticamente.getNome());
+					List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new ConsoleSearch(true), RuoloPolicy.APPLICATIVA, paGenerataAutomcaticamente.getNome());
 					if(listAttivazione!=null && !listAttivazione.isEmpty()) {
 						listaOggettiDaEliminare.addAll(listAttivazione);
 					}
 					
 					if(confCore.isConfigurazioneAllarmiEnabled()) {
 						// cancello allarmi associati alla porta se esistono
-						List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.APPLICATIVA, paGenerataAutomcaticamente.getNome());
+						List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.APPLICATIVA, paGenerataAutomcaticamente.getNome());
 						if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 							listaOggettiDaEliminare.addAll(listAllarmi);
 						}
@@ -1639,14 +1639,14 @@ public class AccordiServizioParteSpecificaUtilities {
 					}
 					
 					// cancello per policy associate alla porta se esistono
-					List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, pdGenerataAutomcaticamente.getNome());
+					List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new ConsoleSearch(true), RuoloPolicy.DELEGATA, pdGenerataAutomcaticamente.getNome());
 					if(listAttivazione!=null && !listAttivazione.isEmpty()) {
 						listaOggettiDaEliminare.addAll(listAttivazione);
 					}
 					
 					if(confCore.isConfigurazioneAllarmiEnabled()) {
 						// cancello allarmi associati alla porta se esistono
-						List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.DELEGATA, pdGenerataAutomcaticamente.getNome());
+						List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.DELEGATA, pdGenerataAutomcaticamente.getNome());
 						if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 							listaOggettiDaEliminare.addAll(listAllarmi);
 						}
@@ -1722,14 +1722,14 @@ public class AccordiServizioParteSpecificaUtilities {
 			listaOggettiDaEliminare.add(mappingErogazione);
 			
 			// cancello per policy associate alla porta se esistono
-			List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.APPLICATIVA, tmpPA.getNome());
+			List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new ConsoleSearch(true), RuoloPolicy.APPLICATIVA, tmpPA.getNome());
 			if(listAttivazione!=null && !listAttivazione.isEmpty()) {
 				listaOggettiDaEliminare.addAll(listAttivazione);
 			}
 			
 			if(confCore.isConfigurazioneAllarmiEnabled()) {
 				// cancello allarmi associati alla porta se esistono
-				List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.APPLICATIVA, tmpPA.getNome());
+				List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.APPLICATIVA, tmpPA.getNome());
 				if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 					listaOggettiDaEliminare.addAll(listAllarmi);
 				}
@@ -1815,14 +1815,14 @@ public class AccordiServizioParteSpecificaUtilities {
 				listaOggettiDaEliminare.add(mappingFruizione);
 			
 				// cancello per policy associate alla porta se esistono
-				List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, tmpPD.getNome());
+				List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new ConsoleSearch(true), RuoloPolicy.DELEGATA, tmpPD.getNome());
 				if(listAttivazione!=null && !listAttivazione.isEmpty()) {
 					listaOggettiDaEliminare.addAll(listAttivazione);
 				}
 				
 				if(confCore.isConfigurazioneAllarmiEnabled()) {
 					// cancello allarmi associati alla porta se esistono
-					List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.DELEGATA, tmpPD.getNome());
+					List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.DELEGATA, tmpPD.getNome());
 					if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 						listaOggettiDaEliminare.addAll(listAllarmi);
 					}

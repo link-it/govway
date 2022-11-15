@@ -155,6 +155,9 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 					break;
 				}
 			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 			
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));

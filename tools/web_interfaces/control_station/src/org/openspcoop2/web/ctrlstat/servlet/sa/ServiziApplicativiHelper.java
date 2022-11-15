@@ -84,7 +84,7 @@ import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
@@ -191,7 +191,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 	
 				// Controllo che i campi DataElementType.SELECT abbiano uno dei valori ammessi
-				if (!getmsg.equals(CostantiConfigurazione.ABILITATO.toString()) && !getmsg.equals(CostantiConfigurazione.DISABILITATO.toString())) {
+				if (!CostantiConfigurazione.ABILITATO.toString().equals(getmsg) && !CostantiConfigurazione.DISABILITATO.toString().equals(getmsg)) {
 					this.pd.setMessage("Servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"' dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
 					return false;
 				}
@@ -1055,7 +1055,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				if (contaListe) {
 					// BugFix OP-674
 					//List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.saCore.servizioApplicativoRuoliList(sa.getId(),searchForCount);
 					//int numRuoli = lista1.size();
 					int numRuoli = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO_RUOLI);
@@ -1122,7 +1122,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				if (contaListe) {
 					// BugFix OP-674
 					//List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.saCore.servizioApplicativoRuoliList(sa.getId(),searchForCount);
 					//int numRuoli = lista1.size();
 					int numRuoli = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO_RUOLI);
@@ -1464,7 +1464,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 
 	public boolean servizioApplicativoCheckData(TipoOperazione tipoOperazione, String[] soggettiList, long idProvOld,
-			String ruoloFruitore, String ruoloErogatore, List<ExtendedConnettore> listExtendedConnettore,
+			String ruoloFruitoreParam, String ruoloErogatore, List<ExtendedConnettore> listExtendedConnettore,
 			ServizioApplicativo saOld)
 			throws Exception {
 		try {
@@ -1480,9 +1480,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 			}
 			
-			if(ruoloFruitore==null){
-				ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
-			}
+//			String ruoloFruitore = ruoloFruitoreParam;
+//			if(ruoloFruitore==null){
+//				ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
+//			}
 			if(ruoloErogatore==null){
 				ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
 			}
@@ -2406,7 +2407,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					supportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocolloS); // devono essere fatti vedere tutti i soggetti, anche quelli esterni.
 				}
 				
-				if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
+				if( (filterProtocollo!=null && 
+						//!"".equals(filterProtocollo) &&
 						!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
 						||
 					(filterProtocollo==null && protocolloS!=null)
@@ -2468,7 +2470,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			this.addFilterApiContesto(filterApiContesto, true);
 			
 			if(profiloSelezionato &&
-					filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					filterApiContesto!=null && 
+					//!"".equals(filterApiContesto) &&
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
 				String filterApiImplementazione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
 				this.addFilterApiImplementazione(filterProtocollo, filterSoggetto, filterGruppo, filterApiContesto, filterApiImplementazione, false);
@@ -2583,7 +2586,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String protocolloPerFiltroProprieta = protocolloS;
 			// valorizzato con il protocollo nel menu in alto a destra oppure null, controllo se e' stato selezionato nel filtro di ricerca
 			if(protocolloPerFiltroProprieta == null) {
-				if("".equals(filterProtocollo) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
+				if(
+						//"".equals(filterProtocollo) || 
+						CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
 					protocolloPerFiltroProprieta = null;
 				} else {
 					protocolloPerFiltroProprieta = filterProtocollo;
@@ -2595,7 +2600,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				// soggetto non selezionato nel menu' in alto a dx
 				if(!this.isSoggettoMultitenantSelezionato()) {
 					soggettoPerFiltroProprieta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
-					if("".equals(soggettoPerFiltroProprieta) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(soggettoPerFiltroProprieta)) {
+					if(
+							//"".equals(soggettoPerFiltroProprieta) || 
+							CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(soggettoPerFiltroProprieta)) {
 						soggettoPerFiltroProprieta = null;
 					}
 				} else {
@@ -2833,7 +2840,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				if (contaListe) {
 					// BugFix OP-674
 					//List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
-					Search searchForCount = new Search(true,1);
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.saCore.servizioApplicativoRuoliList(sa.getId(),searchForCount);
 					//int numRuoli = lista1.size();
 					int numRuoli = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO_RUOLI);
@@ -2868,7 +2875,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				} else {
 					org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
 					boolean connettoreDisabilitato = ((CostantiConfigurazione.DISABILITATO.equals(connettore.getTipo())) || ("".equals(connettore.getTipo())) || (connettore.getTipo() == null));
-					boolean messageBoxDisabilitato = ((CostantiConfigurazione.DISABILITATO.equals(is.getGetMessage())) || ("".equals(is.getGetMessage())) || (is.getGetMessage() == null));
+					boolean messageBoxDisabilitato = ((CostantiConfigurazione.DISABILITATO.equals(is.getGetMessage())) || (is.getGetMessage() == null) || ("".equals(is.getGetMessage().getValue())));
 					if ( connettoreDisabilitato && messageBoxDisabilitato) {
 						de.setValue(CostantiConfigurazione.DISABILITATO.toString());
 					} else {
@@ -2919,7 +2926,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				} else {
 					org.openspcoop2.core.config.Connettore connettore = ra.getConnettore();
 					boolean connettoreDisabilitato = ((CostantiConfigurazione.DISABILITATO.equals(connettore.getTipo())) || ("".equals(connettore.getTipo())) || (connettore.getTipo() == null));
-					boolean messageBoxDisabilitato = ((CostantiConfigurazione.DISABILITATO.equals(ra.getGetMessage())) || ("".equals(ra.getGetMessage())) || (ra.getGetMessage() == null));
+					boolean messageBoxDisabilitato = ((CostantiConfigurazione.DISABILITATO.equals(ra.getGetMessage())) || (ra.getGetMessage() == null) || ("".equals(ra.getGetMessage().getValue())) );
 					if ( connettoreDisabilitato && messageBoxDisabilitato) {
 						de.setValue(CostantiConfigurazione.DISABILITATO.toString());
 					} else {
@@ -3011,7 +3018,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		// Ruoli e' come i tag per ora
 		if(!isServer) {
-			List<String> listaRuoli = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
+			List<String> listaRuoli = this.saCore.servizioApplicativoRuoliList(sa.getId(),new ConsoleSearch(true));
 			for (int j = 0; j < listaRuoli.size(); j++) {
 				String ruolo = listaRuoli.get(j);
 				
@@ -3977,6 +3984,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	}
 	
 	public List<Parameter> getTitoloSA(Integer parentSA, String idsogg, String idAsps, String idPorta)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		
+		if(parentSA==null) {
+			throw new Exception("Param parentSA is null");
+		}
+		if(idsogg==null) {
+			throw new Exception("Param idsogg is null");
+		}
+		
 		String soggettoTitle = null;
 		if(this.core.isRegistroServiziLocale()){
 			Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
@@ -3992,6 +4007,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	}
 
 	private List<Parameter> _getTitoloSA(Integer parentSA, String idsogg, String idAsps, String soggettoTitle, String idPorta)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		
+		if(parentSA==null) {
+			throw new Exception("Param parentSA is null");
+		}
+		
 		List<Parameter> lstParam = new ArrayList<>();
 		switch (parentSA) {
 		case ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE:
@@ -4439,7 +4459,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			
 			boolean tokenWithHttpsEnabledByConfigSA = false;
-			if(saOld.getInvocazionePorta()!=null && saOld.getInvocazionePorta().sizeCredenzialiList()>0) {
+			if(saOld!=null && saOld.getInvocazionePorta()!=null && saOld.getInvocazionePorta().sizeCredenzialiList()>0) {
 				Credenziali c = saOld.getInvocazionePorta().getCredenziali(0);
 				if(c!=null && c.getTokenPolicy()!=null && StringUtils.isNotEmpty(c.getTokenPolicy())) {
 					// se entro in questa servlet sono sicuramente con credenziale ssl, se esiste anche token policy abbiamo la combo
@@ -4722,7 +4742,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 	}
 	
-	public void prepareServiziApplicativiProprietaList(ServizioApplicativo sa, Search ricerca, List<Proprieta> lista) throws Exception{
+	public void prepareServiziApplicativiProprietaList(ServizioApplicativo sa, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception{
 		try {
 			boolean modalitaCompleta = this.isModalitaCompleta();
 			

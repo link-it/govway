@@ -114,14 +114,18 @@ public class GestorePdDInitThread extends Thread {
 					GestorePdDInitThread.log.info("Trovate "+pddList.size()+" pdd su cui avviare il thread di gestione");
 				else
 					GestorePdDInitThread.log.info("Non sono state trovate pdd da gestire");
-				for (int i = 0; i < pddList.size(); i++) {
-					PdDControlStation pdd = null;
-					try{
-						pdd = core.getPdDControlStation(pddList.get(i));
-					}catch(DriverControlStationNotFound dNot){
-						GestorePdDInitThread.log.error("Errore durante la lettura dei dati della pdd ["+pddList.get(i)+"]: "+dNot.getMessage());
+				if(pddList!=null) {
+					for (int i = 0; i < pddList.size(); i++) {
+						PdDControlStation pdd = null;
+						try{
+							pdd = core.getPdDControlStation(pddList.get(i));
+						}catch(DriverControlStationNotFound dNot){
+							GestorePdDInitThread.log.error("Errore durante la lettura dei dati della pdd ["+pddList.get(i)+"]: "+dNot.getMessage());
+						}
+						if(pdd!=null) {
+							addGestore(pdd);
+						}
 					}
-					addGestore(pdd);				
 				}
 			}
 

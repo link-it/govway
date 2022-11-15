@@ -36,7 +36,7 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -98,6 +98,9 @@ public class PorteApplicativeTrasformazioniRispostaList extends Action {
 							break;
 						}
 					}
+					if(oldRegola==null) {
+						throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+					}
 					
 					TrasformazioneRegolaRisposta rispostaToMove = null;
 					
@@ -107,6 +110,9 @@ public class PorteApplicativeTrasformazioniRispostaList extends Action {
 							rispostaToMove = risposta;
 							break;
 						}
+					}
+					if(rispostaToMove==null) {
+						throw new Exception("TrasformazioneRegolaRisposta con id '"+idTrasformazioneRisposta+"' non trovata");
 					}
 					
 					int posizioneAttuale = rispostaToMove.getPosizione();
@@ -119,6 +125,9 @@ public class PorteApplicativeTrasformazioniRispostaList extends Action {
 							rispostaToSwitch = risposta;
 							break;
 						}
+					}
+					if(rispostaToSwitch==null) {
+						throw new Exception("TrasformazioneRegolaRisposta con id '"+posizioneNuova+"' non trovata");
 					}
 					
 					rispostaToMove.setPosizione(posizioneNuova);
@@ -138,7 +147,7 @@ public class PorteApplicativeTrasformazioniRispostaList extends Action {
 			}
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE; 
 			

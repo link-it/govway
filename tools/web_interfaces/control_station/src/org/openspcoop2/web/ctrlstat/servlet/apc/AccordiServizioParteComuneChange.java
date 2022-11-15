@@ -83,7 +83,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
@@ -302,7 +302,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
 		GruppiCore gruppiCore = new GruppiCore(apcCore);
 		ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
-		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+		ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 		FiltroRicercaGruppi filtroRicerca = new FiltroRicercaGruppi();
 		List<String> elencoGruppi = null;
 
@@ -370,9 +370,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 			List<Soggetto> listaSoggetti=null;
 
 			if(apcCore.isVisioneOggettiGlobale(userLogin)){
-				listaSoggetti = soggettiCore.soggettiList(null, new Search(true));
+				listaSoggetti = soggettiCore.soggettiList(null, new ConsoleSearch(true));
 			}else{
-				listaSoggetti = soggettiCore.soggettiList(userLogin, new Search(true));
+				listaSoggetti = soggettiCore.soggettiList(userLogin, new ConsoleSearch(true));
 			}
 
 			List<String> soggettiListTmp = new ArrayList<String>();
@@ -395,9 +395,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 			if(this.isServizioComposto) {
 				List<AccordoCooperazione> lista = null;
 				if(apcCore.isVisioneOggettiGlobale(userLogin)){
-					lista = acCore.accordiCooperazioneList(null, new Search(true));
+					lista = acCore.accordiCooperazioneList(null, new ConsoleSearch(true));
 				}else{
-					lista = acCore.accordiCooperazioneList(userLogin, new Search(true));
+					lista = acCore.accordiCooperazioneList(userLogin, new ConsoleSearch(true));
 				}
 				if (lista != null && lista.size() > 0) {
 					accordiCooperazioneEsistenti = new String[lista.size()+1];

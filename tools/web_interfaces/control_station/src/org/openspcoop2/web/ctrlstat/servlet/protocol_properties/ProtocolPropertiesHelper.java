@@ -104,7 +104,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 	public Object getIdOggettoProprietario(Object proprietario, String idProprietario, String nomeProprieta, String nomeParentProprieta, ProprietariProtocolProperty tipoProprietario, String tipoAccordo) throws Exception {
 		try{
-			if(tipoProprietario != null && proprietario != null && proprietario != null){
+			if(tipoProprietario != null && proprietario != null){
 				switch (tipoProprietario) {
 				case ACCORDO_COOPERAZIONE:
 					AccordoCooperazione ac = (AccordoCooperazione) proprietario;
@@ -459,13 +459,13 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
 			de.setName(Costanti.PARAMETER_FILENAME_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
-			de.setValue(contenutoDocumento.getFilename());
+			de.setValue(contenutoDocumento!=null ? contenutoDocumento.getFilename() : null);
 			dati.addElement(de);
 	
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
 			de.setName(Costanti.PARAMETER_FILEID_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
-			de.setValue(contenutoDocumento.getId());
+			de.setValue(contenutoDocumento!=null ? contenutoDocumento.getId(): null);
 			dati.addElement(de);
 		}else {
 			/* Contenuto Documento */
@@ -539,13 +539,13 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
 			de.setName(Costanti.PARAMETER_FILENAME_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
-			de.setValue(contenutoDocumento.getFilename());
+			de.setValue(contenutoDocumento!=null ? contenutoDocumento.getFilename() : null);
 			dati.addElement(de);
 	
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
 			de.setName(Costanti.PARAMETER_FILEID_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
-			de.setValue(contenutoDocumento.getId());
+			de.setValue(contenutoDocumento!=null ? contenutoDocumento.getId() : null);
 			dati.addElement(de);
 	
 			if(!readOnly) {

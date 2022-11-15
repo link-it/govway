@@ -96,12 +96,16 @@ public class GestioneOperazione {
 					if(pw!=null){
 						pw.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 				try{
 					if(out!=null){
 						out.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 			msgErrore = msgErrore +"\n"+out.toString();
 		}

@@ -51,11 +51,13 @@ public class CostantiUtilities {
 			break;
 		}
     	
-    	if(p==null || "".equals(p)){
-    		v = v.replace(CostantiControlStation.OPENSPCOOP2_PREFIX_LOCAL_PATH, CostantiControlStation.DEFAULT_OPENSPCOOP2_PREFIX_LOCAL_PATH);
-    	}
-    	else{
-    		v = v.replace(CostantiControlStation.OPENSPCOOP2_PREFIX_LOCAL_PATH, prefix);
+    	if(v!=null) {
+	    	if(p==null || "".equals(p)){
+	    		v = v.replace(CostantiControlStation.OPENSPCOOP2_PREFIX_LOCAL_PATH, CostantiControlStation.DEFAULT_OPENSPCOOP2_PREFIX_LOCAL_PATH);
+	    	}
+	    	else{
+	    		v = v.replace(CostantiControlStation.OPENSPCOOP2_PREFIX_LOCAL_PATH, prefix);
+	    	}
     	}
     	//System.out.println("LOCALPATH["+tipo.name()+"]: "+v);
     	return v;
@@ -82,11 +84,13 @@ public class CostantiUtilities {
 			break;
 		}
     	
-    	if(p==null || "".equals(p)){
-    		v = v.replace(CostantiControlStation.OPENSPCOOP2_PROPERTIES_NAME, CostantiControlStation.DEFAULT_OPENSPCOOP2_PROPERTIES_NAME);
-    	}
-    	else{
-    		v = v.replace(CostantiControlStation.OPENSPCOOP2_PROPERTIES_NAME, prefix);
+    	if(v!=null) {
+	    	if(p==null || "".equals(p)){
+	    		v = v.replace(CostantiControlStation.OPENSPCOOP2_PROPERTIES_NAME, CostantiControlStation.DEFAULT_OPENSPCOOP2_PROPERTIES_NAME);
+	    	}
+	    	else{
+	    		v = v.replace(CostantiControlStation.OPENSPCOOP2_PROPERTIES_NAME, prefix);
+	    	}
     	}
     	//System.out.println("PROPERTY["+tipo.name()+"]: "+v);
     	return v;

@@ -119,6 +119,9 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 					break;
 				}
 			}
+			if(oldRegola==null) {
+				throw new Exception("TrasformazioneRegola con id '"+idTrasformazione+"' non trovata");
+			}
 			
 			String trasformazioneContenutoAbilitatoS  = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED);
 			boolean trasformazioneContenutoAbilitato = trasformazioneContenutoAbilitatoS != null ? ServletUtils.isCheckBoxEnabled(trasformazioneContenutoAbilitatoS) : false;

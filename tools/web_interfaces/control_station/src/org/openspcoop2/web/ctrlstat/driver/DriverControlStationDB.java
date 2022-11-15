@@ -99,7 +99,7 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.lib.audit.DriverAudit;
@@ -126,6 +126,9 @@ public class DriverControlStationDB  {
 
 	// Datasource per la connessione al DB
 	public DataSource datasource = null;
+	public void setDatasource(DataSource datasource) {
+		this.datasource = datasource;
+	}
 
 	// Connection passata al momento della creazione dell'oggetto
 	private Connection globalConnection = null;
@@ -2599,7 +2602,7 @@ public class DriverControlStationDB  {
 		return count;
 	}
 
-	public List<ConfigurazionePolicy> configurazioneControlloTrafficoConfigurazionePolicyList(Search ricerca) throws DriverControlStationException{
+	public List<ConfigurazionePolicy> configurazioneControlloTrafficoConfigurazionePolicyList(ConsoleSearch ricerca) throws DriverControlStationException{
 		String nomeMetodo = "configurazioneControlloTrafficoConfigurazionePolicyList";
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
@@ -2719,7 +2722,7 @@ public class DriverControlStationDB  {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<AttivazionePolicy> configurazioneControlloTrafficoAttivazionePolicyList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException{
+	public List<AttivazionePolicy> configurazioneControlloTrafficoAttivazionePolicyList(ConsoleSearch ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException{
 		return (List<AttivazionePolicy>) this._configurazioneControlloTrafficoAttivazionePolicyList(ricerca, ruoloPorta, nomePorta, 
 				false, "configurazioneControlloTrafficoAttivazionePolicyList",
 				null, null, null,
@@ -2727,7 +2730,7 @@ public class DriverControlStationDB  {
 				null, null);
 	}
 	@SuppressWarnings("unchecked")
-	public List<AttivazionePolicy> configurazioneControlloTrafficoAttivazionePolicyListByFilter(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta,
+	public List<AttivazionePolicy> configurazioneControlloTrafficoAttivazionePolicyListByFilter(ConsoleSearch ricerca, RuoloPolicy ruoloPorta, String nomePorta,
 			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
 			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
 			IDServizio filtroServizioAzione, String filtroRuolo) throws DriverControlStationException{
@@ -2738,7 +2741,7 @@ public class DriverControlStationDB  {
 				filtroServizioAzione, filtroRuolo);
 	}
 	@SuppressWarnings("unchecked")
-	public List<TipoRisorsaPolicyAttiva> configurazioneControlloTrafficoAttivazionePolicyTipoRisorsaList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException{
+	public List<TipoRisorsaPolicyAttiva> configurazioneControlloTrafficoAttivazionePolicyTipoRisorsaList(ConsoleSearch ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException{
 		return (List<TipoRisorsaPolicyAttiva>) this._configurazioneControlloTrafficoAttivazionePolicyList(ricerca, ruoloPorta, nomePorta, 
 				true, "configurazioneControlloTrafficoAttivazionePolicyTipoRisorsaList",
 				null, null, null,
@@ -2746,7 +2749,7 @@ public class DriverControlStationDB  {
 				null, null);
 	}
 	@SuppressWarnings("unchecked")
-	private Object _configurazioneControlloTrafficoAttivazionePolicyList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta, boolean tipoRisorsa, String nomeMetodo,
+	private Object _configurazioneControlloTrafficoAttivazionePolicyList(ConsoleSearch ricerca, RuoloPolicy ruoloPorta, String nomePorta, boolean tipoRisorsa, String nomeMetodo,
 			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
 			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
 			IDServizio filtroServizioAzione, String filtroRuolo) throws DriverControlStationException{
@@ -4612,7 +4615,7 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public List<ConfigurazioneAllarmeBean> allarmiList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverConfigurazioneException {
+	public List<ConfigurazioneAllarmeBean> allarmiList(ConsoleSearch ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverConfigurazioneException {
 		String nomeMetodo = "allarmiList";
 		
 		Connection con = null;
@@ -4647,7 +4650,7 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public List<Allarme> allarmiSenzaPluginList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverConfigurazioneException {
+	public List<Allarme> allarmiSenzaPluginList(ConsoleSearch ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverConfigurazioneException {
 		String nomeMetodo = "allarmiSenzaPluginList";
 		
 		Connection con = null;
@@ -5135,7 +5138,7 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public List<ConfigurazioneAllarmeHistoryBean> allarmiHistoryList(Search ricerca, Long idAllarme) throws DriverConfigurazioneException {
+	public List<ConfigurazioneAllarmeHistoryBean> allarmiHistoryList(ConsoleSearch ricerca, Long idAllarme) throws DriverConfigurazioneException {
 		String nomeMetodo = "allarmiHistoryList";
 				
 		Connection con = null;
@@ -5205,14 +5208,14 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public List<ConfigurazioneAllarmeBean> configurazioneAllarmiList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationException{
+	public List<ConfigurazioneAllarmeBean> configurazioneAllarmiList(ConsoleSearch ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationException{
 		return this._configurazioneAllarmiList(ricerca, ruoloPorta, nomePorta, 
 				"configurazioneControlloTrafficoAttivazionePolicyList",
 				null, null, null,
 				null, null,
 				null, null);
 	}
-	public List<ConfigurazioneAllarmeBean> configurazioneAllarmiListByFilter(Search ricerca, RuoloPorta ruoloPorta, String nomePorta,
+	public List<ConfigurazioneAllarmeBean> configurazioneAllarmiListByFilter(ConsoleSearch ricerca, RuoloPorta ruoloPorta, String nomePorta,
 			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
 			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
 			IDServizio filtroServizioAzione, String filtroRuolo) throws DriverControlStationException{
@@ -5222,7 +5225,7 @@ public class DriverControlStationDB  {
 				filtroSoggettoErogatore, filtroRuoloErogatore,
 				filtroServizioAzione, filtroRuolo);
 	}
-	private List<ConfigurazioneAllarmeBean> _configurazioneAllarmiList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta, String nomeMetodo,
+	private List<ConfigurazioneAllarmeBean> _configurazioneAllarmiList(ConsoleSearch ricerca, RuoloPorta ruoloPorta, String nomePorta, String nomeMetodo,
 			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
 			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
 			IDServizio filtroServizioAzione, String filtroRuolo) throws DriverControlStationException{

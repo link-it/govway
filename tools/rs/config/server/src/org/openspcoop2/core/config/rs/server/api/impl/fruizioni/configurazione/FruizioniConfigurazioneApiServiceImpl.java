@@ -143,7 +143,7 @@ import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleUtilities;
@@ -1345,7 +1345,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
 			final int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
-			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			final ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
 			if(metrica!=null) {
 				String risorsa = ErogazioniApiHelper.getDataElementModalitaRisorsa(metrica);
 				ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, risorsa);
@@ -1400,7 +1400,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
 			final int idLista = Liste.PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA;
-			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			final ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
 			
 			List<CorrelazioneApplicativaElemento> lista = env.pdCore.porteDelegateCorrelazioneApplicativaList(pd.getId().intValue(), ricerca);
 
@@ -1458,7 +1458,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
 			final int idLista = Liste.PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA;
-			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			final ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
 			
 			List<CorrelazioneApplicativaRispostaElemento> lista = env.pdCore.porteDelegateCorrelazioneApplicativaRispostaList(pd.getId().intValue(), ricerca);
 
@@ -1884,7 +1884,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			ControlloAccessiAutorizzazioneApplicativi ret = new ControlloAccessiAutorizzazioneApplicativi();
 			
 			int idLista = Liste.PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
-			Search ricerca = Helper.setupRicercaPaginata("", -1, 0, idLista);
+			ConsoleSearch ricerca = Helper.setupRicercaPaginata("", -1, 0, idLista);
 			List<ServizioApplicativo> lista = env.pdCore.porteDelegateServizioApplicativoList(pd.getId(), ricerca);
 			ret.setApplicativi(lista.stream().map( saPA -> saPA.getNome()).collect(Collectors.toList()));
 		
@@ -1921,7 +1921,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			ControlloAccessiAutorizzazioneApplicativi ret = new ControlloAccessiAutorizzazioneApplicativi();
 			
 			int idLista = Liste.PORTE_DELEGATE_TOKEN_SERVIZIO_APPLICATIVO;
-			Search ricerca = Helper.setupRicercaPaginata("", -1, 0, idLista);
+			ConsoleSearch ricerca = Helper.setupRicercaPaginata("", -1, 0, idLista);
 			List<ServizioApplicativo> lista = env.pdCore.porteDelegateServizioApplicativoTokenList(pd.getId(), ricerca);
 			ret.setApplicativi(lista.stream().map( saPA -> saPA.getNome()).collect(Collectors.toList()));
 		

@@ -44,7 +44,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerPool;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -348,7 +348,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 			else {
 				
 				// Preparo la lista
-				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+				ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 				int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
 

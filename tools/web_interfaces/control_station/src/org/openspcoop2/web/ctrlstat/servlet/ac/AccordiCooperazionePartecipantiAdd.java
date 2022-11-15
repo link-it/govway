@@ -39,7 +39,7 @@ import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -125,9 +125,9 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 
 			List<Soggetto> soggetti = null;
 			if(acCore.isVisioneOggettiGlobale(userLogin)){
-				soggetti = soggettiCore.soggettiRegistroList(null, new Search(true));
+				soggetti = soggettiCore.soggettiRegistroList(null, new ConsoleSearch(true));
 			}else{
-				soggetti = soggettiCore.soggettiRegistroList(userLogin, new Search(true));
+				soggetti = soggettiCore.soggettiRegistroList(userLogin, new ConsoleSearch(true));
 			}
 			for (Soggetto sogg : soggetti) {
 				String s = sogg.getTipo()+"/"+sogg.getNome();
@@ -228,7 +228,7 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			List<IDSoggetto> lista = acCore.accordiCoopPartecipantiList(ac.getId(),ricerca);
 

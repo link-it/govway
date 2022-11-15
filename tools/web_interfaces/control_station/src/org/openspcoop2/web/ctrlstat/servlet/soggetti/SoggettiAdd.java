@@ -61,7 +61,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
@@ -260,9 +260,9 @@ public final class SoggettiAdd extends Action {
 
 				// aggiungo gli altri elementi
 				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-					lista.addAll(pddCore.pddList(null, new Search(true)));
+					lista.addAll(pddCore.pddList(null, new ConsoleSearch(true)));
 				}else{
-					lista.addAll(pddCore.pddList(userLogin, new Search(true)));
+					lista.addAll(pddCore.pddList(userLogin, new ConsoleSearch(true)));
 				}
 
 				totPdd = lista.size();
@@ -930,7 +930,9 @@ public final class SoggettiAdd extends Action {
 			soggettoConfig.setSuperUser(userLogin);
 
 			//imposto properties custom
-			soggettoRegistro.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType,null)); 
+			if(soggettoRegistro!=null) {
+				soggettoRegistro.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType,null));
+			}
 
 
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);
@@ -947,7 +949,7 @@ public final class SoggettiAdd extends Action {
 			}
 									
 			// recupero la lista dei soggetti
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			if(soggettiCore.isSetSearchAfterAdd()) {
 				soggettiCore.setSearchAfterAdd(Liste.SOGGETTI, soggettoConfig.getNome(), request, session, ricerca);

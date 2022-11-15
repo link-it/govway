@@ -37,7 +37,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.audit.AuditingCore;
 import org.openspcoop2.web.lib.audit.dao.Configurazione;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
@@ -212,7 +212,7 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 			confCore.performCreateOperation(userLogin, confHelper.smista(), f);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			List<Filtro> lista = null;
 			lista = confCore.filtriList(ricerca);

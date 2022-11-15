@@ -91,7 +91,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
@@ -778,7 +778,7 @@ public class ApiApiHelper {
 
 		StatoApiEnum stato = null;
 		String descrizioneStato = "";
-		Search searchForCount = new Search(true);
+		ConsoleSearch searchForCount = new ConsoleSearch(true);
 		switch (ret.getTipoInterfaccia().getProtocollo()) {
 		case REST:
 			// caso REST: l'API e' abilitata se ha almeno una risorsa

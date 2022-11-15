@@ -213,20 +213,26 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			String nomeProtocollo = null;
 			String tipoENomeSoggetto = null;
 			String nomePdd = null;
-			@SuppressWarnings("unused")
-			IDSoggetto idSoggetto = null;
+//			@SuppressWarnings("unused")
+//			IDSoggetto idSoggetto = null;
 			if(saCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(idProv);
+				if(soggetto==null) {
+					throw new Exception("Soggetto con id '"+idProv+"' non trovato");
+				}
 				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
 				nomePdd = soggetto.getPortaDominio();
-				idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
+//				idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
 			}
 			else{
 				Soggetto soggetto = soggettiCore.getSoggetto(idProv);
+				if(soggetto==null) {
+					throw new Exception("Soggetto con id '"+idProv+"' non trovato");
+				}
 				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
-				idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
+//				idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
 			}
 
 			if(dominio==null) {
@@ -455,7 +461,7 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 				pd.setLabelBottoneInvia(labelButtonSalva);
 			}
 			
-			Parameter nomeCredenziale = new Parameter(saHelper.getLabelCredenzialeCertificato(oldCredenziali.getCnSubject()), null);
+			Parameter nomeCredenziale = new Parameter(saHelper.getLabelCredenzialeCertificato(oldCredenziali!=null ? oldCredenziali.getCnSubject() : null), null);
 			
 			if(visualizzaConfirm) {
 				if(useIdSogg){

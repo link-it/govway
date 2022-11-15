@@ -35,7 +35,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
@@ -105,7 +105,7 @@ public final class AccordiServizioParteComuneAllegatiDel extends Action {
 			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneAllegati(as, userLogin, apcCore, apcHelper, idAllegati);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			List<Documento> lista = apcCore.accordiAllegatiList(as.getId().intValue(), ricerca);
 
 			apcHelper.prepareAccordiAllegatiList(as, ricerca, lista,tipoAccordo);

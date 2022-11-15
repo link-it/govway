@@ -43,7 +43,7 @@ import org.openspcoop2.utils.transport.http.credential.PrincipalReaderFactory;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -230,7 +230,7 @@ public final class AuthorizationFilter implements Filter {
 									}
 									
 									boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(request, session);
-									Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+									ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 									if(ricerca!=null) {
 										ricerca.reset();
 										for (int i = 0; i < Liste.getTotaleListe(); i++) {
@@ -466,7 +466,7 @@ public final class AuthorizationFilter implements Filter {
 									}
 									
 									boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(request, session);
-									Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+									ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 									if(ricerca!=null) {
 										ricerca.reset();
 										for (int i = 0; i < Liste.getTotaleListe(); i++) {
@@ -635,7 +635,7 @@ public final class AuthorizationFilter implements Filter {
 				//lH.updateTipoInterfaccia();
 				
 				// Inizializzo parametri di ricerca
-				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+				ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 				lH.initializeFilter(ricerca);
 				
 				// Boolean verifico configurazione

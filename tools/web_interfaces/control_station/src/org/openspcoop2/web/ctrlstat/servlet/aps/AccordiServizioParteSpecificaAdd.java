@@ -85,7 +85,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -802,7 +802,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			// calcolo soggetti compatibili con accordi
 			List<Soggetto> listSoggetti = null;
-			Search searchSoggetti = new Search(true);
+			ConsoleSearch searchSoggetti = new ConsoleSearch(true);
 			searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, this.tipoProtocollo);
 			boolean gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore = false;
 			if(gestioneFruitori) {
@@ -902,7 +902,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
 					tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(this.tipoProtocollo,this.serviceBinding);
 
-					searchSoggetti = new Search(true);
+					searchSoggetti = new ConsoleSearch(true);
 					searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, this.tipoProtocollo);
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
 						listSoggetti = soggettiCore.soggettiRegistroList(null, searchSoggetti);
@@ -939,7 +939,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}catch(DriverRegistroServiziNotFound notFound) {}
 				}
 				else {
-					Search searchSoggettiFruitori = new Search(true);
+					ConsoleSearch searchSoggettiFruitori = new ConsoleSearch(true);
 					searchSoggettiFruitori.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, this.tipoProtocollo);
 					searchSoggettiFruitori.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
@@ -2238,7 +2238,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
 			apsHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 			
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
 			if(apsCore.isSetSearchAfterAdd()) {
 				apsCore.setSearchAfterAdd(Liste.SERVIZI, asps.getNome(), request, session, ricerca);

@@ -94,7 +94,7 @@ import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
-import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.SerialiableFormFile;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper;
@@ -968,7 +968,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
 
 			final int idLista = Liste.ACCORDI;
-			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
+			final ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
 					env.tipo_protocollo);
 
 			if(profiloQualsiasi!=null && profiloQualsiasi) {
@@ -1033,7 +1033,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");
 
 			int idLista = Liste.ACCORDI_ALLEGATI;
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
+			ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
 					env.tipo_protocollo);
 
 			List<Documento> docsRegistro = env.apcCore.accordiAllegatiList(as.getId().intValue(), ricerca);
@@ -1084,7 +1084,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");
 
 			int idLista = Liste.ACCORDI_PORTTYPE_AZIONI;
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
+			ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
 					env.tipo_protocollo);
 
 			PortType pt = as.getPortTypeList().stream().filter(p -> nomeServizio.equals(p.getNome())).findFirst()
@@ -1143,7 +1143,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			int idLista = Liste.ACCORDI_API_RESOURCES;
 
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
+			ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
 					env.tipo_protocollo);
 
 			if (httpMethod != null)
@@ -1197,7 +1197,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			int idLista = Liste.ACCORDI_PORTTYPE;
 
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
+			ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
 					env.tipo_protocollo);
 
 			List<PortType> servizi = env.apcCore.accordiPorttypeList(as.getId().intValue(), ricerca);

@@ -46,6 +46,7 @@ import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
@@ -82,7 +83,7 @@ public class InitListener implements ServletContextListener {
 
 	//private static String IDMODULO = "ControlStation";
 	protected static Logger log = null;
-	private final static Boolean initialized_semaphore = true;
+	private final static Semaphore semaphoreInitListener = new Semaphore("InitListener");
 	private static boolean initialized = false;
 	static {
 		InitListener.log = LoggerWrapperFactory.getLogger(InitListener.class);
@@ -130,7 +131,8 @@ public class InitListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		
-		synchronized (initialized_semaphore) {
+		semaphoreInitListener.acquireThrowRuntime("contextInitialized");
+		try {
 			
 			if(InitListener.initialized) {
 				return;
@@ -172,10 +174,14 @@ public class InitListener implements ServletContextListener {
 						if(is!=null){
 							is.close();
 						}
-					}catch(Exception eClose){}
+					}catch(Exception eClose){
+						// close
+					}
 				}
 	
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 					
 			try{
 				ControlStationLogger.initialize(InitListener.log, confDir, confPropertyName, confLocalPathPrefix, null, appendActualConfiguration);
@@ -417,6 +423,8 @@ public class InitListener implements ServletContextListener {
 			}
 			
 			InitListener.initialized = true;
+		}finally {
+			semaphoreInitListener.release("contextInitialized");
 		}
 	}
 
