@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="spotbugs_LocalEnv" basedir=".">
+
+	<!-- openspcoop2 -->
+	<property name="openspcoop2" location="../../" />
+	<property name="openspcoop2.dist" value="${openspcoop2}/dist" />
+	<property name="openspcoop2.lib" value="${openspcoop2}/lib" />
+	<property name="required_lib" value="${openspcoop2.lib}"/>
+
+	<!-- https://github.com/spotbugs/spotbugs -->
+	<!-- https://spotbugs.github.io/ -->
+	<property name="spotbugs.home" value="" />
+
+	<!-- ** https://spotbugs.readthedocs.io/en/stable/ant.html ** -->
+	<!-- If set to low, confidence is not used to filter bugs. If set to medium (the default), low confidence issues are suppressed. If set to high, only high confidence bugs are reported -->
+	<property name="spotbugs.confidence" value="low" />
+	<!-- 
+		Set the analysis effort level. The value specified should be one of min, default, or max.
+		https://spotbugs.readthedocs.io/en/stable/running.html
+		"The -effort:max enable analyses which increase precision and find more bugs, but which may require more memory and take more time to complete."
+	 -->
+	<property name="spotbugs.efforts" value="max" />
+	<!-- Enables or disables scanning of nested jar and zip files found in the list of files and directories to be analyzed. By default, scanning of nested jar/zip files is enabled. -->
+	<property name="spotbugs.nested" value="true" />
+	<!-- Whether to abort the build process if there is an error running SpotBugs. -->
+	<property name="spotbugs.failOnError" value="true" />
+	<!-- It specifies a path containing filters specifying bugs to exclude from being reported -->
+	<property name="spotbugs.filters" value="filters" />
+	<!--  
+		It specifies the output format. 
+		If set to "xml" (the default), output is in XML format. 
+		If set to "xml:withMessages", output is in XML format augmented with human-readable messages. (You should use this format if you plan to generate a report using an XSL stylesheet.) 
+		If set to "html", output is in HTML formatted (default stylesheet is default.xsl). 
+		If set to "text", output is in ad-hoc text format. 
+		If set to "emacs", output is in Emacs error message format. 
+		If set to "xdocs", output is xdoc XML for use with Apache Maven. 
+	-->
+	<property name="spotbugs.outputType" value="xml" />
+	<!--  Names the output dir in which the FindBugs output will be saved -->
+	<property name="spotbugs.output" value="reports" />
+
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="false" />
+	
+</project>
+
+

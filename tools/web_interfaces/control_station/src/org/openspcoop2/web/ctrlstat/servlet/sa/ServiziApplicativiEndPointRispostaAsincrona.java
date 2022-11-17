@@ -120,7 +120,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
+			Boolean useIdSogg = parentSA!=null ? (parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO) : null;
 			
 			String nomeservizioApplicativo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
 			String idsil = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
@@ -277,8 +277,14 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			InvocazionePorta invocazionePorta = sa.getInvocazionePorta();
 			RispostaAsincrona ra = sa.getRispostaAsincrona();
+			if(ra==null) {
+				throw new Exception("ServizioApplicativo con id '"+idSilInt+"' senza RispostaAsincrona");
+			}
 			InvocazioneCredenziali cra = ra.getCredenziali();
 			Connettore connra = ra.getConnettore();
+			if(connra==null) {
+				throw new Exception("ServizioApplicativo con id '"+idSilInt+"' senza connettore in RispostaAsincrona");
+			}
 			List<Property> cp = connra.getPropertyList();
 			
 			boolean forceEnabled = false;

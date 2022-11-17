@@ -1945,6 +1945,9 @@ public class TestOptimizedHeader {
 					soap = (AbstractOpenSPCoop2Message_soap_impl<?>)_soapMsg;
 					soap.getContent(true, "idTransazione-xxx").getSOAPMessage();
 				}
+				else {
+					throw new Exception("Atteso messaggio con tipo '"+AbstractOpenSPCoop2Message_soap_impl.class.getName()+"'");
+				}
 				
 				SOAPHeader hdr = soap.getSOAPHeader();
 				if(hdr==null) {

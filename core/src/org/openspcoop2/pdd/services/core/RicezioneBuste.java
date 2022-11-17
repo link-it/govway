@@ -1052,6 +1052,14 @@ public class RicezioneBuste {
 		// Classi registrate
 		ClassNameProperties className = ClassNameProperties.getInstance();
 
+		if(requestInfo==null) {
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,null,
+					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento("RequesInfo is null"),null,
+					"InizializzazioneRisorseServizioRicezioneBuste");
+			return;
+		}
+		
 		//	IdentificativoPdD
 		IDSoggetto identitaPdD = requestInfo.getIdentitaPdD();
 
@@ -1081,6 +1089,13 @@ public class RicezioneBuste {
 			nomePorta = inRequestContext.getConnettore().getUrlProtocolContext().getFunctionParameters() + "_urlInvocazione("+ inRequestContext.getConnettore().getUrlProtocolContext().getUrlInvocazione_formBased() + ")";
 		}
 		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,identitaPdD,this.msgContext.getIdModulo(),nomePorta,requestInfo,configurazionePdDReader);
+		if(msgDiag==null) {
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,logCore,null,
+					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento("MsgDiagnostico is null",CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),null,
+					"InizializzazioneRisorseServizioRicezioneBuste");
+			return;
+		}
 		this.msgContext.setMsgDiagnostico(msgDiag); // aggiorno msg diagnostico
 		msgDiag.setPddContext(inRequestContext.getPddContext(), protocolFactory);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
@@ -2111,14 +2126,14 @@ public class RicezioneBuste {
 			bustaURLMapping = new Busta(protocolFactory,infoServizio, soggettoFruitore, 
 					idServizio!=null ? idServizio.getSoggettoErogatore() : null, 
 					id, generazioneListaTrasmissioni);
-			if(infoServizio.getCollaborazione()) {
+			if(infoServizio!=null && infoServizio.getCollaborazione()) {
 				// in questo punto sar' true solo se infoServizio è stato letto dal registro E siamo in 'isStaticBasedIdentificationMode_InfoProtocol'
 				if(headerIntegrazioneRichiesta!=null && headerIntegrazioneRichiesta.getBusta()!=null 
 						&& headerIntegrazioneRichiesta.getBusta().getIdCollaborazione()!=null) {
 					bustaURLMapping.setCollaborazione(headerIntegrazioneRichiesta.getBusta().getIdCollaborazione());
 				}
 			}
-			if(infoServizio.getIdRiferimentoRichiesta()) {
+			if(infoServizio!=null && infoServizio.getIdRiferimentoRichiesta()) {
 				// in questo punto sar' true solo se infoServizio è stato letto dal registro E siamo in 'isStaticBasedIdentificationMode_InfoProtocol'
 				if(headerIntegrazioneRichiesta!=null && headerIntegrazioneRichiesta.getBusta()!=null 
 						&& headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio()!=null) {
@@ -4314,15 +4329,17 @@ public class RicezioneBuste {
 		
 		if(servizioApplicativoFruitore!=null){
 			// overriding busta
-			bustaRichiesta.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+			if(bustaRichiesta!=null) {
+				bustaRichiesta.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+			}
 		}
 		else{
 			// altrimenti se è valorizzato internamente alla busta (poichè previsto dal protocollo (es. pdc)) e non capito tramite informazioni di integrazione uso quello
-			if(bustaRichiesta.getServizioApplicativoFruitore()!=null){
+			if(bustaRichiesta!=null && bustaRichiesta.getServizioApplicativoFruitore()!=null){
 				servizioApplicativoFruitore = bustaRichiesta.getServizioApplicativoFruitore();
 			}
 		}
-		String idMessageRequest = bustaRichiesta.getID();
+		String idMessageRequest = bustaRichiesta!=null ? bustaRichiesta.getID() : null;
 
 		TipoPdD tipoPorta = TipoPdD.APPLICATIVA;
 		if(functionAsRouter)
@@ -4347,8 +4364,10 @@ public class RicezioneBuste {
 			this.msgContext.getProtocol().setAzione(idServizio.getAzione()); 
 		}
 		this.msgContext.getProtocol().setIdRichiesta(idMessageRequest);
-		this.msgContext.getProtocol().setProfiloCollaborazione(bustaRichiesta.getProfiloDiCollaborazione(),bustaRichiesta.getProfiloDiCollaborazioneValue());
-		this.msgContext.getProtocol().setCollaborazione(bustaRichiesta.getCollaborazione());
+		if(bustaRichiesta!=null) {
+			this.msgContext.getProtocol().setProfiloCollaborazione(bustaRichiesta.getProfiloDiCollaborazione(),bustaRichiesta.getProfiloDiCollaborazioneValue());
+			this.msgContext.getProtocol().setCollaborazione(bustaRichiesta.getCollaborazione());
+		}
 
 
 
@@ -5026,14 +5045,14 @@ public class RicezioneBuste {
 			// NOTA: Usare getIntegrationServiceBinding poichè le funzionalità si riferiscono al tipo di integrazione scelta
 			
 			IProtocolConfiguration protocolConfiguration = protocolFactory.createProtocolConfiguration();
-			if(bustaRichiesta.getProfiloDiCollaborazione()!=null && 
+			if(bustaRichiesta!=null && bustaRichiesta.getProfiloDiCollaborazione()!=null && 
 					!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.UNKNOWN.equals(bustaRichiesta.getProfiloDiCollaborazione()) ){
 				if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),bustaRichiesta.getProfiloDiCollaborazione())==false){
 					throw new Exception("Profilo di Collaborazione ["+bustaRichiesta.getProfiloDiCollaborazione().getEngineValue()+"]");
 				}
 			}
 			// NOTA:  FiltroDuplicati, consegnaAffidabile, idCollaborazione, consegnaInOrdine verificato in sbustamento.
-			if(bustaRichiesta.getScadenza()!=null){
+			if(bustaRichiesta!=null && bustaRichiesta.getScadenza()!=null){
 				if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.SCADENZA)==false){
 					throw new Exception(FunzionalitaProtocollo.SCADENZA.getEngineValue());
 				}
@@ -5198,8 +5217,14 @@ public class RicezioneBuste {
 
 		// UPDATE: Modalita' gestione risposta (Sincrona/Fault/Ricevute...)
 		// Per i profili diversi dal sincrono e' possibile impostare dove far ritornare l'errore
-		if((org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())==false) &&
-				(oneWayStateless==false) && (sincronoStateless==false) && (asincronoStateless==false) && (routingStateless==false) ){
+		if(
+				(bustaRichiesta!=null) &&
+				(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())==false) &&
+				(oneWayStateless==false) && 
+				(sincronoStateless==false) && 
+				(asincronoStateless==false) && 
+				(routingStateless==false) 
+			){
 			// New connection puo' essere usata solo se non siamo in modalita stateless
 			newConnectionForResponse = configurazionePdDReader.newConnectionForResponse();
 		}
@@ -5597,7 +5622,13 @@ public class RicezioneBuste {
 		// Aggiorno eventuale valore ProfiloCollaborazione dipendete dal profilo (PDC)
 		if(bustaRichiesta!=null && this.msgContext.getProtocol()!=null) {
 			this.msgContext.getProtocol().setProfiloCollaborazione(bustaRichiesta.getProfiloDiCollaborazione(),bustaRichiesta.getProfiloDiCollaborazioneValue());
-			if(bustaRichiesta.getVersioneServizio()>0 && bustaRichiesta.getVersioneServizio()!=this.msgContext.getProtocol().getVersioneServizio()) {
+			if(
+					(bustaRichiesta!=null) &&
+					(bustaRichiesta.getVersioneServizio()!=null) && 
+					(bustaRichiesta.getVersioneServizio().intValue()>0) && 
+					(this.msgContext.getProtocol().getVersioneServizio()!=null) &&
+					(bustaRichiesta.getVersioneServizio().intValue()!=this.msgContext.getProtocol().getVersioneServizio().intValue())
+				) {
 				this.msgContext.getProtocol().setVersioneServizio(bustaRichiesta.getVersioneServizio());
 			}
 		}
@@ -5609,8 +5640,11 @@ public class RicezioneBuste {
 		/* -------- Controlli Header di Integrazione ------------- */
 		
 		IProtocolConfiguration protocolConfig = protocolFactory.createProtocolConfiguration();
-		if(infoServizio.getIdRiferimentoRichiesta() &&
-				protocolConfig.isIntegrationInfoRequired(TipoPdD.APPLICATIVA, requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA)) {
+		if(
+				(infoServizio!=null) && 
+				(infoServizio.getIdRiferimentoRichiesta()) &&
+				(protocolConfig.isIntegrationInfoRequired(TipoPdD.APPLICATIVA, requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA))
+			) {
 			String riferimentoRichiesta = null;
 			if (headerIntegrazioneRichiesta!=null &&
 					headerIntegrazioneRichiesta.getBusta() != null && headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null) {
@@ -6647,8 +6681,15 @@ public class RicezioneBuste {
 				
 				// VALIDAZIONE CONTENUTI APPLICATIVI
 				
-				if(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())||
-						CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())){
+				if(
+						(validazioneContenutoApplicativoApplicativo!=null)
+						&&
+						(
+								CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())
+								||
+								CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())
+						)
+					){
 				
 					transaction.getTempiElaborazione().startValidazioneRichiesta();
 					ByteArrayInputStream binXSD = null;
@@ -7618,7 +7659,7 @@ public class RicezioneBuste {
 		
 		
 		/* FIX bug riferimentoMessaggio errato, contiene un id generato nel flusso di risposta (e poi non usato in seguito a errori) invece di quello della richiesta */
-		bustaRichiesta = bustaRichiesta.newInstance(); // Per evitare che mi venga modificato da ImbustamentoRisposte (TODO: Non ho capito il motivo)
+		bustaRichiesta = bustaRichiesta.newInstance(); // Per evitare che mi venga modificato da ImbustamentoRisposte (Non ho capito il motivo)
 		
 		
 		
@@ -8673,50 +8714,52 @@ public class RicezioneBuste {
 				outResponsePAMessage.setSoggettoMittente(soggettoFruitore);
 				outResponsePAMessage.setServizio(idServizio);
 				
-				for (int i = 0; i < tipiIntegrazionePA_response.length; i++) {
-					try {
-						IGestoreIntegrazionePA gestore = null;
+				if(tipiIntegrazionePA_response!=null) {
+					for (int i = 0; i < tipiIntegrazionePA_response.length; i++) {
 						try {
-							gestore = (IGestoreIntegrazionePA) pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA_response[i]);
-						}catch(Exception e){
-							throw e;
-						}
-						if(gestore!=null){
-							String classType = null;
+							IGestoreIntegrazionePA gestore = null;
 							try {
-								classType = gestore.getClass().getName();
-								AbstractCore.init(gestore, pddContext, protocolFactory);
-							} catch (Exception e) {
-								throw new Exception(
-										"Riscontrato errore durante l'inizializzazione della classe ["+ classType
-												+ "] da utilizzare per la gestione dell'integrazione delle erogazioni (Risposta Update/Delete) di tipo ["+ tipiIntegrazionePA_response[i] + "]: " + e.getMessage());
+								gestore = (IGestoreIntegrazionePA) pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA_response[i]);
+							}catch(Exception e){
+								throw e;
 							}
-							if(gestore instanceof IGestoreIntegrazionePASoap){
-								if(propertiesReader.deleteHeaderIntegrazioneResponsePA()){
+							if(gestore!=null){
+								String classType = null;
+								try {
+									classType = gestore.getClass().getName();
+									AbstractCore.init(gestore, pddContext, protocolFactory);
+								} catch (Exception e) {
+									throw new Exception(
+											"Riscontrato errore durante l'inizializzazione della classe ["+ classType
+													+ "] da utilizzare per la gestione dell'integrazione delle erogazioni (Risposta Update/Delete) di tipo ["+ tipiIntegrazionePA_response[i] + "]: " + e.getMessage());
+								}
+								if(gestore instanceof IGestoreIntegrazionePASoap){
+									if(propertiesReader.deleteHeaderIntegrazioneResponsePA()){
+										if(responseMessage==null){
+											responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(), MessageRole.RESPONSE);
+											outResponsePAMessage.setMessage(responseMessage);
+										}
+										gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePAMessage);
+									}else{
+										// gia effettuato l'update dell'header in InoltroBuste
+									}
+								}else{
 									if(responseMessage==null){
 										responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(), MessageRole.RESPONSE);
 										outResponsePAMessage.setMessage(responseMessage);
 									}
 									gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePAMessage);
-								}else{
-									// gia effettuato l'update dell'header in InoltroBuste
 								}
-							}else{
-								if(responseMessage==null){
-									responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(), MessageRole.RESPONSE);
-									outResponsePAMessage.setMessage(responseMessage);
-								}
-								gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePAMessage);
+							} else {
+								throw new Exception("Gestore non inizializzato");
 							}
-						} else {
-							throw new Exception("Gestore non inizializzato");
+								
+						} catch (Exception e) {
+							msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePA_response[i]);
+							msgDiag.addKeywordErroreProcessamento(e);
+							msgDiag.logPersonalizzato("headerIntegrazione.creazioneFallita");
+							logCore.error(msgDiag.getMessaggio_replaceKeywords("headerIntegrazione.creazioneFallita"), e);
 						}
-							
-					} catch (Exception e) {
-						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePA_response[i]);
-						msgDiag.addKeywordErroreProcessamento(e);
-						msgDiag.logPersonalizzato("headerIntegrazione.creazioneFallita");
-						logCore.error(msgDiag.getMessaggio_replaceKeywords("headerIntegrazione.creazioneFallita"), e);
 					}
 				}
 				
@@ -8793,7 +8836,9 @@ public class RicezioneBuste {
 				/* ---------- Gestione Transazione Modulo ---------------- */	    
 				// Aggiorno proprietario Messaggio
 				msgDiag.mediumDebug("Aggiornamento proprietario messaggio...");
-				msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+				if(msgResponse!=null) {
+					msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+				}
 
 				// Commit JDBC
 				msgDiag.mediumDebug("Commit delle operazioni per la gestione della risposta...");
@@ -9704,8 +9749,10 @@ public class RicezioneBuste {
 						( bustaRichiesta.getCollaborazione()!=null && (bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())==false) ) 
 				){
 
-					if( ( newConnectionForResponse==false ) || 
-							( newConnectionForResponse && (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
+					if( 
+							( newConnectionForResponse==false ) 
+							|| 
+							( (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
 					){	
 						String idRichiesta = bustaRichiesta.getRiferimentoMessaggio();
 						if(idRichiesta==null){
@@ -9731,8 +9778,10 @@ public class RicezioneBuste {
 						( bustaRichiesta.getCollaborazione()!=null && (bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())==false) ) 
 				){
 
-					if( ( newConnectionForResponse==false ) || 
-							( newConnectionForResponse && (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
+					if( 
+							( newConnectionForResponse==false ) 
+							|| 
+							( (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
 					){	
 						String idRichiesta = bustaRichiesta.getRiferimentoMessaggio();
 						if(idRichiesta==null){
@@ -9804,8 +9853,10 @@ public class RicezioneBuste {
 						( bustaRichiesta.getCollaborazione()!=null && (bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())==false) ) 
 				){
 
-					if( ( newConnectionForResponse==false ) || 
-							( newConnectionForResponse && (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
+					if( 
+							( newConnectionForResponse==false ) 
+							|| 
+							( (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
 					){
 						String idRicevutaRichiesta = bustaRichiesta.getRiferimentoMessaggio();
 						if(idRicevutaRichiesta==null){
@@ -9831,8 +9882,10 @@ public class RicezioneBuste {
 						( bustaRichiesta.getCollaborazione()!=null && (bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())==false) ) 
 				){
 
-					if( ( newConnectionForResponse==false ) || 
-							( newConnectionForResponse && (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
+					if( 
+							( newConnectionForResponse==false ) 
+							|| 
+							( (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
 					){
 						String idRicevutaRichiesta = bustaRichiesta.getRiferimentoMessaggio();
 						if(idRicevutaRichiesta==null){
@@ -10033,7 +10086,7 @@ public class RicezioneBuste {
 				//	Asincrono Asimmetrico
 				if(bustaRichiesta.getRiferimentoMessaggio()==null){
 					ricevuta = "ricevuta di una richiesta asincrona asimmetrica";
-					// TODO ServizioCorrelato da impostare nella ricevuta asincrona
+					// ServizioCorrelato da impostare nella ricevuta asincrona
 				}else if(ruoloBustaRicevuta!=null && RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString()) ){
 					ricevuta = "ricevuta di una risposta asincrona asimmetrica";
 				}

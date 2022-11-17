@@ -3480,6 +3480,9 @@ public class ControlStationCore {
 
 			operazioneDaSmistareList = new ArrayList<OperazioneDaSmistare>();
 			con = ControlStationCore.dbM.getConnection();
+			if(con==null) {
+				throw new ControlStationCoreException("Connection is null");
+			}
 
 			// le operazioni da eseguire devono essere transazionali quindi
 			// disabilito l'autocommit

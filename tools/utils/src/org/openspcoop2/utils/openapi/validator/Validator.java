@@ -200,7 +200,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				apiRest = this.api;
 				apiValidatorStructure = openapiApi.getValidationStructure();
 			}
-			else if(api instanceof Api) {
+			else {
 				apiRest = this.api;
 				if(apiRest.containsKey(VALIDATION_STRUCTURE)) {
 					apiValidatorStructure = (OpenapiApiValidatorStructure) apiRest.getVendorImpl(VALIDATION_STRUCTURE);

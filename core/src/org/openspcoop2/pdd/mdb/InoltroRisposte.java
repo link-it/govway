@@ -138,18 +138,45 @@ public class InoltroRisposte extends GenericLib{
 	public EsitoLib _onMessage(IOpenSPCoopState openspcoopstate,
 			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, 
 			MsgDiagnostico msgDiag) throws OpenSPCoopStateException {
-		InoltroRisposteMessage inoltroRisposteMsg = (InoltroRisposteMessage) openspcoopstate.getMessageLib();		
+		
 		EsitoLib esito = new EsitoLib();
+				
+		if(openspcoopstate==null) {
+			if(msgDiag!=null) {
+				msgDiag.logErroreGenerico("openspcoopstate is null", "openspcoopstate.checkNull");
+			}
+			else {
+				this.log.error("openspcoopstate is null");
+			}
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
+		
+		InoltroRisposteMessage inoltroRisposteMsg = (InoltroRisposteMessage) openspcoopstate.getMessageLib();		
+		
+		if(msgDiag==null) {
+			if(this.log!=null) {
+				this.log.error("MsgDiagnostico is null");
+			}
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
 		
 		/* PddContext */
 		PdDContext pddContext = inoltroRisposteMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
-		@SuppressWarnings("unused")
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Busta e tipo di implementazione PdD con cui interoperare */
 		// Busta da inviare (tracciamento e Message-Security)
 		Busta busta = inoltroRisposteMsg.getBustaRisposta();
+		if(busta==null) {
+			msgDiag.logErroreGenerico("Busta is null", "Busta.checkNull"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
 		String implementazionePdDDestinatario = inoltroRisposteMsg.getImplementazionePdDSoggettoDestinatario();
 		
 		IDSoggetto identitaPdD = inoltroRisposteMsg.getDominio();
@@ -364,7 +391,6 @@ public class InoltroRisposte extends GenericLib{
 			tracciamento = new org.openspcoop2.pdd.logger.Tracciamento(identitaPdD,InoltroBuste.ID_MODULO,pddContext,tipoPorta,msgDiag.getPorta(),
 					configurazionePdDManager);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			msgDiag.logErroreGenerico(e, "ProtocolFactory.instanziazione"); 
 			openspcoopstate.releaseResource();
 			esito.setEsitoInvocazione(false); 
@@ -706,7 +732,9 @@ public class InoltroRisposte extends GenericLib{
 			/* ----------- MTOM Processor BeforeSecurity ------------ */
 			msgDiag.mediumDebug("MTOM Processor [BeforeSecurity]...");
 			try{
-				mtomProcessor.mtomBeforeSecurity(responseMessage, flowProperties.tipoMessaggio);
+				if(mtomProcessor!=null && flowProperties!=null) {
+					mtomProcessor.mtomBeforeSecurity(responseMessage, flowProperties.tipoMessaggio);
+				}
 			}catch(Exception e){
 				// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 				//msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
@@ -1319,7 +1347,7 @@ public class InoltroRisposte extends GenericLib{
 					esito.setEsitoInvocazione(false);
 				}else{
 					if(inoltroSegnalazioneErrore)
-						ejbUtils.releaseOutboxMessage(false); // TODO CHECKME
+						ejbUtils.releaseOutboxMessage(false);
 					else
 						ejbUtils.releaseInboxMessage(false);
 					esito.setEsitoInvocazione(true);
@@ -1742,7 +1770,6 @@ public class InoltroRisposte extends GenericLib{
 			if(profiloCollaborazione!=null)
 				if (state instanceof StatefulMessage )
 					((StatefulMessage)state).closePreparedStatement();
-				//else ; //TODO CHECKME
 		}
 		
 		return flowProperties;

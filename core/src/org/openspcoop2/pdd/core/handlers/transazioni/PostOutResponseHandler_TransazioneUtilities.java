@@ -189,6 +189,13 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
+		if(transaction==null) {
+			throw new HandlerException("Transaction is null");
+		}
+		if(context==null) {
+			throw new HandlerException("Context is null");
+		}
+		
 		Traccia tracciaRichiesta = transaction.getTracciaRichiesta();
 		Traccia tracciaRisposta = transaction.getTracciaRisposta();
 

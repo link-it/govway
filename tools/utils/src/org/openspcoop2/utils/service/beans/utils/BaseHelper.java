@@ -356,7 +356,11 @@ public class BaseHelper {
 	
 	public static <T> T deserializeDefault(Object o, Class<T> dest) {		
 		Optional<T> ret = deserializeOptional(o, dest);
-		if (!ret.isPresent() || (ret.isPresent() && ret.get() == null)) {
+		if ( 
+				(!ret.isPresent()) 
+				|| 
+				(ret.isPresent() && ret.get() == null)
+		) {
 			try {
 				return Utilities.newInstance(dest);
 			} catch (Exception e) {

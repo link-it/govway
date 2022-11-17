@@ -90,24 +90,28 @@ public class ArchiveAccordoServizioComposto extends ArchiveAccordoServizioParteC
 	
 	
 	private IDAccordoCooperazione idAccordoCooperazione;
-	private List<IDServizio> idServiziComponenti = new ArrayList<IDServizio>();
+	private List<IDServizio> idServiziComponenti = null;
 		
 
 	public ArchiveAccordoServizioComposto(IDSoggetto idSoggettoProprietario,AccordoServizioParteComune accordoServizioParteComune, ArchiveIdCorrelazione idCorrelazione)throws ProtocolException {
 		super(idSoggettoProprietario, accordoServizioParteComune,idCorrelazione);
+		this.idServiziComponenti = new ArrayList<IDServizio>();
 	}
 	public ArchiveAccordoServizioComposto(IDSoggetto idSoggettoProprietario,AccordoServizioParteComune accordoServizioParteComune,
 			ArchiveIdCorrelazione idCorrelazione,
 			boolean informationMissingManagementEnabled) throws ProtocolException {
 		super(idSoggettoProprietario, accordoServizioParteComune,idCorrelazione,informationMissingManagementEnabled);
+		this.idServiziComponenti = new ArrayList<IDServizio>();
 	}
 	public ArchiveAccordoServizioComposto(AccordoServizioParteComune accordoServizioParteComune, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException {
 		super(accordoServizioParteComune,idCorrelazione);
+		this.idServiziComponenti = new ArrayList<IDServizio>();
 	}
 	public ArchiveAccordoServizioComposto(AccordoServizioParteComune accordoServizioParteComune, 
 			ArchiveIdCorrelazione idCorrelazione,
 			boolean informationMissingManagementEnabled) throws ProtocolException {
 		super(accordoServizioParteComune,idCorrelazione, informationMissingManagementEnabled);
+		this.idServiziComponenti = new ArrayList<IDServizio>();
 	}
 	
 	

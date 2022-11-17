@@ -147,7 +147,9 @@ public class CommonsMailSender extends Sender {
 			for (File file : filesAllegati) {
 				try{
 					file.delete();
-				}catch(Exception e){}
+				}catch(Throwable e){
+					// ignore
+				}
 			}
 		}
 		

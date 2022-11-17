@@ -528,6 +528,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						break;
 					}
 				}
+				if(fruitore==null) {
+					throw new Exception("Fruitore '"+idSoggettoFruitore.getTipo()+"/"+idSoggettoFruitore.getNome()+"' non trovato");
+				}
 				providerSoggettoFruitore = fruitore.getId()+"";
 			}
 			
@@ -554,8 +557,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			AccordoServizioParteComuneSintetico as = null;
 			if (accordo != null && !"".equals(accordo)) {
 				as = apcCore.getAccordoServizioSintetico(Long.parseLong(accordo));
+				if(as==null) {
+					throw new Exception("AccordoServizioParteComune con id '"+accordo+"' non trovato");
+				}
 			} else {
 				as = apcCore.getAccordoServizioSintetico(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+				if(as==null) {
+					throw new Exception("AccordoServizioParteComune con id '"+asps.getAccordoServizioParteComune()+"' non trovato");
+				}
 				portType = asps.getPortType();
 			}
 			
@@ -873,7 +882,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			Properties propertiesProprietario = new Properties();
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, id);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_ACCORDO_SERVIZIO_PARTE_SPECIFICA);
-			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, uriAccordo);
+			if(uriAccordo!=null) {
+				propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, uriAccordo);
+			}
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE, URLEncoder.encode( AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE + "?" + request.getQueryString(), "UTF-8"));
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, tipoProtocollo);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, "");
@@ -1767,7 +1778,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
 					String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
-					pd.setMessage(pre + MessageFormat.format(msg, uriAccordo) + post, Costanti.MESSAGE_TYPE_CONFIRM);
+					if(uriAccordo!=null) {
+						pd.setMessage(pre + MessageFormat.format(msg, uriAccordo) + post, Costanti.MESSAGE_TYPE_CONFIRM);
+					}
+					else {
+						pd.setMessage(pre + msg + post, Costanti.MESSAGE_TYPE_CONFIRM);
+					}
 					
 					pd.setDati(dati);
 					

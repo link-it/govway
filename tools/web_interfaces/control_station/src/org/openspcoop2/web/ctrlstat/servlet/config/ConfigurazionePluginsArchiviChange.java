@@ -98,16 +98,16 @@ public final class ConfigurazionePluginsArchiviChange extends Action {
 			confHelper.makeMenu();
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 			
-			String postBackElementName = confHelper.getPostBackElementName();
-			
-			// se ho modificato il soggetto ricalcolo il servizio e il service binding
-			if (postBackElementName != null) {
-				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE)) {
-				}
-				
-				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN)) {
-				}
-			}
+//			String postBackElementName = confHelper.getPostBackElementName();
+//			
+//			// se ho modificato il soggetto ricalcolo il servizio e il service binding
+//			if (postBackElementName != null) {
+//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE)) {
+//				}
+//				
+//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN)) {
+//				}
+//			}
 
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));

@@ -255,7 +255,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		if(oPddContextFromServlet!=null){
 			pddContextFromServlet = (PdDContext) oPddContextFromServlet;
 		}
-					
+				
+		// check requestInfo
+		if(requestInfo==null) {
+			String msg = "RequestInfo undefined";
+			logCore.error(msg);
+			return;
+		}
+		
 		// Identifico Servizio per comprendere correttamente il messageType
 		ServiceIdentificationReader serviceIdentificationReader = null;
 		try{
@@ -602,7 +609,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			/* ------------ Controllo ContentType -------------------- */
 			
 			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.tipologiaMessaggio");
-			messageTypeReq = MessageType.SOAP_11; // TODO: rendere parametrico ?
+			messageTypeReq = MessageType.SOAP_11; // rendere parametrico ?
 			
 			
 			
@@ -856,7 +863,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			}			
 
 			if((requestMessage!=null && requestMessage.getParseException() != null) || 
-					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 				ParseException parseException = null;
 				if( requestMessage!=null && requestMessage.getParseException() != null ){
@@ -889,8 +896,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						parseException.getParseException(),null);
 			}
 			else if( (responseMessage!=null && responseMessage.getParseException() != null) ||
-					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
-				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+				if(pddContext!=null) {
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+				}
 				ParseException parseException = null;
 				if( responseMessage!=null && responseMessage.getParseException() != null ){
 					parseException = responseMessage.getParseException();
@@ -913,7 +922,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 			try{
 				// Se non sono stati recuperati i dati delle url, provo a recuperarli
-				URLProtocolContext urlProtocolContext = context.getUrlProtocolContext();
+				URLProtocolContext urlProtocolContext = context!=null ? context.getUrlProtocolContext() : null;
 				if(urlProtocolContext==null){
 					urlProtocolContext = req.getURLProtocolContext();
 				}
@@ -926,11 +935,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				}
 			}catch(Throwable t){}
 			try{
-				Credenziali credenziali = context.getCredenziali();
+				Credenziali credenziali = context!=null ? context.getCredenziali() : null;
 				if(credenziali==null){
 					credenziali = new Credenziali(req.getCredential());
 				}
-				if(credenziali!=null){
+				if(credenziali!=null && pddContext!=null){
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CREDENZIALI_INVOCAZIONE, credenziali.toString());
 				}
 			}catch(Throwable t){}

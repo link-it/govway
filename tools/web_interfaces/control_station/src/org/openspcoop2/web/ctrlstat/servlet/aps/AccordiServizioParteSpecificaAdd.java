@@ -580,7 +580,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			int accordoPrimoAccesso = -1;
 
-			if (listaIdAPI.size() > 0) {
+			if (listaIdAPI!=null && listaIdAPI.size() > 0) {
 				int i = 0;
 				if(listaIdAPI.size() > 1) {
 					accordiList = new String[listaIdAPI.size()+1];
@@ -843,7 +843,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 			
-			if(listSoggetti.size()<=0) {
+			if(listSoggetti==null || listSoggetti.size()<=0) {
 				if(gestioneFruitori) {
 					pd.setMessage("Non risultano registrati soggetti che possano erogare API", Costanti.MESSAGE_TYPE_INFO);
 				}

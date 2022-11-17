@@ -349,7 +349,10 @@ public class PddHelper extends ConsoleHelper {
 				}
 			}
 
-			if (singlePdd || (!singlePdd && tipo.equals(PddTipologia.ESTERNO))) {
+			if (
+					singlePdd 
+					|| 
+					(tipo.equals(PddTipologia.ESTERNO))) {
 				// campi obbligatori
 
 				// nome

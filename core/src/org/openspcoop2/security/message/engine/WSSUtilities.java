@@ -107,6 +107,11 @@ public class WSSUtilities {
 	}
 	
 	public static boolean isNormalizeToSaajImpl(MessageSecurityContext wssContext){
+		
+		if(wssContext==null) {
+			return false;
+		}
+		
 		Map<String,Object> wssProperties = null;
 		if(wssContext.isFunctionAsClient())
 			wssProperties = wssContext.getOutgoingProperties();

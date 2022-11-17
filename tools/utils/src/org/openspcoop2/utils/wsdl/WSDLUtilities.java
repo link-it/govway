@@ -1130,16 +1130,14 @@ public class WSDLUtilities {
 			
 			// Aggiungo targetNamespace e altri prefix associati al namespace
 			boolean foundTargetNamespace = false;
-			if(attributiDaMantenere.size()>0){
-				while(attributiDaMantenere.size()>0){
-					//schemaXSD.setAttributeNode(attributiDaMantenere.remove(0));
-					Attr attr = attributiDaMantenere.remove(0);
-					if("targetNamespace".equals(attr.getName())){
-						foundTargetNamespace = true;
-					}
-					//System.out.println("RE-ADD NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
-					this.xmlUtils.addAttribute(attr, schemaXSD);
+			while(attributiDaMantenere.size()>0){
+				//schemaXSD.setAttributeNode(attributiDaMantenere.remove(0));
+				Attr attr = attributiDaMantenere.remove(0);
+				if("targetNamespace".equals(attr.getName())){
+					foundTargetNamespace = true;
 				}
+				//System.out.println("RE-ADD NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
+				this.xmlUtils.addAttribute(attr, schemaXSD);
 			}
 			if(!foundTargetNamespace){
 				schemaXSD.setAttribute("targetNamespace", targetNamespace);

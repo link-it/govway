@@ -1087,7 +1087,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 *
 	 * @param idAccordo dell'accordo da verificare
 	 * @return true se l'accordo esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
+	 * @throws DriverRegistroServiziException
 	 */    
 	@Override
 	public boolean existsAccordoCooperazione(IDAccordoCooperazione idAccordo) throws DriverRegistroServiziException{
@@ -6167,7 +6167,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 *
 	 * @param nome della porta di dominio da verificare
 	 * @return true se la porta di dominio esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
+	 * @throws DriverRegistroServiziException
 	 */    
 	@Override
 	public boolean existsPortaDominio(String nome) throws DriverRegistroServiziException{
@@ -19179,9 +19179,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 				stmt.setString(index++, filterTipoCredenziali);
-				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
-					// like
-				}
+//				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+//					// like
+//				}
 			}
 			if(existsParameters!=null && !existsParameters.isEmpty()) {
 				for (Object object : existsParameters) {
@@ -19375,9 +19375,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 				stmt.setString(index++, filterTipoCredenziali);
-				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
-					// like
-				}
+//				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+//					// like
+//				}
 			}
 			if(existsParameters!=null && !existsParameters.isEmpty()) {
 				for (Object object : existsParameters) {

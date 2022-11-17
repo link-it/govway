@@ -303,7 +303,6 @@ public class GestoreConsegnaMultipla {
 
 	}
 
-	@SuppressWarnings("resource")
 	private void getConnectionAndSave(Object o, String protocol, boolean update, boolean throwNotFoundIfNotExists, IDPortaApplicativa idPA, 
 			IOpenSPCoopState openspcoopState, IState state, RequestInfo requestInfo,
 			String tipoOperazione,
@@ -902,8 +901,8 @@ public class GestoreConsegnaMultipla {
 			 boolean possibileTerminazioneSingleIntegrationManagerMessage,boolean consegnaInErrore,
 			 List<String> timeDetails) {
 		
-		boolean debug = this.debug;
-		debug = true; // un eventuale errore deve essere sempre registrato
+		//boolean debug = this.debug;
+		boolean debug = true; // un eventuale errore deve essere sempre registrato
 		
 		DAOFactory daoF = debug ? daoFactory : daoFactoryDevNull;
 		Logger logFactory = debug ? daoFactoryLoggerTransazioniSql : daoFactoryLoggerTransazioniDevNull;

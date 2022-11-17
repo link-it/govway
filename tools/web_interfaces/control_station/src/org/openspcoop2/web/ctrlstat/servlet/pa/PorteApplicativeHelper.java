@@ -1705,7 +1705,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		// *************** ServizioApplicativo Erogatore *********************
 		
-		if(!isConfigurazione && TipoOperazione.CHANGE.equals(tipoOp)){
+//		if(!isConfigurazione && TipoOperazione.CHANGE.equals(tipoOp)){
 				
 			// Il link richiede ulteriori parametri.
 			
@@ -1726,7 +1726,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //			dati.addElement(de);
 		
 			
-		}
+		//}
 		
 		// *************** Controllo degli Accessi *********************
 	

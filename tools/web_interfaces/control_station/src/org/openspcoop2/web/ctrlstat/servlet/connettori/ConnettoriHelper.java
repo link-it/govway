@@ -2871,7 +2871,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	//				dati.addElement(de);
 	//			}
 	
-				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)){
 	//				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
 	//						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
 								
@@ -2934,7 +2934,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				
 				// opzioni avanzate
-				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)) {
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
@@ -3142,7 +3142,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							
 							InvocazioneServizio is = sa.getInvocazioneServizio();
 							Connettore connettore = is.getConnettore();
-							if(connettore.getCustom()==null || !connettore.getCustom()){
+							if(connettore==null || connettore.getCustom()==null || !connettore.getCustom()){
 								// è cambiato il tipo
 								de.setType(DataElementType.HIDDEN);
 							}
@@ -3184,7 +3184,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				
 				// Https
-				if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+				if (TipiConnettore.HTTPS.toString().equals(endpointtype)) {
 					ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo, 
 							httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
 							httpsKeyAlias, httpsTrustStoreCRLs,
@@ -3195,14 +3195,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 	
 				// Jms
-				if (endpointtype.equals(TipiConnettore.JMS.getNome())) {
+				if (TipiConnettore.JMS.getNome().equals(endpointtype)) {
 					ConnettoreJMSUtils.addJMSDati(dati, nome, tipo, user, password, initcont, urlpgk, 
 							provurl, connfact, sendas, objectName, tipoOperazione, stato,
 							this.core, this, this.getSize());
 				}
 				
 				// FileSystem
-				if (endpointtype.equals(TipiConnettore.FILE.toString())) {
+				if (TipiConnettore.FILE.toString().equals(endpointtype)) {
 					ConnettoreFileUtils.addFileDati(dati, this.getSize(),this,
 							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
@@ -3212,14 +3212,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				
 				// Proxy
-				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)){
 					if (ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
 						this.addProxyToDati(dati, proxyHost, proxyPort, proxyUsername, proxyPassword);
 					}
 				}
 				
 				// TempiRisposta
-				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)){
 					if (ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
 						this.addTempiRispostaToDati(dati, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta);
 					}
@@ -3231,7 +3231,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				
 				// Opzioni Avanzate
-				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)){
 					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
 				}
 	

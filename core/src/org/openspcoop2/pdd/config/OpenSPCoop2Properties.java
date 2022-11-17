@@ -228,7 +228,7 @@ public class OpenSPCoop2Properties {
 		    try{
 		    	if(properties!=null)
 		    		properties.close();
-		    }catch(Exception er){
+		    }catch(Throwable er){
 		    	// close
 		    }
 		}
@@ -534,8 +534,7 @@ public class OpenSPCoop2Properties {
 				if(this.getPathConfigurazionePDD().indexOf("@")!=-1){
 					// estrazione tipo database
 					try{
-						String tipoDatabase = DBUtils.estraiTipoDatabaseFromLocation(this.getPathConfigurazionePDD());
-						tipoDatabase.toString();
+						DBUtils.estraiTipoDatabaseFromLocation(this.getPathConfigurazionePDD());
 					}catch(Exception e){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location', mentre veniva analizzato il prefisso tipoDatabase@datasource: "+e.getMessage(),e);
 						return false;
@@ -3737,20 +3736,18 @@ public class OpenSPCoop2Properties {
 							String root = getRootDirectory();
 							indirizzo = root+indirizzo;
 						}
-						if(indirizzo.indexOf("${")!=-1){
-							while (indirizzo.indexOf("${")!=-1){
-								int indexStart = indirizzo.indexOf("${");
-								int indexEnd = indirizzo.indexOf("}");
-								if(indexEnd==-1){
-									throw new Exception("errore durante l'interpretazione del path ["+indirizzo+"]: ${ utilizzato senza la rispettiva chiusura }");
-								}
-								String nameSystemProperty = indirizzo.substring(indexStart+"${".length(),indexEnd);
-								String valueSystemProperty = System.getProperty(nameSystemProperty);
-								if(valueSystemProperty==null){
-									throw new Exception("errore durante l'interpretazione del path ["+indirizzo+"]: variabile di sistema ${"+nameSystemProperty+"} non esistente");
-								}
-								indirizzo = indirizzo.replace("${"+nameSystemProperty+"}", valueSystemProperty);
+						while (indirizzo.indexOf("${")!=-1){
+							int indexStart = indirizzo.indexOf("${");
+							int indexEnd = indirizzo.indexOf("}");
+							if(indexEnd==-1){
+								throw new Exception("errore durante l'interpretazione del path ["+indirizzo+"]: ${ utilizzato senza la rispettiva chiusura }");
 							}
+							String nameSystemProperty = indirizzo.substring(indexStart+"${".length(),indexEnd);
+							String valueSystemProperty = System.getProperty(nameSystemProperty);
+							if(valueSystemProperty==null){
+								throw new Exception("errore durante l'interpretazione del path ["+indirizzo+"]: variabile di sistema ${"+nameSystemProperty+"} non esistente");
+							}
+							indirizzo = indirizzo.replace("${"+nameSystemProperty+"}", valueSystemProperty);
 						}
 					}
 

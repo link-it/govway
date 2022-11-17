@@ -856,10 +856,8 @@ public class XACMLPolicyUtilities {
 	
 	private static String normalizeKeyClaim(String keyParam) {
 		String key = keyParam;
-		if(key.contains(".")) {
-			while(key.contains(".")) {
-				key = key.replace(".", ":");
-			}
+		while(key.contains(".")) {
+			key = key.replace(".", ":");
 		}
 		return key;
 	}

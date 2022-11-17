@@ -187,7 +187,9 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 						bustaToSend.getTipoDestinatario(), 
 						bustaToSend.getDestinatario(), 
 						bustaToSend.getVersioneServizio()); 
-				servizioBusta.setAzione(bustaToSend.getAzione());	
+				if(servizioBusta!=null) {
+					servizioBusta.setAzione(bustaToSend.getAzione());
+				}
 				
 				// Set identità soggetti erogatori usati poi successivamente
 				requestInfoForMemoryOptimization.setRequestConfig(new RequestConfig());
@@ -250,7 +252,9 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				IDSoggetto identitaPdD = null;
 				String dominioRD = null;
 				try{
-					dominioRD = this.configurazionePdDReader.getIdentificativoPorta(servizioBusta.getSoggettoErogatore(),protocolFactory, requestInfoForMemoryOptimization);
+					if(servizioBusta!=null) {
+						dominioRD = this.configurazionePdDReader.getIdentificativoPorta(servizioBusta.getSoggettoErogatore(),protocolFactory, requestInfoForMemoryOptimization);
+					}
 					if(dominioRD==null){
 						throw new Exception("Dominio is null");
 					}
@@ -274,14 +278,16 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				richiestaApplicativa.setIdentitaServizioApplicativoFruitore(bustaToSend.getServizioApplicativoFruitore());
 				richiestaApplicativa.setIdAccordo(idAccordo);
 	
-				IDServizioApplicativo idSA = new IDServizioApplicativo();
-				idSA.setNome(richiestaApplicativa.getServizioApplicativo());
-				idSA.setIdSoggettoProprietario(servizioBusta.getSoggettoErogatore());
-				try {
-					ServizioApplicativo sa = this.configurazionePdDReader.getServizioApplicativo(idSA, requestInfoForMemoryOptimization);
-					requestInfoForMemoryOptimization.getRequestConfig().addServizioApplicativoErogatore(sa, idTransazione);
-				}catch(Exception e){
-					this.log.getLog().debug("Recupero dati soggetto erogatore (pdd) dal registro fallito: "+e.getMessage(),e);
+				if(servizioBusta!=null) {
+					IDServizioApplicativo idSA = new IDServizioApplicativo();
+					idSA.setNome(richiestaApplicativa.getServizioApplicativo());
+					idSA.setIdSoggettoProprietario(servizioBusta.getSoggettoErogatore());
+					try {
+						ServizioApplicativo sa = this.configurazionePdDReader.getServizioApplicativo(idSA, requestInfoForMemoryOptimization);
+						requestInfoForMemoryOptimization.getRequestConfig().addServizioApplicativoErogatore(sa, idTransazione);
+					}catch(Exception e){
+						this.log.getLog().debug("Recupero dati soggetto erogatore (pdd) dal registro fallito: "+e.getMessage(),e);
+					}
 				}
 				
 				ConsegnaContenutiApplicativiMessage consegnaMSG = new ConsegnaContenutiApplicativiMessage();

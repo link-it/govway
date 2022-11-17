@@ -1170,8 +1170,8 @@ public class TimerGestoreMessaggiLib  {
 							String tipoConnessione = "tipo:"+tipoConnettore+" porta:delegata id_busta:"+identificatoreConnessione;
 							this.logTimer.debug("--------------------------------------");
 							this.logTimer.debug(tipoConnessione);
-							this.logTimer.debug("SCADENZA ["+scadenza.toString()+"]   CONNETTORE ["+connettore.getCreationDate().toString()+"]");
-							if(connettore.getCreationDate().before(scadenza)){
+							this.logTimer.debug("SCADENZA ["+scadenza.toString()+"]   CONNETTORE ["+((connettore!=null && connettore.getCreationDate()!=null) ? connettore.getCreationDate().toString() : null)+"]");
+							if(connettore!=null && connettore.getCreationDate()!=null && connettore.getCreationDate().before(scadenza)){
 								this.logTimer.info("SCADUTO");
 								this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_CONNESSIONE,tipoConnessione);
 								this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_DATA_CREAZIONE_CONNESSIONE,connettore.getCreationDate().toString());
@@ -1185,7 +1185,15 @@ public class TimerGestoreMessaggiLib  {
 								this.msgDiag.logPersonalizzato("connessioneScaduta.EliminazioneEffettuata");
 							}
 							else{
-								this.logTimer.debug("NON SCADUTO");
+								if(connettore==null) {
+									this.logTimer.debug("NON PIU' PRESENTE");
+								}
+								else if(connettore.getCreationDate()==null) {
+									this.logTimer.debug("SENZA DATA DI CREAZIONE");
+								}
+								else {
+									this.logTimer.debug("NON SCADUTO");
+								}
 							}
 
 							this.logTimer.debug("--------------------------------------");
@@ -1258,8 +1266,8 @@ public class TimerGestoreMessaggiLib  {
 							String tipoConnessione = "tipo:"+tipoConnettore+" porta:applicativa id_busta:"+identificatoreConnessione;
 							this.logTimer.debug("--------------------------------------");
 							this.logTimer.debug(tipoConnessione);
-							this.logTimer.debug("SCADENZA ["+scadenza.toString()+"]   CONNETTORE ["+connettore.getCreationDate().toString()+"]");
-							if(connettore.getCreationDate().before(scadenza)){
+							this.logTimer.debug("SCADENZA ["+scadenza.toString()+"]   CONNETTORE ["+((connettore!=null && connettore.getCreationDate()!=null) ? connettore.getCreationDate().toString() : null)+"]");
+							if(connettore!=null && connettore.getCreationDate()!=null && connettore.getCreationDate().before(scadenza)){
 								this.logTimer.info("SCADUTO");
 								this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_CONNESSIONE,tipoConnessione);
 								this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_DATA_CREAZIONE_CONNESSIONE,connettore.getCreationDate().toString());
@@ -1273,7 +1281,15 @@ public class TimerGestoreMessaggiLib  {
 								this.msgDiag.logPersonalizzato("connessioneScaduta.EliminazioneEffettuata");
 							}
 							else{
-								this.logTimer.debug("NON SCADUTO");
+								if(connettore==null) {
+									this.logTimer.debug("NON PIU' PRESENTE");
+								}
+								else if(connettore.getCreationDate()==null) {
+									this.logTimer.debug("SENZA DATA DI CREAZIONE");
+								}
+								else {
+									this.logTimer.debug("NON SCADUTO");
+								}
 							}
 
 							this.logTimer.debug("--------------------------------------");

@@ -310,6 +310,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
+			if(pa==null) {
+				throw new Exception("PortaApplicativa con id '"+idInt+"' non trovata");
+			}
 			boolean behaviourConFiltri = ConditionalUtils.isConfigurazioneCondizionaleByFilter(pa, ControlStationCore.getLog());
 			String idporta = pa.getNome();
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
@@ -360,8 +363,14 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			IDServizioApplicativoDB idSADB = new IDServizioApplicativoDB(idSA);
 			idSADB.setId(oldPaSA.getId());
 			ServizioApplicativo oldSA = saCore.getServizioApplicativo(idSA );
+			if(oldSA==null) {
+				throw new Exception("ServizioApplicativo con id '"+idSA+"' non trovata");
+			}
 			InvocazionePorta invocazionePorta = oldSA.getInvocazionePorta();
 			InvocazioneServizio oldIS = oldSA.getInvocazioneServizio();
+			if(oldIS==null) {
+				throw new Exception("ServizioApplicativo con id '"+idSA+"' senza InvocazioneServizio");
+			}
 			InvocazioneCredenziali oldCis = oldIS.getCredenziali();
 			Connettore oldConnis = oldIS.getConnettore();
 			isConnettoreCustomUltimaImmagineSalvata = oldConnis.getCustom();
@@ -1809,7 +1818,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						else {
 							// Fix: altrimenti rimaneva assegnate le credenziali quando si disabilitava l'integration manager
 							if(!porteApplicativeHelper.isModalitaCompleta()) {
-								if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
+								if(invocazionePorta!=null) {
 									while (invocazionePorta.sizeCredenzialiList()>0) {
 										invocazionePorta.removeCredenziali(0);
 									}

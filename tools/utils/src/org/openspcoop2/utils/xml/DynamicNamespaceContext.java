@@ -236,18 +236,19 @@ public class DynamicNamespaceContext implements javax.xml.namespace.NamespaceCon
 			while(en.hasMoreElements()){
 				String prefix = (String) en.nextElement();
 				if(this.context.getProperty(prefix).equals(namespace)){
+					/*
 					if(javax.xml.XMLConstants.DEFAULT_NS_PREFIX.equals(prefix)){
-						//System.out.println("RETURN ["+prefix+"] -a. '<default Namespace URI>'");
+						System.out.println("RETURN ["+prefix+"] -a. '<default Namespace URI>'");
 					}
 					else if(javax.xml.XMLConstants.XML_NS_PREFIX.equals(prefix)){
-						//System.out.println("RETURN ["+prefix+"] -d. 'XMLConstants.XML_NS_URI'"); // inizializzato nel costruttore
+						System.out.println("RETURN ["+prefix+"] -d. 'XMLConstants.XML_NS_URI'"); // inizializzato nel costruttore
 					}
 					else if(javax.xml.XMLConstants.XMLNS_ATTRIBUTE.equals(prefix)){
-						//System.out.println("RETURN ["+prefix+"] -e. 'XMLConstants.XMLNS_ATTRIBUTE_NS_URI'"); // inizializzato nel costruttore
+						System.out.println("RETURN ["+prefix+"] -e. 'XMLConstants.XMLNS_ATTRIBUTE_NS_URI'"); // inizializzato nel costruttore
 					}
 					else{
-						//System.out.println("RETURN ["+prefix+"] -b. 'bound Namespace URI'"); // primo che incontro
-					}
+						System.out.println("RETURN ["+prefix+"] -b. 'bound Namespace URI'"); // primo che incontro
+					}*/
 					return prefix;
 				}
 			}	
@@ -300,18 +301,18 @@ public class DynamicNamespaceContext implements javax.xml.namespace.NamespaceCon
 			while(en.hasMoreElements()){
 				String prefix = (String) en.nextElement();
 				if(this.context.getProperty(prefix).equals(namespace)){
-					if(javax.xml.XMLConstants.DEFAULT_NS_PREFIX.equals(prefix)){
-						//System.out.println("ADD ["+prefix+"] -a. bound Namespace URI  the <default Namespace URI>");
+					/*if(javax.xml.XMLConstants.DEFAULT_NS_PREFIX.equals(prefix)){
+						System.out.println("ADD ["+prefix+"] -a. bound Namespace URI  the <default Namespace URI>");
 					}
 					else if(javax.xml.XMLConstants.XML_NS_PREFIX.equals(prefix)){
-						//System.out.println("RETURN ["+prefix+"] -c. 'XMLConstants.XML_NS_URI'"); // inizializzato nel costruttore
+						System.out.println("RETURN ["+prefix+"] -c. 'XMLConstants.XML_NS_URI'"); // inizializzato nel costruttore
 					}
 					else if(javax.xml.XMLConstants.XMLNS_ATTRIBUTE.equals(prefix)){
-						//System.out.println("RETURN ["+prefix+"] -d. 'XMLConstants.XMLNS_ATTRIBUTE_NS_URI'"); // inizializzato nel costruttore
+						System.out.println("RETURN ["+prefix+"] -d. 'XMLConstants.XMLNS_ATTRIBUTE_NS_URI'"); // inizializzato nel costruttore
 					}
 					else{
-						//System.out.println("ADD ["+prefix+"] -a. bound Namespace URI");
-					}
+						System.out.println("ADD ["+prefix+"] -a. bound Namespace URI");
+					}*/
 					v.add(prefix);
 				}
 			}	

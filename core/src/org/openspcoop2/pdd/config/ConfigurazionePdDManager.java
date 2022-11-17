@@ -415,12 +415,14 @@ public class ConfigurazionePdDManager {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idSoggetto!=null;
 		if(useRequestInfo) {
 			if( requestInfo.getRequestConfig().getSoggettoErogatoreConfig()!=null && requestInfo.getRequestConfig().getSoggettoErogatoreIdentificativoPorta()!=null &&
-				idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getTipo()) &&
+					idSoggetto!=null && idSoggetto.getTipo()!=null && idSoggetto.getNome()!=null &&
+					idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getTipo()) &&
 					idSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getNome())	) {
 				return requestInfo.getRequestConfig().getSoggettoErogatoreIdentificativoPorta();
 			}
 			else if( requestInfo.getRequestConfig().getSoggettoFruitoreConfig()!=null && requestInfo.getRequestConfig().getSoggettoFruitoreIdentificativoPorta()!=null &&
-				idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getTipo()) &&
+					idSoggetto!=null && idSoggetto.getTipo()!=null && idSoggetto.getNome()!=null &&
+					idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getTipo()) &&
 					idSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getNome())	) {
 				return requestInfo.getRequestConfig().getSoggettoFruitoreIdentificativoPorta();
 			}
@@ -428,6 +430,7 @@ public class ConfigurazionePdDManager {
 		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
 			if(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig()!=null && 
 					requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreIdentificativoPorta()!=null &&
+					idSoggetto!=null && idSoggetto.getTipo()!=null && idSoggetto.getNome()!=null &&
 					idSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getTipo()) && 
 					idSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getNome())) {
 				return requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreIdentificativoPorta();
@@ -436,6 +439,7 @@ public class ConfigurazionePdDManager {
 		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
 			if(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig()!=null && 
 					requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreIdentificativoPorta()!=null &&
+					idSoggetto!=null && idSoggetto.getTipo()!=null && idSoggetto.getNome()!=null &&
 					idSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getTipo()) && 
 					idSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getNome())) {
 				return requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreIdentificativoPorta();

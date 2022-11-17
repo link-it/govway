@@ -80,7 +80,7 @@ public class AccordiServizioParteComuneUtilities {
 
 		// Cerco i servizi in cui devo cambiare la URI dell'accordo
 		List<AccordoServizioParteSpecifica> servizi = apsCore.serviziByAccordoFilterList(idAccordoOLD);
-		if(servizi!=null && servizi.size()>0){
+		if(servizi!=null){
 			while(servizi.size()>0){
 				AccordoServizioParteSpecifica s = servizi.remove(0);
 				s.setAccordoServizioParteComune(newURI);

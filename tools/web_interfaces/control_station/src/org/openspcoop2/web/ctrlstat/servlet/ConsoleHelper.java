@@ -907,12 +907,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(paramAsString != null) {
 			
 			// Fix: textarea un ritorno a capo viene codificato con \r\n, anche se il valore fornito iniziale possedeva solo lo \n.
-			if(paramAsString.contains("\r\n")) {
-				while(paramAsString.contains("\r\n")) {
-					paramAsString = paramAsString.replace("\r\n", "\n");
-				}
+			while(paramAsString.contains("\r\n")) {
+				paramAsString = paramAsString.replace("\r\n", "\n");
 			}
-			
+						
 			Constructor<T> constructor = type.getConstructor(String.class);
 			if(constructor != null)
 				toReturn = constructor.newInstance(paramAsString);
@@ -1308,7 +1306,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String[] split = postBackElementName.split(Costanti.PARAMETER_FILENAME_REMOVE_PLACEHOLDER);
 				try {
 					int pos = Integer.parseInt(split[1]);
-					toRet.get(pos).setValue(null); // TODO
+					toRet.get(pos).setValue(null); 
 					toRet.get(pos).setFilename(null);
 					toRet.get(pos).setId(null);  
 				}catch(Exception e) {
@@ -7371,10 +7369,12 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						if(!profiloModi) {
 							if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-								this.pd.setMessage(profiloModi ?
-									CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_CANALE_DISABILITATA_AUTORIZZAZIONE_GENERALE
-									:
-									CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_TRASPORTO_DISABILITATA_AUTORIZZAZIONE_GENERALE);
+								this.pd.setMessage(
+										//profiloModi ?
+										//	CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_CANALE_DISABILITATA_AUTORIZZAZIONE_GENERALE
+										//	:
+										CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_TRASPORTO_DISABILITATA_AUTORIZZAZIONE_GENERALE
+									);
 								return false;
 							}
 						}
@@ -7424,10 +7424,12 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						if(!profiloModi) {
 							if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-								this.pd.setMessage(profiloModi ?
-									CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_CANALE_DISABILITATA_PUNTUALMENTE
-									:
-									CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_TRASPORTO_DISABILITATA_PUNTUALMENTE);
+								this.pd.setMessage(
+									//profiloModi ?
+									//CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_CANALE_DISABILITATA_PUNTUALMENTE
+									//:
+									CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_TRASPORTO_DISABILITATA_PUNTUALMENTE
+									);
 								return false;
 							}
 						}
@@ -16011,10 +16013,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		StringBuilder sbCon = new StringBuilder();
-		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
-			//sbCon.append(sa.getNome());
-			//sbCon.append(" ");
-		}
+//		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+//			//sbCon.append(sa.getNome());
+//			//sbCon.append(" ");
+//		}
 		sbCon.append(this.getLabelConnettore(is, addExtInfo, false));
 		return sbCon.toString();
 	}
@@ -16797,7 +16799,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean trasformazioneContenutoRispostaAbilitato, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoRispostaTipo, 
 			BinaryParameter trasformazioneContenutoRispostaTemplate, String trasformazioneContenutoRispostaTipoCheck, String trasformazioneContenutoRispostaContentType, String trasformazioneContenutoRispostaReturnCode,
 			ServiceBinding serviceBindingMessage, 
-			boolean trasformazioneRispostaSoapAbilitato, String trasformazioneRispostaSoapEnvelope,  
+			boolean trasformazioneRispostaSoapAbilitatoParam, String trasformazioneRispostaSoapEnvelope,  
 			org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneRispostaSoapEnvelopeTipo, BinaryParameter trasformazioneRispostaSoapEnvelopeTemplate, String trasformazioneRispostaSoapEnvelopeTipoCheck
 			
 			) throws Exception {
@@ -17095,6 +17097,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(trasformazioneContenutoRispostaTipo.isTrasformazioneProtocolloEnabled() && trasformazioneRichiestaRestAbilitato &&
 						!TipoTrasformazione.EMPTY.equals(trasformazioneContenutoRispostaTipo)) {
 					
+					boolean trasformazioneRispostaSoapAbilitato = trasformazioneRispostaSoapAbilitatoParam;
 					trasformazioneRispostaSoapAbilitato = true; // forzo
 					
 					// sezione trasformazione SOAP

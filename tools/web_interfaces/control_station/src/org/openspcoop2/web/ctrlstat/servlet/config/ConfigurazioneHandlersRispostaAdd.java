@@ -136,12 +136,12 @@ public class ConfigurazioneHandlersRispostaAdd extends Action {
 			// Preparo il menu
 			confHelper.makeMenu();
 			
-			String postBackElementName = confHelper.getPostBackElementName();
-			if (postBackElementName != null) {
-				// selezione del plugin
-				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_PLUGIN)) {
-				}
-			}
+//			String postBackElementName = confHelper.getPostBackElementName();
+//			if (postBackElementName != null) {
+//				// selezione del plugin
+//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_PLUGIN)) {
+//				}
+//			}
 			
 			List<Parameter> lstParamSession = new ArrayList<Parameter>();
 

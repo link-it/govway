@@ -1167,7 +1167,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 								for (PortaApplicativa paAssociata : listaPorteApplicativeAssociate) {
 									String statoMTOM = this.getStatoMTOMPortaApplicativa(paAssociata);
 	
-									if(statoMTOM == PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO) {
+									if(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO.equals(statoMTOM)) {
 										controlloMTOMAbilitato = true;
 										break;
 									}
@@ -1189,7 +1189,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 									String statoTracciamento = this.getStatoTracciamentoPortaApplicativa(paAssociata);
 	
 	
-									if(statoTracciamento == PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA){
+									if(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA.equals(statoTracciamento)){
 										controlloCorrelazioneApplicativaAbilitato = true;
 										break;
 									}
@@ -1366,7 +1366,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 								for (PortaDelegata pdAssociata : listaPorteDelegateAssociate) {
 									String statoMTOM = this.getStatoMTOMPortaDelegata(pdAssociata);
 	
-									if(statoMTOM == PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_ABILITATO) {
+									if(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_ABILITATO.equals(statoMTOM)) {
 										controlloMTOMAbilitato = true;
 										break;
 									}
@@ -1388,7 +1388,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 									String statoTracciamento = this.getStatoTracciamentoPortaDelegata(pdAssociata);
 	
 	
-									if(statoTracciamento == PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA){
+									if(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA.equals(statoTracciamento)){
 										controlloCorrelazioneApplicativaAbilitato = true;
 										break;
 									}
@@ -1522,6 +1522,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		else 
 			this.pd.setCustomListViewName(ErogazioniCostanti.ASPS_EROGAZIONI_NOME_VISTA_CUSTOM_FORM_EROGAZIONE);
 
+		if(asps==null) {
+			throw new Exception("Param asps is null");
+		}
+		
 		boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 		Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
 		Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
@@ -2096,7 +2100,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paDefault));
 				}
 				
-				boolean visualizzaLinkConfigurazioneConnettore = !this.core.isConnettoriMultipliEnabled() || ( this.core.isConnettoriMultipliEnabled() && !connettoreMultiploEnabled );
+				boolean visualizzaLinkConfigurazioneConnettore = 
+						(!this.core.isConnettoriMultipliEnabled()) 
+						|| 
+						(!connettoreMultiploEnabled );
 				if(visualizzaLinkConfigurazioneConnettore) {
 					List<Parameter> listParametersConnettore = new ArrayList<>();
 					listParametersConnettore.add(paIdProvider);
@@ -2114,7 +2121,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					de.addImage(image);
 				}
 
-				boolean visualizzaLinkCheckConnettore = checkConnettore && (!this.core.isConnettoriMultipliEnabled() || ( this.core.isConnettoriMultipliEnabled() && !connettoreMultiploEnabled ));
+				boolean visualizzaLinkCheckConnettore = 
+						checkConnettore && 
+						(
+								(!this.core.isConnettoriMultipliEnabled())
+								|| 
+								( !connettoreMultiploEnabled )
+						);
 				if(visualizzaLinkCheckConnettore) {
 					List<Parameter> listParametersVerificaConnettore = new ArrayList<>();
 					paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
@@ -3309,7 +3322,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						boolean controlloMTOMAbilitato = false;
 						String statoMTOM = this.getStatoMTOMPortaApplicativa(paAssociata);
 
-						if(statoMTOM == PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO) {
+						if(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO.equals(statoMTOM)) {
 							controlloMTOMAbilitato = true;
 							numeroConfigurazioniAttive ++ ;
 						} else {
@@ -3367,7 +3380,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						boolean tracciamentoAbilitato = false;
 						String statoTracciamento = this.getStatoTracciamentoPortaApplicativa(paAssociata);
 
-						if(statoTracciamento == PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA){
+						if(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA.equals(statoTracciamento)){
 							tracciamentoAbilitato = true;
 							numeroConfigurazioniAttive ++ ;
 						} else {

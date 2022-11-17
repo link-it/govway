@@ -146,12 +146,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 */
 	public SPCoopValidazioneSintattica(IProtocolFactory<SOAPHeaderElement> protocolFactory,IState state) throws ProtocolException{
 		super(protocolFactory,state);
-		if(this.errorsTrovatiSullaListaEccezioni == null)
-			this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
-		if(this.erroriProcessamento == null)
-			this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
-		if(this.erroriValidazione == null)
-			this.erroriValidazione = new java.util.ArrayList<Eccezione>();
+		this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
+		this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
+		this.erroriValidazione = new java.util.ArrayList<Eccezione>();
 		
 //		this.tipiSoggetti = this.protocolFactory.createProtocolConfiguration().getTipiSoggetti();
 //		this.tipiServizi = this.protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP);

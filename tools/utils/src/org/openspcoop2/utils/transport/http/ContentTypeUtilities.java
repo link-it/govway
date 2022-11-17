@@ -132,25 +132,17 @@ public class ContentTypeUtilities {
 	public static String normalizeToRfc7230(String ct) {
 		// Line folding of headers has been deprecated in the latest HTTP RFC:
 		// http://tools.ietf.org/html/rfc7230#section-3.2.4
-		if(ct.contains("\r\n")) {
-			while (ct.contains("\r\n")) {
-				ct = ct.replace("\r\n", " ");
-			}
+		while (ct.contains("\r\n")) {
+			ct = ct.replace("\r\n", " ");
 		}
-		if(ct.contains("\r")) {
-			while (ct.contains("\r")) {
-				ct = ct.replace("\r", " ");
-			}
+		while (ct.contains("\r")) {
+			ct = ct.replace("\r", " ");
 		}
-		if(ct.contains("\n")) {
-			while (ct.contains("\n")) {
-				ct = ct.replace("\n", " ");
-			}
+		while (ct.contains("\n")) {
+			ct = ct.replace("\n", " ");
 		}
-		if(ct.contains("\t")) {
-			while (ct.contains("\t")) {
-				ct = ct.replace("\t", " ");
-			}
+		while (ct.contains("\t")) {
+			ct = ct.replace("\t", " ");
 		}
 		return ct.trim();
 	}

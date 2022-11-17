@@ -547,7 +547,7 @@ public class TestOpenApi3Extended {
 				msgErroreAtteso = "- [ERROR][] [Path '/allegati/0/documento'] Object has missing required properties ([\"uri\"])";
 				break;
 			}
-			if(!e.getMessage().contains(msgErroreAtteso)) {
+			if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
 			System.out.println("Test #2 completato\n\n");
@@ -586,7 +586,7 @@ public class TestOpenApi3Extended {
 				msgErroreAtteso = "[ERROR][] [Path '/allegati/0/documento/tipoDocumento'] Instance value (\"riferimento-uriERRATA\") not found in enum (possible values: [\"inline\",\"riferimento-uri\"])";
 				break;
 			}
-			if(!e.getMessage().contains(msgErroreAtteso)) {
+			if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
 			System.out.println("Test #3 completato\n\n");
@@ -627,7 +627,7 @@ public class TestOpenApi3Extended {
 				msgErroreAtteso = "[ERROR][] [Path '/allegati/1/documento'] Object has missing required properties ([\"tipoDocumento\"])";
 				break;
 			}		
-			if(!e.getMessage().contains(msgErroreAtteso)) {
+			if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
 			
@@ -642,7 +642,7 @@ public class TestOpenApi3Extended {
 				msgErroreAtteso = "* /allOf/1/properties/allegati/items/allOf/1: Discriminator field 'tipoDocumento' is required";
 				break;
 			}	
-			if(!e.getMessage().contains(msgErroreAtteso)) {
+			if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
 			System.out.println("Test #4 completato\n\n");
@@ -919,7 +919,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "- [ERROR][] [Path '/allegati/0/codiceOpzionaleNumerico'] ECMA 262 regex \"^\\d{6}$\" does not match input string \""+StringEscapeUtils.unescapeJava(valore)+"";
 					break;
 				}				
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t (Valore:"+valore+") ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'" +"\nTrovato invece: '"+e.getMessage()+"'");
 				}
@@ -936,7 +936,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "* /allOf/1/properties/allegati/items/allOf/0";
 					break;
 				}	
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
@@ -1033,7 +1033,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "- [ERROR][] [Path '/allegati/0/codiceOpzionaleCodiceFiscaleOrCodiceEsterno'] ECMA 262 regex \"^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$\" does not match input string \""+StringEscapeUtils.unescapeJava(valore);
 					break;
 				}	
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t (Valore:"+valore+") ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -1050,7 +1050,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "* /allOf/1/properties/allegati/items/allOf/0:";
 					break;
 				}	
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
@@ -1152,7 +1152,7 @@ public class TestOpenApi3Extended {
 						}
 						break;
 					}	
-					if(!msg.contains(atteso)) {
+					if(atteso!=null && !msg.contains(atteso)) {
 						String checkErrore = "Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
 						System.out.println("\t "+checkErrore);
 						throw new Exception(checkErrore);
@@ -1254,7 +1254,7 @@ public class TestOpenApi3Extended {
 						}
 						break;
 					}	
-					if(!msg.contains(atteso)) {
+					if(atteso!=null && !msg.contains(atteso)) {
 						String checkErrore = "Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
 						System.out.println("\t "+checkErrore);
 						System.out.println("\tatteso: "+atteso);
@@ -1329,7 +1329,7 @@ public class TestOpenApi3Extended {
 						}
 						break;
 					}	
-					if(!msg.contains(atteso)) {
+					if(atteso!=null && !msg.contains(atteso)) {
 						String checkErrore = "Atteso errore: '"+atteso+"'\nValidazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
 						System.out.println("\t "+checkErrore);
 						throw new Exception(checkErrore);
@@ -1466,7 +1466,7 @@ public class TestOpenApi3Extended {
 						}
 						break;
 					}					
-					if(!msg.contains(atteso)) {
+					if(atteso!=null && !msg.contains(atteso)) {
 						String checkErrore = "Validazione richiesta "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
 						System.out.println("\t "+checkErrore);
 						throw new Exception(checkErrore);
@@ -1518,7 +1518,7 @@ public class TestOpenApi3Extended {
 					atteso = "Required Content-Type is missing";
 					break;
 				}			
-				if(!msg.contains(atteso)) {
+				if(atteso!=null && !msg.contains(atteso)) {
 					String checkErrore = "Validazione "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
 					System.out.println("\t "+checkErrore);
 					throw new Exception(checkErrore);
@@ -1611,7 +1611,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetest/2020-07-21 @body] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
 					break;
 				}	
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -1667,7 +1667,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "[ERROR][RESPONSE][] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
 					break;
 				}	
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -1732,7 +1732,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetest/2020-07-21 @header.data_documento_header] String \""+valore+"\" is invalid against requested date format(s)";
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -1789,7 +1789,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "[ERROR][RESPONSE][] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -1854,7 +1854,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetest/2020-07-21 @query.data_documento_query] String \""+valore+"\" is invalid against requested date format(s) ";
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -1927,7 +1927,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -2032,7 +2032,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetimetest/2020-07-21T17:32:28Z @body] [Path '/data'] String \""+valore+"\" is invalid against requested ";
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -2095,7 +2095,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "[ERROR][RESPONSE][] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -2171,7 +2171,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetimetest/2020-07-21T17:32:28Z @header.datetime_documento_header] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -2236,7 +2236,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "[ERROR][RESPONSE][] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -2311,7 +2311,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetimetest/2020-07-21T17:32:28Z @query.datetime_documento_query] String \""+valore+"\" is invalid against r";
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -2396,7 +2396,7 @@ public class TestOpenApi3Extended {
 					}
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -2554,7 +2554,7 @@ public class TestOpenApi3Extended {
 					break;
 				}
 				if(msgErroreAtteso2==null) {
-					if(!e.getMessage().contains(msgErroreAtteso)) {
+					if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 						System.out.println("\t "+tipoTest+" ERRORE!");
 						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 					}
@@ -2800,7 +2800,9 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso3 = "* /allOf/0/anyOf/2: Object has missing required properties ([\"status\"])";
 					break;
 				}
-				if(!e.getMessage().contains(msgErroreAtteso) || !e.getMessage().contains(msgErroreAtteso2) || !e.getMessage().contains(msgErroreAtteso3)) {
+				if( (msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) || 
+						(msgErroreAtteso2!=null && !e.getMessage().contains(msgErroreAtteso2)) || 
+						(msgErroreAtteso3!=null && !e.getMessage().contains(msgErroreAtteso3))) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"' o '"+msgErroreAtteso3+"'");
 				}
@@ -3125,7 +3127,7 @@ public class TestOpenApi3Extended {
 					
 					if(openAPILibrary == OpenAPILibrary.json_schema) {
 						msgErroreAtteso = "does not have a value in the enumeration [si, no, yes, s, n, y, 0, 1, on, off]";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
+						if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 						}
@@ -3211,7 +3213,7 @@ public class TestOpenApi3Extended {
 					
 					if(openAPILibrary == OpenAPILibrary.json_schema) {
 						msgErroreAtteso = "does not have a value in the enumeration [si, no, yes, s, n, y, 0, 1, on, off]";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
+						if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 						}
@@ -3730,17 +3732,17 @@ public class TestOpenApi3Extended {
 		case json_schema:
 			if(arrayValuesNull) {
 				String msgErroreAtteso = "1029 $.array_nullable_values_optional[0]: null found, string expected";
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 				msgErroreAtteso = "1029 $.array_nullable_values_optional[1]: null found, string expected";
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 				msgErroreAtteso = "1029 $.array_nullable_values_required[0]: null found, string expected";
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -3748,7 +3750,7 @@ public class TestOpenApi3Extended {
 			else {
 				for (int k = 0; k < 2; k++) {
 					String msgErroreAtteso = "1029 $."+element+(k==0 ? "required" : "optional")+": null found, "+type+" expected";
-					if(!e.getMessage().contains(msgErroreAtteso)) {
+					if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 						System.out.println("\t "+tipoTest+" ERRORE!");
 						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 					}	
@@ -3759,19 +3761,19 @@ public class TestOpenApi3Extended {
 			if(arrayValuesNull) {
 				
 				String msgErroreAtteso = "body.array_nullable_values_optional.0: Null value is not allowed. (code: 1021)";
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 				
 				msgErroreAtteso = "body.array_nullable_values_optional.1: Null value is not allowed. (code: 1021)";				
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 				
 				msgErroreAtteso = "body.array_nullable_values_required.0: Null value is not allowed. (code: 1021)";
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -3780,7 +3782,7 @@ public class TestOpenApi3Extended {
 				for (int k = 0; k < 2; k++) {
 					String suffix = (k==0 ? "required" : "optional");
 					String msgErroreAtteso = "body."+element+suffix+": Null value is not allowed. (code: 1021)";
-					if(!e.getMessage().contains(msgErroreAtteso)) {
+					if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 						System.out.println("\t "+tipoTest+" ERRORE!");
 						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 					}
@@ -3791,19 +3793,19 @@ public class TestOpenApi3Extended {
 			if(arrayValuesNull) {
 				
 				String msgErroreAtteso = "[Path '/array_nullable_values_optional/0'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])";
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 				
 				msgErroreAtteso = "[Path '/array_nullable_values_optional/1'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])";				
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 				
 				msgErroreAtteso = "[Path '/array_nullable_values_required/0'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])";
-				if(!e.getMessage().contains(msgErroreAtteso)) {
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -3812,7 +3814,7 @@ public class TestOpenApi3Extended {
 				for (int k = 0; k < 2; k++) {
 					String suffix = (k==0 ? "required" : "optional");
 					String msgErroreAtteso = "[Path '/"+element+suffix+"'] Instance type (null) does not match any allowed primitive type (allowed:";
-					if(!e.getMessage().contains(msgErroreAtteso)) {
+					if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 						System.out.println("\t "+tipoTest+" ERRORE!");
 						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 					}

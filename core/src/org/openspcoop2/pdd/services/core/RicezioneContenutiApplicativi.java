@@ -815,6 +815,17 @@ public class RicezioneContenutiApplicativi {
 		// RegistroServizi Reader
 		RegistroServiziManager registroServiziReader = RegistroServiziManager.getInstance();
 
+		if(requestInfo==null) {
+			String msg = "Inizializzazione di GovWay non correttamente effettuata: RequestInfo is null";
+			logCore.error(msg);
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse(this.generatoreErrore.build(pddContext, IntegrationFunctionError.INTERNAL_REQUEST_ERROR, 
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(msg), null, null));
+			}
+			return;
+		}
+		
 		// IdentificativoPdD
 		IDSoggetto identitaPdD = requestInfo.getIdentitaPdD();
 
@@ -998,6 +1009,16 @@ public class RicezioneContenutiApplicativi {
 			nomePorta = urlProtocolContext.getFunctionParameters() + "_urlInvocazione("+ urlProtocolContext.getUrlInvocazione_formBased() + ")";
 		}
 		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,identitaPdD, this.msgContext.getIdModulo(),nomePorta,requestInfo,configurazionePdDReader);
+		if(msgDiag==null) {
+			String msg = "Inizializzazione di GovWay non correttamente effettuata: MsgDiagnostico is null";
+			logCore.error(msg);
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse(this.generatoreErrore.build(pddContext, IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, 
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), null, null));
+			}
+			return;
+		}
 		this.msgContext.setMsgDiagnostico(msgDiag); // aggiorno msg diagnostico
 		msgDiag.setPddContext(inRequestContext.getPddContext(), protocolFactory);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
@@ -1119,11 +1140,11 @@ public class RicezioneContenutiApplicativi {
 
 		// Raccolgo dati
 		IDSoggetto soggettoFruitore = null;
-		if(portaDelegata!=null) {
-			soggettoFruitore = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
-		}
 		try {
-			soggettoFruitore.setCodicePorta(configurazionePdDReader.getIdentificativoPorta(soggettoFruitore, protocolFactory, requestInfo));
+			if(portaDelegata!=null) {
+				soggettoFruitore = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
+				soggettoFruitore.setCodicePorta(configurazionePdDReader.getIdentificativoPorta(soggettoFruitore, protocolFactory, requestInfo));
+			}
 		} catch (Exception e) {
 			msgDiag.logErroreGenerico(e,"getIdentificativoPorta");
 			openspcoopstate.releaseResource();
@@ -1138,7 +1159,9 @@ public class RicezioneContenutiApplicativi {
 			identificativoPortaDelegata.setIdentificativiFruizione(new IdentificativiFruizione());
 		}
 		identificativoPortaDelegata.getIdentificativiFruizione().setSoggettoFruitore(soggettoFruitore);
-		identitaPdD = soggettoFruitore; // la PdD Assume l'identita del soggetto
+		if(soggettoFruitore!=null) {
+			identitaPdD = soggettoFruitore; // la PdD Assume l'identita del soggetto
+		}
 		this.msgContext.getProtocol().setDominio(identitaPdD);
 		this.msgContext.setIdentitaPdD(identitaPdD);
 		// che possiede la Porta Delegata ID Porta Delegata
@@ -1314,6 +1337,9 @@ public class RicezioneContenutiApplicativi {
 				idModuloInAttesa, proprietaErroreAppl, identitaPdD);
 		IDServizio idServizio = null;
 		try {
+			if(portaDelegata==null) {
+				throw new Exception("PortaDelgata non trovata");
+			}
 			IDSoggetto soggettoErogatore = new IDSoggetto(portaDelegata.getSoggettoErogatore().getTipo(),portaDelegata.getSoggettoErogatore().getNome());
 			idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getServizio().getTipo(),portaDelegata.getServizio().getNome(), 
 					soggettoErogatore, portaDelegata.getServizio().getVersione());
@@ -1366,7 +1392,8 @@ public class RicezioneContenutiApplicativi {
 			return;
 		}
 		try {
-			if(idServizio.getSoggettoErogatore().getCodicePorta()==null) {
+			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null &&
+					idServizio.getSoggettoErogatore().getCodicePorta()==null) {
 				idServizio.getSoggettoErogatore().setCodicePorta(registroServiziReader.getDominio(idServizio.getSoggettoErogatore(), null, protocolFactory, requestInfo));
 			}
 						
@@ -1378,15 +1405,17 @@ public class RicezioneContenutiApplicativi {
 		
 			// aggiorno informazioni dell'header di integrazione della risposta
 			headerIntegrazioneRisposta = new HeaderIntegrazione(idTransazione);
-			headerIntegrazioneRisposta.getBusta().setTipoMittente(soggettoFruitore.getTipo());
-			headerIntegrazioneRisposta.getBusta().setMittente(soggettoFruitore.getNome());
+			if(soggettoFruitore!=null) {
+				headerIntegrazioneRisposta.getBusta().setTipoMittente(soggettoFruitore.getTipo());
+				headerIntegrazioneRisposta.getBusta().setMittente(soggettoFruitore.getNome());
+			}
 			headerIntegrazioneRisposta.getBusta().setTipoDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getTipo());
 			headerIntegrazioneRisposta.getBusta().setDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getNome());
 			headerIntegrazioneRisposta.getBusta().setTipoServizio(richiestaDelegata.getIdServizio().getTipo());
 			headerIntegrazioneRisposta.getBusta().setServizio(richiestaDelegata.getIdServizio().getNome());
 			headerIntegrazioneRisposta.getBusta().setVersioneServizio(richiestaDelegata.getIdServizio().getVersione());
 			headerIntegrazioneRisposta.getBusta().setAzione(richiestaDelegata.getIdServizio().getAzione());
-			if (headerIntegrazioneRichiesta.getBusta() != null
+			if (headerIntegrazioneRichiesta!=null && headerIntegrazioneRichiesta.getBusta() != null
 					&& headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null) {
 				// per profilo asincrono asimmetrico e simmetrico
 				headerIntegrazioneRisposta.getBusta().setRiferimentoMessaggio(headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
@@ -1836,7 +1865,7 @@ public class RicezioneContenutiApplicativi {
 			tipoAutenticazione = configurazionePdDReader.getAutenticazione(portaDelegata);
 			autenticazioneOpzionale = configurazionePdDReader.isAutenticazioneOpzionale(portaDelegata);
 			tipoGestioneToken = configurazionePdDReader.getGestioneToken(portaDelegata);
-			if(portaDelegata.getGestioneToken()!=null) {
+			if(portaDelegata!=null && portaDelegata.getGestioneToken()!=null) {
 				gestioneTokenAutenticazione = portaDelegata.getGestioneToken().getAutenticazione();
 			}
 			tipoAutorizzazione = configurazionePdDReader.getAutorizzazione(portaDelegata);
@@ -4335,8 +4364,15 @@ public class RicezioneContenutiApplicativi {
 			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_CONTENUTI, tipo);
 			msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,"");
 		}
-		if (CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())
-				|| CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
+		if (
+				(validazioneContenutoApplicativoApplicativo!=null)
+				&&
+				(
+						CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())
+						|| 
+						CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())
+				)
+			) {
 
 			transaction.getTempiElaborazione().startValidazioneRichiesta();
 			ByteArrayInputStream binXSD = null;

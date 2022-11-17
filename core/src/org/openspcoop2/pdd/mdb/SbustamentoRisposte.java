@@ -152,6 +152,12 @@ public class SbustamentoRisposte extends GenericLib {
 		
 		/* Processamento informazioni */
 		RichiestaDelegata richiestaDelegata = sbustamentoRisposteMsg.getRichiestaDelegata();
+		if(richiestaDelegata==null) {
+			msgDiag.logErroreGenerico("RichiestaDelegata is null", "RichiestaDelegata.checkNull"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
 		
 		TipoPdD tipoPdD = TipoPdD.DELEGATA;
 		if(msgDiag.getPorta()==null) {
@@ -181,6 +187,12 @@ public class SbustamentoRisposte extends GenericLib {
 		
 		//	ProprietaErroreApplicativo
 		ProprietaErroreApplicativo proprietaErroreAppl = richiestaDelegata.getFault();
+		if(proprietaErroreAppl==null) {
+			msgDiag.logErroreGenerico("ProprietaErroreApplicativo is null", "ProprietaErroreApplicativo.checkNull"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
 		proprietaErroreAppl.setIdModulo(SbustamentoRisposte.ID_MODULO);
 		
 		try{
@@ -677,7 +689,7 @@ public class SbustamentoRisposte extends GenericLib {
 										msgDiag.getMessaggio_replaceKeywords("validazioneBusta.bustaNonCorretta"));
 							}else{
 								// profilo OneWay, non aspetta una risposta
-								ejbUtils.releaseInboxMessage(false); //TODO CHECKME
+								ejbUtils.releaseInboxMessage(false);
 								esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO,
 										msgDiag.getMessaggio_replaceKeywords("validazioneBusta.bustaNonCorretta"));
 							}
@@ -988,16 +1000,6 @@ public class SbustamentoRisposte extends GenericLib {
 
 
 
-
-
-			/* ------------  Invio Riscontri per altri NAL  ------------- */
-			// TODO: da implementare
-
-
-
-
-			/* ------------  Collaborazione e Sequenza  ------------- */
-			// TODO: da implementare
 
 
 

@@ -56,6 +56,9 @@ import org.slf4j.Logger;
 public class Utilities {
 
 	public static void refreshIdentificativiPorta(Busta busta,IDSoggetto idSoggettoDefault,RegistroServiziManager registroServiziManager,IProtocolFactory<?> protocolFactory, RequestInfo requestInfo){
+		if(busta==null) {
+			return;
+		}
 		if(busta.getMittente()!=null && busta.getTipoMittente()!=null && busta.getIdentificativoPortaMittente()==null){
 			try{
 				if(idSoggettoDefault.getTipo().equals(busta.getTipoMittente()) &&

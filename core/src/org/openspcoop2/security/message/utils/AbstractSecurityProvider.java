@@ -175,7 +175,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 											
 					if(find) {
 						//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
-						if(value!=null && value instanceof String && HSMUtils.isKeystoreHSM((String)value)) {
+						if(value!=null && HSMUtils.isKeystoreHSM((String)value)) {
 							//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
 							item.setValue(HSMUtils.KEYSTORE_HSM_PREFIX+value);
 							item.setType(ItemType.HIDDEN);
@@ -208,7 +208,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 											
 					if(find) {
 						//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
-						if(value!=null && value instanceof String && HSMUtils.isKeystoreHSM((String)value)) {
+						if(value!=null && HSMUtils.isKeystoreHSM((String)value)) {
 							//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
 							item.setValue(HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED);
 							item.setType(ItemType.HIDDEN);
@@ -241,7 +241,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 											
 					if(find) {
 						//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
-						if(value!=null && value instanceof String && HSMUtils.isKeystoreHSM((String)value)) {
+						if(value!=null && HSMUtils.isKeystoreHSM((String)value)) {
 							//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
 							item.setValue(HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED);
 							item.setType(ItemType.HIDDEN);

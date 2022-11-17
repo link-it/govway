@@ -137,6 +137,12 @@ public class Imbustamento extends GenericLib{
 		String implementazionePdDDestinatario = imbustamentoMsg.getImplementazionePdDSoggettoDestinatario();
 		
 		RichiestaDelegata richiestaDelegata = imbustamentoMsg.getRichiestaDelegata();
+		if(richiestaDelegata==null) {
+			msgDiag.logErroreGenerico("RichiestaDelegata is null", "RichiestaDelegata.checkNull"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
 		IDSoggetto identitaPdD = imbustamentoMsg.getRichiestaDelegata().getDominio();
 		TipoPdD tipoPdD = TipoPdD.DELEGATA;
 		msgDiag.setDominio(identitaPdD);  // imposto anche il dominio nel msgDiag

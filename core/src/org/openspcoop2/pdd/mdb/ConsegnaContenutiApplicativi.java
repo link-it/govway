@@ -424,6 +424,18 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		Date dataConsegna = DateManager.getDate();
 		
 		EsitoLib esito = new EsitoLib();
+		
+		if(openspcoopstate==null) {
+			if(msgDiag!=null) {
+				msgDiag.logErroreGenerico("openspcoopstate is null", "openspcoopstate.checkNull");
+			}
+			else {
+				this.log.error("openspcoopstate is null");
+			}
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
+		
 		ConsegnaContenutiApplicativiMessage consegnaContenutiApplicativiMsg = (ConsegnaContenutiApplicativiMessage) openspcoopstate.getMessageLib();
 		
 		ConsegnaContenutiApplicativiBehaviourMessage behaviourConsegna = consegnaContenutiApplicativiMsg.getBehaviour();
@@ -436,8 +448,25 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			gestioneErroreBehaviour = behaviourConsegna.getGestioneErrore();
 		}
 		
+		if(msgDiag==null) {
+			if(this.log!=null) {
+				this.log.error("MsgDiagnostico is null");
+			}
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
+		
 		/* PddContext */
 		PdDContext pddContext = consegnaContenutiApplicativiMsg.getPddContext();
+		
+		if(pddContext==null) {
+			msgDiag.logErroreGenerico("PddContext is null", "PdDContext.checkNull"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
+		
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
 				
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
@@ -571,7 +600,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				idServizio.setAzione(azione);
 			}
 			idAccordoServizio = richiestaApplicativa.getIdAccordo();
-			soggettoErogatoreServizioHeaderIntegrazione = idServizio.getSoggettoErogatore();
+			if(idServizio!=null) {
+				soggettoErogatoreServizioHeaderIntegrazione = idServizio.getSoggettoErogatore();
+			}
 			profiloGestione = richiestaApplicativa.getProfiloGestione();
 			servizioApplicativoFruitore = richiestaApplicativa.getIdentitaServizioApplicativoFruitore();
 			idCorrelazioneApplicativa = richiestaApplicativa.getIdCorrelazioneApplicativa();
@@ -587,7 +618,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			isRicevutaAsincrona = richiestaDelegata.isRicevutaAsincrona();
 			idServizio = richiestaDelegata.getIdServizio();
 			if(bustaRichiesta!=null){
-				if(idServizio.getSoggettoErogatore()!=null){
+				if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
 					if(idServizio.getSoggettoErogatore().getCodicePorta()==null){
 						idServizio.getSoggettoErogatore().setCodicePorta(bustaRichiesta.getIdentificativoPortaDestinatario());
 					}
@@ -1121,7 +1152,13 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
 		
 		// RequestInfo
-		if( requestInfo==null || (requestInfo!=null && requestInfoForMemoryOptimization) || idTransazione==null) {
+		if( 
+				(requestInfo==null) 
+				|| 
+				(requestInfoForMemoryOptimization) 
+				|| 
+				(idTransazione==null)
+			) {
 			// devo leggerlo dal messaggio
 			try {
 				RequestInfo _requestInfoForMemoryOptimization = null;
@@ -1148,7 +1185,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				//Devo farlo dopo aver applicato la trasformazione
 				//correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
-				if(requestInfo==null || (requestInfo!=null && requestInfoForMemoryOptimization)) {
+				if(
+						(requestInfo==null) 
+						|| 
+						(requestInfoForMemoryOptimization)
+					) {
 					Object o = consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 					if(o==null) {
 						throw new Exception("RequestInfo non presente nel contesto");
@@ -1386,26 +1427,26 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							RuoloMessaggio.RISPOSTA);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "imbustatore.buildID(idMessageResponse)");
-				if(existsModuloInAttesaRispostaApplicativa) {
-					try{
-						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_507_COSTRUZIONE_IDENTIFICATIVO),
-								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-								(consegnaMessagePrimaTrasformazione!=null ? consegnaMessagePrimaTrasformazione.getParseException() : null),
-								pddContext);
-						esito.setEsitoInvocazione(true); 
-						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "imbustatore.buildID(idMessageResponse)");
-					}catch(Exception sendError){
-						ejbUtils.rollbackMessage("Creazione id di risposta (sendRispostaApplicativa) fallita", esito);
-						esito.setStatoInvocazioneErroreNonGestito(sendError);
-						esito.setEsitoInvocazione(false);
-					}
-				}else{
-					ejbUtils.rollbackMessage("Creazione id di risposta fallita", esito);
-					esito.setStatoInvocazioneErroreNonGestito(e);
+				//if(existsModuloInAttesaRispostaApplicativa) {
+				try{
+					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_507_COSTRUZIONE_IDENTIFICATIVO),
+							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+							(consegnaMessagePrimaTrasformazione!=null ? consegnaMessagePrimaTrasformazione.getParseException() : null),
+							pddContext);
+					esito.setEsitoInvocazione(true); 
+					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "imbustatore.buildID(idMessageResponse)");
+				}catch(Exception sendError){
+					ejbUtils.rollbackMessage("Creazione id di risposta (sendRispostaApplicativa) fallita", esito);
+					esito.setStatoInvocazioneErroreNonGestito(sendError);
 					esito.setEsitoInvocazione(false);
 				}
+				//}else{
+				//	ejbUtils.rollbackMessage("Creazione id di risposta fallita", esito);
+				//	esito.setStatoInvocazioneErroreNonGestito(e);
+				//	esito.setEsitoInvocazione(false);
+				//}
 				openspcoopstate.releaseResource();
 
 				return esito;
@@ -1479,7 +1520,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				this.propertiesReader.isGestioneElementoCollaborazione(implementazionePdDMittente) && 
 				this.propertiesReader.isGestioneConsegnaInOrdine(implementazionePdDMittente);	
 				consegnaInOrdine = gestioneConsegnaInOrdineAbilitata &&
-					bustaRichiesta.getSequenza()!=-1;
+						bustaRichiesta!=null && bustaRichiesta.getSequenza()!=-1;
 				break;
 			}
 		}
@@ -1596,7 +1637,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 
 			/* -----  Header Integrazione ------ */
-			String originalID = bustaRichiesta.getID();
+			String originalID = bustaRichiesta!=null ? bustaRichiesta.getID() : null;
 			if(idMessaggioPreBehaviour!=null){
 				bustaRichiesta.setID(idMessaggioPreBehaviour);
 			}
@@ -1624,10 +1665,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				headerIntegrazione.getBusta().setVersioneServizio(idServizio.getVersione());
 				headerIntegrazione.getBusta().setAzione(idServizio.getAzione());
 			}
-			headerIntegrazione.getBusta().setID(bustaRichiesta.getID());
-			headerIntegrazione.getBusta().setRiferimentoMessaggio(bustaRichiesta.getRiferimentoMessaggio());
-			headerIntegrazione.getBusta().setIdCollaborazione(bustaRichiesta.getCollaborazione());
-			headerIntegrazione.getBusta().setProfiloDiCollaborazione(bustaRichiesta.getProfiloDiCollaborazione());
+			if(bustaRichiesta!=null) {
+				headerIntegrazione.getBusta().setID(bustaRichiesta.getID());
+				headerIntegrazione.getBusta().setRiferimentoMessaggio(bustaRichiesta.getRiferimentoMessaggio());
+				headerIntegrazione.getBusta().setIdCollaborazione(bustaRichiesta.getCollaborazione());
+				headerIntegrazione.getBusta().setProfiloDiCollaborazione(bustaRichiesta.getProfiloDiCollaborazione());
+			}
 			headerIntegrazione.setIdApplicativo(idCorrelazioneApplicativa);
 			headerIntegrazione.setServizioApplicativo(servizioApplicativoFruitore);
 			if(servizioApplicativoToken!=null) {
@@ -1844,7 +1887,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				connettoreMsg.setUrlInvocazionePorta(consegnaMessagePrimaTrasformazione.getTransportRequestContext().getUrlInvocazione_formBased());
 			}
 
-			bustaRichiesta.setID(originalID);
+			if(bustaRichiesta!=null) {
+				bustaRichiesta.setID(originalID);
+			}
 
 
 
@@ -3521,8 +3566,17 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						}
 						
 						// Verifica xsd  (Se siamo in un caso di risposta applicativa presente)
-						if(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())||
-								CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())){
+						if(
+								(responseMessage!=null)
+								&&
+								(validazioneContenutoApplicativoApplicativo!=null) 
+								&&
+								(
+										CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())
+										||
+										CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())
+								) 
+							){
 
 							if(transactionNullable!=null) {
 								transactionNullable.getTempiElaborazione().startValidazioneRisposta();
@@ -4033,7 +4087,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						
 						msgResponse.deleteMessageFromFileSystem(); // elimino eventuale risposta salvata su fileSystem
 						msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
-						if(responseMessage.getParseException() == null){
+						if(responseMessage==null || responseMessage.getParseException() == null){
 							
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

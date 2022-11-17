@@ -1066,10 +1066,12 @@ public class DocumentoExporter extends HttpServlet {
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);
 
-			OutputStream out = response.getOutputStream();	
-			out.write(docBytes);
-			out.flush();
-			out.close();
+			if(docBytes!=null) {
+				OutputStream out = response.getOutputStream();	
+				out.write(docBytes);
+				out.flush();
+				out.close();
+			}
 
 		} catch (Exception e) {
 			ControlStationCore.logError("Errore durante il download dei documenti "+e.getMessage(), e);

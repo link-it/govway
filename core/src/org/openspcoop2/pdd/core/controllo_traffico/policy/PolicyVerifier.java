@@ -79,8 +79,14 @@ import org.slf4j.Logger;
  */
 public class PolicyVerifier {
 
-	public static List<String> listClusterNodes = null;
-	
+	private static List<String> listClusterNodes = null;
+	public static List<String> getListClusterNodes() {
+		return listClusterNodes;
+	}
+	public static void setListClusterNodes(List<String> listClusterNodes) {
+		PolicyVerifier.listClusterNodes = listClusterNodes;
+	}
+
 	public static RisultatoVerificaPolicy verifica(
 			ConfigurazionePdDManager configPdDManager, IProtocolFactory<?> protocolFactory,
 			IGestorePolicyAttive gestorePolicyAttive, PolicyConfiguration policyConfiguration, Logger logCC,

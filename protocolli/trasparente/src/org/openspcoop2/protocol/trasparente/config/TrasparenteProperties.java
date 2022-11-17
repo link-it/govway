@@ -85,7 +85,7 @@ public class TrasparenteProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){
+			}catch(Throwable er){
 				// close
 			}
 		}

@@ -124,7 +124,9 @@ public class TransactionLibrary {
 			try{
 				tInfo = transazioneInfoSearchDAO.find(exprTransactionInfo);
 				lastRunning = tInfo.getData();
-			}catch(NotFoundException notFound){}
+			}catch(NotFoundException notFound){
+				// ignore
+			}
 			
 			
 			// Esamino le transazioni da processare
@@ -262,7 +264,9 @@ public class TransactionLibrary {
 				logCore.info("Shutdown pool ...");
 				threadsPool.shutdown(); 
 				logCore.info("Shutdown pool ok");
-			}catch(Exception e){}
+			}catch(Throwable e){
+				// ignore
+			}
 		}
 
 

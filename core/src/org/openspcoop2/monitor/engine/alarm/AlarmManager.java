@@ -345,7 +345,8 @@ public class AlarmManager {
 			if(allarmeImmagineDB.getEnabled()==null){
 				return true;
 			}
-			else if(allarmeImmagineDB.getEnabled() != confAllarme.getEnabled()){
+			else if(allarmeImmagineDB.getEnabled()!=null && confAllarme.getEnabled()!=null && 
+					(allarmeImmagineDB.getEnabled().intValue() != confAllarme.getEnabled().intValue())){
 				return true;
 			}
 		}
@@ -359,7 +360,8 @@ public class AlarmManager {
 			if(allarmeImmagineDB.getAcknowledged()==null){
 				return true;
 			}
-			else if(allarmeImmagineDB.getAcknowledged() != confAllarme.getAcknowledged()){
+			else if(allarmeImmagineDB.getAcknowledged()!=null && confAllarme.getAcknowledged()!=null &&
+					(allarmeImmagineDB.getAcknowledged().intValue() != confAllarme.getAcknowledged().intValue())){
 				return true;
 			}
 		}

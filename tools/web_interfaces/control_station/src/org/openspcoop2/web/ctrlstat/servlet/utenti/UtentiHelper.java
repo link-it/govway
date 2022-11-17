@@ -85,13 +85,18 @@ public class UtentiHelper extends ConsoleHelper {
 
 	private boolean hasOnlyPermessiUtenti(String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,
 			String isUtenti,String isAuditing, String isAccordiCooperazione,boolean singlePdD) {
-		return (((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
+		return (
+				(
+						(isServizi == null) 
+						|| 
+						!ServletUtils.isCheckBoxEnabled(isServizi)
+				) &&
 				(
 						!singlePdD 
 						|| 
 						(
-								singlePdD 
-								&& 
+								//singlePdD 
+								//&& 
 								(
 										(isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)
 								)
@@ -597,9 +602,11 @@ public class UtentiHelper extends ConsoleHelper {
 								de.setType(DataElementType.TEXT);
 								de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO+ "_txt");
 								
-								IDSoggetto idSoggetto = idSoggettiOperativi.get(0);
-								String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
-								de.setValue(labelSoggetto);
+								if(idSoggettiOperativi!=null) {
+									IDSoggetto idSoggetto = idSoggettiOperativi.get(0);
+									String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+									de.setValue(labelSoggetto);
+								}
 			//					de.setValue(soggettoDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoDefaultUtente);
 								dati.addElement(de);
 							}
@@ -745,9 +752,11 @@ public class UtentiHelper extends ConsoleHelper {
 							de.setType(DataElementType.TEXT);
 							de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR+ "_txt");
 							
-							IDSoggetto idSoggetto = idSoggettiOperativi.get(0);
-							String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
-							de.setValue(labelSoggetto);
+							if(idSoggettiOperativi!=null) {
+								IDSoggetto idSoggetto = idSoggettiOperativi.get(0);
+								String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+								de.setValue(labelSoggetto);
+							}
 	//						de.setValue(soggettoDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoDefaultUtente);
 							dati.addElement(de);
 						}
@@ -1304,8 +1313,10 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
 				de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA + "_txt");
 				
-				String labelProt = ConsoleHelper._getLabelProtocollo(protocolliDispondibili.get(0));
-				de.setValue(labelProt);
+				if(protocolliDispondibili!=null) {
+					String labelProt = ConsoleHelper._getLabelProtocollo(protocolliDispondibili.get(0));
+					de.setValue(labelProt);
+				}
 //				de.setValue(profiloSelezionatoUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : ConsoleHelper._getLabelProtocollo(profiloSelezionatoUtente));
 				dati.addElement(de);
 				
@@ -1380,10 +1391,11 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setType(DataElementType.TEXT);
 					de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO+ "_txt");
 					
-					IDSoggetto idSoggetto = idSoggettiOperativi.get(0);
-					String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
-					
-					de.setValue(labelSoggetto);
+					if(idSoggettiOperativi!=null) {
+						IDSoggetto idSoggetto = idSoggettiOperativi.get(0);
+						String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+						de.setValue(labelSoggetto);
+					}
 //					de.setValue(soggettoSelezionatoUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoSelezionatoUtente);
 					dati.addElement(de);
 				}
@@ -1783,13 +1795,16 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			// Almeno un permesso dev'essere selezionato
-			if (((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
+			if (
+					(
+							(isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)
+					) &&
 					(
 							!singlePdD 
 							|| 
 							(
-									singlePdD 
-									&& 
+									//singlePdD 
+									//&& 
 									(
 											(isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)
 									)

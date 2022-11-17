@@ -945,10 +945,12 @@ public class GestorePdDThread extends GestoreGeneral {
 				}
 			} catch (ClassQueueException e) {
 				try {
-					operation.setStatus(OperationStatus.ERROR);
-					operation.setDetails(e.toString());
-					operation.setTimeExecute(new Timestamp(System.currentTimeMillis()));
-					operationManager.updateOperation(operation);
+					if(operation!=null) {
+						operation.setStatus(OperationStatus.ERROR);
+						operation.setDetails(e.toString());
+						operation.setTimeExecute(new Timestamp(System.currentTimeMillis()));
+						operationManager.updateOperation(operation);
+					}
 					this.qs.rollback();
 				} catch (Exception er) {
 				}

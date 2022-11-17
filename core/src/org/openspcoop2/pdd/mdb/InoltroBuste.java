@@ -299,10 +299,37 @@ public class InoltroBuste extends GenericLib{
 			MsgDiagnostico msgDiag) throws OpenSPCoopStateException {
 
 		EsitoLib esito = new EsitoLib();
+		
+		if(openspcoopstate==null) {
+			if(msgDiag!=null) {
+				msgDiag.logErroreGenerico("openspcoopstate is null", "openspcoopstate.checkNull");
+			}
+			else {
+				this.log.error("openspcoopstate is null");
+			}
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
+		if(msgDiag==null) {
+			if(this.log!=null) {
+				this.log.error("MsgDiagnostico is null");
+			}
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
+		
 		InoltroBusteMessage inoltroBusteMsg = (InoltroBusteMessage) openspcoopstate.getMessageLib();
 		
 		/* PddContext */
 		PdDContext pddContext = inoltroBusteMsg.getPddContext();
+		if(pddContext==null) {
+			msgDiag.logErroreGenerico("PddContext is null", "PdDContext.checkNull"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
+		
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
 						
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
@@ -312,7 +339,21 @@ public class InoltroBuste extends GenericLib{
 		String implementazionePdDDestinatario = inoltroBusteMsg.getImplementazionePdDSoggettoDestinatario();
 		
 		RichiestaDelegata richiestaDelegata = inoltroBusteMsg.getRichiestaDelegata();
+		if(richiestaDelegata==null) {
+			msgDiag.logErroreGenerico("RichiestaDelegata is null", "RichiestaDelegata.checkNull"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
+		
 		Busta bustaRichiesta = inoltroBusteMsg.getBusta();
+		if(bustaRichiesta==null) {
+			msgDiag.logErroreGenerico("Busta is null", "Busta.checkNull"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
+		
 		IDSoggetto identitaPdD = inoltroBusteMsg.getRichiestaDelegata().getDominio();
 		String profiloGestione = richiestaDelegata.getProfiloGestione();
 		msgDiag.setDominio(identitaPdD);  // imposto anche il dominio nel msgDiag
@@ -1167,12 +1208,14 @@ public class InoltroBuste extends GenericLib{
 			HeaderIntegrazione headerIntegrazione = new HeaderIntegrazione(idTransazione);
 			headerIntegrazione.getBusta().setTipoMittente(soggettoFruitore.getTipo());
 			headerIntegrazione.getBusta().setMittente(soggettoFruitore.getNome());
-			headerIntegrazione.getBusta().setTipoDestinatario(idServizio.getSoggettoErogatore().getTipo());
-			headerIntegrazione.getBusta().setDestinatario(idServizio.getSoggettoErogatore().getNome());
-			headerIntegrazione.getBusta().setTipoServizio(idServizio.getTipo());
-			headerIntegrazione.getBusta().setServizio(idServizio.getNome());
-			headerIntegrazione.getBusta().setVersioneServizio(idServizio.getVersione());
-			headerIntegrazione.getBusta().setAzione(idServizio.getAzione());
+			if(idServizio!=null) {
+				headerIntegrazione.getBusta().setTipoDestinatario(idServizio.getSoggettoErogatore().getTipo());
+				headerIntegrazione.getBusta().setDestinatario(idServizio.getSoggettoErogatore().getNome());
+				headerIntegrazione.getBusta().setTipoServizio(idServizio.getTipo());
+				headerIntegrazione.getBusta().setServizio(idServizio.getNome());
+				headerIntegrazione.getBusta().setVersioneServizio(idServizio.getVersione());
+				headerIntegrazione.getBusta().setAzione(idServizio.getAzione());
+			}
 			headerIntegrazione.getBusta().setID(bustaRichiesta.getID());
 			headerIntegrazione.getBusta().setRiferimentoMessaggio(bustaRichiesta.getRiferimentoMessaggio());
 			headerIntegrazione.getBusta().setIdCollaborazione(bustaRichiesta.getCollaborazione());
@@ -2338,7 +2381,8 @@ public class InoltroBuste extends GenericLib{
 						motivoErroreConsegna = "Errore durante la consegna";
 					}
 					//	interpretazione esito consegna
-					GestioneErrore gestioneConsegnaConnettore =configurazionePdDManager.getGestioneErroreConnettoreComponenteCooperazione(protocolFactory, requestMessageTrasformato.getServiceBinding());
+					GestioneErrore gestioneConsegnaConnettore =
+							configurazionePdDManager.getGestioneErroreConnettoreComponenteCooperazione(protocolFactory, requestMessageTrasformato!=null ? requestMessageTrasformato.getServiceBinding() : null);
 					GestoreErroreConnettore gestoreErrore = new GestoreErroreConnettore();
 					errorConsegna = !gestoreErrore.verificaConsegna(gestioneConsegnaConnettore,motivoErroreConsegna,eccezioneProcessamentoConnettore,connectorSender);
 					if(errorConsegna){
@@ -3990,7 +4034,9 @@ public class InoltroBuste extends GenericLib{
 
 				// Gestione Specifica per Buste
 				bustaRisposta = validatore.getBusta();
-				idMessageResponse = bustaRisposta.getID();
+				if(bustaRisposta!=null) {
+					idMessageResponse = bustaRisposta.getID();
+				}
 				
 				// Imposto eventuali informazioni DirectVM
 				if(bustaRisposta!=null && pddContext!=null){
@@ -4601,7 +4647,6 @@ public class InoltroBuste extends GenericLib{
 							esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO,motivoErroreRiconsegna);
 							esito.setEsitoInvocazione(false);
 						}else{
-							//TODO CHECKME relaseoutbox con il messaggio di risposta o di richiesta ?
 							ejbUtils.releaseOutboxMessage(false);
 							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,motivoErroreRiconsegna);
 							esito.setEsitoInvocazione(true);
@@ -4651,8 +4696,17 @@ public class InoltroBuste extends GenericLib{
 							msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_CONTENUTI, tipo);
 							msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,"");
 						}
-						if(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())||
-								CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())){
+						if( 
+								(responseMessage!=null)
+								&&
+								(validazioneContenutoApplicativoApplicativo!=null)
+								&&
+								(
+										CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())
+										||
+										CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())
+								)
+							){
 
 							if(transactionNullable!=null) {
 								transactionNullable.getTempiElaborazione().startValidazioneRisposta();
@@ -4873,7 +4927,9 @@ public class InoltroBuste extends GenericLib{
 
 					//msgResponse.aggiornaInformazioni(bustaRisposta.getServizio(),bustaRisposta.getAzione());
 					msgDiag.mediumDebug("Aggiorna proprietario messaggio risposta...");
-					msgResponse.aggiornaProprietarioMessaggio(SbustamentoRisposte.ID_MODULO);
+					if(msgResponse!=null) {
+						msgResponse.aggiornaProprietarioMessaggio(SbustamentoRisposte.ID_MODULO);
+					}
 					((OpenSPCoopState)openspcoopstate).setMessageLib(sbustamentoRisposteMSG);
 					
 					if (openspcoopstate instanceof OpenSPCoopStateful) {

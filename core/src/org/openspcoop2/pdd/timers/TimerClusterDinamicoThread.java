@@ -81,7 +81,7 @@ public class TimerClusterDinamicoThread extends BaseThread{
 	    	
 	    	try {
 	    		if(this.manager.isRateLimitingGestioneCluster()) {
-	    			PolicyVerifier.listClusterNodes = this.manager.getHostnames(this.log);
+	    			PolicyVerifier.setListClusterNodes(this.manager.getHostnames(this.log));
 	    		}
 	    	}catch(Exception e){
 				this.log.error("Errore durante l'aggiornamento della lista dei nodi per il rate limiting: "+e.getMessage(),e);

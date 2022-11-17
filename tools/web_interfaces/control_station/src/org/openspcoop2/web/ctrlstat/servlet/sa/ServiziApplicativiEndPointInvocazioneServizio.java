@@ -132,7 +132,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
+			Boolean useIdSogg = parentSA!=null ? (parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO) : null;
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 
 			boolean isModalitaCompleta = saHelper.isModalitaCompleta();
@@ -317,8 +317,14 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			InvocazionePorta invocazionePorta = sa.getInvocazionePorta();
 			InvocazioneServizio is = sa.getInvocazioneServizio();
+			if(is==null) {
+				throw new Exception("ServizioApplicativo con id '"+idSilInt+"' senza InvocazioneServizio");
+			}
 			InvocazioneCredenziali cis = is.getCredenziali();
 			Connettore connis = is.getConnettore();
+			if(connis==null) {
+				throw new Exception("ServizioApplicativo con id '"+idSilInt+"' senza connettore in InvocazioneServizio");
+			}
 			List<Property> cp = connis.getPropertyList();
 			String tipoSA = sa.getTipo();
 			
@@ -1328,7 +1334,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				else {
 					// Fix: altrimenti rimaneva assegnate le credenziali quando si disabilitava l'integration manager
 					if(!saHelper.isModalitaCompleta()) {
-						if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
+						if(invocazionePorta!=null) {
 							while (invocazionePorta.sizeCredenzialiList()>0) {
 								invocazionePorta.removeCredenziali(0);
 							}

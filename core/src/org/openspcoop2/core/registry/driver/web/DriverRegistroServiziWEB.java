@@ -2425,7 +2425,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
      *
      * @param idAccordo dell'accordo da verificare
      * @return true se l'accordo esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
+	 * @throws DriverRegistroServiziException
      */    
     @Override
 	public boolean existsAccordoCooperazione(IDAccordoCooperazione idAccordo) throws DriverRegistroServiziException{
@@ -2571,7 +2571,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	 *
 	 * @param idAccordo dell'accordo da verificare
 	 * @return true se l'accordo esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
+	 * @throws DriverRegistroServiziException
 	 */    
 	@Override
 	public boolean existsAccordoServizioParteComune(IDAccordo idAccordo) throws DriverRegistroServiziException{
@@ -2717,7 +2717,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	 *
 	 * @param nome della porta di dominio da verificare
 	 * @return true se la porta di dominio esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
+	 * @throws DriverRegistroServiziException
 	 */    
 	@Override
 	public boolean existsPortaDominio(String nome) throws DriverRegistroServiziException{
@@ -3297,10 +3297,10 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				soggetto.setDescrizione("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome());
 			}
 			IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome(),soggetto.getIdentificativoPorta());
-			if( (soggetto.getCodiceIpa() == null) || ("".equals(soggetto.getCodiceIpa())) ){
-				// TODO GESTIRE TRAMITE FACTORY?				
-				//soggetto.setCodiceIpa(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica(idSoggetto,false));
-			}
+//			if( (soggetto.getCodiceIpa() == null) || ("".equals(soggetto.getCodiceIpa())) ){
+//				// GESTIRE TRAMITE FACTORY?				
+//				//soggetto.setCodiceIpa(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica(idSoggetto,false));
+//			}
 
 
 			// Controllo pre-esistenza del soggetto
@@ -3390,10 +3390,10 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				soggetto.setDescrizione("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome());
 			}
 			IDSoggetto idSoggettoNEW = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
-			if( (soggetto.getCodiceIpa() == null) || ("".equals(soggetto.getCodiceIpa())) ){
-				// TODO GESTIRE TRAMITE FACTORY?				
-				//soggetto.setCodiceIpa(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica(idSoggettoNEW,false));
-			}
+//			if( (soggetto.getCodiceIpa() == null) || ("".equals(soggetto.getCodiceIpa())) ){
+//				// GESTIRE TRAMITE FACTORY?				
+//				//soggetto.setCodiceIpa(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica(idSoggettoNEW,false));
+//			}
 
 			// Controllo pre-esistenza del soggetto da modificare
 			if( this.generatoreXML.existsSoggetto(idSoggettoOLD) == false){

@@ -116,7 +116,6 @@ public final class ConfigurazioneProxyPassRegolaAdd extends Action {
 			confHelper.makeMenu();
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 			
-			String postBackElementName = confHelper.getPostBackElementName();
 			
 			List<String> protocolli = confCore.getProtocolli();
 			List<IDSoggetto> soggetti = new ArrayList<>();
@@ -125,11 +124,13 @@ public final class ConfigurazioneProxyPassRegolaAdd extends Action {
 				  soggetti = soggettiCore.getIdSoggettiOperativi(protocollo);
 				} 
 			
-			// se ho modificato il soggetto ricalcolo il servizio e il service binding
-			if (postBackElementName != null) {
-				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO)) {
-				}
-			}
+//			String postBackElementName = confHelper.getPostBackElementName();
+//			
+//			// se ho modificato il soggetto ricalcolo il servizio e il service binding
+//			if (postBackElementName != null) {
+//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO)) {
+//				}
+//			}
 
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));

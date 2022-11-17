@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter
+              xmlns="https://github.com/spotbugs/filter/3.0.0"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+
+  <!-- 
+	This element matches warnings having at least a specified bug rank. 
+	The value attribute should be an integer value between 1 and 20, where 1 to 4 are scariest, 5 to 9 scary, 10 to 14 troubling, and 15 to 20 of concern bugs. 
+  -->
+ <Match>
+    <Or>
+      <Rank value="20" />
+      <Rank value="19" />
+      <Rank value="18" />
+      <Rank value="17" />
+      <Rank value="16" />
+      <Rank value="15" />
+    </Or>
+  </Match>
+
+</FindBugsFilter>

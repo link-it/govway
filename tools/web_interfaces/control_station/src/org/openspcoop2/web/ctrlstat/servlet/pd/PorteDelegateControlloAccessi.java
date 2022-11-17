@@ -186,6 +186,9 @@ public class PorteDelegateControlloAccessi extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
+			if(portaDelegata==null) {
+				throw new Exception("PortaDelegata con id '"+idInt+"' non trovata");
+			}
 			String idporta = portaDelegata.getNome();
 			
 			List<String> ruoli = new ArrayList<>();
@@ -903,6 +906,9 @@ public class PorteDelegateControlloAccessi extends Action {
 			Vector<DataElement> dati = new Vector<DataElement>();
 			
 			portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
+			if(portaDelegata==null) {
+				throw new Exception("PortaDelegata con id '"+idInt+"' non trovata");
+			}
 			idporta = portaDelegata.getNome();
 			
 			ruoli = new ArrayList<>();

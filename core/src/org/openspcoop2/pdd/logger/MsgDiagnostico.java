@@ -121,7 +121,6 @@ public class MsgDiagnostico {
 	private DiagnosticoBuilder diagnosticoBuilder;
 	
 	/** Protocol Factory */
-	private ProtocolFactoryManager protocolFactoryManager = null;
 	private IProtocolFactory<?> protocolFactory;
 	private ITraduttore traduttore;
 	/** ConfigurazionePdDReader */
@@ -253,11 +252,12 @@ public class MsgDiagnostico {
 			this.generatoreDateCasuali = GeneratoreCasualeDate.getGeneratoreCasualeDate();
 		}
 		try{
-			if(this.pddContext==null) {
-				throw new Exception("PdDContext is null");
+			if(requestInfo!=null && requestInfo.getProtocolFactory()!=null) {
+				this.protocolFactory = requestInfo.getProtocolFactory();
 			}
-			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
-			this.protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+			else {
+				throw new Exception("ProtocolFactory unknow");
+			}
 			this.traduttore = this.protocolFactory.createTraduttore();
 		} catch(Throwable e){
 			// Succede quando non appartiene a nessun protocollo, ad esempio i diagnostici di startup

@@ -181,10 +181,10 @@ public final class PorteApplicativeChange extends Action {
 			String integrazioneStato = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE_STATO);
 			String integrazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
 			String[] integrazioneGruppi = porteApplicativeHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
-		
+					
 			List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<GruppoIntegrazione>();  
 			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<String, List<String>>();
-			boolean isConfigurazione = parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE; 
+			boolean isConfigurazione = parentPA!=null ? (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) : false; 
 			boolean datiAltroPorta = isConfigurazione ? ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA)) : false;
 			boolean visualizzaSezioneOpzioniAvanzate = !(porteApplicativeHelper.isModalitaStandard() || (isConfigurazione && !datiAltroPorta));
 
@@ -693,7 +693,7 @@ public final class PorteApplicativeChange extends Action {
 			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 						
 			String nomeBreadCrumb = oldNomePA;
-			if(parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) {
+			if( parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) ) {
 //				List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList = apsCore.mappingServiziPorteAppList(idServizioCheck, idAspsLong, null);
 //				MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = null;
 //				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativaTmp : mappingServiziPorteAppList) {
@@ -1030,7 +1030,7 @@ public final class PorteApplicativeChange extends Action {
 				String[] serviziList = null;
 				String[] serviziListLabel = null;
 				FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
-				if ( (!soggvirt.equals("")) && (!soggvirt.equals("-")) ){
+				if ( (!"".equals(soggvirt)) && (!"-".equals(soggvirt)) ){
 					filtroServizi.setTipoSoggettoErogatore(soggvirt.split("/")[0]);
 					filtroServizi.setNomeSoggettoErogatore(soggvirt.split("/")[1]);
 				}
@@ -1121,7 +1121,7 @@ public final class PorteApplicativeChange extends Action {
 				
 				String[] azioniList = null;
 				String[] azioniListLabel = null;
-				List<String> filtraAzioniUtilizzate = new ArrayList<String>(); // TODO controllare
+				List<String> filtraAzioniUtilizzate = new ArrayList<String>();
 				if ((modeaz != null) && modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {
 				
 					Map<String,String> azioni = apcCore.getAzioniConLabel(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
@@ -1300,7 +1300,7 @@ public final class PorteApplicativeChange extends Action {
 				// Prendo le azioni associate al servizio
 				String[] azioniList = null;
 				String[] azioniListLabel = null;
-				List<String> filtraAzioniUtilizzate = new ArrayList<String>(); // TODO controllare
+				List<String> filtraAzioniUtilizzate = new ArrayList<String>();
 				if ((modeaz != null) && modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {
 				
 					Map<String,String> azioni = apcCore.getAzioniConLabel(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
@@ -1435,12 +1435,12 @@ public final class PorteApplicativeChange extends Action {
 				// non modifico paAzione
 			}
 			else if ((( (azione!=null && !azione.equals("")) || 
-							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED) ||
-							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) ||
-							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) ||
-							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) ||
-							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))) ||
-							(azid!=null && !azid.equals("")) ) {
+						PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED.equals(modeaz) ||
+						PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED.equals(modeaz) ||
+						PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED.equals(modeaz) ||
+						PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED.equals(modeaz) ||
+						PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED.equals(modeaz))) ||
+					    (azid!=null && !azid.equals("")) ) {
 				PortaApplicativaAzione paa = new PortaApplicativaAzione();
 
 				if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {

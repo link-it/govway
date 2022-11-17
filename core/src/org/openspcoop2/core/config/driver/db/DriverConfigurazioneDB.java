@@ -7701,6 +7701,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			
 			}
 
+			if(stm==null) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Type '"+type+"' sconosciuto?");
+			}
+			
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -15637,8 +15641,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addWhereCondition("id_porta = ?");
 			
-			// [TODO] Parametri da definire con Andrea
-			
 			if (!search.equals("")) { // con search
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 			} 
@@ -15662,7 +15664,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				azione.setId(risultato.getLong("id"));
 				azione.setNome(risultato.getString("azione")) ;
 				
-				// [TODO] Parametri da definire con Andrea
 				String nomePortaDelegante = null;
 				azione.setNomePortaDelegante(nomePortaDelegante);
 				PortaApplicativaAzioneIdentificazione identificazione = null;
@@ -22296,9 +22297,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 					stmt.setString(index++,CostantiConfigurazione.CREDENZIALE_SSL.toString());
 				}
-				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
-					// like
-				}
+//				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+//					// like
+//				}
 				if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
 					stmt.setString(index++, filterCredenzialeTokenPolicy);
 				}
@@ -22583,9 +22584,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 					stmt.setString(index++,CostantiConfigurazione.CREDENZIALE_SSL.toString());
 				}
-				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
-					// like
-				}
+//				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+//					// like
+//				}
 				if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
 					stmt.setString(index++, filterCredenzialeTokenPolicy);
 				}
@@ -23025,9 +23026,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 					stmt.setString(index++,CostantiConfigurazione.CREDENZIALE_SSL.toString());
 				}
-				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
-					// like
-				}
+//				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+//					// like
+//				}
 				if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
 					stmt.setString(index++, filterCredenzialeTokenPolicy);
 				}
@@ -23250,9 +23251,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 					stmt.setString(index++,CostantiConfigurazione.CREDENZIALE_SSL.toString());
 				}
-				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
-					// like
-				}
+//				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+//					// like
+//				}
 				if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
 					stmt.setString(index++, filterCredenzialeTokenPolicy);
 				}
@@ -27894,7 +27895,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(risultato!=null) risultato.close();
 				if(stmt!=null) stmt.close();
 			}catch (Exception e) {
-				// TODO: handle exception
+				// ignore
 			}
 
 			try{
@@ -33997,9 +33998,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			// nop
 		}
 		
-		if(CostantiConfigurazione.ALLARMI_TIPOLOGIA_CONFIGURAZIONE.equals(tipologiaRicerca)) {
-			// nop
-		}
+//		if(CostantiConfigurazione.ALLARMI_TIPOLOGIA_CONFIGURAZIONE.equals(tipologiaRicerca)) {
+//			// nop
+//		}
 		
 		if(CostantiConfigurazione.ALLARMI_TIPOLOGIA_APPLICATIVA.equals(tipologiaRicerca) || CostantiConfigurazione.ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE.equals(tipologiaRicerca)) {
 			

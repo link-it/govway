@@ -5652,7 +5652,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// e' un errore
 				tmp = null;
 			}
-			infoDatabase = tmp.split("\n");
+			infoDatabase = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
 		}
@@ -5854,7 +5854,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// e' un errore
 				tmp = null;
 			}
-			infoSSL = tmp.split("\n");
+			infoSSL = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
 		}
@@ -5906,7 +5906,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					// e' un errore
 					tmp = null;
 				}
-				infoCryptoKeyLength = tmp.split("\n");
+				infoCryptoKeyLength = tmp!=null ? tmp.split("\n") : null;
 			}catch(Exception e){
 				this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
 			}
@@ -5965,7 +5965,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// e' un errore
 				tmp = null;
 			}
-			infoCharset = tmp.split("\n");
+			infoCharset = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
 		}
@@ -6027,7 +6027,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// e' un errore
 				tmp = null;
 			}
-			infoInternazionalizzazione = tmp.split("\n");
+			infoInternazionalizzazione = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
 		}
@@ -6087,7 +6087,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// e' un errore
 				tmp = null;
 			}
-			infoTimezone = tmp.split("\n");
+			infoTimezone = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
 		}
@@ -6144,7 +6144,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// e' un errore
 				tmp = null;
 			}
-			infoJavaNet = tmp.split("\n");
+			infoJavaNet = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni di Java Networking (jmxResourcePdD): "+e.getMessage(),e);
 		}
@@ -14935,7 +14935,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 				}
 			}
-			else if(protocolliValue.size()>1){ 
+			else if(protocolliValue!=null && protocolliValue.size()>1){ 
 				de.setValues(protocolliValue);
 				de.setLabels(protocolliLabel);
 				de.setSelected(protocolloSelezionatoValue);
@@ -19823,7 +19823,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		StringBuilder sbParsingError = new StringBuilder();
 		
 		if(first) {
-			if(tipoOp.equals(TipoOperazione.ADD)) {
+//			if(tipoOp.equals(TipoOperazione.ADD)) {
 //				allarme.setEnabled(1);
 //				allarme.setTipoAllarme(null);
 //				allarme.setMail(new AllarmeMail());
@@ -19842,7 +19842,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				}else{
 //					allarme.getScript().setAckMode(0);
 //				}
-			}
+//			}
 		} else {
 			// ricostruisco lo stato a partire dai parametri
 			String idAllarmeS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME);
@@ -21457,7 +21457,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
 		
 		boolean protocolloAssociatoFiltroNonSelezionatoUtente = false;
-		if(allarme.getFiltro().isEnabled()){
+		if(allarme!=null && allarme.getFiltro()!=null && allarme.getFiltro().isEnabled()){
 			protocolliValue = this.confCore.getProtocolli(this.request, this.session);
 			if(allarme.getFiltro().getProtocollo()!=null) {
 				// sara' sempre impostato, a meno della prima volta (create policy)
@@ -21467,7 +21467,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		
-		if(allarme.getFiltro().isEnabled()){
+		if(allarme!=null && allarme.getFiltro()!=null && allarme.getFiltro().isEnabled()){
 			
 			// protocollo
 			if(configurazione) {
@@ -22226,7 +22226,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		else {
 			boolean hidden = ruoloPorta!=null;
 			addToDatiDataElementStato_postBackViaPOST(dati, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_ENABLED, 
-					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_ENABLED, allarme.getFiltro().isEnabled(), true,
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_ENABLED, (allarme!=null && allarme.getFiltro()!=null && allarme.getFiltro().isEnabled()), true,
 					false, false, hidden);
 			
 			if(ruoloPorta!=null) {
@@ -22237,7 +22237,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}
 		
-		boolean filtroEnabled = allarme.getFiltro().isEnabled();
+		boolean filtroEnabled = allarme!=null && allarme.getFiltro()!=null && allarme.getFiltro().isEnabled();
 		if(ruoloPorta!=null) {
 			filtroEnabled = filtroAbilitatoAPI;
 		}
@@ -22320,7 +22320,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 				}
 			}
-			else if(protocolliValue.size()>1){ 
+			else if(protocolliValue!=null && protocolliValue.size()>1){ 
 				de.setValues(protocolliValue);
 				de.setLabels(protocolliLabel);
 				de.setSelected(protocolloSelezionatoValue);

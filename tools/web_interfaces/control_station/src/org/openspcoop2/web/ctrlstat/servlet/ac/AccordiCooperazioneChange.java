@@ -495,7 +495,9 @@ public final class AccordiCooperazioneChange extends Action {
 			// Modifico i dati dell'accordo nel db
 			ac.setNome(nome);
 			ac.setDescrizione(descr);
-			if(referente!=null && !"".equals(referente) && !"-".equals(referente)){
+			if(
+					//referente!=null && 
+					!"".equals(referente) && !"-".equals(referente)){
 				int idRef = 0;
 				try {
 					idRef = Integer.parseInt(referente);

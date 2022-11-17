@@ -326,6 +326,10 @@ public final class ConfigurazioneGenerale extends Action {
 			if(extendedServletList!=null && extendedServletList.size()>0){
 				for (IExtendedFormServlet extendedServlet : extendedServletList) {
 
+					if(extendedServlet==null) {
+						throw new Exception("IExtendedFormServlet is null in list");
+					}
+					
 					ExtendedInfo ei = new ExtendedInfo();
 					ei.extendedServlet = extendedServlet;
 					DBManager dbManager = null;

@@ -77,7 +77,9 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		this.openspcoopProperties =  OpenSPCoop2Properties.getInstance();
 		
 		this.context = context;
-		this.idTransazione = (String) this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		if(this.context!=null) {
+			this.idTransazione = (String) this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		}
 		this.soglia = soglia;
 		this.repositoryFile = repositoryFile;
 	}

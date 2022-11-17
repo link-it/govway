@@ -382,6 +382,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			boolean buildSecurityTokenInRequest, ModIHeaderType headerType, boolean integritaCustom, boolean securityHeaderObbligatorio,
 			Map<String, Object> dynamicMapParameter, Busta datiRichiesta) throws Exception {
 		
+		if(msg==null) {
+			throw new Exception("Param msg is null");
+		}
+		
 		boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
 		String idTransazione = null;
 		if(this.context!=null) {
@@ -390,13 +394,11 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		
 		String securityTokenHeader = headerTokenRest;
 		List<String> securityTokens = null;
-		if(msg!=null) {
-			if(request && msg.getTransportRequestContext()!=null) {
-				securityTokens = msg.getTransportRequestContext().getHeaderValues(securityTokenHeader);
-			}
-			else if(!request && msg.getTransportResponseContext()!=null) {
-				securityTokens = msg.getTransportResponseContext().getHeaderValues(securityTokenHeader);
-			}
+		if(request && msg.getTransportRequestContext()!=null) {
+			securityTokens = msg.getTransportRequestContext().getHeaderValues(securityTokenHeader);
+		}
+		else if(!request && msg.getTransportResponseContext()!=null) {
+			securityTokens = msg.getTransportResponseContext().getHeaderValues(securityTokenHeader);
 		}
 		String securityToken = null;
 		if(securityTokens!=null && !securityTokens.isEmpty()) {
@@ -809,14 +811,16 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 								CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
 						prefix+"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"'"));
 				}
-				String audValue = toString(aud);
-				if(!headerDuplicati || headerAuthentication) {
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, audValue);
-				}
 				else {
-					String audAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
-					if(!audValue.equals(audAuthorization)) {
-						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE, audValue);
+					String audValue = toString(aud);
+					if(!headerDuplicati || headerAuthentication) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, audValue);
+					}
+					else {
+						String audAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
+						if(!audValue.equals(audAuthorization)) {
+							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE, audValue);
+						}
 					}
 				}
 			}

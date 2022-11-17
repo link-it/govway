@@ -747,14 +747,11 @@ public class ClientTest {
 					log.error("Query: "+sqlQueryObject.toString());
 					throw new Exception("UnixTime [checkDB] test1 failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
+				
 			}catch(Exception e){
 				
 				throw e;
@@ -786,14 +783,11 @@ public class ClientTest {
 							rs.getLong("unixtimeavg")+" sum:"+
 							rs.getLong("unixtimesum")+"]");
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
+				
 			}catch(Exception e){
 				
 				throw e;
@@ -838,14 +832,11 @@ public class ClientTest {
 					}
 					oldLatenza = latenza;
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
+				
 			}catch(Exception e){
 				
 				throw e;
@@ -907,14 +898,12 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				
+				stmtQuery.close();
+				stmtQuery = null;
+				
 			}catch(Exception e){
 				
 				throw e;
@@ -981,14 +970,11 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
+				
 			}catch(Exception e){
 				
 				throw e;
@@ -1026,14 +1012,11 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
+				
 			}catch(Exception e){
 				
 				throw e;
@@ -1073,14 +1056,11 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1118,14 +1098,11 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
+				
 			}catch(Exception e){
 				
 				throw e;
@@ -1170,14 +1147,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1220,14 +1193,10 @@ public class ClientTest {
 				else{
 					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1267,14 +1236,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1317,14 +1282,10 @@ public class ClientTest {
 				else{
 					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1398,14 +1359,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1447,14 +1404,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1498,14 +1451,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1547,14 +1496,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1603,14 +1548,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1657,14 +1598,10 @@ public class ClientTest {
 				else{
 					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1705,14 +1642,11 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1756,14 +1690,10 @@ public class ClientTest {
 				else{
 					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1810,14 +1740,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1856,14 +1782,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1901,14 +1823,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -1952,14 +1870,10 @@ public class ClientTest {
 				else{
 					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -2003,14 +1917,10 @@ public class ClientTest {
 				else{
 					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -2061,14 +1971,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -2107,14 +2013,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -2152,14 +2054,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -2203,14 +2101,10 @@ public class ClientTest {
 				else{
 					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -2254,14 +2148,10 @@ public class ClientTest {
 				else{
 					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -2350,14 +2240,10 @@ public class ClientTest {
 						}
 					}
 				}finally {
-					if(rs!=null){
-						rs.close();
-						rs = null;
-					}
-					if(stmtQuery!=null){
-						stmtQuery.close();
-						stmtQuery = null;
-					}
+					rs.close();
+					rs = null;
+					stmtQuery.close();
+					stmtQuery = null;
 				}
 				
 				if(index==0) {
@@ -2429,14 +2315,10 @@ public class ClientTest {
 						}
 					}
 				}finally {
-					if(rs!=null){
-						rs.close();
-						rs = null;
-					}
-					if(stmtQuery!=null){
-						stmtQuery.close();
-						stmtQuery = null;
-					}
+					rs.close();
+					rs = null;
+					stmtQuery.close();
+					stmtQuery = null;
 				}
 				
 				if(index==0) {
@@ -2508,14 +2390,10 @@ public class ClientTest {
 						}
 					}
 				}finally {
-					if(rs!=null){
-						rs.close();
-						rs = null;
-					}
-					if(stmtQuery!=null){
-						stmtQuery.close();
-						stmtQuery = null;
-					}
+					rs.close();
+					rs = null;
+					stmtQuery.close();
+					stmtQuery = null;
 				}
 				
 				if(index==0) {
@@ -2620,14 +2498,10 @@ public class ClientTest {
 				else{
 					throw new Exception("Test failed"); 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -2708,14 +2582,12 @@ public class ClientTest {
 					}
 				}
 				
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				
+				stmtQuery.close();
+				stmtQuery = null;
+				
 			}catch(Exception e){
 				
 				throw e;
@@ -2797,14 +2669,10 @@ public class ClientTest {
 				}
 			
 					
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -2902,14 +2770,10 @@ public class ClientTest {
 				}
 			
 					
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -2999,14 +2863,10 @@ public class ClientTest {
 				}
 				
 				
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -3118,14 +2978,10 @@ public class ClientTest {
 					}
 				}
 				
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -3204,28 +3060,20 @@ public class ClientTest {
 						if(rs.getString("mittente").endsWith("10")){
 							if(1!=rs.getLong("cont")){
 								long cont = rs.getLong("cont");
-								if(rs!=null){
-									rs.close();
-									rs = null;
-								}
-								if(stmtQuery!=null){
-									stmtQuery.close();
-									stmtQuery = null;
-								}
+								rs.close();
+								rs = null;
+								stmtQuery.close();
+								stmtQuery = null;
 								throw new Exception("Test failed row["+(index)+"] found:"+cont+" expected:1"); 
 							}
 						}
 						else{
 							if(2!=rs.getLong("cont")){
 								long cont = rs.getLong("cont");
-								if(rs!=null){
-									rs.close();
-									rs = null;
-								}
-								if(stmtQuery!=null){
-									stmtQuery.close();
-									stmtQuery = null;
-								}
+								rs.close();
+								rs = null;
+								stmtQuery.close();
+								stmtQuery = null;
 								throw new Exception("Test failed row["+(index)+"] found:"+cont+" expected:2"); 
 							}
 						}
@@ -3239,14 +3087,10 @@ public class ClientTest {
 					throw new Exception("Test failed (expected "+((ROW/2)+1)+" rows, found:"+(index)+")"); 
 				}
 				
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -3333,28 +3177,20 @@ public class ClientTest {
 						if(rs.getString("mittente").endsWith("10")){
 							if(1!=rs.getLong("cont")){
 								long cont = rs.getLong("cont");
-								if(rs!=null){
-									rs.close();
-									rs = null;
-								}
-								if(stmtQuery!=null){
-									stmtQuery.close();
-									stmtQuery = null;
-								}
+								rs.close();
+								rs = null;
+								stmtQuery.close();
+								stmtQuery = null;
 								throw new Exception("Test failed row["+((index-1))+"] found:"+cont+" expected:1"); 
 							}
 						}
 						else{
 							if(2!=rs.getLong("cont")){
 								long cont = rs.getLong("cont");
-								if(rs!=null){
-									rs.close();
-									rs = null;
-								}
-								if(stmtQuery!=null){
-									stmtQuery.close();
-									stmtQuery = null;
-								}
+								rs.close();
+								rs = null;
+								stmtQuery.close();
+								stmtQuery = null;
 								throw new Exception("Test failed row["+((index-1))+"] found:"+cont+" expected:2"); 
 							}
 						}
@@ -3368,14 +3204,10 @@ public class ClientTest {
 					throw new Exception("Test failed (expected "+limit+" rows, found:"+(index)+")"); 
 				}
 				
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -3466,14 +3298,11 @@ public class ClientTest {
 						throw new Exception("Test failed (expected "+ROW+" rows, found:"+(index)+")"); 
 					}
 					
-					if(rs!=null){
 					rs.close();
 					rs = null;
-				}
-					if(stmtQuery!=null){
 					stmtQuery.close();
 					stmtQuery = null;
-				}
+				
 				}catch(Exception e){
 					
 					throw e;
@@ -3576,14 +3405,11 @@ public class ClientTest {
 						throw new Exception("Test failed (expected "+limit+" rows, found:"+(index)+")"); 
 					}
 					
-					if(rs!=null){
 					rs.close();
 					rs = null;
-				}
-					if(stmtQuery!=null){
 					stmtQuery.close();
 					stmtQuery = null;
-				}
+				
 				}catch(Exception e){
 					
 					throw e;
@@ -3688,14 +3514,11 @@ public class ClientTest {
 						throw new Exception("Test failed (expected "+limit+" rows, found:"+(index)+")"); 
 					}
 					
-					if(rs!=null){
 					rs.close();
 					rs = null;
-				}
-					if(stmtQuery!=null){
 					stmtQuery.close();
 					stmtQuery = null;
-				}
+				
 				}catch(Exception e){
 					
 					throw e;
@@ -3848,27 +3671,19 @@ public class ClientTest {
 							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(cont!=1){
-									if(rs!=null){
-										rs.close();
-										rs = null;
-									}
-									if(stmtQuery!=null){
-										stmtQuery.close();
-										stmtQuery = null;
-									}
+									rs.close();
+									rs = null;
+									stmtQuery.close();
+									stmtQuery = null;
 									throw new Exception("Expected 1, found "+cont);
 								}
 							}
 							else{
 								if(cont!=2){
-									if(rs!=null){
-										rs.close();
-										rs = null;
-									}
-									if(stmtQuery!=null){
-										stmtQuery.close();
-										stmtQuery = null;
-									}
+									rs.close();
+									rs = null;
+									stmtQuery.close();
+									stmtQuery = null;
 									throw new Exception("Expected 2, found "+cont);
 								}
 							}			
@@ -3896,14 +3711,11 @@ public class ClientTest {
 					}	
 				}
 				
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
+				
 			}catch(Exception e){
 				
 				throw e;
@@ -3987,27 +3799,19 @@ public class ClientTest {
 							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(cont!=1){
-									if(rs!=null){
-										rs.close();
-										rs = null;
-									}
-									if(stmtQuery!=null){
-										stmtQuery.close();
-										stmtQuery = null;
-									}
+									rs.close();
+									rs = null;
+									stmtQuery.close();
+									stmtQuery = null;
 									throw new Exception("Expected 1, found "+cont);
 								}
 							}
 							else{
 								if(cont!=2){
-									if(rs!=null){
-										rs.close();
-										rs = null;
-									}
-									if(stmtQuery!=null){
-										stmtQuery.close();
-										stmtQuery = null;
-									}
+									rs.close();
+									rs = null;
+									stmtQuery.close();
+									stmtQuery = null;
 									throw new Exception("Expected 2, found "+cont);
 								}
 							}			
@@ -4022,14 +3826,11 @@ public class ClientTest {
 						throw new Exception("Test failed (expected "+(limitEsterno)+" rows, found:"+(index)+")"); 
 					}
 					
-					if(rs!=null){
 					rs.close();
 					rs = null;
-				}
-					if(stmtQuery!=null){
 					stmtQuery.close();
 					stmtQuery = null;
-				}
+				
 					
 				}catch(Exception e){
 					
@@ -4141,14 +3942,11 @@ public class ClientTest {
 						throw new Exception("Test failed (expected "+(numeroEntriesRisultato)+" rows, found:"+(index)+")"); 
 					}
 					
-					if(rs!=null){
 					rs.close();
 					rs = null;
-				}
-					if(stmtQuery!=null){
 					stmtQuery.close();
 					stmtQuery = null;
-				}
+				
 					
 				}catch(Exception e){
 					
@@ -4241,27 +4039,19 @@ public class ClientTest {
 							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(cont!=1){
-									if(rs!=null){
-										rs.close();
-										rs = null;
-									}
-									if(stmtQuery!=null){
-										stmtQuery.close();
-										stmtQuery = null;
-									}
+									rs.close();
+									rs = null;
+									stmtQuery.close();
+									stmtQuery = null;
 									throw new Exception("Expected 1, found "+cont);
 								}
 							}
 							else{
 								if(cont!=2){
-									if(rs!=null){
-										rs.close();
-										rs = null;
-									}
-									if(stmtQuery!=null){
-										stmtQuery.close();
-										stmtQuery = null;
-									}
+									rs.close();
+									rs = null;
+									stmtQuery.close();
+									stmtQuery = null;
 									throw new Exception("Expected 2, found "+cont);
 								}
 							}			
@@ -4279,14 +4069,11 @@ public class ClientTest {
 						throw new Exception("Test failed, unexpected element ends with 10");	
 					}
 					
-					if(rs!=null){
 					rs.close();
 					rs = null;
-				}
-					if(stmtQuery!=null){
 					stmtQuery.close();
 					stmtQuery = null;
-				}
+				
 					
 				}catch(Exception e){
 					
@@ -4390,27 +4177,19 @@ public class ClientTest {
 							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(cont!=1){
-									if(rs!=null){
-										rs.close();
-										rs = null;
-									}
-									if(stmtQuery!=null){
-										stmtQuery.close();
-										stmtQuery = null;
-									}
+									rs.close();
+									rs = null;
+									stmtQuery.close();
+									stmtQuery = null;
 									throw new Exception("Expected 1, found "+cont);
 								}
 							}
 							else{
 								if(cont!=2){
-									if(rs!=null){
-										rs.close();
-										rs = null;
-									}
-									if(stmtQuery!=null){
-										stmtQuery.close();
-										stmtQuery = null;
-									}
+									rs.close();
+									rs = null;
+									stmtQuery.close();
+									stmtQuery = null;
 									throw new Exception("Expected 2, found "+cont);
 								}
 							}			
@@ -4438,14 +4217,10 @@ public class ClientTest {
 					}
 				}
 				
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -4496,11 +4271,11 @@ public class ClientTest {
 			sqlQueryObject.setOffset(2);
 
 			try{
-				if(count){
-					info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
-				}else{
-					info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
-				}
+				//if(count){
+				//	info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
+				//}else{
+				info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+				//}
 				throw new Exception("Attesa eccezione: Non e' possibile usare offset se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
 				if(!s.getMessage().equals(msgOffset))
@@ -4521,11 +4296,11 @@ public class ClientTest {
 			sqlQueryObject.setOffset(2);
 			
 			try{
-				if(count){
-					info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
-				}else{
-					info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
-				}
+				//if(count){
+				//	info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
+				//}else{
+				info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+				//}
 				throw new Exception("Attesa eccezione: Non e' possibile usare offset se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
 				if(!s.getMessage().equals(msgOffset))
@@ -4546,11 +4321,11 @@ public class ClientTest {
 			sqlQueryObject.setLimit(10);
 			
 			try{
-				if(count){
-					info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
-				}else{
-					info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
-				}
+				//if(count){
+				//	info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
+				//}else{
+				info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+				//}
 				throw new Exception("Attesa eccezione: Non e' possibile usare limit se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
 				if(!s.getMessage().equals(msgLimit) && !s.getMessage().equals(msgOffset)) // alcune implementazione forzano l'offset a 0 se si imposta il limit e non l'offset
@@ -4658,15 +4433,15 @@ public class ClientTest {
 			}finally{
 				try{
 					if(rs!=null){
-					rs.close();
-					rs = null;
-				}
+						rs.close();
+						rs = null;
+					}
 				}catch(Exception eClose){}
 				try{
 					if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+						stmtQuery.close();
+						stmtQuery = null;
+					}
 				}catch(Exception eClose){
 					// close
 				}
@@ -4771,27 +4546,19 @@ public class ClientTest {
 							if(mit.endsWith("10")){
 								if(unionAll){
 									if(cont!=2){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 2, found "+cont);
 									}
 								}
 								else{
 									if(cont!=1){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 1, found "+cont);
 									}
 								}
@@ -4799,27 +4566,19 @@ public class ClientTest {
 							else{
 								if(unionAll){
 									if(cont!=4){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 4, found "+cont);
 									}
 								}
 								else{
 									if(cont!=2){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 2, found "+cont);
 									}
 								}
@@ -4841,14 +4600,10 @@ public class ClientTest {
 					}	
 				}
 				
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 			}catch(Exception e){
 				
 				throw e;
@@ -4952,27 +4707,19 @@ public class ClientTest {
 							if(mit.endsWith("10")){
 								if(unionAll){
 									if(cont!=2){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 2, found "+cont);
 									}
 								}
 								else{
 									if(cont!=1){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 1, found "+cont);
 									}
 								}
@@ -4980,27 +4727,19 @@ public class ClientTest {
 							else{
 								if(unionAll){
 									if(cont!=4){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 4, found "+cont);
 									}
 								}
 								else{
 									if(cont!=2){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 2, found "+cont);
 									}
 								}
@@ -5016,14 +4755,11 @@ public class ClientTest {
 						throw new Exception("Test failed (expected "+(limitEsterno)+" rows, found:"+(index)+")"); 
 					}
 					
-					if(rs!=null){
 					rs.close();
 					rs = null;
-				}
-					if(stmtQuery!=null){
 					stmtQuery.close();
 					stmtQuery = null;
-				}
+				
 					
 				}catch(Exception e){
 					
@@ -5168,14 +4904,11 @@ public class ClientTest {
 						throw new Exception("Test failed (expected "+(numeroEntriesRisultato)+" rows, found:"+(index)+")"); 
 					}
 					
-					if(rs!=null){
 					rs.close();
 					rs = null;
-				}
-					if(stmtQuery!=null){
 					stmtQuery.close();
 					stmtQuery = null;
-				}
+				
 					
 				}catch(Exception e){
 					
@@ -5286,27 +5019,19 @@ public class ClientTest {
 							if(mit.endsWith("10")){
 								if(unionAll){
 									if(cont!=2){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 2, found "+cont);
 									}
 								}
 								else{
 									if(cont!=1){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 1, found "+cont);
 									}
 								}
@@ -5314,27 +5039,19 @@ public class ClientTest {
 							else{
 								if(unionAll){
 									if(cont!=4){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 4, found "+cont);
 									}
 								}
 								else{
 									if(cont!=2){
-										if(rs!=null){
-											rs.close();
-											rs = null;
-										}
-										if(stmtQuery!=null){
-											stmtQuery.close();
-											stmtQuery = null;
-										}
+										rs.close();
+										rs = null;
+										stmtQuery.close();
+										stmtQuery = null;
 										throw new Exception("Expected 2, found "+cont);
 									}
 								}
@@ -5353,14 +5070,11 @@ public class ClientTest {
 						throw new Exception("Test failed, unexpected element ends with 10");	
 					}
 					
-					if(rs!=null){
 					rs.close();
 					rs = null;
-				}
-					if(stmtQuery!=null){
 					stmtQuery.close();
 					stmtQuery = null;
-				}
+				
 					
 				}catch(Exception e){
 					
@@ -5557,14 +5271,10 @@ public class ClientTest {
 							" (time:"+rs.getTimestamp("gdo")+" campo_vuoto:("+rs.getString("campo_vuoto")+")");
 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 				
 				int attesi = 10;
 				if(TipiDatabase.ORACLE.equals(tipo)){
@@ -5606,14 +5316,10 @@ public class ClientTest {
 							" (time:"+rs.getTimestamp("gdo")+" campo_vuoto:("+rs.getString("campo_vuoto")+")");
 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 				
 				int attesi = 11;
 				if(TipiDatabase.ORACLE.equals(tipo)){
@@ -5654,14 +5360,10 @@ public class ClientTest {
 							" (time:"+rs.getTimestamp("gdo")+" campo_vuoto:("+rs.getString("campo_vuoto")+")");
 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 				
 				int attesi = 9;
 				if(TipiDatabase.ORACLE.equals(tipo)){
@@ -5702,14 +5404,10 @@ public class ClientTest {
 							" (time:"+rs.getTimestamp("gdo")+" campo_vuoto:("+rs.getString("campo_vuoto")+")");
 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 				
 				int attesi = 2;
 				if(TipiDatabase.ORACLE.equals(tipo)){
@@ -5781,14 +5479,10 @@ public class ClientTest {
 							" (time:"+rs.getTimestamp("gdo")+")");
 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 				
 				int attesi = ROW;
 				info(log,systemOut,"Attesi ["+attesi+"] trovati["+index+"]");
@@ -5895,14 +5589,10 @@ public class ClientTest {
 							" (time:"+rs.getTimestamp("gdo")+")");
 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 				
 				int attesi = ROW;
 				info(log,systemOut,"Attesi ["+attesi+"] trovati["+index+"]");
@@ -6078,14 +5768,10 @@ public class ClientTest {
 							" (time:"+rs.getTimestamp("gdo")+")");
 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 				
 				int attesi = ROW;
 				info(log,systemOut,"Attesi ["+attesi+"] trovati["+index+"]");
@@ -6264,14 +5950,10 @@ public class ClientTest {
 							" (time:"+rs.getTimestamp("gdo")+")");
 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 				
 				int attesi = ROW;
 				info(log,systemOut,"Attesi ["+attesi+"] trovati["+index+"]");
@@ -6444,14 +6126,10 @@ public class ClientTest {
 							" (time:"+rs.getTimestamp("gdo")+")");
 
 				}
-				if(rs!=null){
-					rs.close();
-					rs = null;
-				}
-				if(stmtQuery!=null){
-					stmtQuery.close();
-					stmtQuery = null;
-				}
+				rs.close();
+				rs = null;
+				stmtQuery.close();
+				stmtQuery = null;
 				
 				int attesi = ROW;
 				info(log,systemOut,"Attesi ["+attesi+"] trovati["+index+"]");

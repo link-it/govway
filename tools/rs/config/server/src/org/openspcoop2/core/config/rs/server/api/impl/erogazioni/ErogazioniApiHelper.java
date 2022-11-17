@@ -5460,7 +5460,7 @@ public class ErogazioniApiHelper {
 						}
 					}
 					else {
-						policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.DELEGATA);
+						//policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.DELEGATA);
 						// devo prendere i soggetti interni
 						if(!isPddEsterna) {
 							soggettiSupportati.add(idSoggetto);

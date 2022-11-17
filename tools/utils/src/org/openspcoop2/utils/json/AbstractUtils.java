@@ -354,10 +354,8 @@ public abstract class AbstractUtils {
 	}
 	private static String normalizeKey(String keyParam) {
 		String key = keyParam.trim();
-		if(key.contains(" ")) {
-			while(key.contains(" ")) {
-				key = key.replace(" ", "_");
-			}
+		while(key.contains(" ")) {
+			key = key.replace(" ", "_");
 		}
 		return key;
 	}

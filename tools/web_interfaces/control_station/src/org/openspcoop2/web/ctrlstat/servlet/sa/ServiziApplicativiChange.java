@@ -484,8 +484,14 @@ public final class ServiziApplicativiChange extends Action {
 			}
 			
 			InvocazioneServizio is = sa.getInvocazioneServizio();
+			if(is==null) {
+				throw new Exception("ServizioApplicativo con id '"+idServizioApplicativo+"' senza InvocazioneServizio");
+			}
 			InvocazioneCredenziali cis = is.getCredenziali();
 			Connettore connis = is.getConnettore();
+			if(connis==null) {
+				throw new Exception("ServizioApplicativo con id '"+idServizioApplicativo+"' senza connettore in InvocazioneServizio");
+			}
 			List<Property> cp = connis.getPropertyList();
 			
 			Boolean isConnettoreCustomUltimaImmagineSalvata = connis.getCustom();
@@ -566,7 +572,9 @@ public final class ServiziApplicativiChange extends Action {
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_SERVIZIO_APPLICATIVO);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, oldIdServizioApplicativo.toString());
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE, URLEncoder.encode( ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE + "?" + request.getQueryString(), "UTF-8"));
-			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, nomeProtocollo);
+			if(nomeProtocollo!=null) {
+				propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, nomeProtocollo);
+			}
 			
 			String postBackElementName = saHelper.getPostBackElementName();
 			String labelButtonSalva = Costanti.LABEL_MONITOR_BUTTON_INVIA;
@@ -2024,10 +2032,10 @@ public final class ServiziApplicativiChange extends Action {
 							credenziali.setUser(tokenClientIdSA);
 						}
 					}
-					else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
+					else if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL.equals(tipoauthSA)) {
 						credenziali.setUser(principalSA);
 					} 
-					else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN)) {
+					else if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(tipoauthSA)) {
 						credenziali.setTokenPolicy(tokenPolicySA);
 						credenziali.setUser(tokenClientIdSA);
 					}

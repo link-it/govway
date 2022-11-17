@@ -159,6 +159,12 @@ public class Sbustamento extends GenericLib{
 		
 		/* Intrepretazione informazioni */
 		RichiestaApplicativa richiestaApplicativa = sbustamentoMsg.getRichiestaApplicativa();
+		if(richiestaApplicativa==null) {
+			msgDiag.logErroreGenerico("RichiestaApplicativa is null", "RichiestaApplicativa.checkNull"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
 	
 		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
 		if(msgDiag.getPorta()==null) {
@@ -1117,7 +1123,7 @@ public class Sbustamento extends GenericLib{
 								if(configurazionePdDManager.ricevutaAsincronaAsimmetricaAbilitata(pa)==false){
 									if(bustaRichiesta.getRiferimentoMessaggio()==null){
 										ricevuta = "ricevuta di una richiesta asincrona asimmetrica";
-										// TODO ServizioCorrelato da impostare nella ricevuta asincrona
+										// ServizioCorrelato da impostare nella ricevuta asincrona
 									}else if( RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString()) ){
 										ricevuta = "ricevuta di una risposta asincrona asimmetrica";
 									}

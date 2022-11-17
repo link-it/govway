@@ -146,7 +146,13 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			// Request Info
 			URLProtocolContext urlProtocolContext = new URLProtocolContextImpl(req,logCore,true,true,openSPCoopProperties.getCustomContexts());
 			urlProtocolContext.setInterfaceName(portaDelegata);
+			if(protocolFactory==null) {
+				throw new Exception("ProtocolFactory is null");
+			}
 			requestInfo = ConnectorUtils.getRequestInfo(protocolFactory, urlProtocolContext);
+			if(requestInfo==null) {
+				throw new Exception("RequestInfo is null");
+			}
 		}catch(Exception e){
 			String msgError = "Lettura RequestInfo non riuscita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msgError);
@@ -234,7 +240,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,IntegrationManager.ID_MODULO,nomePorta,requestInfo,configPdDManager);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER);
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
-		if(context!=null && protocolFactory!=null) {
+		if(context!=null) {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 		}
 		
@@ -744,11 +750,13 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				}
 			}
 			Utilities.printFreeMemory("IntegrationManager - Post costruzione richiesta");
-			msgRequest.setProtocolName(protocolFactory.getProtocol());
-			msgRequest.setTransactionId( idTransazione);
-			Object nomePortaInvocataObject = context.getPddContext().getObject(CostantiPdD.NOME_PORTA_INVOCATA);
-			if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
-				msgRequest.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, (String) nomePortaInvocataObject );
+			if(msgRequest!=null) {
+				msgRequest.setProtocolName(protocolFactory.getProtocol());
+				msgRequest.setTransactionId( idTransazione);
+				Object nomePortaInvocataObject = context.getPddContext().getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+				if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
+					msgRequest.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, (String) nomePortaInvocataObject );
+				}
 			}
 
 			
@@ -855,12 +863,17 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				else{
 					parseException = (ParseException) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
 				}
-				String msgErrore = parseException.getParseException().getMessage();
-				if(msgErrore==null){
-					msgErrore = parseException.getParseException().toString();
+				String msgErrore = null;
+				if(parseException!=null && parseException.getParseException()!=null) {
+					msgErrore = parseException.getParseException().getMessage();
+					if(msgErrore==null){
+						msgErrore = parseException.getParseException().toString();
+					}
 				}	
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
-				logCore.error("parsingExceptionRichiesta",parseException.getSourceException());
+				if(parseException!=null) {
+					logCore.error("parsingExceptionRichiesta",parseException.getSourceException());
+				}
 //				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
 //				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
 //						getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()));

@@ -191,9 +191,9 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 				if(oValue!=null && oValue instanceof String) {
 					value = (String) oValue;
 				}
-				if (SecurityConstants.ENCRYPTION_USER.equals(key) && SecurityConstants.USE_REQ_SIG_CERT.equals(value)) {
-					// value = ...;
-				}
+//				if (SecurityConstants.ENCRYPTION_USER.equals(key) && SecurityConstants.USE_REQ_SIG_CERT.equals(value)) {
+//					// value = ...;
+//				}
 				
 				// src/site/xdoc/migration/wss4j20.xml:the "samlPropFile" and "samlPropRefId" configuration tags have been removed. 
 				// Per ottenere lo stesso effetto di poter utilizzare tale file di proprietà, si converta la proprietà nella nuova voce: 'samlCallbackRef'

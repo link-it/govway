@@ -61,23 +61,21 @@ public class PropertiesReader extends MapReader<Object, Object> {
 		if(convertKeyEnvProperties){
 			label = "della chiave";
 		}
-		if(value.indexOf("${")!=-1){
-			while (value.indexOf("${")!=-1){
-				int indexStart = value.indexOf("${");
-				int indexEnd = value.indexOf("}");
-				if(indexEnd==-1){
-					throw new UtilsException("Errore durante l'interpretazione "+label+" ["+value+"]: ${ utilizzato senza la rispettiva chiusura }");
-				}
-				String nameSystemProperty = value.substring(indexStart+"${".length(),indexEnd);
-				String valueSystemProperty = System.getenv(nameSystemProperty); // sistema
-				if(valueSystemProperty==null) {
-					valueSystemProperty = System.getProperty(nameSystemProperty); // java
-				}
-				if(valueSystemProperty==null){
-					throw new UtilsException("Errore durante l'interpretazione "+label+" ["+value+"]: variabile di sistema o java ${"+nameSystemProperty+"} non esistente");
-				}
-				value = value.replace("${"+nameSystemProperty+"}", valueSystemProperty);
+		while (value.indexOf("${")!=-1){
+			int indexStart = value.indexOf("${");
+			int indexEnd = value.indexOf("}");
+			if(indexEnd==-1){
+				throw new UtilsException("Errore durante l'interpretazione "+label+" ["+value+"]: ${ utilizzato senza la rispettiva chiusura }");
 			}
+			String nameSystemProperty = value.substring(indexStart+"${".length(),indexEnd);
+			String valueSystemProperty = System.getenv(nameSystemProperty); // sistema
+			if(valueSystemProperty==null) {
+				valueSystemProperty = System.getProperty(nameSystemProperty); // java
+			}
+			if(valueSystemProperty==null){
+				throw new UtilsException("Errore durante l'interpretazione "+label+" ["+value+"]: variabile di sistema o java ${"+nameSystemProperty+"} non esistente");
+			}
+			value = value.replace("${"+nameSystemProperty+"}", valueSystemProperty);
 		}
 		return value;
 	}

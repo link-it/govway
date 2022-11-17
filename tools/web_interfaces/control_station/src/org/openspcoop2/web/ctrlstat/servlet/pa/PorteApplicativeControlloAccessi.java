@@ -187,6 +187,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 			
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
+			if(pa==null) {
+				throw new Exception("PortaApplicativa con id '"+idInt+"' non trovata");
+			}
 			String idporta = pa.getNome();
 
 			List<String> ruoli = new ArrayList<>();
@@ -949,6 +952,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			pa = porteApplicativeCore.getPortaApplicativa(idInt);
+			if(pa==null) {
+				throw new Exception("PortaApplicativa con id '"+idInt+"' non trovata");
+			}
 			idporta = pa.getNome();
 
 			ruoli = new ArrayList<>();

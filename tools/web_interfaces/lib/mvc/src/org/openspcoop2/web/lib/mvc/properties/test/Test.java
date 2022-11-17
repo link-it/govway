@@ -63,7 +63,7 @@ public class Test {
 			
 			Config configDaFile = xmlReader.readConfig(f);
 			
-			System.out.println("Check Config JAVA Exists ["+configDaFile != null +"]");
+			System.out.println("Check Config JAVA Exists ["+(configDaFile != null)+"]");
 			
 			Map<String, String> mapDB = null;
 			

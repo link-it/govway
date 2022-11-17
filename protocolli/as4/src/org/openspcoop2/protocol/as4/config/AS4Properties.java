@@ -93,7 +93,7 @@ public class AS4Properties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){
+			}catch(Throwable er){
 				// close
 			}
 		}

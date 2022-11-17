@@ -251,7 +251,14 @@ public class RicezioneContenutiApplicativiService {
 		if(oPddContextFromServlet!=null){
 			pddContextFromServlet = (PdDContext) oPddContextFromServlet;
 		}
-				
+		
+		// check requestInfo
+		if(requestInfo==null) {
+			String msg = "RequestInfo undefined";
+			logCore.error(msg);
+			return;
+		}
+		
 		// Identifico Servizio per comprendere correttamente il messageType
 		ServiceIdentificationReader serviceIdentificationReader = null;
 		try{
@@ -311,7 +318,7 @@ public class RicezioneContenutiApplicativiService {
 				// non loggo l'errore tanto poi provo a ricreare il context subito dopo e li verra' registrato l'errore
 			}
 		}
-		
+				
 		// Logger dei messaggi diagnostici
 		String nomePorta = requestInfo.getProtocolContext().getInterfaceName();
 		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,idModulo,nomePorta,requestInfo);
@@ -963,7 +970,9 @@ public class RicezioneContenutiApplicativiService {
 					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)) ||
 					requestReadTimeout!=null ||
 					requestLimitExceeded!=null){
-				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+				if(pddContext!=null) {
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+				}
 				
 				ParseException parseException = null;
 				Throwable tParsing = null;
@@ -1085,11 +1094,11 @@ public class RicezioneContenutiApplicativiService {
 			
 			try{
 				// Se non sono stati recuperati i dati delle url, provo a recuperarli
-				URLProtocolContext urlProtocolContext = context.getUrlProtocolContext();
+				URLProtocolContext urlProtocolContext = context!=null ? context.getUrlProtocolContext() : null;
 				if(urlProtocolContext==null){
 					urlProtocolContext = req.getURLProtocolContext();
 				}
-				if(urlProtocolContext!=null){
+				if(urlProtocolContext!=null && pddContext!=null){
 					String urlInvocazione = urlProtocolContext.getUrlInvocazione_formBased();
 					if(urlProtocolContext.getFunction()!=null){
 						urlInvocazione = "["+urlProtocolContext.getFunction()+"] "+urlInvocazione;
@@ -1100,11 +1109,11 @@ public class RicezioneContenutiApplicativiService {
 				// ignore
 			}
 			try{
-				Credenziali credenziali = context.getCredenziali();
+				Credenziali credenziali = context!=null ? context.getCredenziali() : null;
 				if(credenziali==null){
 					credenziali = new Credenziali(req.getCredential());
 				}
-				if(credenziali!=null){
+				if(credenziali!=null && pddContext!=null){
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CREDENZIALI_INVOCAZIONE, credenziali.toString());
 				}
 			}catch(Throwable t){
@@ -1464,7 +1473,7 @@ public class RicezioneContenutiApplicativiService {
 							// ignore
 						}
 					}
-					if(ServiceBinding.SOAP.equals(responseMessageError.getServiceBinding()) ){
+					if(responseMessageError!=null && ServiceBinding.SOAP.equals(responseMessageError.getServiceBinding()) ){
 						SOAPBody body = responseMessageError.castAsSoap().getSOAPBody();
 						if(body!=null && body.hasFault()){
 							statoServletResponse = 500;

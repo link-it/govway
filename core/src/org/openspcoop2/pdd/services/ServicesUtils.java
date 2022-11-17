@@ -138,6 +138,9 @@ public class ServicesUtils {
 	
 	public static ServiceIdentificationReader getServiceIdentificationReader(Logger logCore, RequestInfo requestInfo,
 			RegistroServiziManager registroServiziManager, ConfigurazionePdDManager configurazionePdDManager) throws Exception{
+		if(requestInfo==null) {
+			throw new Exception("Param requestInfo is null");
+		}
 		IRegistryReader registryReader = new CachedRegistryReader(logCore, requestInfo.getProtocolFactory(), registroServiziManager, requestInfo);
 		IConfigIntegrationReader configIntegrationReader = new CachedConfigIntegrationReader(logCore, requestInfo.getProtocolFactory(), configurazionePdDManager, requestInfo);
 		return new ServiceIdentificationReader(registryReader, configIntegrationReader, requestInfo.getProtocolFactory(), logCore);

@@ -235,7 +235,7 @@ public final class PorteDelegateChange extends Action {
 		
 			List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<GruppoIntegrazione>();  
 			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<String, List<String>>();
-			boolean isConfigurazione = parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE; 
+			boolean isConfigurazione =  parentPD!=null ? (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE) : false; 
 			boolean visualizzaSezioneOpzioniAvanzate = !(porteDelegateHelper.isModalitaStandard() || (isConfigurazione && !datiAltroPorta));
 
 			// dal secondo accesso in poi il calcolo dei gruppi da visualizzare avviene leggendo i parametri dalla richiesta
@@ -682,7 +682,7 @@ public final class PorteDelegateChange extends Action {
 			
 			String nomeBreadCrumb = oldNomePD;
 			
-			if(parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE) {
+			if( parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 //				List<MappingFruizionePortaDelegata> mappingServiziPorteAppList = apsCore.serviziFruitoriMappingList(Long.parseLong(idFruizione), idSoggettoFruitore, idServizioCheck, null);
 //						
 //				MappingFruizionePortaDelegata mappingFruizionePortaDelegata = null;
@@ -1086,7 +1086,7 @@ public final class PorteDelegateChange extends Action {
 				// associate a servid e la metto in un array
 				String[] azioniList = null;
 				String[] azioniListLabel = null;
-				List<String> filtraAzioniUtilizzate = new ArrayList<String>(); // TODO controllare
+				List<String> filtraAzioniUtilizzate = new ArrayList<String>();
 				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				
 					Map<String,String> azioni = porteDelegateCore.getAzioniConLabel(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
@@ -1259,7 +1259,7 @@ public final class PorteDelegateChange extends Action {
 				// associate a servid e la metto in un array
 				String[] azioniList = null;
 				String[] azioniListLabel = null;
-				List<String> filtraAzioniUtilizzate = new ArrayList<String>(); // TODO controllare
+				List<String> filtraAzioniUtilizzate = new ArrayList<String>();
 				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				
 					Map<String,String> azioni = porteDelegateCore.getAzioniConLabel(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
@@ -1344,7 +1344,7 @@ public final class PorteDelegateChange extends Action {
 			servizio = servid.split("/")[1];
 			tiposervizio = servid.split("/")[0];
 			
-			if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+			if (PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT.equals(modeaz)) {
 				azione = "";
 			} else {
 				azid = "";
@@ -1442,10 +1442,11 @@ public final class PorteDelegateChange extends Action {
 			else if (((azione != null) || (azid != null) || modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) ||
 							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
 							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED)) &&
-							(!azione.equals("") || !azid.equals("") || 
-									(modeaz != null && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) || 
-											modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
-											modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))))) {
+							(!"".equals(azione) || !azid.equals("") || 
+									(modeaz != null && 
+									(modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) || 
+									modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
+									modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))))) {
 				PortaDelegataAzione pdAzione = new PortaDelegataAzione();
 
 				if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {

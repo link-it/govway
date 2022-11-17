@@ -295,17 +295,15 @@ public class XSDSchemaCollection {
 			
 			// Provo a registrare gli schemi utilizzati
 			if(resourceResolver!=null){
-				if(resourceResolver instanceof XSDResourceResolver){
-					XSDResourceResolver xsdResolver = resourceResolver;
-					for (String systemId : xsdResolver.getResources().keySet()) {
-						byte[] contenuto = xsdResolver.getResources().get(systemId);
-						File schemaTmpLog = null;
-						if(dirCreate)
-							schemaTmpLog = File.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd", dir);
-						else
-							schemaTmpLog = File.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd");
-						FileSystemUtilities.writeFile(schemaTmpLog, contenuto);
-					}
+				XSDResourceResolver xsdResolver = resourceResolver;
+				for (String systemId : xsdResolver.getResources().keySet()) {
+					byte[] contenuto = xsdResolver.getResources().get(systemId);
+					File schemaTmpLog = null;
+					if(dirCreate)
+						schemaTmpLog = File.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd", dir);
+					else
+						schemaTmpLog = File.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd");
+					FileSystemUtilities.writeFile(schemaTmpLog, contenuto);
 				}
 			}
 			

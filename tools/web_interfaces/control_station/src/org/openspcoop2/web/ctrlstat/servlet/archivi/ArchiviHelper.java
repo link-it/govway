@@ -1592,7 +1592,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 								stepIncrementValue = stepIncrementValue_incrementNumber_incrementCondition.substring((tmp[0]+" ").length());
 							}
 							String value = miss.getRequisitiInput().get(inputName);
-							if(stepIncrementValue.equals(value)) {
+							if(stepIncrementValue!=null && stepIncrementValue.equals(value)) {
 								stepConfigurated = stepConfigurated + increment;
 							}
 						}
@@ -1609,10 +1609,13 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			showIntestazioneArchivio = wizard.getIntestazioneOriginale();
 			
-			DataElement de = new DataElement();
-			de.setLabel(importInformationMissingException.getIdObjectDescription());
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			if(importInformationMissingException!=null) {
+				DataElement de = new DataElement();
+				de.setLabel(importInformationMissingException.getIdObjectDescription());
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+			}
+			
 			showSection = false;
 			
 		}else{
@@ -1693,12 +1696,14 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		
-		de = new DataElement();
-		de.setValue(importInformationMissingException.getIdObject());
-		de.setType(DataElementType.HIDDEN);
-		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID);
-		de.setSize(this.getSize());
-		dati.addElement(de);
+		if(importInformationMissingException!=null) {
+			de = new DataElement();
+			de.setValue(importInformationMissingException.getIdObject());
+			de.setType(DataElementType.HIDDEN);
+			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
 
 		File fileFormFile = importerUtils.writeFormFile(sessionId, ff);
 		de = new DataElement();
@@ -1764,17 +1769,19 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME);
 		dati.addElement(de);
 
-		de = new DataElement();
-		de.setValue(importInformationMissingException.getIdObjectDescription());
-		if(showIntestazioneArchivio){
-			de.setType(DataElementType.TEXT);
+		if(importInformationMissingException!=null) {
+			de = new DataElement();
+			de.setValue(importInformationMissingException.getIdObjectDescription());
+			if(showIntestazioneArchivio){
+				de.setType(DataElementType.TEXT);
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION);
+			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION);
+			dati.addElement(de);
 		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-		}
-		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION);
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION);
-		dati.addElement(de);
 
 		
 		
@@ -1792,7 +1799,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		
 		// requisiti
-		if ( importInformationMissingException.isMissingRequisitiInfoInput() ){
+		if ( importInformationMissingException!=null && importInformationMissingException.isMissingRequisitiInfoInput() ){
 		
 			RequisitoInput requisitoInput = importInformationMissingException.getMissingRequisitiInfoInputObject();
 			
@@ -1911,10 +1918,15 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		// soggetto - versione - accordoParteComune - accordoCooperazione
 		
-		if ( importInformationMissingException.isMissingInfoSoggetto() ||
-				importInformationMissingException.isMissingInfoVersione() ||
-				importInformationMissingException.isMissingInfoAccordoServizioParteComune() || 
-				importInformationMissingException.isMissingInfoAccordoCooperazione() ) {
+		if ( 
+				importInformationMissingException!=null && 
+				(
+						importInformationMissingException.isMissingInfoSoggetto() ||
+						importInformationMissingException.isMissingInfoVersione() ||
+						importInformationMissingException.isMissingInfoAccordoServizioParteComune() || 
+						importInformationMissingException.isMissingInfoAccordoCooperazione()
+				)
+			) {
 			
 			String labelSection = ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_IDENTIFICAZIONE_MANCANTI;
 			String labelSoggettoDataElement = ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT;
@@ -2090,7 +2102,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		
 		// input
-		if ( importInformationMissingException.isMissingInfoInput() ){
+		if ( importInformationMissingException!=null && importInformationMissingException.isMissingInfoInput() ){
 		
 			Input input = importInformationMissingException.getMissingInfoInputObject();
 			
@@ -2143,7 +2155,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		// servizi parte comune
 		
-		if ( importInformationMissingException.isMissingInfoProfiliServizi() ){
+		if ( importInformationMissingException!=null && importInformationMissingException.isMissingInfoProfiliServizi() ){
 			
 			if(showSection){
 				de = new DataElement();
@@ -2342,7 +2354,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		// servizi parte comune
 		
-		if ( importInformationMissingException.isMismatchPortTypeRifServiziParteComune() ){
+		if ( importInformationMissingException!=null && importInformationMissingException.isMismatchPortTypeRifServiziParteComune() ){
 			
 			if(showSection){
 				de = new DataElement();
@@ -2384,7 +2396,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		// invocazioneServizio
 		
-		if( importInformationMissingException.isMissingInfoInvocazioneServizio() ){
+		if( importInformationMissingException!=null && importInformationMissingException.isMissingInfoInvocazioneServizio() ){
 			
 			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
 				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoHeader() );
@@ -2489,7 +2501,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		// connettore
 		
-		if( importInformationMissingException.isMissingInfoConnettore() ){
+		if( importInformationMissingException!=null && importInformationMissingException.isMissingInfoConnettore() ){
 			
 			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
 				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoHeader() );
@@ -2549,7 +2561,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		// credenziali
 		
-		if( importInformationMissingException.isMissingInfoCredenziali() ){
+		if( importInformationMissingException!=null && importInformationMissingException.isMissingInfoCredenziali() ){
 			
 			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
 				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoHeader() );

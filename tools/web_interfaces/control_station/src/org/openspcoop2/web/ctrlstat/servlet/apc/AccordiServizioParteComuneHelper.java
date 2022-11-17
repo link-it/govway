@@ -3538,8 +3538,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PRIVATO);
 		if(privato){
-			de.setValue(privato ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED );
-			de.setSelected(privato ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED );
+			de.setValue(
+					//privato ? 
+						Costanti.CHECK_BOX_ENABLED 
+					//	: Costanti.CHECK_BOX_DISABLED 
+					);
+			de.setSelected(
+					//privato ? 
+						Costanti.CHECK_BOX_ENABLED 
+					//	: Costanti.CHECK_BOX_DISABLED 
+					);
 		}
 		if (this.core.isShowFlagPrivato() &&  modificheAbilitate  && isInterfacciaAvanzata && gestioneInformazioniGenerali) {
 			de.setType(DataElementType.CHECKBOX);
@@ -4243,13 +4251,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 		de = new DataElement();
 		//if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom) {
-		if(isModalitaVistaApiCustom) {
+		if(isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom) {
 			de.setLabel(ApiCostanti.APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE);
 		}
 		else {
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
 		}
-		if ( gestioneInfoProtocollo && (almostOneSupported || isSoap) ) { // se soap sicuramente c'è il protocollo di collaborazione
+		if ( (gestioneInfoProtocollo!=null) && gestioneInfoProtocollo && (almostOneSupported || isSoap) ) { // se soap sicuramente c'è il protocollo di collaborazione
 			de.setType(DataElementType.TITLE);
 		} else {
 			de.setType(DataElementType.HIDDEN);
@@ -4259,7 +4267,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
-		if (gestioneInfoProtocollo && isSoap) {
+		if (gestioneInfoProtocollo!=null && gestioneInfoProtocollo && isSoap) {
 			de.setType(DataElementType.SELECT);
 			de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(tipoProtocollo,serviceBinding));
 			de.setSelected(profcoll);
@@ -4295,7 +4303,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_FILTRO_DUPLICATI);
-		if (gestioneInfoProtocollo && filtroDuplicatiSupportato) {
+		if (gestioneInfoProtocollo!=null && gestioneInfoProtocollo && filtroDuplicatiSupportato) {
 			if(modificheAbilitate){
 				de.setType(DataElementType.CHECKBOX);
 				if ( ServletUtils.isCheckBoxEnabled(filtrodup) || CostantiRegistroServizi.ABILITATO.equals(filtrodup) ) {
@@ -4306,11 +4314,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				if ( ServletUtils.isCheckBoxEnabled(filtrodup) || CostantiRegistroServizi.ABILITATO.equals(filtrodup) ) {
 					de.setValue(CostantiRegistroServizi.ABILITATO.toString());
 				}else{
-					if(modificheAbilitate){
-						de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
-					}else{
-						de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
-					}
+					//if(modificheAbilitate){
+					//	de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+					//}else{
+					de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+					//}
 				}
 			}	
 		} else {
@@ -4328,7 +4336,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONFERMA_RICEZIONE);
-		if (gestioneInfoProtocollo&& confermaRicezioneSupportato) {
+		if (gestioneInfoProtocollo!=null && gestioneInfoProtocollo && confermaRicezioneSupportato) {
 			if(modificheAbilitate){
 				de.setType(DataElementType.CHECKBOX);
 				if (ServletUtils.isCheckBoxEnabled(confric) || CostantiRegistroServizi.ABILITATO.equals(confric)) {
@@ -4357,7 +4365,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COLLABORAZIONE);
-		if (gestioneInfoProtocollo && collaborazioneSupportato) {
+		if (gestioneInfoProtocollo!=null && gestioneInfoProtocollo && collaborazioneSupportato) {
 			if(modificheAbilitate){
 				de.setType(DataElementType.CHECKBOX);
 				if (ServletUtils.isCheckBoxEnabled(idcoll) || CostantiRegistroServizi.ABILITATO.equals(idcoll)) {
@@ -4386,7 +4394,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
-		if (gestioneInfoProtocollo && idRiferimentoRichiestaSupportato) {
+		if (gestioneInfoProtocollo!=null && gestioneInfoProtocollo && idRiferimentoRichiestaSupportato) {
 			if(modificheAbilitate){
 				de.setType(DataElementType.CHECKBOX);
 				if (ServletUtils.isCheckBoxEnabled(idRifRichiesta) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiesta)) {
@@ -4415,7 +4423,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONSEGNA_ORDINE);
-		if (gestioneInfoProtocollo && consegnaInOrdineSupportato) {
+		if (gestioneInfoProtocollo!=null && gestioneInfoProtocollo && consegnaInOrdineSupportato) {
 			if(modificheAbilitate){
 				de.setType(DataElementType.CHECKBOX);
 				if (ServletUtils.isCheckBoxEnabled(consord) || CostantiRegistroServizi.ABILITATO.equals(consord)) {
@@ -4444,7 +4452,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
 		de.setValue(scadenza);
-		if (gestioneInfoProtocollo && scadenzaSupportato) {
+		if (gestioneInfoProtocollo!=null && gestioneInfoProtocollo && scadenzaSupportato) {
 			de.setType(DataElementType.TEXT_EDIT);
 			if( !modificheAbilitate && (scadenza==null || "".equals(scadenza)) )
 				de.setValue(" ");
@@ -5458,8 +5466,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
-
-			// TODO da vedere come recuperare il numero totale di entries
 
 			// inizializzo i dati
 			if (lista != null) {

@@ -75,7 +75,7 @@ public class ServerProperties  {
 		    try{
 				if(properties!=null)
 				    properties.close();
-		    }catch(Exception er){
+		    }catch(Throwable er){
 		    	// close
 		    }
 		}

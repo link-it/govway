@@ -59,11 +59,11 @@ public class PropertiesSerializator {
 				List<String> values = this.properties.get(key);
 				if(values!=null && !values.isEmpty()) {
 					for (String value : values) {
-						if(value.contains("\n")){
+						//if(value.contains("\n")){
 							//throw new Exception("Valore ["+value+"] della chiave ["+key+"] contiene il carattere '\\n' non ammesso");
-							while(value.contains("\n")){
-								value = value.replace("\n", TEMPLATE_RITORNO_A_CAPO);
-							}
+						//}
+						while(value.contains("\n")){
+							value = value.replace("\n", TEMPLATE_RITORNO_A_CAPO);
 						}
 						if(bf.length()>0){
 							bf.append("\n");
@@ -99,10 +99,8 @@ public class PropertiesSerializator {
 				}
 				String key = keyValue[0];
 				String value = keyValueTmp.substring((key+"=").length());
-				if(value.contains(TEMPLATE_RITORNO_A_CAPO)){
-					while(value.contains(TEMPLATE_RITORNO_A_CAPO)){
-						value = value.replace(TEMPLATE_RITORNO_A_CAPO, "\n");
-					}
+				while(value.contains(TEMPLATE_RITORNO_A_CAPO)){
+					value = value.replace(TEMPLATE_RITORNO_A_CAPO, "\n");
 				}
 				TransportUtils.addHeader(map, key, value);
 			}

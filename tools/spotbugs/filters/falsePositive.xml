@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter
+              xmlns="https://github.com/spotbugs/filter/3.0.0"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+
+  <!-- False positive -->
+  <Match>
+    <Classregex name="org\.openspcoop2\.core\.allarmi\.dao\.jdbc\.JDBC.*ServiceImpl" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils" />
+    <Method name="configurazioneAllarmiList" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Classregex name="org\.openspcoop2\.core\.controllo_traffico\.dao\.jdbc\.JDBC.*ServiceImpl" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils" />
+    <Method name="_configurazioneControlloTrafficoAttivazionePolicyList" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Classregex name="org\.openspcoop2\.core\.eventi\.dao\.jdbc\.JDBC.*ServiceImpl" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Classregex name="org\.openspcoop2\.core\.plugins\.dao\.jdbc\.JDBC.*ServiceImpl" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.plugins.utils.handlers.HandlersDriverUtils" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Classregex name="org\.openspcoop2\.core\.statistiche\.dao\.jdbc\.JDBC.*ServiceImpl" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Classregex name="org\.openspcoop2\.core\.transazioni\.dao\.jdbc\.JDBC.*ServiceImpl" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.transazioni.utils.TransactionServerUtils" />
+    <Method name="_aggiornaInformazioneConsegnaTerminata" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.core.commons.DBUtils" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB" />
+    <Method name="isAlive" />
+    <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.config.driver.ConnettorePropertiesUtilities" />
+    <Method name="getPropertiesConnettore" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.config.driver.utils.XMLDataConverter" />
+    <Method name="readServiceBinding" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB_LIB" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB" />
+    <Method name="isAlive" />
+    <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.registry.driver.ConnettorePropertiesUtilities" />
+    <Method name="getPropertiesConnettore" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.mapping.DBMappingUtils" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.mapping.DBProtocolPropertiesUtils" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriver" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriverUtilities" />
+    <Method name="getMsgDiagnostico" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.basic.dump.DumpProducer" />
+    <Method name="dump" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.basic.tracciamento.TracciamentoDriver" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.basic.tracciamento.TracciamentoDriverUtilities" />
+    <Method name="getTraccia" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.basic.tracciamento.TracciaProducer" />
+    <Method name="log" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.engine.driver.RepositoryBuste" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.engine.driver.History" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.engine.driver.Riscontri" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.engine.driver.RollbackRepositoryBuste" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.engine.driver.repository.TestGestoreRepository" />
+    <Method name="test" />
+    <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Classregex name="org\.openspcoop2\.monitor\.engine\.config\.ricerche\.dao\.jdbc\.JDBC.*ServiceImpl" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Classregex name="org\.openspcoop2\.monitor\.engine\.config\.statistiche\.dao\.jdbc\.JDBC.*ServiceImpl" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Classregex name="org\.openspcoop2\.monitor\.engine\.config\.transazioni\.dao\.jdbc\.JDBC.*ServiceImpl" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.pdd.config.DynamicClusterManager" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.pdd.core.GestoreMessaggi" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.pdd.core.SavedMessage" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreadsDB" />
+    <Method name="_updateMap" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.pdd.core.threshold.PostgreSQLThreshold" />
+    <Method name="check" />
+    <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.pdd.monitor.driver.DriverMonitoraggio" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.utils.id.serial.IDSerialGenerator_alphanumeric" />
+    <Method name="generate" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.id.serial.IDSerialGenerator_numeric" />
+    <Method name="generate" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.id.serial.IDSerialGenerator_mysql" />
+    <Method name="generate" />
+    <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.jdbc.AbstractNoReturnGeneratedKeyGenerator" />
+    <Method name="generateKey" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.jdbc.InsertAndGeneratedKey" />
+    <Method name="insertAndReturnGeneratedKey" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.jdbc.TestJDBCAdapter" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.semaphore.SemaphoreEngine" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.semaphore.ClientTest" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.sql.ClientTest" />
+    <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.sql.ClientTest" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.sonde.ClientTest" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.sonde.SondaFactory" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities" />
+    <Method name="insertAndReturnGeneratedKey" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.protocol.as4.services.RicezioneNotificheConnettoreUtils" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.protocol.as4.pmode.test.ClientTest" />
+    <Method name="main" />
+    <Bug pattern="DMI_CONSTANT_DB_PASSWORD" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.web.lib.audit.DriverAudit" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.web.lib.audit.DriverAuditDBAppender" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.web.lib.queue.ClassQueue" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.web.lib.users.DriverUsersDB" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.web.loader.core.LoaderCore" />
+    <Method name="getNomePddOperativa" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB_LIB" />
+    <Method name="CRUDPdd" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB" />
+    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+  </Match>
+
+</FindBugsFilter>

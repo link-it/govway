@@ -378,9 +378,9 @@ public class Parser {
 									else if(ParserRegexpNotFound.NULL.equals(mappingRecord.getRegexpNotFoundBehaviour())){
 										tmpValue = null;
 									}
-									else if(ParserRegexpNotFound.ORIGINAL.equals(mappingRecord.getRegexpNotFoundBehaviour())){
-										//tmpValue = tmpValue;
-									}
+//									else if(ParserRegexpNotFound.ORIGINAL.equals(mappingRecord.getRegexpNotFoundBehaviour())){
+//										//tmpValue = tmpValue;
+//									}
 								}
 								else{
 									tmpValue = regExpValue;

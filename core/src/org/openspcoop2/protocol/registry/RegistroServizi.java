@@ -352,22 +352,20 @@ public class RegistroServizi  {
 				String path = registro.getLocation();
 				if(CostantiConfigurazione.REGISTRO_XML.equals(registro.getTipo())){
 					//if( (path.startsWith("http://")==false) && (path.startsWith("file://")==false) ){
-					if(path.indexOf("${")!=-1){
-						while (path.indexOf("${")!=-1){
-							int indexStart = path.indexOf("${");
-							int indexEnd = path.indexOf("}");
-							if(indexEnd==-1){
-								this.log.error("errore durante l'interpretazione del path ["+path+"]: ${ utilizzato senza la rispettiva chiusura }");
-								continue;
-							}
-							String nameSystemProperty = path.substring(indexStart+"${".length(),indexEnd);
-							String valueSystemProperty = System.getProperty(nameSystemProperty);
-							if(valueSystemProperty==null){
-								this.log.error("errore durante l'interpretazione del path ["+path+"]: variabile di sistema ${"+nameSystemProperty+"} non esistente");
-								continue;
-							}
-							path = path.replace("${"+nameSystemProperty+"}", valueSystemProperty);
+					while (path.indexOf("${")!=-1){
+						int indexStart = path.indexOf("${");
+						int indexEnd = path.indexOf("}");
+						if(indexEnd==-1){
+							this.log.error("errore durante l'interpretazione del path ["+path+"]: ${ utilizzato senza la rispettiva chiusura }");
+							continue;
 						}
+						String nameSystemProperty = path.substring(indexStart+"${".length(),indexEnd);
+						String valueSystemProperty = System.getProperty(nameSystemProperty);
+						if(valueSystemProperty==null){
+							this.log.error("errore durante l'interpretazione del path ["+path+"]: variabile di sistema ${"+nameSystemProperty+"} non esistente");
+							continue;
+						}
+						path = path.replace("${"+nameSystemProperty+"}", valueSystemProperty);
 					}
 					//}
 				}

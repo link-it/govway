@@ -74,9 +74,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.username = tokenParser.getUsername();
 		List<String> a = tokenParser.getAudience();
 		if(a!=null && a.size()>0) {
-			if(this.aud == null) {
-				this.aud = new ArrayList<>();
-			}
+			this.aud = new ArrayList<>();
 			this.aud.addAll(a);
 		}
 		this.exp = tokenParser.getExpired();
@@ -86,16 +84,12 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.jti = tokenParser.getJWTIdentifier();
 		List<String> r = tokenParser.getRoles();
 		if(r!=null && r.size()>0) {
-			if(this.roles == null) {
-				this.roles = new ArrayList<>();
-			}
+			this.roles = new ArrayList<>();
 			this.roles.addAll(r);
 		}
 		List<String> s = tokenParser.getScopes(); 
 		if(s!=null && s.size()>0) {
-			if(this.scopes == null) {
-				this.scopes = new ArrayList<>();
-			}
+			this.scopes = new ArrayList<>();
 			this.scopes.addAll(s);
 		}
 		if(tokenParser.getUserInfoParser()!=null) {

@@ -216,13 +216,12 @@ public class ClientTest {
 		ClassLoaderUtilities.newInstance(driver);
 		Connection con = null;
 		List<Connection> conThreads = new ArrayList<Connection>();
-		Statement stmtDelete = null;
 		PreparedStatement stmtInsert = null;
 		try{
 			con = DriverManager.getConnection(url, userName, password);
 
 			InfoStatistics infoStat = new InfoStatistics();
-			clear(infoStat, con, stmtDelete);
+			clear(infoStat, con);
 			
 			for (int i = 0; i < THREADS; i++) {
 				conThreads.add(DriverManager.getConnection(url, userName, password));
@@ -255,7 +254,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			ClientTestThread.reset();
-			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			//clear(infoStat, con); Utilizzo la precedente esecuzione come inizializzazione della tabella
 			infoStat.clear();
 			
 			info(log,systemOut,"\n\n==========================================");
@@ -269,7 +268,7 @@ public class ClientTest {
 			/** TEST N.2 PROGRESSIVO con MAX */
 			
 			ClientTestThread.reset();
-			clear(infoStat, con, stmtDelete);
+			clear(infoStat, con);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
@@ -292,7 +291,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			ClientTestThread.reset();
-			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			//clear(infoStat, con); Utilizzo la precedente esecuzione come inizializzazione della tabella
 			infoStat.clear();
 			
 			info(log,systemOut,"\n\n==========================================");
@@ -316,7 +315,7 @@ public class ClientTest {
 			/** TEST N.3 PROGRESSIVO con MAX e Wrap */
 			
 			ClientTestThread.reset();
-			clear(infoStat, con, stmtDelete);
+			clear(infoStat, con);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
@@ -330,7 +329,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			ClientTestThread.reset();
-			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			//clear(infoStat, con); Utilizzo la precedente esecuzione come inizializzazione della tabella
 			infoStat.clear();
 			
 			info(log,systemOut,"\n\n==========================================");
@@ -346,7 +345,7 @@ public class ClientTest {
 			/** TEST N.4 PROGRESSIVO (InfoAssociata) */
 			
 			ClientTestThread.reset();
-			clear(infoStat, con, stmtDelete);
+			clear(infoStat, con);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
@@ -361,7 +360,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			ClientTestThread.reset();
-			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			//clear(infoStat, con); Utilizzo la precedente esecuzione come inizializzazione della tabella
 			infoStat.clear();
 			
 			info(log,systemOut,"\n\n==========================================");
@@ -376,7 +375,7 @@ public class ClientTest {
 			/** TEST N.5 PROGRESSIVO con MAX (InfoAssociata) */
 			
 			ClientTestThread.reset();
-			clear(infoStat, con, stmtDelete);
+			clear(infoStat, con);
 
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
@@ -400,7 +399,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			ClientTestThread.reset();
-			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			//clear(infoStat, con); Utilizzo la precedente esecuzione come inizializzazione della tabella
 			infoStat.clear();
 			
 			info(log,systemOut,"\n\n==========================================");
@@ -425,7 +424,7 @@ public class ClientTest {
 			/** TEST N.6 PROGRESSIVO con MAX e Wrap (InfoAssociata)  */
 			
 			ClientTestThread.reset();
-			clear(infoStat, con, stmtDelete);
+			clear(infoStat, con);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
@@ -440,7 +439,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			ClientTestThread.reset();
-			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			//clear(infoStat, con); Utilizzo la precedente esecuzione come inizializzazione della tabella
 			infoStat.clear();
 			
 			info(log,systemOut,"\n\n==========================================");
@@ -455,7 +454,7 @@ public class ClientTest {
 			/** TEST N.7 PROGRESSIVO con MAX */
 			
 			ClientTestThread.reset();
-			clear(infoStat, con, stmtDelete);
+			clear(infoStat, con);
 	
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
@@ -479,7 +478,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			ClientTestThread.reset();
-			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			//clear(infoStat, con); Utilizzo la precedente esecuzione come inizializzazione della tabella
 			infoStat.clear();
 			
 			info(log,systemOut,"\n\n==========================================");
@@ -504,7 +503,7 @@ public class ClientTest {
 			/** TEST N.8 PROGRESSIVO con MAX e Wrap */
 			
 			ClientTestThread.reset();
-			clear(infoStat, con, stmtDelete);
+			clear(infoStat, con);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
@@ -518,7 +517,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			ClientTestThread.reset();
-			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			//clear(infoStat, con); Utilizzo la precedente esecuzione come inizializzazione della tabella
 			infoStat.clear();
 			
 			info(log,systemOut,"\n\n==========================================");
@@ -533,7 +532,7 @@ public class ClientTest {
 			/** TEST N.9 PROGRESSIVO con MAX (InfoAssociata) */
 			
 			ClientTestThread.reset();
-			clear(infoStat, con, stmtDelete);
+			clear(infoStat, con);
 		
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
@@ -557,7 +556,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			ClientTestThread.reset();
-			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			//clear(infoStat, con); Utilizzo la precedente esecuzione come inizializzazione della tabella
 			infoStat.clear();
 			
 			info(log,systemOut,"\n\n==========================================");
@@ -583,7 +582,7 @@ public class ClientTest {
 			/** TEST N.10 PROGRESSIVO con MAX e Wrap (InfoAssociata) */
 			
 			ClientTestThread.reset();
-			clear(infoStat, con, stmtDelete);
+			clear(infoStat, con);
 		
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
@@ -598,7 +597,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			ClientTestThread.reset();
-			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			//clear(infoStat, con); Utilizzo la precedente esecuzione come inizializzazione della tabella
 			infoStat.clear();
 			
 			info(log,systemOut,"\n\n==========================================");
@@ -609,9 +608,6 @@ public class ClientTest {
 			
 			
 		}finally{
-			try{
-				stmtDelete.close();
-			}catch(Exception eClose){}
 			try{
 				stmtInsert.close();
 			}catch(Exception eClose){}
@@ -645,12 +641,12 @@ public class ClientTest {
 		}
 	}
 	
-	private static void clear(InfoStatistics infoStat, Connection con, Statement stmtDelete) throws Exception{
+	private static void clear(InfoStatistics infoStat, Connection con) throws Exception{
 		
 		infoStat.clear();
 		
 		String delete = "delete from "+Constants.TABELLA_ID_RELATIVO_AS_LONG;
-		stmtDelete = con.createStatement();
+		Statement stmtDelete = con.createStatement();
 		stmtDelete.execute(delete);
 		stmtDelete.close();
 		

@@ -1409,7 +1409,10 @@ public final class SoggettiChange extends Action {
 			// preparo lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 						
-			if (!oldnomeprov.equals(this.nomeprov) || !oldtipoprov.equals(this.tipoprov)) {
+			if (  (oldnomeprov!=null && !oldnomeprov.equals(this.nomeprov)) 
+					|| 
+				  (oldtipoprov!=null && !oldtipoprov.equals(this.tipoprov))
+				 ) {
 				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SOGGETTI);
 				
 				User user = ServletUtils.getUserFromSession(request, session);

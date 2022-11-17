@@ -374,6 +374,10 @@ public class HttpUtilities {
 	
 	public static void setOutputFile(HttpServletResponse response, boolean noCache, String fileName) throws UtilsException{
 		
+		if(fileName==null) {
+			throw new UtilsException("Param filename is null");
+		}
+		
 		// setto content-type e header per gestire il download lato client
 		String mimeType = null;
 		if(fileName.contains(".")){
@@ -401,6 +405,10 @@ public class HttpUtilities {
 	
 	public static void setOutputFile(HttpServletResponse response, boolean noCache, String fileName, String mimeType) throws UtilsException{
 				
+		if(response==null) {
+			throw new UtilsException("Param response is null");
+		}
+		
 		if(mimeType!=null){
 			response.setContentType(mimeType);
 		}

@@ -969,665 +969,667 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			
 			List<Res> res = new ArrayList<Res>();
-			for (Map<String, Object> row : list) {
-
-				Res r = new Res();
-				Date data = (Date) row.get(GenericJDBCUtilities.getAlias(model.DATA));
-				r.setId(data != null ? data.getTime() : null);
-				r.setRisultato(data);
-				List<Number> rSommaMediaPesata = new ArrayList<Number>();
-				
-				//collezione dei risultati
-				if(isLatenza){
-					Number obLT = StatsUtils.converToNumber(row.get("somma_latenza_totale"));
-					Number obLS = StatsUtils.converToNumber(row.get("somma_latenza_servizio"));
-					Number obLP = StatsUtils.converToNumber(row.get("somma_latenza_porta"));
-					Number obSommaMediaPesata = null;
-					if(calcolaSommeMediaPesata) {
-						obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
-					}
-
-					if(obLT!=null){
-						r.inserisciSomma(obLT);
-						if(calcolaSommeMediaPesata) {
-							rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-						}
-					}
-					else{
-						if(isLatenza_totale){
-							r.inserisciSomma(0);
-							if(calcolaSommeMediaPesata) {
-								rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-							}
-						}
-					}
-
-					if(obLS!=null){
-						r.inserisciSomma(obLS);
-						if(calcolaSommeMediaPesata) {
-							rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-						}
-					}
-					else{
-						if(isLatenza_servizio){
-							r.inserisciSomma(0);
-							if(calcolaSommeMediaPesata) {
-								rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-							}
-						}
-					}
-
-					if(obLP!=null){
-						r.inserisciSomma(obLP);
-						if(calcolaSommeMediaPesata) {
-							rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-						}
-					}
-					else{
-						if(isLatenza_porta){
-							r.inserisciSomma(0);
-							if(calcolaSommeMediaPesata) {
-								rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-							}
-						}
-					}
+			if(list!=null) {
+				for (Map<String, Object> row : list) {
+	
+					Res r = new Res();
+					Date data = (Date) row.get(GenericJDBCUtilities.getAlias(model.DATA));
+					r.setId(data != null ? data.getTime() : null);
+					r.setRisultato(data);
+					List<Number> rSommaMediaPesata = new ArrayList<Number>();
 					
-				}
-				else if(isBanda){
-					Number obComplessiva = StatsUtils.converToNumber(row.get("somma_banda_complessiva"));
-					Number obInterna = StatsUtils.converToNumber(row.get("somma_banda_interna"));
-					Number obEsterna = StatsUtils.converToNumber(row.get("somma_banda_esterna"));
-
-					if(obComplessiva!=null){
-						r.inserisciSomma(obComplessiva);
+					//collezione dei risultati
+					if(isLatenza){
+						Number obLT = StatsUtils.converToNumber(row.get("somma_latenza_totale"));
+						Number obLS = StatsUtils.converToNumber(row.get("somma_latenza_servizio"));
+						Number obLP = StatsUtils.converToNumber(row.get("somma_latenza_porta"));
+						Number obSommaMediaPesata = null;
+						if(calcolaSommeMediaPesata) {
+							obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
+						}
+	
+						if(obLT!=null){
+							r.inserisciSomma(obLT);
+							if(calcolaSommeMediaPesata) {
+								rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+							}
+						}
+						else{
+							if(isLatenza_totale){
+								r.inserisciSomma(0);
+								if(calcolaSommeMediaPesata) {
+									rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
+							}
+						}
+	
+						if(obLS!=null){
+							r.inserisciSomma(obLS);
+							if(calcolaSommeMediaPesata) {
+								rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+							}
+						}
+						else{
+							if(isLatenza_servizio){
+								r.inserisciSomma(0);
+								if(calcolaSommeMediaPesata) {
+									rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
+							}
+						}
+	
+						if(obLP!=null){
+							r.inserisciSomma(obLP);
+							if(calcolaSommeMediaPesata) {
+								rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+							}
+						}
+						else{
+							if(isLatenza_porta){
+								r.inserisciSomma(0);
+								if(calcolaSommeMediaPesata) {
+									rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
+							}
+						}
+						
 					}
-					else{
-						if(isBanda_complessiva){
-							r.inserisciSomma(0);
+					else if(isBanda){
+						Number obComplessiva = StatsUtils.converToNumber(row.get("somma_banda_complessiva"));
+						Number obInterna = StatsUtils.converToNumber(row.get("somma_banda_interna"));
+						Number obEsterna = StatsUtils.converToNumber(row.get("somma_banda_esterna"));
+	
+						if(obComplessiva!=null){
+							r.inserisciSomma(obComplessiva);
+						}
+						else{
+							if(isBanda_complessiva){
+								r.inserisciSomma(0);
+							}
+						}
+	
+						if(obInterna!=null){
+							r.inserisciSomma(obInterna);
+						}
+						else{
+							if(isBanda_interna){
+								r.inserisciSomma(0);
+							}
+						}
+	
+						if(obEsterna!=null){
+							r.inserisciSomma(obEsterna);
+						}
+						else{
+							if(isBanda_esterna){
+								r.inserisciSomma(0);
+							}
 						}
 					}
-
-					if(obInterna!=null){
-						r.inserisciSomma(obInterna);
-					}
 					else{
-						if(isBanda_interna){
-							r.inserisciSomma(0);
+						Number somma = StatsUtils.converToNumber(row.get("somma"));
+						if(somma!=null){
+							r.setSomma(somma);
+						}
+						else{
+							r.setSomma(0);
 						}
 					}
-
-					if(obEsterna!=null){
-						r.inserisciSomma(obEsterna);
-					}
-					else{
-						if(isBanda_esterna){
-							r.inserisciSomma(0);
-						}
-					}
-				}
-				else{
-					Number somma = StatsUtils.converToNumber(row.get("somma"));
-					if(somma!=null){
-						r.setSomma(somma);
-					}
-					else{
-						r.setSomma(0);
-					}
-				}
-
-				//System.out.println("MISURAZIONE NORMALE: \n"+r.toString());
-
-				if(this.andamentoTemporaleSearch.isAndamentoTemporalePerEsiti()){
-
-					//System.out.println(" CALCOLO ESITI ");
-
-					// ************ ESITI ******************
-					IExpression expOk = this.dao.newExpression();
-					IExpression expKo = this.dao.newExpression();
-					IExpression expFault = this.dao.newExpression();
-					
-					this.createGenericAndamentoTemporaleExpression(expOk, this.dao, model,	isCount,data,false);
-					this.createGenericAndamentoTemporaleExpression(expKo, this.dao, model,	isCount,data,false);
-					this.createGenericAndamentoTemporaleExpression(expFault, this.dao, model,	isCount,data,false);
-					switch (tipoVisualizzazione) {
-					case TEMPO_MEDIO_RISPOSTA:{
-						TipoLatenza tipoLatenza = this.andamentoTemporaleSearch.getTipoLatenza();
-						switch (tipoLatenza) {
-						case LATENZA_PORTA:
-							expOk.isNotNull(model.LATENZA_PORTA);
-							expKo.isNotNull(model.LATENZA_PORTA);
-							expFault.isNotNull(model.LATENZA_PORTA);
+	
+					//System.out.println("MISURAZIONE NORMALE: \n"+r.toString());
+	
+					if(this.andamentoTemporaleSearch.isAndamentoTemporalePerEsiti()){
+	
+						//System.out.println(" CALCOLO ESITI ");
+	
+						// ************ ESITI ******************
+						IExpression expOk = this.dao.newExpression();
+						IExpression expKo = this.dao.newExpression();
+						IExpression expFault = this.dao.newExpression();
+						
+						this.createGenericAndamentoTemporaleExpression(expOk, this.dao, model,	isCount,data,false);
+						this.createGenericAndamentoTemporaleExpression(expKo, this.dao, model,	isCount,data,false);
+						this.createGenericAndamentoTemporaleExpression(expFault, this.dao, model,	isCount,data,false);
+						switch (tipoVisualizzazione) {
+						case TEMPO_MEDIO_RISPOSTA:{
+							TipoLatenza tipoLatenza = this.andamentoTemporaleSearch.getTipoLatenza();
+							switch (tipoLatenza) {
+							case LATENZA_PORTA:
+								expOk.isNotNull(model.LATENZA_PORTA);
+								expKo.isNotNull(model.LATENZA_PORTA);
+								expFault.isNotNull(model.LATENZA_PORTA);
+								break;
+							case LATENZA_SERVIZIO:
+								expOk.isNotNull(model.LATENZA_SERVIZIO);
+								expKo.isNotNull(model.LATENZA_SERVIZIO);
+								expFault.isNotNull(model.LATENZA_SERVIZIO);
+								break;
+							case LATENZA_TOTALE:
+							default:
+								expOk.isNotNull(model.LATENZA_TOTALE);
+								expKo.isNotNull(model.LATENZA_TOTALE);
+								expFault.isNotNull(model.LATENZA_TOTALE);
+								break;
+							}
 							break;
-						case LATENZA_SERVIZIO:
-							expOk.isNotNull(model.LATENZA_SERVIZIO);
-							expKo.isNotNull(model.LATENZA_SERVIZIO);
-							expFault.isNotNull(model.LATENZA_SERVIZIO);
-							break;
-						case LATENZA_TOTALE:
+						}
 						default:
-							expOk.isNotNull(model.LATENZA_TOTALE);
-							expKo.isNotNull(model.LATENZA_TOTALE);
-							expFault.isNotNull(model.LATENZA_TOTALE);
 							break;
 						}
-						break;
-					}
-					default:
-						break;
-					}
-					
-					if(forceIndexes!=null && forceIndexes.size()>0){
-						for (Index index : forceIndexes) {
-							expOk.addForceIndex(index);	
-							expKo.addForceIndex(index);	
-							expFault.addForceIndex(index);	
+						
+						if(forceIndexes!=null && forceIndexes.size()>0){
+							for (Index index : forceIndexes) {
+								expOk.addForceIndex(index);	
+								expKo.addForceIndex(index);	
+								expFault.addForceIndex(index);	
+							}
 						}
-					}
-					
-					EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(StatisticheGiornaliereService.log, this.andamentoTemporaleSearch.getProtocollo());
-					List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
-					List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
-					List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
-
-					expOk.and().in(model.ESITO, esitiOk);
-					expKo.and().in(model.ESITO, esitiKo);
-					expFault.and().in(model.ESITO, esitiFault);
-
-					List<Map<String, Object>> listOk = null;
-					Res rEsito = new Res();
-					rEsito.setId(data.getTime());
-					rEsito.setRisultato(data);
-					List<Number> rEsitoSommaMediaPesata = new ArrayList<Number>();
-					
-					this.timeoutEvent = false;
-					
-					if(this.timeoutRicerche == null) {
-						try{
-						listOk = this.dao.groupBy(expOk, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
-						} catch (NotFoundException e) {
-							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
-							//collezione dei risultati
-							rEsito.inserisciSomma(0);
-						} 
-					} else {
-						try {
-							listOk =  ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> 
-							this.dao.groupBy(expOk, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
-								).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
-						} catch (InterruptedException e) {
-							StatisticheGiornaliereService.log.error(e.getMessage(), e);
-						} catch (ExecutionException e) {
-							if(e.getCause() instanceof NotFoundException) {
+						
+						EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(StatisticheGiornaliereService.log, this.andamentoTemporaleSearch.getProtocollo());
+						List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+						List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+						List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
+	
+						expOk.and().in(model.ESITO, esitiOk);
+						expKo.and().in(model.ESITO, esitiKo);
+						expFault.and().in(model.ESITO, esitiFault);
+	
+						List<Map<String, Object>> listOk = null;
+						Res rEsito = new Res();
+						rEsito.setId(data.getTime());
+						rEsito.setRisultato(data);
+						List<Number> rEsitoSommaMediaPesata = new ArrayList<Number>();
+						
+						this.timeoutEvent = false;
+						
+						if(this.timeoutRicerche == null) {
+							try{
+							listOk = this.dao.groupBy(expOk, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+							} catch (NotFoundException e) {
 								StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
 								//collezione dei risultati
 								rEsito.inserisciSomma(0);
-							}else {
-								if(e.getCause() instanceof ServiceException) {
-									throw (ServiceException) e.getCause();
+							} 
+						} else {
+							try {
+								listOk =  ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> 
+								this.dao.groupBy(expOk, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
+									).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+							} catch (InterruptedException e) {
+								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+							} catch (ExecutionException e) {
+								if(e.getCause() instanceof NotFoundException) {
+									StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
+									//collezione dei risultati
+									rEsito.inserisciSomma(0);
+								}else {
+									if(e.getCause() instanceof ServiceException) {
+										throw (ServiceException) e.getCause();
+									}
+									if(e.getCause() instanceof NotImplementedException) {
+										throw (NotImplementedException) e.getCause();
+									}
+									StatisticheGiornaliereService.log.error(e.getMessage(), e);
 								}
-								if(e.getCause() instanceof NotImplementedException) {
-									throw (NotImplementedException) e.getCause();
-								}
+							} catch (TimeoutException e) {
+								this.timeoutEvent = true;
+								//collezione dei risultati
+								rEsito.inserisciSomma(0);
 								StatisticheGiornaliereService.log.error(e.getMessage(), e);
 							}
-						} catch (TimeoutException e) {
-							this.timeoutEvent = true;
+						}
+						
+						if(listOk!=null && listOk.size()>0){
+							if(listOk.size()>1){
+								throw new Exception("Expected only one result, found: "+listOk.size());
+							}
+							Map<String, Object> rowOk = listOk.get(0);
+							//					rEsito = new Res();
+							//					Date dataOk = (Date) rowOk.get(JDBCUtilities.getAlias(model.DATA));
+							//					rEsito.setId(dataOk != null ? dataOk.getTime() : null);
+							//					rEsito.setRisultato(dataOk);
+	
 							//collezione dei risultati
-							rEsito.inserisciSomma(0);
-							StatisticheGiornaliereService.log.error(e.getMessage(), e);
-						}
-					}
-					
-					if(listOk!=null && listOk.size()>0){
-						if(listOk.size()>1){
-							throw new Exception("Expected only one result, found: "+listOk.size());
-						}
-						Map<String, Object> rowOk = listOk.get(0);
-						//					rEsito = new Res();
-						//					Date dataOk = (Date) rowOk.get(JDBCUtilities.getAlias(model.DATA));
-						//					rEsito.setId(dataOk != null ? dataOk.getTime() : null);
-						//					rEsito.setRisultato(dataOk);
-
-						//collezione dei risultati
-						if(isLatenza){
-							Number obLT = StatsUtils.converToNumber(rowOk.get("somma_latenza_totale"));
-							Number obLS = StatsUtils.converToNumber(rowOk.get("somma_latenza_servizio"));
-							Number obLP = StatsUtils.converToNumber(rowOk.get("somma_latenza_porta"));
-							Number obSommaMediaPesata = null;
-							if(calcolaSommeMediaPesata) {
-								obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
-							}
-
-							if(obLT != null){
-								rEsito.inserisciSomma(obLT);
+							if(isLatenza){
+								Number obLT = StatsUtils.converToNumber(rowOk.get("somma_latenza_totale"));
+								Number obLS = StatsUtils.converToNumber(rowOk.get("somma_latenza_servizio"));
+								Number obLP = StatsUtils.converToNumber(rowOk.get("somma_latenza_porta"));
+								Number obSommaMediaPesata = null;
 								if(calcolaSommeMediaPesata) {
-									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
 								}
-							}
-							else{
-								if(isLatenza_totale){
-									rEsito.inserisciSomma(0);
+	
+								if(obLT != null){
+									rEsito.inserisciSomma(obLT);
 									if(calcolaSommeMediaPesata) {
 										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
 									}
 								}
-							}
-
-							if(obLS != null){
-								rEsito.inserisciSomma(obLS);
-								if(calcolaSommeMediaPesata) {
-									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								else{
+									if(isLatenza_totale){
+										rEsito.inserisciSomma(0);
+										if(calcolaSommeMediaPesata) {
+											rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+										}
+									}
 								}
-							}
-							else{
-								if(isLatenza_servizio){
-									rEsito.inserisciSomma(0);
+	
+								if(obLS != null){
+									rEsito.inserisciSomma(obLS);
 									if(calcolaSommeMediaPesata) {
 										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
 									}
 								}
-							}
-
-							if(obLP != null){
-								rEsito.inserisciSomma(obLP);
-								if(calcolaSommeMediaPesata) {
-									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								else{
+									if(isLatenza_servizio){
+										rEsito.inserisciSomma(0);
+										if(calcolaSommeMediaPesata) {
+											rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+										}
+									}
 								}
-							}
-							else{
-								if(isLatenza_porta){
-									rEsito.inserisciSomma(0);
+	
+								if(obLP != null){
+									rEsito.inserisciSomma(obLP);
 									if(calcolaSommeMediaPesata) {
 										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
 									}
 								}
+								else{
+									if(isLatenza_porta){
+										rEsito.inserisciSomma(0);
+										if(calcolaSommeMediaPesata) {
+											rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+										}
+									}
+								}
 							}
-						}
-						else if(isBanda){
-							Number obComplessiva = StatsUtils.converToNumber(rowOk.get("somma_banda_complessiva"));
-							Number obInterna = StatsUtils.converToNumber(rowOk.get("somma_banda_interna"));
-							Number obEsterna = StatsUtils.converToNumber(rowOk.get("somma_banda_esterna"));
-
-							if(obComplessiva != null){
-								rEsito.inserisciSomma(obComplessiva);
+							else if(isBanda){
+								Number obComplessiva = StatsUtils.converToNumber(rowOk.get("somma_banda_complessiva"));
+								Number obInterna = StatsUtils.converToNumber(rowOk.get("somma_banda_interna"));
+								Number obEsterna = StatsUtils.converToNumber(rowOk.get("somma_banda_esterna"));
+	
+								if(obComplessiva != null){
+									rEsito.inserisciSomma(obComplessiva);
+								}
+								else{
+									if(isBanda_complessiva){
+										rEsito.inserisciSomma(0);
+									}
+								}
+	
+								if(obInterna != null){
+									rEsito.inserisciSomma(obInterna);
+								}
+								else{
+									if(isBanda_interna){
+										rEsito.inserisciSomma(0);
+									}
+								}
+	
+								if(obEsterna != null){
+									rEsito.inserisciSomma(obEsterna);
+								}
+								else{
+									if(isBanda_esterna){
+										rEsito.inserisciSomma(0);
+									}
+								}
 							}
 							else{
-								if(isBanda_complessiva){
+								Number somma = StatsUtils.converToNumber(rowOk.get("somma"));
+								if(somma!=null){
+									rEsito.inserisciSomma(somma);
+								}
+								else{
 									rEsito.inserisciSomma(0);
 								}
 							}
-
-							if(obInterna != null){
-								rEsito.inserisciSomma(obInterna);
-							}
-							else{
-								if(isBanda_interna){
-									rEsito.inserisciSomma(0);
-								}
-							}
-
-							if(obEsterna != null){
-								rEsito.inserisciSomma(obEsterna);
-							}
-							else{
-								if(isBanda_esterna){
-									rEsito.inserisciSomma(0);
-								}
-							}
+	
 						}
-						else{
-							Number somma = StatsUtils.converToNumber(rowOk.get("somma"));
-							if(somma!=null){
-								rEsito.inserisciSomma(somma);
-							}
-							else{
-								rEsito.inserisciSomma(0);
-							}
-						}
-
-					}
-					//System.out.println("MISURAZIONE OK: \n"+rEsito.toString());
-
-					List<Map<String, Object>> listFaultApplicativo = null;
-					
-					this.timeoutEvent = false;
-					
-					if(this.timeoutRicerche == null) {
-						try{
-							listFaultApplicativo = this.dao.groupBy(expFault, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
-						} catch (NotFoundException e) {
-							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
-							//collezione dei risultati
-							rEsito.inserisciSomma(0);
-						} 
-					} else {
-						try {
-							listFaultApplicativo = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> 
-							 this.dao.groupBy(expFault, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
-								).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
-						} catch (InterruptedException e) {
-							StatisticheGiornaliereService.log.error(e.getMessage(), e);
-						} catch (ExecutionException e) {
-							if(e.getCause() instanceof NotFoundException) {
+						//System.out.println("MISURAZIONE OK: \n"+rEsito.toString());
+	
+						List<Map<String, Object>> listFaultApplicativo = null;
+						
+						this.timeoutEvent = false;
+						
+						if(this.timeoutRicerche == null) {
+							try{
+								listFaultApplicativo = this.dao.groupBy(expFault, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+							} catch (NotFoundException e) {
 								StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
 								//collezione dei risultati
 								rEsito.inserisciSomma(0);
-							}else {
-								if(e.getCause() instanceof ServiceException) {
-									throw (ServiceException) e.getCause();
+							} 
+						} else {
+							try {
+								listFaultApplicativo = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> 
+								 this.dao.groupBy(expFault, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
+									).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+							} catch (InterruptedException e) {
+								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+							} catch (ExecutionException e) {
+								if(e.getCause() instanceof NotFoundException) {
+									StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
+									//collezione dei risultati
+									rEsito.inserisciSomma(0);
+								}else {
+									if(e.getCause() instanceof ServiceException) {
+										throw (ServiceException) e.getCause();
+									}
+									if(e.getCause() instanceof NotImplementedException) {
+										throw (NotImplementedException) e.getCause();
+									}
+									StatisticheGiornaliereService.log.error(e.getMessage(), e);
 								}
-								if(e.getCause() instanceof NotImplementedException) {
-									throw (NotImplementedException) e.getCause();
-								}
+							} catch (TimeoutException e) {
+								this.timeoutEvent = true;
+								//collezione dei risultati
+								rEsito.inserisciSomma(0);
 								StatisticheGiornaliereService.log.error(e.getMessage(), e);
 							}
-						} catch (TimeoutException e) {
-							this.timeoutEvent = true;
-							//collezione dei risultati
-							rEsito.inserisciSomma(0);
-							StatisticheGiornaliereService.log.error(e.getMessage(), e);
 						}
-					}
-				
-					if(listFaultApplicativo!=null && listFaultApplicativo.size()>0){
-						if(listFaultApplicativo.size()>1){
-							throw new Exception("Expected only one result, found: "+listFaultApplicativo.size());
-						}
-						Map<String, Object> rowFault = listFaultApplicativo.get(0);
-
-						//collezione dei risultati
-						if(isLatenza){
-							Number obLT = StatsUtils.converToNumber(rowFault.get("somma_latenza_totale"));
-							Number obLS = StatsUtils.converToNumber(rowFault.get("somma_latenza_servizio"));
-							Number obLP = StatsUtils.converToNumber(rowFault.get("somma_latenza_porta"));
-							Number obSommaMediaPesata = null;
-							if(calcolaSommeMediaPesata) {
-								obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
-							}
-
-							if(obLT != null){
-								rEsito.inserisciSomma(obLT);
-								if(calcolaSommeMediaPesata) {
-									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-								}
-							}
-							else{
-								if(isLatenza_totale){
-									rEsito.inserisciSomma(0);
-									if(calcolaSommeMediaPesata) {
-										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-									}
-								}
-							}
-
-							if(obLS != null){
-								rEsito.inserisciSomma(obLS);
-								if(calcolaSommeMediaPesata) {
-									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-								}
-							}
-							else{
-								if(isLatenza_servizio){
-									rEsito.inserisciSomma(0);
-									if(calcolaSommeMediaPesata) {
-										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-									}
-								}
-							}
-
-							if(obLP != null){
-								rEsito.inserisciSomma(obLP);
-								if(calcolaSommeMediaPesata) {
-									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-								}
-							}
-							else{
-								if(isLatenza_porta){
-									rEsito.inserisciSomma(0);
-									if(calcolaSommeMediaPesata) {
-										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
-									}
-								}
-							}
-							
-						}
-						else if(isBanda){
-							Number obComplessiva = StatsUtils.converToNumber(rowFault.get("somma_banda_complessiva"));
-							Number obInterna = StatsUtils.converToNumber(rowFault.get("somma_banda_interna"));
-							Number obEsterna = StatsUtils.converToNumber(rowFault.get("somma_banda_esterna"));
-
-							if(obComplessiva != null){
-								rEsito.inserisciSomma(obComplessiva);
-							}
-							else{
-								if(isBanda_complessiva){
-									rEsito.inserisciSomma(0);
-								}
-							}
-
-							if(obInterna != null){
-								rEsito.inserisciSomma(obInterna);
-							}
-							else{
-								if(isBanda_interna){
-									rEsito.inserisciSomma(0);
-								}
-							}
-
-							if(obEsterna != null){
-								rEsito.inserisciSomma(obEsterna);
-							}
-							else{
-								if(isBanda_esterna){
-									rEsito.inserisciSomma(0);
-								}
-							}						
-
-						}
-						else{
-							Number somma = StatsUtils.converToNumber(rowFault.get("somma"));
-							if(somma!=null){
-								rEsito.inserisciSomma(somma);
-							}
-							else{
-								rEsito.inserisciSomma(0);
-							}
-						}
-
-					}
-					//System.out.println("MISURAZIONE FAULT: \n"+rEsito.toString());
-
-					List<Map<String, Object>> listKo = null;
 					
-					this.timeoutEvent = false;
-					
-					if(this.timeoutRicerche == null) {
-						try{
-							listKo = this.dao.groupBy(expKo, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
-						} catch (NotFoundException e) {
-							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
+						if(listFaultApplicativo!=null && listFaultApplicativo.size()>0){
+							if(listFaultApplicativo.size()>1){
+								throw new Exception("Expected only one result, found: "+listFaultApplicativo.size());
+							}
+							Map<String, Object> rowFault = listFaultApplicativo.get(0);
+	
 							//collezione dei risultati
-							rEsito.inserisciSomma(0);
-						} 
-					} else {
-						try {
-							listKo = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> 
-							this.dao.groupBy(expKo, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
-								).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
-						} catch (InterruptedException e) {
-							StatisticheGiornaliereService.log.error(e.getMessage(), e);
-						} catch (ExecutionException e) {
-							if(e.getCause() instanceof NotFoundException) {
+							if(isLatenza){
+								Number obLT = StatsUtils.converToNumber(rowFault.get("somma_latenza_totale"));
+								Number obLS = StatsUtils.converToNumber(rowFault.get("somma_latenza_servizio"));
+								Number obLP = StatsUtils.converToNumber(rowFault.get("somma_latenza_porta"));
+								Number obSommaMediaPesata = null;
+								if(calcolaSommeMediaPesata) {
+									obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
+								}
+	
+								if(obLT != null){
+									rEsito.inserisciSomma(obLT);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
+								}
+								else{
+									if(isLatenza_totale){
+										rEsito.inserisciSomma(0);
+										if(calcolaSommeMediaPesata) {
+											rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+										}
+									}
+								}
+	
+								if(obLS != null){
+									rEsito.inserisciSomma(obLS);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
+								}
+								else{
+									if(isLatenza_servizio){
+										rEsito.inserisciSomma(0);
+										if(calcolaSommeMediaPesata) {
+											rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+										}
+									}
+								}
+	
+								if(obLP != null){
+									rEsito.inserisciSomma(obLP);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
+								}
+								else{
+									if(isLatenza_porta){
+										rEsito.inserisciSomma(0);
+										if(calcolaSommeMediaPesata) {
+											rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+										}
+									}
+								}
+								
+							}
+							else if(isBanda){
+								Number obComplessiva = StatsUtils.converToNumber(rowFault.get("somma_banda_complessiva"));
+								Number obInterna = StatsUtils.converToNumber(rowFault.get("somma_banda_interna"));
+								Number obEsterna = StatsUtils.converToNumber(rowFault.get("somma_banda_esterna"));
+	
+								if(obComplessiva != null){
+									rEsito.inserisciSomma(obComplessiva);
+								}
+								else{
+									if(isBanda_complessiva){
+										rEsito.inserisciSomma(0);
+									}
+								}
+	
+								if(obInterna != null){
+									rEsito.inserisciSomma(obInterna);
+								}
+								else{
+									if(isBanda_interna){
+										rEsito.inserisciSomma(0);
+									}
+								}
+	
+								if(obEsterna != null){
+									rEsito.inserisciSomma(obEsterna);
+								}
+								else{
+									if(isBanda_esterna){
+										rEsito.inserisciSomma(0);
+									}
+								}						
+	
+							}
+							else{
+								Number somma = StatsUtils.converToNumber(rowFault.get("somma"));
+								if(somma!=null){
+									rEsito.inserisciSomma(somma);
+								}
+								else{
+									rEsito.inserisciSomma(0);
+								}
+							}
+	
+						}
+						//System.out.println("MISURAZIONE FAULT: \n"+rEsito.toString());
+	
+						List<Map<String, Object>> listKo = null;
+						
+						this.timeoutEvent = false;
+						
+						if(this.timeoutRicerche == null) {
+							try{
+								listKo = this.dao.groupBy(expKo, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+							} catch (NotFoundException e) {
 								StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
 								//collezione dei risultati
 								rEsito.inserisciSomma(0);
-							}else {
-								if(e.getCause() instanceof ServiceException) {
-									throw (ServiceException) e.getCause();
+							} 
+						} else {
+							try {
+								listKo = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> 
+								this.dao.groupBy(expKo, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
+									).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+							} catch (InterruptedException e) {
+								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+							} catch (ExecutionException e) {
+								if(e.getCause() instanceof NotFoundException) {
+									StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
+									//collezione dei risultati
+									rEsito.inserisciSomma(0);
+								}else {
+									if(e.getCause() instanceof ServiceException) {
+										throw (ServiceException) e.getCause();
+									}
+									if(e.getCause() instanceof NotImplementedException) {
+										throw (NotImplementedException) e.getCause();
+									}
+									StatisticheGiornaliereService.log.error(e.getMessage(), e);
 								}
-								if(e.getCause() instanceof NotImplementedException) {
-									throw (NotImplementedException) e.getCause();
-								}
+							} catch (TimeoutException e) {
+								this.timeoutEvent = true;
+								//collezione dei risultati
+								rEsito.inserisciSomma(0);
 								StatisticheGiornaliereService.log.error(e.getMessage(), e);
 							}
-						} catch (TimeoutException e) {
-							this.timeoutEvent = true;
+						}
+						
+						if(listKo!=null && listKo.size()>0){
+							if(listKo.size()>1){
+								throw new Exception("Expected only one result, found: "+listKo.size());
+							}
+							Map<String, Object> rowKo = listKo.get(0);
+	
 							//collezione dei risultati
-							rEsito.inserisciSomma(0);
-							StatisticheGiornaliereService.log.error(e.getMessage(), e);
-						}
-					}
-					
-					if(listKo!=null && listKo.size()>0){
-						if(listKo.size()>1){
-							throw new Exception("Expected only one result, found: "+listKo.size());
-						}
-						Map<String, Object> rowKo = listKo.get(0);
-
-						//collezione dei risultati
-						if(isLatenza){
-							Number obLT = StatsUtils.converToNumber(rowKo.get("somma_latenza_totale"));
-							Number obLS = StatsUtils.converToNumber(rowKo.get("somma_latenza_servizio"));
-							Number obLP = StatsUtils.converToNumber(rowKo.get("somma_latenza_porta"));
-							Number obSommaMediaPesata = null;
-							if(calcolaSommeMediaPesata) {
-								obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
-							}
-
-							if(obLT != null){
-								rEsito.inserisciSomma(obLT);
+							if(isLatenza){
+								Number obLT = StatsUtils.converToNumber(rowKo.get("somma_latenza_totale"));
+								Number obLS = StatsUtils.converToNumber(rowKo.get("somma_latenza_servizio"));
+								Number obLP = StatsUtils.converToNumber(rowKo.get("somma_latenza_porta"));
+								Number obSommaMediaPesata = null;
 								if(calcolaSommeMediaPesata) {
-									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
 								}
-							}
-							else{
-								if(isLatenza_totale){
-									rEsito.inserisciSomma(0);
+	
+								if(obLT != null){
+									rEsito.inserisciSomma(obLT);
 									if(calcolaSommeMediaPesata) {
 										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
 									}
 								}
-							}
-
-							if(obLS != null){
-								rEsito.inserisciSomma(obLS);
-								if(calcolaSommeMediaPesata) {
-									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								else{
+									if(isLatenza_totale){
+										rEsito.inserisciSomma(0);
+										if(calcolaSommeMediaPesata) {
+											rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+										}
+									}
 								}
-							}
-							else{
-								if(isLatenza_servizio){
-									rEsito.inserisciSomma(0);
+	
+								if(obLS != null){
+									rEsito.inserisciSomma(obLS);
 									if(calcolaSommeMediaPesata) {
 										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
 									}
 								}
-							}
-
-							if(obLP != null){
-								rEsito.inserisciSomma(obLP);
-								if(calcolaSommeMediaPesata) {
-									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								else{
+									if(isLatenza_servizio){
+										rEsito.inserisciSomma(0);
+										if(calcolaSommeMediaPesata) {
+											rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+										}
+									}
 								}
-							}
-							else{
-								if(isLatenza_porta){
-									rEsito.inserisciSomma(0);
+	
+								if(obLP != null){
+									rEsito.inserisciSomma(obLP);
 									if(calcolaSommeMediaPesata) {
 										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
 									}
 								}
+								else{
+									if(isLatenza_porta){
+										rEsito.inserisciSomma(0);
+										if(calcolaSommeMediaPesata) {
+											rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+										}
+									}
+								}
+	
 							}
-
-						}
-						else if(isBanda){
-							Number obComplessiva = StatsUtils.converToNumber(rowKo.get("somma_banda_complessiva"));
-							Number obInterna = StatsUtils.converToNumber(rowKo.get("somma_banda_interna"));
-							Number obEsterna = StatsUtils.converToNumber(rowKo.get("somma_banda_esterna"));
-
-							if(obComplessiva != null){
-								rEsito.inserisciSomma(obComplessiva);
+							else if(isBanda){
+								Number obComplessiva = StatsUtils.converToNumber(rowKo.get("somma_banda_complessiva"));
+								Number obInterna = StatsUtils.converToNumber(rowKo.get("somma_banda_interna"));
+								Number obEsterna = StatsUtils.converToNumber(rowKo.get("somma_banda_esterna"));
+	
+								if(obComplessiva != null){
+									rEsito.inserisciSomma(obComplessiva);
+								}
+								else{
+									if(isBanda_complessiva){
+										rEsito.inserisciSomma(0);
+									}
+								}
+	
+								if(obInterna != null){
+									rEsito.inserisciSomma(obInterna);
+								}
+								else{
+									if(isBanda_interna){
+										rEsito.inserisciSomma(0);
+									}
+								}
+	
+								if(obEsterna != null){
+									rEsito.inserisciSomma(obEsterna);
+								}
+								else{
+									if(isBanda_esterna){
+										rEsito.inserisciSomma(0);
+									}
+								}
 							}
 							else{
-								if(isBanda_complessiva){
+								Number somma = StatsUtils.converToNumber(rowKo.get("somma"));
+								if(somma!=null){
+									rEsito.inserisciSomma(somma);
+								}
+								else{
 									rEsito.inserisciSomma(0);
 								}
 							}
-
-							if(obInterna != null){
-								rEsito.inserisciSomma(obInterna);
-							}
-							else{
-								if(isBanda_interna){
-									rEsito.inserisciSomma(0);
-								}
-							}
-
-							if(obEsterna != null){
-								rEsito.inserisciSomma(obEsterna);
-							}
-							else{
-								if(isBanda_esterna){
-									rEsito.inserisciSomma(0);
-								}
-							}
+	
 						}
-						else{
-							Number somma = StatsUtils.converToNumber(rowKo.get("somma"));
-							if(somma!=null){
-								rEsito.inserisciSomma(somma);
+						//System.out.println("MISURAZIONE KO: \n"+rEsito.toString());
+	
+	
+						// ************ FINE ESITI ***********************
+	
+						//System.out.println("ESITI");
+						if(forceUseDistribGiornaliera) {
+						
+							Date truncDate = null;
+							if(statisticheSettimanaliUtils!=null) {
+								truncDate = statisticheSettimanaliUtils.truncDate(rEsito.getRisultato(), false);
 							}
-							else{
-								rEsito.inserisciSomma(0);
+							else {
+								truncDate = statisticheMensiliUtils.truncDate(rEsito.getRisultato(), false);
 							}
-						}
-
-					}
-					//System.out.println("MISURAZIONE KO: \n"+rEsito.toString());
-
-
-					// ************ FINE ESITI ***********************
-
-					//System.out.println("ESITI");
-					if(forceUseDistribGiornaliera) {
-					
-						Date truncDate = null;
-						if(statisticheSettimanaliUtils!=null) {
-							truncDate = statisticheSettimanaliUtils.truncDate(rEsito.getRisultato(), false);
+							
+							elaboraIntervalloTemporale(truncDate, res, rEsito, isLatenza_porta, rEsitoSommaMediaPesata);
+							
 						}
 						else {
-							truncDate = statisticheMensiliUtils.truncDate(rEsito.getRisultato(), false);
+							res.add(rEsito);
 						}
-						
-						elaboraIntervalloTemporale(truncDate, res, rEsito, isLatenza_porta, rEsitoSommaMediaPesata);
-						
+	
 					}
-					else {
-						res.add(rEsito);
-					}
-
-				}
-				else{
-
-					//System.out.println("NORMALE");
-					if(forceUseDistribGiornaliera) {
-						
-						Date truncDate = null;
-						if(statisticheSettimanaliUtils!=null) {
-							truncDate = statisticheSettimanaliUtils.truncDate(r.getRisultato(), false);
+					else{
+	
+						//System.out.println("NORMALE");
+						if(forceUseDistribGiornaliera) {
+							
+							Date truncDate = null;
+							if(statisticheSettimanaliUtils!=null) {
+								truncDate = statisticheSettimanaliUtils.truncDate(r.getRisultato(), false);
+							}
+							else {
+								truncDate = statisticheMensiliUtils.truncDate(r.getRisultato(), false);
+							}
+							
+							elaboraIntervalloTemporale(truncDate, res, r, isLatenza_porta, rSommaMediaPesata);
+							
 						}
 						else {
-							truncDate = statisticheMensiliUtils.truncDate(r.getRisultato(), false);
+							res.add(r);
 						}
-						
-						elaboraIntervalloTemporale(truncDate, res, r, isLatenza_porta, rSommaMediaPesata);
-						
 					}
-					else {
-						res.add(r);
-					}
+	
 				}
-
 			}
 
 			if(forceUseDistribGiornaliera) {
@@ -3035,6 +3037,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				dao = this.statSettimanaleSearchDAO;
 				break;
 			}
+			if(dao==null) {
+				throw new ServiceException("DAO is null");
+			}
+			if(model==null) {
+				throw new ServiceException("Model is null");
+			}
 			return this.executeDistribuzioneSoggetto( dao,model, false, -1, -1);
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -3084,6 +3092,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				model = StatisticaSettimanale.model().STATISTICA_BASE;
 				dao = this.statSettimanaleSearchDAO;
 				break;
+			}
+			if(dao==null) {
+				throw new ServiceException("DAO is null");
+			}
+			if(model==null) {
+				throw new ServiceException("Model is null");
 			}
 			return this.executeDistribuzioneSoggetto(dao,model, true, start, limit);
 

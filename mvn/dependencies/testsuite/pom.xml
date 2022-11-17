@@ -14,6 +14,7 @@
 		<module>axis14</module>
 		<module>applicationServer</module>
 		<module>test</module>
+		<module>staticAnalysis</module>
 	</modules>
 
 	<parent>

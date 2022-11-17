@@ -307,7 +307,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		List<String> elencoGruppi = null;
 
 		AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAcc);
-		boolean asWithAllegati = apcHelper.asWithAllegatiXsd(as);
+		boolean asWithAllegati = false;
 		
 		// carico i canali
 		CanaliConfigurazione gestioneCanali = confCore.getCanaliConfigurazione(false);
@@ -322,10 +322,18 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		boolean used = false;
 		
-		IDAccordo idAccordoOLD = idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione());
+		IDAccordo idAccordoOLD = null;
+		if(as!=null) {
+			idAccordoOLD = idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione());
+		}
 
 		try {
 
+			if(as==null) {
+				throw new Exception("AccordoServizioParteComune con id '"+idAcc+"' non trovato");
+			}
+			asWithAllegati = apcHelper.asWithAllegatiXsd(as);
+			
 			// controllo se l'accordo e' utilizzato da qualche asps
 			List<AccordoServizioParteSpecifica> asps = apsCore.serviziByAccordoFilterList(idAccordoOLD);
 			used = asps != null && asps.size() > 0;
@@ -346,7 +354,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
-			this.consoleConfiguration = this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE) ? 
+			this.consoleConfiguration = (this.tipoAccordo==null || this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE)) ? 
 					this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(this.consoleOperationType, apcHelper, 
 							this.registryReader, this.configRegistryReader, idAccordoOLD)
 					: this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(this.consoleOperationType, apcHelper, 
@@ -439,7 +447,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 		propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, uriAS);
 		propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE, URLEncoder.encode( AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE + "?" + request.getQueryString(), "UTF-8"));
 		propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, this.tipoProtocollo);
-		propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, this.tipoAccordo);
+		if(this.tipoAccordo!=null) {
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, this.tipoAccordo);
+		}
 		
 		List<Parameter> listaParams = apcHelper.getTitoloApc(tipoOp, as, this.tipoAccordo, labelASTitle, null, true); 
 
@@ -1036,7 +1046,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			String newProfiloCollaborazione = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(as.getProfiloCollaborazione());
 			// controllo se profilo e' cambiato e se e' cambiato da oneway ad
 			// altro devo effettuare i controlli
-			if (!oldProfiloCollaborazione.equals(newProfiloCollaborazione) && oldProfiloCollaborazione.equals(CostantiRegistroServizi.ONEWAY)) {
+			if (!oldProfiloCollaborazione.equals(newProfiloCollaborazione) && oldProfiloCollaborazione.equals(CostantiRegistroServizi.ONEWAY.getValue())) {
 
 				ArrayList<String> nomiAzioniDaEscludere = new ArrayList<String>();
 				// imposto le azioni per il filtro

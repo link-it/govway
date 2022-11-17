@@ -1,0 +1,264 @@
+<project name="spotbugs" basedir="." default="run">
+
+	<import file="local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	
+	<!-- https://github.com/spotbugs/spotbugs -->
+	<!-- https://spotbugs.github.io/ -->
+
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${openspcoop2.lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties">
+		<classpath>
+			<pathelement location="${openspcoop2.lib}/staticAnalysis/spotbugs-ant-4.7.3.jar"/>
+		</classpath>
+	</taskdef>
+
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_run" >
+                <fileset dir="${required_lib}" >
+                        <exclude name="**/axis14/*"/>
+                        <exclude name="**/applicationServer/**/*.jar"/>
+                        <exclude name="**/swagger-codegen/*"/>
+                        <exclude name="**/*README"/>
+                        <exclude name="*.userlibraries"/>
+                </fileset>
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<!-- Find -->
+	<target name="findBugs">
+
+		<delete dir="${spotbugs.output}" />
+		<mkdir dir="${spotbugs.output}" />
+
+		<!-- Utils -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="utils"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/utils/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_utils*.jar"/>
+		</antcall>
+		<!-- GenericProject -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="generic-project"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/generic_project/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_generic-project*.jar"/>
+		</antcall>
+		<!-- Message -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="message"/>
+			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_message*.jar"/>
+		</antcall>
+		<!-- Core -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="core"/>
+			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_core*.jar"/>
+		</antcall>
+		<!-- Protocol -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="protocol"/>
+			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_protocol*.jar"/>
+		</antcall>
+		<!-- Monitor -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="monitor"/>
+			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_monitor*.jar"/>
+		</antcall>
+		<!-- Security -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="security"/>
+			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_security*.jar"/>
+		</antcall>
+		<!-- Pdd -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="pdd"/>
+			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_pdd*.jar"/>
+		</antcall>
+		<!-- Profilo AS4 -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="protocol-as4"/>
+			<param name="analyzeSrc" value="${openspcoop2}/protocolli/as4/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_as4-protocol*.jar"/>
+		</antcall>
+		<!-- Profilo ModI -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="protocol-modipa"/>
+			<param name="analyzeSrc" value="${openspcoop2}/protocolli/modipa/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_modipa-protocol*.jar"/>
+		</antcall>
+		<!-- Profilo SDI -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="protocol-sdi"/>
+			<param name="analyzeSrc" value="${openspcoop2}/protocolli/sdi/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_sdi-protocol*.jar"/>
+		</antcall>
+		<!-- Profilo SPCoop -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="protocol-spcoop"/>
+			<param name="analyzeSrc" value="${openspcoop2}/protocolli/spcoop/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_spcoop-protocol*.jar"/>
+		</antcall>
+		<!-- Profilo API Gateway -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="protocol-trasparente"/>
+			<param name="analyzeSrc" value="${openspcoop2}/protocolli/trasparente/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_trasparente-protocol*.jar"/>
+		</antcall>
+		<!-- WEB Lib audit -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="web-lib-audit"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/audit/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_web-lib-audit*.jar"/>
+		</antcall>
+		<!-- WEB Lib mvc -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="web-lib-mvc"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/mvc/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_web-lib-mvc*.jar"/>
+		</antcall>
+		<!-- WEB Lib queue -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="web-lib-queue"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/queue/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_web-lib-queue*.jar"/>
+		</antcall>
+		<!-- WEB Lib users -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="web-lib-users"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/users/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_web-lib-users*.jar"/>
+		</antcall>
+		<!-- WEB Loader -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="web-loader"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/loader/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_web-loaderConsole*.jar"/>
+		</antcall>
+		<!-- WEB Console -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="web-govwayConsole"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/control_station/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_web-govwayConsole*.jar"/>
+		</antcall>
+		<!-- WEB Monitor -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="web-govwayMonitor"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/monitor/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_web-govwayMonitor*.jar"/>
+		</antcall>
+		<!-- RS API Config -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="rs-config"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/rs/config/server/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_rs-config-server*.jar"/>
+		</antcall>
+		<!-- RS API Monitor -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="rs-monitor"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/rs/monitor/server/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_rs-monitor-server*.jar"/>
+		</antcall>
+		<!-- Batch Statistiche -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="batch-statistiche"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/batch/statistiche/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_batch-statistiche*.jar"/>
+		</antcall>
+		<!-- Batch Runtime -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="batch-runtime-repository"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/batch/runtime-repository/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_batch-runtime-repository*.jar"/>
+		</antcall>
+
+	</target>
+	<target name="_findBugs">
+
+                <if>
+                        <equals arg1="${spotbugs.home}" arg2="$${spotbugs.home}"/>
+                        <then>
+                                <fail message="Parametro 'spotbugs.home' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${spotbugs.home}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'spotbugs.home' non definito"/>
+                        </then>
+                </if>
+
+		<var name="reportFileName" value="${spotbugs.output}/spotbugs_report_${analyzeType}.xml"/>
+		<delete file="${reportFileName}"/>
+
+		<echo message="Analizzo sorgenti: ${analyzeSrc}"/>
+		<echo message="Archivi jar: ${analyzeJarDir}/${analyzeJar}"/>
+		<spotbugs home="${spotbugs.home}"
+		    output="${spotbugs.outputType}"
+		    outputFile="${reportFileName}" 
+		    effort="${spotbugs.efforts}"
+		    reportLevel="${spotbugs.confidence}"
+		    nested="${spotbugs.nested}" 
+		    failOnError="${spotbugs.failOnError}"
+		    debug="${debug}">
+			<auxClasspath refid="classpath_run" />
+			<sourcePath path="${analyzeSrc}" />
+			<fileset dir="${analyzeJarDir}" >
+                                <include name="${analyzeJar}"/>
+                        </fileset> 
+			<excludePath>
+			    <fileset dir="${spotbugs.filters}" includes="*"/>
+			</excludePath>
+		</spotbugs>
+	</target>
+
+</project>

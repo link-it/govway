@@ -444,7 +444,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				//				Soggetto soggetto = soggettiCore.getSoggettoRegistro(new IDSoggetto(servFru.getTipo(),servFru.getNome()));
 				//				profiloSoggettoFruitore = soggetto.getVersioneProtocollo();
 			}
-
+			if(soggettoFruitore==null) {
+				throw new Exception("Fruitore con id '"+idSoggettoFruitore+"' non trovato");
+			}
 
 			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(tiposervizio);
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);

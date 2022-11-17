@@ -886,11 +886,14 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					String tipoconn = null;
 					Connettore connis = is.getConnettore();
 					if (endpointtype == null) {
-						if ((connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString())) {
+						if ((connis!=null && connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString())) {
 							endpointtype = TipiConnettore.CUSTOM.toString();
 							tipoconn = connis.getTipo();
-						} else
-							endpointtype = connis.getTipo();
+						} else {
+							if(connis!=null) {
+								endpointtype = connis.getTipo();
+							}
+						}
 					}
 					if(endpointtype==null){
 						endpointtype=TipiConnettore.DISABILITATO.toString();
@@ -1061,7 +1064,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					
 					String autenticazioneHttp = saHelper.getAutenticazioneHttp(null, endpointtype, user);
 					
-					List<Property> cp = connis.getPropertyList();
+					List<Property> cp = connis!=null ? connis.getPropertyList() : null;
 					String url = null;
 					String nomeCodaJMS = null;
 					String tipoCodaJMS = null;
@@ -1070,46 +1073,48 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					String initcont = null;
 					String urlpgk = null;
 					String provurl = null;
-					for (int i = 0; i < connis.sizePropertyList(); i++) {
-						Property singlecp = cp.get(i);
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_HTTP_LOCATION)) {
-							if (url == null) {
-								url = singlecp.getValore();
+					if(connis!=null) {
+						for (int i = 0; i < connis.sizePropertyList(); i++) {
+							Property singlecp = cp.get(i);
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_HTTP_LOCATION)) {
+								if (url == null) {
+									url = singlecp.getValore();
+								}
 							}
-						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_NOME)) {
-							if (nomeCodaJMS == null) {
-								nomeCodaJMS = singlecp.getValore();
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_NOME)) {
+								if (nomeCodaJMS == null) {
+									nomeCodaJMS = singlecp.getValore();
+								}
 							}
-						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_TIPO)) {
-							if (tipoCodaJMS == null) {
-								tipoCodaJMS = singlecp.getValore();
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_TIPO)) {
+								if (tipoCodaJMS == null) {
+									tipoCodaJMS = singlecp.getValore();
+								}
 							}
-						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY)) {
-							if (connfact == null) {
-								connfact = singlecp.getValore();
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY)) {
+								if (connfact == null) {
+									connfact = singlecp.getValore();
+								}
 							}
-						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_SEND_AS)) {
-							if (sendas == null) {
-								sendas = singlecp.getValore();
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_SEND_AS)) {
+								if (sendas == null) {
+									sendas = singlecp.getValore();
+								}
 							}
-						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL)) {
-							if (initcont == null) {
-								initcont = singlecp.getValore();
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL)) {
+								if (initcont == null) {
+									initcont = singlecp.getValore();
+								}
 							}
-						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG)) {
-							if (urlpgk == null) {
-								urlpgk = singlecp.getValore();
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG)) {
+								if (urlpgk == null) {
+									urlpgk = singlecp.getValore();
+								}
 							}
-						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL)) {
-							if (provurl == null) {
-								provurl = singlecp.getValore();
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL)) {
+								if (provurl == null) {
+									provurl = singlecp.getValore();
+								}
 							}
 						}
 					}
@@ -1134,7 +1139,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					String httpsTrustStoreCRLs = null;
 					boolean httpsstato = false;
 					String httpskeystore = null;
-					if (httpstipologia == null) {
+					if (httpstipologia == null && props!=null) {
 						httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
 						httpstipologia = props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE);
 						httpshostverifyS = props.get(CostantiDB.CONNETTORE_HTTPS_HOSTNAME_VERIFIER);
@@ -1244,7 +1249,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						
 					}
 					
-					Boolean isConnettoreCustomUltimaImmagineSalvata = connis.getCustom();
+					Boolean isConnettoreCustomUltimaImmagineSalvata = connis!=null ? connis.getCustom() : null;
 					
 					Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 					
