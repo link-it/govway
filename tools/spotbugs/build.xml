@@ -1,4 +1,4 @@
-<project name="spotbugs" basedir="." default="run">
+<project name="spotbugs" basedir="." default="findBugs">
 
 	<import file="local_env.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
@@ -237,43 +237,64 @@
                         </then>
                 </if>
 
-		<var name="_spotBugsEfforts" value="${spotbugs.efforts}"/>
                 <if>
-			<and>
-	                        <equals arg1="${jenkins}" arg2="true"/>
-				<equals arg1="${analyzeType}" arg2="web-govwayConsole"/>
-			</and>
+                        <equals arg1="${spotbugs.skipPackages}" arg2="$${spotbugs.skipPackages}"/>
                         <then>
-			       <echo message="WARN: imposto efforts=default per ambiente jenkins per console di gestione" />
-                               <var name="_spotBugsEfforts" value="default"/>
+				<var name="_spotBugsExecute" value="true"/>                                
                         </then>
+			<else>
+				<condition property="_spotBugsExecute" value="false" else="true">
+					<contains string="${spotbugs.skipPackages}" substring="${analyzeType}"/>
+				</condition>	
+			</else>
                 </if>
 
-		<var name="reportFileName" value="${spotbugs.output}/spotbugs_report_${analyzeType}.xml"/>
-		<delete file="${reportFileName}"/>
+                <if>
+                        <equals arg1="${_spotBugsExecute}" arg2="true"/>
+                        <then>
 
-		<echo message="Analizzo sorgenti: ${analyzeSrc}"/>
-		<echo message="Archivi jar: ${analyzeJarDir}/${analyzeJar}"/>
-		<echo message="Effort: ${_spotBugsEfforts}"/>
-		<spotbugs home="${spotbugs.home}"
-		    output="${spotbugs.outputType}"
-		    outputFile="${reportFileName}" 
-		    effort="${_spotBugsEfforts}"
-		    reportLevel="${spotbugs.confidence}"
-		    nested="${spotbugs.nested}" 
-		    failOnError="${spotbugs.failOnError}"
-                    timeout="${spotbugs.timeout}"
-                    jvmargs="${spotbugs.jvmargs}"
-		    debug="${debug}">
-			<auxClasspath refid="classpath_run" />
-			<sourcePath path="${analyzeSrc}" />
-			<fileset dir="${analyzeJarDir}" >
-                                <include name="${analyzeJar}"/>
-                        </fileset> 
-			<excludePath>
-			    <fileset dir="${spotbugs.filters}" includes="*"/>
-			</excludePath>
-		</spotbugs>
+				<var name="_spotBugsEfforts" value="${spotbugs.efforts}"/>
+				<if>
+					<and>
+					        <equals arg1="${jenkins}" arg2="true"/>
+						<equals arg1="${analyzeType}" arg2="web-govwayConsole"/>
+					</and>
+				        <then>
+					       <echo message="WARN: imposto efforts=default per ambiente jenkins per console di gestione" />
+				               <var name="_spotBugsEfforts" value="default"/>
+				        </then>
+				</if>
+
+				<var name="reportFileName" value="${spotbugs.output}/spotbugs_report_${analyzeType}.xml"/>
+				<delete file="${reportFileName}"/>
+
+				<echo message="Analizzo sorgenti: ${analyzeSrc}"/>
+				<echo message="Archivi jar: ${analyzeJarDir}/${analyzeJar}"/>
+				<echo message="Effort: ${_spotBugsEfforts}"/>
+				<spotbugs home="${spotbugs.home}"
+				    output="${spotbugs.outputType}"
+				    outputFile="${reportFileName}" 
+				    effort="${_spotBugsEfforts}"
+				    reportLevel="${spotbugs.confidence}"
+				    nested="${spotbugs.nested}" 
+				    failOnError="${spotbugs.failOnError}"
+				    timeout="${spotbugs.timeout}"
+				    jvmargs="${spotbugs.jvmargs}"
+				    debug="${debug}">
+					<auxClasspath refid="classpath_run" />
+					<sourcePath path="${analyzeSrc}" />
+					<fileset dir="${analyzeJarDir}" >
+				                <include name="${analyzeJar}"/>
+				        </fileset> 
+					<excludePath>
+					    <fileset dir="${spotbugs.filters}" includes="*"/>
+					</excludePath>
+				</spotbugs>
+			 </then>
+			<else>
+				<echo message="WARN: skip analysis for '${analyzeType}'" />
+			</else>
+                </if>
 	</target>
 
 </project>
