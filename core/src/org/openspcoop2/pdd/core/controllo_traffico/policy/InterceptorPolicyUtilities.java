@@ -524,7 +524,7 @@ public class InterceptorPolicyUtilities {
 
 				}
 				
-				if(!ruoloSoggetto & !ruoloApplicativo && datiTransazione.getIdServizioApplicativoToken()!=null) {
+				if(!ruoloSoggetto && !ruoloApplicativo && datiTransazione.getIdServizioApplicativoToken()!=null) {
 						
 					if(policyGlobale || TipoPdD.APPLICATIVA.equals(datiTransazione.getTipoPdD())){
 						RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);

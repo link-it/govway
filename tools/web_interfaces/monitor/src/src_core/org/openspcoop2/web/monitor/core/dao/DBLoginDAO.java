@@ -28,8 +28,6 @@ import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
 import org.openspcoop2.core.config.Configurazione;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -304,7 +302,7 @@ public class DBLoginDAO implements ILoginDAO {
 	public Configurazione readConfigurazioneGenerale() throws ServiceException {
 		try {
 			return this.driverConfigDB.getConfigurazioneGenerale();
-		} catch (DriverConfigurazioneException | DriverConfigurazioneNotFound e) {
+		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new ServiceException(e); 
 		}

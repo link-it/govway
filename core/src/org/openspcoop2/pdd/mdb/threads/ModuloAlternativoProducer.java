@@ -412,7 +412,7 @@ public class ModuloAlternativoProducer implements IProducer {
 						ps3.setString(1, id_messaggi.get(i).getIdMessaggio());
 						ps3.setString(2, id_messaggi.get(i).getTipo());
 						ps3.executeUpdate();
-						System.out.print(this.ID_MODULO + "set sched=1 al msg: " + id_messaggi.get(i).getIdMessaggio() + " | " + id_messaggi.get(i).getTipo() + ".......");
+						System.out.print(this.ID_MODULO + "set sched=1 al msg: " + id_messaggi.get(i).getIdMessaggio() + " - " + id_messaggi.get(i).getTipo() + ".......");
 					}catch (SQLException e1) {
 						this.log.error(this.ID_MODULO +": SqlExecption, eseguo rollback " + e1);
 						connectionDB.rollback();

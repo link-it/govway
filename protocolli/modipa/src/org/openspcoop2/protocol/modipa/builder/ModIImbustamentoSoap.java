@@ -660,9 +660,9 @@ public class ModIImbustamentoSoap {
 		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION, SecurityConstants.FALSE); // lo faccio globalmente!
 		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_SEND_KEY_VALUE, SecurityConstants.FALSE); // lo faccio globalmente!
 		
-		//       410 | signatureDigestAlgorithm                                                       | http://www.w3.org/2001/04/xmlenc#sha256           | 360
-		//       410 | signatureC14nAlgorithmExclusive                                                | http://www.w3.org/2001/10/xml-exc-c14n#           | 371
-		//      410 | signatureAlgorithm                                                             | http://www.w3.org/2001/04/xmldsig-more#rsa-sha256 | 374
+		//       410 - signatureDigestAlgorithm                                                       - http://www.w3.org/2001/04/xmlenc#sha256           - 360
+		//       410 - signatureC14nAlgorithmExclusive                                                - http://www.w3.org/2001/10/xml-exc-c14n#           - 371
+		//      410 - signatureAlgorithm                                                             - http://www.w3.org/2001/04/xmldsig-more#rsa-sha256 - 374
 
 		
 		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_20);

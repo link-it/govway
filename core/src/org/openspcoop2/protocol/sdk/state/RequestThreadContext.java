@@ -30,7 +30,13 @@ import org.slf4j.Logger;
  */
 public class RequestThreadContext {
 
-	public static Logger log = null;
+	private static Logger log = null;
+	public static synchronized void setLog(Logger log) {
+		if(RequestThreadContext.log==null) {
+			RequestThreadContext.log = log;
+		}
+	}
+
 	private static final ThreadLocal<RequestThreadContext> transactionContext_threadLocal =  new ThreadLocal<RequestThreadContext>() {
 		 @Override
 		 protected RequestThreadContext initialValue() {

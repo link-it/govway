@@ -1301,7 +1301,7 @@ public class ConfigurazioniCsvExporter {
 		// colonne servizio applicativo e relativo connettore
 		if(dettaglioSA != null) {
 			ServizioApplicativo saOp2 = dettaglioSA.getSaOp2();
-			// colonne del servizio applicativo NOME | MESSAGE BOX | SBUSTAMENTO SOAP | SBUSTAMENTO PROTOCOLLO
+			// colonne del servizio applicativo NOME - MESSAGE BOX - SBUSTAMENTO SOAP - SBUSTAMENTO PROTOCOLLO
 //			if(StringUtils.isNotEmpty(saOp2.getNome()))
 //				oneLine.add(saOp2.getNome());
 //			else 

@@ -18460,7 +18460,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					try {
 						Paths.get(dirArchivio);
-				    } catch (InvalidPathException | NullPointerException ex) {
+				    } catch (InvalidPathException ex) {
+				    	this.pd.setMessage("Il valore indicato nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DIR_ARCHIVIO+"' non rappresenta un path valido.");
+						return false;
+				    } catch (NullPointerException ex) {
 				    	this.pd.setMessage("Il valore indicato nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DIR_ARCHIVIO+"' non rappresenta un path valido.");
 						return false;
 				    }

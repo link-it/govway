@@ -5347,7 +5347,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			
 			// Ordine Colonne: 
-			// Nome | [AccordoCooperazione] |ServiceBinding | Stato | Risorse | Servizi | Azioni | Erogatori | [Componenti] |Allegati
+			// Nome - [AccordoCooperazione]  - ServiceBinding - Stato - Risorse - Servizi - Azioni - Erogatori - [Componenti] - Allegati
 
 			Boolean gestioneInfoProtocollo = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
 			Boolean showAccordiAzioni = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);

@@ -182,49 +182,49 @@ public class ArchiviExporter extends HttpServlet {
 				cascadeConfig = exportModeObject.getCascade();
 				
 				if(archiviCore.isExportArchive_servizi_standard()==false){
-					if(cascadePdd!=null & !"".equals(cascadePdd)){
+					if(cascadePdd!=null && !"".equals(cascadePdd)){
 						cascadeConfig.setCascadePdd(ServletUtils.isCheckBoxEnabled(cascadePdd));
 					}
 					
-					if(cascadeGruppi!=null & !"".equals(cascadeGruppi)){
+					if(cascadeGruppi!=null && !"".equals(cascadeGruppi)){
 						cascadeConfig.setCascadeGruppi(ServletUtils.isCheckBoxEnabled(cascadeGruppi));
 					}
 					
-					if(cascadeRuoli!=null & !"".equals(cascadeRuoli)){
+					if(cascadeRuoli!=null && !"".equals(cascadeRuoli)){
 						cascadeConfig.setCascadeRuoli(ServletUtils.isCheckBoxEnabled(cascadeRuoli));
 					}
 					
-					if(cascadeScope!=null & !"".equals(cascadeScope)){
+					if(cascadeScope!=null && !"".equals(cascadeScope)){
 						cascadeConfig.setCascadeScope(ServletUtils.isCheckBoxEnabled(cascadeScope));
 					}
 					
-					if(cascadeSoggetti!=null & !"".equals(cascadeSoggetti)){
+					if(cascadeSoggetti!=null && !"".equals(cascadeSoggetti)){
 						cascadeConfig.setCascadeSoggetti(ServletUtils.isCheckBoxEnabled(cascadeSoggetti));
 					}
 					
-					if(cascadeServiziApplicativi!=null & !"".equals(cascadeServiziApplicativi)){
+					if(cascadeServiziApplicativi!=null && !"".equals(cascadeServiziApplicativi)){
 						cascadeConfig.setCascadeServiziApplicativi(ServletUtils.isCheckBoxEnabled(cascadeServiziApplicativi));
 					}
-					if(cascadePorteDelegate!=null & !"".equals(cascadePorteDelegate)){
+					if(cascadePorteDelegate!=null && !"".equals(cascadePorteDelegate)){
 						cascadeConfig.setCascadePorteDelegate(ServletUtils.isCheckBoxEnabled(cascadePorteDelegate));
 					}
-					if(cascadePorteApplicative!=null & !"".equals(cascadePorteApplicative)){
+					if(cascadePorteApplicative!=null && !"".equals(cascadePorteApplicative)){
 						cascadeConfig.setCascadePorteApplicative(ServletUtils.isCheckBoxEnabled(cascadePorteApplicative));
 					}
 					
-					if(cascadeAccordiCooperazione!=null & !"".equals(cascadeAccordiCooperazione)){
+					if(cascadeAccordiCooperazione!=null && !"".equals(cascadeAccordiCooperazione)){
 						cascadeConfig.setCascadeAccordoCooperazione(ServletUtils.isCheckBoxEnabled(cascadeAccordiCooperazione));
 					}
-					if(cascadeAccordiServizioParteComune!=null & !"".equals(cascadeAccordiServizioParteComune)){
+					if(cascadeAccordiServizioParteComune!=null && !"".equals(cascadeAccordiServizioParteComune)){
 						cascadeConfig.setCascadeAccordoServizioParteComune(ServletUtils.isCheckBoxEnabled(cascadeAccordiServizioParteComune));
 					}
-					if(cascadeAccordiServizioComposto!=null & !"".equals(cascadeAccordiServizioComposto)){
+					if(cascadeAccordiServizioComposto!=null && !"".equals(cascadeAccordiServizioComposto)){
 						cascadeConfig.setCascadeAccordoServizioComposto(ServletUtils.isCheckBoxEnabled(cascadeAccordiServizioComposto));
 					}
-					if(cascadeAccordiServizioParteSpecifica!=null & !"".equals(cascadeAccordiServizioParteSpecifica)){
+					if(cascadeAccordiServizioParteSpecifica!=null && !"".equals(cascadeAccordiServizioParteSpecifica)){
 						cascadeConfig.setCascadeAccordoServizioParteSpecifica(ServletUtils.isCheckBoxEnabled(cascadeAccordiServizioParteSpecifica));
 					}
-					if(cascadeFruizioni!=null & !"".equals(cascadeFruizioni)){
+					if(cascadeFruizioni!=null && !"".equals(cascadeFruizioni)){
 						cascadeConfig.setCascadeFruizioni(ServletUtils.isCheckBoxEnabled(cascadeFruizioni));
 					}
 				}

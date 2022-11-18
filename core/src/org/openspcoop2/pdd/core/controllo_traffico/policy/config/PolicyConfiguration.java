@@ -76,14 +76,14 @@ public class PolicyConfiguration extends AbstractPolicyConfiguration implements 
 		case LOCAL:
 			break;
 		case LOCAL_DIVIDED_BY_NODES:
-			if(this.LOCAL_DIVIDED_BY_NODES_remaining_zeroValue==null) {
-				this.LOCAL_DIVIDED_BY_NODES_remaining_zeroValue = op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_remaining_zeroValue();
+			if(this._getLOCAL_DIVIDED_BY_NODES_remaining_zeroValue()==null) {
+				this.setLOCAL_DIVIDED_BY_NODES_remaining_zeroValue(op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_remaining_zeroValue());
 			}
-			if(this.LOCAL_DIVIDED_BY_NODES_limit_roundingDown==null) {
-				this.LOCAL_DIVIDED_BY_NODES_limit_roundingDown = op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_roundingDown();
+			if(this._getLOCAL_DIVIDED_BY_NODES_limit_roundingDown()==null) {
+				this.setLOCAL_DIVIDED_BY_NODES_limit_roundingDown(op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_roundingDown());
 			}
-			if(this.LOCAL_DIVIDED_BY_NODES_limit_normalizedQuota==null) {
-				this.LOCAL_DIVIDED_BY_NODES_limit_normalizedQuota = op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_normalizedQuota();
+			if(this._getLOCAL_DIVIDED_BY_NODES_limit_normalizedQuota()==null) {
+				this.setLOCAL_DIVIDED_BY_NODES_limit_normalizedQuota(op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_normalizedQuota());
 			}
 			break;
 		case DATABASE:

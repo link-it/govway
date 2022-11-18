@@ -23,7 +23,7 @@ Per creare una tag version:
 
 7. Inserire la corretta versione (con suffisso rc o beta se serve) nei files doc resources/doc/src/manuali/conf.py e resources/doc/src/releaseNotes/conf.py
 
-8. (PVersion) Eseguire i test di verifica JavaDoc, GPL, XSD e StringBuffer.
+8. (PVersion) Eseguire i test di verifica JavaDoc, GPL, StringBuffer, Hashtable, Vector, NonShortCircuitLogic.
 
 9. (PVersion) Sistemare file distrib/distrib.sh indicando la corretta versione compresa di suffissi 'rc' o 'beta'
    - verificare che la compilazione su readthedocs funzioni correttamente

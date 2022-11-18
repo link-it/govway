@@ -75,8 +75,6 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.OperationSintetica;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
@@ -488,7 +486,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 						ret.addItemsItem(ErogazioniApiHelper
 								.fruizioneViewItemToFruizioneItem(ErogazioniApiHelper.aspsToFruizioneViewItem(env, asps, idFruitore)));
 
-					} catch (DriverRegistroServiziNotFound | DriverRegistroServiziException e) {
+					} catch (Exception e) {
 						// Cosa fare in questi casi? Errore interno perchè il fruitore deve essere
 						// necessariamente presente
 						// dato che l'erogazione l'abbiamo appena presa dal db?

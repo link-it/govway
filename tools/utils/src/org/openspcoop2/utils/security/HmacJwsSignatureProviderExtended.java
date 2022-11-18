@@ -83,7 +83,9 @@ public class HmacJwsSignatureProviderExtended extends org.apache.cxf.rs.security
         	else {
         		mac.init(this.secretKey.getSecretKey(), this.hmacSpec);
         	}
-        } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
+        } catch (InvalidKeyException e) {
+            throw new SecurityException(e);
+        } catch (InvalidAlgorithmParameterException e) {
             throw new SecurityException(e);
         }
         

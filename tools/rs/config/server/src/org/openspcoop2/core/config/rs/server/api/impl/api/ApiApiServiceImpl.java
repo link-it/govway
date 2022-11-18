@@ -76,8 +76,6 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
@@ -1297,7 +1295,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			ApiAllegato ret = as.getAllegatoList().stream().filter(a -> nomeAllegato.equals(a.getFile())).map(a -> {
 				try {
 					return ApiApiHelper.documentoToApiAllegato(env.archiviCore.getDocumento(a.getId(), true));
-				} catch (DriverRegistroServiziException | DriverRegistroServiziNotFound e) {
+				} catch (Exception e) {
 					return null;
 				}
 			}).findFirst().orElse(null);
@@ -1306,7 +1304,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				ret = as.getSpecificaSemiformaleList().stream().filter(a -> nomeAllegato.equals(a.getFile())).map(a -> {
 					try {
 						return ApiApiHelper.documentoToApiAllegato(env.archiviCore.getDocumento(a.getId(), true));
-					} catch (DriverRegistroServiziException | DriverRegistroServiziNotFound e) {
+					} catch (Exception e) {
 						return null;
 					}
 				}).findFirst().orElse(null);

@@ -2192,7 +2192,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 			
 			if (!connettore &&
-					credenzialiToken &
+					credenzialiToken &&
 					(
 							ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(tipoauth)
 							||

@@ -4161,7 +4161,7 @@ public class DriverConfigurazioneDB_LIB {
 				// creo i connettori, ma disabilitati
 
 				// connettore risp
-				//il nome del connettore deve essere univoco Connettore[RISP | INV]_nomeSA+tipoSoggetto+nomeSoggetto
+				//il nome del connettore deve essere univoco Connettore[RISP o INV]_nomeSA+tipoSoggetto+nomeSoggetto
 				connettoreRisp = new Connettore();
 				connettoreRisp.setNome("ConnettoreRISP_" + aSA.getNome()+"_"+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario());
 				connettoreRisp.setTipo(TipiConnettore.DISABILITATO.getNome());

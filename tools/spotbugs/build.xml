@@ -237,18 +237,33 @@
                         </then>
                 </if>
 
+		<var name="_spotBugsEfforts" value="${spotbugs.efforts}"/>
+                <if>
+			<and>
+	                        <equals arg1="${jenkins}" arg2="true"/>
+				<equals arg1="${analyzeType}" arg2="web-govwayConsole"/>
+			</and>
+                        <then>
+			       <echo message="WARN: imposto efforts=default per ambiente jenkins per console di gestione" />
+                               <var name="_spotBugsEfforts" value="default"/>
+                        </then>
+                </if>
+
 		<var name="reportFileName" value="${spotbugs.output}/spotbugs_report_${analyzeType}.xml"/>
 		<delete file="${reportFileName}"/>
 
 		<echo message="Analizzo sorgenti: ${analyzeSrc}"/>
 		<echo message="Archivi jar: ${analyzeJarDir}/${analyzeJar}"/>
+		<echo message="Effort: ${_spotBugsEfforts}"/>
 		<spotbugs home="${spotbugs.home}"
 		    output="${spotbugs.outputType}"
 		    outputFile="${reportFileName}" 
-		    effort="${spotbugs.efforts}"
+		    effort="${_spotBugsEfforts}"
 		    reportLevel="${spotbugs.confidence}"
 		    nested="${spotbugs.nested}" 
 		    failOnError="${spotbugs.failOnError}"
+                    timeout="${spotbugs.timeout}"
+                    jvmargs="${spotbugs.jvmargs}"
 		    debug="${debug}">
 			<auxClasspath refid="classpath_run" />
 			<sourcePath path="${analyzeSrc}" />

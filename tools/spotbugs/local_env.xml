@@ -27,6 +27,16 @@
 	<property name="spotbugs.failOnError" value="true" />
 	<!-- It specifies a path containing filters specifying bugs to exclude from being reported -->
 	<property name="spotbugs.filters" value="filters" />
+	<!-- 
+		It specifies the amount of time, in milliseconds, that the Java process executing SpotBugs may run before it is assumed to be hung and is terminated. 
+		The default is 600,000 milliseconds, which is ten minutes. Note that for very large programs, SpotBugs may require more than ten minutes to complete its analysis. 
+	-->
+	<property name="spotbugs.timeout" value="600000" />
+	<!-- 
+		It specifies any arguments that should be passed to the Java virtual machine used to run SpotBugs. 
+		You may need to use this attribute to specify flags to increase the amount of memory the JVM may use if you are analyzing a very large program. 
+	-->
+	<property name="spotbugs.jvmargs" value="" />
 	<!--  
 		It specifies the output format. 
 		If set to "xml" (the default), output is in XML format. 

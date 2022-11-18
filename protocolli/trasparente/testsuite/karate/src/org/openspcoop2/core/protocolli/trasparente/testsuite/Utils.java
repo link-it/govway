@@ -115,7 +115,9 @@ public class Utils {
 		try {
 			doc = docBuilder.parse(is);
 			return doc.getDocumentElement();
-		} catch (SAXException | IOException e) {
+		} catch (SAXException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

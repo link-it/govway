@@ -208,7 +208,7 @@ public class RequestBuilder {
 
 	public static HttpRequest buildSoapRequest(String erogazione, String azione, String soapAction, String contentTypeSoap, String body) {
 		// nel soap 1.1 l'azione è specifica nello header SOAPAction
-		// versioneSoap =[ HttpConstants.CONTENT_TYPE_SOAP_1_1; |  HttpConstants.CONTENT_TYPE_SOAP_1_2 ]
+		// versioneSoap =[ HttpConstants.CONTENT_TYPE_SOAP_1_1; o  HttpConstants.CONTENT_TYPE_SOAP_1_2 ]
 				
 		if (contentTypeSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {	
 			String content = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +  

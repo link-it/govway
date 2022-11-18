@@ -28,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -250,9 +249,9 @@ import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
-import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
@@ -14489,16 +14488,15 @@ public class ConsoleHelper implements IConsoleHelper {
 		}catch(UserInputValidationException e) {
 			this.pd.setMessage(e.getMessage());  
 			return false;
-		}catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione, impossibile caricare il plugin di validazione previsto dalla configurazione"); 
-			return false;		
 		} catch(ProviderException e) {
 			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione, impossibile utilizzare il plugin di validazione previsto dalla configurazione"); 
 			return false;
 		} catch(ProviderValidationException e) {
 			this.pd.setMessage(e.getMessage());  
 			return false;
+		} catch (Throwable e) {
+			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione, impossibile caricare il plugin di validazione previsto dalla configurazione"); 
+			return false;		
 		}
 	}
 	

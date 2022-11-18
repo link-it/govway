@@ -710,7 +710,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				OpenSPCoop2Startup.log.info("Il logger utilizzato nel package '"+com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN+"' e' stato disabilitato");
 			}
 			
-			RequestThreadContext.log = OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori();
+			RequestThreadContext.setLog(OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori());
 
 			
 			

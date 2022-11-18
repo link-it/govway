@@ -193,7 +193,7 @@ public abstract class ModuloAlternativoWorker implements IWorker {
 				ps.setString(3, this.ide.getTipo());
 				ps.executeUpdate();
 				connectionDB.commit();
-				System.out.println(this.ID_MODULO + "Lib eseguita correttamente, rimetto scheduling a 0 per il messaggio: " + this.ide.getIdMessaggio()  + " | "+ this.ide.getTipo());
+				System.out.println(this.ID_MODULO + "Lib eseguita correttamente, rimetto scheduling a 0 per il messaggio: " + this.ide.getIdMessaggio()  + " - "+ this.ide.getTipo());
 			 */
 				
 				
@@ -245,7 +245,7 @@ public abstract class ModuloAlternativoWorker implements IWorker {
 				ps.executeUpdate();
 				connectionDB.commit();
 				System.out.println(this.ID_MODULO + ".gestisciNOK: chiamata alla libreria dell'MDB fallita " +
-						"rimetto scheduling a 0 per il messaggio: " + this.ide.getIdMessaggio()  + " | "+ this.ide.getTipo() +		
+						"rimetto scheduling a 0 per il messaggio: " + this.ide.getIdMessaggio()  + " - "+ this.ide.getTipo() +		
 						 " settato redelivery_delay a: " + ts);
 			
 			}catch (Exception e) {

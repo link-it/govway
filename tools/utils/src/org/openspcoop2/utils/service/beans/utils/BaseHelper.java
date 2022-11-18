@@ -215,7 +215,7 @@ public class BaseHelper {
 	}
 	
 	/**
-	 * Questa funzione completa la deserializzazione di un oggetto jaxrs che arriva nella Api come una LinkedHashMap&lt;String, String | LinkedHashMap&lt;String, etc..&gt;&gt;
+	 * Questa funzione completa la deserializzazione di un oggetto jaxrs che arriva nella Api come una LinkedHashMap&lt;String, String or LinkedHashMap&lt;String, etc..&gt;&gt;
 	 * 
 	 * Da notare che questo metodo sebbene generico per i fini di govway, non è da considerare un metodo valido di deserializzazione da una linkedHashmap, rappresentazione
 	 * di un json, in un oggetto destinazione.
@@ -279,8 +279,14 @@ public class BaseHelper {
 					BeanUtils.setProperty(toFill, k, v);
 				}
 				
-			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
-				throw new RuntimeException(e); 	//TODO: log
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e); 	
+			} catch (InvocationTargetException e) {
+				throw new RuntimeException(e); 	
+			} catch (NoSuchMethodException  e) {
+				throw new RuntimeException(e); 
+			} catch (InstantiationException e) {
+				throw new RuntimeException(e);
 			}
 		});
 		

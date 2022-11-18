@@ -493,7 +493,7 @@ public class LoginBean extends AbstractLoginBean {
 			if(this.salvaModificheProfiloSuDB) {
 				this.loginDao.salvaModalita(this.getLoggedUser().getUtente());
 			}
-		} catch (NotFoundException | ServiceException e) {
+		} catch (Exception e) {
 			String errorMessage = "Si e' verificato un errore durante il cambio della modalita', si prega di riprovare piu' tardi.";
 			this.log.error(e.getMessage(),e);
 			MessageUtils.addErrorMsg(errorMessage);
@@ -762,7 +762,7 @@ public class LoginBean extends AbstractLoginBean {
 			if(this.salvaModificheProfiloSuDB) {
 				this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
 			}
-		} catch (NotFoundException | ServiceException e) {
+		} catch (Exception e) {
 			String errorMessage = "Si e' verificato un errore durante il cambio del soggetto, si prega di riprovare piu' tardi.";
 			this.log.error(e.getMessage(),e);
 			MessageUtils.addErrorMsg(errorMessage);
@@ -789,7 +789,7 @@ public class LoginBean extends AbstractLoginBean {
 			if(this.salvaModificheProfiloSuDB) {
 				this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
 			}
-		} catch (NotFoundException | ServiceException e) {
+		} catch (Exception e) {
 			String errorMessage = "Si e' verificato un errore durante il cambio del soggetto, si prega di riprovare piu' tardi.";
 			this.log.error(e.getMessage(),e);
 			MessageUtils.addErrorMsg(errorMessage);

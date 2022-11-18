@@ -1266,7 +1266,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 		try {
 		
-			// Method & path
+			// Method e path
 		    final DefaultRequest.Builder builder = new DefaultRequest.Builder(
 		    		urlInvocazione,
 		    		Request.Method.getMethod(method));

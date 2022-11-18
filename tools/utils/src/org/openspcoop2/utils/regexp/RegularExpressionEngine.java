@@ -303,7 +303,7 @@ public class RegularExpressionEngine {
 	    Esempio2: pattern che restituisce il valore di un parametro sapendo il nome
 	    .+secondopar=([^&]*).*
 	    .* un qualsiasi numero di caratteri anche 0 seguito dalla parola secondopar=.
-	    La Parte successiva tra parentesi sara la sottostringa restituita, composta dai caratteri che seguono secondopar= fino a quando non trova un & che e' il carattere che delimita il valore del parametro dal successivo parametro
+	    La Parte successiva tra parentesi sara la sottostringa restituita, composta dai caratteri che seguono secondopar= fino a quando non trova un '&' che e' il carattere che delimita il valore del parametro dal successivo parametro
 	
 	    N.B.
 	    &amp; -> &

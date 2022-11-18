@@ -1225,8 +1225,8 @@ public class ExpressionImpl implements IExpression {
 				newConjunctionExpr.addExpression(this.expressionEngine);
 			}else{
 				// se e' una congiunzione verifico che al suo interno vi siano solo semplici operazioni e non altre congiunzioni e che l'operatore utilizzato sia quello di default.
-				// se cosi' e' evito di creare una struttura simile alla seguente: ((A & B) & C)
-				// Preferisco invece ricreare un nuovo oggetto equivalente: A & B & C
+				// se cosi' e' evito di creare una struttura simile alla seguente: ((A and B) and C)
+				// Preferisco invece ricreare un nuovo oggetto equivalente: A and B and C
 				boolean simpleConjunction = true;
 				ConjunctionExpressionImpl cTest = (ConjunctionExpressionImpl) this.expressionEngine;
 				if(cTest.isAndConjunction() != this.andLogicOperator){

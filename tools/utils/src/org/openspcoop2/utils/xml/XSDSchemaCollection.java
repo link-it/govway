@@ -281,7 +281,7 @@ public class XSDSchemaCollection {
 			dir.delete();
 			boolean dirCreate = dir.mkdir();
 			//System.out.println("FILE?["+dir.getAbsolutePath()+"] ["+dirCreate+"] ["+dir.isDirectory()+"]");
-			dirCreate = dirCreate & dir.isDirectory();
+			dirCreate = dirCreate && dir.isDirectory();
 			//System.out.println("DIR CREATE ["+dirCreate+"]");
 			
 			// Provo a registrare lo schema principale

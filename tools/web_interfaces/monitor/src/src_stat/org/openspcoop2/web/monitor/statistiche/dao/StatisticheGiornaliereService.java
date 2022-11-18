@@ -81,7 +81,6 @@ import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
-import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
@@ -7738,7 +7737,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expr.sortOrder(SortOrder.ASC).addOrder(modelContenuti.RISORSA_VALORE);
 			}
 
-		}  catch (ExpressionNotImplementedException | NotImplementedException e) {
+		} catch (ExpressionNotImplementedException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (NotImplementedException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (UtilsException e) {
@@ -8196,7 +8198,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expr.sortOrder(SortOrder.ASC).addOrder(model.DATA,SortOrder.ASC).addOrder(modelContenuti.RISORSA_VALORE,SortOrder.ASC); 
 			}
 
-		}  catch (ExpressionNotImplementedException | NotImplementedException e) {
+		} catch (ExpressionNotImplementedException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (NotImplementedException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
@@ -9080,7 +9085,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 		} catch (NotFoundException e) {
 			StatisticheGiornaliereService	.log.debug(e.getMessage(), e);
-		}  catch (NumberFormatException | ServiceException | MultipleResultException | NotImplementedException e) {
+		} catch (Exception e) {
 			StatisticheGiornaliereService	.log.error(e.getMessage(), e);
 		}
 		
