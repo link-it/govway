@@ -62,16 +62,16 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
     Verranno analizzati i sorgenti di tutti gli archivi jar prodotti con la compilazione descritta al punto 2.2.
     Un report viene prodotto nella directory 'spotbugs-reports'
 
-    Gli identificativi dei package analizzati sono i seguenti: 
-    - core runtime di GovWay: utils, generic-project, message, core, protocol, monitor, security, pdd
-    - profili di interoperabiltà: protocol-as4, protocol-modipa, protocol-sdi, protocol-spcoop, protocol-trasparente
-    - console web: web-lib-audit, web-lib-mvc, web-lib-queue, web-lib-users, web-loader, web-govwayConsole, web-govwayMonitor
-    - api di configurazione e monitoraggio: rs-config, rs-monitor
-    - batch: batch-statistiche, batch-runtime-repository
+    Gli identificativi dei package analizzati sono classificati come segue: 
+    - runtime di GovWay: utils, generic-project, message, core, protocol, monitor, security, pdd;
+    - profili di interoperabiltà: protocol-as4, protocol-modipa, protocol-sdi, protocol-spcoop, protocol-trasparente;
+    - console web: web-lib-audit, web-lib-mvc, web-lib-queue, web-lib-users, web-loader, web-govwayConsole, web-govwayMonitor;
+    - api di configurazione e monitoraggio: rs-config, rs-monitor;
+    - batch: batch-statistiche, batch-runtime-repository.
 
     Per evitare la verifica di alcuni package è possibile utilizzare la proprietà 'spotbugs.skipPackages'.   
 
-    L'esempio seguente attiva l'analisi dei sorgenti solamente releativi ai componenti di runtime di GovWay:
+    L'esempio seguente attiva l'analisi dei sorgenti solamente per i componenti di runtime di GovWay:
         mvn verify -Dspotbugs=verify 
                    -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none 
                    -Dspotbugs.home=/tmp/spotbugs-4.7.3 
