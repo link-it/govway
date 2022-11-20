@@ -54,56 +54,56 @@
 
 		<!-- Utils -->
 		<antcall target="_findBugs">
-			<param name="analyzeType" value="utils"/>
+			<param name="analyzeType" value="utils-commons"/>
 			<param name="analyzeSrc" value="${openspcoop2}/tools/utils/src"/>
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_utils*.jar"/>
 		</antcall>
 		<!-- GenericProject -->
 		<antcall target="_findBugs">
-			<param name="analyzeType" value="generic-project"/>
+			<param name="analyzeType" value="utils-generic-project"/>
 			<param name="analyzeSrc" value="${openspcoop2}/tools/generic_project/src"/>
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_generic-project*.jar"/>
 		</antcall>
 		<!-- Message -->
 		<antcall target="_findBugs">
-			<param name="analyzeType" value="message"/>
+			<param name="analyzeType" value="runtime-message"/>
 			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_message*.jar"/>
 		</antcall>
 		<!-- Core -->
 		<antcall target="_findBugs">
-			<param name="analyzeType" value="core"/>
+			<param name="analyzeType" value="runtime-core"/>
 			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_core*.jar"/>
 		</antcall>
 		<!-- Protocol -->
 		<antcall target="_findBugs">
-			<param name="analyzeType" value="protocol"/>
+			<param name="analyzeType" value="runtime-protocol"/>
 			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_protocol*.jar"/>
 		</antcall>
 		<!-- Monitor -->
 		<antcall target="_findBugs">
-			<param name="analyzeType" value="monitor"/>
+			<param name="analyzeType" value="runtime-monitor"/>
 			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_monitor*.jar"/>
 		</antcall>
 		<!-- Security -->
 		<antcall target="_findBugs">
-			<param name="analyzeType" value="security"/>
+			<param name="analyzeType" value="runtime-security"/>
 			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_security*.jar"/>
 		</antcall>
 		<!-- Pdd -->
 		<antcall target="_findBugs">
-			<param name="analyzeType" value="pdd"/>
+			<param name="analyzeType" value="runtime-pdd"/>
 			<param name="analyzeSrc" value="${openspcoop2}/core/src"/>
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_pdd*.jar"/>
@@ -265,12 +265,21 @@
 				        </then>
 				</if>
 
-				<var name="reportFileName" value="${spotbugs.output}/spotbugs_report_${analyzeType}.xml"/>
+				<if>
+					<equals arg1="${spotbugs.outputType}" arg2="xml:withMessages"/>
+				        <then>
+						<var name="reportFileName" value="${spotbugs.output}/spotbugs_report_${analyzeType}.xml"/>
+				        </then>
+					<else>
+						<var name="reportFileName" value="${spotbugs.output}/spotbugs_report_${analyzeType}.${spotbugs.outputType}"/>
+					</else>
+				</if>
 				<delete file="${reportFileName}"/>
 
 				<echo message="Analizzo sorgenti: ${analyzeSrc}"/>
 				<echo message="Archivi jar: ${analyzeJarDir}/${analyzeJar}"/>
 				<echo message="Effort: ${_spotBugsEfforts}"/>
+				<echo message="Output '${spotbugs.outputType}': ${reportFileName}"/>
 				<spotbugs home="${spotbugs.home}"
 				    output="${spotbugs.outputType}"
 				    outputFile="${reportFileName}" 

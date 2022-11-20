@@ -160,11 +160,11 @@
     <Class name="org.openspcoop2.protocol.engine.driver.RollbackRepositoryBuste" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
-  <Match>
+  <!-- Verifica su jenkins<Match>
     <Class name="org.openspcoop2.protocol.engine.driver.repository.TestGestoreRepository" />
     <Method name="test" />
     <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
-  </Match>
+  </Match> -->
   <Match>
     <Class name="org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
