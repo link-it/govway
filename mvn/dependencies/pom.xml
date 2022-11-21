@@ -96,6 +96,7 @@
 							<outputDirectory>${owasp.output.dir}</outputDirectory>
 							<format>ALL</format>
 							<suppressionFiles>
+								<!-- Documentare ogni modifica anche in resources/doc/src/manuali/console/release-process/thirdPartyDependencyAnalysis/skip.rst -->
 								<suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/console-back-office.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/commons-discovery.xml</suppressionFile>
