@@ -34,11 +34,16 @@ L'analisi viene effettuata ad ogni commit sul `master dei sorgenti del progetto 
 
 È attuabile anche una verifica manuale, effettuando il checkout dei `dei sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ ed avviando una analisi come descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_maven`.
 
-Nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip` viene mostrato come vengano gestiti i falsi positivi.
+Se il processo di verifica, descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_ci`, rilevata una vulnerabilità viene avviata un'ulteriore analisi al fine di verificare:
+
+- se se tratta di un falso positivo, e in tal case viene registrato come tale in modo che successive verifiche non segnalino più la vulnerabilità. Maggiori dettagli sulla gestione dei falsi positivi vengono forniti nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip`;
+
+- se la segnalazione tratta una vulnerabilità che impatta sul software GovWay viene invece aperto un avviso di sicurezza ed avviato il processo di risoluzione. Maggiori dettagli a riguardo sono forniti nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_securityAdvisory`.
 
 .. toctree::
         :maxdepth: 2
         
 	ci_jenkins
 	maven
+	securityAdvisory/index
 	skip
