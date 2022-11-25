@@ -3898,23 +3898,24 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 													transactionNullable, pddContext,
 													pd);
 								}
-								
-								gestoreCorrelazione.verificaCorrelazioneRisposta(correlazioneApplicativaRisposta, responseMessage, headerIntegrazioneRisposta, false);
-								
-								idCorrelazioneApplicativaRisposta = gestoreCorrelazione.getIdCorrelazione();
-								
-								if(idCorrelazioneApplicativaRisposta!=null) {
-									if(transactionNullable!=null) {
-										transactionNullable.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+								if(gestoreCorrelazione!=null){
+									gestoreCorrelazione.verificaCorrelazioneRisposta(correlazioneApplicativaRisposta, responseMessage, headerIntegrazioneRisposta, false);
+									
+									idCorrelazioneApplicativaRisposta = gestoreCorrelazione.getIdCorrelazione();
+									
+									if(idCorrelazioneApplicativaRisposta!=null) {
+										if(transactionNullable!=null) {
+											transactionNullable.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+										}
 									}
+									
+									if(richiestaApplicativa!=null)
+										richiestaApplicativa.setIdCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+									else if(richiestaDelegata!=null)
+										richiestaDelegata.setIdCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+															
+									msgDiag.setIdCorrelazioneRisposta(idCorrelazioneApplicativaRisposta);
 								}
-								
-								if(richiestaApplicativa!=null)
-									richiestaApplicativa.setIdCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
-								else if(richiestaDelegata!=null)
-									richiestaDelegata.setIdCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
-														
-								msgDiag.setIdCorrelazioneRisposta(idCorrelazioneApplicativaRisposta);
 								
 							}catch(Exception e){
 								

@@ -1,5 +1,12 @@
 2022-11-25  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug OP-1498
+	L'aggiornamento dell'interfaccia OpenAPI o WSDL di una API va in errore utilizzando la versione 3.3.9.p1.
+	Dal log si evince un bug introdotto con la gestione delle vulnerabilità di tipo CSRF: 'Parametro [_csrf] Duplicato'
+
+2022-11-25  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
 	Aggiunta funzionalità OP-1496
 	Oltre alle modalità di interscambio di informazioni standard il client può adesso fornire altre informazioni al gateway 
