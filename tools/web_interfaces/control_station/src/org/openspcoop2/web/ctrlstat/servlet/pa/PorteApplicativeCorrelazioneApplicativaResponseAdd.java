@@ -45,6 +45,7 @@ import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -99,12 +100,14 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseAdd extends Ac
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
+			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
 			// Prendo il nome della porta applicativa
 			PortaApplicativa pde = porteApplicativeCore.getPortaApplicativa(idInt);
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pde.getTipoSoggettoProprietario());
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
@@ -148,7 +151,8 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseAdd extends Ac
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRispostaToDati(TipoOperazione.ADD,
-						elemxml, mode, pattern, gif, dati, apc.getServiceBinding());
+						elemxml, mode, pattern, gif, dati, apc.getServiceBinding(),
+						protocollo);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 				
@@ -173,7 +177,8 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseAdd extends Ac
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRispostaToDati(TipoOperazione.ADD,
-						elemxml, mode, pattern, gif, dati, apc.getServiceBinding());
+						elemxml, mode, pattern, gif, dati, apc.getServiceBinding(),
+						protocollo);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 				
@@ -191,7 +196,10 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseAdd extends Ac
 			cae.setIdentificazione(CorrelazioneApplicativaRispostaIdentificazione.toEnumConstant(mode));
 			if (mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED) ||
 					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED) ||
-					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED) ||
+					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE) ||
+					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) ||
+					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)) {
 				cae.setPattern(pattern);
 			}
 			

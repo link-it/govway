@@ -6,7 +6,7 @@ Payload Claims del token JWT
 Il pattern di sicurezza, su API di tipo REST, produrrà la generazione di un token JWT firmato inserito all'interno dell'header HTTP previsto dalle *Linee Guida AGID di Interoperabilità*. 
 Nel payload del JWT vengono generati i claim di default previsti dal prodotto come quelli temporali (iat, nbf, exp), l'identificativo unico della richiesta (jti), e altri claims che consentono di individuare gli attori (sub, iss, client_id, aud). 
 
-Altri claims possono essere aggiunti al payload JWT definendoli nel campo 'Claims' tra i criteri di configurazione 'ModI' della richiesta, in una fruizione, o della risposta, in una erogazione. Vanno indicati per riga nella forma 'nome=valore' come mostrato nella figura :numref:`modipa_sicurezza_claims_custom`. Il valore può essere definito come costante o contenere parti dinamiche, definite tramite una sintassi proprietaria di GovWay, che verranno risolte a runtime dal Gateway  (per maggiori dettagli :ref:`valoriDinamici`).
+Altri claims possono essere aggiunti al payload JWT definendoli nel campo 'Claims' tra i criteri di configurazione 'ModI' della richiesta, in una fruizione, o della risposta, in una erogazione. Vanno indicati per riga nella forma 'nome=valore' come mostrato nella figura :numref:`modipa_sicurezza_claims_custom`. Il valore può essere definito come costante o contenere parti dinamiche, definite tramite una sintassi proprietaria di GovWay, che verranno risolte a runtime dal Gateway  (per maggiori dettagli :ref:`valoriDinamici`). Ulteriori modalità per aggiungere claim proprietari vengono descritti nella sezione :ref:`avanzate_generazione_claims`.
 
 .. figure:: ../../../_figure_console/modipa_sicurezza_claims_custom.png
     :scale: 50%

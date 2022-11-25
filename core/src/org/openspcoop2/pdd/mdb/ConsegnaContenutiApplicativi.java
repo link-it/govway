@@ -2542,6 +2542,42 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 			}
 
+			
+			
+			
+			
+			
+			msgDiag.mediumDebug("Aggiungo informazioni di integrazione dinamica della risposta nel contesto ...");
+					
+			try {
+				if(pa!=null && transportResponseContext!=null) {
+					configurazionePdDManager.setInformazioniIntegrazioneDinamiche(this.log, transportResponseContext, pddContext, pa);
+				}
+			} 
+			catch (Throwable e) {
+				msgDiag.addKeywordErroreProcessamento(e, "setInformazioniIntegrazioneDinamicheRisposta");
+				msgDiag.logErroreGenerico(e,"setInformazioniIntegrazioneDinamicheRisposta");
+				String msgErrore = "Lettura delle informazioni di integrazione dinamica della risposta ha provocato un errore: "+e.getMessage();
+				this.log.error(msgErrore,e);
+				if(existsModuloInAttesaRispostaApplicativa) {
+					
+					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),
+							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+							(connectorSender!=null && connectorSender.getResponse()!=null ? connectorSender.getResponse().getParseException() : null),
+							pddContext);
+					
+					esito.setEsitoInvocazione(true); 
+					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
+				}else{
+					ejbUtils.rollbackMessage(msgErrore,servizioApplicativo, esito);
+					esito.setEsitoInvocazione(false); 
+					esito.setStatoInvocazioneErroreNonGestito(e);
+				}
+				openspcoopstate.releaseResource();
+				return esito;
+			}
 
 
 
@@ -3846,11 +3882,22 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							GestoreCorrelazioneApplicativa gestoreCorrelazione = null;
 							try{
 								
-								gestoreCorrelazione = 
-										new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(),
-												this.log,soggettoFruitore,idServizio, servizioApplicativo,protocolFactory,
-												transactionNullable, pddContext,
-												proprietaPorta);
+								if(pa!=null) {
+									gestoreCorrelazione = 
+											new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(), this.log,
+													soggettoFruitore,idServizio,bustaRichiesta, 
+													servizioApplicativo,protocolFactory,
+													transactionNullable, pddContext,
+													pa);
+								}
+								else if(pd!=null) {
+									gestoreCorrelazione = 
+											new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(), this.log,
+													soggettoFruitore,idServizio,bustaRichiesta, 
+													servizioApplicativo,protocolFactory,
+													transactionNullable, pddContext,
+													pd);
+								}
 								
 								gestoreCorrelazione.verificaCorrelazioneRisposta(correlazioneApplicativaRisposta, responseMessage, headerIntegrazioneRisposta, false);
 								

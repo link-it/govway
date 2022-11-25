@@ -22,21 +22,30 @@
 
 package org.openspcoop2.pdd.core;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.SOAPEnvelope;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Resource;
@@ -44,11 +53,19 @@ import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.MessageContent;
+import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.Configurazione;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -63,6 +80,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
@@ -108,6 +126,8 @@ public class GestoreCorrelazioneApplicativa {
 	private IDSoggetto soggettoFruitore;
 	/** Servizio */
 	private IDServizio idServizio;
+	/** Busta */
+	private Busta busta;
 	/** Resource REST */
 	private Resource restResource;
 	/** Servizio Applicativo */
@@ -125,6 +145,10 @@ public class GestoreCorrelazioneApplicativa {
 	/** RequestInfo */
 	private RequestInfo requestInfo;
 	
+	/** Porta */
+	private PortaDelegata pd;
+	private PortaApplicativa pa;
+	
 	private int maxLengthCorrelazioneApplicativa = 255;
 	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request = -1;
 	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request = -1;
@@ -140,7 +164,29 @@ public class GestoreCorrelazioneApplicativa {
 	 * Costruttore. 
 	 *
 	 */
-	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,
+	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,Busta busta,
+			String servizioApplicativo,IProtocolFactory<?> protocolFactory,
+			Transaction transaction, PdDContext pddContext,
+			PortaDelegata pd){
+		this.pd = pd;
+		init(state, alog, 
+				soggettoFruitore, idServizio, busta,
+				servizioApplicativo, protocolFactory, 
+				transaction, pddContext, 
+				pd!=null ? pd.getProprietaList() : null);
+	}
+	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,Busta busta,
+			String servizioApplicativo,IProtocolFactory<?> protocolFactory,
+			Transaction transaction, PdDContext pddContext,
+			PortaApplicativa pa){
+		this.pa = pa;
+		init(state, alog, 
+				soggettoFruitore, idServizio, busta,
+				servizioApplicativo, protocolFactory, 
+				transaction, pddContext, 
+				pa!=null ? pa.getProprietaList() : null);
+	}
+	private void init(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,Busta busta,
 			String servizioApplicativo,IProtocolFactory<?> protocolFactory,
 			Transaction transaction, PdDContext pddContext,
 			List<Proprieta> proprieta){
@@ -152,6 +198,7 @@ public class GestoreCorrelazioneApplicativa {
 		}
 		this.soggettoFruitore = soggettoFruitore;
 		this.idServizio = idServizio;
+		this.busta = busta;
 		this.servizioApplicativo = servizioApplicativo;
 		this.protocolFactory = protocolFactory;
 		this.transaction = transaction;
@@ -198,9 +245,12 @@ public class GestoreCorrelazioneApplicativa {
 	 */
 	public GestoreCorrelazioneApplicativa(IState state,Logger alog,
 			IProtocolFactory<?> protocolFactory,
-			Transaction transaction,
-			List<Proprieta> proprieta){
-		this(state,alog,null,null,null,protocolFactory,transaction, null, proprieta);
+			Transaction transaction){
+		init(state,alog,
+				null,null,null,
+				null,protocolFactory,
+				transaction, null, 
+				null);
 	}
 
 	public void updateState(IState state){
@@ -567,7 +617,115 @@ public class GestoreCorrelazioneApplicativa {
 							}
 						}
 					}
+					else if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_TEMPLATE.equals(elemento.getIdentificazione())
+							||
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_FREEMARKER_TEMPLATE.equals(elemento.getIdentificazione())
+							||
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_VELOCITY_TEMPLATE.equals(elemento.getIdentificazione())){
+						try{
+							
+							if(elemento.getPattern()==null || StringUtils.isEmpty(elemento.getPattern())) {
+								throw new Exception ("Template non disponibile");
+							}
+							
+							Map<String, List<String>> pTrasporto = null;
+							String urlInvocazione = null;
+							Map<String, List<String>> pQuery = null;
+							Map<String, List<String>> pForm = null;
+							if(this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) {
+								pTrasporto = this.requestInfo.getProtocolContext().getHeaders();
+								urlInvocazione = this.requestInfo.getProtocolContext().getUrlInvocazione_formBased();
+								pQuery = this.requestInfo.getProtocolContext().getParameters();
+								if(this.requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
+									HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) this.requestInfo.getProtocolContext();
+									HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
+									if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+										FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
+										if(formServlet.getFormUrlEncodedParametersValues()!=null &&
+												!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
+											pForm = formServlet.getFormUrlEncodedParametersValues();
+										}
+									}
+								}
+							}
+							MessageContent messageContent = null;
+							boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+							if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+								messageContent = new MessageContent(message.castAsSoap(), bufferMessage_readOnly, this.pddContext);
+							}
+							else{
+								if(MessageType.XML.equals(message.getMessageType())){
+									messageContent = new MessageContent(message.castAsRestXml(), bufferMessage_readOnly, this.pddContext);
+								}
+								else if(MessageType.JSON.equals(message.getMessageType())){
+									messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, this.pddContext);
+								}
+							}
+							
+							Map<String, Object> dynamicMap = new HashMap<String, Object>();
+							ErrorHandler errorHandler = new ErrorHandler();
+							DynamicUtils.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
+									message,
+									messageContent, 
+									this.busta, 
+									pTrasporto, 
+									pQuery,
+									pForm,
+									errorHandler);
+							if(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_TEMPLATE.equals(elemento.getIdentificazione())) {
+								idCorrelazioneApplicativa = DynamicUtils.convertDynamicPropertyValue("CorrelazioneApplicativaRichiesta.gwt", elemento.getPattern(), dynamicMap, this.pddContext);
+								if(idCorrelazioneApplicativa!=null) {
+									idCorrelazioneApplicativa = ConditionalUtils.normalizeTemplateResult(idCorrelazioneApplicativa);
+								}
+							}
+							else {
+								ByteArrayOutputStream bout = new ByteArrayOutputStream();
+								ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(this.state);
+								IDPortaApplicativa idPA = null;
+								IDPortaDelegata idPD = null;
+								if(this.pa!=null) {
+									idPA = new IDPortaApplicativa();
+									idPA.setNome(this.pa.getNome());
+								}
+								else if(this.pd!=null){
+									idPD = new IDPortaDelegata();
+									idPD.setNome(this.pd.getNome());
+								}
+								else {
+									throw new Exception ("Porta non disponibile");
+								}
+								Template template = idPA!=null ?
+										configurazionePdDManager.getTemplateCorrelazioneApplicativaRichiesta(idPA, elemento.getNome(), elemento.getPattern().getBytes(), this.requestInfo)
+										:
+										configurazionePdDManager.getTemplateCorrelazioneApplicativaRichiesta(idPD, elemento.getNome(), elemento.getPattern().getBytes(), this.requestInfo);
+								
+								if(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_FREEMARKER_TEMPLATE.equals(elemento.getIdentificazione())) {
+									DynamicUtils.convertFreeMarkerTemplate(template, dynamicMap, bout);
+								}
+								else {
+									//if(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_VELOCITY_TEMPLATE.equals(elemento.getIdentificazione())) {
+									DynamicUtils.convertVelocityTemplate(template, dynamicMap, bout);
+								}
+								bout.flush();
+								bout.close();
+								idCorrelazioneApplicativa = bout.toString();
+								if(idCorrelazioneApplicativa!=null) {
+									idCorrelazioneApplicativa = ConditionalUtils.normalizeTemplateResult(idCorrelazioneApplicativa);
+								}
+							}
+
+						}catch(Exception e){
+							if(bloccaIdentificazioneNonRiuscita){
+								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
+										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione headerBased (Header:"+elemento.getPattern()+"): "+e.getMessage());
+								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
+							}else{
+								correlazioneNonRiuscitaDaAccettare = true;
+							}
+						}
+					}
 					else{
+						// Content-Based
 						try{
 							if(ServiceBinding.REST.equals(message.getServiceBinding()) && 
 									!MessageType.XML.equals(message.getMessageType()) && 
@@ -1029,7 +1187,135 @@ public class GestoreCorrelazioneApplicativa {
 							}
 						}
 					}
+					else if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_TEMPLATE.equals(elemento.getIdentificazione())
+							||
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_FREEMARKER_TEMPLATE.equals(elemento.getIdentificazione())
+							||
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_VELOCITY_TEMPLATE.equals(elemento.getIdentificazione())){
+						try{
+							
+							if(elemento.getPattern()==null || StringUtils.isEmpty(elemento.getPattern())) {
+								throw new Exception ("Template non disponibile");
+							}
+							
+							Map<String, List<String>> pTrasporto = null;
+							String urlInvocazione = null;
+							Map<String, List<String>> pQuery = null;
+							Map<String, List<String>> pForm = null;
+							if(this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) {
+								pTrasporto = this.requestInfo.getProtocolContext().getHeaders();
+								urlInvocazione = this.requestInfo.getProtocolContext().getUrlInvocazione_formBased();
+								pQuery = this.requestInfo.getProtocolContext().getParameters();
+								if(this.requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
+									HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) this.requestInfo.getProtocolContext();
+									HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
+									if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+										FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
+										if(formServlet.getFormUrlEncodedParametersValues()!=null &&
+												!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
+											pForm = formServlet.getFormUrlEncodedParametersValues();
+										}
+									}
+								}
+							}
+							
+							Map<String, List<String>> parametriTrasporto = null;
+							if(message.getTransportResponseContext()!=null) {
+								if(message.getTransportResponseContext().getHeaders()!=null &&
+									!message.getTransportResponseContext().getHeaders().isEmpty()) {
+									parametriTrasporto = message.getTransportResponseContext().getHeaders();
+								}
+								else {
+									parametriTrasporto = new HashMap<String, List<String>>();
+									message.getTransportResponseContext().setHeaders(parametriTrasporto);
+								}
+							}
+
+							MessageContent messageContent = null;
+							boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+							if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+								messageContent = new MessageContent(message.castAsSoap(), bufferMessage_readOnly, this.pddContext);
+							}
+							else{
+								if(MessageType.XML.equals(message.getMessageType())){
+									messageContent = new MessageContent(message.castAsRestXml(), bufferMessage_readOnly, this.pddContext);
+								}
+								else if(MessageType.JSON.equals(message.getMessageType())){
+									messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, this.pddContext);
+								}
+							}
+							
+							Map<String, Object> dynamicMapRequest = new HashMap<String, Object>();
+							ErrorHandler errorHandlerRequest = new ErrorHandler();
+							DynamicUtils.fillDynamicMapRequest(this.log, dynamicMapRequest, this.pddContext, urlInvocazione,
+									null, //message,
+									null, //messageContent, 
+									this.busta, 
+									pTrasporto, 
+									pQuery,
+									pForm,
+									errorHandlerRequest);
+							
+							Map<String, Object> dynamicMap = new HashMap<String, Object>();
+							ErrorHandler errorHandler = new ErrorHandler();
+							DynamicUtils.fillDynamicMapResponse(this.log, dynamicMap, dynamicMapRequest, this.pddContext, 
+									message,
+									messageContent, this.busta, parametriTrasporto,
+									errorHandler);
+							if(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_TEMPLATE.equals(elemento.getIdentificazione())) {
+								idCorrelazioneApplicativa = DynamicUtils.convertDynamicPropertyValue("CorrelazioneApplicativaRisposta.gwt", elemento.getPattern(), dynamicMap, this.pddContext);
+								if(idCorrelazioneApplicativa!=null) {
+									idCorrelazioneApplicativa = ConditionalUtils.normalizeTemplateResult(idCorrelazioneApplicativa);
+								}
+							}
+							else {
+								ByteArrayOutputStream bout = new ByteArrayOutputStream();
+								ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(this.state);
+								IDPortaApplicativa idPA = null;
+								IDPortaDelegata idPD = null;
+								if(this.pa!=null) {
+									idPA = new IDPortaApplicativa();
+									idPA.setNome(this.pa.getNome());
+								}
+								else if(this.pd!=null){
+									idPD = new IDPortaDelegata();
+									idPD.setNome(this.pd.getNome());
+								}
+								else {
+									throw new Exception ("Porta non disponibile");
+								}
+								Template template = idPA!=null ?
+										configurazionePdDManager.getTemplateCorrelazioneApplicativaRisposta(idPA, elemento.getNome(), elemento.getPattern().getBytes(), this.requestInfo)
+										:
+										configurazionePdDManager.getTemplateCorrelazioneApplicativaRisposta(idPD, elemento.getNome(), elemento.getPattern().getBytes(), this.requestInfo);
+								
+								if(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_FREEMARKER_TEMPLATE.equals(elemento.getIdentificazione())) {
+									DynamicUtils.convertFreeMarkerTemplate(template, dynamicMap, bout);
+								}
+								else {
+									//if(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_VELOCITY_TEMPLATE.equals(elemento.getIdentificazione())) {
+									DynamicUtils.convertVelocityTemplate(template, dynamicMap, bout);
+								}
+								bout.flush();
+								bout.close();
+								idCorrelazioneApplicativa = bout.toString();
+								if(idCorrelazioneApplicativa!=null) {
+									idCorrelazioneApplicativa = ConditionalUtils.normalizeTemplateResult(idCorrelazioneApplicativa);
+								}
+							}
+
+						}catch(Exception e){
+							if(bloccaIdentificazioneNonRiuscita){
+								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
+										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione headerBased (Header:"+elemento.getPattern()+"): "+e.getMessage());
+								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
+							}else{
+								correlazioneNonRiuscitaDaAccettare = true;
+							}
+						}
+					}
 					else{
+						// Content-Based
 						try{
 							if(ServiceBinding.REST.equals(message.getServiceBinding()) && 
 									!MessageType.XML.equals(message.getMessageType()) && 

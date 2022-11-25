@@ -1567,6 +1567,9 @@
 			<xsd:enumeration value="headerBased"/>
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>
+			<xsd:enumeration value="template"/>
+			<xsd:enumeration value="freemarkerTemplate"/>
+			<xsd:enumeration value="velocityTemplate"/>
 			<xsd:enumeration value="disabilitato"/>
 		</xsd:restriction>
 	</xsd:simpleType>
@@ -1575,6 +1578,9 @@
 			<xsd:enumeration value="headerBased"/>
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>
+			<xsd:enumeration value="template"/>
+			<xsd:enumeration value="freemarkerTemplate"/>
+			<xsd:enumeration value="velocityTemplate"/>
 			<xsd:enumeration value="disabilitato"/>
 		</xsd:restriction>
 	</xsd:simpleType>

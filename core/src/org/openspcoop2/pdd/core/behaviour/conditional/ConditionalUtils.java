@@ -290,7 +290,7 @@ public class ConditionalUtils  {
 							pQuery,
 							pForm,
 							errorHandler);
-					condition = DynamicUtils.convertDynamicPropertyValue("ConditionalConfig.gwt", patternSelettore, dynamicMap, pddContext, true);
+					condition = DynamicUtils.convertDynamicPropertyValue("ConditionalConfig.gwt", patternSelettore, dynamicMap, pddContext);
 					if(condition!=null) {
 						condition = ConditionalUtils.normalizeTemplateResult(condition);
 					}

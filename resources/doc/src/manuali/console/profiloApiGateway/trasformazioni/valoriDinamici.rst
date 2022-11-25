@@ -20,12 +20,14 @@ Le regole di trasformazione possono avvalersi di un contesto di risorse, con val
 -   *aa:FIELD* : consente di accedere agli attributi recuperati tramite Attribute Authority; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi' (es. per ottenere il valore dell'attributo 'attr1' usare ${aa:attributes[attr1]}, se configurata solamente 1 A.A., altrimenti usare ${aa:attributes[nomeAttributeAuthority][attr1]} )
 -   *transportContext:FIELD* : accesso ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext' (es. per il principal usare ${transportContext:credential.principal})
 -   *securityToken:FIELD* : permette di accedere alle informazioni relative ai certificati ed ai security token presenti nella richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.protocol.sdk.SecurityToken' (es. per accedere al CN del certificato presente nel token ModI 'Authorization' usare ${securityToken:authorization.certificate.subject.info(CN)})
+-   *integration:FIELD* : permette di accedere ai claim di un token di integrazione; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazione' (es. per ottenere il valore del claim 'claimCustom' usare ${integration:info[claimCustom]}). Maggiori informazioni sulla funzionalità sono disponibili nella sezione ':ref:`integrazioneTokenJson`'.
 -   *config:NAME* : accesso alle proprietà configurate per l'API; il valore 'NAME' indica la proprietà desiderata
 -   *clientApplicationConfig:NAME* : accesso alle proprietà configurate nell'applicativo fruitore; il valore 'NAME' indica la proprietà desiderata
 -   *clientOrganizationConfig:NAME* : accesso alle proprietà configurate nel soggetto fruitore; il valore 'NAME' indica la proprietà desiderata
 -   *providerOrganizationConfig:NAME* : accesso alle proprietà configurate nel soggetto erogatore; il valore 'NAME' indica la proprietà desiderata
 -   *tokenClientApplicationConfig:NAME* : permette di accedere alla proprietà, configurata nell'applicativo client identificato tramite il clientId presente nel token, con nome 'NAME'
 -   *tokenClientOrganizationConfig:NAME* : permette di accedere alla proprietà, configurata nel soggetto proprietario dell'applicativo client identificato tramite il clientId presente nel token, con nome 'NAME'
+-   *request:FIELD* : permette di accedere al contenuto della richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.dynamic.ContentReader' (es. per ottenere il digest dell'attachment usare ${request:part.attachmentByIndex(0).contentBase64Digest(SHA-256)})
 -   *system:NAME* : valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'
 -   *env:NAME* : valore associato alla variabile di sistema con nome 'NAME'
 -   *java:NAME* : valore associato alla variabile java con nome 'NAME'
@@ -36,6 +38,8 @@ Per le risposte sono inoltre disponibili anche le seguenti risorse:
 -   xPathResponse.EXPR: applicazione di un'espressione XPath, rappresentata dal valore EXPR, alla risposta xml (o soap).
 -   jsonPathResponse.EXPR: applicazione di un'espressione jsonPath, rappresentata dal valore EXPR, alla risposta json.
 -   dateResponse.FORMAT: la data di elaborazione della risposta; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${date:yyyyMMdd_HHmmssSSS})
+-   *integrationResponse:FIELD* : permette di accedere ai claim di un token di integrazione; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazione' (es. per ottenere il valore del claim 'claimCustom' usare ${integrationResponse:info[claimCustom]}). Maggiori informazioni sulla funzionalità sono disponibili nella sezione ':ref:`integrazioneTokenJson`'.
+-   *response:FIELD* : permette di accedere al contenuto della risposta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.dynamic.ContentReader' (es. per ottenere il digest dell'attachment usare ${response:part.attachmentByIndex(0).contentBase64Digest(SHA-256)})
 
 L'utilizzo dei suddetti elementi, come placeholder all'interno di template, comporta l'automatica sostituzione con il valore attuale a runtime da parte del gateway.
 
@@ -56,12 +60,14 @@ La sintassi per accedere le proprietà dinamiche sopraelencate è differente in 
 - ${aa:FIELD}
 - ${transportContext:FIELD}
 - ${securityToken:FIELD}
+- ${integration:FIELD} o ${integrationResponse:FIELD}
 - ${config:NAME}
 - ${clientApplicationConfig:NAME}
 - ${clientOrganizationConfig:NAME}
 - ${providerOrganizationConfig:NAME}
 - ${tokenClientApplicationConfig:NAME}
 - ${tokenClientOrganizationConfig:NAME}
+- ${request:FIELD} o ${response:FIELD}
 - ${system:NAME}
 - ${env:NAME}
 - ${java:NAME}
@@ -83,12 +89,14 @@ Nei casi in cui il testo della trasformazione è interpretato da framework ester
 - aa (org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi)
 - transportContext (org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext)
 - securityToken (org.openspcoop2.protocol.sdk.SecurityToken)
+- integration o integrationResponse (org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazione)
 - config (java.util.Map<String, String>)
 - clientApplicationConfig (java.util.Map<String, String>)
 - clientOrganizationConfig (java.util.Map<String, String>)
 - providerOrganizationConfig (java.util.Map<String, String>)
 - tokenClientApplicationConfig (java.util.Map<String, String>)
 - tokenClientOrganizationConfig (java.util.Map<String, String>)
+- request o response (org.openspcoop2.pdd.core.dynamic.ContentExtractor)
 - system (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
 - env (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
 - java (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
@@ -105,7 +113,6 @@ Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i se
   - velocity: new.instance("my.package.name","Parametro1","ParametroN") 
   - freemarker: new("my.package.name","Parametro1","ParametroN")
 
-- request/response: permette di accedere al contenuto della richiesta/risposta (org.openspcoop2.pdd.core.dynamic.ContentExtractor)
 - attachments (org.openspcoop2.pdd.core.dynamic.AttachmentsReader); consente di ottenere gli allegati registrati sull'API
 - context (java.util.Map<String, Object>); permette di accedere al contesto della richiesta.
 - errorHandler (org.openspcoop2.pdd.core.dynamic.ErrorHandler); permette di generare risposte personalizzate che segnalano l'impossibilità di proseguire la trasformazione.

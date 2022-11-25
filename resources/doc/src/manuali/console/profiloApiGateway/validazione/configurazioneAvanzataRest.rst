@@ -8,7 +8,7 @@ Configurazione per API REST
 .. note::
 	Tutte le proprietà configurate vengono verificate in AND tra di loro. Ad esempio è quindi possibile definire sia il codice http che il Content-Type per cui si desidera abilitare una validazione.
 
-- *validation.emptyResponse.enabled* : consente di disabilitare la validazione della risposta in caso di payload http vuoto. I valori associabili alle proprietà sono 'true' o 'false'. Per default questo controllo è abilitato.
+- *validation.emptyResponse.enabled* : consente di disabilitare la validazione della risposta in caso di payload http vuoto. I valori associabili alla proprietà sono 'true' o 'false'. Per default questo controllo è abilitato.
 
 - *validation.problemDetails.enabled* : consente di disabilitare la validazione della risposta nel caso il payload http contenga un oggetto *Problem Details* come definito nella specifica *RFC 7807* (https://tools.ietf.org/html/rfc7807). I valori associabili alle proprietà sono 'true' o 'false'. Per default questo controllo è abilitato.
 

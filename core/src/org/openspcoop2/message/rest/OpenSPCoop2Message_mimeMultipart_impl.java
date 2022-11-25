@@ -68,7 +68,7 @@ public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoo
 	protected String buildContentAsString() throws MessageException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			this.serializeContent(bout, true);
+			this.serializeContent(bout, false);
 			bout.flush();
 			bout.close();
 			return bout.toString(this.contentTypeCharsetName);
@@ -80,7 +80,7 @@ public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoo
 	protected byte[] buildContentAsByteArray() throws MessageException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			this.serializeContent(bout, true);
+			this.serializeContent(bout, false);
 			bout.flush();
 			bout.close();
 			return bout.toByteArray();

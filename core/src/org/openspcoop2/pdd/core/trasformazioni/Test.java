@@ -48,6 +48,9 @@ import org.openspcoop2.pdd.core.dynamic.Costanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazione;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
 import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.pdd.core.dynamic.Template;
@@ -60,6 +63,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.io.ArchiveType;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.Entry;
 import org.openspcoop2.utils.io.ZipUtilities;
@@ -68,6 +72,7 @@ import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -364,6 +369,57 @@ public class Test {
 			"\"altro\":{\"internoA\":\"VALOREMODIFICATOCOMPLEX\"}"+
 			"}";
 	
+	private static final String INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE = "InformazioneIntegrazioneString";
+	private static final String INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE_VALORE = "ValoreIntegrazioneString";
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE = "InformazioneIntegrazioneInteger";
+	private static final String INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE_VALORE = "3";
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE = "InformazioneIntegrazioneBoolean";
+	private static final String INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE_VALORE = "true";
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE = "InformazioneIntegrazioneFloat";
+	private static final String INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE_VALORE = "45.8";
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE = "InformazioneIntegrazioneList";
+	private static final String INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE_VALORE_2 = "InformazioneIntegrazioneListBMW";
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_COMPLEX = "InformazioneIntegrazioneComplex";
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE = "InformazioneIntegrazioneComplexString";
+	private static final String INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_VALORE = "ValoreIntegrazioneComplexString";
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS = "InformazioneIntegrazioneComplexIntCLAIMS";
+	private static final String INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS_VALORE = "777"; 
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX = "InformazioneIntegrazioneInternoComplex";
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS = "InformazioneIntegrazioneComplexStringInterno";
+	private static final String INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS_VALORE = "InformazioneIntegrazioneComplexValoreInternoString";
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST = "InformazioneIntegrazioneComplexList";
+	private static final String INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST_SIMPLE_VALORE_0 = "123459876";
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_JSON_COMPLEX = 
+			"{\n"+	   
+	            "\""+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"\": \""+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE_VALORE+"\",\n"+
+	            "\""+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"\": "+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE_VALORE+",\n"+
+	            "\""+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"\": "+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE_VALORE+",\n"+
+	            "\""+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"\": "+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE_VALORE+",\n"+
+	            "\""+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"\": [ \"IntegrazioneFord\", \"IntegrazioneFiat\", \""+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE_VALORE_2+"\" ],\n"+
+	            "\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"\": {\n"+
+	            "    \""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"\": \""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_VALORE+"\",\n"+
+	            "    \""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"\": "+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS_VALORE+",\n"+
+	            "    \"esempioIntegrazioneInternoBoolean\": true,\n"+
+	            "    \"esempioIntegrazioneInternoFloat\": 66.6,\n"+
+	            "    \"esempioIntegrazioneInternoList\": [ \"IntegrazioneInternoFord\", \"IntegrazioneInternoBMW\", \"IntegrazioneInternoFiat\" ],\n"+
+	            "    \""+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"\": {\n"+
+	            "        \""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"\": \""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS_VALORE+"\",\n"+
+	            "        \""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"\": [ "+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST_SIMPLE_VALORE_0+" , 4, 6 ]\n"+
+	            "    }\n"+
+	            "}\n"+
+			"}";
+	
 	
 	
 	// **** Template GovWay *****
@@ -398,7 +454,16 @@ public class Test {
 			"\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\": \"${tokenClientOrganizationConfig:"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"}\",\n"+
 			"\""+SYSTEM_CONFIG1+"\": \"${system:"+SYSTEM_CONFIG1+"}\",\n"+
 			"\""+ENV_CONFIG1+"\": \"${env:"+ENV_CONFIG1+"}\",\n"+
-			"\""+JAVA_CONFIG1+"\": \"${java:"+JAVA_CONFIG1+"}\",\n";
+			"\""+JAVA_CONFIG1+"\": \"${java:"+JAVA_CONFIG1+"}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"\": \"${integration:info["+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"\": \"${integration:info["+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"\": \"${integration:info["+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"\": \"${integration:info["+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"\": \"${integration:info["+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"][2]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"\": \"${integration:info["+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"\": \"${integration:claims["+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"\": \"${integration:info["+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"][0]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"\": \"${integration:claims["+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"]}\",\n";
 	private static final String JSON_TEMPLATE_BODY_RESPONSE = 	   
 			"\""+DATA_RISPOSTA+"\": \"${dateResponse:yyyyMMdd_HHmmssSSS}\",\n"+
 			"\""+HEADER1_RISPOSTA+"\": \"${headerResponse:"+HEADER1_RISPOSTA+"}\",\n"+
@@ -441,7 +506,16 @@ public class Test {
 			"<"+SYSTEM_CONFIG1+">"+"${system:"+SYSTEM_CONFIG1+"}"+"</"+SYSTEM_CONFIG1+">\n"+
 			"<"+ENV_CONFIG1+">"+"${env:"+ENV_CONFIG1+"}"+"</"+ENV_CONFIG1+">\n"+
 			"<"+JAVA_CONFIG1+">"+"${java:"+JAVA_CONFIG1+"}"+"</"+JAVA_CONFIG1+">\n"+
-			"<"+caratteri_element_name+">"+"${jsonPath:$."+caratteri_element_name+"}"+"</"+caratteri_element_name+">\n";
+			"<"+caratteri_element_name+">"+"${jsonPath:$."+caratteri_element_name+"}"+"</"+caratteri_element_name+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+">${integration:info["+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"]}</"+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+">${integration:info["+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"]}</"+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+">${integration:info["+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"]}</"+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+">${integration:info["+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"]}</"+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+">${integration:info["+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"][2]}</"+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+">${integration:info["+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+">${integration:claims["+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+">${integration:info["+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"][0]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+">${integration:claims["+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+">\n";
 	private static final String XML_TEMPLATE_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse:yyyyMMdd_HHmmssSSS}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"${headerResponse:"+HEADER1_RISPOSTA+"}"+"</"+HEADER1_RISPOSTA+">\n"+
@@ -500,7 +574,16 @@ public class Test {
 			"\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\": \"${tokenClientOrganizationConfig[\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\"]}\",\n"+
             "\""+SYSTEM_CONFIG1+"\": \"${system.read(\""+SYSTEM_CONFIG1+"\")}\",\n"+
             "\""+ENV_CONFIG1+"\": \"${env.read(\""+ENV_CONFIG1+"\")}\",\n"+
-            "\""+JAVA_CONFIG1+"\": \"${java.read(\""+JAVA_CONFIG1+"\")}\",\n";
+            "\""+JAVA_CONFIG1+"\": \"${java.read(\""+JAVA_CONFIG1+"\")}\",\n"+
+            "\""+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"\"][2]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"\": \"${integration.claims[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"\"][0]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"\": \"${integration.claims[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"\"]}\",\n";
 	private static final String JSON_TEMPLATE_FREEMARKER_BODY_RESPONSE = 	   
 			"\""+DATA_RISPOSTA+"\": \"${dateResponse?string('dd.MM.yyyy HH:mm:ss')}\",\n"+
 			"\""+HEADER1_RISPOSTA+"\": \"<#if headerResponse[\""+HEADER1_RISPOSTA+"\"]??>${headerResponse[\""+HEADER1_RISPOSTA+"\"]}<#else>${headerResponse[\""+HEADER1_RISPOSTA+"\"?lower_case]}</#if>\",\n"+
@@ -575,7 +658,16 @@ public class Test {
 			"<"+SYSTEM_CONFIG1+">"+"${system.read(\""+SYSTEM_CONFIG1+"\")}"+"</"+SYSTEM_CONFIG1+">\n"+
 			"<"+ENV_CONFIG1+">"+"${env.read(\""+ENV_CONFIG1+"\")}"+"</"+ENV_CONFIG1+">\n"+
 			"<"+JAVA_CONFIG1+">"+"${java.read(\""+JAVA_CONFIG1+"\")}"+"</"+JAVA_CONFIG1+">\n"+
-			"<"+caratteri_element_name+">"+"${jsonpath.read(\"$."+caratteri_element_name+"\")}"+"</"+caratteri_element_name+">\n";
+			"<"+caratteri_element_name+">"+"${jsonpath.read(\"$."+caratteri_element_name+"\")}"+"</"+caratteri_element_name+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"\"][2]}</"+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+">${integration.claims[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"\"][0]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+">${integration.claims[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+">\n";
 	private static final String XML_TEMPLATE_FREEMARKER_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse?string('dd.MM.yyyy HH:mm:ss')}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"<#if headerResponse[\""+HEADER1_RISPOSTA+"\"]??>${headerResponse[\""+HEADER1_RISPOSTA+"\"]}<#else>${headerResponse[\""+HEADER1_RISPOSTA+"\"?lower_case]}</#if>"+"</"+HEADER1_RISPOSTA+">\n"+
@@ -705,7 +797,16 @@ public class Test {
 			"\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\": \"${tokenClientOrganizationConfig[\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\"]}\",\n"+
             "\""+SYSTEM_CONFIG1+"\": \"${system.read(\""+SYSTEM_CONFIG1+"\")}\",\n"+
 			"\""+ENV_CONFIG1+"\": \"${env.read(\""+ENV_CONFIG1+"\")}\",\n"+
-			"\""+JAVA_CONFIG1+"\": \"${java.read(\""+JAVA_CONFIG1+"\")}\",\n";
+			"\""+JAVA_CONFIG1+"\": \"${java.read(\""+JAVA_CONFIG1+"\")}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"\"][2]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"\": \"${integration.claims[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"\"]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"\": \"${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"\"][0]}\",\n"+
+			"\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"\": \"${integration.claims[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"\"]}\",\n";
 	private static final String JSON_TEMPLATE_VELOCITY_BODY_RESPONSE = 	   
 			"\""+DATA_RISPOSTA+"\": \"${dateResponse}\",\n"+
 			"\""+HEADER1_RISPOSTA+"\": \"#if ($headerResponse[\""+HEADER1_RISPOSTA+"\"])${headerResponse[\""+HEADER1_RISPOSTA+"\"]}#else#set($tmp = \""+HEADER1_RISPOSTA_CASE_INSENTIVE+"\")${headerResponse[$tmp.toLowerCase()]}#end\",\n"+
@@ -779,7 +880,16 @@ public class Test {
 			"<"+SYSTEM_CONFIG1+">"+"${system.read(\""+SYSTEM_CONFIG1+"\")}"+"</"+SYSTEM_CONFIG1+">\n"+
 			"<"+ENV_CONFIG1+">"+"${env.read(\""+ENV_CONFIG1+"\")}"+"</"+ENV_CONFIG1+">\n"+
 			"<"+JAVA_CONFIG1+">"+"${java.read(\""+JAVA_CONFIG1+"\")}"+"</"+JAVA_CONFIG1+">\n"+
-			"<"+caratteri_element_name+">"+"${jsonpath.read(\"$."+caratteri_element_name+"\")}"+"</"+caratteri_element_name+">\n";
+			"<"+caratteri_element_name+">"+"${jsonpath.read(\"$."+caratteri_element_name+"\")}"+"</"+caratteri_element_name+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"\"][2]}</"+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+">${integration.claims[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+">${integration.info[\""+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"\"][0]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+">\n"+
+			"<"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+">${integration.claims[\""+INFORMAZIONI_INTEGRAZIONE_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_INTERNO_COMPLEX+"."+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"\"]}</"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+">\n";
 	private static final String XML_TEMPLATE_VELOCITY_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"#if ($headerResponse[\""+HEADER1_RISPOSTA+"\"])${headerResponse[\""+HEADER1_RISPOSTA+"\"]}#else#set($tmp = \""+HEADER1_RISPOSTA_CASE_INSENTIVE+"\")${headerResponse[$tmp.toLowerCase()]}#end"+"</"+HEADER1_RISPOSTA+">\n"+
@@ -1116,6 +1226,16 @@ public class Test {
 		
 		System.setProperty(JAVA_CONFIG1, JAVA_CONFIG1_VALORE);
 		System.setProperty(JAVA_CONFIG2, JAVA_CONFIG2_VALORE);
+		
+		InformazioniIntegrazioneSorgente sourceType = InformazioniIntegrazioneSorgente.http_header;
+		String sourceName = "GovWay-Integration";
+		InformazioniIntegrazioneCodifica sourceEncodeType = InformazioniIntegrazioneCodifica.base64;
+		boolean sourceRequired = true;
+		HttpServletTransportRequestContext transportRequestContext = new HttpServletTransportRequestContext();
+		TransportUtils.addHeader(parametriTrasporto,sourceName,Base64Utilities.encodeAsString(INFORMAZIONI_INTEGRAZIONE_JSON_COMPLEX.getBytes()));
+		transportRequestContext.setHeaders(parametriTrasporto);
+		InformazioniIntegrazione infoIntegration = new InformazioniIntegrazione(sourceType, sourceName, sourceEncodeType, sourceRequired, log, transportRequestContext);
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.INFORMAZIONI_INTEGRAZIONE, infoIntegration);
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
@@ -2108,6 +2228,69 @@ public class Test {
 			if(!contenuto.contains(caratteriNonUTF_JSON_VALUE)) {
 				throw new Exception("Valore '"+caratteriNonUTF_JSON_VALUE+"' per field '"+caratteri_element_name+"' non trovato");
 			}
+		}
+	
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE)) {
+			throw new Exception("Informazione integrazione '"+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"' non trovata");
+		}
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE_VALORE)) {
+			throw new Exception("Valore '"+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE_VALORE+"' per field '"+INFORMAZIONI_INTEGRAZIONE_STRING_SIMPLE+"' non trovato");
+		}
+		
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE)) {
+			throw new Exception("Informazione integrazione '"+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"' non trovata");
+		}
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE_VALORE)) {
+			throw new Exception("Valore '"+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE_VALORE+"' per field '"+INFORMAZIONI_INTEGRAZIONE_INT_SIMPLE+"' non trovato");
+		}
+		
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE)) {
+			throw new Exception("Informazione integrazione '"+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"' non trovata");
+		}
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE_VALORE)) {
+			throw new Exception("Valore '"+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE_VALORE+"' per field '"+INFORMAZIONI_INTEGRAZIONE_BOOLEAN_SIMPLE+"' non trovato");
+		}
+		
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE)) {
+			throw new Exception("Informazione integrazione '"+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"' non trovata");
+		}
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE_VALORE)) {
+			throw new Exception("Valore '"+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE_VALORE+"' per field '"+INFORMAZIONI_INTEGRAZIONE_FLOAT_SIMPLE+"' non trovato");
+		}
+		
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE)) {
+			throw new Exception("Informazione integrazione '"+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"' non trovata");
+		}
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE_VALORE_2)) {
+			throw new Exception("Valore '"+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE_VALORE_2+"' per field '"+INFORMAZIONI_INTEGRAZIONE_LIST_SIMPLE+"' non trovato");
+		}
+		
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE)) {
+			throw new Exception("Informazione integrazione '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"' non trovata");
+		}
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE)) {
+			throw new Exception("Valore '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_VALORE+"' per field '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE+"' non trovato");
+		}
+		
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS)) {
+			throw new Exception("Informazione integrazione '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"' non trovata");
+		}
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS)) {
+			throw new Exception("Valore '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS_VALORE+"' per field '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_INT_SIMPLE_CLAIMS+"' non trovato");
+		}
+
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS)) {
+			throw new Exception("Informazione integrazione '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"' non trovata");
+		}
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS)) {
+			throw new Exception("Valore '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS_VALORE+"' per field '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_STRING_SIMPLE_CLAIMS+"' non trovato");
+		}
+		
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST)) {
+			throw new Exception("Informazione integrazione '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"' non trovata");
+		}
+		if(!contenuto.contains(INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST)) {
+			throw new Exception("Valore '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST_SIMPLE_VALORE_0+"' per field '"+INFORMAZIONI_INTEGRAZIONE_COMPLEX_LIST+"' non trovato");
 		}
 		
 	}

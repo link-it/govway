@@ -1,0 +1,6 @@
+{
+    "elemento": "/path/",
+    "identificazione_tipo": "velocity-template",
+    "identificazione": "prova${header[test]}",
+    "generazione_errore_identificazione_fallita": true
+}

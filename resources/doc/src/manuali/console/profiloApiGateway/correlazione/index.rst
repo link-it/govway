@@ -66,27 +66,28 @@ indicare i seguenti dati:
    -  *Url di Invocazione*: il valore viene preso dalla url utilizzata dal
       servizio applicativo per l'invocazione. La regola per l'estrazione
       dalla url viene specificata tramite un'espressione regolare
-      inserita nel campo pattern (l'espressione deve avere un match con l'intera url).
-
-   -  *Contenuto*: Il valore viene estratto direttamente dal
-      messaggio applicativo. La regola per l'estrazione dal messaggio è
-      specificata tramite un'espressione XPath o JSONPath inserita nel
-      campo pattern;
+      inserita nel campo 'Espressione Regolare' (l'espressione deve avere un match con l'intera url).
 
    -  *Header HTTP*: Il valore viene estratto dall'header di trasporto
       avente il nome indicato nel campo successivo.
 
+   -  *Contenuto*: Il valore viene estratto direttamente dal
+      messaggio applicativo. La regola per l'estrazione dal messaggio è
+      specificata tramite un'espressione XPath o JSONPath inserita nel
+      campo 'Pattern'.
+
    -  *Header di Integrazione*: il valore viene estratto dall'header di integrazione
       GovWay presente nel valore della proprietà *IDApplicativo*.
+
+   - *Template*: il valore è il risultato dell'istanziazione del template fornito rispetto ai dati della richiesta.
+
+   - *Freemarker Template*: il valore è ottenuto tramite il processamento di un Freemarker Template.
+
+   - *Velocity Template*: il valore è ottenuto tramite il processamento di un Velocity Template.
 
    -  *Disabilitata*: l'identificatore applicativo non viene estratto.
       Questa opzione è utile quando si vuole disabilitare l'estrazione
       dell'id applicativo solo per specifici messaggi;
-
--  *Pattern*: definisce l'espressione regolare, nel caso di
-   identificazione urlBased, o l'espressione XPath/JSONPath, nel caso di
-   identificazione contentBased, utilizzata per l'acquisizione
-   dell'identificatore applicativo.
 
 -  *Identificazione Fallita*: azione da intraprendere nel caso fallisca
    l'estrazione dell'identificatore applicativo tramite la regola

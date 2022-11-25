@@ -160,6 +160,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_ID_ASPS = "IdAsps";
 	public final static String LABEL_PARAMETRO_ID_FRUIZIONE = "IdFruizione";
 	public final static String LABEL_PARAMETRO_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_TEMPLATE = "Template";
 	public final static String LABEL_PARAMETRO_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
 	public final static String LABEL_PARAMETRO_APPLICATIVO = "Applicativo";
@@ -1307,6 +1308,9 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_REST = CostantiRegistroServizi.DEFAULT_VALUE_INTERFACE_TYPE_REST.getValue();
 	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SOAP = CostantiRegistroServizi.DEFAULT_VALUE_INTERFACE_TYPE_SOAP.getValue();
 	
+	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_TEMPLATE.toString();
+	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_FREEMARKER_TEMPLATE.toString();
+	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_VELOCITY_TEMPLATE.toString();
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED.toString();
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_URL_BASED.toString();
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_HEADER_BASED.toString();

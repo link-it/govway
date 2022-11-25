@@ -383,6 +383,9 @@ Di seguito vengono descritti i test del package 'integrazione':
 - 'accept', verifica  l'utilizzo dell'header 'Accept' per API REST
    ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.accept
 
+- 'json', verifica  l'utilizzo dell'interscambio di informazioni tramite una struttura JSON e l'utilizzo della correlazione applicativa di tipo template, velocity e freemarker
+   ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.json
+
 Di seguito vengono descritti i test del package 'autenticazione':
 
 - 'applicativi_esterni', verifica l'autenticazione degli applicativi di dominio esterno

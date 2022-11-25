@@ -619,7 +619,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 				Costanti.ID_RETRIEVE_JWT_SESSION_INFO.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
-			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_CLAIMS);
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_CLAIMS);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
 			return pInfo;
 		}

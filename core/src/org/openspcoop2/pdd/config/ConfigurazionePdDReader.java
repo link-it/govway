@@ -2791,6 +2791,13 @@ public class ConfigurazionePdDReader {
 		return this.configurazionePdD.getTemplateTrasformazioneSoapRisposta(connectionPdD, idPD, nomeTrasformazione, risposta, requestInfo);
 	}
 	
+	public Template getTemplateCorrelazioneApplicativaRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeRegola, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateCorrelazioneApplicativaRichiesta(connectionPdD, idPD, nomeRegola, template, requestInfo);
+	}
+	public Template getTemplateCorrelazioneApplicativaRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeRegola, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateCorrelazioneApplicativaRisposta(connectionPdD, idPD, nomeRegola, template, requestInfo);
+	}
+	
 	protected Template getTemplateIntegrazione(Connection connectionPdD,IDPortaDelegata idPD, File file, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getTemplateIntegrazione(connectionPdD, idPD, file, requestInfo);
 	}
@@ -4054,6 +4061,13 @@ public class ConfigurazionePdDReader {
 	}
 	protected Template getTemplateConnettoreMultiploCondizionale(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getTemplateConnettoreMultiploCondizionale(connectionPdD, idPA, nomeRegola, template, requestInfo);
+	}
+	
+	public Template getTemplateCorrelazioneApplicativaRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateCorrelazioneApplicativaRichiesta(connectionPdD, idPA, nomeRegola, template, requestInfo);
+	}
+	public Template getTemplateCorrelazioneApplicativaRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateCorrelazioneApplicativaRisposta(connectionPdD, idPA, nomeRegola, template, requestInfo);
 	}
 	
 	protected Template getTemplateIntegrazione(Connection connectionPdD,IDPortaApplicativa idPA, File file, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

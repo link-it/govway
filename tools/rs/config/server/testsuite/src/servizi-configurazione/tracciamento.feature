@@ -1,11 +1,11 @@
 Feature: Configurazione Servizi Tracciamento
 
-Background:
-    * def correlazione_risposta = read('classpath:bodies/correlazione-applicativa-risposta.json')
-    * def correlazione_richiesta = read('classpath:bodies/correlazione-applicativa-richiesta.json')
 
 @CRUDTracciamento
 Scenario: CRUD TRACCIAMENTO
+
+    * def correlazione_richiesta = read('classpath:bodies/'+richiesta)
+    * def correlazione_risposta = read('classpath:bodies/'+risposta)
 	
     # CREATE RICHIESTA
     Given url configUrl
@@ -63,7 +63,7 @@ Scenario: CRUD TRACCIAMENTO
     And match response contains correlazione_risposta
 
     #UPDATE RICHIESTA
-    * def update_richiesta =  read('classpath:bodies/correlazione-applicativa-richiesta-update.json')
+    * def update_richiesta =  read('classpath:bodies/'+richiesta_update)
     Given url configUrl
     And path servizio_path, 'configurazioni', 'tracciamento', 'correlazione-applicativa', 'richiesta', '*'
     And header Authorization = govwayConfAuth
@@ -73,7 +73,7 @@ Scenario: CRUD TRACCIAMENTO
     Then status 204
 
     #UPDATE RISPOSTA
-    * def update_risposta =  read('classpath:bodies/correlazione-applicativa-risposta-update.json')
+    * def update_risposta =  read('classpath:bodies/'+risposta_update)
     Given url risposta_url
     And header Authorization = govwayConfAuth
     And request update_risposta

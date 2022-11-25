@@ -706,7 +706,7 @@ public class GestoreTrasformazioni {
 			// contentTypeRichiesta
 			if(richiesta.getContentType()!=null && StringUtils.isNotEmpty(richiesta.getContentType())) {
 				forceContentTypeRichiesta = richiesta.getContentType();
-				forceContentTypeRichiesta = DynamicUtils.convertDynamicPropertyValue("forceContentTypeRichiesta", forceContentTypeRichiesta, dynamicMap, this.pddContext, true);
+				forceContentTypeRichiesta = DynamicUtils.convertDynamicPropertyValue("forceContentTypeRichiesta", forceContentTypeRichiesta, dynamicMap, this.pddContext);
 			}
 			
 			if(!trasformazioneContenuto) {
@@ -1069,7 +1069,7 @@ public class GestoreTrasformazioni {
 			// contentTypeRisposta
 			if(trasformazioneRisposta.getContentType()!=null && StringUtils.isNotEmpty(trasformazioneRisposta.getContentType())) {
 				forceContentTypeRisposta = trasformazioneRisposta.getContentType();
-				forceContentTypeRisposta = DynamicUtils.convertDynamicPropertyValue("forceContentTypeRisposta", forceContentTypeRisposta, dynamicMap, this.pddContext, true);
+				forceContentTypeRisposta = DynamicUtils.convertDynamicPropertyValue("forceContentTypeRisposta", forceContentTypeRisposta, dynamicMap, this.pddContext);
 			}
 			
 			if(!trasformazioneContenuto) {
@@ -1129,7 +1129,7 @@ public class GestoreTrasformazioni {
 			String forceResponseStatus = null;
 			if(trasformazioneRisposta.getReturnCode()!=null && StringUtils.isNotEmpty(trasformazioneRisposta.getReturnCode())) {
 				forceResponseStatus = trasformazioneRisposta.getReturnCode();
-				forceResponseStatus = DynamicUtils.convertDynamicPropertyValue("forceResponseStatus", forceResponseStatus, dynamicMap, this.pddContext, true);
+				forceResponseStatus = DynamicUtils.convertDynamicPropertyValue("forceResponseStatus", forceResponseStatus, dynamicMap, this.pddContext);
 				if(forceResponseStatus!=null && StringUtils.isNotEmpty(forceResponseStatus)) {
 					GestoreTrasformazioniUtilities.checkReturnCode(forceResponseStatus);
 				}

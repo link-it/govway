@@ -66,6 +66,8 @@ import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenzialiIM;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 import org.openspcoop2.pdd.core.handlers.ExitHandler;
 import org.openspcoop2.pdd.core.handlers.InRequestHandler;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolHandler;
@@ -1120,6 +1122,29 @@ public class OpenSPCoop2Properties {
 						return false;
 				}
 			}
+			
+			// Integrazione Dynamic Info
+			this.isIntegrazioneDynamicInfoEnabled();
+			if(this.getIntegrazioneDynamicInfoType()==null) {
+				return false;
+			}
+			if(this.getIntegrazioneDynamicInfoName()==null) {
+				return false;
+			}
+			if(this.getIntegrazioneDynamicInfoEncodeType()==null) {
+				return false;
+			}
+			this.isIntegrazioneDynamicInfoRequired();
+			
+			// Integrazione Response Dynamic Info
+			this.isIntegrazioneResponseDynamicInfoEnabled();
+			if(this.getIntegrazioneResponseDynamicInfoName()==null) {
+				return false;
+			}
+			if(this.getIntegrazioneResponseDynamicInfoEncodeType()==null) {
+				return false;
+			}
+			this.isIntegrazioneResponseDynamicInfoRequired();
 			
 			// Integrazione Template
 			if(this.getIntegrazioneTemplateRequestPropertyTipo()==null) {
@@ -12021,6 +12046,200 @@ public class OpenSPCoop2Properties {
 		return this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1;
 	}
 
+	
+	
+	/* ********  INTEGRAZIONE INFORMAZIONI DINAMICHE  ******** */
+	
+	private Boolean isIntegrazioneDynamicInfoEnabled = null;
+	public boolean isIntegrazioneDynamicInfoEnabled() {
+		String pName = "org.openspcoop2.pdd.integrazione.dynamicInfo.enabled";
+		if(this.isIntegrazioneDynamicInfoEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				this.isIntegrazioneDynamicInfoEnabled = Boolean.parseBoolean(name);
+			}catch(java.lang.Throwable e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.isIntegrazioneDynamicInfoEnabled = false;
+			}    
+		}
+
+		if(this.isIntegrazioneDynamicInfoEnabled==null){
+			return false;
+		}
+		return this.isIntegrazioneDynamicInfoEnabled;
+	}
+	
+	private InformazioniIntegrazioneSorgente getIntegrazioneDynamicInfoType = null;
+	public InformazioniIntegrazioneSorgente getIntegrazioneDynamicInfoType() {
+		String pName = "org.openspcoop2.pdd.integrazione.dynamicInfo.type";
+		if(this.getIntegrazioneDynamicInfoType==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				this.getIntegrazioneDynamicInfoType = InformazioniIntegrazioneSorgente.valueOf(name);
+			}catch(java.lang.Throwable e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}    
+		}
+
+		return this.getIntegrazioneDynamicInfoType;
+	}
+	
+	private String getIntegrazioneDynamicInfoName = null;
+	public String getIntegrazioneDynamicInfoName() {
+		String pName = "org.openspcoop2.pdd.integrazione.dynamicInfo.name";
+		if(this.getIntegrazioneDynamicInfoName==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				this.getIntegrazioneDynamicInfoName = name;
+			}catch(java.lang.Throwable e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}    
+		}
+
+		return this.getIntegrazioneDynamicInfoName;
+	}
+	
+	private InformazioniIntegrazioneCodifica getIntegrazioneDynamicInfoEncodeType = null;
+	public InformazioniIntegrazioneCodifica getIntegrazioneDynamicInfoEncodeType() {
+		String pName = "org.openspcoop2.pdd.integrazione.dynamicInfo.encode";
+		if(this.getIntegrazioneDynamicInfoEncodeType==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				this.getIntegrazioneDynamicInfoEncodeType = InformazioniIntegrazioneCodifica.valueOf(name);
+			}catch(java.lang.Throwable e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}    
+		}
+
+		return this.getIntegrazioneDynamicInfoEncodeType;
+	}
+	
+	private Boolean isIntegrazioneDynamicInfoRequired = null;
+	public boolean isIntegrazioneDynamicInfoRequired() {
+		String pName = "org.openspcoop2.pdd.integrazione.dynamicInfo.required";
+		if(this.isIntegrazioneDynamicInfoRequired==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				this.isIntegrazioneDynamicInfoRequired = Boolean.parseBoolean(name);
+			}catch(java.lang.Throwable e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.isIntegrazioneDynamicInfoRequired = false;
+			}    
+		}
+
+		if(this.isIntegrazioneDynamicInfoRequired==null){
+			return false;
+		}
+		return this.isIntegrazioneDynamicInfoRequired;
+	}
+	
+	// risposta
+	
+	private Boolean isIntegrazioneResponseDynamicInfoEnabled = null;
+	public boolean isIntegrazioneResponseDynamicInfoEnabled() {
+		String pName = "org.openspcoop2.pdd.integrazione.responseDynamicInfo.enabled";
+		if(this.isIntegrazioneResponseDynamicInfoEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				this.isIntegrazioneResponseDynamicInfoEnabled = Boolean.parseBoolean(name);
+			}catch(java.lang.Throwable e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.isIntegrazioneResponseDynamicInfoEnabled = false;
+			}    
+		}
+
+		if(this.isIntegrazioneResponseDynamicInfoEnabled==null){
+			return false;
+		}
+		return this.isIntegrazioneResponseDynamicInfoEnabled;
+	}
+	
+	private String getIntegrazioneResponseDynamicInfoName = null;
+	public String getIntegrazioneResponseDynamicInfoName() {
+		String pName = "org.openspcoop2.pdd.integrazione.responseDynamicInfo.name";
+		if(this.getIntegrazioneResponseDynamicInfoName==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				this.getIntegrazioneResponseDynamicInfoName = name;
+			}catch(java.lang.Throwable e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}    
+		}
+
+		return this.getIntegrazioneResponseDynamicInfoName;
+	}
+	
+	private InformazioniIntegrazioneCodifica getIntegrazioneResponseDynamicInfoEncodeType = null;
+	public InformazioniIntegrazioneCodifica getIntegrazioneResponseDynamicInfoEncodeType() {
+		String pName = "org.openspcoop2.pdd.integrazione.responseDynamicInfo.encode";
+		if(this.getIntegrazioneResponseDynamicInfoEncodeType==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				this.getIntegrazioneResponseDynamicInfoEncodeType = InformazioniIntegrazioneCodifica.valueOf(name);
+			}catch(java.lang.Throwable e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}    
+		}
+
+		return this.getIntegrazioneResponseDynamicInfoEncodeType;
+	}
+	
+	private Boolean isIntegrazioneResponseDynamicInfoRequired = null;
+	public boolean isIntegrazioneResponseDynamicInfoRequired() {
+		String pName = "org.openspcoop2.pdd.integrazione.responseDynamicInfo.required";
+		if(this.isIntegrazioneResponseDynamicInfoRequired==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				this.isIntegrazioneResponseDynamicInfoRequired = Boolean.parseBoolean(name);
+			}catch(java.lang.Throwable e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.isIntegrazioneResponseDynamicInfoRequired = false;
+			}    
+		}
+
+		if(this.isIntegrazioneResponseDynamicInfoRequired==null){
+			return false;
+		}
+		return this.isIntegrazioneResponseDynamicInfoRequired;
+	}
+	
+	
 	
 	/* ********  INTEGRAZIONE TEMPLATE  ******** */
     

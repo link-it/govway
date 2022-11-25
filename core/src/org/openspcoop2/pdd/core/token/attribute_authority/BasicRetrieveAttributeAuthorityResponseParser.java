@@ -19,10 +19,7 @@
  */
 package org.openspcoop2.pdd.core.token.attribute_authority;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,11 +29,6 @@ import org.openspcoop2.pdd.core.token.parser.TokenUtils;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.slf4j.Logger;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
 
 /**     
  * BasicRetrieveAttributeAuthorityResponseParser
@@ -131,97 +123,10 @@ public class BasicRetrieveAttributeAuthorityResponseParser implements IRetrieveA
 			}			
 		}
 		
-		Map<String, Object> attributes = new HashMap<String, Object>();
-		
 		JSONUtils jsonUtils = JSONUtils.getInstance();
-		if(jsonUtils.isJson(this.raw)) {
-			try {
-				JsonNode jsonResponse = jsonUtils.getAsNode(this.raw);
-				if(jsonResponse instanceof ObjectNode) {
-					
-					Iterator<String> iterator = jsonResponse.fieldNames();
-					while(iterator.hasNext()) {
-						String field = iterator.next();
-						if(this.attributesClaims.contains(field)) {
-							try {
-								JsonNode selectedClaim = jsonResponse.get(field);
-								if(selectedClaim instanceof ValueNode) {
-									attributes.put(field, selectedClaim.asText());
-								}
-								else if(selectedClaim instanceof ArrayNode) {
-									ArrayNode array = (ArrayNode) selectedClaim;
-									if(array.size()>0) {
-										JsonNode arrayFirstChildNode = array.get(0);
-										if(arrayFirstChildNode instanceof ValueNode) {
-											List<Object> l = new ArrayList<Object>();
-											for (int i = 0; i < array.size(); i++) {
-												JsonNode arrayChildNode = array.get(i);
-												Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(arrayChildNode);
-												if(readClaims!=null && readClaims.size()>0) {
-													if(readClaims.size()==1) {
-														for (String claim : readClaims.keySet()) {
-															Object value = readClaims.get(claim);
-															l.add(value);
-														}
-													}
-													else {
-														for (String claim : readClaims.keySet()) {
-															Object value = readClaims.get(claim);
-															_addAttribute(attributes, claim==null ? field : claim, value);
-														}
-													}
-												}
-											}
-											if(!l.isEmpty()) {
-												_addAttribute(attributes, field, l);
-											}
-										}
-										else {
-											for (int i = 0; i < array.size(); i++) {
-												JsonNode arrayChildNode = array.get(i);
-												Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(arrayChildNode);
-												if(readClaims!=null && readClaims.size()>0) {
-													for (String claim : readClaims.keySet()) {
-														Object value = readClaims.get(claim);
-														_addAttribute(attributes, claim, value);
-													}
-												}
-											}
-										}
-									}
-								}
-								else {
-									Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(selectedClaim);
-									if(readClaims!=null && readClaims.size()>0) {
-										for (String claim : readClaims.keySet()) {
-											Object value = readClaims.get(claim);
-											_addAttribute(attributes, claim, value);
-										}
-									}
-								}
-							}catch(Throwable e) {
-								this.log.error("Errore durante la conversione in mappa del claim '"+field+"' (Attribute Authority: "+this.attributeAuthority+"): "+e.getMessage(),e);
-							}
-						}
-					}
-					
-				}
-			}catch(Exception e) {}
-		}
-		
+		Map<String, Object> attributes = jsonUtils.convertToMap(this.log, ("Attribute Authority: "+this.attributeAuthority), this.raw, this.attributesClaims);
+				
 		return attributes;
-	}
-	private void _addAttribute(Map<String, Object> attributes, String claim, Object value) {
-		if(attributes.containsKey(claim)) {
-			for (int j = 1; j < 100; j++) {
-				String newKeyClaim = "_"+claim+"_"+j;
-				if(!attributes.containsKey(newKeyClaim)) {
-					attributes.put(newKeyClaim, attributes.get(claim));
-					break;
-				}
-			}
-		}
-		attributes.put(claim,value); // sovrascrive claim gia' esistente (e' stato salvato con un nome speciale)
 	}
 	
 	// String representing the issuer for this attribute response

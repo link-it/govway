@@ -3522,7 +3522,10 @@ public class ConsoleHelper implements IConsoleHelper {
 					(
 							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || 
 							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED) || 
-							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) || 
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE) || 
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) || 
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)
 					) 
 					&& 
 					pattern.equals("")
@@ -3530,6 +3533,11 @@ public class ConsoleHelper implements IConsoleHelper {
 				String label = "";
 				if(mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED)) {
 					label = CostantiControlStation.LABEL_PARAMETRO_NOME;
+				}
+				else if(mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE) || 
+						mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) || 
+						mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)) {
+					label = CostantiControlStation.LABEL_PARAMETRO_TEMPLATE;
 				}
 				else {
 					label = CostantiControlStation.LABEL_PATTERN;
@@ -3544,6 +3552,9 @@ public class ConsoleHelper implements IConsoleHelper {
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI);
 				return false;
@@ -3554,6 +3565,16 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 			}
+			
+			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE)) {
+				try{
+					DynamicUtils.validate(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabelParametro(), pattern, false);
+				}catch(Exception e){
+					this.pd.setMessage("Il valore indicato nel parametro '"+ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabelParametro()+"' non risulta corretto: "+e.getMessage());
+					return false;
+				}
+			}
+			
 			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) {
 				if(ServiceBinding.SOAP.equals(serviceBinding)) {
 					if(this.checkXPath(pattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
@@ -3621,7 +3642,10 @@ public class ConsoleHelper implements IConsoleHelper {
 					(
 							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || 
 							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED) || 
-							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) || 
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE) || 
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) || 
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)
 					) 
 					&& 
 					pattern.equals("")
@@ -3629,6 +3653,11 @@ public class ConsoleHelper implements IConsoleHelper {
 				String label = "";
 				if(mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED)) {
 					label = CostantiControlStation.LABEL_PARAMETRO_NOME;
+				}
+				else if(mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE) || 
+						mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) || 
+						mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)) {
+					label = CostantiControlStation.LABEL_PARAMETRO_TEMPLATE;
 				}
 				else {
 					label = CostantiControlStation.LABEL_PATTERN;
@@ -3642,7 +3671,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			if (!mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED)
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) 
-					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED)  
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI);
 				return false;
@@ -3650,6 +3682,14 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED)) {
 				if(this.checkRegexp(pattern,ModalitaIdentificazione.URL_BASED.getLabelParametro())==false){
+					return false;
+				}
+			}
+			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE)) {
+				try{
+					DynamicUtils.validate(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabelParametro(), pattern, false);
+				}catch(Exception e){
+					this.pd.setMessage("Il valore indicato nel parametro '"+ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabelParametro()+"' non risulta corretto: "+e.getMessage());
 					return false;
 				}
 			}
@@ -17336,7 +17376,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						if(trasformazioneSoapAction!=null && !"".equals(trasformazioneSoapAction)) {
 							try{
-								DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION, trasformazioneSoapAction, true, false);
+								DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION, trasformazioneSoapAction, false);
 							}catch(Exception e){
 								this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION+"' non risulta corretto: "+e.getMessage());
 								return false;
@@ -18866,7 +18906,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 				try{
-					DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE, valore, true, false);
+					DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE, valore, false);
 				}catch(Exception e){
 					this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE+"' non risulta corretto: "+e.getMessage());
 					return false;
@@ -18913,7 +18953,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 				try{
-					DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE, valore, true, false);
+					DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE, valore, false);
 				}catch(Exception e){
 					this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE+"' non risulta corretto: "+e.getMessage());
 					return false;
@@ -18960,7 +19000,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 				try{
-					DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE, valore, true, false);
+					DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE, valore, false);
 				}catch(Exception e){
 					this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE+"' non risulta corretto: "+e.getMessage());
 					return false;

@@ -27,6 +27,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 
 /**
  * Classe che raccoglie le proprieta
@@ -517,6 +519,122 @@ public class CostantiProprieta {
 	public static boolean isFiltroDuplicatiTestEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
 		return readBooleanValueWithDefault(proprieta, FILTRO_DUPLICATI_TEST, defaultValue, FILTRO_DUPLICATI_TEST_ENABLED, FILTRO_DUPLICATI_TEST_DISABLED);
 	}
+	
+	
+	
+	
+	// ****  INFORMAZIONI INTEGRAZIONE *****
+	
+	public static final String INFORMAZIONI_INTEGRAZIONE_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String INFORMAZIONI_INTEGRAZIONE_VALUE_DISABLED = VALUE_DISABLED;
+		
+	private static final String INFORMAZIONI_INTEGRAZIONE_ENABLED = "integrationInfo.enabled";
+	private static final String INFORMAZIONI_INTEGRAZIONE_TYPE = "integrationInfo.type";
+	private static final String INFORMAZIONI_INTEGRAZIONE_NAME = "integrationInfo.name";
+	private static final String INFORMAZIONI_INTEGRAZIONE_ENCODE = "integrationInfo.encode";
+	private static final String INFORMAZIONI_INTEGRAZIONE_REQUIRED = "integrationInfo.required";
+		
+	public static boolean isInformazioniIntegrazioneEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, INFORMAZIONI_INTEGRAZIONE_ENABLED, defaultValue, INFORMAZIONI_INTEGRAZIONE_VALUE_ENABLED, INFORMAZIONI_INTEGRAZIONE_VALUE_DISABLED);
+	}
+	public static InformazioniIntegrazioneSorgente getTipoInformazioniIntegrazione(List<Proprieta> proprieta, InformazioniIntegrazioneSorgente defaultValue) throws Exception {
+		String valueS = readValue(proprieta, INFORMAZIONI_INTEGRAZIONE_TYPE);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			try {
+				return InformazioniIntegrazioneSorgente.valueOf(valueS);
+			}catch(Throwable t) {
+				InformazioniIntegrazioneSorgente [] s = InformazioniIntegrazioneSorgente.values();
+				StringBuilder sb = new StringBuilder();
+				if(s!=null) {
+					for (InformazioniIntegrazioneSorgente informazioniIntegrazioneSorgente : s) {
+						if(sb.length()>0) {
+							sb.append(", ");
+						}
+						sb.append(informazioniIntegrazioneSorgente);
+					}
+				}
+				throw new Exception("Uncorrect value '"+valueS+"' for property '"+INFORMAZIONI_INTEGRAZIONE_TYPE+"' (Supported values: "+sb.toString()+")");
+			}
+		}
+		return defaultValue;
+	}
+	public static String getNomeSorgenteInformazioniIntegrazione(List<Proprieta> proprieta, String defaultValue) throws Exception {
+		String valueS = readValue(proprieta, INFORMAZIONI_INTEGRAZIONE_NAME);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS;
+		}
+		return defaultValue;
+	}
+	public static InformazioniIntegrazioneCodifica getTipoCodificaInformazioniIntegrazione(List<Proprieta> proprieta, InformazioniIntegrazioneCodifica defaultValue) throws Exception {
+		String valueS = readValue(proprieta, INFORMAZIONI_INTEGRAZIONE_ENCODE);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			try {
+				return InformazioniIntegrazioneCodifica.valueOf(valueS);
+			}catch(Throwable t) {
+				InformazioniIntegrazioneCodifica [] s = InformazioniIntegrazioneCodifica.values();
+				StringBuilder sb = new StringBuilder();
+				if(s!=null) {
+					for (InformazioniIntegrazioneCodifica informazioniIntegrazioneCodifica : s) {
+						if(sb.length()>0) {
+							sb.append(", ");
+						}
+						sb.append(informazioniIntegrazioneCodifica);
+					}
+				}
+				throw new Exception("Uncorrect value '"+valueS+"' for property '"+INFORMAZIONI_INTEGRAZIONE_ENCODE+"' (Supported values: "+sb.toString()+")");
+			}
+		}
+		return defaultValue;
+	}
+	public static boolean isInformazioniIntegrazioneRequired(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, INFORMAZIONI_INTEGRAZIONE_REQUIRED, defaultValue, INFORMAZIONI_INTEGRAZIONE_VALUE_ENABLED, INFORMAZIONI_INTEGRAZIONE_VALUE_DISABLED);
+	}
+	
+	// ****  INFORMAZIONI INTEGRAZIONE RISPOSTA *****
+	
+	public static final String INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_DISABLED = VALUE_DISABLED;
+	
+	private static final String INFORMAZIONI_INTEGRAZIONE_RISPOSTA_ENABLED = "responseIntegrationInfo.enabled";
+	private static final String INFORMAZIONI_INTEGRAZIONE_RISPOSTA_NAME = "responseIntegrationInfo.name";
+	private static final String INFORMAZIONI_INTEGRAZIONE_RISPOSTA_ENCODE = "responseIntegrationInfo.encode";
+	private static final String INFORMAZIONI_INTEGRAZIONE_RISPOSTA_REQUIRED = "responseIntegrationInfo.required";
+		
+	public static boolean isInformazioniIntegrazioneRispostaEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_ENABLED, defaultValue, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_ENABLED, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_DISABLED);
+	}
+	public static String getNomeSorgenteInformazioniIntegrazioneRisposta(List<Proprieta> proprieta, String defaultValue) throws Exception {
+		String valueS = readValue(proprieta, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_NAME);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS;
+		}
+		return defaultValue;
+	}
+	public static InformazioniIntegrazioneCodifica getTipoCodificaInformazioniIntegrazioneRisposta(List<Proprieta> proprieta, InformazioniIntegrazioneCodifica defaultValue) throws Exception {
+		String valueS = readValue(proprieta, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_ENCODE);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			try {
+				return InformazioniIntegrazioneCodifica.valueOf(valueS);
+			}catch(Throwable t) {
+				InformazioniIntegrazioneCodifica [] s = InformazioniIntegrazioneCodifica.values();
+				StringBuilder sb = new StringBuilder();
+				if(s!=null) {
+					for (InformazioniIntegrazioneCodifica informazioniIntegrazioneCodifica : s) {
+						if(sb.length()>0) {
+							sb.append(", ");
+						}
+						sb.append(informazioniIntegrazioneCodifica);
+					}
+				}
+				throw new Exception("Uncorrect value '"+valueS+"' for property '"+INFORMAZIONI_INTEGRAZIONE_RISPOSTA_ENCODE+"' (Supported values: "+sb.toString()+")");
+			}
+		}
+		return defaultValue;
+	}
+	public static boolean isInformazioniIntegrazioneRispostaRequired(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_REQUIRED, defaultValue, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_ENABLED, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_DISABLED);
+	}
+	
 	
 	
 	

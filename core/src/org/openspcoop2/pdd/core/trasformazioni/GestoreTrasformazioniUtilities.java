@@ -164,7 +164,7 @@ public class GestoreTrasformazioniUtilities {
 				
 				if(valore!=null) {
 					try {
-						valore = DynamicUtils.convertDynamicPropertyValue(oggetto+"-"+nome, valore, dynamicMap, pddContext, true);
+						valore = DynamicUtils.convertDynamicPropertyValue(oggetto+"-"+nome, valore, dynamicMap, pddContext);
 					}catch(Exception e) {
 						String msgErrore = "["+oggetto+"] Conversione valore per '"+nome+"' non riuscita (valore: "+valore+"): "+e.getMessage();
 						if(parametro.getIdentificazioneFallita()!=null && TrasformazioneIdentificazioneRisorsaFallita.IGNORA.equals(parametro.getIdentificazioneFallita())) {
@@ -306,7 +306,7 @@ public class GestoreTrasformazioniUtilities {
 			bout.close();
 			
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
-			String newContent = DynamicUtils.convertDynamicPropertyValue("template", bout.toString(), dynamicMap, pddContext, true);
+			String newContent = DynamicUtils.convertDynamicPropertyValue("template", bout.toString(), dynamicMap, pddContext);
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template completata");
 			if(newContent==null || "".equals(newContent)) {
 				risultato.setEmpty(true);
@@ -508,7 +508,7 @@ public class GestoreTrasformazioniUtilities {
 						transportRequestContext.setRequestType(trasformazioneRest_method);
 						String trasformazioneRest_path_real = null;
 						if(trasformazioneRest_path!=null) {
-							trasformazioneRest_path_real = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_path", trasformazioneRest_path, dynamicMap, pddContext, true);
+							trasformazioneRest_path_real = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_path", trasformazioneRest_path, dynamicMap, pddContext);
 						}
 						transportRequestContext.setFunctionParameters(trasformazioneRest_path_real);
 						messageType = requestInfo.getBindingConfig().getRequestMessageType(ServiceBinding.REST, transportRequestContext, contentType);
@@ -685,7 +685,7 @@ public class GestoreTrasformazioniUtilities {
 					
 					String soapAction = null;
 					if(trasformazioneSoap_soapAction!=null) {
-						soapAction = DynamicUtils.convertDynamicPropertyValue("soapAction", trasformazioneSoap_soapAction, dynamicMap, pddContext, true);
+						soapAction = DynamicUtils.convertDynamicPropertyValue("soapAction", trasformazioneSoap_soapAction, dynamicMap, pddContext);
 					}
 					
 					OpenSPCoop2Message messageSoap = null;
@@ -970,11 +970,11 @@ public class GestoreTrasformazioniUtilities {
 			Map<String, Object> dynamicMap, PdDContext pddContext) throws DynamicException {
 		if(ServiceBinding.REST.equals(message.getServiceBinding())) {
 			if(StringUtils.isNotEmpty(trasformazioneRest_method)) {
-				String newMethod = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_method", trasformazioneRest_method, dynamicMap, pddContext, true);
+				String newMethod = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_method", trasformazioneRest_method, dynamicMap, pddContext);
 				message.getTransportRequestContext().setRequestType(newMethod);
 			}
 			if(StringUtils.isNotEmpty(trasformazioneRest_path)) {
-				String newPath = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_path", trasformazioneRest_path, dynamicMap, pddContext, true);
+				String newPath = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_path", trasformazioneRest_path, dynamicMap, pddContext);
 				message.getTransportRequestContext().setFunctionParameters(newPath);
 			}
 		}

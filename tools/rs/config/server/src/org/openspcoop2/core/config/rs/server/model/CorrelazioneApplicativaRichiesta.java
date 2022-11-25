@@ -30,9 +30,9 @@ public class CorrelazioneApplicativaRichiesta extends CorrelazioneApplicativaBas
   @Schema(required = true, description = "")
   private CorrelazioneApplicativaRichiestaEnum identificazioneTipo = null;
   
-  @Schema(description = "La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata")
+  @Schema(description = "La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione   * template: template con parti dinamiche risolte a runtime da GovWay   * freemarker-template: freemarker template   * velocity-template: velocity template   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata")
  /**
-   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata  
+   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione   * template: template con parti dinamiche risolte a runtime da GovWay   * freemarker-template: freemarker template   * velocity-template: velocity template   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata  
   **/
   private String identificazione = null;
  /**
@@ -56,7 +56,7 @@ public class CorrelazioneApplicativaRichiesta extends CorrelazioneApplicativaBas
   }
 
  /**
-   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata
+   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione   * template: template con parti dinamiche risolte a runtime da GovWay   * freemarker-template: freemarker template   * velocity-template: velocity template   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata
    * @return identificazione
   **/
   @JsonProperty("identificazione")

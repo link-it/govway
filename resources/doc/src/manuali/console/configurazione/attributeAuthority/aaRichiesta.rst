@@ -32,7 +32,7 @@ Nel caso di richiesta di tipo *JWS* si devono fornire le informazioni necessarie
 
 -  *JWS Payload*: consente di impostare i valori dei claim presenti nella parte body (firmata) del JWT. Vengono fornite differenti modalità con le quali poter definire il payload:
 
-	-  *RFC7515*: consente di definire i claims standard ('iss','sub' e 'aud') e la validità temporale del JWT. Inoltre è possibile definire ulteriori claims da inserire nel body indicandoli per riga (nome=valore) nel campo 'Claims'. I claim 'iss', 'sub', 'aud' e gli eventuali claims aggiuntivi possono essere definiti tramite costanti o possono contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
+	-  *RFC7515*: consente di definire i claims standard ('iss','sub' e 'aud') e la validità temporale del JWT. Inoltre è possibile definire ulteriori claims da inserire nel body indicandoli per riga (nome=valore) nel campo 'Claims' (modalità descritte nella sezione :ref:`avanzate_generazione_claims`). I claim 'iss', 'sub', 'aud' e gli eventuali claims aggiuntivi possono essere definiti tramite costanti o possono contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
 
 	-  *Template*: il payload viene definito tramite un template che può contenere parti dinamiche risolte a runtime definite tramite una sintassi proprietaria di GovWay.
 

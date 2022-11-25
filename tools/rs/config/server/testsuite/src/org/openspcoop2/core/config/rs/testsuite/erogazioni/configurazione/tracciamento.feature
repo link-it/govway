@@ -21,12 +21,18 @@ Background:
 * def api_petstore_path = 'api/' + petstore_key
 
 @Tracciamento
-Scenario: Configurazione Tracciamento
+Scenario Outline: Configurazione Tracciamento
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
 
-    * def conf = call read('classpath:servizi-configurazione/tracciamento.feature') ({servizio_path: erogazione_petstore_path })
+    * def conf = call read('classpath:servizi-configurazione/tracciamento.feature') ({servizio_path: erogazione_petstore_path, richiesta: richiesta, richiesta_update: richiesta_update, risposta: risposta, risposta_update: risposta_update })
 
     * call delete ({ resourcePath: erogazione_petstore_path })
     * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|richiesta|richiesta_update|risposta|risposta_update|descrizione|
+|correlazione-applicativa-richiesta.json|correlazione-applicativa-richiesta-update.json|correlazione-applicativa-risposta.json|correlazione-applicativa-risposta-update.json|richiesta è url-based, update richiesta è header-based, risposta è header-based, update riposta è disabilitato|
+|correlazione-applicativa-richiesta-content-based.json|correlazione-applicativa-richiesta-input-based-update.json|correlazione-applicativa-template-risposta.json|correlazione-applicativa-risposta-content-based-update.json|si capisce dai nomi|
+|correlazione-applicativa-richiesta-disabilitato.json|correlazione-applicativa-richiesta-freemarker-template-based-update.json|correlazione-applicativa-velocity-template-risposta.json|correlazione-applicativa-risposta-velocity-template-update.json|si capisce dai nomi|

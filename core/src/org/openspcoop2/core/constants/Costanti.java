@@ -95,6 +95,8 @@ public class Costanti {
 	public static final MapKey<String> PROPRIETA_APPLICATIVO_TOKEN = Map.newMapKey("PROPRIETA_APPLICATIVO_TOKEN");
 	public static final MapKey<String> PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN = Map.newMapKey("PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN");
     public final static MapKey<String> IDENTITA_GESTORE_CREDENZIALI = Map.newMapKey("IDENTITA_GESTORE_CREDENZIALI");
+    public static final MapKey<String> INFORMAZIONI_INTEGRAZIONE = Map.newMapKey("INFORMAZIONI_INTEGRAZIONE");
+    public static final MapKey<String> INFORMAZIONI_INTEGRAZIONE_RISPOSTA = Map.newMapKey("INFORMAZIONI_INTEGRAZIONE_RISPOSTA");
 		
 	public final static MapKey<String> EMESSI_DIAGNOSTICI_ERRORE = Map.newMapKey("EMESSI_DIAGNOSTICI_ERRORE");
 	public final static MapKey<String> REQUEST_INFO = Map.newMapKey("REQUEST_INFO");

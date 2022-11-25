@@ -2541,6 +2541,71 @@ public class InoltroBuste extends GenericLib{
 			
 
 			
+			msgDiag.mediumDebug("Aggiungo informazioni di integrazione dinamica della risposta nel contesto ...");
+			
+			try {
+				if(pd!=null && transportResponseContext!=null) {
+					configurazionePdDManager.setInformazioniIntegrazioneDinamiche(this.log, transportResponseContext, pddContext, pd);
+				}
+			} 
+			catch (Throwable e) {
+				// prima emetto diagnostico di fine connettore
+			
+				StringBuilder bfMsgErroreSituazioneAnomale = new StringBuilder();
+				EsitoElaborazioneMessaggioTracciato esitoTraccia = gestioneTracciamentoFineConnettore(errorConsegna, 
+						soapFault, restProblem, 
+						traduttore, msgDiag, motivoErroreConsegna, 
+						responseMessage, isBlockedTransaction_responseMessageWithTransportCodeError,
+						functionAsRouter, sendRispostaApplicativa, bfMsgErroreSituazioneAnomale);
+				if(esitoTraccia!=null) {
+					tracciamento.registraRichiesta(requestMessageTrasformato,securityInfo,headerBustaRichiesta,bustaRichiesta,esitoTraccia,
+							Tracciamento.createLocationString(false, location),
+							idCorrelazioneApplicativa);
+				}
+				
+				msgDiag.addKeywordErroreProcessamento(e, "setInformazioniIntegrazioneDinamicheRisposta");
+				msgDiag.logErroreGenerico(e,"setInformazioniIntegrazioneDinamicheRisposta");
+				String msgErrore = "Lettura delle informazioni di integrazione dinamica della risposta ha provocato un errore: "+e.getMessage();
+				this.log.error(msgErrore,e);
+				if(functionAsRouter){
+					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),bustaRichiesta,
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),
+							idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,
+							(responseMessage!=null ? responseMessage.getParseException() : null));
+					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErrore);
+					esito.setEsitoInvocazione(true);
+				}else{
+					if(sendRispostaApplicativa){
+						OpenSPCoop2Message responseMessageError = 
+								this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,
+										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),e,
+												(responseMessage!=null ? responseMessage.getParseException() : null));
+						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErrore);
+						esito.setEsitoInvocazione(true);
+					}else{
+						// Se Non e' attivo una gestione dei riscontri, faccio il rollback sulla coda.
+						// Altrimenti verra attivato la gestione dei riscontri che riprovera' dopo un tot.
+						if(gestioneBusteNonRiscontrateAttive==false){
+							ejbUtils.rollbackMessage(msgErrore, esito);
+							esito.setEsitoInvocazione(false);
+							esito.setStatoInvocazioneErroreNonGestito(e);
+						}else{
+							ejbUtils.updateErroreProcessamentoMessage(msgErrore, esito);
+							esito.setEsitoInvocazione(true);
+							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErrore);
+						}
+					}
+				}
+				openspcoopstate.releaseResource();
+				return esito;
+				
+			}
+			
+			
+			
 			
 			
 			
@@ -3845,10 +3910,11 @@ public class InoltroBuste extends GenericLib{
 				try{
 					
 					gestoreCorrelazione = 
-							new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(),
-									this.log,soggettoFruitore,idServizio, servizioApplicativoFruitore,protocolFactory,
+							new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(), this.log,
+									soggettoFruitore,idServizio, bustaRichiesta, 
+									servizioApplicativoFruitore,protocolFactory,
 									transactionNullable, pddContext,
-									pd.getProprietaList());
+									pd);
 
 					gestoreCorrelazione.verificaCorrelazioneRisposta(pd.getCorrelazioneApplicativaRisposta(), responseMessage, headerIntegrazioneRisposta, false);
 					

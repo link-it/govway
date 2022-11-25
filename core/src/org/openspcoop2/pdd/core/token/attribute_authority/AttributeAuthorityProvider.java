@@ -373,7 +373,7 @@ public class AttributeAuthorityProvider implements IProvider {
 		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_CLAIMS.equals(id)
 			) {
 			ProviderInfo pInfo = new ProviderInfo();
-			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_CLAIMS);
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_CLAIMS);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI_CON_REQUIRED_ATTRIBUTES);
 			return pInfo;
 		}

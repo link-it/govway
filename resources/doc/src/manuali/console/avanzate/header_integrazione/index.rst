@@ -42,3 +42,4 @@ informazioni dal gateway solamente tramite la modalità *Trasporto*.
 	headerRisposta
 	headerClientGW
 	headers
+        tokenJson

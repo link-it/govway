@@ -20,10 +20,13 @@
 
 package org.openspcoop2.utils.json;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
 import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -248,5 +251,32 @@ public class YAMLUtils extends AbstractUtils {
 			return jsonRepresentation;
 		}
 		return null;
+	}
+	
+	
+	// CONVERT TO MAP 
+	
+	public Map<String, Object> convertToMap(Logger log, String source, String raw) {
+		return this.convertToMap(log, source, raw, null);
+	}
+	public Map<String, Object> convertToMap(Logger log, String source, String raw, List<String> claimsToConvert) {
+		if(this.isYaml(raw)) {
+			return super._convertToMap(log, source, raw, claimsToConvert);
+		}
+		else {
+			return new HashMap<>(); // empty return
+		}	
+	}
+	
+	public Map<String, Object> convertToMap(Logger log, String source, byte[]raw) {
+		return this.convertToMap(log, source, raw, null);
+	}
+	public Map<String, Object> convertToMap(Logger log, String source, byte[]raw, List<String> claimsToConvert) {
+		if(this.isYaml(raw)) {
+			return super._convertToMap(log, source, raw, claimsToConvert);
+		}
+		else {
+			return new HashMap<>(); // empty return
+		}	
 	}
 }

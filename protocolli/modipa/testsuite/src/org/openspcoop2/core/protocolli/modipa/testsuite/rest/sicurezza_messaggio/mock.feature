@@ -3,10 +3,16 @@ Feature: Server mock per il testing della sicurezza messaggio
 Background:
 
     * def getRequestHeader = read('classpath:utils/get-request-header.js')
+    * def encode_base64 = read('classpath:utils/encode-base64.js')
 
     * def isTest =
     """
     function(id) {
+
+        karate.log("Mock test id (case A): ", karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]"))
+        karate.log("Mock test id (case B): ", karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]"))
+        karate.log("Mock test id (case C): ", karate.get("requestHeaders['govway-testsuite-test-id'][0]"))
+
         return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
                karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
                karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
@@ -506,13 +512,49 @@ Scenario: isTest('multipart-request-mixed-idar0302')
 Scenario: isTest('idar03-custom-single-header') || isTest('idar03-custom-doppi-header') || isTest('idar03-custom-doppi-header-solo-richiesta') ||
           isTest('idar0302-custom-single-header') || isTest('idar0302-custom-doppi-header') || isTest('idar0302-custom-doppi-header-solo-richiesta')
 
+    * def integration_header = karate.readAsString('classpath:test/rest/sicurezza-messaggio/integration_info.json')
+    * def integration_header_base64 = encode_base64(integration_header);
+
+    * karate.log("Response: ", integration_header_base64)
+
     * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * match requestHeaders['Authorization'] == '#notpresent'
     * match requestHeaders['Digest'] == '#notpresent'
     * def responseStatus = 200
+    * def newHeaders = 
+    """
+    ({
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-Integration': integration_header_base64
+    })
+    """
+    * configure responseHeaders = newHeaders
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
+
+Scenario: isTest('idar03-custom-doppi-header-multipart')
+
+    * def integration_header = karate.readAsString('classpath:test/rest/sicurezza-messaggio/integration_info.json')
+    * def integration_header_base64 = encode_base64(integration_header);
+
+    * karate.log("Response: ", integration_header_base64)
+
+    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Digest'] == '#notpresent'
+    * def responseStatus = 200
+    * def newHeaders = 
+    """
+    ({
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'Content-Type': 'multipart/mixed; boundary="----=_Part_1_1678144365.1610454048429"; type="text/xml"',
+       'GovWay-Integration': integration_header_base64
+    })
+    """
+    * configure responseHeaders = newHeaders
+    * def response = read('classpath:test/rest/sicurezza-messaggio/richiestaConAllegati.bin')
 
 
 # catch all

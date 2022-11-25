@@ -150,14 +150,14 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		
 		this.endpoint = policyNegoziazioneToken.getEndpoint();
 		if(this.endpoint!=null && !"".equals(this.endpoint)) {
-			this.endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", this.endpoint, dynamicMap, pddContext, true);	
+			this.endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", this.endpoint, dynamicMap, pddContext);	
 		}
 		
 		boolean basic = policyNegoziazioneToken.isBasicAuthentication();
 		if(basic) {
 			this.basicUsername = policyNegoziazioneToken.getBasicAuthentication_username();
 			if(this.basicUsername!=null && !"".equals(this.basicUsername)) {
-				this.basicUsername = DynamicUtils.convertDynamicPropertyValue("username.gwt", this.basicUsername, dynamicMap, pddContext, true);	
+				this.basicUsername = DynamicUtils.convertDynamicPropertyValue("username.gwt", this.basicUsername, dynamicMap, pddContext);	
 			}
 		}
 		
@@ -165,14 +165,14 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		if(bearer) {
 			this.bearerToken = policyNegoziazioneToken.getBeareAuthentication_token();
 			if(this.bearerToken!=null && !"".equals(this.bearerToken)) {
-				this.bearerToken = DynamicUtils.convertDynamicPropertyValue("bearerToken.gwt", this.bearerToken, dynamicMap, pddContext, true);	
+				this.bearerToken = DynamicUtils.convertDynamicPropertyValue("bearerToken.gwt", this.bearerToken, dynamicMap, pddContext);	
 			}
 		}
 		
 		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
 			this.usernamePasswordGrant = policyNegoziazioneToken.getUsernamePasswordGrant_username();
 			if(this.usernamePasswordGrant!=null && !"".equals(this.usernamePasswordGrant)) {
-				this.usernamePasswordGrant = DynamicUtils.convertDynamicPropertyValue("usernamePasswordGrant.gwt", this.usernamePasswordGrant, dynamicMap, pddContext, true);	
+				this.usernamePasswordGrant = DynamicUtils.convertDynamicPropertyValue("usernamePasswordGrant.gwt", this.usernamePasswordGrant, dynamicMap, pddContext);	
 			}
 		}
 		
@@ -247,7 +247,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				this.signedJwtIssuer = policyNegoziazioneToken.getJwtIssuer();
 			}
 			if(this.signedJwtIssuer!=null && !"".equals(this.signedJwtIssuer) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.signedJwtIssuer)) {
-				this.signedJwtIssuer = DynamicUtils.convertDynamicPropertyValue("issuer.gwt", this.signedJwtIssuer, dynamicMap, pddContext, true);	
+				this.signedJwtIssuer = DynamicUtils.convertDynamicPropertyValue("issuer.gwt", this.signedJwtIssuer, dynamicMap, pddContext);	
 			}
 			
 			
@@ -270,7 +270,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				this.signedJwtClientId = policyNegoziazioneToken.getJwtClientId();
 			}
 			if(this.signedJwtClientId!=null && !"".equals(this.signedJwtClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.signedJwtClientId)) {
-				this.signedJwtClientId = DynamicUtils.convertDynamicPropertyValue("clientId.gwt", this.signedJwtClientId, dynamicMap, pddContext, true);	
+				this.signedJwtClientId = DynamicUtils.convertDynamicPropertyValue("clientId.gwt", this.signedJwtClientId, dynamicMap, pddContext);	
 			}
 			
 			
@@ -293,57 +293,57 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				this.signedJwtSubject = policyNegoziazioneToken.getJwtSubject();
 			}
 			if(this.signedJwtSubject!=null && !"".equals(this.signedJwtSubject) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.signedJwtSubject)) {
-				this.signedJwtSubject = DynamicUtils.convertDynamicPropertyValue("subject.gwt", this.signedJwtSubject, dynamicMap, pddContext, true);	
+				this.signedJwtSubject = DynamicUtils.convertDynamicPropertyValue("subject.gwt", this.signedJwtSubject, dynamicMap, pddContext);	
 			}
 			
 			this.signedJwtAudience = policyNegoziazioneToken.getJwtAudience();
 			if(this.signedJwtAudience!=null && !"".equals(this.signedJwtAudience) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.signedJwtAudience)) {
-				this.signedJwtAudience = DynamicUtils.convertDynamicPropertyValue("jwtAudience.gwt", this.signedJwtAudience, dynamicMap, pddContext, true);	
+				this.signedJwtAudience = DynamicUtils.convertDynamicPropertyValue("jwtAudience.gwt", this.signedJwtAudience, dynamicMap, pddContext);	
 			}
 			
 			this.signedJwtJti = policyNegoziazioneToken.getJwtIdentifier();
 			if(this.signedJwtJti!=null && !"".equals(this.signedJwtJti) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.signedJwtJti)) {
-				this.signedJwtJti = DynamicUtils.convertDynamicPropertyValue("jti.gwt", this.signedJwtJti, dynamicMap, pddContext, true);	
+				this.signedJwtJti = DynamicUtils.convertDynamicPropertyValue("jti.gwt", this.signedJwtJti, dynamicMap, pddContext);	
 			}
 			
 			if(policyNegoziazioneToken.isPDND()) {
 				
 				this.signedJwtPurposeId = policyNegoziazioneToken.getJwtPurposeId();
 				if(this.signedJwtPurposeId!=null && !"".equals(this.signedJwtPurposeId)) {
-					this.signedJwtPurposeId = DynamicUtils.convertDynamicPropertyValue("jwtPurposeId.gwt", this.signedJwtPurposeId, dynamicMap, pddContext, true);	
+					this.signedJwtPurposeId = DynamicUtils.convertDynamicPropertyValue("jwtPurposeId.gwt", this.signedJwtPurposeId, dynamicMap, pddContext);	
 				}
 				
 				this.signedJwtSessionInfo = policyNegoziazioneToken.getJwtSessionInfo();
 				if(this.signedJwtSessionInfo!=null && !"".equals(this.signedJwtSessionInfo)) {
-					this.signedJwtSessionInfo = DynamicUtils.convertDynamicPropertyValue("sessionInfo.gwt", this.signedJwtSessionInfo, dynamicMap, pddContext, true);	
+					this.signedJwtSessionInfo = DynamicUtils.convertDynamicPropertyValue("sessionInfo.gwt", this.signedJwtSessionInfo, dynamicMap, pddContext);	
 				}
 				
 			}
 			
 			this.signedJwtClaims = policyNegoziazioneToken.getJwtClaims();
 			if(this.signedJwtClaims!=null && !"".equals(this.signedJwtClaims)) {
-				this.signedJwtClaims = DynamicUtils.convertDynamicPropertyValue("claims.gwt", this.signedJwtClaims, dynamicMap, pddContext, true);	
+				this.signedJwtClaims = DynamicUtils.convertDynamicPropertyValue("claims.gwt", this.signedJwtClaims, dynamicMap, pddContext);	
 			}
 			
 			this.signedJwtCustomId = policyNegoziazioneToken.getJwtSignIncludeKeyIdCustom();
 			if(this.signedJwtCustomId!=null && !"".equals(this.signedJwtCustomId)) {
-				this.signedJwtCustomId = DynamicUtils.convertDynamicPropertyValue("kid.customId.gwt", this.signedJwtCustomId, dynamicMap, pddContext, true);	
+				this.signedJwtCustomId = DynamicUtils.convertDynamicPropertyValue("kid.customId.gwt", this.signedJwtCustomId, dynamicMap, pddContext);	
 			}
 			
 			this.signedJwtX509Url = policyNegoziazioneToken.getJwtSignIncludeX509URL();
 			if(this.signedJwtX509Url!=null && !"".equals(this.signedJwtX509Url)) {
-				this.signedJwtX509Url = DynamicUtils.convertDynamicPropertyValue("url-x5u.gwt", this.signedJwtX509Url, dynamicMap, pddContext, true);	
+				this.signedJwtX509Url = DynamicUtils.convertDynamicPropertyValue("url-x5u.gwt", this.signedJwtX509Url, dynamicMap, pddContext);	
 			}
 		}
 		
 		this.scope = policyNegoziazioneToken.getScopeString();
 		if(this.scope!=null && !"".equals(this.scope)) {
-			this.scope = DynamicUtils.convertDynamicPropertyValue("scopes.gwt", this.scope, dynamicMap, pddContext, true);	
+			this.scope = DynamicUtils.convertDynamicPropertyValue("scopes.gwt", this.scope, dynamicMap, pddContext);	
 		}
 		
 		this.audience = policyNegoziazioneToken.getAudience();
 		if(this.audience!=null && !"".equals(this.audience)) {
-			this.audience = DynamicUtils.convertDynamicPropertyValue("aud.gwt", this.audience, dynamicMap, pddContext, true);	
+			this.audience = DynamicUtils.convertDynamicPropertyValue("aud.gwt", this.audience, dynamicMap, pddContext);	
 		}
 		
 		if(policyNegoziazioneToken.isPDND()) {
@@ -370,18 +370,18 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				}
 			}
 			if(this.formClientId!=null && !"".equals(this.formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.formClientId)) {
-				this.formClientId = DynamicUtils.convertDynamicPropertyValue("formClientId.gwt", this.formClientId, dynamicMap, pddContext, true);	
+				this.formClientId = DynamicUtils.convertDynamicPropertyValue("formClientId.gwt", this.formClientId, dynamicMap, pddContext);	
 			}
 			
 			this.formResource = policyNegoziazioneToken.getFormResource();
 			if(this.formResource!=null && !"".equals(this.formResource) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.formResource)) {
-				this.formResource = DynamicUtils.convertDynamicPropertyValue("formResource.gwt", this.formResource, dynamicMap, pddContext, true);	
+				this.formResource = DynamicUtils.convertDynamicPropertyValue("formResource.gwt", this.formResource, dynamicMap, pddContext);	
 			}
 		}
 		
 		this.parameters = policyNegoziazioneToken.getFormParameters();
 		if(this.parameters!=null && !"".equals(this.parameters)) {
-			this.parameters = DynamicUtils.convertDynamicPropertyValue("parameters.gwt", this.parameters, dynamicMap, pddContext, true);	
+			this.parameters = DynamicUtils.convertDynamicPropertyValue("parameters.gwt", this.parameters, dynamicMap, pddContext);	
 		}
 	}
 	

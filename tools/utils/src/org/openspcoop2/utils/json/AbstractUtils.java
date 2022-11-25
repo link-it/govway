@@ -33,12 +33,14 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
 
 /**	
  * AbstractUtils
@@ -359,6 +361,301 @@ public abstract class AbstractUtils {
 		}
 		return key;
 	}
+	
+	
+	// CONVERT TO MAP 
+	
+	protected Map<String, Object> _convertToMap(Logger log, String source, String raw, List<String> claimsToConvert) {
+		JsonNode jsonResponse = null;
+		try {
+			jsonResponse = this.getAsNode(raw);
+		}catch(Throwable t) {
+			// ignore
+		}
+		return _convertToMap(log, source, jsonResponse, claimsToConvert);
+	}
+	protected Map<String, Object> _convertToMap(Logger log, String source, byte[]raw, List<String> claimsToConvert) {
+		JsonNode jsonResponse = null;
+		try {
+			jsonResponse = this.getAsNode(raw);
+		}catch(Throwable t) {
+			// ignore
+		}
+		return _convertToMap(log, source, jsonResponse, claimsToConvert);
+	}
+	private Map<String, Object> _convertToMap(Logger log, String source, JsonNode jsonResponse, List<String> claimsToConvert) {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+			
+		try {
+			if(jsonResponse!=null && jsonResponse instanceof ObjectNode) {
+						
+				Iterator<String> iterator = jsonResponse.fieldNames();
+				while(iterator.hasNext()) {
+					String field = iterator.next();
+					if(claimsToConvert==null || claimsToConvert.contains(field)) {
+						try {
+							JsonNode selectedClaim = jsonResponse.get(field);
+							if(selectedClaim instanceof ValueNode) {
+								returnMap.put(field, selectedClaim.asText());
+							}
+							else if(selectedClaim instanceof ArrayNode) {
+								ArrayNode array = (ArrayNode) selectedClaim;
+								if(array.size()>0) {
+									JsonNode arrayFirstChildNode = array.get(0);
+									if(arrayFirstChildNode instanceof ValueNode) {
+										List<Object> l = new ArrayList<Object>();
+										for (int i = 0; i < array.size(); i++) {
+											JsonNode arrayChildNode = array.get(i);
+											Map<String, Object> readClaims = this.convertToSimpleMap(arrayChildNode);
+											if(readClaims!=null && readClaims.size()>0) {
+												if(readClaims.size()==1) {
+													for (String claim : readClaims.keySet()) {
+														Object value = readClaims.get(claim);
+														l.add(value);
+													}
+												}
+												else {
+													for (String claim : readClaims.keySet()) {
+														Object value = readClaims.get(claim);
+														_addAttribute(returnMap, claim==null ? field : claim, value);
+													}
+												}
+											}
+										}
+										if(!l.isEmpty()) {
+											_addAttribute(returnMap, field, l);
+										}
+									}
+									else {
+										for (int i = 0; i < array.size(); i++) {
+											JsonNode arrayChildNode = array.get(i);
+											Map<String, Object> readClaims = this.convertToSimpleMap(arrayChildNode);
+											if(readClaims!=null && readClaims.size()>0) {
+												for (String claim : readClaims.keySet()) {
+													Object value = readClaims.get(claim);
+													_addAttribute(returnMap, claim, value);
+												}
+											}
+										}
+									}
+								}
+							}
+							else {
+								Map<String, Object> readClaims = this.convertToSimpleMap(selectedClaim);
+								if(readClaims!=null && readClaims.size()>0) {
+									for (String claim : readClaims.keySet()) {
+										Object value = readClaims.get(claim);
+										_addAttribute(returnMap, claim, value);
+									}
+								}
+							}
+						}catch(Throwable e) {
+							log.error("Convert claim '"+field+"' to map failed ("+source+"): "+e.getMessage(),e);
+						}
+					}
+				}
+			}
+		}catch(Throwable e) {
+			// ignore
+		}
+
+		return returnMap;
+	}
+	private void _addAttribute(Map<String, Object> attributes, String claim, Object value) {
+		if(attributes.containsKey(claim)) {
+			for (int j = 1; j < 100; j++) {
+				String newKeyClaim = "_"+claim+"_"+j;
+				if(!attributes.containsKey(newKeyClaim)) {
+					attributes.put(newKeyClaim, attributes.get(claim));
+					break;
+				}
+			}
+		}
+		attributes.put(claim,value); // sovrascrive claim gia' esistente (e' stato salvato con un nome speciale)
+	}	
+	
+	
+	
+	// INSERT VALUE
+	
+	public final static String CAST_PREFIX = "cast(";
+	public final static String CAST_SUFFIX_AS_INT = " as int)";
+	public final static String CAST_SUFFIX_AS_LONG = " as long)";
+	public final static String CAST_SUFFIX_AS_FLOAT = " as float)";
+	public final static String CAST_SUFFIX_AS_DOUBLE = " as double)";
+	public final static String CAST_SUFFIX_AS_BOOLEAN = " as boolean)";
+	
+	private final static String CAST_ARRAY_OPTIONAL_EMPTY_RESULT = "cast( as string array)";
+	public final static String CAST_PREFIX_ARRAY = "cast([";
+	public final static String CAST_SUFFIX_AS_STRING_ARRAY = "] as string array)";
+	
+	public void putValue(ObjectNode objectNode, String key, String value) throws UtilsException {
+		if(value!=null) {
+			String checkValue = value.trim();
+			if(CAST_ARRAY_OPTIONAL_EMPTY_RESULT.equals(checkValue)) {
+				// nop
+			}
+			else if(checkValue.startsWith(CAST_PREFIX_ARRAY) && checkValue.endsWith(CAST_SUFFIX_AS_STRING_ARRAY)) {
+				String raw = value.trim();
+				try {
+					raw = value.substring(CAST_PREFIX_ARRAY.length(), (value.length()-CAST_SUFFIX_AS_STRING_ARRAY.length()));
+					String [] tmp = raw.split(",");
+					StringBuilder sb = new StringBuilder();
+					if(tmp!=null && tmp.length>0) {
+						for (int i = 0; i < tmp.length; i++) {
+							String check = tmp[i];
+							if(check!=null) {
+								check = check.trim();	
+							}
+							if(StringUtils.isNotEmpty(check)) {
+								if(sb.length()>0) {
+									sb.append(",");
+								}
+								sb.append("\"").append(check).append("\"");
+							}
+						}
+					}
+					if(sb.length()>0) {
+						String newValue = "["+sb.toString()+"]";
+						JsonNode node = this.getAsNode(newValue);
+						objectNode.set(key, node);
+					}
+					else {
+						throw new Exception("empty value after parsing");
+					}
+				}catch(Throwable t) {
+					throw new UtilsException("Cast value '"+raw+"' as string array failed: "+t.getMessage(),t);
+				}
+			}
+			else if(checkValue.startsWith("[") && checkValue.endsWith("]")) {
+				try {
+					JsonNode node = this.getAsNode(value);
+					objectNode.set(key, node);
+				}catch(Throwable t) {
+					boolean throwException = true;
+					// provo ad aggiungere le stringhe
+					String s = checkValue.substring(1, checkValue.length()-1);
+					if(s!=null && StringUtils.isNotEmpty(s)) {
+						String [] tmp = s.split(",");
+						StringBuilder sb = new StringBuilder();
+						if(tmp!=null && tmp.length>0) {
+							for (int i = 0; i < tmp.length; i++) {
+								String check = tmp[i];
+								if(check!=null) {
+									check = check.trim();	
+								}
+								if(StringUtils.isNotEmpty(check)) {
+									if(sb.length()>0) {
+										sb.append(",");
+									}
+									sb.append("\"").append(check).append("\"");
+								}
+							}
+						}
+						if(sb.length()>0) {
+							try {
+								String newValue = "["+sb.toString()+"]";
+								JsonNode node = this.getAsNode(newValue);
+								objectNode.set(key, node);
+								throwException = false;
+							}catch(Throwable t2) {
+								// rilancio prima eccezione
+							}
+						}
+					}
+					if(throwException) {
+						throw new UtilsException("Process value '"+value+"' as array node failed: "+t.getMessage(),t);
+					}
+				}
+			}
+			else if(checkValue.startsWith("{") && checkValue.endsWith("}")) {
+				JsonNode node = this.getAsNode(value);
+				objectNode.set(key, node);
+			}
+			else {
+				String checkValueLowerCase = checkValue.toLowerCase();
+				if(checkValueLowerCase.startsWith(CAST_PREFIX) && checkValueLowerCase.endsWith(CAST_SUFFIX_AS_INT)) {
+					String raw = value.trim();
+					try {
+						raw = value.substring(CAST_PREFIX.length(), (value.length()-CAST_SUFFIX_AS_INT.length()));
+						if(raw!=null) {
+							raw = raw.trim();
+							if(StringUtils.isNotEmpty(raw)) {
+								int v = Integer.valueOf(raw);
+								objectNode.put(key, v);
+							}
+						}
+					}catch(Throwable t) {
+						throw new UtilsException("Cast value '"+raw+"' as int failed: "+t.getMessage(),t);
+					}
+				}
+				else if(checkValueLowerCase.startsWith(CAST_PREFIX) && checkValueLowerCase.endsWith(CAST_SUFFIX_AS_LONG)) {
+					String raw = value.trim();
+					try {
+						raw = value.substring(CAST_PREFIX.length(), (value.length()-CAST_SUFFIX_AS_LONG.length()));
+						if(raw!=null) {
+							raw = raw.trim();
+							if(StringUtils.isNotEmpty(raw)) {
+								long v = Long.valueOf(raw);
+								objectNode.put(key, v);
+							}
+						}
+					}catch(Throwable t) {
+						throw new UtilsException("Cast value '"+raw+"' as long failed: "+t.getMessage(),t);
+					}
+				}
+				else if(checkValueLowerCase.startsWith(CAST_PREFIX) && checkValueLowerCase.endsWith(CAST_SUFFIX_AS_FLOAT)) {
+					String raw = value.trim();
+					try {
+						raw = value.substring(CAST_PREFIX.length(), (value.length()-CAST_SUFFIX_AS_FLOAT.length()));
+						if(raw!=null) {
+							raw = raw.trim();
+							if(StringUtils.isNotEmpty(raw)) {
+								float v = Float.valueOf(raw);
+								objectNode.put(key, v);
+							}
+						}
+					}catch(Throwable t) {
+						throw new UtilsException("Cast value '"+raw+"' as float failed: "+t.getMessage(),t);
+					}
+				}
+				else if(checkValueLowerCase.startsWith(CAST_PREFIX) && checkValueLowerCase.endsWith(CAST_SUFFIX_AS_DOUBLE)) {
+					String raw = value.trim();
+					try {
+						raw = value.substring(CAST_PREFIX.length(), (value.length()-CAST_SUFFIX_AS_DOUBLE.length()));
+						if(raw!=null) {
+							raw = raw.trim();
+							if(StringUtils.isNotEmpty(raw)) {
+								double v = Double.valueOf(raw);
+								objectNode.put(key, v);
+							}
+						}
+					}catch(Throwable t) {
+						throw new UtilsException("Cast value '"+raw+"' as double failed: "+t.getMessage(),t);
+					}
+				}
+				else if(checkValueLowerCase.startsWith(CAST_PREFIX) && checkValueLowerCase.endsWith(CAST_SUFFIX_AS_BOOLEAN)) {
+					String raw = value.trim();
+					try {
+						raw = value.substring(CAST_PREFIX.length(), (value.length()-CAST_SUFFIX_AS_BOOLEAN.length()));
+						if(raw!=null) {
+							raw = raw.trim();
+							if(StringUtils.isNotEmpty(raw)) {
+								boolean v = Boolean.valueOf(raw);
+								objectNode.put(key, v);
+							}
+						}
+					}catch(Throwable t) {
+						throw new UtilsException("Cast value '"+raw+"' as boolean failed: "+t.getMessage(),t);
+					}
+				}
+				else {
+					objectNode.put(key, value);
+				}
+			}
+		}
+	}
+	
 	
 	
 	// RENAME
@@ -911,6 +1208,7 @@ public abstract class AbstractUtils {
 		}
 		return l;
 	}
+	
 }
 
 class _StructureNode {

@@ -9,6 +9,11 @@ Background:
     * def isTest =
     """
     function(id) {
+
+        karate.log("Proxy test id (case A): ", karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]"))
+        karate.log("Proxy test id (case B): ", karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]"))
+        karate.log("Proxy test id (case C): ", karate.get("requestHeaders['govway-testsuite-test-id'][0]"))
+
         return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
                karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
                karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
@@ -4221,7 +4226,56 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar0302-custom-singl
             aud: 'testsuite',
             client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             iss: 'DemoSoggettoFruitore',
-            sub: 'ApplicativoBlockingIDA01'
+            sub: 'ApplicativoBlockingIDA01',
+	    integrationInfoString: 'valoreClientString',
+            integrationInfoInt: 13,
+            integrationInfoBoolean: true,
+	    integrationInfoFloat: 24.2,
+            integrationInfoList0: 'val1',
+            integrationInfoList1: 'val2',
+	    integrationInfoList: ['val1','val2'],
+	    level2_integrationInfoString: 'valoreClientLeve2String',
+            level2_integrationInfoInt: 99,
+            level2_integrationInfoBoolean: false,
+	    level2_integrationInfoFloat: 102.29,
+            level2_integrationInfoList0: 33,
+            level2_integrationInfoList1: 1234,
+	    level2_integrationInfoList: [33,1234],
+	    level3_integrationInfoString: 'valoreClientLeve3String',
+            level3_integrationInfoInt: 12467,
+            level3_integrationInfoBoolean: false,
+	    level3_claims_integrationInfoString: 'valoreClientLeve3String',
+            level3_claims_integrationInfoInt: 12467,
+            level3_claims_integrationInfoBoolean: false,
+	    complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            },
+            complex_integrationInfoListTest1: [ '666' , '999' ],
+            complex_integrationInfoListTest2: [ '666' , '999' ],
+            optional_integrationInfoString: 'valoreClientString',
+            optional_integrationInfoBoolean: true,
+            optional_integrationInfoLong: 2147483747,
+            optional_integrationInfoDouble: 1399.56,
+            optional_integrationInfoListTest: [ '666' , '999' ],
+            optional_complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            }
         }
     })
     """
@@ -4236,6 +4290,7 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar0302-custom-singl
     * match requestHeaders['Digest'] == '#notpresent'
     * match requestHeaders['Authorization'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['GovWay-Integration'] == '#notpresent'
 
     * def server_token_match =
     """
@@ -4245,7 +4300,56 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar0302-custom-singl
             aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             client_id: 'RestBlockingIDAR03Custom/v1',
             iss: 'DemoSoggettoErogatore',
-            sub: 'RestBlockingIDAR03Custom/v1'
+            sub: 'RestBlockingIDAR03Custom/v1',
+	    integrationInfoString: 'valoreClientString',
+            integrationInfoInt: 13,
+            integrationInfoBoolean: true,
+	    integrationInfoFloat: 24.2,
+            integrationInfoList0: 'val1',
+            integrationInfoList1: 'val2',
+	    integrationInfoList: ['val1','val2'],
+	    level2_integrationInfoString: 'valoreClientLeve2String',
+            level2_integrationInfoInt: 99,
+            level2_integrationInfoBoolean: false,
+	    level2_integrationInfoFloat: 102.29,
+            level2_integrationInfoList0: 33,
+            level2_integrationInfoList1: 1234,
+	    level2_integrationInfoList: [33,1234],
+	    level3_integrationInfoString: 'valoreClientLeve3String',
+            level3_integrationInfoInt: 12467,
+            level3_integrationInfoBoolean: false,
+	    level3_claims_integrationInfoString: 'valoreClientLeve3String',
+            level3_claims_integrationInfoInt: 12467,
+            level3_claims_integrationInfoBoolean: false,
+	    complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            },
+            complex_integrationInfoListTest1: [ '666' , '999' ],
+            complex_integrationInfoListTest2: [ '666' , '999' ],
+            optional_integrationInfoString: 'valoreClientString',
+            optional_integrationInfoBoolean: true,
+            optional_integrationInfoLong: 2147483747,
+            optional_integrationInfoDouble: 1399.56,
+            optional_integrationInfoListTest: [ '666' , '999' ],
+            optional_complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            }
         }
     })
     """
@@ -4257,6 +4361,7 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar0302-custom-singl
     * match responseHeaders['Digest'] == '#notpresent'
     * match responseHeaders['Authorization'] == '#notpresent'
     * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match responseHeaders['GovWay-Integration'] == '#notpresent'
 
     * def newHeaders = 
     """
@@ -4279,7 +4384,25 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
             aud: 'testsuite',
             client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             iss: 'DemoSoggettoFruitore',
-            sub: 'ApplicativoBlockingIDA01'
+            sub: 'ApplicativoBlockingIDA01',
+            integrationInfoString: 'valoreClientString',
+            level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
+            integrationInfoAuthorizationBoolean: true,
+            integrationInfoAuthorizationList0: 'val1',
+            integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
+            optional_integrationInfoAuthorizationString: 'valoreClientString',
+            optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
+            optional_complex_integrationInfoAuthorization: {
+               clientClaimLeve3String: 'valoreClientLeve3String', 
+               clientClaimLeve3Boolean: false, 
+               clientClaimLeve3Int: 12467, 
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: 'valoreClientLeve4String', 
+                  clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                  clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                  clientClaimLeve4ListString: [ 'val1' , 'val2']
+               }
+           }
         }
     })
     """
@@ -4293,7 +4416,25 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
             aud: 'testsuite',
             client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             iss: 'DemoSoggettoFruitore',
-            sub: 'ApplicativoBlockingIDA01'
+            sub: 'ApplicativoBlockingIDA01',
+            integrationInfoString: 'valoreClientString',
+            level2_integrationInfoIntegrityString: 'valoreClientLeve2String',
+            complex_integrationInfoIntegrityListTest1: [ '666' , '999' ],
+            complex_integrationInfoIntegrityListTest2: [ '666' , '999' ],
+            complex_integrationInfoIntegrity: {
+              clientClaimLeve3String: 'valoreClientLeve3String', 
+              clientClaimLeve3Boolean: false, 
+              clientClaimLeve3Int: 12467, 
+              clientClaimLeve4Complex: {
+                clientClaimLeve4String: 'valoreClientLeve4String', 
+                clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                clientClaimLeve4ListString: [ 'val1' , 'val2' ]
+              }
+            },
+            optional_integrationInfoIntegrityBoolean: true,
+            optional_integrationInfoIntegrityLong: 2.147483747E9,
+            optional_integrationInfoIntegrityDouble: 1399.56
         }
     })
     """
@@ -4336,7 +4477,25 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
             aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
             iss: 'DemoSoggettoErogatore',
-            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1'
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            integrationInfoString: 'valoreClientString',
+            level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
+            integrationInfoAuthorizationBoolean: true,
+            integrationInfoAuthorizationList0: 'val1',
+            integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
+            optional_integrationInfoAuthorizationString: 'valoreClientString',
+            optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
+            optional_complex_integrationInfoAuthorization: {
+               clientClaimLeve3String: 'valoreClientLeve3String', 
+               clientClaimLeve3Boolean: false, 
+               clientClaimLeve3Int: 12467, 
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: 'valoreClientLeve4String', 
+                  clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                  clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                  clientClaimLeve4ListString: [ 'val1' , 'val2']
+               }
+           }
         }
     })
     """
@@ -4350,7 +4509,25 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
             aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
             iss: 'DemoSoggettoErogatore',
-            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1'
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            integrationInfoString: 'valoreClientString',
+            level2_integrationInfoIntegrityString: 'valoreClientLeve2String',
+            complex_integrationInfoIntegrityListTest1: [ '666' , '999' ],
+            complex_integrationInfoIntegrityListTest2: [ '666' , '999' ],
+            complex_integrationInfoIntegrity: {
+              clientClaimLeve3String: 'valoreClientLeve3String', 
+              clientClaimLeve3Boolean: false, 
+              clientClaimLeve3Int: 12467, 
+              clientClaimLeve4Complex: {
+                clientClaimLeve4String: 'valoreClientLeve4String', 
+                clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                clientClaimLeve4ListString: [ 'val1' , 'val2' ]
+              }
+            },
+            optional_integrationInfoIntegrityBoolean: true,
+            optional_integrationInfoIntegrityLong: 2.147483747E9,
+            optional_integrationInfoIntegrityDouble: 1399.56
         }
     })
     """
@@ -4404,7 +4581,25 @@ Scenario: isTest('idar03-custom-doppi-header-solo-richiesta') || isTest('idar030
             aud: 'testsuite',
             client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             iss: 'DemoSoggettoFruitore',
-            sub: 'ApplicativoBlockingIDA01'
+            sub: 'ApplicativoBlockingIDA01',
+            integrationInfoString: 'valoreClientString',
+            level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
+            integrationInfoAuthorizationBoolean: true,
+            integrationInfoAuthorizationList0: 'val1',
+            integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
+            optional_integrationInfoAuthorizationString: 'valoreClientString',
+            optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
+            optional_complex_integrationInfoAuthorization: {
+               clientClaimLeve3String: 'valoreClientLeve3String', 
+               clientClaimLeve3Boolean: false, 
+               clientClaimLeve3Int: 12467, 
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: 'valoreClientLeve4String', 
+                  clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                  clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                  clientClaimLeve4ListString: [ 'val1' , 'val2']
+               }
+           }
         }
     })
     """
@@ -4418,7 +4613,25 @@ Scenario: isTest('idar03-custom-doppi-header-solo-richiesta') || isTest('idar030
             aud: 'testsuite',
             client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             iss: 'DemoSoggettoFruitore',
-            sub: 'ApplicativoBlockingIDA01'
+            sub: 'ApplicativoBlockingIDA01',
+            integrationInfoString: 'valoreClientString',
+            level2_integrationInfoIntegrityString: 'valoreClientLeve2String',
+            complex_integrationInfoIntegrityListTest1: [ '666' , '999' ],
+            complex_integrationInfoIntegrityListTest2: [ '666' , '999' ],
+            complex_integrationInfoIntegrity: {
+              clientClaimLeve3String: 'valoreClientLeve3String', 
+              clientClaimLeve3Boolean: false, 
+              clientClaimLeve3Int: 12467, 
+              clientClaimLeve4Complex: {
+                clientClaimLeve4String: 'valoreClientLeve4String', 
+                clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                clientClaimLeve4ListString: [ 'val1' , 'val2' ]
+              }
+            },
+            optional_integrationInfoIntegrityBoolean: true,
+            optional_integrationInfoIntegrityLong: 2.147483747E9,
+            optional_integrationInfoIntegrityDouble: 1399.56
         }
     })
     """
@@ -4461,7 +4674,8 @@ Scenario: isTest('idar03-custom-doppi-header-solo-richiesta') || isTest('idar030
             aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
             iss: 'DemoSoggettoErogatore',
-            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1'
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            integrationInfoString: 'valoreClientString'
         }
     })
     """
@@ -4484,6 +4698,155 @@ Scenario: isTest('idar03-custom-doppi-header-solo-richiesta') || isTest('idar030
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+Scenario: isTest('idar03-custom-doppi-header-multipart')
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            apiRest: true,
+            digest: 'SHA-512=7hPdSbDFK3zRBgIhlbmmGBBPpTgSCGzA+AI76gBExG2GICAqN4VGS7fVsPB0o6ShNY7z5dnJyLLtRBFeg2WPSw==',
+            digestBody: 'hcVH9WYC4R+GjoSDXIWcn+ewY1B7+hgZ7w2EJVR//mk=',
+            digestAllegato1: '2v8wtsBZO3c0V0i4IKvwFmffKeea5ZG/drRGiXl39Gc=',
+            digestAllegato2: 'KNdo5OCzZu8Hh7FwKxfpqPMTAHsC2ZRxOds5WTiu4QA='
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            apiRest: true,
+            digest: 'SHA-512=7hPdSbDFK3zRBgIhlbmmGBBPpTgSCGzA+AI76gBExG2GICAqN4VGS7fVsPB0o6ShNY7z5dnJyLLtRBFeg2WPSw==',
+            digestBody: 'hcVH9WYC4R+GjoSDXIWcn+ewY1B7+hgZ7w2EJVR//mk=',
+            digestAllegato1: 'SHA-256=62d7686b95ca8df384ce021b205ebb1dca6e23842f41ea6930e93c2a4a0b05e3',
+            digestAllegato2: 'SHA-256=9c287afbddcad7c3bceb4a49fc6d246be236f04639c4eff7269504b3d9a801e3'
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def client_token_authorization = decodeToken(requestHeaders['Authorization'][0], "Bearer")
+    * def client_token_integrity = decodeToken(requestHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], "AGID")
+    
+    * def client_token_authorization_jti = get client_token_authorization $.payload.jti
+    * def client_token_integrity_jti = get client_token_integrity $.payload.jti
+    * match client_token_authorization_jti == client_token_integrity_jti
+
+    * def client_token_authorization_iat = get client_token_authorization $.payload.iat
+    * def client_token_integrity_iat = get client_token_integrity $.payload.iat
+    * match client_token_authorization_iat == client_token_integrity_iat
+    
+    * def client_token_authorization_nbf = get client_token_authorization $.payload.nbf
+    * def client_token_integrity_nbf = get client_token_integrity $.payload.nbf
+    * match client_token_authorization_nbf == client_token_integrity_nbf
+    
+    * def client_token_authorization_exp = get client_token_authorization $.payload.exp
+    * def client_token_integrity_exp = get client_token_integrity $.payload.exp
+    * match client_token_authorization_exp == client_token_integrity_exp
+
+    * match client_token_authorization.payload.signed_headers == "#notpresent"
+    * match client_token_integrity.payload.signed_headers == "#notpresent"
+
+    * setRequestHeader("Content-Type","multipart/mixed; boundary=----=_Part_1_1678144365.1610454048429; type=text/xml")
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicatiMultipart/v1')
+    
+
+
+    * def server_token_authorization_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CustomHeaderDuplicatiMultipart/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicatiMultipart/v1',
+            apiRestMultipart: true,
+            response_digest: 'SHA-512=T8pFlWTcon+1T69sT6jncZ7CzqYgAJInuDs4kBmeg9lRoiBND/D+qTH1+RPKAU6fMmaHzzY4qCCIcZy0VosVxg==',
+            response_digestBody: 'hcVH9WYC4R+GjoSDXIWcn+ewY1B7+hgZ7w2EJVR//mk=',
+            response_digestAllegato1: '2v8wtsBZO3c0V0i4IKvwFmffKeea5ZG/drRGiXl39Gc=',
+            response_digestAllegato2: 'KNdo5OCzZu8Hh7FwKxfpqPMTAHsC2ZRxOds5WTiu4QA='
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['Authorization'][0], match_to: server_token_authorization_match, kind: "Bearer"  })
+    
+    # Il response digest del secondo token viene diverso poichè c'è una newLine differente tra il messaggio trattato la prima volta e la seconda volta, credo per via del mock
+    * def server_token_integrity_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CustomHeaderDuplicatiMultipart/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicatiMultipart/v1',
+            apiRestMultipart: true,
+            response_digest: 'SHA-512=7hPdSbDFK3zRBgIhlbmmGBBPpTgSCGzA+AI76gBExG2GICAqN4VGS7fVsPB0o6ShNY7z5dnJyLLtRBFeg2WPSw==',
+            response_digestBody: 'hcVH9WYC4R+GjoSDXIWcn+ewY1B7+hgZ7w2EJVR//mk=',
+            response_digestAllegato1: 'SHA-256=62d7686b95ca8df384ce021b205ebb1dca6e23842f41ea6930e93c2a4a0b05e3',
+            response_digestAllegato2: 'SHA-256=9c287afbddcad7c3bceb4a49fc6d246be236f04639c4eff7269504b3d9a801e3'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], match_to: server_token_integrity_match, kind: "AGID"  })
+
+    * def server_token_authorization = decodeToken(responseHeaders['Authorization'][0], "Bearer")
+    * def server_token_integrity = decodeToken(responseHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], "AGID")
+    
+    * def server_token_authorization_jti = get server_token_authorization $.payload.jti
+    * def server_token_integrity_jti = get server_token_integrity $.payload.jti
+    * match server_token_authorization_jti == server_token_integrity_jti
+
+    * def server_token_authorization_iat = get server_token_authorization $.payload.iat
+    * def server_token_integrity_iat = get server_token_integrity $.payload.iat
+    * match server_token_authorization_iat == server_token_integrity_iat
+    
+    * def server_token_authorization_nbf = get server_token_authorization $.payload.nbf
+    * def server_token_integrity_nbf = get server_token_integrity $.payload.nbf
+    * match server_token_authorization_nbf == server_token_integrity_nbf
+    
+    * def server_token_authorization_exp = get server_token_authorization $.payload.exp
+    * def server_token_integrity_exp = get server_token_integrity $.payload.exp
+    * match server_token_authorization_exp == server_token_integrity_exp
+
+    * match server_token_authorization.payload.signed_headers == "#notpresent"
+    * match server_token_integrity.payload.signed_headers == "#notpresent"
+    
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['CustomTestSuiteDoppi-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Authorization-Token': responseHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Server-Integrity-Token': responseHeaders['CustomTestSuiteDoppi-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
 
 
 

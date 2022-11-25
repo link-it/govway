@@ -30,6 +30,8 @@ import java.util.Map;
 
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -79,11 +81,92 @@ public class DumpMessaggio implements Serializable{
 		}
 		return null;
 	}
-
+	
 	public void setBody(ByteArrayOutputStream body) {
 		this.body = body;
 	}
 
+	public String getBodyBase64Digest(String algorithm) throws UtilsException{
+		return getBodyDigest(algorithm, DigestEncoding.BASE64, false);
+	}
+	public String getBodyBase64Digest(String algorithm, String rfc3230) throws UtilsException{
+		// // per invocazioni dinamiche
+		boolean v = false;
+		try {
+			v = Boolean.valueOf(rfc3230);
+		}catch(Exception e) {
+			throw new UtilsException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+		}
+		return getBodyBase64Digest(algorithm, v);
+	}
+	public String getBodyBase64Digest(String algorithm, boolean rfc3230) throws UtilsException{
+		return getBodyDigest(algorithm, DigestEncoding.BASE64, rfc3230);
+	}
+	
+	public String getBodyHexDigest(String algorithm) throws UtilsException{
+		return getBodyDigest(algorithm, DigestEncoding.HEX, false);
+	}
+	public String getBodyHexDigest(String algorithm, String rfc3230) throws UtilsException{
+		// // per invocazioni dinamiche
+		boolean v = false;
+		try {
+			v = Boolean.valueOf(rfc3230);
+		}catch(Exception e) {
+			throw new UtilsException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+		}
+		return getBodyHexDigest(algorithm, v);
+	}
+	public String getBodyHexDigest(String algorithm, boolean rfc3230) throws UtilsException{
+		return getBodyDigest(algorithm, DigestEncoding.HEX, rfc3230);
+	}
+	
+	public String getBodyDigest(String algorithm, String digestEncodingParam) throws UtilsException{
+		return getBodyDigest(algorithm, digestEncodingParam, false);
+	}
+	public String getBodyDigest(String algorithm, DigestEncoding digestEncoding) throws UtilsException{
+		return getBodyDigest(algorithm, digestEncoding, false);
+	}
+	public String getBodyDigest(String algorithm, String digestEncodingParam, String rfc3230) throws UtilsException{
+		// // per invocazioni dinamiche
+		boolean v = false;
+		try {
+			v = Boolean.valueOf(rfc3230);
+		}catch(Exception e) {
+			throw new UtilsException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+		}
+		return getBodyDigest(algorithm, digestEncodingParam, v);
+	}
+	public String getBodyDigest(String algorithm, String digestEncodingParam,
+			boolean rfc3230 // aggiunge prefisso algoritmo=
+			) throws UtilsException{
+		DigestEncoding digestEncoding = null;
+		try {
+			digestEncoding = DigestEncoding.valueOf(digestEncodingParam);
+		}catch(Throwable t) {
+			throw new UtilsException("DigestEncoding '"+digestEncodingParam+"' unsupported");
+		}
+		return getBodyDigest(algorithm, digestEncoding, rfc3230);
+	}
+	public String getBodyDigest(String algorithm, DigestEncoding digestEncoding, String rfc3230) throws UtilsException{
+		// // per invocazioni dinamiche
+		boolean v = false;
+		try {
+			v = Boolean.valueOf(rfc3230);
+		}catch(Exception e) {
+			throw new UtilsException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+		}
+		return getBodyDigest(algorithm, digestEncoding, v);
+	}
+	public String getBodyDigest(String algorithm, DigestEncoding digestEncoding,
+			boolean rfc3230 // aggiunge prefisso algoritmo=
+			) throws UtilsException{
+		byte[] content = getBody();
+		if(content==null) {
+			throw new UtilsException("Content null");
+		}
+		return org.openspcoop2.utils.digest.DigestUtils.getDigestValue(content, algorithm, digestEncoding, rfc3230);
+	}
+	
 	public String getContentType() {
 		return this.contentType;
 	}
@@ -100,6 +183,19 @@ public class DumpMessaggio implements Serializable{
 		this.attachments = attachments;
 	}
 	
+	public DumpAttachment getAttachmentByIndex(String index) throws UtilsException {
+		// // per invocazioni dinamiche
+		int pos = -1;
+		try {
+			pos = Integer.valueOf(index);
+			if(pos<0) {
+				throw new Exception("negative index");
+			}
+		}catch(Exception e) {
+			throw new UtilsException("Uncorrect position '"+pos+"': "+e.getMessage(),e);
+		}
+		return getAttachment(pos);
+	}
 	public DumpAttachment getAttachment(int index) {
 		if(this.attachments==null || this.attachments.isEmpty()) {
 			return null;
@@ -108,6 +204,12 @@ public class DumpMessaggio implements Serializable{
 			return null;
 		}
 		return this.attachments.get(index);
+	}
+	public DumpAttachment getAttachmentById(String id) {
+		return getAttachment(id);
+	}
+	public DumpAttachment getAttachmentByContentId(String id) {
+		return getAttachment(id);
 	}
 	public DumpAttachment getAttachment(String id) {
 		if(this.attachments==null || this.attachments.isEmpty()) {

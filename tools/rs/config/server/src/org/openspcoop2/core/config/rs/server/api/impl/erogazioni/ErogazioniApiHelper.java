@@ -5197,7 +5197,10 @@ public class ErogazioniApiHelper {
 		
 		if ( body.getIdentificazioneTipo() == CorrelazioneApplicativaRichiestaEnum.URL_BASED 
 			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRichiestaEnum.HEADER_BASED 
-			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRichiestaEnum.CONTENT_BASED	) {
+			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRichiestaEnum.CONTENT_BASED
+			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRichiestaEnum.TEMPLATE
+			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRichiestaEnum.FREEMARKER_TEMPLATE
+			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRichiestaEnum.VELOCITY_TEMPLATE) {
 			
 			cae.setPattern(body.getIdentificazione());
 		}
@@ -5220,7 +5223,10 @@ public class ErogazioniApiHelper {
 		cae.setIdentificazione(CorrelazioneApplicativaRispostaIdentificazione.valueOf(body.getIdentificazioneTipo().name()));
 		
 		if ( 	 body.getIdentificazioneTipo() == CorrelazioneApplicativaRispostaEnum.HEADER_BASED 
-			||   body.getIdentificazioneTipo() == CorrelazioneApplicativaRispostaEnum.CONTENT_BASED	) {
+			||   body.getIdentificazioneTipo() == CorrelazioneApplicativaRispostaEnum.CONTENT_BASED
+			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRispostaEnum.TEMPLATE
+			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRispostaEnum.FREEMARKER_TEMPLATE
+			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRispostaEnum.VELOCITY_TEMPLATE	) {
 			
 			cae.setPattern(body.getIdentificazione());
 		}

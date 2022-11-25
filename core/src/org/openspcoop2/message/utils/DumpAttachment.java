@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
@@ -124,6 +126,87 @@ public class DumpAttachment implements Serializable{
 	}
 	public void setContent(ByteArrayOutputStream content) {
 		this.content = content;
+	}
+	
+	public String getContentBase64Digest(String algorithm) throws UtilsException{
+		return getContentDigest(algorithm, DigestEncoding.BASE64, false);
+	}
+	public String getContentBase64Digest(String algorithm, String rfc3230) throws UtilsException{
+		// // per invocazioni dinamiche
+		boolean v = false;
+		try {
+			v = Boolean.valueOf(rfc3230);
+		}catch(Exception e) {
+			throw new UtilsException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+		}
+		return getContentBase64Digest(algorithm, v);
+	}
+	public String getContentBase64Digest(String algorithm, boolean rfc3230) throws UtilsException{
+		return getContentDigest(algorithm, DigestEncoding.BASE64, rfc3230);
+	}
+	
+	public String getContentHexDigest(String algorithm) throws UtilsException{
+		return getContentDigest(algorithm, DigestEncoding.HEX, false);
+	}
+	public String getContentHexDigest(String algorithm, String rfc3230) throws UtilsException{
+		// // per invocazioni dinamiche
+		boolean v = false;
+		try {
+			v = Boolean.valueOf(rfc3230);
+		}catch(Exception e) {
+			throw new UtilsException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+		}
+		return getContentHexDigest(algorithm, v);
+	}
+	public String getContentHexDigest(String algorithm, boolean rfc3230) throws UtilsException{
+		return getContentDigest(algorithm, DigestEncoding.HEX, rfc3230);
+	}
+	
+	public String getContentDigest(String algorithm, String digestEncodingParam) throws UtilsException{
+		return getContentDigest(algorithm, digestEncodingParam, false);
+	}
+	public String getContentDigest(String algorithm, DigestEncoding digestEncoding) throws UtilsException{
+		return getContentDigest(algorithm, digestEncoding, false);
+	}
+	public String getContentDigest(String algorithm, String digestEncodingParam, String rfc3230) throws UtilsException{
+		// // per invocazioni dinamiche
+		boolean v = false;
+		try {
+			v = Boolean.valueOf(rfc3230);
+		}catch(Exception e) {
+			throw new UtilsException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+		}
+		return getContentDigest(algorithm, digestEncodingParam, v);
+	}
+	public String getContentDigest(String algorithm, String digestEncodingParam,
+			boolean rfc3230 // aggiunge prefisso algoritmo=
+			) throws UtilsException{
+		DigestEncoding digestEncoding = null;
+		try {
+			digestEncoding = DigestEncoding.valueOf(digestEncodingParam);
+		}catch(Throwable t) {
+			throw new UtilsException("DigestEncoding '"+digestEncodingParam+"' unsupported");
+		}
+		return getContentDigest(algorithm, digestEncoding, rfc3230);
+	}
+	public String getContentDigest(String algorithm, DigestEncoding digestEncoding, String rfc3230) throws UtilsException{
+		// // per invocazioni dinamiche
+		boolean v = false;
+		try {
+			v = Boolean.valueOf(rfc3230);
+		}catch(Exception e) {
+			throw new UtilsException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+		}
+		return getContentDigest(algorithm, digestEncoding, v);
+	}
+	public String getContentDigest(String algorithm, DigestEncoding digestEncoding,
+			boolean rfc3230 // aggiunge prefisso algoritmo=
+			) throws UtilsException{
+		byte[] content = getContent();
+		if(content==null) {
+			throw new UtilsException("Content null");
+		}
+		return org.openspcoop2.utils.digest.DigestUtils.getDigestValue(content, algorithm, digestEncoding, rfc3230);
 	}
 	
 	@Deprecated

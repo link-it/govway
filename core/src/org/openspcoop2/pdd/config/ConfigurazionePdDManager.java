@@ -55,6 +55,7 @@ import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.StatoServiziPdd;
@@ -74,6 +75,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
@@ -112,6 +114,9 @@ import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazione;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
 import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -124,6 +129,7 @@ import org.openspcoop2.protocol.registry.CertificateCheck;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -134,6 +140,7 @@ import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 
@@ -391,7 +398,7 @@ public class ConfigurazionePdDManager {
 
 						try {
 							value = (String)config.getFlowParameters().get(keyForReplace);
-							String newValue = DynamicUtils.convertDynamicPropertyValue("ConditionalMessageSecurity", value, dynamicMap, pddContext, true);
+							String newValue = DynamicUtils.convertDynamicPropertyValue("ConditionalMessageSecurity", value, dynamicMap, pddContext);
 							if (newValue != null && !"".contentEquals(newValue)) {
 								config.getFlowParameters().put(keyForReplace, newValue);
 							}
@@ -911,10 +918,62 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getTemplateTrasformazioneSoapRisposta(this.getConnection(), idPD, nomeTrasformazione, risposta, requestInfo);
 	}
 	
+	public Template getTemplateCorrelazioneApplicativaRichiesta(IDPortaDelegata idPD, String nomeRegola, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateCorrelazioneApplicativaRichiesta(this.getConnection(), idPD, nomeRegola, template, requestInfo);
+	}
+	public Template getTemplateCorrelazioneApplicativaRisposta(IDPortaDelegata idPD, String nomeRegola, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateCorrelazioneApplicativaRisposta(this.getConnection(), idPD, nomeRegola, template, requestInfo);
+	}
+	
 	public Template getTemplateIntegrazione(IDPortaDelegata idPD, File file, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getTemplateIntegrazione(this.getConnection(), idPD, file, requestInfo);
 	}
 
+	public void setInformazioniIntegrazioneDinamiche(Logger log, HttpServletTransportRequestContext transportRequestContext, Context context, PortaDelegata pd) throws DriverConfigurazioneException {
+		_setInformazioniIntegrazioneDinamiche(log, transportRequestContext, context, pd.getProprietaList());
+	}
+	private void _setInformazioniIntegrazioneDinamiche(Logger log, HttpServletTransportRequestContext transportRequestContext, Context context, 
+			List<Proprieta> proprieta) throws DriverConfigurazioneException {
+		
+		try {
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+			boolean isEnabled = CostantiProprieta.isInformazioniIntegrazioneEnabled(proprieta, op2Properties.isIntegrazioneDynamicInfoEnabled());
+			if(isEnabled) {
+				InformazioniIntegrazioneSorgente sourceType = CostantiProprieta.getTipoInformazioniIntegrazione(proprieta, op2Properties.getIntegrazioneDynamicInfoType());
+				String sourceName = CostantiProprieta.getNomeSorgenteInformazioniIntegrazione(proprieta, op2Properties.getIntegrazioneDynamicInfoName());
+				InformazioniIntegrazioneCodifica sourceEncodeType = CostantiProprieta.getTipoCodificaInformazioniIntegrazione(proprieta, op2Properties.getIntegrazioneDynamicInfoEncodeType());
+				boolean required = CostantiProprieta.isInformazioniIntegrazioneRequired(proprieta, op2Properties.isIntegrazioneDynamicInfoRequired());
+				InformazioniIntegrazione infoIntegrazione = new InformazioniIntegrazione(sourceType, sourceName, sourceEncodeType, required, log, transportRequestContext);
+				context.addObject(Costanti.INFORMAZIONI_INTEGRAZIONE, infoIntegrazione);
+			}			
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		
+	}
+	
+	public void setInformazioniIntegrazioneDinamiche(Logger log, TransportResponseContext transportResponseContext, Context context, PortaDelegata pd) throws DriverConfigurazioneException {
+		_setInformazioniIntegrazioneDinamiche(log, transportResponseContext, context, pd.getProprietaList());
+	}
+	private void _setInformazioniIntegrazioneDinamiche(Logger log, TransportResponseContext transportResponseContext, Context context, 
+			List<Proprieta> proprieta) throws DriverConfigurazioneException {
+		
+		try {
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+			boolean isEnabled = CostantiProprieta.isInformazioniIntegrazioneRispostaEnabled(proprieta, op2Properties.isIntegrazioneResponseDynamicInfoEnabled());
+			if(isEnabled) {
+				InformazioniIntegrazioneSorgente sourceType = InformazioniIntegrazioneSorgente.http_header;
+				String sourceName = CostantiProprieta.getNomeSorgenteInformazioniIntegrazioneRisposta(proprieta, op2Properties.getIntegrazioneResponseDynamicInfoName());
+				InformazioniIntegrazioneCodifica sourceEncodeType = CostantiProprieta.getTipoCodificaInformazioniIntegrazioneRisposta(proprieta, op2Properties.getIntegrazioneResponseDynamicInfoEncodeType());
+				boolean required = CostantiProprieta.isInformazioniIntegrazioneRispostaRequired(proprieta, op2Properties.isIntegrazioneResponseDynamicInfoRequired());
+				InformazioniIntegrazione infoIntegrazione = new InformazioniIntegrazione(sourceType, sourceName, sourceEncodeType, required, log, transportResponseContext);
+				context.addObject(Costanti.INFORMAZIONI_INTEGRAZIONE_RISPOSTA, infoIntegrazione);
+			}			
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		
+	}
 	
 
 
@@ -1301,8 +1360,23 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getTemplateConnettoreMultiploCondizionale(this.getConnection(), idPA, nomeRegola, template, requestInfo);
 	}
 	
+	public Template getTemplateCorrelazioneApplicativaRichiesta(IDPortaApplicativa idPA, String nomeRegola, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateCorrelazioneApplicativaRichiesta(this.getConnection(), idPA, nomeRegola, template, requestInfo);
+	}
+	public Template getTemplateCorrelazioneApplicativaRisposta(IDPortaApplicativa idPA, String nomeRegola, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateCorrelazioneApplicativaRisposta(this.getConnection(), idPA, nomeRegola, template, requestInfo);
+	}
+	
 	public Template getTemplateIntegrazione(IDPortaApplicativa idPA, File file, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getTemplateIntegrazione(this.getConnection(), idPA, file, requestInfo);
+	}
+		
+	public void setInformazioniIntegrazioneDinamiche(Logger log, HttpServletTransportRequestContext transportRequestContext, Context context, PortaApplicativa pa) throws DriverConfigurazioneException {
+		_setInformazioniIntegrazioneDinamiche(log, transportRequestContext, context, pa.getProprietaList());
+	}
+	
+	public void setInformazioniIntegrazioneDinamiche(Logger log, TransportResponseContext transportResponseContext, Context context, PortaApplicativa pa) throws DriverConfigurazioneException {
+		_setInformazioniIntegrazioneDinamiche(log, transportResponseContext, context, pa.getProprietaList());
 	}
 
 

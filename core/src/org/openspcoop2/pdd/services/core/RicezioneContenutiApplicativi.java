@@ -1711,12 +1711,31 @@ public class RicezioneContenutiApplicativi {
 		
 		
 		
+
+
 		
 		
 		
 		
+		// ------------- Informazioni Integrazione -----------------------------
 		
-		
+		msgDiag.mediumDebug("Aggiungo informazioni di integrazione dinamica nel contesto ...");
+				
+		try {
+			if(portaDelegata!=null) {
+				configurazionePdDReader.setInformazioniIntegrazioneDinamiche(logCore, urlProtocolContext, pddContext, portaDelegata);
+			}
+		} 
+		catch (Exception e) {
+			msgDiag.logErroreGenerico(e, "setInformazioniIntegrazioneDinamiche");
+			openspcoopstate.releaseResource();
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext,IntegrationFunctionError.BAD_REQUEST,
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e,null)));
+			}
+			return;
+		}
 		
 		
 		
@@ -3404,11 +3423,37 @@ public class RicezioneContenutiApplicativi {
 			}
 			return;
 		}
+		
+		Busta busta = null;
+		try {
+			busta = new Busta(protocolFactory.getProtocol());
+			if(soggettoFruitore!=null) {
+				busta.setTipoMittente(soggettoFruitore.getTipo());
+				busta.setMittente(soggettoFruitore.getNome());
+			}
+			if(richiestaDelegata!=null && richiestaDelegata.getIdServizio()!=null) {
+				if(richiestaDelegata.getIdServizio().getSoggettoErogatore()!=null) {
+					busta.setTipoDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getTipo());
+					busta.setDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getNome());
+				}
+				busta.setTipoServizio(richiestaDelegata.getIdServizio().getTipo());
+				busta.setServizio(richiestaDelegata.getIdServizio().getNome());
+				busta.setVersioneServizio(richiestaDelegata.getIdServizio().getVersione());
+				busta.setAzione(richiestaDelegata.getIdServizio().getAzione());
+				if(sa!=null) {
+					busta.setServizioApplicativoFruitore(sa.getNome());
+				}
+			}
+		}catch(Throwable t) {
+			// ignore
+		}
+		
 		GestoreCorrelazioneApplicativa correlazioneApplicativa = 
-			new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, richiestaDelegata.getIdSoggettoFruitore(),
-					richiestaDelegata.getIdServizio(),servizioApplicativo,protocolFactory,
+			new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, 
+					richiestaDelegata.getIdSoggettoFruitore(), richiestaDelegata.getIdServizio(), busta,
+					servizioApplicativo,protocolFactory,
 					transaction, pddContext,
-					portaDelegata!=null ? portaDelegata.getProprietaList() : null);
+					portaDelegata);
 		boolean correlazioneEsistente = false;
 		String idCorrelazioneApplicativa = null;
 		if (correlazionePD != null) {

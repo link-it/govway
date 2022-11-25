@@ -2791,6 +2791,17 @@ public class ConfigurazionePdD  {
 				requestInfo);
 	}
 
+	public Template getTemplateCorrelazioneApplicativaRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeRegola, byte[] template,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPD, "getTemplateCorrelazioneApplicativaRichiesta", TemplateSource.CORRELAZIONE_APPLICATIVA_RICHIESTA, (nomeRegola!=null ? nomeRegola : "___default___"), template,
+				requestInfo);
+	}
+	public Template getTemplateCorrelazioneApplicativaRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeRegola, byte[] template,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPD, "getTemplateCorrelazioneApplicativaRisposta", TemplateSource.CORRELAZIONE_APPLICATIVA_RISPOSTA, (nomeRegola!=null ? nomeRegola : "___default___"), template,
+				requestInfo);
+	}
+	
 	private Template _getTemplate(Connection connectionPdD,IDPortaDelegata idPD, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes,
 			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
@@ -3621,6 +3632,17 @@ public class ConfigurazionePdD  {
 	public Template getTemplateConnettoreMultiploCondizionale(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template,
 			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return _getTemplate(connectionPdD, idPA, "getTemplateConnettoreMultiploCondizionale", TemplateSource.CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE, (nomeRegola!=null ? nomeRegola : "___default___"), template,
+				requestInfo);
+	}
+	
+	public Template getTemplateCorrelazioneApplicativaRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPA, "getTemplateCorrelazioneApplicativaRichiesta", TemplateSource.CORRELAZIONE_APPLICATIVA_RICHIESTA, (nomeRegola!=null ? nomeRegola : "___default___"), template,
+				requestInfo);
+	}
+	public Template getTemplateCorrelazioneApplicativaRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPA, "getTemplateCorrelazioneApplicativaRisposta", TemplateSource.CORRELAZIONE_APPLICATIVA_RISPOSTA, (nomeRegola!=null ? nomeRegola : "___default___"), template,
 				requestInfo);
 	}
 	

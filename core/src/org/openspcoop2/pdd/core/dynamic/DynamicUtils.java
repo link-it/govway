@@ -38,6 +38,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -138,7 +139,12 @@ public class DynamicUtils {
 				Object o = dynamicMapResponse.get(key);
 				if(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase().equals(key.toLowerCase()) 
 						|| 
-					Costanti.MAP_RESPONSE.toLowerCase().equals(key.toLowerCase())){
+					Costanti.MAP_RESPONSE.toLowerCase().equals(key.toLowerCase())
+						||
+					Costanti.MAP_INTEGRATION.toLowerCase().equals(key.toLowerCase())
+						||
+					(Costanti.MAP_INTEGRATION+Costanti.MAP_SUFFIX_RESPONSE).toLowerCase().equals(key.toLowerCase())
+					){
 					dynamicMap.put(key, o);
 				}
 				else {
@@ -252,6 +258,21 @@ public class DynamicUtils {
 						dynamicMap.put(Costanti.MAP_ATTACHMENTS_OBJECT, aReader);
 					}
 				}
+			}
+			if(dynamicMap.containsKey(Costanti.MAP_INTEGRATION)==false) {
+				Object oInformazioniIntegrazione = dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.INFORMAZIONI_INTEGRAZIONE);
+	    		if(oInformazioniIntegrazione!=null) {
+	    			InformazioniIntegrazione informazioniIntegrazione = (InformazioniIntegrazione) oInformazioniIntegrazione;
+	    			dynamicMap.put(Costanti.MAP_INTEGRATION, informazioniIntegrazione);
+	    		}
+			}
+			if(dynamicMap.containsKey((Costanti.MAP_INTEGRATION+Costanti.MAP_SUFFIX_RESPONSE))==false) {
+				Object oInformazioniIntegrazione = dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.INFORMAZIONI_INTEGRAZIONE_RISPOSTA);
+	    		if(oInformazioniIntegrazione!=null) {
+	    			InformazioniIntegrazione informazioniIntegrazione = (InformazioniIntegrazione) oInformazioniIntegrazione;
+	    			dynamicMap.put((Costanti.MAP_INTEGRATION+Costanti.MAP_SUFFIX_RESPONSE), informazioniIntegrazione);
+	    			dynamicMap.put((Costanti.MAP_INTEGRATION+Costanti.MAP_SUFFIX_RESPONSE).toLowerCase(), informazioniIntegrazione);
+	    		}
 			}
 			if(dynamicMap.containsKey(Costanti.MAP_TOKEN_INFO)==false) {
 				Object oInformazioniTokenNormalizzate = dynamicInfo.getPddContext().getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
@@ -645,9 +666,26 @@ public class DynamicUtils {
 				tmp = tmp.replace(transactionIdConstant, idTransazione);
 			}
 		}
+		
+		if(forceStartWithDollaro) {
+			transactionIdConstant = Costanti.MAP_TRANSACTION_ID;
+			if(forceStartWithDollaro) {
+				transactionIdConstant = "?"+transactionIdConstant;
+			}
+			if(tmp.contains(transactionIdConstant)){
+				String idTransazione = (String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+				while(tmp.contains(transactionIdConstant)){
+					tmp = tmp.replace(transactionIdConstant, idTransazione);
+				}
+			}
+		}
+				
 		return tmp;
 	}
 	
+	public static void validate(String name,String tmpParam, boolean addPrefixError) throws DynamicException{
+		validate(name, tmpParam, true, addPrefixError);
+	}
 	public static void validate(String name,String tmpParam, boolean forceStartWithDollaro, boolean addPrefixError) throws DynamicException{
 		Context pddContext = new Context();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, "fakeId");
@@ -664,6 +702,9 @@ public class DynamicUtils {
 		}
 	}
 	
+	public static String convertDynamicPropertyValue(String name,String tmpParam,Map<String,Object> dynamicMap,Context pddContext) throws DynamicException{
+		return convertDynamicPropertyValue(name, tmpParam, dynamicMap, pddContext, true);
+	}
 	public static String convertDynamicPropertyValue(String name,String tmpParam,Map<String,Object> dynamicMap,Context pddContext, boolean forceStartWithDollaro) throws DynamicException{
 
 		String tmp = initTemplateValue(tmpParam, forceStartWithDollaro, pddContext);
@@ -749,10 +790,14 @@ public class DynamicUtils {
 		return tmp;
 	}
 	
-	private static String convertDynamicPropertyContent(String tmp, Map<String,Object> dynamicMap, 
+	private static String convertDynamicPropertyContent(String tmpOriginal, Map<String,Object> dynamicMap, 
 			TemplateType templateType, 
 			boolean forceStartWithDollaro, boolean response,
 			boolean onlyValidate) throws DynamicException {
+		
+		if(tmpOriginal==null) {
+			return null; // precedente replace ha causato un null tramite opzione ?
+		}
 		
 		String istruzione = null;
 		String prefix = null;
@@ -784,9 +829,41 @@ public class DynamicUtils {
 		}
 		
 
+		String tmp = tmpOriginal;
 		if(forceStartWithDollaro) {
-			prefix = "$"+prefix;
+			String prefixDollaro = "$"+prefix;
+			tmp = _convertDynamicPropertyContent(tmp, dynamicMap, 
+					templateType, 
+					response,
+					onlyValidate,
+					istruzione, prefixDollaro);
+			
+			String prefixOptional = "?"+prefix;
+			tmp = _convertDynamicPropertyContent(tmp, dynamicMap, 
+					templateType, 
+					response,
+					onlyValidate,
+					istruzione, prefixOptional);
 		}
+		else {
+			tmp = _convertDynamicPropertyContent(tmp, dynamicMap, 
+					templateType, 
+					response,
+					onlyValidate,
+					istruzione, prefix);
+		}
+
+		if(tmpOriginal!=null && tmpOriginal.trim().startsWith("?{") && tmp!=null && StringUtils.isEmpty(tmp)) {
+			return null;
+		}
+		
+		return tmp;
+	}
+	private static String _convertDynamicPropertyContent(String tmp, Map<String,Object> dynamicMap, 
+			TemplateType templateType, 
+			boolean response,
+			boolean onlyValidate,
+			String istruzione, String prefix) throws DynamicException {
 		if(response) {
 			istruzione = istruzione+Costanti.MAP_SUFFIX_RESPONSE;
 			prefix = prefix.substring(0,prefix.length()-1);
@@ -1163,7 +1240,7 @@ public class DynamicUtils {
 					String oggetto = "property-"+keyP;
 					String entryName = null;
 					try {
-						entryName = DynamicUtils.convertDynamicPropertyValue(oggetto, keyP, dynamicMap, pddContext, true);
+						entryName = DynamicUtils.convertDynamicPropertyValue(oggetto, keyP, dynamicMap, pddContext);
 					}catch(Exception e) {
 						throw new Exception("["+oggetto+"] Conversione valore per entry name '"+keyP+"' non riuscita: "+e.getMessage(),e);
 					}
@@ -1259,7 +1336,7 @@ public class DynamicUtils {
 					else {
 						String oggettoV = "valore-"+keyP;
 						try {
-							String v = DynamicUtils.convertDynamicPropertyValue(oggettoV, valoreP, dynamicMap, pddContext, true);
+							String v = DynamicUtils.convertDynamicPropertyValue(oggettoV, valoreP, dynamicMap, pddContext);
 							if(v!=null) {
 								content = v.getBytes();
 							}

@@ -1,0 +1,5 @@
+{
+    "identificazione_tipo": "freemarker-template",
+    "identificazione": "prova${header[test]}",
+    "generazione_errore_identificazione_fallita": true
+}

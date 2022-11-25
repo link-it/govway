@@ -29,6 +29,9 @@ public enum CorrelazioneApplicativaRispostaEnum {
 CONTENT_BASED("content-based"),
   HEADER_BASED("header-based"),
   INPUT_BASED("input-based"),
+  TEMPLATE("template"),
+  FREEMARKER_TEMPLATE("freemarker-template"),
+  VELOCITY_TEMPLATE("velocity-template"),
   DISABILITATO("disabilitato");
 
   private String value;

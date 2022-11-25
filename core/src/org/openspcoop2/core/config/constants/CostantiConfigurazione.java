@@ -83,6 +83,12 @@ public class CostantiConfigurazione {
     public final static CorrelazioneApplicativaRichiestaIdentificazione CORRELAZIONE_APPLICATIVA_RICHIESTA_URL_BASED = CorrelazioneApplicativaRichiestaIdentificazione.URL_BASED;
     /** tipo di porta delegata: integration-based */
     public final static CorrelazioneApplicativaRichiestaIdentificazione CORRELAZIONE_APPLICATIVA_RICHIESTA_HEADER_BASED = CorrelazioneApplicativaRichiestaIdentificazione.HEADER_BASED;
+    /** tipo di porta delegata: template */
+    public final static CorrelazioneApplicativaRichiestaIdentificazione CORRELAZIONE_APPLICATIVA_RICHIESTA_TEMPLATE = CorrelazioneApplicativaRichiestaIdentificazione.TEMPLATE;
+    /** tipo di porta delegata: freemarker-template */
+    public final static CorrelazioneApplicativaRichiestaIdentificazione CORRELAZIONE_APPLICATIVA_RICHIESTA_FREEMARKER_TEMPLATE = CorrelazioneApplicativaRichiestaIdentificazione.FREEMARKER_TEMPLATE;
+    /** tipo di porta delegata: velocity-template */
+    public final static CorrelazioneApplicativaRichiestaIdentificazione CORRELAZIONE_APPLICATIVA_RICHIESTA_VELOCITY_TEMPLATE = CorrelazioneApplicativaRichiestaIdentificazione.VELOCITY_TEMPLATE;
 
     /** tipo di porta delegata: static */
     public final static CorrelazioneApplicativaRispostaIdentificazione CORRELAZIONE_APPLICATIVA_RISPOSTA_DISABILITATO = CorrelazioneApplicativaRispostaIdentificazione.DISABILITATO;
@@ -92,7 +98,13 @@ public class CostantiConfigurazione {
     public final static CorrelazioneApplicativaRispostaIdentificazione CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED = CorrelazioneApplicativaRispostaIdentificazione.INPUT_BASED;
     /** tipo di porta delegata: content-based */
     public final static CorrelazioneApplicativaRispostaIdentificazione CORRELAZIONE_APPLICATIVA_RISPOSTA_HEADER_BASED = CorrelazioneApplicativaRispostaIdentificazione.HEADER_BASED;
-   
+    /** tipo di porta delegata: template */
+    public final static CorrelazioneApplicativaRispostaIdentificazione CORRELAZIONE_APPLICATIVA_RISPOSTA_TEMPLATE = CorrelazioneApplicativaRispostaIdentificazione.TEMPLATE;
+    /** tipo di porta delegata: freemarker-template */
+    public final static CorrelazioneApplicativaRispostaIdentificazione CORRELAZIONE_APPLICATIVA_RISPOSTA_FREEMARKER_TEMPLATE = CorrelazioneApplicativaRispostaIdentificazione.FREEMARKER_TEMPLATE;
+    /** tipo di porta delegata: velocity-template */
+    public final static CorrelazioneApplicativaRispostaIdentificazione CORRELAZIONE_APPLICATIVA_RISPOSTA_VELOCITY_TEMPLATE = CorrelazioneApplicativaRispostaIdentificazione.VELOCITY_TEMPLATE;
+
     /** tipo di porta autenticazione: none */
     public final static InvocazioneServizioTipoAutenticazione INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE = InvocazioneServizioTipoAutenticazione.NONE;
     /** tipo di porta autenticazione: basic */

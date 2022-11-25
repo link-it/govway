@@ -20,6 +20,7 @@ Funzionalità Avanzate
 	fileTrace/index.rst
 	govway_proxy
         autenticazione
+        generazione_claims
 	contentBased
 	validazione
 	password

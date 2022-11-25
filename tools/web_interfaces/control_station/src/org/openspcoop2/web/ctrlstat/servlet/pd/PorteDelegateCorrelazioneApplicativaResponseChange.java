@@ -47,6 +47,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -119,11 +120,14 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 
 			// Prendo il nome della porta delegata
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
+			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			String nomePorta = pde.getNome();
 
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pde.getTipoSoggettoProprietario());
+			
 			// Prendo il nome originario della correlazione applicativa
 			String elemxmlOrig = "";
 			CorrelazioneApplicativaRisposta ca = pde.getCorrelazioneApplicativaRisposta();
@@ -196,7 +200,8 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaResponseToDati(TipoOperazione.CHANGE, 
-						pd,  elemxml, mode, pattern, gif, dati, idcorrString, apc.getServiceBinding());
+						pd,  elemxml, mode, pattern, gif, dati, idcorrString, apc.getServiceBinding(),
+						protocollo);
 
 				pd.setDati(dati);
 
@@ -223,7 +228,8 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 				
 				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaResponseToDati(TipoOperazione.CHANGE, 
-						pd,   elemxml, mode, pattern, gif, dati, idcorrString, apc.getServiceBinding());
+						pd,   elemxml, mode, pattern, gif, dati, idcorrString, apc.getServiceBinding(),
+						protocollo);
 
 				pd.setDati(dati);
 
@@ -259,7 +265,10 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 			caeNew.setIdentificazione(CorrelazioneApplicativaRispostaIdentificazione.toEnumConstant(mode));
 			if (mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED) || 
 					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED) || 
-					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED) ||
+					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_TEMPLATE) ||
+					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) ||
+					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)) {
 				caeNew.setPattern(StringEscapeUtils.unescapeHtml(pattern));
 			}
 			if(!PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_DISABILITATO.equals(mode)){

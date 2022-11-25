@@ -664,7 +664,8 @@ public class ModIImbustamentoRest {
 					throw pe;
 				}
 				if(value!=null) {
-					payloadToken.put(key, value);
+					//payloadToken.put(key, value);
+					jsonUtils.putValue(payloadToken, key, value); // per salvaguardare i tipi
 					// Non lo aggiungo alla traccia per adesso
 					//busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLAIM_PREFIX+key, value);
 				}

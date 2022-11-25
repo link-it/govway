@@ -779,9 +779,9 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		case RISPOSTA_USCITA_DUMP_BINARIO:
 			try {
 				if(ContentTypeUtilities.isMultipartContentType(contentType)) {
-					return contentLength.intValue() < multipartThreshold.intValue();
+					return contentLength!=null && multipartThreshold!=null && contentLength.intValue() < multipartThreshold.intValue();
 				}
-			} catch (UtilsException e) {
+			} catch (Throwable e) {
 				log.error("Errore nel check multipart: "+e.getMessage(),e); 
 			}
 			break;

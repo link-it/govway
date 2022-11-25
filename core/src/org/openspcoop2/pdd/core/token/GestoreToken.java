@@ -3803,18 +3803,7 @@ public class GestoreToken {
 								if(sessionInfoPayload ==null) {
 									sessionInfoPayload = jsonUtils.newObjectNode();
 								}
-								
-								if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
-									JsonNode node = jsonUtils.getAsNode(valore);
-									sessionInfoPayload.set(nome, node);
-								}
-								else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
-									JsonNode node = jsonUtils.getAsNode(valore);
-									sessionInfoPayload.set(nome, node);
-								}
-								else {
-									sessionInfoPayload.put(nome, valore);
-								}
+								jsonUtils.putValue(sessionInfoPayload, nome, valore);
 							}
 						}
 					}
@@ -3836,17 +3825,7 @@ public class GestoreToken {
 					if(nome!=null && !"".equals(nome)) {
 						String valore = convertTextToProperties.getProperty(nome);
 						if(valore!=null) {
-							if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
-								JsonNode node = jsonUtils.getAsNode(valore);
-								jwtPayload.set(nome, node);
-							}
-							else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
-								JsonNode node = jsonUtils.getAsNode(valore);
-								jwtPayload.set(nome, node);
-							}
-							else {
-								jwtPayload.put(nome, valore);
-							}
+							jsonUtils.putValue(jwtPayload, nome, valore);
 						}
 					}
 				}
@@ -4589,17 +4568,7 @@ public class GestoreToken {
 					if(nome!=null && !"".equals(nome)) {
 						String valore = convertTextToProperties.getProperty(nome);
 						if(valore!=null) {
-							if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
-								JsonNode node = jsonUtils.getAsNode(valore);
-								jwtPayload.set(nome, node);
-							}
-							else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
-								JsonNode node = jsonUtils.getAsNode(valore);
-								jwtPayload.set(nome, node);
-							}
-							else {
-								jwtPayload.put(nome, valore);
-							}
+							jsonUtils.putValue(jwtPayload, nome, valore);
 						}
 					}
 				}

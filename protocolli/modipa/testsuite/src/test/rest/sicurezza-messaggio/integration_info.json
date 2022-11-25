@@ -1,0 +1,27 @@
+{
+  "clientClaimString": "valoreClientString",
+  "clientClaimBoolean": true,
+  "clientClaimInt": 13,
+  "clientClaimLong": 2147483747,
+  "clientClaimFloat": 24.2,
+  "clientClaimDouble": 1399.56,
+  "clientClaimList": [ "val1", "val2" ],
+  "clientClaimComplex": {
+    "clientClaimLeve2String": "valoreClientLeve2String",
+    "clientClaimLeve2Boolean": false,
+    "clientClaimLeve2Int": 99,
+    "clientClaimLeve2Float": 102.29,
+    "clientClaimLeve2List": [ 33, 1234 ],
+    "clientClaimLeve2Complex": {
+        "clientClaimLeve3String": "valoreClientLeve3String",
+        "clientClaimLeve3Boolean": false,
+        "clientClaimLeve3Int": 12467,
+        "clientClaimLeve4Complex": {
+            "clientClaimLeve4String": "valoreClientLeve4String",
+            "clientClaimLeve4ListInt": [ 33, 1234 ],
+            "clientClaimLeve4ListStringInt": [ "666", "999" ],
+            "clientClaimLeve4ListString": [ "val1", "val2" ]
+        }
+    }
+  }
+}

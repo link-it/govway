@@ -3189,6 +3189,9 @@ components:
                     * url-based: espressione regolare da applicare alla url di invocazione
                     * content-based: xpath o json path da applicare sul contenuto
                     * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione
+                    * template: template con parti dinamiche risolte a runtime da GovWay
+                    * freemarker-template: freemarker template
+                    * velocity-template: velocity template
                     * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata
     CorrelazioneApplicativaRisposta:
        type: object
@@ -3207,6 +3210,9 @@ components:
                     * header-based: nome dell'header
                     * content-based: xpath o json path da applicare sul contenuto
                     * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione
+                    * template: template con parti dinamiche risolte a runtime da GovWay
+                    * freemarker-template: freemarker template
+                    * velocity-template: velocity template
                     * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata
 
     RegistrazioneMessaggi:
@@ -3440,11 +3446,11 @@ components:
       example: 'content-based'   
     CorrelazioneApplicativaRichiestaEnum:
       type: string
-      enum: ['content-based', 'header-based', 'url-based', 'input-based', 'disabilitato']
+      enum: ['content-based', 'header-based', 'url-based', 'input-based', 'template', 'freemarker-template', 'velocity-template', 'disabilitato']
       example: 'content-based'
     CorrelazioneApplicativaRispostaEnum:
       type: string
-      enum: ['content-based', 'header-based', 'input-based', 'disabilitato']
+      enum: ['content-based', 'header-based', 'input-based', 'template', 'freemarker-template', 'velocity-template', 'disabilitato']
       example: 'content-based'
     ConfigurazioneCanaleEnum:
       type: string

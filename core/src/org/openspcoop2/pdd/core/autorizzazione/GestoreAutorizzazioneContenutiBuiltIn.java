@@ -85,7 +85,7 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 			// Risolvo valore della risorsa
 			String valoreRisorsa = null;
 			try {
-				valoreRisorsa = DynamicUtils.convertDynamicPropertyValue(risorsa, risorsa, dynamicMap, pddContext, true);
+				valoreRisorsa = DynamicUtils.convertDynamicPropertyValue(risorsa, risorsa, dynamicMap, pddContext);
 			}catch(Exception e) {
 				String msgError = "Conversione valore della risorsa '"+risorsa+"' non riuscita: "+e.getMessage();
 				if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
@@ -232,7 +232,7 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 				}
 				
 				try {
-					expectedValue = DynamicUtils.convertDynamicPropertyValue(risorsa, expectedValue, dynamicMap, pddContext, true);
+					expectedValue = DynamicUtils.convertDynamicPropertyValue(risorsa, expectedValue, dynamicMap, pddContext);
 				}catch(Exception e) {
 					String msgErrore = "Conversione valore per risorsa '"+risorsa+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage();
 					//throw new Exception(msgErrore,e);

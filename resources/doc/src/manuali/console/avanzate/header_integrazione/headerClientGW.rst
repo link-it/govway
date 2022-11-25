@@ -18,3 +18,5 @@ Based* attive di default.
    GovWay-Relates-To               govway\_relates\_to         Identificativo di un precedente messaggio a cui la richiesta in essere si riferisce. (Sezione :ref:`correlazioneTransazioniDifferenti`)                                                                                                 
    GovWay-Conversation-ID          govway\_conversation\_id    Identificativo di una conversazione a cui la richiesta in essere si riferisce (Sezione :ref:`correlazioneTransazioniDifferenti`)                                                                                                       
    =============================   =========================   ==========================================
+
+Esiste inoltre la possibilità per il client di fornire informazioni di integrazione tramite un json, come descritto nella sezione :ref:`integrazioneTokenJson`.

@@ -1833,6 +1833,29 @@ public class RicezioneBuste {
 		
 		
 		
+		// ------------- Informazioni Integrazione -----------------------------
+		
+		msgDiag.mediumDebug("Aggiungo informazioni di integrazione dinamica nel contesto ...");
+				
+		try {
+			if(pa!=null) {
+				configurazionePdDReader.setInformazioniIntegrazioneDinamiche(logCore, urlProtocolContext, pddContext, pa);
+			}
+		} 
+		catch (Exception e) {
+			msgDiag.logErroreGenerico(e, "setInformazioniIntegrazioneDinamiche");
+			setSOAPFault_processamento(IntegrationFunctionError.BAD_REQUEST,logCore, 
+					null, //msgDiag,
+					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
+					"setInformazioniIntegrazioneDinamiche");
+			openspcoopstate.releaseResource();
+			return;
+		}
+		
+		
+		
+		
 		
 		
 		
@@ -5743,10 +5766,11 @@ public class RicezioneBuste {
 			GestoreCorrelazioneApplicativa gestoreCorrelazioneApplicativa = null;
 			try {
 				gestoreCorrelazioneApplicativa = 
-					new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, soggettoFruitore,
-							idServizio,servizioApplicativoFruitore,protocolFactory,
+					new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, 
+							soggettoFruitore, idServizio, bustaRichiesta,
+							servizioApplicativoFruitore,protocolFactory,
 							transaction, pddContext,
-							pa.getProprietaList());
+							pa);
 				
 				gestoreCorrelazioneApplicativa.verificaCorrelazione(pa.getCorrelazioneApplicativa(), urlProtocolContext, requestMessage, 
 						headerIntegrazioneRichiesta, false);

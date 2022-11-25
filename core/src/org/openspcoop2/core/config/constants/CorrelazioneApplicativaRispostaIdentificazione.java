@@ -42,6 +42,12 @@ public enum CorrelazioneApplicativaRispostaIdentificazione implements IEnumerati
 	CONTENT_BASED ("contentBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("inputBased")
 	INPUT_BASED ("inputBased"),
+	@javax.xml.bind.annotation.XmlEnumValue("template")
+	TEMPLATE ("template"),
+	@javax.xml.bind.annotation.XmlEnumValue("freemarkerTemplate")
+	FREEMARKER_TEMPLATE ("freemarkerTemplate"),
+	@javax.xml.bind.annotation.XmlEnumValue("velocityTemplate")
+	VELOCITY_TEMPLATE ("velocityTemplate"),
 	@javax.xml.bind.annotation.XmlEnumValue("disabilitato")
 	DISABILITATO ("disabilitato");
 	

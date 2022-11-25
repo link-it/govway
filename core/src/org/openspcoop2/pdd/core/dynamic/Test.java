@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -42,14 +43,17 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PddProperties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 
 /**
@@ -170,6 +174,26 @@ public class Test {
 			"     </configurazione>\n"+
 			"</openspcoop2>";
 	
+	private static final String JSON_COMPLEX = 
+			"{\n"+	   
+	            "\"esempioString\": \"ValoreString\",\n"+
+	            "\"esempioInt\": 13,\n"+
+	            "\"esempioBoolean\": false,\n"+
+	            "\"esempioFloat\": 13.2,\n"+
+	            "\"esempioList\": [ \"Ford\", \"BMW\", \"Fiat\" ],\n"+
+	            "\"esempioComplex\": {\n"+
+	            "    \"esempioInternoString\": \"ValoreInternoString\",\n"+
+	            "    \"esempioInternoInt\": 99,\n"+
+	            "    \"esempioInternoBoolean\": true,\n"+
+	            "    \"esempioInternoFloat\": 66.6,\n"+
+	            "    \"esempioInternoList\": [ \"InternoFord\", \"InternoBMW\", \"InternoFiat\" ],\n"+
+	            "    \"esempioInternoComplex\": {\n"+
+	            "        \"esempioInternoInternoString\": \"ValoreInternoInternoString\",\n"+
+	            "        \"esempioInternoInternoList\": [ 3 , 4, 6 ]\n"+
+	            "    }\n"+
+	            "}\n"+
+			"}";
+	
 	public static void main(String [] args) throws Exception{
 		test();
 	}
@@ -179,8 +203,11 @@ public class Test {
 		File fTmpOp2Properties = File.createTempFile("govway", ".properties"); 
 		try {
 		
-		boolean forceDollaro = true;
 		String prefix = "$";
+		String prefixOptional = "?";
+		
+		boolean addPrefixError = true;
+		boolean forceDollaro = true;
 		
 		Logger log = LoggerWrapperFactory.getLogger(Test.class);
 		
@@ -215,47 +242,516 @@ public class Test {
 		String idTransazione = "xxyy";
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, idTransazione);
 				
+		InformazioniIntegrazioneSorgente sourceType = InformazioniIntegrazioneSorgente.http_header;
+		String sourceName = "GovWay-Integration";
+		InformazioniIntegrazioneCodifica sourceEncodeType = InformazioniIntegrazioneCodifica.base64;
+		boolean sourceRequired = true;
+		HttpServletTransportRequestContext transportRequestContext = new HttpServletTransportRequestContext();
+		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),sourceName,Base64Utilities.encodeAsString(JSON_COMPLEX.getBytes()));
+		transportRequestContext.setHeaders(connettoreMsg.getPropertiesTrasporto());
+		InformazioniIntegrazione infoIntegration = new InformazioniIntegrazione(sourceType, sourceName, sourceEncodeType, sourceRequired, log, transportRequestContext);
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.INFORMAZIONI_INTEGRAZIONE, infoIntegration);
+		
+		RequestInfo requestInfo = new RequestInfo();
+		requestInfo.setIdTransazione("Test");
+		requestInfo.setIdentitaPdD(new IDSoggetto("TIPO", null)); // volutamente null
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, requestInfo);
+				
 		DynamicInfo dInfo = new DynamicInfo(connettoreMsg, pddContext);
 		
 		
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
 		String expr = prefix + "{transaction:id}";
-		DynamicUtils.validate("testTransactionId", expr, forceDollaro, true);
-		String value = DynamicUtils.convertDynamicPropertyValue("testTransactionId", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testTransactionId", expr, addPrefixError);
+		String value = DynamicUtils.convertDynamicPropertyValue("testTransactionId", expr, dynamicMap, pddContext);
 		System.out.println("TransactionID: "+value+"\n\n");
 		String expected = idTransazione;
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
+		
+		expr = prefixOptional + "{transaction:id}";
+		DynamicUtils.validate("testTransactionId", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testTransactionId", expr, dynamicMap, pddContext);
+		System.out.println("optional TransactionID: "+value+"\n\n");
+		expected = idTransazione;
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		
+		expr = prefix + "{keywordNotExists:id}";
+		DynamicUtils.validate("testKeywordNotExists:id", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testKeywordNotExists:id", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "object with key 'keywordNotExists' not found";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefixOptional + "{keywordNotExists:id}";
+		DynamicUtils.validate("optional testKeywordNotExists:id", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testKeywordNotExists:id", expr, dynamicMap, pddContext);
+		System.out.println("optional testKeywordNotExists:id: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
 		expr = prefix + "{context:TEST1}";
-		DynamicUtils.validate("testPddContext", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testPddContext", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testPddContext", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContext", expr, dynamicMap, pddContext);
 		System.out.println("testPddContext: "+value+"\n\n");
 		expected = "VALORE DI ESEMPIO";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
+		expr = prefixOptional + "{context:TEST1}";
+		DynamicUtils.validate("testPddContext", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContext", expr, dynamicMap, pddContext);
+		System.out.println("optional testPddContext: "+value+"\n\n");
+		expected = "VALORE DI ESEMPIO";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:test1}";
+		DynamicUtils.validate("testPddContextLowerCase", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContextLowerCase", expr, dynamicMap, pddContext);
+		System.out.println("testPddContextLowerCase: "+value+"\n\n");
+		expected = "VALORE DI ESEMPIO";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:TesT1}";
+		DynamicUtils.validate("testPddContextMixedCase", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContextMixedCase", expr, dynamicMap, pddContext);
+		System.out.println("testPddContextMixedCase: "+value+"\n\n");
+		expected = "VALORE DI ESEMPIO";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:keywordNotExists}";
+		DynamicUtils.validate("testContextKeywordNotExists", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testContextKeywordNotExists", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "'keywordNotExists' not exists in map";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefixOptional + "{context:keywordNotExists}";
+		DynamicUtils.validate("optional testContextKeywordNotExists", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testContextKeywordNotExists", expr, dynamicMap, pddContext);
+		System.out.println("optional testContextKeywordNotExists: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}		
+		
+		expr = prefix + "{context:REQUEST_INFO.idTransazione}";
+		DynamicUtils.validate("testPddContextRequestInfoIdTransazione", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContextRequestInfoIdTransazione", expr, dynamicMap, pddContext);
+		System.out.println("testPddContextRequestInfoIdTransazione: "+value+"\n\n");
+		expected = "Test";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:REQUEST_INFO.messageFactory}";
+		DynamicUtils.validate("testPddContextRequestInfoMessageFactoryNotExists", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testPddContextRequestInfoMessageFactoryNotExists", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "return null object";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefixOptional + "{context:REQUEST_INFO.messageFactory}";
+		DynamicUtils.validate("optional testPddContextRequestInfoMessageFactoryNotExists", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testPddContextRequestInfoMessageFactoryNotExists", expr, dynamicMap, pddContext);
+		System.out.println("optional testPddContextRequestInfoMessageFactoryNotExists: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:REQUEST_INFO.idServizio}";
+		DynamicUtils.validate("testPddContextRequestInfoIdServizioNotExists", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testPddContextRequestInfoIdServizioNotExists", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "return null object";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefixOptional + "{context:REQUEST_INFO.idServizio}";
+		DynamicUtils.validate("optional testPddContextRequestInfoIdServizioNotExists", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testPddContextRequestInfoIdServizioNotExists", expr, dynamicMap, pddContext);
+		System.out.println("optional testPddContextRequestInfoIdServizioNotExists: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:REQUEST_INFO.identitaPdD.tipo}";
+		DynamicUtils.validate("testPddContextRequestInfoNomeIdentitaPdD", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContextRequestInfoNomeIdentitaPdD", expr, dynamicMap, pddContext);
+		System.out.println("testPddContextRequestInfoNomeIdentitaPdD: "+value+"\n\n");
+		expected = "TIPO";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefixOptional + "{context:REQUEST_INFO.identitaPdD.tipo}";
+		DynamicUtils.validate("testPddContextRequestInfoNomeIdentitaPdD", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContextRequestInfoNomeIdentitaPdD", expr, dynamicMap, pddContext);
+		System.out.println("testPddContextRequestInfoNomeIdentitaPdD: "+value+"\n\n");
+		expected = "TIPO";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:REQUEST_INFO.identitaPdD.nome}";
+		DynamicUtils.validate("testPddContextRequestInfoNomeIdentitaPdDNotExists", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testPddContextRequestInfoNomeIdentitaPdDNotExists", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "return null object";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefixOptional + "{context:REQUEST_INFO.identitaPdD.nome}";
+		DynamicUtils.validate("optional testPddContextRequestInfoNomeIdentitaPdDNotExists", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testPddContextRequestInfoNomeIdentitaPdDNotExists", expr, dynamicMap, pddContext);
+		System.out.println("optional testPddContextRequestInfoNomeIdentitaPdDNotExists: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
+		
 		expr = prefix + "{header:Header1}";
-		DynamicUtils.validate("testHeader", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testHeader", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testHeader", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeader", expr, dynamicMap, pddContext);
 		System.out.println("testHeader: "+value+"\n\n");
 		expected = "Valore1";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
+		expr = prefix + "{header:header1}";
+		DynamicUtils.validate("testHeaderLowerCase", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeaderLowerCase", expr, dynamicMap, pddContext);
+		System.out.println("testHeaderLowerCase: "+value+"\n\n");
+		expected = "Valore1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{header:HEADER1}";
+		DynamicUtils.validate("testHeaderUpperCase", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeaderUpperCase", expr, dynamicMap, pddContext);
+		System.out.println("testHeaderUpperCase: "+value+"\n\n");
+		expected = "Valore1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{header:keywordNotExists}";
+		DynamicUtils.validate("testHeaderKeywordNotExists", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testHeaderKeywordNotExists", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "'keywordNotExists' not exists in map";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefixOptional + "{header:keywordNotExists}";
+		DynamicUtils.validate("optional testHeaderKeywordNotExists", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testHeaderKeywordNotExists", expr, dynamicMap, pddContext);
+		System.out.println("optional testHeaderKeywordNotExists: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}	
+		
 		expr = prefix + "{query:P1}";
-		DynamicUtils.validate("testUrl", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testUrl", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testUrl", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testUrl", expr, dynamicMap, pddContext);
 		System.out.println("testUrl: "+value+"\n\n");
 		expected = "Valore1URL";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
+		expr = prefix + "{query:p1}";
+		DynamicUtils.validate("testUrlLowerCase", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testUrlLowerCase", expr, dynamicMap, pddContext);
+		System.out.println("testUrlLowerCase: "+value+"\n\n");
+		expected = "Valore1URL";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{query:keywordNotExists}";
+		DynamicUtils.validate("testUrlKeywordNotExists", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testUrlKeywordNotExists", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "'keywordNotExists' not exists in map";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefixOptional + "{query:keywordNotExists}";
+		DynamicUtils.validate("optional testUrlKeywordNotExists", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testUrlKeywordNotExists", expr, dynamicMap, pddContext);
+		System.out.println("optional testUrlKeywordNotExists: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
+		expr = "MixedString-"+prefix+"{query:p1}"+"-"+prefix+"{header:header1}";
+		DynamicUtils.validate("testMixedString", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testMixedString", expr, dynamicMap, pddContext);
+		System.out.println("testMixedString: "+value+"\n\n");
+		expected = "MixedString-Valore1URL-Valore1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "MixedString-"+prefix+"{query:keywordNotExists}"+"-"+prefix+"{header:keywordNotExists}";
+		DynamicUtils.validate("testMixedStringKeywordNotExists", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testMixedStringKeywordNotExists", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "'keywordNotExists' not exists in map";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = "MixedString-"+prefixOptional+"{query:keywordNotExists}"+"-"+prefixOptional+"{header:keywordNotExists}";
+		DynamicUtils.validate("optional testMixedStringKeywordNotExists", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testMixedStringKeywordNotExists", expr, dynamicMap, pddContext);
+		System.out.println("optional testMixedStringKeywordNotExists: "+value+"\n\n");
+		expected = "MixedString--";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:info[esempioString]}";
+		DynamicUtils.validate("testIntegrationContextString", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextString", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextString: "+value+"\n\n");
+		expected = "ValoreString";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:info[keywordNotExists]}";
+		DynamicUtils.validate("testIntegrationContexKeywordNotExistst", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testIntegrationContexKeywordNotExistst", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "'keywordNotExists' not exists in map";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefixOptional + "{integration:info[keywordNotExists]}";
+		DynamicUtils.validate("optional testIntegrationContexKeywordNotExistst", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testIntegrationContexKeywordNotExistst", expr, dynamicMap, pddContext);
+		System.out.println("optional testIntegrationContexKeywordNotExistst: "+value+"\n\n");
+		expected = "MixedString--";
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:info[esempioInt]}";
+		DynamicUtils.validate("testIntegrationContextInt", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInt", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInt: "+value+"\n\n");
+		expected = "13";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:info[esempioBoolean]}";
+		DynamicUtils.validate("testIntegrationContextBoolean", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextBoolean", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextBoolean: "+value+"\n\n");
+		expected = "false";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:info[esempioFloat]}";
+		DynamicUtils.validate("testIntegrationContextFloat", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextFloat", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextFloat: "+value+"\n\n");
+		expected = "13.2";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:info[esempioList]}";
+		DynamicUtils.validate("testIntegrationContextList", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextList", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextList: "+value+"\n\n");
+		expected = "[Ford, BMW, Fiat]";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:info[esempioList][1]}";
+		DynamicUtils.validate("testIntegrationContextList1", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextList1", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextList1: "+value+"\n\n");
+		expected = "BMW";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:info[esempioInternoString]}";
+		DynamicUtils.validate("testIntegrationContextInternoString", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInternoString", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInternoString: "+value+"\n\n");
+		expected = "ValoreInternoString";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:claims[esempioComplex.esempioInternoString]}";
+		DynamicUtils.validate("testIntegrationContextInternoStringAsClaim", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInternoStringAsClaim", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInternoStringAsClaim: "+value+"\n\n");
+		expected = "ValoreInternoString";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+
+		expr = prefix + "{integration:info[esempioInternoList]}";
+		DynamicUtils.validate("testIntegrationContextInternoList", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInternoList", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInternoList: "+value+"\n\n");
+		expected = "[InternoFord, InternoBMW, InternoFiat]";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:claims[esempioComplex.esempioInternoList]}";
+		DynamicUtils.validate("testIntegrationContextInternoListAsClaim", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInternoListAsClaim", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInternoListAsClaim: "+value+"\n\n");
+		expected = "[InternoFord, InternoBMW, InternoFiat]";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:info[esempioInternoList][2]}";
+		DynamicUtils.validate("testIntegrationContextInternoList2", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInternoList2", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInternoList2: "+value+"\n\n");
+		expected = "InternoFiat";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:claims[esempioComplex.esempioInternoList][2]}";
+		DynamicUtils.validate("testIntegrationContextInternoList2AsClaim", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInternoList2AsClaim", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInternoList2AsClaim: "+value+"\n\n");
+		expected = "InternoFiat";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+
+		expr = prefix + "{integration:info[esempioInternoComplex.esempioInternoInternoString]}";
+		DynamicUtils.validate("testIntegrationContextInternoInternoString", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInternoInternoString", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInternoInternoString: "+value+"\n\n");
+		expected = "ValoreInternoInternoString";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:claims[esempioComplex.esempioInternoComplex.esempioInternoInternoString]}";
+		DynamicUtils.validate("testIntegrationContextInternoInternoStringAsClaim", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInternoInternoStringAsClaim", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInternoInternoStringAsClaim: "+value+"\n\n");
+		expected = "ValoreInternoInternoString";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:info[esempioInternoComplex.esempioInternoInternoList][2]}";
+		DynamicUtils.validate("testIntegrationContextInternoInternoList2", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInternoInternoList2", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInternoInternoList2: "+value+"\n\n");
+		expected = "6";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{integration:claims[esempioComplex.esempioInternoComplex.esempioInternoInternoList][2]}";
+		DynamicUtils.validate("testIntegrationContextInternoInternoList2AsClaim", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testIntegrationContextInternoInternoList2AsClaim", expr, dynamicMap, pddContext);
+		System.out.println("testIntegrationContextInternoInternoList2AsClaim: "+value+"\n\n");
+		expected = "6";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 		
 		dynamicMap = new HashMap<>();
 		dInfo = new DynamicInfo(connettoreMsg, pddContext);
@@ -265,8 +761,8 @@ public class Test {
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
 		expr = prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova/text()}";
-		DynamicUtils.validate("testXml", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testXml", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testXml", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testXml", expr, dynamicMap, pddContext);
 		System.out.println("Pattern1: "+value);
 		expected = "test";
 		if(!expected.equals(value)) {
@@ -274,8 +770,8 @@ public class Test {
 		}
 		
 		expr = prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}Envelope/{http://schemas.xmlsoap.org/soap/envelope/}Body/prova/text()}";
-		DynamicUtils.validate("testXml", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testXml", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testXml", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testXml", expr, dynamicMap, pddContext);
 		System.out.println("Pattern1b: "+value);
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
@@ -290,16 +786,16 @@ public class Test {
 		}
 		
 		expr = prefix+"{xpath://prova/text()}";
-		DynamicUtils.validate("testXml2", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testXml2", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testXml2", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testXml2", expr, dynamicMap, pddContext);
 		System.out.println("Pattern2: "+value);
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
 		expr = "Metto un po ("+prefix+"{xPath://prova/text()}) di testo prima ("+prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova2/text()}) e dopo";
-		DynamicUtils.validate("testXml3", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testXml3", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testXml3", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testXml3", expr, dynamicMap, pddContext);
 		System.out.println("Pattern3: "+value);
 		expected = "Metto un po (test) di testo prima (test2) e dopo";
 		if(!expected.equals(value)) {
@@ -307,16 +803,33 @@ public class Test {
 		}
 		
 		expr = prefix+"{xpath://provaNonEsiste/text()}";
-		DynamicUtils.validate("testXmlPatternNotFound", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testXmlPatternNotFound", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testXmlPatternNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testXmlPatternNotFound", expr, dynamicMap, pddContext);
 		System.out.println("Pattern4: "+value);
 		expected = "";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
+		expr = prefixOptional+"{xpath://provaNonEsiste/text()}";
+		DynamicUtils.validate("optional testXmlPatternNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testXmlPatternNotFound", expr, dynamicMap, pddContext);
+		System.out.println("optional testXmlPatternNotFound: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
+		expr = "Metto un po ("+prefixOptional+"{xPath://provaNonEsiste/text()}) di testo prima ("+prefixOptional+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova2/text()}) e dopo";
+		DynamicUtils.validate("optional testXml3 con mix non esiste", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testXml3 con mix non esiste", expr, dynamicMap, pddContext);
+		System.out.println("optional testXml3 con mix non esiste: "+value);
+		expected = "Metto un po () di testo prima (test2) e dopo";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
 		expr = prefix+"{xpath://provaNonEsiste/Text()}";
-		DynamicUtils.validate("testXmlPatternError", expr, forceDollaro, true);
+		DynamicUtils.validate("testXmlPatternError", expr, addPrefixError);
 		try {
 			System.out.println("Pattern5: "+DynamicUtils.convertDynamicPropertyValue("testXmlPatternError", expr, dynamicMap, pddContext, forceDollaro));
 			throw new Exception("Attesa eccezione pattern malformato");
@@ -329,10 +842,10 @@ public class Test {
 				throw e;
 			}
 		}
-		
+				
 		expr = prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}Envelope/{http://schemas.xmlsoap.org/soap/envelope/}Body/prova/text()";
 		try {
-			DynamicUtils.validate("testChiusuraMancante", expr, forceDollaro, true);
+			DynamicUtils.validate("testChiusuraMancante", expr, addPrefixError);
 			throw new Exception("Attesa eccezione expr malformata");
 		}catch(Exception e) {
 			if(e.getMessage().contains("Trovata istruzione 'xPath' non correttamente formata (chiusura '}' non trovata)")) {
@@ -343,7 +856,7 @@ public class Test {
 			}
 		}
 		try {
-			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraMancante", expr, dynamicMap, pddContext, forceDollaro);
+			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraMancante", expr, dynamicMap, pddContext);
 			throw new Exception("Attesa eccezione expr malformata");
 		}catch(Exception e) {
 			if(e.getMessage().contains("Trovata istruzione 'xPath' non correttamente formata (chiusura '}' non trovata)")) {
@@ -356,7 +869,7 @@ public class Test {
 		
 		expr = prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}Envelope/{http://schemas.xmlsoap.org/soap/envelope/Body/prova/text()}";
 		try {
-			DynamicUtils.validate("testChiusuraInternaMancante", expr, forceDollaro, true);
+			DynamicUtils.validate("testChiusuraInternaMancante", expr, addPrefixError);
 			throw new Exception("Attesa eccezione expr malformata");
 		}catch(Exception e) {
 			if(e.getMessage().contains("Trovata istruzione 'xPath' non correttamente formata (chiusura '}' non trovata)")) {
@@ -367,7 +880,7 @@ public class Test {
 			}
 		}
 		try {
-			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraInternaMancante", expr, dynamicMap, pddContext, forceDollaro);
+			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraInternaMancante", expr, dynamicMap, pddContext);
 			throw new Exception("Attesa eccezione expr malformata");
 		}catch(Exception e) {
 			if(e.getMessage().contains("Trovata istruzione 'xPath' non correttamente formata (chiusura '}' non trovata)")) {
@@ -380,8 +893,8 @@ public class Test {
 		
 		if(prefix.equals("$")) {
 			expr = JSON_TEMPLATE;
-			DynamicUtils.validate("xml2json", expr, forceDollaro, true);
-			value = DynamicUtils.convertDynamicPropertyValue("xml2json", JSON_TEMPLATE, dynamicMap, pddContext, forceDollaro);
+			DynamicUtils.validate("xml2json", expr, addPrefixError);
+			value = DynamicUtils.convertDynamicPropertyValue("xml2json", JSON_TEMPLATE, dynamicMap, pddContext);
 			System.out.println("Test conversione xml2json: \n"+value);
 			expected = EXPECTED_JSON;
 			if(!expected.equals(value)) {
@@ -723,8 +1236,8 @@ public class Test {
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
 		expr = prefix+"{jsonPath:$.Year}";
-		DynamicUtils.validate("testJson", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testJson", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testJson", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testJson", expr, dynamicMap, pddContext);
 		System.out.println("Pattern1: "+value);
 		expected = "2018";
 		if(!expected.equals(value)) {
@@ -732,8 +1245,8 @@ public class Test {
 		}
 		
 		expr = "Metto un po ("+prefix+"{jsonpath:$.Year}) di altro test ("+prefix+"{jsonPath:$.Acronym}) fine";
-		DynamicUtils.validate("test2Json", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("test2Json", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("test2Json", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("test2Json", expr, dynamicMap, pddContext);
 		System.out.println("Pattern2: "+value);
 		expected = "Metto un po (2018) di altro test (SGML) fine";
 		if(!expected.equals(value)) {
@@ -741,16 +1254,24 @@ public class Test {
 		}
 		
 		expr = prefix+"{jsonPath:$.NotFound}";
-		DynamicUtils.validate("testJsonPatternNotFound", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testJsonPatternNotFound", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testJsonPatternNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testJsonPatternNotFound", expr, dynamicMap, pddContext);
 		System.out.println("Pattern3: "+value);
 		expected = "";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
+		expr = prefixOptional+"{jsonPath:$.NotFound}";
+		DynamicUtils.validate("optional testJsonPatternNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testJsonPatternNotFound", expr, dynamicMap, pddContext);
+		System.out.println("optional testJsonPatternNotFound: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
 		expr = prefix+"{jsonPath:$$$dedde}";
-		DynamicUtils.validate("testJsonPatternError", expr, forceDollaro, true);
+		DynamicUtils.validate("testJsonPatternError", expr, addPrefixError);
 		try {
 			System.out.println("Pattern4: "+DynamicUtils.convertDynamicPropertyValue("testJsonPatternError", expr, dynamicMap, pddContext, forceDollaro));
 			throw new Exception("Attesa eccezione pattern malformato");
@@ -766,7 +1287,7 @@ public class Test {
 		
 		expr = prefix+"{jsonPath:$.NotFound";
 		try {
-			DynamicUtils.validate("testChiusuraMancante", expr, forceDollaro, true);
+			DynamicUtils.validate("testChiusuraMancante", expr, addPrefixError);
 			throw new Exception("Attesa eccezione expr malformata");
 		}catch(Exception e) {
 			if(e.getMessage().contains("Trovata istruzione 'jsonPath' non correttamente formata (chiusura '}' non trovata)")) {
@@ -777,7 +1298,7 @@ public class Test {
 			}
 		}
 		try {
-			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraMancante", expr, dynamicMap, pddContext, forceDollaro);
+			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraMancante", expr, dynamicMap, pddContext);
 			throw new Exception("Attesa eccezione expr malformata");
 		}catch(Exception e) {
 			if(e.getMessage().contains("Trovata istruzione 'jsonPath' non correttamente formata (chiusura '}' non trovata)")) {
@@ -791,8 +1312,8 @@ public class Test {
 		
 		if(prefix.equals("$")) {
 			expr = XML_TEMPLATE;
-			DynamicUtils.validate("json2xml", expr, forceDollaro, true);
-			value = DynamicUtils.convertDynamicPropertyValue("json2xml", expr, dynamicMap, pddContext, forceDollaro);
+			DynamicUtils.validate("json2xml", expr, addPrefixError);
+			value = DynamicUtils.convertDynamicPropertyValue("json2xml", expr, dynamicMap, pddContext);
 			System.out.println("Test conversione json2xml: \n"+value);
 			expected = EXPECTED_XML;
 			if(!expected.equals(value)) {
@@ -840,17 +1361,34 @@ public class Test {
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
 		expr = prefix+"{urlRegExp:.+azione=([^&]*).*}";
-		DynamicUtils.validate("testUrl", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testUrl", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testUrl", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testUrl", expr, dynamicMap, pddContext);
 		System.out.println("PatternUrl1: "+value);
 		expected = "az2";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
+		expr = prefix+"{urlRegExp:.+azioneNotFound=([^&]*).*}";
+		DynamicUtils.validate("testUrlNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testUrlNotFound", expr, dynamicMap, pddContext);
+		System.out.println("PatternUrlNotFound: "+value);
+		expected = "";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefixOptional+"{urlRegExp:.+azioneNotFound=([^&]*).*}";
+		DynamicUtils.validate("optional testUrlNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testUrlNotFound", expr, dynamicMap, pddContext);
+		System.out.println("optional testUrlNotFound: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
 		expr = prefix+"{urlRegExp:.+azione=([^&]*).*";
 		try {
-			DynamicUtils.validate("testChiusuraMancante", expr, forceDollaro, true);
+			DynamicUtils.validate("testChiusuraMancante", expr, addPrefixError);
 			throw new Exception("Attesa eccezione expr malformata");
 		}catch(Exception e) {
 			if(e.getMessage().contains("Trovata istruzione 'urlRegExp' non correttamente formata (chiusura '}' non trovata)")) {
@@ -861,7 +1399,7 @@ public class Test {
 			}
 		}
 		try {
-			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraMancante", expr, dynamicMap, pddContext, forceDollaro);
+			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraMancante", expr, dynamicMap, pddContext);
 			throw new Exception("Attesa eccezione expr malformata");
 		}catch(Exception e) {
 			if(e.getMessage().contains("Trovata istruzione 'urlRegExp' non correttamente formata (chiusura '}' non trovata)")) {
@@ -932,8 +1470,8 @@ public class Test {
 		pddContext.addObject(MAP, map);
 		
 		expr = "attribute value: ${context:MAP.map[attr1]}";
-		DynamicUtils.validate("testMAP", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testMAP", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testMAP", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testMAP", expr, dynamicMap, pddContext);
 		System.out.println("MapAttr: "+value+"\n\n");
 		expected = "attribute value: value1";
 		if(!expected.equals(value)) {
@@ -941,8 +1479,8 @@ public class Test {
 		}
 		
 		expr = "attribute value: ${context:MULTIMAP.map[aa][attr1]}";
-		DynamicUtils.validate("testMULTIMAP", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testMULTIMAP", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP", expr, dynamicMap, pddContext);
 		System.out.println("MultiMapAttr: "+value+"\n\n");
 		expected = "attribute value: value1";
 		if(!expected.equals(value)) {
@@ -950,8 +1488,8 @@ public class Test {
 		}
 		
 		expr = "attribute value: ${context:MULTIMAP.map[aa][attr2]}";
-		DynamicUtils.validate("testMULTIMAP2", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP2", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testMULTIMAP2", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP2", expr, dynamicMap, pddContext);
 		System.out.println("MultiMapAttr2: "+value+"\n\n");
 		expected = "attribute value: value2";
 		if(!expected.equals(value)) {
@@ -959,8 +1497,8 @@ public class Test {
 		}
 		
 		expr = "attribute value: ${context:MULTIMAP.map[aa2][attr21]}";
-		DynamicUtils.validate("testMULTIMAP3", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP3", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testMULTIMAP3", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP3", expr, dynamicMap, pddContext);
 		System.out.println("MultiMapAttr3: "+value+"\n\n");
 		expected = "attribute value: value21";
 		if(!expected.equals(value)) {
@@ -968,8 +1506,8 @@ public class Test {
 		}
 		
 		expr = "attribute value: ${context:MULTIMAP.map[aa][attr3][attr32]}";
-		DynamicUtils.validate("testMULTIMAP4", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP4", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testMULTIMAP4", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP4", expr, dynamicMap, pddContext);
 		System.out.println("MultiMapAttr4: "+value+"\n\n");
 		expected = "attribute value: value32";
 		if(!expected.equals(value)) {
@@ -977,19 +1515,86 @@ public class Test {
 		}
 		
 		expr = "attribute value: ${context:MULTIMAP.map[aa][attr4][2]}";
-		DynamicUtils.validate("testMULTIMAP5", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP5", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testMULTIMAP5", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP5", expr, dynamicMap, pddContext);
 		System.out.println("MultiMapAttr5: "+value+"\n\n");
 		expected = "attribute value: 43";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
+		expr = prefix + "{context:MULTIMAP.map[notExists]}";
+		DynamicUtils.validate("testMultimapKeywordNotExists", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testMultimapKeywordNotExists", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "'notExists' not exists in map";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
 		
+		expr = prefixOptional + "{context:MULTIMAP.map[notExists]}";
+		DynamicUtils.validate("optional testMultimapKeywordNotExists", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testMultimapKeywordNotExists", expr, dynamicMap, pddContext);
+		System.out.println("optional testMultimapKeywordNotExists: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:MULTIMAP.map[aa][notExists]}";
+		DynamicUtils.validate("testMultimapKeywordNotExistsLevel2", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testMultimapKeywordNotExistsLevel2", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "'notExists' not exists in map";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefixOptional + "{context:MULTIMAP.map[aa][notExists]}";
+		DynamicUtils.validate("optional testMultimapKeywordNotExistsLevel2", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testMultimapKeywordNotExistsLevel2", expr, dynamicMap, pddContext);
+		System.out.println("optional testMultimapKeywordNotExistsLevel2: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:MULTIMAP.map[aa][attr4][10]}";
+		DynamicUtils.validate("testMultimapKeywordNotExistsLevel3", expr, addPrefixError);
+		try {
+			DynamicUtils.convertDynamicPropertyValue("testMultimapKeywordNotExistsLevel3", expr, dynamicMap, pddContext);
+			throw new Exception("Attesa eccezione");
+		}catch(Exception e) {
+			String atteso = "wrong position '10' (list size:3)";
+			if(e.getMessage().contains(atteso)) {
+				System.out.println("Eccezione attesa: "+e.getMessage()+"\n\n");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefixOptional + "{context:MULTIMAP.map[aa][attr4][10]}";
+		DynamicUtils.validate("optional testMultimapKeywordNotExistsLevel3", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testMultimapKeywordNotExistsLevel3", expr, dynamicMap, pddContext);
+		System.out.println("optional testMultimapKeywordNotExistsLevel3: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
 		
 
 		expr = "Valore da non rimpiazzare {transaction:id} insieme ad altro";
-		DynamicUtils.validate("test1{}DaNonRisolvere", expr, forceDollaro, true);
+		DynamicUtils.validate("test1{}DaNonRisolvere", expr, addPrefixError);
 		value = DynamicUtils.convertDynamicPropertyValue("test1{}DaNonRisolvere", expr, dynamicMap, pddContext, true); // forceDollaro a true
 		System.out.println("test1{}DaNonRisolvere: "+value+"\n\n");
 		expected = expr;
@@ -998,7 +1603,7 @@ public class Test {
 		}
 		
 		expr = "{transaction:id}";
-		DynamicUtils.validate("test2{}DaNonRisolvere", expr, forceDollaro, true);
+		DynamicUtils.validate("test2{}DaNonRisolvere", expr, addPrefixError);
 		value = DynamicUtils.convertDynamicPropertyValue("test2{}DaNonRisolvere", expr, dynamicMap, pddContext, true); // forceDollaro a true
 		System.out.println("test2{}DaNonRisolvere: "+value+"\n\n");
 		expected = expr;
@@ -1007,7 +1612,7 @@ public class Test {
 		}
 		
 		expr = "{\n \"transaction\": \"id\"\n}";
-		DynamicUtils.validate("test3{}DaNonRisolvere", expr, forceDollaro, true);
+		DynamicUtils.validate("test3{}DaNonRisolvere", expr, addPrefixError);
 		value = DynamicUtils.convertDynamicPropertyValue("test3{}DaNonRisolvere", expr, dynamicMap, pddContext, true); // forceDollaro a true
 		System.out.println("test3{}DaNonRisolvere: "+value+"\n\n");
 		expected = expr;
@@ -1016,7 +1621,7 @@ public class Test {
 		}
 		
 		expr = "{\n \"transaction\": \"id\",\n \"transaction\": \"${transaction:id}\"\n}";
-		DynamicUtils.validate("test4{}DaNonRisolvere", expr, forceDollaro, true);
+		DynamicUtils.validate("test4{}DaNonRisolvere", expr, addPrefixError);
 		value = DynamicUtils.convertDynamicPropertyValue("test4{}DaNonRisolvere", expr, dynamicMap, pddContext, true); // forceDollaro a true
 		System.out.println("test4{}DaNonRisolvere: "+value+"\n\n");
 		expected = expr.replace("${transaction:id}", idTransazione);
@@ -1025,32 +1630,83 @@ public class Test {
 		}
 
 		expr = prefix + "{system:systemP1}";
-		DynamicUtils.validate("testSystem", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testSystem", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testSystem", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testSystem", expr, dynamicMap, pddContext);
 		System.out.println("testSystem: "+value+"\n\n");
 		expected = "systemV1";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
+		expr = prefix+"{system:systemNotFound}";
+		DynamicUtils.validate("testSystemNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testSystemNotFound", expr, dynamicMap, pddContext);
+		System.out.println("testSystemNotFound: "+value);
+		expected = "";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefixOptional+"{system:systemNotFound}";
+		DynamicUtils.validate("optional testSystemNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testSystemNotFound", expr, dynamicMap, pddContext);
+		System.out.println("optional testSystemNotFound: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
 		System.setProperty("pCustomJava1", "v1java");
 		System.setProperty("pCustomJava2", "v2java");
 		expr = prefix + "{java:pCustomJava1}";
-		DynamicUtils.validate("testJava", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testJava", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testJava", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testJava", expr, dynamicMap, pddContext);
 		System.out.println("testJava: "+value+"\n\n");
 		expected = "v1java";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
 		
+		expr = prefix+"{java:javaNotFound}";
+		DynamicUtils.validate("testJavaNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testJavaNotFound", expr, dynamicMap, pddContext);
+		System.out.println("testJavaNotFound: "+value);
+		expected = "";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefixOptional+"{java:javaNotFound}";
+		DynamicUtils.validate("optional testJavaNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testJavaNotFound", expr, dynamicMap, pddContext);
+		System.out.println("optional testJavaNotFound: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
 		expr = prefix + "{env:HOSTNAME}";
-		DynamicUtils.validate("testEnv", expr, forceDollaro, true);
-		value = DynamicUtils.convertDynamicPropertyValue("testEnv", expr, dynamicMap, pddContext, forceDollaro);
+		DynamicUtils.validate("testEnv", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testEnv", expr, dynamicMap, pddContext);
 		System.out.println("testEnv: "+value+"\n\n");
 		expected = System.getenv("HOSTNAME");
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix+"{env:envNotFound}";
+		DynamicUtils.validate("testEnvNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testEnvNotFound", expr, dynamicMap, pddContext);
+		System.out.println("testEnvNotFound: "+value);
+		expected = "";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefixOptional+"{env:envNotFound}";
+		DynamicUtils.validate("optional testEnvNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testEnvNotFound", expr, dynamicMap, pddContext);
+		System.out.println("optional testEnvNotFound: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
 		}
 		
 		}finally {

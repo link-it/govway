@@ -1658,7 +1658,7 @@ public class GestoreAutorizzazione {
 							}
 							
 							try {
-								expectedValue = DynamicUtils.convertDynamicPropertyValue(key, expectedValue, dynamicMap, pddContext, true);
+								expectedValue = DynamicUtils.convertDynamicPropertyValue(key, expectedValue, dynamicMap, pddContext);
 							}catch(Exception e) {
 								String msg = "Conversione valore per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage();
 								//throw new Exception(msg,e);

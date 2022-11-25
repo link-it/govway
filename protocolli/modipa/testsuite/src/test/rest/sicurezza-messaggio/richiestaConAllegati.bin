@@ -1,0 +1,291 @@
+------=_Part_1_1678144365.1610454048429
+Content-Type: text/xml; charset=utf-8
+Content-ID: <root>
+Content-Transfer-Encoding: binary
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Header xmlns:prova="http://prova.openspcoop2.org">
+	<a:example1 xmlns:a="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0">prova</a:example1>
+        <b:example2 xmlns:b="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0">prova2</b:example2>
+	</soapenv:Header>
+	<soapenv:Body>
+        <ns2:MRequest xmlns:ns2="http://amministrazioneesempio.it/nomeinterfacciaservizio">
+            <M>
+                <oId>1</oId>
+                <a>
+                    <a1s>
+                        <a1>1</a1>
+                        <a1>2</a1>
+                    </a1s>
+                    <a2>RGFuJ3MgVG9vbHMgYXJlIGNvb2wh</a2>
+                </a>
+                <b>Stringa di esempio</b>
+            </M>
+        </ns2:MRequest>
+</soapenv:Body>
+</soapenv:Envelope>
+------=_Part_1_1678144365.1610454048429
+Content-Type: text/plain; charset=UTF-8
+Content-ID: <3063313a-5d0c-4031-b085-ee24e171d37b>
+Content-Transfer-Encoding: binary
+
+7925fc54-a9c8-4bda-8a13-b3751ef7a30c
+
+select id from transazioni t where data_ingresso_richiesta > '2020-12-18 05:00' AND esito=38 AND EXISTS (select id_transazione from transazioni_sa sa where sa.id_transazione=t.id) AND NOT EXISTS (select consegna_terminata from transazioni_sa sa where sa.id_transazione=t.id AND sa.consegna_terminata <> 't');
+-[ RECORD 1 ]----------------------------
+id | 7925fc54-a9c8-4bda-8a13-b3751ef7a30c
+
+update transazioni set esito=39,consegne_multiple=0 where id IN (select id from transazioni t where data_ingresso_richiesta > '2020-12-18 05:00' AND esito=38 AND EXISTS (select id_transazione from transazioni_sa sa where sa.id_transazione=t.id) AND NOT EXISTS (select consegna_terminata from transazioni_sa sa where sa.id_transazione=t.id AND sa.consegna_terminata <> 't'));
+
+
+
+1) Recupero log
+
+2) Errore dump integration manager
+
+ERROR <18-12-2020 09:20:30.568> org.openspcoop2.pdd.logger.Dump.dump(732): Errore durante la registrazione, nel contesto della transazione, del contenuto applicativo presente nel messaggio (IntegrationManager) con identificativo di transazione [4e8504b5-64e6-48d9-8548-e392fca7381e]: Non abilitata la gestione delle transazioni stateful 
+ 
+org.openspcoop2.pdd.core.transazioni.TransactionStatefulNotSupportedException: Non abilitata la gestione delle transazioni stateful
+        at org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful.checkGestioneAbilitata(RepositoryGestioneStateful.java:106) ~[openspcoop2_pdd-cart-3.3.3.p1.0.jar:?]
+        at org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful.addMessaggio(RepositoryGestioneStateful.java:180) ~[openspcoop2_pdd-cart-3.3.3.p1.0.jar:?]
+        at org.openspcoop2.pdd.logger.Dump.dump(Dump.java:721) ~[openspcoop2_pdd-cart-3.3.3.p1.0.jar:?]
+        at org.openspcoop2.pdd.logger.Dump.dumpIntegrationManagerGetMessage(Dump.java:384) ~[openspcoop2_pdd-cart-3.3.3.p1.0.jar:?]
+        at org.openspcoop2.pdd.services.skeleton.IntegrationManager.getMessage_engine(IntegrationManager.java:1097) ~[openspcoop2_pdd-cart-3.3.3.p1.0.jar:?]
+        at org.openspcoop2.pdd.services.skeleton.IntegrationManager.getMessage(IntegrationManager.java:1206) ~[openspcoop2_pdd-cart-3.3.3.p1.0.jar:?]
+        at jdk.internal.reflect.GeneratedMethodAccessor447.invoke(Unknown Source) ~[?:?]
+        at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+        at java.lang.reflect.Method.invoke(Method.java:566) ~
+
+
+
+3) Query Lenta
+
+< 21155 2020-12-18 09:51:38 CET PostgreSQL JDBC Driver pdav4_gw_p1_stats_rw pdav4_gw_p1_stats cart-pda4api-mg01-p2.rt.tix.it SELECT 00000 > LOG:  duration: 7600.747 ms  execute S_2: SELECT tipo_serv
+izio,servizio,versione_servizio,tipo_destinatario,destinatario,sum(dato) as somma FROM ( ( SELECT statistiche_giornaliere.tipo_servizio as tipo_servizio,statistiche_giornaliere.servizio as servizio,
+statistiche_giornaliere.versione_servizio as versione_servizio,statistiche_giornaliere.tipo_destinatario as tipo_destinatario,statistiche_giornaliere.destinatario as destinatario,sum(statistiche_gio
+rnaliere.richieste) as dato FROM statistiche_giornaliere WHERE (  (  (  (  (  (  (  (  (  statistiche_giornaliere.data BETWEEN  $1 AND $2 ) AND (  (  statistiche_giornaliere.tipo_servizio IN ( $3 , 
+$4 ) ) ) ) AND (  (  (  statistiche_giornaliere.tipo_mittente is null ) OR (  statistiche_giornaliere.tipo_mittente = $5 ) OR (  (  statistiche_giornaliere.tipo_mittente IN ( $6 ) ) ) ) ) ) AND (  (
+  statistiche_giornaliere.tipo_destinatario IN ( $7 ) ) ) ) AND (  statistiche_giornaliere.tipo_servizio <> $8 ) ) AND (  statistiche_giornaliere.servizio <> $9 ) ) AND (  statistiche_giornaliere.ve
+rsione_servizio <> $10 ) ) AND (  statistiche_giornaliere.tipo_destinatario <> $11 ) ) AND (  statistiche_giornaliere.destinatario <> $12 ) ) GROUP BY statistiche_giornaliere.tipo_servizio,statistic
+he_giornaliere.servizio,statistiche_giornaliere.versione_servizio,statistiche_giornaliere.tipo_destinatario,statistiche_giornaliere.destinatario ORDER BY statistiche_giornaliere.tipo_servizio ASC ,s
+tatistiche_giornaliere.servizio ASC ,statistiche_giornaliere.versione_servizio ASC ,statistiche_giornaliere.tipo_destinatario ASC ,statistiche_giornaliere.destinatario ASC  OFFSET 0)  UNION  ALL ( S
+ELECT 'gbyfake'::text as tipo_servizio,'gbyfake'::text as servizio,1 as versione_servizio,'gbyfake'::text as tipo_destinatario,'gbyfake'::text as destinatario,sum(0) as dato FROM statistiche_giornal
+iere)  ) as subquery1  GROUP BY tipo_servizio,servizio,versione_servizio,tipo_destinatario,destinatario ORDER BY somma DESC 
+< 21155 2020-12-18 09:51:38 CET PostgreSQL JDBC Driver pdav4_gw_p1_stats_rw pdav4_gw_p1_stats cart-pda4api-mg01-p2.rt.tix.it SELECT 00000 > DETAIL:  parameters: $1 = '', $2 = , $3 = 'gw', $4 = 'gw', $5 = '-', $6 = 'gw', $7 = 'gw', $8 = '-', $9 = '-', $10 = '0', $11 = '-', $12 = '-'
+
+SELECT tipo_servizio,servizio,versione_servizio,tipo_destinatario,destinatario,sum(dato) as somma FROM ( ( SELECT statistiche_giornaliere.tipo_servizio as tipo_servizio,statistiche_giornaliere.servizio as servizio, statistiche_giornaliere.versione_servizio as versione_servizio,statistiche_giornaliere.tipo_destinatario as tipo_destinatario,statistiche_giornaliere.destinatario as destinatario,sum(statistiche_giornaliere.richieste) as dato FROM statistiche_giornaliere WHERE (  (  (  (  (  (  (  (  (  statistiche_giornaliere.data BETWEEN  '2020-11-18 00:00:00' AND '2020-12-18 23:59:59.999' ) AND (  (  statistiche_giornaliere.tipo_servizio IN ( 'gw' , 'gw' ) ) ) ) AND (  (  (  statistiche_giornaliere.tipo_mittente is null ) OR (  statistiche_giornaliere.tipo_mittente = '-' ) OR (  (  statistiche_giornaliere.tipo_mittente IN ( 'gw' ) ) ) ) ) ) AND (  (  statistiche_giornaliere.tipo_destinatario IN ( 'gw' ) ) ) ) AND (  statistiche_giornaliere.tipo_servizio <> '-' ) ) AND (  statistiche_giornaliere.servizio <> '-' ) ) AND (  statistiche_giornaliere.versione_servizio <> 0 ) ) AND (  statistiche_giornaliere.tipo_destinatario <> '-' ) ) AND (  statistiche_giornaliere.destinatario <> '-' ) ) GROUP BY statistiche_giornaliere.tipo_servizio,statistiche_giornaliere.servizio,statistiche_giornaliere.versione_servizio,statistiche_giornaliere.tipo_destinatario,statistiche_giornaliere.destinatario ORDER BY statistiche_giornaliere.tipo_servizio ASC ,statistiche_giornaliere.servizio ASC ,statistiche_giornaliere.versione_servizio ASC ,statistiche_giornaliere.tipo_destinatario ASC ,statistiche_giornaliere.destinatario ASC  OFFSET 0)  UNION  ALL ( SELECT 'gbyfake'::text as tipo_servizio,'gbyfake'::text as servizio,1 as versione_servizio,'gbyfake'::text as tipo_destinatario,'gbyfake'::text as destinatario,sum(0) as dato FROM statistiche_giornaliere)  ) as subquery1  GROUP BY tipo_servizio,servizio,versione_servizio,tipo_destinatario,destinatario ORDER BY somma DESC ;
+
+ Sort  (cost=379853.84..379886.66 rows=13130 width=164)
+   Sort Key: (sum((sum(statistiche_giornaliere.richieste)))) DESC
+   ->  HashAggregate  (cost=378791.58..378955.71 rows=13130 width=164)
+         Group Key: statistiche_giornaliere.tipo_servizio, statistiche_giornaliere.servizio, statistiche_giornaliere.versione_servizio, statistiche_giornaliere.tipo_destinatario, statistiche_giornaliere.destinatario
+         ->  Append  (cost=198755.95..375509.16 rows=131297 width=140)
+               ->  Sort  (cost=198755.95..199084.19 rows=131296 width=51)
+                     Sort Key: statistiche_giornaliere.tipo_servizio, statistiche_giornaliere.servizio, statistiche_giornaliere.versione_servizio, statistiche_giornaliere.destinatario
+                     ->  HashAggregate  (cost=186281.21..187594.17 rows=131296 width=51)
+                           Group Key: statistiche_giornaliere.tipo_servizio, statistiche_giornaliere.servizio, statistiche_giornaliere.versione_servizio, statistiche_giornaliere.tipo_destinatario, statistiche_giornaliere.destinat
+ario
+                           ->  Index Only Scan using index_stat_day on statistiche_giornaliere  (cost=0.68..172050.77 rows=948696 width=47)
+                                 Index Cond: ((data >= '2020-11-18 00:00:00'::timestamp without time zone) AND (data <= '2020-12-18 23:59:59.999'::timestamp without time zone) AND (tipo_destinatario = 'gw'::text))
+                                 Filter: (((tipo_servizio)::text = ANY ('{gw,gw}'::text[])) AND ((tipo_servizio)::text <> '-'::text) AND ((servizio)::text <> '-'::text) AND (versione_servizio <> 0) AND ((destinatario)::text <> '-
+'::text) AND ((tipo_mittente IS NULL) OR ((tipo_mittente)::text = '-'::text) OR ((tipo_mittente)::text = 'gw'::text)))
+               ->  Subquery Scan on "*SELECT* 2"  (cost=174455.51..174455.53 rows=1 width=140)
+                     ->  Finalize Aggregate  (cost=174455.51..174455.52 rows=1 width=140)
+                           ->  Gather  (cost=174455.29..174455.50 rows=2 width=8)
+                                 Workers Planned: 2
+                                 ->  Partial Aggregate  (cost=173455.29..173455.30 rows=1 width=8)
+                                       ->  Parallel Index Only Scan using pk_statistiche_giornaliere on statistiche_giornaliere statistiche_giornaliere_1  (cost=0.43..169530.15 rows=1570055 width=0)
+(18 rows)
+
+
+
+ "index_stat_day" btree (data DESC, esito, esito_contesto, id_porta, tipo_porta, tipo_destinatario, destinatario, tipo_servizio, servizio, versione_servizio, azione, tipo_mittente, mittente, servizio_applicativo, trasporto_mit
+tente, token_issuer, token_client_id, token_subject, token_username, token_mail, client_address, gruppi, uri_api, richieste, bytes_banda_complessiva, bytes_banda_interna, bytes_banda_esterna, latenza_totale, latenza_porta, latenz
+a_servizio)
+
+ Sort  (cost=379853.84..379886.66 rows=13130 width=164) (actual time=8558.624..8558.683 rows=127 loops=1)
+   Sort Key: (sum((sum(statistiche_giornaliere.richieste)))) DESC
+   Sort Method: quicksort  Memory: 39kB
+   ->  HashAggregate  (cost=378791.58..378955.71 rows=13130 width=164) (actual time=8558.081..8558.323 rows=127 loops=1)
+         Group Key: statistiche_giornaliere.tipo_servizio, statistiche_giornaliere.servizio, statistiche_giornaliere.versione_servizio, statistiche_giornaliere.tipo_destinatario, statistiche_giornaliere.destinatario
+         ->  Append  (cost=198755.95..375509.16 rows=131297 width=140) (actual time=6768.448..8557.831 rows=127 loops=1)
+               ->  Sort  (cost=198755.95..199084.19 rows=131296 width=51) (actual time=6768.446..6768.510 rows=126 loops=1)
+                     Sort Key: statistiche_giornaliere.tipo_servizio, statistiche_giornaliere.servizio, statistiche_giornaliere.versione_servizio, statistiche_giornaliere.destinatario
+                     Sort Method: quicksort  Memory: 41kB
+                     ->  HashAggregate  (cost=186281.21..187594.17 rows=131296 width=51) (actual time=6766.290..6767.744 rows=126 loops=1)
+                           Group Key: statistiche_giornaliere.tipo_servizio, statistiche_giornaliere.servizio, statistiche_giornaliere.versione_servizio, statistiche_giornaliere.tipo_destinatario, statistiche_giornaliere.destinat
+ario
+                           ->  Index Only Scan using index_stat_day on statistiche_giornaliere  (cost=0.68..172050.77 rows=948696 width=47) (actual time=0.146..5451.814 rows=986605 loops=1)
+                                 Index Cond: ((data >= '2020-11-18 00:00:00'::timestamp without time zone) AND (data <= '2020-12-18 23:59:59.999'::timestamp without time zone) AND (tipo_destinatario = 'gw'::text))
+                                 Filter: (((tipo_servizio)::text = ANY ('{gw,gw}'::text[])) AND ((tipo_servizio)::text <> '-'::text) AND ((servizio)::text <> '-'::text) AND (versione_servizio <> 0) AND ((destinatario)::text <> '-
+'::text) AND ((tipo_mittente IS NULL) OR ((tipo_mittente)::text = '-'::text) OR ((tipo_mittente)::text = 'gw'::text)))
+                                 Heap Fetches: 6979
+               ->  Subquery Scan on "*SELECT* 2"  (cost=174455.51..174455.53 rows=1 width=140) (actual time=1789.196..1789.199 rows=1 loops=1)
+                     ->  Finalize Aggregate  (cost=174455.51..174455.52 rows=1 width=140) (actual time=1789.192..1789.194 rows=1 loops=1)
+                           ->  Gather  (cost=174455.29..174455.50 rows=2 width=8) (actual time=1789.172..1797.793 rows=3 loops=1)
+                                 Workers Planned: 2
+                                 Workers Launched: 2
+                                 ->  Partial Aggregate  (cost=173455.29..173455.30 rows=1 width=8) (actual time=1716.721..1716.723 rows=1 loops=3)
+                                       ->  Parallel Index Only Scan using pk_statistiche_giornaliere on statistiche_giornaliere statistiche_giornaliere_1  (cost=0.43..169530.15 rows=1570055 width=0) (actual time=0.066..976.435 ro
+ws=1265087 loops=3)
+                                             Heap Fetches: 7211
+ Planning Time: 0.604 ms
+ Execution Time: 8573.453 ms
+(25 rows)
+
+
+
+4) ERRORE ora_registrazione
+
+SELECT MESSAGGI.ID_MESSAGGIO as identificativoBusta,SERVIZIO_APPLICATIVO,ORA_REGISTRAZIONE,RIFERIMENTO_MSG,MESSAGGI.TIPO as TipoMessaggio,TIPO_CONSEGNA,PROPRIETARIO,INTEGRATION_MANAGER FROM MESSAGGI,MSG_SERVIZI_APPLICATIVI WHERE ( $1 > MESSAGGI.ORA_REGISTRAZIONE ) AND ( MESSAGGI.RIFERIMENTO_MSG IS NOT NULL ) AND ( MESSAGGI.TIPO=$2 ) AND ( MSG_SERVIZI_APPLICATIVI.TIPO_CONSEGNA=$3 ) AND ( lower(MESSAGGI.PROPRIETARIO) LIKE '%ricezionecontenutiapplicativi%' ) AND ( MSG_SERVIZI_APPLICATIVI.INTEGRATION_MANAGER=$4 ) AND ( MESSAGGI.ID_MESSAGGIO=MSG_SERVIZI_APPLICATIVI.ID_MESSAGGIO ) LIMIT 50
+
+
+
+SELECT MESSAGGI.ID_MESSAGGIO as identificativoBusta,SERVIZIO_APPLICATIVO,MESSAGGI.ORA_REGISTRAZIONE,RIFERIMENTO_MSG,MESSAGGI.TIPO as TipoMessaggio,TIPO_CONSEGNA,PROPRIETARIO,INTEGRATION_MANAGER FROM MESSAGGI,MSG_SERVIZI_APPLICATIVI WHERE ( '2020-12-18 10:57:16.661' > MESSAGGI.ORA_REGISTRAZIONE ) AND ( MESSAGGI.RIFERIMENTO_MSG IS NOT NULL ) AND ( MESSAGGI.TIPO='INBOX' ) AND ( MSG_SERVIZI_APPLICATIVI.TIPO_CONSEGNA='ConnectionReply' ) AND ( lower(MESSAGGI.PROPRIETARIO) LIKE '%ricezionecontenutiapplicativi%' ) AND ( MSG_SERVIZI_APPLICATIVI.INTEGRATION_MANAGER=0 ) AND ( MESSAGGI.ID_MESSAGGIO=MSG_SERVIZI_APPLICATIVI.ID_MESSAGGIO ) LIMIT 50
+;
+
+
+
+5) VERSIONE DENTRO I SETUP
+
+------=_Part_1_1678144365.1610454048429
+Content-Type: application/pdf; charset=UTF-8
+Content-ID: <5ec3652b-eee3-4c67-aea8-aa94bf3d7245>
+Content-Transfer-Encoding: binary
+
+%PDF-1.3
+%«Ïè¢
+5 0 obj
+<</Length 6 0 R/Filter /FlateDecode>>
+stream
+xú}çΩ
+¬@Ñ˚}ä-wã;oìÀ˝¥b@T√ÅÖXb!Wﬂ\M
++ò¯`fFg›Gké6Cƒ«úç‚ì˜ärÚmÏ~
+ˇ„'Ã ﬂY\c¨∏-:ùP,,oÇ]∞¡ªÄ18€*©p£=õéz6ôN,≤ÿôM"º≤	ZÿHR“Ì¥Í≥ÀôêÔÂ }ÅãÍ∫ÿ+çendstream
+endobj
+6 0 obj
+149
+endobj
+4 0 obj
+<</Type/Page/MediaBox [0 0 595 842]
+/Rotate 0/Parent 3 0 R
+/Resources<</ProcSet[/PDF /Text]
+/ExtGState 10 0 R
+/Font 11 0 R
+>>
+/Contents 5 0 R
+>>
+endobj
+3 0 obj
+<< /Type /Pages /Kids [
+4 0 R
+] /Count 1
+>>
+endobj
+1 0 obj
+<</Type /Catalog /Pages 3 0 R
+>>
+endobj
+7 0 obj
+<</Type/ExtGState
+/OPM 1>>endobj
+10 0 obj
+<</R7
+7 0 R>>
+endobj
+11 0 obj
+<</R9
+9 0 R/R8
+8 0 R>>
+endobj
+9 0 obj
+<</BaseFont/Courier/Type/Font
+/Subtype/Type1>>
+endobj
+8 0 obj
+<</BaseFont/Times-Roman/Type/Font
+/Subtype/Type1>>
+endobj
+2 0 obj
+<</Producer(ESP Ghostscript 815.03)
+/CreationDate(D:20071126095303)
+/ModDate(D:20071126095303)>>endobj
+xref
+0 12
+0000000000 65535 f 
+0000000472 00000 n 
+0000000758 00000 n 
+0000000413 00000 n 
+0000000253 00000 n 
+0000000015 00000 n 
+0000000234 00000 n 
+0000000520 00000 n 
+0000000692 00000 n 
+0000000630 00000 n 
+0000000561 00000 n 
+0000000591 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R /Info 2 0 R
+/ID [(ñ»ÚAKéEnXÒp¨≤)(ñ»ÚAKéEnXÒp¨≤)]
+>>
+startxref
+869
+%%EOF
+
+------=_Part_1_1678144365.1610454048429
+Content-Type: text/xml; charset=UTF-8
+Content-ID: <b38bebd7-dd0e-4ca2-a5b7-36b68993bd04>
+Content-Transfer-Encoding: binary
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Header xmlns:prova="http://prova.openspcoop2.org">
+	<a:example1 xmlns:a="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova</a:example1>
+        <b:example2 xmlns:b="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova2</b:example2>
+	</soapenv:Header>
+	<soapenv:Body>
+<!-- PROVA -->
+<ns1:getQuote xmlns:ns1="urn:xmethods-delayed-quotes" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:se="http://schemas.xmlsoap.org/soap/envelope/" se:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+	<symbol xsi:type="xsd:string">IBM</symbol>
+
+
+	<prova2>CIAOCIAO</prova2>
+	<bo><si>234</si></bo>
+<!-- Doppia commento -->
+</ns1:getQuote>
+<test/>
+<test2/>
+</soapenv:Body>
+</soapenv:Envelope>
+
+------=_Part_1_1678144365.1610454048429
+Content-Type: application/json; charset=UTF-8
+Content-ID: <31b6adaf-e801-4016-9781-688dd8682257>
+Content-Transfer-Encoding: binary
+
+{
+    "glossary": {
+        "title": "example glossary",
+		"GlossDiv": {
+            "title": "S",
+			"GlossList": {
+                "GlossEntry": {
+                    "ID": "SGML",
+					"SortAs": "SGML",
+					"GlossTerm": "Standard Generalized Markup Language",
+					"Acronym": "SGML",
+					"Abbrev": "ISO 8879:1986",
+					"Enabled": true,
+					"Year": 2018,
+					"Quote": 1.45,
+					"GlossDef": {
+                        "para": "A meta-markup language, used to create markup languages such as DocBook.",
+						"GlossSeeAlso": ["GML", "XML"]
+                    },
+					"GlossSee": "markup"
+                }
+            }
+        }
+    }
+}
+
+------=_Part_1_1678144365.1610454048429--

@@ -11549,8 +11549,10 @@ components:
               \ alla url di invocazione\n  * content-based: xpath o json path da applicare\
               \ sul contenuto\n  * input-based: questo field non deve essere valorizzato\
               \ poichè l'informazione applicativa viene estratta dagli header di integrazione\n\
-              \  * disabilitato:  questo field non deve essere valorizzato poichè\
-              \ la funzionalità di estrazione è disabilitata"
+              \  * template: template con parti dinamiche risolte a runtime da GovWay\n\
+              \  * freemarker-template: freemarker template\n  * velocity-template:\
+              \ velocity template\n  * disabilitato:  questo field non deve essere\
+              \ valorizzato poichè la funzionalità di estrazione è disabilitata"
     CorrelazioneApplicativaRisposta:
       type: "object"
       allOf:
@@ -11567,8 +11569,10 @@ components:
               \ nome dell'header\n  * content-based: xpath o json path da applicare\
               \ sul contenuto\n  * input-based: questo field non deve essere valorizzato\
               \ poichè l'informazione applicativa viene estratta dagli header di integrazione\n\
-              \  * disabilitato:  questo field non deve essere valorizzato poichè\
-              \ la funzionalità di estrazione è disabilitata"
+              \  * template: template con parti dinamiche risolte a runtime da GovWay\n\
+              \  * freemarker-template: freemarker template\n  * velocity-template:\
+              \ velocity template\n  * disabilitato:  questo field non deve essere\
+              \ valorizzato poichè la funzionalità di estrazione è disabilitata"
     RegistrazioneMessaggi:
       type: "object"
       allOf:
@@ -11909,6 +11913,9 @@ components:
       - "header-based"
       - "url-based"
       - "input-based"
+      - "template"
+      - "freemarker-template"
+      - "velocity-template"
       - "disabilitato"
     CorrelazioneApplicativaRispostaEnum:
       type: "string"
@@ -11917,6 +11924,9 @@ components:
       - "content-based"
       - "header-based"
       - "input-based"
+      - "template"
+      - "freemarker-template"
+      - "velocity-template"
       - "disabilitato"
     ConfigurazioneCanaleEnum:
       type: "string"

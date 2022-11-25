@@ -1,3 +1,21 @@
+2022-11-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1496
+	Oltre alle modalità di interscambio di informazioni standard il client può adesso fornire altre informazioni al gateway 
+	tramite un json il cui formato non è prestabilito da GovWay ma può essere definito in maniera arbitraria dal client.
+	Il json può essere inviato nell'header http 'GovWay-Integration' codificato in base64.
+	La presenza dell’header http non è obbligatoria ma se presente le sue informazioni vengono rese disponibili tramite la keyword "integration"
+	utilizzabile nelle varie funzionalità del gateway come ad esempio nella generazione di token di sicurezza ModI con claim custom.
+	Inoltre per quanto concerne i claim aggiuntivi che possono essere aggiunti all'interno del payload dei JWT generati da GovWay è adesso possibile:
+	- aggiungere il claim solamente se la risoluzione dinamica del valore viene effettuata con successo utilizzando la forma opzionale "?{..}";
+	- definire tipi primitivi json (boolean,int,long,float,double) effettuando un cast nella forma "cast(<valore> as <tipoPrimitivo>)";
+	- convertire una lista json di tipi primitivi in lista di stringhe effettuando un cast nella forma "cast(<valore> as string array)".
+	Sono infine state aggiunte ulteriori modalità di attuazione della correlazione applicativa:
+	- Template: l'id di correlazione è il risultato dell'istanziazione del template fornito rispetto ai dati della richiesta;
+	- Freemarker Template: l'id è ottenuto tramite il processamento di un Freemarker Template;
+	- Velocity Template: l'id è ottenuto tramite il processamento di un Velocity Template.
+
 2022-11-18  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.9.p1
@@ -6234,8 +6252,8 @@ Rivedere anche il discorso del cambio di versione di una API
 	* [InstallerVersioneBinaria]
 	Risolto Bug OP-516
 	La presenza di un firewall tra l'application server ed un database comporta problemi simili al seguente errore:
-	        “an i/o error occurred while sending the batckend”
-	Questo succedeva poichè le connessioni aperte dai datasource di riferimento del prodotto non contenevano appropriate configurazioni di “idle” 
+	        "an i/o error occurred while sending the batckend"
+	Questo succedeva poichè le connessioni aperte dai datasource di riferimento del prodotto non contenevano appropriate configurazioni di "idle"
 	che evitassero alle connessioni di rimanere aperte all'infinito, 
 	comportamento non utilizzabile in presenza di firewall che effettuano il drop delle connessioni una volta rilevate inattive.
 	Di seguito le modifiche attuate:

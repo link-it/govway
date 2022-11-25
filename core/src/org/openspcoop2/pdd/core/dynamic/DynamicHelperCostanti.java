@@ -39,7 +39,9 @@ public class DynamicHelperCostanti {
 	
 	// ****** TEMPLATE VARI (TRASFORMAZIONI)
 	
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO = "Il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway.<br/>Le espressioni utilizzabili sono:";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PREFIX = "Il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway.";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SUFFIX = "Le espressioni utilizzabili sono:";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO = LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PREFIX+"<br/>"+LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SUFFIX;
 	
 	public final static String LABEL_CONFIGURAZIONE_INFO_TEMPLATE = "Il template fornito può contenere parti dinamiche risolte a runtime dal Gateway.<br/>Le espressioni utilizzabili sono:";
 	
@@ -62,7 +64,16 @@ public class DynamicHelperCostanti {
 		"Il valore della proprietà corrisponde al contenuto dell'entry.<BR/>"+
 		org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 		"È possibile selezionare parti del messaggio, per associarle come contenuto dell'entry, utilizzando le seguenti espressioni dinamiche risolte a runtime dal Gateway:";
-		
+
+	public final static String LABEL_CONFIGURAZIONE_CLAIMS = LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PREFIX+
+			"<BR/><BR/>"+StringEscapeUtils.escapeHtml("Un valore definito come parte dinamica tramite la sintassi ${..}, la cui risoluzione non è possibile a runtime, comporta un fallimento della richiesta in corso. Per una aggiunta del claim condizionata al riuscimento della risoluzione dinamica, senza far terminare la richiesta in errore in caso di mancata risoluzione, è possibile usare la forma '?{..}'.")+
+			"<BR/><BR/>"+StringEscapeUtils.escapeHtml("Fornendo un valore che inizia e termina con le parentesi graffe si definisce un oggetto json, come ad esempio:<BR/> claimTest={\"prova\":\"valoreProva\", \"prova2\":\"${header:X-Example}\"}")+
+			"<BR/><BR/>"+StringEscapeUtils.escapeHtml("Se il valore inizia e termina con le parentesi quadre si definisce invece un array json, come ad esempio:<BR/> claimTest=[\"valoreProva\", \"valoreProva2\", \"${header:X-Example}\"]")+
+			"<BR/><BR/>"+StringEscapeUtils.escapeHtml("Per definire tipi primitivi json (boolean,int,long,float,double) è necessario attuare un cast come ad esempio:<BR/> claimTest=cast(true as boolean) oppure claimTest=cast(${header:X-Example} as long)")+
+	        "<BR/><BR/>"+StringEscapeUtils.escapeHtml("Per convertire una lista json di tipi primitivi in lista di stringhe è possibile attuare un cast come ad esempio:<BR/> claimTest=cast([1,2,3] as string array)")+
+	        "<BR/><BR/>"+LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SUFFIX;
+	
+	
 	
 	// ****** CONTENT-TYPE (TRASFORMAZIONI, MODI)
 	
@@ -103,9 +114,10 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni da messaggi XML tramite espressioni XPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_XML_XPATH+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_JSONPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni da messaggi JSON tramite espressioni JSONPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_JSON_PATH+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_URL = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_URL_REGEXP+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dalla url tramite espressioni regolari ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_URL_REGEXP+")"); 
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_REQUEST = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_REQUEST+"</b>: permette di accedere al contenuto della richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_MESSAGE+")";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_REQUEST = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_REQUEST+"</b>: permette di accedere al contenuto della richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_MESSAGE_CONTENT+")";
 	//public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CTX_OBJECT+"</b>: permette di accedere al contesto della richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_CTX_OBJECT_HTML_ESCAPED+")");
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CTX_OBJECT+"</b>: permette di accedere al contesto della richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_CTX_OBJECT_HTML_ESCAPED+")";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_INTEGRATION = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_INTEGRATION+"</b>: permette di accedere ai claims di un token di integrazione ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_INTEGRATION+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TOKEN_INFO = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_TOKEN_INFO+"</b>: permette di accedere ai claims di un token ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_TOKEN_INFO+")"); 
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_TOKEN_CLIENT = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_TOKEN+"</b>: identità dell'applicativo client identificato tramite il clientId presente nel token ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_APPLICATIVO_TOKEN+")");
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_ATTRIBUTES = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+"</b>: permette di accedere agli attributi recuperati tramite Attribute Authority ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ATTRIBUTES+")"); 
@@ -133,7 +145,8 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH_SOAP = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio di risposta tramite espressioni XPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_XML_XPATH+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio XML di risposta tramite espressioni XPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_XML_XPATH+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_JSONPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio JSON di risposta tramite espressioni JSONPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_JSON_PATH+")"); 
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_RESPONSE+"</b>: permette di accedere al contenuto della risposta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_MESSAGE+")";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_INTEGRATION = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_INTEGRATION+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: permette di accedere ai claims di un token di integrazione presente nella risposta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_INTEGRATION+")"); 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_RESPONSE+"</b>: permette di accedere al contenuto della risposta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_MESSAGE_CONTENT+")";
 	
 	
 	private final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI = new ArrayList<>();
@@ -155,6 +168,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ATTRIBUTES);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_TRANSPORT_CONTEXT);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_INTEGRATION);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_API_IMPL_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_APPLICATIVO_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_SOGGETTO_FRUITORE_PROPERTY_CONFIG);
@@ -283,6 +297,8 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ATTRIBUTES);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_TRANSPORT_CONTEXT);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_INTEGRATION);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_INTEGRATION);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_API_IMPL_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_APPLICATIVO_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_SOGGETTO_FRUITORE_PROPERTY_CONFIG);
@@ -416,6 +432,8 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+":EXPR}</b>: espressione XPath applicata su un messaggio XML"; 
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_JSONPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+":EXPR}</b>: espressione JSONPath applicata su un messaggio JSON"; 
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_URL = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_URL_REGEXP+":EXPR}</b>: espressione regolare applicata sulla url"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_REQUEST = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_REQUEST+":FIELD}</b>: permette di accedere al contenuto della richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_MESSAGE_READER+"' (es. per ottenere il digest dell'attachment usare ${request:part.attachmentByIndex(0).contentBase64Digest(SHA-256)})";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_INTEGRATION = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_INTEGRATION+":FIELD}</b>: permette di accedere ai claim di un token di integrazione; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_INTEGRATION+"' (es. per ottenere il valore del claim 'claimCustom' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_INTEGRATION+":info[claimCustom]})";
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_TOKEN_INFO = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_TOKEN_INFO+":FIELD}</b>: permette di accedere ai claim di un token; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_TOKEN_INFO+"' (es. per ottenere il valore del claim 'sub' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_TOKEN_INFO+":sub})";
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_TOKEN_CLIENT = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_TOKEN+":FIELD}</b>: identità dell'applicativo client identificato tramite il clientId presente nel token; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_APPLICATIVO_TOKEN+"' (es. per ottenere il nome dell'applicativo usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_TOKEN+":nome})";
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ATTRIBUTES = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+":FIELD}</b>: permette di accedere agli attributi recuperati tramite Attribute Authority; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ATTRIBUTES+"' (es. per ottenere il valore dell'attributo 'attr1' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+":attributes[attr1]}, se configurata solamente 1 A.A., altrimenti usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+":attributes[nomeAttributeAuthority][attr1]} )";
@@ -437,6 +455,8 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH_SOAP = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":EXPR}</b>: espressione XPath applicata sulla risposta"; 
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":EXPR}</b>: espressione XPath applicata su una risposta XML"; 
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_JSONPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":EXPR}</b>: espressione JSONPath applicata su una risposta JSON"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_INTEGRATION = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_INTEGRATION+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":FIELD}</b>: permette di accedere ai claim di un token di integrazione presente nella risposta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_INTEGRATION+"' (es. per ottenere il valore del claim 'claimCustom' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_INTEGRATION+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":info[claimCustom]})";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_RESPONSE+":FIELD}</b>: permette di accedere al contenuto della risposta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_MESSAGE_READER+"' (es. per ottenere il digest dell'attachment usare ${response:part.attachmentByIndex(0).contentBase64Digest(SHA-256)})";
 	
 	
 	public final static List<String> LABEL_CONFIGURAZIONE_INFO_ALL_VALORI = new ArrayList<>();
@@ -457,12 +477,14 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ATTRIBUTES);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_CONTEXT);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SECURITY_TOKEN);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_INTEGRATION);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_API_IMPL_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_APPLICATIVO_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SOGGETTO_FRUITORE_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SOGGETTO_EROGATORE_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_APPLICATIVO_TOKEN_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_PROPERTY_CONFIG);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_REQUEST);
 //		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_HEADER_VALUES);
 //		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_QUERY_VALUES);
 //		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_FORM_VALUES);
@@ -521,6 +543,7 @@ public class DynamicHelperCostanti {
 		deleteField(LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI,LABEL_CONFIGURAZIONE_INFO_TRASPORTO_HEADER_VALUES); // elimino header values
 		deleteField(LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI,LABEL_CONFIGURAZIONE_INFO_TRASPORTO_QUERY_VALUES); // elimino url values
 		deleteField(LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI,LABEL_CONFIGURAZIONE_INFO_TRASPORTO_FORM_VALUES); // elimino form values
+		deleteField(LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI,LABEL_CONFIGURAZIONE_INFO_TRASPORTO_REQUEST); // elimino request
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(boolean modi, boolean fruizione, boolean forceNoSecToken) {
 		//if(forceNoSecToken || !modi || fruizione) {
@@ -558,12 +581,15 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ATTRIBUTES);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_CONTEXT);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SECURITY_TOKEN);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_INTEGRATION);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_INTEGRATION);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_API_IMPL_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_APPLICATIVO_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SOGGETTO_FRUITORE_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SOGGETTO_EROGATORE_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_APPLICATIVO_TOKEN_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_PROPERTY_CONFIG);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE);
 //		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_HEADER_VALUES);
 //		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_HEADER_VALUES);
 //		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_QUERY_VALUES);
@@ -715,6 +741,7 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_XPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+":EXPR}</b>: espressione XPath applicata su un messaggio XML"; 
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_JSONPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+":EXPR}</b>: espressione JSONPath applicata su un messaggio JSON"; 
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_URL = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_URL_REGEXP+":EXPR}</b>: espressione regolare applicata sulla url di invocazione"; 
+	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_INTEGRATION = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_INTEGRATION+":FIELD}</b>: permette di accedere ai claim di un token di integrazione; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_INTEGRATION+"' (es. per ottenere il valore del claim 'claimCustom' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_INTEGRATION+":info[claimCustom]})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_TOKEN_CLIENT = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_TOKEN+":FIELD}</b>: identità dell'applicativo client identificato tramite il clientId presente nel token; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_APPLICATIVO_TOKEN+"' (es. per ottenere il nome dell'applicativo usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_TOKEN+":nome})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_TRASPORTO_CONTEXT = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+":FIELD}</b>: permette di accedere ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_URL_PROTOCOL_CONTEXT_OBJECT+"' (es. per il principal usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+":credential.principal})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_BUSTA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_OBJECT+":FIELD}</b>: permette di utilizzare informazioni generiche del profilo; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_BUSTA_OBJECT+"' (es. per il mittente usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_OBJECT+":mittente})";
@@ -743,6 +770,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_BUSTA);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_PROPERTY_BUSTA);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SECURITY_TOKEN);
+		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_INTEGRATION);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_API_IMPL_PROPERTY_CONFIG);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_APPLICATIVO_PROPERTY_CONFIG);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOGGETTO_FRUITORE_PROPERTY_CONFIG);
@@ -783,6 +811,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_BUSTA);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_PROPERTY_BUSTA);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SECURITY_TOKEN);
+		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_INTEGRATION);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_API_IMPL_PROPERTY_CONFIG);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_APPLICATIVO_PROPERTY_CONFIG);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOGGETTO_FRUITORE_PROPERTY_CONFIG);
@@ -844,6 +873,7 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_XPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+":EXPR}</b>: espressione XPath applicata su un messaggio XML"; 
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_JSONPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+":EXPR}</b>: espressione JSONPath applicata su un messaggio JSON"; 
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_URL = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_URL_REGEXP+":EXPR}</b>: espressione regolare applicata sulla url di invocazione"; 
+	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_INTEGRATION = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_INTEGRATION+":FIELD}</b>: permette di accedere ai claim di un token di integrazione; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_INTEGRATION+"' (es. per ottenere il valore del claim 'claimCustom' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_INTEGRATION+":info[claimCustom]})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_TOKEN_INFO = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_TOKEN_INFO+":FIELD}</b>: permette di accedere ai claim di un token; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_TOKEN_INFO+"' (es. per ottenere il valore del claim 'sub' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_TOKEN_INFO+":sub})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_TOKEN_CLIENT = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_TOKEN+":FIELD}</b>: identità dell'applicativo client identificato tramite il clientId presente nel token; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_APPLICATIVO_TOKEN+"' (es. per ottenere il nome dell'applicativo usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_TOKEN+":nome})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_ATTRIBUTES = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+":FIELD}</b>: permette di accedere agli attributi recuperati tramite Attribute Authority; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ATTRIBUTES+"' (es. per ottenere il valore dell'attributo 'attr1' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+":attributes[attr1]}, se configurata solamente 1 A.A., altrimenti usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+":attributes[nomeAttributeAuthority][attr1]} )";
@@ -876,6 +906,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_BUSTA);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_PROPERTY_BUSTA);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SECURITY_TOKEN);
+		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_INTEGRATION);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_API_IMPL_PROPERTY_CONFIG);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_APPLICATIVO_PROPERTY_CONFIG);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOGGETTO_FRUITORE_PROPERTY_CONFIG);
@@ -918,6 +949,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_BUSTA);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_PROPERTY_BUSTA);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SECURITY_TOKEN);
+		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_INTEGRATION);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_API_IMPL_PROPERTY_CONFIG);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_APPLICATIVO_PROPERTY_CONFIG);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOGGETTO_FRUITORE_PROPERTY_CONFIG);
@@ -994,9 +1026,6 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_SUBJECT = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il claim 'sub' verrà valorizzato con il medesimo valore associato al Client ID";
 	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_IDENTIFIER = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il claim 'jti' verrà valorizzato con un UUID generato da GovWay";
 	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_FORM_PARAMETRO_CLIENT_ID = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il parametro verrà valorizzato con il medesimo valore associato al Client ID definito nel payload del JWT";
-	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_CLAIMS = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+
-			"<BR/><BR/>"+StringEscapeUtils.escapeHtml("Fornendo un valore che inizia e termina con le parentesi graffe si definisce un oggetto json, come ad esempio:<BR/> claimTest={\"prova\":\"valoreProva\", \"prova2\":\"${header:X-Example}\"}")+
-			"<BR/><BR/>"+StringEscapeUtils.escapeHtml("Se il valore inizia e termina con le parentesi quadre si definisce invece un array json, come ad esempio:<BR/> claimTest=[\"valoreProva\", \"valoreProva2\", \"${header:X-Example}\"]");
 	
 	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_VALORE_NON_DEFINITO = "<b>"+org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED+"</b>: indica di non generare il claim";
 	
@@ -1036,9 +1065,7 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_DEFAULT_CLAIMS_RESPONSE = 
 			"Se vengono indicati i claims 'iss' o 'sub' o 'aud' o 'client_id' i valori forniti sovrascriveranno le impostazioni di default del prodotto.<br/>"+
 				LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_DEFAULT_NOT_GENERATED;
-	private final static String LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_SUFFIX = 
-			"Il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway.<br/>Le espressioni utilizzabili sono:"; // usato anche sotto per audience
-	
+
 	public final static String getLABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO(boolean request, boolean corniceSicurezza, List<String> denyClaims) {
 		StringBuilder sb = new StringBuilder(LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_PREFIX);
 		sb.append(LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_DENY_CLAIMS.
@@ -1047,7 +1074,7 @@ public class DynamicHelperCostanti {
 		sb.append(request ? LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_DEFAULT_CLAIMS_REQUEST :
 			LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_DEFAULT_CLAIMS_RESPONSE);
 		//}
-		sb.append(LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_SUFFIX);
+		sb.append(LABEL_CONFIGURAZIONE_CLAIMS);
 		return sb.toString();
 	}
 	
@@ -1065,7 +1092,7 @@ public class DynamicHelperCostanti {
 	
 	// ******* MODI - REST EROGAZIONE/FRUIZIONE AUDIENCE
 
-	public final static String LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_INFO = LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_SUFFIX;
+	public final static String LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_INFO = LABEL_CONFIGURAZIONE_INFO_TRASPORTO;
 	
 	public final static List<String> LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE_INFO_VALORI_REQUEST = new ArrayList<>();
 	static {

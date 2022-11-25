@@ -641,7 +641,7 @@ public class ModIUtilities {
 	public static String getDynamicValue(String tipoRisorsa, String template, Map<String, Object> dynamicMap, Context context) throws Exception {
 		String valoreRisorsa = null;
 		try {
-			valoreRisorsa = DynamicUtils.convertDynamicPropertyValue(tipoRisorsa, template, dynamicMap, context, true);
+			valoreRisorsa = DynamicUtils.convertDynamicPropertyValue(tipoRisorsa, template, dynamicMap, context);
 		}catch(Exception e) {
 			throw new Exception("Conversione valore della risorsa ("+tipoRisorsa+") '"+template+"' non riuscita: "+e.getMessage(),e);
 		}

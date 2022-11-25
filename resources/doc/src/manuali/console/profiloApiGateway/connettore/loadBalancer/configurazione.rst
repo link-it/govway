@@ -65,7 +65,7 @@ L'identificativo di sessione utilizzato è individuabile tramite una delle segue
 
 - *Freemarker Template*: l'identificativo di sessione è ottenuto tramite il processamento di un Freemarker Template;
 
-- *Velocity Template*: l'identificativo di sessione è ottenuto tramite il processamento di un Velocity Template;
+- *Velocity Template*: l'identificativo di sessione è ottenuto tramite il processamento di un Velocity Template.
 
 È anche possibile attivare un 'Passive Health Check' che verifica la connettività verso i connettori configurati. Un utilizzo di un connettore che provoca un errore di connettività comporta la sua esclusione dal pool dei connettori utilizzabili per un intervallo di tempo configurabile (:numref:`LoadBalancerPassiveHealthCheck`).
 

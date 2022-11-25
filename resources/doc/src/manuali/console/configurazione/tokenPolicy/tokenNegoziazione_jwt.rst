@@ -51,13 +51,8 @@ Nella sezione 'JWT Payload' si devono definire i parametri inseriti nella parte 
 
 -  *Time to Live*: indica la validità temporale, in secondi, a partire dalla data di creazione dell'asserzione;
 
--  *Claims*: consente di inserire ulteriori claims nel payload JWT firmato, indicandoli per riga nel formato 'nome=valore'. Fornendo un valore che inizia e termina con le parentesi graffe si definisce un oggetto json, come ad esempio:
-
-	- claimTest={"prova":"valoreProva", "prova2":"${header:X-Example}"}
-
-	Se il valore inizia e termina con le parentesi quadre si definisce invece un array json, come ad esempio:
-
-	- claimTest=["valoreProva", "valoreProva2", "${header:X-Example}"]
+-  *Claims*: consente di inserire ulteriori claims nel payload JWT firmato, indicandoli per riga nel formato 'nome=valore' (modalità descritte nella sezione :ref:`avanzate_generazione_claims`).
 
 Tutti i valori definiti nella sezione 'JWT Payload' possono contenere parti dinamiche che verranno risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
-Inoltre se non si generare un determinato claim è possibile utilizzare la keyword '${undefined}' come valore del campo.
+
+Inoltre se non si desidera generare un determinato claim è possibile utilizzare la keyword '${undefined}' come valore del campo.

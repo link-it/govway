@@ -2924,6 +2924,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						case INPUT_BASED:
 							de.setValue(ModalitaIdentificazione.INPUT_BASED.getLabel());
 							break;
+						case TEMPLATE:
+							de.setValue(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
+							break;
+						case FREEMARKER_TEMPLATE:
+							de.setValue(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
+							break;
+						case VELOCITY_TEMPLATE:
+							de.setValue(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
+							break;
 						}
 					}
 					e.addElement(de);
@@ -3070,6 +3079,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							break;
 						case INPUT_BASED:
 							de.setValue(ModalitaIdentificazione.INPUT_BASED.getLabel());
+							break;
+						case TEMPLATE:
+							de.setValue(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
+							break;
+						case FREEMARKER_TEMPLATE:
+							de.setValue(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
+							break;
+						case VELOCITY_TEMPLATE:
+							de.setValue(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
 							break;
 						}
 					}
@@ -3642,7 +3660,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	public Vector<DataElement> addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione tipoOp,
 			String elemxml, String mode, String pattern, String gif,
-			String riusoIdMessaggio, Vector<DataElement> dati, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
+			String riusoIdMessaggio, Vector<DataElement> dati, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
+			String protocollo) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
@@ -3684,13 +3703,20 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED,
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED, 
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_INPUT_BASED, 
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE, 
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE, 
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE, 
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO
 		};
 		List<String> labels = ModalitaIdentificazione.getLabels(
 				ModalitaIdentificazione.URL_BASED,
 				ModalitaIdentificazione.HEADER_BASED,
 				ModalitaIdentificazione.CONTENT_BASED,
-				ModalitaIdentificazione.INPUT_BASED);
+				ModalitaIdentificazione.INPUT_BASED,
+				ModalitaIdentificazione.GOVWAY_TEMPLATE,
+				ModalitaIdentificazione.FREEMARKER_TEMPLATE,
+				ModalitaIdentificazione.VELOCITY_TEMPLATE
+				);
 		labels.add(CostantiControlStation.LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO);
 		
 		de = new DataElement();
@@ -3706,12 +3732,53 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 		if (PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED.equals(mode) ||
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED.equals(mode) ||
-				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED.equals(mode) 
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED.equals(mode) ||
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE.equals(mode) ||
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE.equals(mode) ||
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE.equals(mode) 
 				) {
 			de = new DataElement();
 			if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else if(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE.equals(mode) ||
+					PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE.equals(mode) ||
+					PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE.equals(mode) ) {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TEMPLATE);
+				de.setType(DataElementType.TEXT_AREA);
+				
+				if(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE.equals(mode)) {
+					dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
+					dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(this.isProfiloModIPA(protocollo), false, false));
+					}
+					else {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(this.isProfiloModIPA(protocollo), false, false));
+					}
+				}
+				else if(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE.equals(mode)) {
+					dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
+					dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER(this.isProfiloModIPA(protocollo), false, false));
+					}
+					else {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER(this.isProfiloModIPA(protocollo), false, false));
+					}
+				}
+				else {
+					dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
+					dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY(this.isProfiloModIPA(protocollo), false, false));
+					}
+					else {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY(this.isProfiloModIPA(protocollo), false, false));
+					}
+				}
+				de.setInfo(dInfoPattern);
 			}
 			else {
 				if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED)) {
@@ -3768,7 +3835,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 	public Vector<DataElement> addPorteApplicativeCorrelazioneApplicativeRispostaToDati(TipoOperazione tipoOp,
 			String elemxml, String mode, String pattern, String gif,
-			Vector<DataElement> dati, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
+			Vector<DataElement> dati, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
+			String protocollo) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
@@ -3807,14 +3875,20 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		String[] tipoMode = {
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED,
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED,
-				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_INPUT_BASED,
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_INPUT_BASED, 
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE, 
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE, 
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE, 
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO
 		};
 		
 		List<String> labels = ModalitaIdentificazione.getLabels(
 				ModalitaIdentificazione.HEADER_BASED,
 				ModalitaIdentificazione.CONTENT_BASED,
-				ModalitaIdentificazione.INPUT_BASED);
+				ModalitaIdentificazione.INPUT_BASED,
+				ModalitaIdentificazione.GOVWAY_TEMPLATE,
+				ModalitaIdentificazione.FREEMARKER_TEMPLATE,
+				ModalitaIdentificazione.VELOCITY_TEMPLATE);
 		labels.add(CostantiControlStation.LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO);
 		
 		de = new DataElement();
@@ -3830,11 +3904,52 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 		if (PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED.equals(mode) ||
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED.equals(mode) ||
-				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED.equals(mode)) {
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED.equals(mode) ||
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE.equals(mode) ||
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE.equals(mode) ||
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE.equals(mode) ) {
 			de = new DataElement();
 			if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else if(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE.equals(mode) ||
+					PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE.equals(mode) ||
+					PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE.equals(mode) ) {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TEMPLATE);
+				de.setType(DataElementType.TEXT_AREA);
+				
+				if(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE.equals(mode)) {
+					dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
+					dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
+					}
+					else {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
+					}
+				}
+				else if(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE.equals(mode)) {
+					dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
+					dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_FREEMARKER(this.isProfiloModIPA(protocollo), false, false));
+					}
+					else {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_FREEMARKER(this.isProfiloModIPA(protocollo), false, false));
+					}
+				}
+				else {
+					dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
+					dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_VELOCITY(this.isProfiloModIPA(protocollo), false, false));
+					}
+					else {
+						dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY(this.isProfiloModIPA(protocollo), false, false));
+					}
+				}
+				de.setInfo(dInfoPattern);
 			}
 			else {
 				if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED)) {
@@ -7107,10 +7222,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
 						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(this.isProfiloModIPA(protocollo), false, false));
 						}
 						else {
-							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(this.isProfiloModIPA(protocollo), false, false));
 						}
 					}
 					else if(org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyTipoSelettore.FREEMARKER_TEMPLATE.equals(stickyTipoSelettore)) {
@@ -7334,10 +7449,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
 						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(this.isProfiloModIPA(protocollo), false, false));
 						}
 						else {
-							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(this.isProfiloModIPA(protocollo), false, false));
 						}
 					}
 					else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
@@ -10475,10 +10590,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
 				dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
+					dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(this.isProfiloModIPA(protocollo), false, false));
 				}
 				else {
-					dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
+					dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(this.isProfiloModIPA(protocollo), false, false));
 				}
 			}
 			else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
