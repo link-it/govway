@@ -4714,7 +4714,7 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
             iss: 'DemoSoggettoFruitore',
             sub: 'ApplicativoBlockingIDA01',
             apiRest: true,
-            digest: 'SHA-512=7hPdSbDFK3zRBgIhlbmmGBBPpTgSCGzA+AI76gBExG2GICAqN4VGS7fVsPB0o6ShNY7z5dnJyLLtRBFeg2WPSw==',
+            digest: '#string',
             digestBody: 'hcVH9WYC4R+GjoSDXIWcn+ewY1B7+hgZ7w2EJVR//mk=',
             digestAllegato1: '2v8wtsBZO3c0V0i4IKvwFmffKeea5ZG/drRGiXl39Gc=',
             digestAllegato2: 'KNdo5OCzZu8Hh7FwKxfpqPMTAHsC2ZRxOds5WTiu4QA='
@@ -4733,7 +4733,7 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
             iss: 'DemoSoggettoFruitore',
             sub: 'ApplicativoBlockingIDA01',
             apiRest: true,
-            digest: 'SHA-512=7hPdSbDFK3zRBgIhlbmmGBBPpTgSCGzA+AI76gBExG2GICAqN4VGS7fVsPB0o6ShNY7z5dnJyLLtRBFeg2WPSw==',
+            digest: '#string',
             digestBody: 'hcVH9WYC4R+GjoSDXIWcn+ewY1B7+hgZ7w2EJVR//mk=',
             digestAllegato1: 'SHA-256=62d7686b95ca8df384ce021b205ebb1dca6e23842f41ea6930e93c2a4a0b05e3',
             digestAllegato2: 'SHA-256=9c287afbddcad7c3bceb4a49fc6d246be236f04639c4eff7269504b3d9a801e3'
@@ -4782,7 +4782,7 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
             iss: 'DemoSoggettoErogatore',
             sub: 'RestBlockingIDAR03CustomHeaderDuplicatiMultipart/v1',
             apiRestMultipart: true,
-            response_digest: 'SHA-512=T8pFlWTcon+1T69sT6jncZ7CzqYgAJInuDs4kBmeg9lRoiBND/D+qTH1+RPKAU6fMmaHzzY4qCCIcZy0VosVxg==',
+            response_digest: '#string',
             response_digestBody: 'hcVH9WYC4R+GjoSDXIWcn+ewY1B7+hgZ7w2EJVR//mk=',
             response_digestAllegato1: '2v8wtsBZO3c0V0i4IKvwFmffKeea5ZG/drRGiXl39Gc=',
             response_digestAllegato2: 'KNdo5OCzZu8Hh7FwKxfpqPMTAHsC2ZRxOds5WTiu4QA='
@@ -4802,7 +4802,7 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
             iss: 'DemoSoggettoErogatore',
             sub: 'RestBlockingIDAR03CustomHeaderDuplicatiMultipart/v1',
             apiRestMultipart: true,
-            response_digest: 'SHA-512=7hPdSbDFK3zRBgIhlbmmGBBPpTgSCGzA+AI76gBExG2GICAqN4VGS7fVsPB0o6ShNY7z5dnJyLLtRBFeg2WPSw==',
+            response_digest: '#string',
             response_digestBody: 'hcVH9WYC4R+GjoSDXIWcn+ewY1B7+hgZ7w2EJVR//mk=',
             response_digestAllegato1: 'SHA-256=62d7686b95ca8df384ce021b205ebb1dca6e23842f41ea6930e93c2a4a0b05e3',
             response_digestAllegato2: 'SHA-256=9c287afbddcad7c3bceb4a49fc6d246be236f04639c4eff7269504b3d9a801e3'

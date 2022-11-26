@@ -613,7 +613,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		
 		String messaggioAtteso = "Identificazione 'Template' (${query:govway-testsuite-id_connettore_request}) non è riuscita ad estrarre dalla richiesta l'informazione utile ad i"
 				+ "dentificare il connettore da utilizzare: Proprieta' 'ConditionalConfig.gwt' contiene un valore non corretto: Placeholder [{query:govway-testsuite-id_connettore_request}"
-				+ "] resolution failed: object [java.util.HashMap] with wrong position [govway-testsuite-id_connettore_request] not exists as key in map";
+				+ "] resolution failed: object [java.util.HashMap] 'govway-testsuite-id_connettore_request' not exists in map";
 		
 		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
 		for (var toCheck: toCheckForDiagnostici) {

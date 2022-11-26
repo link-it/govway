@@ -518,7 +518,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		
 		String messaggioAtteso = "Identificazione 'Template' (${query:govway-testsuite-id_connettore_request}) non è riuscita ad estrarre dalla richiesta l'informazione utile ad i"
 				+ "dentificare il connettore da utilizzare: Proprieta' 'ConditionalConfig.gwt' contiene un valore non corretto: Placeholder [{query:govway-testsuite-id_connettore_request}"
-				+ "] resolution failed: object [java.util.HashMap] with wrong position [govway-testsuite-id_connettore_request] not exists as key in map";
+				+ "] resolution failed: object [java.util.HashMap] 'govway-testsuite-id_connettore_request' not exists in map";
 		
 		String messaggioFallback = 	"Per la notifica viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
 

@@ -1070,7 +1070,7 @@ public class RestAutenticazioneTest extends ConfigLoader {
 				Utils.isJenkins() ?
 						"Resource '${tokenClient:nome}' with unexpected value 'ApplicativoToken2SoggettoInternoFruitore'"
 						:
-						"(Resource '${tokenClientApplicationConfig:authzContenutiTest}' not verifiable; unprocessable dynamic value 'true': Proprieta' '${tokenClientApplicationConfig:authzContenutiTest}' contiene un valore non corretto: Placeholder [{tokenClientApplicationConfig:authzContenutiTest}] resolution failed: object [java.util.HashMap] with wrong position [authzContenutiTest] not exists as key in map)");
+						"(Resource '${tokenClientApplicationConfig:authzContenutiTest}' not verifiable; unprocessable dynamic value 'true': Proprieta' '${tokenClientApplicationConfig:authzContenutiTest}' contiene un valore non corretto: Placeholder [{tokenClientApplicationConfig:authzContenutiTest}] resolution failed: object [java.util.HashMap] 'authzContenutiTest' not exists in map)");
 	}
 
 	@Test
@@ -1078,7 +1078,7 @@ public class RestAutenticazioneTest extends ConfigLoader {
 		Utilities._test(TipoServizio.FRUIZIONE, ConfigLoader.logCore, API, "authzContenuti",
 				Utilities.idApplicativoToken2SoggettoInternoFruitore, Utilities.clientIdApplicativoToken2SoggettoInternoFruitore, null,
 				Utilities.soggettoInternoTestFruitore, Utilities.idApplicativoTrasporto1SoggettoInternoFruitore, Utilities.basicUsernameApplicativoTrasporto1SoggettoInternoFruitore,  
-				"(Resource '${tokenClientApplicationConfig:authzContenutiTest}' not verifiable; unprocessable dynamic value 'true': Proprieta' '${tokenClientApplicationConfig:authzContenutiTest}' contiene un valore non corretto: Placeholder [{tokenClientApplicationConfig:authzContenutiTest}] resolution failed: object [java.util.HashMap] with wrong position [authzContenutiTest] not exists as key in map)");
+				"(Resource '${tokenClientApplicationConfig:authzContenutiTest}' not verifiable; unprocessable dynamic value 'true': Proprieta' '${tokenClientApplicationConfig:authzContenutiTest}' contiene un valore non corretto: Placeholder [{tokenClientApplicationConfig:authzContenutiTest}] resolution failed: object [java.util.HashMap] 'authzContenutiTest' not exists in map)");
 	}
 	
 	@Test

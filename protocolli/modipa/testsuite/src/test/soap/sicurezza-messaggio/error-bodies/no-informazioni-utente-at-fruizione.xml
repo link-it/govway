@@ -10,8 +10,8 @@
             </env:Code>
             <env:Reason>
                 <env:Text xml:lang="en-US">Il servizio richiede una funzionalità non supportata dal protocollo modipa: Non è stato possibile recuperare un valore da associare alla risorsa 'Informazioni Utente - UserID Utente': 
-Conversione valore della risorsa (Informazioni Utente - UserID Utente) '${header:GovWay-CS-User}' non riuscita: Proprieta' 'Informazioni Utente - UserID Utente' contiene un valore non corretto: Placeholder [{header:GovWay-CS-User}] resolution failed: object [java.util.HashMap] with wrong position [GovWay-CS-User] not exists as key in map
-Conversione valore della risorsa (Informazioni Utente - UserID Utente) '${query:govway_cs_user}' non riuscita: Proprieta' 'Informazioni Utente - UserID Utente' contiene un valore non corretto: Placeholder [{query:govway_cs_user}] resolution failed: object [java.util.HashMap] with wrong position [govway_cs_user] not exists as key in map</env:Text>
+Conversione valore della risorsa (Informazioni Utente - UserID Utente) '${header:GovWay-CS-User}' non riuscita: Proprieta' 'Informazioni Utente - UserID Utente' contiene un valore non corretto: Placeholder [{header:GovWay-CS-User}] resolution failed: object [java.util.HashMap] 'GovWay-CS-User' not exists in map
+Conversione valore della risorsa (Informazioni Utente - UserID Utente) '${query:govway_cs_user}' non riuscita: Proprieta' 'Informazioni Utente - UserID Utente' contiene un valore non corretto: Placeholder [{query:govway_cs_user}] resolution failed: object [java.util.HashMap] 'govway_cs_user' not exists in map</env:Text>
             </env:Reason>
             <env:Role>http://govway.org/integration</env:Role>
             <env:Detail>
@@ -20,8 +20,8 @@ Conversione valore della risorsa (Informazioni Utente - UserID Utente) '${query:
                     <title>BadRequest</title>
                     <status>400</status>
                     <detail>Il servizio richiede una funzionalità non supportata dal protocollo modipa: Non è stato possibile recuperare un valore da associare alla risorsa 'Informazioni Utente - UserID Utente': 
-Conversione valore della risorsa (Informazioni Utente - UserID Utente) '${header:GovWay-CS-User}' non riuscita: Proprieta' 'Informazioni Utente - UserID Utente' contiene un valore non corretto: Placeholder [{header:GovWay-CS-User}] resolution failed: object [java.util.HashMap] with wrong position [GovWay-CS-User] not exists as key in map
-Conversione valore della risorsa (Informazioni Utente - UserID Utente) '${query:govway_cs_user}' non riuscita: Proprieta' 'Informazioni Utente - UserID Utente' contiene un valore non corretto: Placeholder [{query:govway_cs_user}] resolution failed: object [java.util.HashMap] with wrong position [govway_cs_user] not exists as key in map</detail>
+Conversione valore della risorsa (Informazioni Utente - UserID Utente) '${header:GovWay-CS-User}' non riuscita: Proprieta' 'Informazioni Utente - UserID Utente' contiene un valore non corretto: Placeholder [{header:GovWay-CS-User}] resolution failed: object [java.util.HashMap] 'GovWay-CS-User' not exists in map
+Conversione valore della risorsa (Informazioni Utente - UserID Utente) '${query:govway_cs_user}' non riuscita: Proprieta' 'Informazioni Utente - UserID Utente' contiene un valore non corretto: Placeholder [{query:govway_cs_user}] resolution failed: object [java.util.HashMap] 'govway_cs_user' not exists in map</detail>
                     <govway_id>#uuid</govway_id>
                 </problem>
             </env:Detail>
