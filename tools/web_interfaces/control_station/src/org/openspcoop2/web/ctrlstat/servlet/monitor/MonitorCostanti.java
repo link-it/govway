@@ -131,7 +131,7 @@ public class MonitorCostanti {
 	public final static String PARAMETRO_MONITOR_TIPO_SERVIZIO = "tipoServizio";
 	public final static String PARAMETRO_MONITOR_NOME_SERVIZIO = "nomeServizio";
 	public final static String PARAMETRO_MONITOR_VERSIONE_SERVIZIO = "versioneServizio";
-	public final static String PARAMETRO_MONITOR_AZIONE = "azione";
+	public final static String PARAMETRO_MONITOR_AZIONE = "monitorAzione";
 	public final static String PARAMETRO_MONITOR_SOGLIA = "soglia";
 	public final static String PARAMETRO_MONITOR_STATO = "stato";
 	public final static String PARAMETRO_MONITOR_ORDER_BY_CONSEGNA_ASINCRONA = "orderAsinc";

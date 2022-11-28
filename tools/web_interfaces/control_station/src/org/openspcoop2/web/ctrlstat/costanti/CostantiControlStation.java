@@ -996,7 +996,7 @@ public class CostantiControlStation {
 	public final static int ATTRIBUTO_CONFIGURAZIONE_PARENT_SOGGETTO = 1;
 	public final static int ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE = 2;
 	
-	public final static String PARAMETRO_AZIONE = "azione";
+	public final static String PARAMETRO_AZIONE = "par_porte_azione";
 	public final static String PARAMETRO_AZIONI = "azioni";
 	public final static int RIGHE_MULTISELECT_AZIONI = 10;
 	public final static String PARAMETRO_NOME_GRUPPO = "nomeGruppo";
