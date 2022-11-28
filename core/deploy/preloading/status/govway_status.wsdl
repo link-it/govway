@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ws="https://govway.org/apiStatus" xmlns:problem="urn:ietf:rfc:7807" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="https://govway.org/apiStatus">
+   <wsdl:types>
+
+      <xs:schema xmlns:tns="urn:ietf:rfc:7807" 
+			attributeFormDefault="unqualified" 
+			elementFormDefault="qualified" 
+			targetNamespace="urn:ietf:rfc:7807">
+         <xs:element name="problem" type="tns:problem"/>
+         <xs:complexType name="problem">
+            <xs:sequence>
+               <xs:element name="type" type="xs:string" minOccurs="1" />
+               <xs:element name="title" type="xs:string" minOccurs="1" />
+               <xs:element name="status" type="xs:int" minOccurs="1" />
+	       <xs:element name="detail" type="xs:string" minOccurs="1" />
+	       <xs:element name="instance" type="xs:string" minOccurs="0" />
+	       <xs:element name="govway_id" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+         </xs:complexType>
+      </xs:schema>
+
+      <xs:schema xmlns:tns="https://govway.org/apiStatus" 
+			attributeFormDefault="unqualified" 
+			elementFormDefault="qualified" 
+			targetNamespace="https://govway.org/apiStatus">
+	 <xs:element name="getStatus" type="tns:getStatus"/>
+         <xs:complexType name="getStatus"/>
+      </xs:schema>
+
+   </wsdl:types>
+   <wsdl:message name="requestGetStatus">
+      <wsdl:part name="msg" element="ws:getStatus" />
+   </wsdl:message>
+   <wsdl:message name="responseGetStatus">
+      <wsdl:part name="msg" element="problem:problem" />
+   </wsdl:message>
+   <wsdl:message name="problem">
+      <wsdl:part name="fault" element="problem:problem" />
+   </wsdl:message>
+   <wsdl:portType name="api-soap-status">
+      <wsdl:operation name="echo">
+         <wsdl:input name="requestGetStatus" message="ws:requestGetStatus" />
+         <wsdl:output name="responseGetStatus" message="ws:responseGetStatus" />
+         <wsdl:fault name="fault" message="ws:problem" />
+      </wsdl:operation>
+   </wsdl:portType>
+
+	<wsdl:binding name="api-soap-statusSoap11Binding" type="ws:api-soap-status">
+		<soap11:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+		<wsdl:operation name="echo">
+			<soap11:operation soapAction="echo" style="document"/>
+			<wsdl:input name="requestGetStatus">
+				<soap11:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="responseGetStatus">
+				<soap11:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap11:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+
+	</wsdl:binding>
+
+	<!-- SERVICE -->	
+	<wsdl:service name="api-soap-statusSoap11Service">	
+
+		<wsdl:port binding="ws:api-soap-statusSoap11Binding" name="api-soap-statusPortSoap11">
+			<soap11:address location="http://127.0.0.1:8080/govway/ENTE/api-soap-status/v1"/>
+		</wsdl:port>	
+			
+	</wsdl:service>
+
+</wsdl:definitions>

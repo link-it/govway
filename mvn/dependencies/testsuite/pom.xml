@@ -15,6 +15,7 @@
 		<module>applicationServer</module>
 		<module>test</module>
 		<module>staticAnalysis</module>
+		<module>dynamicAnalysis</module>
 	</modules>
 
 	<parent>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="zaproxy_LocalEnv" basedir=".">
+
+	<!-- openspcoop2 -->
+	<property name="openspcoop2" location="../../" />
+	<property name="openspcoop2.dist" value="${openspcoop2}/dist" />
+	<property name="openspcoop2.lib" value="${openspcoop2}/lib" />
+	<property name="required_lib" value="${openspcoop2.lib}"/>
+
+	<!-- Parametri connessione GovWay -->
+	<property name="govway.prefix" value="http://127.0.0.1:8080"/>
+	<property name="govway.ente" value="ENTE"/>
+
+	<!-- https://www.zaproxy.org/ -->
+	<!-- https://github.com/zaproxy/zap-api-java -->
+	<property name="zaproxy.home" value="" />
+
+	<!-- Number of milliseconds before execution is terminated -->
+	<property name="zaproxy.timeout" value="600000"/> <!-- 10 minuti -->
+
+	<!-- Parametri di connessione a zap proxy -->
+	<property name="zaproxy.address" value="127.0.0.1"/>
+	<property name="zaproxy.port" value="8280"/>
+	<property name="zaproxy.api-key" value="govway-test"/>
+	<property name="zaproxy.debug" value="true"/>
+        <property name="zaproxy.session" value="/tmp/goway-test/session"/>
+
+	<!-- Parametri verifica OpenAPI -->
+	<property name="zaproxy.openapi" value=""/>
+	<property name="zaproxy.openapi.targetUrl" value=""/>	
+
+	<!-- Parametri verifica SOAP -->
+	<property name="zaproxy.soap" value=""/>
+	<property name="zaproxy.soap.targetUrl" value=""/>
+
+	<!-- Parametri generazione Reports (https://www.zaproxy.org/docs/desktop/addons/report-generation/api/) -->
+	<property name="zaproxy.report.title" value="GovWay" />
+	<property name="zaproxy.report.description" value="GovWay" />
+	<property name="zaproxy.report.includedConfidences" value="False Positive|Low|Medium|High|Confirmed" />
+	<property name="zaproxy.report.includedRisks" value="Informational|Low|Medium|High" />
+	<!--
+	 Report File Name Pattern. For example, {{yyyy-MM-dd}}-ZAP-Report-[[site]] 
+	 .ext verrà convertito con l'estensione corretta rispetto al template
+	-->
+	<property name="zaproxy.report.fileNamePattern" value="zap_report_{{yyyy-MM-dd}}.ext" />
+	<property name="zaproxy.report.dir" value="reports" />
+	<property name="zaproxy.report.display" value="false" />
+	<!-- 
+		Format: [report-template1 report-theme1 report-sections1] ... [report-templateN report-themeN report-sectionsN]
+		Use task 'reportInfos' per conoscere i valori
+	-->
+	<property name="zaproxy.report.traditional-json" value="traditional-json none none" />
+	<property name="zaproxy.report.traditional-xml" value="traditional-xml none none" />
+	<property name="zaproxy.report.traditional-pdf" value="traditional-pdf none alertcount|instancecount|alertdetails" />
+	<property name="zaproxy.report.traditional-md" value="traditional-pdf none alertcount|instancecount|alertdetails" />
+	<property name="zaproxy.report.traditional-html" value="traditional-html none alertcount|instancecount|alertdetails" />
+	<property name="zaproxy.report.sarif-json" value="sarif-json none none" />
+	<property name="zaproxy.report.modern" value="modern marketing chart|alertcount|instancecount|passingrules|alertdetails|statistics|params" /> <!-- themas: console, construction, corporate, marketing, mountain, nature, ocean, plutonium, skyline, technology' -->
+	<property name="zaproxy.report.high-level-report" value="high-level-report none riskSummaryChart|bugsCountChart|vulnerabilityImpact" />
+	<property name="zaproxy.report.risk-confidence-html" value="risk-confidence-html original contents|aboutThisReport|reportDescription|reportParameters|summaries|riskConfidenceCounts|siteRiskCounts|alertTypeCounts|alerts|requestHeader|requestBody|responseHeader|responseBody|appendix|alertTypes" />
+	<property name="zaproxy.report.traditional-json-plus" value="traditional-json-plus none none" />
+	<property name="zaproxy.report.traditional-xml-plus" value="traditional-xml-plus none none" />
+	<property name="zaproxy.report.traditional-html-plus" value="traditional-html-plus light chart|alertcount|instancecount|passingrules|alertdetails|statistics|params" />
+	<property name="zaproxy.report.templates" value="${zaproxy.report.traditional-json} ${zaproxy.report.traditional-xml} ${zaproxy.report.traditional-pdf} ${zaproxy.report.traditional-md} ${zaproxy.report.traditional-html} ${zaproxy.report.sarif-json} ${zaproxy.report.modern} ${zaproxy.report.high-level-report} ${zaproxy.report.risk-confidence-html} ${zaproxy.report.traditional-json-plus} ${zaproxy.report.traditional-xml-plus} ${zaproxy.report.traditional-html-plus}" />
+
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="false" />
+	
+</project>
+
+

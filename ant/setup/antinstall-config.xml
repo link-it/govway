@@ -548,6 +548,12 @@
         <checkbox defaultValue="false" property="antinstaller_rs_config" value="rsConfig" displayText="API di Configurazione"/>
         <checkbox defaultValue="false" property="antinstaller_rs_monitor" value="rsMonitor" displayText="API di Monitoraggio"/>
 
+	<comment displayText=""/>
+
+	<comment displayText="API Health Check" bold="true"/>
+        <checkbox defaultValue="false" property="antinstaller_rs_rest_status" value="rsRestStatus" displayText="API REST"/>
+        <checkbox defaultValue="false" property="antinstaller_rs_soap_status" value="rsSoapStatus" displayText="API SOAP"/>
+
     </page>
 
     <page name="profili_nuovaInstallazione" type="input" displayText="Profili di Interoperabilità"

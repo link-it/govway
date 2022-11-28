@@ -1,0 +1,5 @@
+curl -v -X POST -H "Content-Type: text/xml" -H "SOAPAction: echo" http://localhost:8080/govway/ENTE/api-soap-status/v1 -d '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+        <soapenv:Body>
+		<ns1:getStatus xmlns:ns1="https://govway.org/apiStatus"/>
+	</soapenv:Body>
+</soapenv:Envelope>'

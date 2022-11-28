@@ -152,6 +152,8 @@
 		Configurazione Servizi
 			antinstaller_rs_config=true/false
 			antinstaller_rs_monitor=true/false
+			antinstaller_rs_rest_status=true/false
+			antinstaller_rs_soap_status=true/false
 
 		Cooperazione Applicativa
 			antinstaller_protocollo_trasparente=true
@@ -782,6 +784,34 @@
 						<delete dir="${tmp_archivi}/apiMonitorZIP"/>
 					</then>
 				</if>
+				<if>
+					<and>
+						<istrue value="${antinstaller_rs_rest_status}"/>
+					</and>
+					<then>
+						<unzip src="${tmp_archivi}/govway.ear/properties/apiRestStatus.zip" dest="${tmp_archivi}/apiRestStatusZIP"/>
+						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
+						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
+						<delete file="${tmp_archivi}/govway.ear/properties/apiRestStatus.zip" />
+						<zip destfile="${tmp_archivi}/govway.ear/properties/apiRestStatus.zip" basedir="${tmp_archivi}/apiRestStatusZIP"/>
+						<delete dir="${tmp_archivi}/apiRestStatusZIP"/>
+					</then>
+				</if>
+				<if>
+					<and>
+						<istrue value="${antinstaller_rs_soap_status}"/>
+					</and>
+					<then>
+						<unzip src="${tmp_archivi}/govway.ear/properties/apiSoapStatus.zip" dest="${tmp_archivi}/apiSoapStatusZIP"/>
+						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
+						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
+						<delete file="${tmp_archivi}/govway.ear/properties/apiSoapStatus.zip" />
+						<zip destfile="${tmp_archivi}/govway.ear/properties/apiSoapStatus.zip" basedir="${tmp_archivi}/apiSoapStatusZIP"/>
+						<delete dir="${tmp_archivi}/apiSoapStatusZIP"/>
+					</then>
+				</if>
 	
 				<!-- govwaySec -->
 				<if>
@@ -844,6 +874,35 @@
 						<delete dir="${tmp_archivi}/apiMonitorZIP"/>
 					</then>
 				</if>
+				<if>
+					<and>
+						<istrue value="${antinstaller_rs_rest_status}"/>
+					</and>
+					<then>
+						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiRestStatus.zip" dest="${tmp_archivi}/apiRestStatusZIP"/>
+						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
+						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
+						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiRestStatus.zip" />
+						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiRestStatus.zip" basedir="${tmp_archivi}/apiRestStatusZIP"/>
+						<delete dir="${tmp_archivi}/apiRestStatusZIP"/>
+					</then>
+				</if>
+				<if>
+					<and>
+						<istrue value="${antinstaller_rs_soap_status}"/>
+					</and>
+					<then>
+						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiSoapStatus.zip" dest="${tmp_archivi}/apiSoapStatusZIP"/>
+						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
+						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
+						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiSoapStatus.zip" />
+						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiSoapStatus.zip" basedir="${tmp_archivi}/apiSoapStatusZIP"/>
+						<delete dir="${tmp_archivi}/apiSoapStatusZIP"/>
+					</then>
+				</if>
+
 
 				<!-- govwaySec -->
 				<if>

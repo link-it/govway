@@ -24,5 +24,7 @@
         <archive path="/op2_3.3.dev/lib/testsuite/karate-core-0.9.6.jar"/>
         <archive path="/op2_3.3.dev/lib/testsuite/karate-junit4-0.9.6.jar"/>
     </library>
-
+    <library name="openspcoop2_3.3.9_lib_dynamicAnalysis" systemlibrary="false">
+        <archive path="/op2_3.3.dev/lib/dynamicAnalysis/zap-clientapi-1.11.0.jar"/>
+    </library>
 </eclipse-userlibraries>

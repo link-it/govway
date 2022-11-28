@@ -7,6 +7,7 @@ axis14
 bean-validation
 commons
 cxf
+dynamicAnalysis
 faces
 git
 httpcore
@@ -28,6 +29,7 @@ shared
 soapbox
 spring
 spring-security
+staticAnalysis
 swagger
 swagger-codegen
 testsuite
