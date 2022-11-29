@@ -20,12 +20,14 @@
 		</classpath>
 	</taskdef>
 
-	<property name="src_zap" location="src" />
-	<property name="build_zap" location="build" />
+	<property name="zap_dir" location="." />
+	<property name="src_zap" value="${zap_dir}/src" />
+	<property name="build_zap" value="${zap_dir}/build" />
+	<property name="scripts_zap" value="${zap_dir}/scripts" />
 
-	<property name="run_zap" location="scripts/runZAProxy.sh" />
-	<property name="stop_zap" location="scripts/stopZAProxy.sh" />
-	<property name="wait_start_zap" location="scripts/waitStartZAProxy.sh" />
+	<property name="run_zap" value="${scripts_zap}/runZAProxy.sh" />
+	<property name="stop_zap" value="${scripts_zap}/stopZAProxy.sh" />
+	<property name="wait_start_zap" value="${scripts_zap}/waitStartZAProxy.sh" />
 		
 	<!-- CLASSPATH -->
 	<path id="classpath_run" >
@@ -87,17 +89,23 @@
                         </then>
                 </if>
 
+		<echo message="Run ZAP Api Key: '${zap-api-key}'"/>
+
 		<!-- Run the java code  -->
 		<exec executable="${run_zap}">
 			<arg value="${zaproxy.home}"/>
 			<arg value="${zaproxy.session}" />
-			<arg value="${zaproxy.api-key}" />
+			<arg value="${zap-api-key}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.address}" />
 		</exec>
 	</target>
 	<target name="-executeZap" depends="-checkZapProxyHome, build"
         	description="Esegue il target indicato" >
+		<tstamp>
+			<format property="touch.time" pattern="yyyyMMdd_HHmmssSSS" />
+		</tstamp>
+		<var name="zap-api-key" value="${zaproxy.api-key}_${touch.time}" />
 		<exec executable="${stop_zap}" failonerror="false"> <!-- Se non esiste fa lo stesso -->
 			<arg value="false" />
 		</exec>
@@ -149,12 +157,33 @@
 		</antcall>
 	</target>
 	<target name="-reportInfos">
-		<!-- Run the java code  -->
+		<echo message="ReportInfos Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.ReportInfos" fork="false">
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
-			<arg value="${zaproxy.api-key}" />
+			<arg value="${zap-api-key}" />
+			<arg value="${zaproxy.debug}" />
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="${build_zap}"/>
+			</classpath>
+		</java>
+	</target>
+
+	<!-- SessionManagementInfos -->
+	<target name="sessionManagementInfos">
+		<antcall target="-executeZap">
+			<param name="zap_target" value="-sessionManagementInfos"/>
+		</antcall>
+	</target>
+	<target name="-sessionManagementInfos">
+		<echo message="SessionManagementInfos Api Key: '${zap-api-key}'"/>
+		<java classname="org.openspcoop2.testsuite.zap.SessionManagementInfos" fork="false">
+			<arg value="${zaproxy.address}" />
+			<arg value="${zaproxy.port}" />
+			<arg value="${zaproxy.session}" />
+			<arg value="${zap-api-key}" />
 			<arg value="${zaproxy.debug}" />
 			<classpath>
 				<path refid="classpath_run" />
@@ -197,12 +226,12 @@
 		</antcall>
 	</target>
 	<target name="-analizeOpenAPI">
-		<!-- Run the java code  -->
+		<echo message="OpenAPI Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.OpenAPI" fork="false">
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
-			<arg value="${zaproxy.api-key}" />
+			<arg value="${zap-api-key}" />
 			<arg value="${zaproxy.debug}" />
 			<arg value="${zaproxy.openapi}" />
 			<arg value="${zaproxy.openapi.targetUrl}" />
@@ -255,12 +284,12 @@
 		</antcall>
 	</target>
 	<target name="-analizeSoap">
-		<!-- Run the java code  -->
+		<echo message="SOAP Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.Soap" fork="false">
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
-			<arg value="${zaproxy.api-key}" />
+			<arg value="${zap-api-key}" />
 			<arg value="${zaproxy.debug}" />
 			<arg value="${zaproxy.soap}" />
 			<arg value="${zaproxy.soap.targetUrl}" />
@@ -280,60 +309,100 @@
 	</target>
 
 	<!-- GovWay API -->
-	<property name="govway_rest_status" location="../../core/deploy/preloading/status/govway_status.yaml" />
-	<property name="govway_soap_status" location="../../core/deploy/preloading/status/govway_status.wsdl" />
-	<property name="govway_api_config" location="../../tools/rs/config/server/src/schemi/merge/govway_rs-api_config.yaml" />
-	<property name="govway_api_monitor" location="../../tools/rs/monitor/server/src/schemi/merge/govway_rs-api_monitor.yaml" />
+	<property name="govway_rest_status" value="${zap_dir}/../../core/deploy/preloading/status/govway_status.yaml" />
+	<property name="govway_soap_status" value="${zap_dir}/../../core/deploy/preloading/status/govway_status.wsdl" />
+	<property name="govway_api_config" value="${zap_dir}/../../tools/rs/config/server/src/schemi/merge/govway_rs-api_config.yaml" />
+	<property name="govway_api_monitor" value="${zap_dir}/../../tools/rs/monitor/server/src/schemi/merge/govway_rs-api_monitor.yaml" />
 	<target name="analizeGovWayAPI">
 
 		<!-- api rest status -->
-		<delete dir="${zaproxy.report.dir}/api-rest-status" />
-		<mkdir dir="${zaproxy.report.dir}/api-rest-status" />
-		<antcall target="analizeOpenAPI">
-			<param name="zaproxy.openapi" value="${govway_rest_status}"/>
-			<param name="zaproxy.openapi.targetUrl" value="${govway.prefix}/govway/${govway.ente}/api-rest-status/v1"/>
-			<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/api-rest-status" />
-			<param name="zaproxy.report.fileNamePattern" value="zap_report_api-rest-status.ext" />
-			<param name="zaproxy.report.title" value="GovWay API REST" />
-			<param name="zaproxy.report.description" value="Analisi per API di tipo REST" />
+		<antcall target="-analizeGovWayAPI">
+			<param name="analyzeTarget" value="analizeOpenAPI"/>
+			<param name="analyzeType" value="api-rest-status"/>
+			<param name="analyzeInterface" value="${govway_rest_status}"/>
+			<param name="analyzeTargetUrl" value="${govway.endpoint}/govway/${govway.ente}/api-rest-status/v1"/>
+			<param name="analyzeTitle" value="GovWay API REST"/>
+			<param name="analyzeDescription" value="Analisi per API di tipo REST"/>
 		</antcall>
 
 		<!-- api soap status -->
-		<delete dir="${zaproxy.report.dir}/api-soap-status" />
-		<mkdir dir="${zaproxy.report.dir}/api-soap-status" />
-		<antcall target="analizeSoap">
-			<param name="zaproxy.soap" value="${govway_soap_status}"/>
-			<param name="zaproxy.soap.targetUrl" value="${govway.prefix}/govway/${govway.ente}/api-soap-status/v1"/>
-			<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/api-soap-status" />
-			<param name="zaproxy.report.fileNamePattern" value="zap_report_api-soap-status.ext" />
-			<param name="zaproxy.report.title" value="GovWay API SOAP" />
-			<param name="zaproxy.report.description" value="Analisi per API di tipo SOAP" />
+		<antcall target="-analizeGovWayAPI">
+			<param name="analyzeTarget" value="analizeSoap"/>
+			<param name="analyzeType" value="api-soap-status"/>
+			<param name="analyzeInterface" value="${govway_soap_status}"/>
+			<param name="analyzeTargetUrl" value="${govway.endpoint}/govway/${govway.ente}/api-soap-status/v1"/>
+			<param name="analyzeTitle" value="GovWay API SOAP"/>
+			<param name="analyzeDescription" value="Analisi per API di tipo SOAP"/>
 		</antcall>
 
 		<!-- api govway config -->
-		<delete dir="${zaproxy.report.dir}/api-config" />
-		<mkdir dir="${zaproxy.report.dir}/api-config" />
-		<antcall target="analizeOpenAPI">
-			<param name="zaproxy.openapi" value="${govway_api_config}"/>
-			<param name="zaproxy.openapi.targetUrl" value="${govway.prefix}/govway/${govway.ente}/api-config/v1"/>
-			<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/api-config" />
-			<param name="zaproxy.report.fileNamePattern" value="zap_report_api-config.ext" />
-			<param name="zaproxy.report.title" value="GovWay API di configurazione" />
-			<param name="zaproxy.report.description" value="Analisi delle API di GovWay di configurazione" />
+		<antcall target="-analizeGovWayAPI">
+			<param name="analyzeTarget" value="analizeOpenAPI"/>
+			<param name="analyzeType" value="api-config"/>
+			<param name="analyzeInterface" value="${govway_api_config}"/>
+			<param name="analyzeTargetUrl" value="${govway.endpoint}/govway/${govway.ente}/api-config/v1"/>
+			<param name="analyzeTitle" value="GovWay API di configurazione" />
+			<param name="analyzeDescription" value="Analisi delle API di GovWay per la configurazione" />
 		</antcall>
 
 		<!-- api govway monitor -->
-		<delete dir="${zaproxy.report.dir}/api-monitor" />
-		<mkdir dir="${zaproxy.report.dir}/api-monitor" />
-		<antcall target="analizeOpenAPI">
-			<param name="zaproxy.openapi" value="${govway_api_monitor}"/>
-			<param name="zaproxy.openapi.targetUrl" value="${govway.prefix}/govway/${govway.ente}/api-monitor/v1"/>
-			<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/api-monitor" />
-			<param name="zaproxy.report.fileNamePattern" value="zap_report_api-monitor.ext" />
-			<param name="zaproxy.report.title" value="GovWay API di monitoraggio" />
-			<param name="zaproxy.report.description" value="Analisi delle API di GovWay di monitoraggio" />
+		<antcall target="-analizeGovWayAPI">
+			<param name="analyzeTarget" value="analizeOpenAPI"/>
+			<param name="analyzeType" value="api-monitor"/>
+			<param name="analyzeInterface" value="${govway_api_monitor}"/>
+			<param name="analyzeTargetUrl" value="${govway.endpoint}/govway/${govway.ente}/api-monitor/v1"/>
+			<param name="analyzeTitle" value="GovWay API di monitoraggio" />
+			<param name="analyzeDescription" value="Analisi delle API di GovWay per il monitoraggio" />
 		</antcall>
 
+	</target>
+	<target name="-analizeGovWayAPI">
+                <if>
+                        <equals arg1="${zaproxy.skipTests}" arg2="$${zaproxy.skipTests}"/>
+                        <then>
+				<var name="_zaproxyExecute" value="true"/>                                
+                        </then>
+			<else>
+				<condition property="_zaproxyExecute" value="false" else="true">
+					<contains string="${zaproxy.skipTests}" substring="${analyzeType}"/>
+				</condition>	
+			</else>
+                </if>
+                <if>
+                        <equals arg1="${_zaproxyExecute}" arg2="true"/>
+                        <then>
+
+				<delete dir="${zaproxy.report.dir}/${analyzeType}" />
+				<mkdir dir="${zaproxy.report.dir}/${analyzeType}" />
+                
+				<if>
+		                        <equals arg1="${analyzeTarget}" arg2="analizeOpenAPI"/>
+		                        <then>
+						<antcall target="analizeOpenAPI">
+							<param name="zaproxy.openapi" value="${analyzeInterface}"/>
+							<param name="zaproxy.openapi.targetUrl" value="${analyzeTargetUrl}"/>
+							<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/${analyzeType}" />
+							<param name="zaproxy.report.fileNamePattern" value="zap_report_${analyzeType}.ext" />
+							<param name="zaproxy.report.title" value="${analyzeTitle}" />
+							<param name="zaproxy.report.description" value="${analyzeDescription}" />
+						</antcall>
+					</then>
+				</if>
+				<if>
+		                        <equals arg1="${analyzeTarget}" arg2="analizeSoap"/>
+		                        <then>
+						<antcall target="analizeSoap">
+							<param name="zaproxy.soap" value="${analyzeInterface}"/>
+							<param name="zaproxy.soap.targetUrl" value="${analyzeTargetUrl}"/>
+							<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/${analyzeType}" />
+							<param name="zaproxy.report.fileNamePattern" value="zap_report_${analyzeType}.ext" />
+							<param name="zaproxy.report.title" value="${analyzeTitle}" />
+							<param name="zaproxy.report.description" value="${analyzeDescription}" />
+						</antcall>
+					</then>
+				</if>
+			</then>
+                </if>
 	</target>
 
 	<!-- GovWay Console -->

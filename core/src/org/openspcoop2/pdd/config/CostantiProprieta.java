@@ -23,7 +23,10 @@ package org.openspcoop2.pdd.config;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.Proprieta;
@@ -635,6 +638,64 @@ public class CostantiProprieta {
 		return readBooleanValueWithDefault(proprieta, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_REQUIRED, defaultValue, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_ENABLED, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_DISABLED);
 	}
 	
+	
+	
+	// ****  SECURITY HEADERS *****
+	
+	public static final String SECURITY_HEADERS_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String SECURITY_HEADERS_VALUE_DISABLED = VALUE_DISABLED;
+		
+	private static final String SECURITY_HEADERS_ENABLED = "securityHeaders.enabled";
+	private static final String SECURITY_HEADERS_DEFAULT_ENABLED = "securityHeaders.default";
+	private static final String SECURITY_HEADERS_LIST = "securityHeaders"; // separati con la virgola
+	private static final String SECURITY_HEADERS_PREFIX = "securityHeaders.";
+
+	public static boolean isSecurityHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, SECURITY_HEADERS_ENABLED, defaultValue, SECURITY_HEADERS_VALUE_ENABLED, SECURITY_HEADERS_VALUE_DISABLED);
+	}
+	public static Map<String, String> getSecurityHeaders(List<Proprieta> proprieta, Properties defaultConfig) throws Exception {
+		
+		Map<String, String> p = new HashMap<>();
+		
+		boolean useDefault = readBooleanValueWithDefault(proprieta, SECURITY_HEADERS_DEFAULT_ENABLED, true, SECURITY_HEADERS_VALUE_ENABLED, SECURITY_HEADERS_VALUE_DISABLED);
+		if(useDefault) {
+			for (Object oKey : defaultConfig.keySet()) {
+				if(oKey instanceof String) {
+					String key = (String) oKey;
+					String value = defaultConfig.getProperty(key);
+					if(key!=null && StringUtils.isNotEmpty(key) &&
+						value!=null && StringUtils.isNotEmpty(value)) {
+						p.put(key, value);
+					}
+				}
+			}
+		}
+	
+		String pLista = readValue(proprieta, SECURITY_HEADERS_LIST);
+		if(pLista!=null && StringUtils.isNotEmpty(pLista)) {
+			String [] tmp = pLista.split(",");
+			if(tmp!=null && tmp.length>0) {
+				for (String key : tmp) {
+					if(key!=null) {
+						key = key.trim();
+						if(StringUtils.isNotEmpty(key)) {
+							String pName = (SECURITY_HEADERS_PREFIX+key);
+							String value = readValue(proprieta, pName);
+							if(value!=null) {
+								value = value.trim();
+								p.put(key, value); // se gia' esiste viene sovrascritto
+							}
+//							else {
+//								throw new Exception("Proprietà '"+pName+"' non definita");
+//							}
+						}
+					}
+				}
+			}
+		}
+		
+		return p;
+	}
 	
 	
 	

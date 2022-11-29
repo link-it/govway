@@ -1,0 +1,22 @@
+diff --git ant/setup/deploy/resources/core/govway_local.properties ant/setup/deploy/resources/core/govway_local.properties
+index 96cf95098a..07c6f27195 100644
+--- ant/setup/deploy/resources/core/govway_local.properties
++++ ant/setup/deploy/resources/core/govway_local.properties
+@@ -14,6 +14,17 @@
+ #org.openspcoop2.pdd.check.readJMXResources.password=PASSWORD
+ # ================================================
+ 
++# ================================================
++# Health check
++# Se abilitato, il servizio /govway/check invocherà anche l'API REST e/o SOAP per verificare il corretto funzionamento di GovWay
++# API REST
++#org.openspcoop2.pdd.check.healthCheck.apiRest.enabled=true
++#org.openspcoop2.pdd.check.healthCheck.apiRest.endpoint=http://localhost:8080/govway/SOGGETTO_LOCALE/api-rest-status/v1/status
++# API SOAP
++#org.openspcoop2.pdd.check.healthCheck.apiSoap.enabled=true
++#org.openspcoop2.pdd.check.healthCheck.apiSoap.endpoint=http://localhost:8080/govway/SOGGETTO_LOCALE/api-soap-status/v1
++# ================================================
++
+ # ================================================
+ # Default
+ #org.openspcoop2.pdd.identificativoPorta.nome=<NomeSoggettoDefault>

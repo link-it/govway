@@ -24,7 +24,11 @@
 			elementFormDefault="qualified" 
 			targetNamespace="https://govway.org/apiStatus">
 	 <xs:element name="getStatus" type="tns:getStatus"/>
-         <xs:complexType name="getStatus"/>
+         <xs:complexType name="getStatus">
+            <xs:sequence>
+               <xs:element name="description" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+	 </xs:complexType>
       </xs:schema>
 
    </wsdl:types>

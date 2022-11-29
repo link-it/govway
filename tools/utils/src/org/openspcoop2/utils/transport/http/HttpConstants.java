@@ -130,7 +130,27 @@ public class HttpConstants {
 	public final static String CACHE_STATUS_HTTP_1_0_DISABLE_CACHE = CACHE_STATUS_DIRECTIVE_NO_CACHE;
 	public final static String CACHE_STATUS_PROXY_EXPIRES = "Expires";
 	public final static long CACHE_STATUS_PROXY_EXPIRES_DISABLE_CACHE = 0;
-
+	public final static String CACHE_STATUS_VARY = "Vary";
+	public final static String CACHE_STATUS_VARY_UNCACHABLE = "*"; // Indicates that factors other than request headers influenced the generation of this response. Implies that the response is uncacheable.
+	public final static List<String> CACHE_STATUS_HEADERS = new ArrayList<>();
+	static {
+		CACHE_STATUS_HEADERS.add(CACHE_STATUS_HTTP_1_1);
+		CACHE_STATUS_HEADERS.add(CACHE_STATUS_HTTP_1_0);
+		CACHE_STATUS_HEADERS.add(CACHE_STATUS_PROXY_EXPIRES);
+		CACHE_STATUS_HEADERS.add(CACHE_STATUS_VARY);
+	}
+	public static boolean isCacheStatusHeader(String hdr) {
+		if(hdr==null) {
+			return false;
+		}
+		for (String h : CACHE_STATUS_HEADERS) {
+			if(h.toLowerCase().equals(hdr.toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/** CORS Request */
 	public final static String ACCESS_CONTROL_REQUEST_HEADERS = "Access-Control-Request-Headers";
 	public final static String ACCESS_CONTROL_REQUEST_METHOD = "Access-Control-Request-Method";

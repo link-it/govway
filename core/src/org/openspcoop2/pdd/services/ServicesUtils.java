@@ -496,8 +496,8 @@ public class ServicesUtils {
 	public static void setGovWayHeaderResponse(OpenSPCoop2Message msg, OpenSPCoop2Properties openspcoopProperties,
 			Map<String, List<String>> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, RequestInfo requestInfo) {
 				
+		UtilitiesIntegrazione utilitiesIntegrazione = null;
 		try {						
-			UtilitiesIntegrazione utilitiesIntegrazione = null;
 			if(portaDelegata) {
 				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePDResponse(logCore);
 			}
@@ -530,27 +530,37 @@ public class ServicesUtils {
 		}
 				
 		setCORSAllowOrigin(propertiesTrasporto, logCore, portaDelegata, pddContext, requestInfo);
-				
+						
 		try {
-			if(propertiesTrasporto!=null && !propertiesTrasporto.isEmpty()) {
 				
-				OpenSPCoop2MessageProperties forwardHeader = null;
-				if(msg!=null &&
-						openspcoopProperties!=null // Puo' non essere inizializzato
-						) {
-					if(ServiceBinding.REST.equals(msg.getServiceBinding())) {
-						forwardHeader = msg.getForwardTransportHeader(openspcoopProperties.getRESTServicesHeadersForwardConfig(false));
-					}
-					else {
-						forwardHeader = msg.getForwardTransportHeader(openspcoopProperties.getSOAPServicesHeadersForwardConfig(false));
-					}
+			OpenSPCoop2MessageProperties forwardHeader = null;
+			if(msg!=null &&
+					openspcoopProperties!=null // Puo' non essere inizializzato
+					) {
+				if(ServiceBinding.REST.equals(msg.getServiceBinding())) {
+					forwardHeader = msg.getForwardTransportHeader(openspcoopProperties.getRESTServicesHeadersForwardConfig(false));
 				}
+				else {
+					forwardHeader = msg.getForwardTransportHeader(openspcoopProperties.getSOAPServicesHeadersForwardConfig(false));
+				}
+			}
+			
+			try {
+				if(utilitiesIntegrazione!=null) {
+					utilitiesIntegrazione.setSecurityHeaders(msg.getServiceBinding(), requestInfo, propertiesTrasporto, forwardHeader);
+				}
+			}catch(Exception e){
+				logCore.error("Set security headers fallito: "+e.getMessage(),e);
+			}
+			
+			if(propertiesTrasporto!=null && !propertiesTrasporto.isEmpty()) {
 				if(forwardHeader!=null && forwardHeader.size()>0) {
 					for (String key : propertiesTrasporto.keySet()) {
 						forwardHeader.removePropertyValues(key);
 					}
 				}
 			}
+			
 		}catch(Exception e){
 			logCore.error("Pulizia forward header, rispetto a quelli generati da GovWay, fallito: "+e.getMessage(),e);
 		}

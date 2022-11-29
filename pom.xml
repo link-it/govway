@@ -66,6 +66,9 @@
 		<!-- static_analysis -->
 		<spotbugs>none</spotbugs>
 
+                <!-- dynamic_analysis -->
+                <zaproxy>none</zaproxy>
+
 	</properties>
 
 	<modules>
@@ -77,6 +80,7 @@
 		<module>core/mvn</module>
 		<module>core/mvn/sql</module>
 		<module>tools/spotbugs/mvn</module>
+                <module>tools/zap/mvn</module>
 	</modules>
 
 	<repositories>

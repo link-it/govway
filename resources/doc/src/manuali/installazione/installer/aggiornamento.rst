@@ -28,7 +28,7 @@ al caso di una nuova installazione:
 
 #. Nel successivo passo è possibile indicare se tra gli archivi generati 
    devono essere inclusi i servizi che permettono la configurazione ed il monitoraggio
-   di GovWay tramite API REST.
+   di GovWay tramite API REST e i servizi di Health Check basati su API REST e/o SOAP.
 
    .. _apiREST_fig_update:
    

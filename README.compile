@@ -78,7 +78,36 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
                    -Dspotbugs.home=/tmp/spotbugs-4.7.3 
                    -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-queue,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository
 
-2.6 Librerie 3parti
+2.6 Analisi dinamica tramite OWASP Zed Attack Proxy (ZAP)
+
+    Prequisito: 
+	- govway sia attivo 
+	- in fase di installazione siano stati scelti i servizi di health check per API REST e SOAP e le API di configurazione e monitoraggio.
+
+    Usare il comando:
+	mvn verify -Dzaproxy=verify -Dzaproxy.home=PATH_ASSOLUTO_TOOLS_ZAP -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=<SoggettoIndicatoInstaller>
+
+    Per evitare la compilazione, il packaging e la verifica owasp descritte nelle precedenti sezioni, utilizzare il comando:
+	mvn verify -Dzaproxy=verify -Dzaproxy.home=PATH_ASSOLUTO_TOOLS_ZAP -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=<SoggettoIndicatoInstaller> -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none
+
+    Un report viene prodotto nella directory 'zaproxy-reports'
+
+    Gli identificativi dei test effettuati sono i seguenti: 
+    - api-rest-status: vengono verificate le vulnerabilità tipiche per API di tipo REST utilizzando il servizio di health check REST di govway 
+    - api-soap-status: vengono verificate le vulnerabilità tipiche per API di tipo SOAP utilizzando il servizio di health check SOAP di govway 
+    - api-config: viene verificata l'API di GovWay per la configurazione
+    - api-monitor: viene verificata l'API di GoWay per il monitoraggio
+
+    Per evitare la verifica di alcuni package è possibile utilizzare la proprietà 'zaproxy.skipTests'. 
+
+    L'esempio seguente attiva l'analisi solamente per la gestione base di API REST e SOAP di GovWay, escludendo gli altri test:
+        mvn verify -Dzaproxy=verify
+                   -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none 
+                   -Dzaproxy.home=/tmp/ZAP_2.12.0
+	           -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=Ente
+                   -Dzaproxy.skipTests=api-config,api-monitor
+
+2.7 Librerie 3parti
 
     I precedenti comandi utilizzano tutti la fase maven 'initialize' per salvare le librerie 3parti nella directory lib.
     Tali librerie vengono poi utilizzati dagli script ant che implementano la compilazione ed il packaging dei tools.

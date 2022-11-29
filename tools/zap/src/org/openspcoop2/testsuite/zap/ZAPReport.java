@@ -410,40 +410,40 @@ public class ZAPReport {
 		 // Template 'template'='traditional-json-plus'
 		 // Template 'template'='traditional-html-plus'
 		
-		if(template.contains("traditional-json")) {
+		if(template.equals("traditional-json")) {
 			return ".json";
 		}
-		else if(template.contains("traditional-pdf")) {
+		else if(template.equals("traditional-pdf")) {
 			return ".pdf";
 		}
-		else if(template.contains("traditional-md")) {
+		else if(template.equals("traditional-md")) {
 			return ".md";
 		}
-		else if(template.contains("traditional-xml")) {
+		else if(template.equals("traditional-xml")) {
 			return ".xml";
 		}
-		else if(template.contains("traditional-html")) {
+		else if(template.equals("traditional-html")) {
 			return ".html";
 		}
-		else if(template.contains("sarif-json")) {
+		else if(template.equals("sarif-json")) {
 			return "_sarif.json";
 		}
-		else if(template.contains("modern")) {
+		else if(template.equals("modern")) {
 			return "_modern.html";
 		}
-		else if(template.contains("high-level-report")) {
+		else if(template.equals("high-level-report")) {
 			return "_high-level-report.html";
 		}
-		else if(template.contains("risk-confidence-html")) {
+		else if(template.equals("risk-confidence-html")) {
 			return "_risk-confidence.html";
 		}
-		else if(template.contains("traditional-xml-plus")) {
+		else if(template.equals("traditional-xml-plus")) {
 			return "_plus.xml";
 		}
-		else if(template.contains("traditional-json-plus")) {
+		else if(template.equals("traditional-json-plus")) {
 			return "_plus.json";
 		}
-		else if(template.contains("traditional-html-plus")) {
+		else if(template.equals("traditional-html-plus")) {
 			return "_plus.html";
 		}
 		else if(template.contains("-json")) {

@@ -9,7 +9,7 @@
 	<property name="required_lib" value="${openspcoop2.lib}"/>
 
 	<!-- Parametri connessione GovWay -->
-	<property name="govway.prefix" value="http://127.0.0.1:8080"/>
+	<property name="govway.endpoint" value="http://127.0.0.1:8080"/>
 	<property name="govway.ente" value="ENTE"/>
 
 	<!-- https://www.zaproxy.org/ -->

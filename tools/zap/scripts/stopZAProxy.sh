@@ -4,7 +4,9 @@ then
 	ZAP_DEBUG="true"
 fi
 
-ZAP_PID=$(ps w | grep -v " grep " | grep org.zaproxy.zap.ZAP | cut -d ' ' -f 1)
+ZAP_PID_GREP=$(ps w | grep -v " grep " | grep org.zaproxy.zap.ZAP)
+ZAP_PID_GREP_TRIM=$(echo "${ZAP_PID_GREP}" | xargs)
+ZAP_PID=$(echo "${ZAP_PID_GREP_TRIM}" | cut -d ' ' -f 1)
 if [ -z "${ZAP_PID}" ]
 then
 	if [ "${ZAP_DEBUG}" == "true" ]

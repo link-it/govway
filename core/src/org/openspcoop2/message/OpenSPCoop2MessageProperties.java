@@ -68,6 +68,10 @@ public class OpenSPCoop2MessageProperties {
 		return this.props.keySet().iterator();
 	}
 	
+	public boolean containsKey(String key){
+		return TransportUtils.containsKey(this.props, key);
+	}
+	
 	@Deprecated
 	public String getProperty(String key){
 		return TransportUtils.getObjectAsString(this.props, key);

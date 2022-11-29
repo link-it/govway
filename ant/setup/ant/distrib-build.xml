@@ -560,6 +560,11 @@
 				<var name="govway_local_properties_name" value="govway_local.properties.new"/>
 			</then>
 		</if>
+		<antcall target="replace_token">
+		    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+			<param name="token" value="/govway/SOGGETTO_LOCALE/"/>
+			<param name="value" value="/govway/${antinstaller_nomesoggetto}/"/>
+		</antcall>
 		<if>
 			<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
 			<then>

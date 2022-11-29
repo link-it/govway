@@ -60,3 +60,18 @@ Se invece vengono rilevati errori dopo che GovWay si è avviato correttamente vi
           < Date: Mon, 10 Oct 2022 16:17:40 GMT
           < 
           Risorse di sistema non disponibili: [Database] Connessione al database GovWay non disponibile: javax.resource.ResourceException: IJ000453: Unable to get managed connection for java:/org.govway.datasource
+
+Oltre ai controlli standard, previsti per default sul servizio, è possibile abilitarne uno ulteriore che si occupa di invocare una API di HealthCheck configurata su GovWay. Per attivare questo controllo è ncessario editare il file *<directory-lavoro>/govway_local.properties* e abilitare l'health check per API REST e/o per API SOAP, indicando il corretto endpoint di esposizione dell'API:
+
+   ::
+
+      # ================================================
+      # Health check
+      # Se abilitato, il servizio /govway/check invocherà anche l'API REST e/o SOAP per verificare il corretto funzionamento di GovWay
+      # API REST
+      org.openspcoop2.pdd.check.healthCheck.apiRest.enabled=true
+      org.openspcoop2.pdd.check.healthCheck.apiRest.endpoint=http://localhost:8080/govway/ENTE/api-rest-status/v1/status
+      # API SOAP
+      org.openspcoop2.pdd.check.healthCheck.apiSoap.enabled=true
+      org.openspcoop2.pdd.check.healthCheck.apiSoap.endpoint=http://localhost:8080/govway/ENTE/api-soap-status/v1
+      # ================================================

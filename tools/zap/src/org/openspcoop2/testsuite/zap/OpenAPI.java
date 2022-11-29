@@ -71,6 +71,10 @@ public class OpenAPI {
 		api.context.excludeFromContext(contextName, ".*");
 		api.context.includeInContext(contextName, targetUrl);
 		
+		api.context.setContextInScope(contextName, "true");
+		
+		api.sessionManagement.setSessionManagementMethod(contextId, "httpAuthSessionManagement", "");
+		
 		@SuppressWarnings("unused")
 		ApiResponse response = null;
 		if(openapiPath!=null) {

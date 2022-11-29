@@ -400,6 +400,7 @@ public class ConnectorDispatcherUtils {
 			else {
 				utilitiesIntegrazione.setInfoProductTransportProperties(trasporto);
 			}
+			utilitiesIntegrazione.setSecurityHeaders(msg!=null ? msg.getServiceBinding() : ServiceBinding.REST, requestInfo, trasporto, null);
 			if(trasporto.size()>0){
 				Iterator<String> keys = trasporto.keySet().iterator();
 				while (keys.hasNext()) {
@@ -514,6 +515,7 @@ public class ConnectorDispatcherUtils {
 			else {
 				utilitiesIntegrazione.setInfoProductTransportProperties(trasporto);
 			}
+			utilitiesIntegrazione.setSecurityHeaders(msg!=null ? msg.getServiceBinding() : ServiceBinding.REST, requestInfo, trasporto, null);
 			if(trasporto.size()>0){
 				Iterator<String> keys = trasporto.keySet().iterator();
 				while (keys.hasNext()) {

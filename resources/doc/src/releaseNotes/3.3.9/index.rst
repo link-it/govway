@@ -11,12 +11,16 @@ si può invece far riferimento al file ChangeLog di questa versione.
 
    Per la versione 3.3.9 utilizzare l'ultima patch version che risolve bug importanti descritti nelle sezioni:
 
+   - :ref:`3.3.9.2_bug`
    - :ref:`3.3.9.1_bug`
 
 .. toctree::
         :maxdepth: 2
 
 	java
+	correlazione
+	integrazione
 	bug
 	bug_p1
+	bug_p2
 

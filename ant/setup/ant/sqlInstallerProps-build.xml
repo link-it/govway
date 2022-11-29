@@ -510,6 +510,14 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 </concat>
 		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_rs_monitor}"/>
 
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '009-003:API REST di Health Check:antinstaller_rs_rest_status', '@VALORE@');
+</concat>
+		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_rs_rest_status}"/>
+
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '009-003:API SOAP di Health Check:antinstaller_rs_soap_status', '@VALORE@');
+</concat>
+		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_rs_soap_status}"/>
+
 
 		<!-- Profili di Interoperabilità: 010 -->
 

@@ -43,7 +43,11 @@ import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
  * Servlet che serve per verificare l'installazione di OpenSPCoop.
@@ -240,6 +244,105 @@ public class CheckStatoPdD extends HttpServlet {
 			String msg = "Sistema di dump dei contenuti applicativi non disponibile: "+Dump.motivoMalfunzionamentoDump.getMessage();
 			sendError(res, log, msg, 500, Dump.motivoMalfunzionamentoDump); 
 		}
+		
+		if(properties.isCheckHealthCheckApiRestEnabled()) {
+			String endpoint = properties.getCheckHealthCheckApiRestEndpoint();
+			
+			HttpRequest request = new HttpRequest();
+			if(endpoint.toLowerCase().startsWith("https")) {
+				request.setHostnameVerifier(false);
+				request.setTrustAllCerts(true);
+			}
+			request.setMethod(HttpRequestMethod.GET);
+			request.setUrl(endpoint);
+			
+			try {
+				HttpResponse response = HttpUtilities.httpInvoke(request);
+				
+				if(response.getResultHTTPOperation()!=200) {
+					String responseS = "";
+					if(response.getHeadersValues()!=null && !response.getHeadersValues().isEmpty()) {
+						for (String hdrName : response.getHeadersValues().keySet()) {
+							if(HttpConstants.RETURN_CODE.equals(hdrName)) {
+								continue;
+							}
+							List<String> values = response.getHeaderValues(hdrName);
+							if(values!=null && !values.isEmpty()) {
+								for (String v : values) {
+									responseS += "\n"+hdrName+":"+v;		
+								}
+							}
+						}
+					}
+					else {
+						if(response.getContentType()!=null) {
+							responseS += "\n"+HttpConstants.CONTENT_TYPE+":"+response.getContentType();
+						}
+					}
+					if(response.getContent()!=null) {
+						responseS += "\n\n"+(new String(response.getContent()));
+					}
+					throw new Exception("HTTP Result:"+response.getResultHTTPOperation()+responseS);
+				}
+				
+			}catch(Throwable t) {
+				String msg = "API REST HealthCheck failed ("+endpoint+")\n"+t.getMessage();
+				sendError(res, log, msg, 500, t); 
+				return;
+			}
+		}
+		
+		if(properties.isCheckHealthCheckApiSoapEnabled()) {
+			String endpoint = properties.getCheckHealthCheckApiSoapEndpoint();
+			
+			HttpRequest request = new HttpRequest();
+			if(endpoint.toLowerCase().startsWith("https")) {
+				request.setHostnameVerifier(false);
+				request.setTrustAllCerts(true);
+			}
+			//request.addHeader(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_SOAP_1_1);
+			request.setContentType(HttpConstants.CONTENT_TYPE_SOAP_1_1);
+			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "echo");
+			request.setMethod(HttpRequestMethod.POST);
+			request.setUrl(endpoint);
+			request.setContent("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Body><ns1:getStatus xmlns:ns1=\"https://govway.org/apiStatus\"/></soapenv:Body></soapenv:Envelope>".getBytes());
+			
+			try {
+				HttpResponse response = HttpUtilities.httpInvoke(request);
+				
+				if(response.getResultHTTPOperation()!=200) {
+					String responseS = "";
+					if(response.getHeadersValues()!=null && !response.getHeadersValues().isEmpty()) {
+						for (String hdrName : response.getHeadersValues().keySet()) {
+							if(HttpConstants.RETURN_CODE.equals(hdrName)) {
+								continue;
+							}
+							List<String> values = response.getHeaderValues(hdrName);
+							if(values!=null && !values.isEmpty()) {
+								for (String v : values) {
+									responseS += "\n"+hdrName+":"+v;		
+								}
+							}
+						}
+					}
+					else {
+						if(response.getContentType()!=null) {
+							responseS += "\n"+HttpConstants.CONTENT_TYPE+":"+response.getContentType();
+						}
+					}
+					if(response.getContent()!=null) {
+						responseS += "\n\n"+(new String(response.getContent()));
+					}
+					throw new Exception("HTTP Result:"+response.getResultHTTPOperation()+responseS);
+				}
+				
+			}catch(Throwable t) {
+				String msg = "API SOAP HealthCheck failed ("+endpoint+")\n"+t.getMessage();
+				sendError(res, log, msg, 500, t); 
+				return;
+			}
+		}
+		
 		return;
 
 	}

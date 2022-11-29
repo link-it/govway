@@ -24,12 +24,13 @@
 				<version>${maven-antrun-plugin}</version>
 				<executions>
 					<execution>
-						<phase>${spotbugs}</phase>
+						<phase>${zaproxy}</phase>
 						<configuration>
 							<target>
 
 								<property name="openspcoop2" location="../../../" />
-								<property name="spotbugs.output" location="../../../zap-reports" />
+								<property name="zaproxy.report.dir" location="../../../zaproxy-reports" />
+								<property name="zap_dir" location="../" />
 								<ant antfile="../build.xml" />
 
 							</target>

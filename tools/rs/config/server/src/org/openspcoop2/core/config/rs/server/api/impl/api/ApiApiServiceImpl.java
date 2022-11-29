@@ -1960,10 +1960,12 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
-			final IDAccordo oldIdAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
-
+			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
+
+			
+			final IDAccordo oldIdAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
 
 			if(!env.gestioneCanali) {
 				throw new Exception("Gestione dei canali non abilitata");
@@ -2099,11 +2101,12 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
-			final IDAccordo oldIdAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
-
+			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
 
+			final IDAccordo oldIdAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+			
 			as.setDescrizione(body.getDescrizione());
 
 			boolean validazioneDocumenti = ServerProperties.getInstance().isValidazioneDocumenti();
@@ -2580,11 +2583,12 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
-			final IDAccordo oldIdAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
-
+			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
-
+			
+			final IDAccordo oldIdAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+			
 			List<Object> objectToCreate = new ArrayList<>();
 			
 			if(body.getTags()==null || body.getTags().isEmpty()) {

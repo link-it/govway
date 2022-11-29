@@ -28,25 +28,36 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -150,6 +161,8 @@ public class UtilitiesIntegrazione {
 	private Map<String, ValidatoreXSD> validatoreXSD_soap11_map = new HashMap<String, ValidatoreXSD>();
 	private Map<String, ValidatoreXSD> validatoreXSD_soap12_map = new HashMap<String, ValidatoreXSD>();
 	
+	private boolean portaDelegata;
+	
 	private boolean request;
 	
 	private Logger log;
@@ -159,6 +172,8 @@ public class UtilitiesIntegrazione {
 		this.log = log;
 		
 		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
+		
+		this.portaDelegata = portaDelegata;
 		
 		this.request = request;
 		
@@ -568,6 +583,111 @@ public class UtilitiesIntegrazione {
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("UtilitiesIntegrazione, creazione delle proprieta' dell'header non riuscita: "+e.getMessage(),e);
 		}
+	}
+	
+	public void setSecurityHeaders(ServiceBinding serviceBinding, RequestInfo requestInfo, Map<String, List<String>> properties, OpenSPCoop2MessageProperties forwardHeader) throws HeaderIntegrazioneException{
+		
+		try {
+			List<Proprieta> proprieta = null;
+			if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+				if(this.portaDelegata) {
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					PortaDelegata pd = ConfigurazionePdDManager.getInstance(null).getPortaDelegata_SafeMethod(idPD, requestInfo);
+					if(pd!=null) {
+						proprieta = pd.getProprietaList();
+					}
+				}
+				else {
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					PortaApplicativa pa = ConfigurazionePdDManager.getInstance(null).getPortaApplicativa_SafeMethod(idPA, requestInfo);
+					if(pa!=null) {
+						proprieta = pa.getProprietaList();
+					}
+				}
+			}
+			
+			boolean enabled = false;
+			if(this.portaDelegata) {
+				if(ServiceBinding.REST.equals(serviceBinding)) {
+					enabled = this.openspcoopProperties.isRESTServices_inoltroBuste_response_securityHeaders();
+				}
+				else {
+					enabled = this.openspcoopProperties.isSOAPServices_inoltroBuste_response_securityHeaders();
+				}
+			}
+			else {
+				if(ServiceBinding.REST.equals(serviceBinding)) {
+					enabled = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_response_securityHeaders();
+				}
+				else {
+					enabled = this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_response_securityHeaders();
+				}
+			}
+			enabled = CostantiProprieta.isSecurityHeadersEnabled(proprieta, enabled);
+			
+			if(enabled) {
+				
+				Properties pDefault = null;
+				if(this.portaDelegata) {
+					if(ServiceBinding.REST.equals(serviceBinding)) {
+						pDefault = this.openspcoopProperties.getRESTServices_inoltroBuste_response_securityHeaders();
+					}
+					else {
+						pDefault = this.openspcoopProperties.getSOAPServices_inoltroBuste_response_securityHeaders();
+					}
+				}
+				else {
+					if(ServiceBinding.REST.equals(serviceBinding)) {
+						pDefault = this.openspcoopProperties.getRESTServices_consegnaContenutiApplicativi_response_securityHeaders();
+					}
+					else {
+						pDefault = this.openspcoopProperties.getSOAPServices_consegnaContenutiApplicativi_response_securityHeaders();
+					}
+				}
+				
+				Map<String, String> securityHeaders = CostantiProprieta.getSecurityHeaders(proprieta, pDefault);
+				if(securityHeaders!=null && !securityHeaders.isEmpty()) {
+					
+					boolean headerCachePresenteRispostaBackend = false;
+					// Gli header per la cache vengono gestiti in blocco
+					for (String hdrName : securityHeaders.keySet()) {
+						if(HttpConstants.isCacheStatusHeader(hdrName)) {
+							if( (TransportUtils.containsKey(properties, hdrName)) 
+									||
+									(forwardHeader!=null && forwardHeader.containsKey(hdrName))
+								) { 
+								headerCachePresenteRispostaBackend = true;	
+								break;
+							}
+						}
+					}
+					
+					for (String hdrName : securityHeaders.keySet()) {
+						
+						if(HttpConstants.isCacheStatusHeader(hdrName) && headerCachePresenteRispostaBackend) {
+							continue;
+						}
+						
+						if( (!TransportUtils.containsKey(properties, hdrName)) 
+								&& 
+								(forwardHeader==null || !forwardHeader.containsKey(hdrName))
+							) { // altrimenti è stato definito dal backend e lascio quello
+							String hdrValue = securityHeaders.get(hdrName);
+							if(hdrValue!=null) {
+								TransportUtils.setHeader(properties, hdrName, hdrValue);
+							}
+						}
+					}
+				}
+				
+			}
+			
+		}catch(Exception e) {
+			throw new HeaderIntegrazioneException("UtilitiesIntegrazione, creazione securityHeaders non riuscita: "+e.getMessage(),e);
+		}
+		
 	}
 	
 	public void setInfoProductTransportProperties(Map<String, List<String>> properties) throws HeaderIntegrazioneException{

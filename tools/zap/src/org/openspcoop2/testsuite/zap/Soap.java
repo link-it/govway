@@ -81,6 +81,10 @@ public class Soap {
 		api.context.excludeFromContext(contextName, ".*");
 		api.context.includeInContext(contextName, targetUrl);
 		
+		api.context.setContextInScope(contextName, "true");
+		
+		api.sessionManagement.setSessionManagementMethod(contextId, "httpAuthSessionManagement", "");
+		
 		DefinitionWrapper dw = null;
 		if(soapPath!=null) {
 			dw = new DefinitionWrapper(soapPath, XMLUtils.getInstance(), true, true);
