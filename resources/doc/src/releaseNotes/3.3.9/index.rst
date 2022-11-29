@@ -20,6 +20,7 @@ si può invece far riferimento al file ChangeLog di questa versione.
 	java
 	correlazione
 	integrazione
+	generazioneTokenJWT
 	bug
 	bug_p1
 	bug_p2

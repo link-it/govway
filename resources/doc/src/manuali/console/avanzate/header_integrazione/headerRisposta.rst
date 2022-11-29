@@ -58,10 +58,11 @@ attivati meccanismi di Rate Limiting (sezione :ref:`rateLimiting`).
 
 **Header di Sicurezza**
 
-Vengono infine aggiunti, se non ritornati dal backend, gli header HTTP indicati nella :numref:`headerGw2ClientVulnerabilitàTab` per ovviare alle seguenti possibili vulnerabilità:
+È stata introdotta una politica di generazione automatica degli header HTTP indicati nella :numref:`headerGw2ClientVulnerabilitàTab`, se non ritornati dal backend che implementa l'API, con lo scopo di evitare alcune vulnerabilità a cui possono essere soggette le implementazioni delle API.
 
-- se l'header 'X-Content-Type-Options' non è presente, vecchie versioni di Internet Explorer e Chrome consentono di effettuare MIME-sniffing sul body della risposta,  potenzialmente causando una interpretazione e visualizzazione di una risposta come un content-type piuttosto che un altro;
-- se il salvataggio della risposta viene consentita dagli header di 'cache control' (Cache-Control, Pragma, Expires e Vary), i contenuti della risposta potrebbero essere memorizzati nella cache dei server proxy. Successive richieste simili, da parte di altri utenti, potrebbero essere servite recuperando la risposta direttamente dalla cache del proxy, piuttosto che dall'implementazione di backend dell'API, comportando una possibile divulgazione di informazioni sensibili.  Anche le `Linee Guida, nella raccomandazioni tecniche per REST 'RAC_REST_NAME_010' <https://docs.italia.it/italia/piano-triennale-ict/lg-modellointeroperabilita-docs/it/bozza/doc/04_Raccomandazioni%20di%20implementazione/05_raccomandazioni-tecniche-per-rest/02_progettazione-e-naming.html#rac-rest-name-010-il-caching-http-deve-essere-disabilitato>`_, consigliano di disabiltare la possibilità di salvare in cache le risposte.   
+.. note::
+
+   Il caching viene disabilitato per evitare che delle risposte vengano inopportunamente messe in cache, come indicato nelle `Linee Guida - raccomandazioni tecniche per REST 'RAC_REST_NAME_010' <https://docs.italia.it/italia/piano-triennale-ict/lg-modellointeroperabilita-docs/it/bozza/doc/04_Raccomandazioni%20di%20implementazione/05_raccomandazioni-tecniche-per-rest/02_progettazione-e-naming.html#rac-rest-name-010-il-caching-http-deve-essere-disabilitato>`_. Il mancato rispetto di questa raccomandazione può portare all’esposizione accidentale di dati personali. 
 
 .. table:: Header restituiti dal gateway nella risposta all'applicativo client, se non ritornati dal Backend
    :widths: 35 65
