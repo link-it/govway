@@ -34,7 +34,7 @@ import org.openspcoop2.generic_project.web.dao.DummyLoginDAO;
 import org.openspcoop2.generic_project.web.dao.ILoginDAO;
 import org.openspcoop2.generic_project.web.impl.jsf1.form.LanguageForm;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.SelectListImpl;
-import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils;
 
 
 /**
@@ -123,13 +123,13 @@ public class LoginBean {
 
 		if(this.currentLocal.getLanguage().equals(Locale.ITALIAN.getLanguage()))
 			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.input.SelectItem(Locale.ITALIAN.getLanguage(),
-					Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal)));
+					Jsf1Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal)));
 		if(this.currentLocal.getLanguage().equals(Locale.ENGLISH.getLanguage()))
 			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.input.SelectItem(Locale.ENGLISH.getLanguage(),
-					Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal)));
+					Jsf1Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal)));
 		if(this.currentLocal.getLanguage().equals(Locale.GERMAN.getLanguage()))
 			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.input.SelectItem(Locale.GERMAN.getLanguage(),
-					Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal)));
+					Jsf1Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal)));
 
 		this.currentLang = this.currentLocal.getLanguage();
 		
@@ -178,7 +178,9 @@ public class LoginBean {
 			fc.getExternalContext().getSessionMap().put("loginBean", null);
 			HttpSession session = (HttpSession)fc.getExternalContext().getSession(false);
 			session.invalidate();
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		return "login";
 	}
 
@@ -233,11 +235,11 @@ public class LoginBean {
 					this.currentLocal = Locale.ENGLISH;
 
 		if(this.currentLocal.getLanguage().equals(Locale.ITALIAN.getLanguage()))
-			newValue.setLabel(Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal));
+			newValue.setLabel(Jsf1Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal));
 		if(this.currentLocal.getLanguage().equals(Locale.GERMAN.getLanguage()))
-			newValue.setLabel(Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal));
+			newValue.setLabel(Jsf1Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal));
 		if(this.currentLocal.getLanguage().equals(Locale.ENGLISH.getLanguage()))
-			newValue.setLabel(Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal));
+			newValue.setLabel(Jsf1Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal));
 
 		this.currentLang = this.currentLocal.getLanguage();
 
@@ -296,7 +298,7 @@ public class LoginBean {
 		this.listaLingueSupportate = new ArrayList<SelectItem>();
 		for (Locale locale : list) {
 			this.listaLingueSupportate.add(new SelectItem(
-					new org.openspcoop2.generic_project.web.input.SelectItem(locale.getLanguage(),Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+locale.getLanguage(),this.currentLocal))));
+					new org.openspcoop2.generic_project.web.input.SelectItem(locale.getLanguage(),Jsf1Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+locale.getLanguage(),this.currentLocal))));
 		}
 		
 		return this.listaLingueSupportate;

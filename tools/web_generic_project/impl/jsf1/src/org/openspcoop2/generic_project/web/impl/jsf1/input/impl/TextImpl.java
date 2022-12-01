@@ -20,7 +20,7 @@
 package org.openspcoop2.generic_project.web.impl.jsf1.input.impl;
 
 import org.openspcoop2.generic_project.web.impl.jsf1.input.BaseFormField;
-import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils;
 import org.openspcoop2.generic_project.web.input.FieldType;
 import org.openspcoop2.generic_project.web.input.Text;
 
@@ -52,7 +52,7 @@ public class TextImpl extends BaseFormField<String> implements Text{
 		String dV = super.getDefaultValue();
 		if(dV != null){
 			try{
-				String tmp = Utils.getInstance().getMessageFromResourceBundle(dV);
+				String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(dV);
 
 				if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 					return tmp;
@@ -66,7 +66,7 @@ public class TextImpl extends BaseFormField<String> implements Text{
 		String dV = super.getDefaultValue2();
 		if(dV != null){
 			try{
-				String tmp = Utils.getInstance().getMessageFromResourceBundle(dV);
+				String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(dV);
 
 				if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 					return tmp;

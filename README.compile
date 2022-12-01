@@ -92,15 +92,15 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 
     Un report viene prodotto nella directory 'zaproxy-reports'
 
-    Gli identificativi dei test effettuati sono i seguenti: 
+    Gli identificativi dei componenti verificati sono i seguenti: 
     - api-rest-status: vengono verificate le vulnerabilità tipiche per API di tipo REST utilizzando il servizio di health check REST di govway 
     - api-soap-status: vengono verificate le vulnerabilità tipiche per API di tipo SOAP utilizzando il servizio di health check SOAP di govway 
     - api-config: viene verificata l'API di GovWay per la configurazione
     - api-monitor: viene verificata l'API di GoWay per il monitoraggio
 
-    Per evitare la verifica di alcuni package è possibile utilizzare la proprietà 'zaproxy.skipTests'. 
+    Per evitare la verifica di alcuni componenti è possibile utilizzare la proprietà 'zaproxy.skipTests'.
 
-    L'esempio seguente attiva l'analisi solamente per la gestione base di API REST e SOAP di GovWay, escludendo gli altri test:
+    L'esempio seguente attiva l'analisi solamente del componente runtime di GovWay per API REST e SOAP, escludendo gli altri test:
         mvn verify -Dzaproxy=verify
                    -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none 
                    -Dzaproxy.home=/tmp/ZAP_2.12.0

@@ -61,7 +61,7 @@ public abstract class ParameterizedDataModel<DTOType, KeyType, BeanType extends 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void walk(FacesContext context, DataVisitor visitor, Range range,
+	public void walk(FacesContext context, DataVisitor visitor, Range rangeParams,
 			Object argument) throws IOException {
 		try{
 			if(this.detached){
@@ -81,11 +81,11 @@ public abstract class ParameterizedDataModel<DTOType, KeyType, BeanType extends 
 //					this.getDataProvider().getForm().setPageIndex(pageIndex);
 					this.getDataProvider().getForm().setCurrentPage(pageIndex);
 					// Aggiorno valori paginazione
-					range = new SequenceRange(start,limit);
+					//range = new SequenceRange(start,limit);
 				}
 				else{
-					  start = ((SequenceRange)range).getFirstRow();
-					  limit = ((SequenceRange)range).getRows();
+					  start = ((SequenceRange)rangeParams).getFirstRow();
+					  limit = ((SequenceRange)rangeParams).getRows();
 				}
 
 //				log.debug("Richiesti Record S["+start+"] L["+limit+"], FiltroPagina ["+this.getDataProvider().getForm().getCurrentPage()+"]"); 

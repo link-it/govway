@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf1.output.field;
 
-import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils;
 import org.openspcoop2.generic_project.web.output.OutputField;
 import org.openspcoop2.generic_project.web.output.OutputType;
 
@@ -95,7 +95,7 @@ public abstract class BaseOutputField<T> implements OutputField<T> {
 	@Override
 	public String getLabel() {
 		try{
-			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.label);
+			String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(this.label);
 
 			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 				return tmp;
@@ -110,7 +110,7 @@ public abstract class BaseOutputField<T> implements OutputField<T> {
 		if(this.value != null){
 			if(this.value instanceof String){
 				try{
-					String tmp = Utils.getInstance().getMessageFromResourceBundle((String) this.value);
+					String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle((String) this.value);
 
 					if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 						return (T) tmp;
@@ -126,7 +126,7 @@ public abstract class BaseOutputField<T> implements OutputField<T> {
 		if(this.defaultValue != null){
 			if(this.defaultValue instanceof String){
 				try{
-					String tmp = Utils.getInstance().getMessageFromResourceBundle((String) this.defaultValue);
+					String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle((String) this.defaultValue);
 
 					if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 						return (T) tmp;

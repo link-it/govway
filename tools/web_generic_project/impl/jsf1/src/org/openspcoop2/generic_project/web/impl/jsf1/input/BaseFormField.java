@@ -31,7 +31,7 @@ import javax.faces.event.ActionEvent;
 import org.openspcoop2.generic_project.web.form.ActionListener;
 import org.openspcoop2.generic_project.web.form.CostantiForm;
 import org.openspcoop2.generic_project.web.form.Form;
-import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils;
 import org.openspcoop2.generic_project.web.input.FieldType;
 import org.openspcoop2.generic_project.web.input.FormField;
 
@@ -170,7 +170,7 @@ public abstract class BaseFormField<T> implements FormField<T>{
 	@Override
 	public String getLabel() {
 		try{
-			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.label);
+			String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(this.label);
 
 			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 				return tmp;
@@ -182,7 +182,7 @@ public abstract class BaseFormField<T> implements FormField<T>{
 	@Override
 	public String getLabel2() {
 		try{
-			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.label2);
+			String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(this.label2);
 
 			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 				return tmp;
@@ -195,12 +195,12 @@ public abstract class BaseFormField<T> implements FormField<T>{
 	public String getRequiredMessage() {
 
 		try{
-			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.requiredMessage);
+			String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(this.requiredMessage);
 
 			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??")){
 				return tmp;
 			} else {
-				tmp = Utils.getInstance().getMessageFromCommonsResourceBundle(this.requiredMessage);
+				tmp = Jsf1Utils.getInstance().getMessageFromCommonsResourceBundle(this.requiredMessage);
 				if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??")){
 					return this.label != null ? (this.label + ": "+ tmp) : tmp;
 				}

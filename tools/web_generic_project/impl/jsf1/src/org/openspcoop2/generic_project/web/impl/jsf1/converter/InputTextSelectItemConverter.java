@@ -51,8 +51,11 @@ public class InputTextSelectItemConverter implements Converter {
 			Object valueAsObj = inputText.getValue();
 
 			if(valueAsObj != null)
-				if(valueAsObj instanceof SelectItem)
-					selectItem = (org.openspcoop2.generic_project.web.input.SelectItem) valueAsObj;
+				if(valueAsObj instanceof SelectItem) {
+					SelectItem s = (SelectItem) valueAsObj;
+					if(s!=null && s.getLabel()!=null && s.getValue()!=null && (s.getValue() instanceof String))
+					selectItem = new org.openspcoop2.generic_project.web.input.SelectItem(s.getLabel(), (String) s.getValue());
+				}
 		}
 		
 		if(selectItem == null)

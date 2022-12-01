@@ -66,14 +66,18 @@ public class SelectListItemConverter implements Converter {
 				}
 			}
 			
-			selectItems = (List<SelectItem>)  fSelectItems.getValue();
+			if(fSelectItems!=null) {
+				selectItems = (List<SelectItem>)  fSelectItems.getValue();
+			}
 		}
 		
-		for (SelectItem selectItem : selectItems) {
-			org.openspcoop2.generic_project.web.input.SelectItem comboBoxItem = 
-					(org.openspcoop2.generic_project.web.input.SelectItem)selectItem.getValue();
-			if(comboBoxItem.getLabel().equalsIgnoreCase(value)) {
-				return comboBoxItem;
+		if(selectItems!=null) {
+			for (SelectItem selectItem : selectItems) {
+				org.openspcoop2.generic_project.web.input.SelectItem comboBoxItem = 
+						(org.openspcoop2.generic_project.web.input.SelectItem)selectItem.getValue();
+				if(comboBoxItem.getLabel().equalsIgnoreCase(value)) {
+					return comboBoxItem;
+				}
 			}
 		}
 		return null;

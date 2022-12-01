@@ -20,7 +20,7 @@
 package org.openspcoop2.generic_project.web.impl.jsf1.table.impl;
 
 import org.openspcoop2.generic_project.web.factory.Costanti;
-import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils;
 import org.openspcoop2.generic_project.web.table.Table;
 
 /***
@@ -60,7 +60,7 @@ public class BaseTable<V> implements Table<V> {
 
 
 	public BaseTable(){
-		this.detailLinkText = Utils.getInstance().getMessageFromCommonsResourceBundle("commons.button.dettaglio.title");
+		this.detailLinkText = Jsf1Utils.getInstance().getMessageFromCommonsResourceBundle("commons.button.dettaglio.title");
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class BaseTable<V> implements Table<V> {
 	@Override
 	public String getHeaderText() {
 		try{
-			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.headerText);
+			String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(this.headerText);
 
 			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 				return tmp;
@@ -137,7 +137,7 @@ public class BaseTable<V> implements Table<V> {
 	@Override
 	public String getDetailLinkText() {
 		try{
-			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.detailLinkText);
+			String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(this.detailLinkText);
 
 			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 				return tmp;

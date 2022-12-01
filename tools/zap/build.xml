@@ -192,6 +192,27 @@
 		</java>
 	</target>
 
+	<!-- AuthenticationInfos -->
+	<target name="authenticationInfos">
+		<antcall target="-executeZap">
+			<param name="zap_target" value="-authenticationInfos"/>
+		</antcall>
+	</target>
+	<target name="-authenticationInfos">
+		<echo message="AuthenticationInfos Api Key: '${zap-api-key}'"/>
+		<java classname="org.openspcoop2.testsuite.zap.AuthenticationInfos" fork="false">
+			<arg value="${zaproxy.address}" />
+			<arg value="${zaproxy.port}" />
+			<arg value="${zaproxy.session}" />
+			<arg value="${zap-api-key}" />
+			<arg value="${zaproxy.debug}" />
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="${build_zap}"/>
+			</classpath>
+		</java>
+	</target>
+
 	<!-- OpenAPI -->
 	<target name="analizeOpenAPI">
 
@@ -405,9 +426,147 @@
                 </if>
 	</target>
 
-	<!-- GovWay Console -->
+	<!-- GovWayConsole -->
 	<target name="analizeGovWayConsole">
+
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.url}" arg2="$${zaproxy.govwayConsole.url}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.url' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.url}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.url' non definito"/>
+                        </then>
+                </if>
+
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.username}" arg2="$${zaproxy.govwayConsole.username}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.username' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.username}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.username' non definito"/>
+                        </then>
+                </if>
+
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.password}" arg2="$${zaproxy.govwayConsole.password}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.password' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.password}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.password' non definito"/>
+                        </then>
+                </if>
+
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.scanTypes}" arg2="$${zaproxy.govwayConsole.scanTypes}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.scanTypes' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.scanTypes}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.scanTypes' non definito"/>
+                        </then>
+                </if>
+
+		<antcall target="-executeZap">
+			<param name="zap_target" value="-analizeGovWayConsole"/>
+		</antcall>
+	</target>
+	<target name="-analizeGovWayConsole">
+		<echo message="GovWayConsole Api Key: '${zap-api-key}'"/>
+		<java classname="org.openspcoop2.testsuite.zap.GovWayConsole" fork="false">
+			<arg value="${zaproxy.address}" />
+			<arg value="${zaproxy.port}" />
+			<arg value="${zaproxy.session}" />
+			<arg value="${zap-api-key}" />
+			<arg value="${zaproxy.debug}" />
+			<arg value="${zaproxy.govwayConsole.url}" />
+			<arg value="${zaproxy.govwayConsole.username}" />
+			<arg value="${zaproxy.govwayConsole.password}" />
+			<arg value="${zaproxy.govwayConsole.scanTypes}" />
+			<arg value="${zaproxy.report.title}" />
+			<arg value="${zaproxy.report.description}" />
+			<arg value="${zaproxy.report.includedConfidences}" />
+			<arg value="${zaproxy.report.includedRisks}" />
+			<arg value="${zaproxy.report.fileNamePatternConsole}" />
+			<arg value="${zaproxy.report.dir}" />
+			<arg value="${zaproxy.report.display}" />
+			<arg value="${zaproxy.report.templates}" />
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="${build_zap}"/>
+			</classpath>
+		</java>
 	</target>
 
-	<target name="analizeGovWay" depends="analizeGovWayAPI,analizeGovWayConsole"/>
+	<!-- GovWay Console -->
+	<target name="analizeGovWayConsoles">
+
+		<!-- govwayConsole -->
+		<antcall target="-analizeGovWayConsoles">
+			<param name="analyzeTarget" value="analizeGovWayConsole"/>
+			<param name="analyzeType" value="console-configurazione"/>
+			<param name="analyzeTargetUrl" value="${govway.endpoint}/govwayConsole"/>
+			<param name="analyzeUsername" value="${govway.console.config.username}"/>
+			<param name="analyzePassword" value="${govway.console.config.password}"/>
+			<param name="analyzeScanTypes" value="spider"/>
+			<param name="analyzeTitle" value="GovWay Console di Configurazione"/>
+			<param name="analyzeDescription" value="Analisi per la console di configurazione di GovWay"/>
+		</antcall>
+
+	</target>
+	<target name="-analizeGovWayConsoles">
+                <if>
+                        <equals arg1="${zaproxy.skipTests}" arg2="$${zaproxy.skipTests}"/>
+                        <then>
+				<var name="_zaproxyExecute" value="true"/>                                
+                        </then>
+			<else>
+				<condition property="_zaproxyExecute" value="false" else="true">
+					<contains string="${zaproxy.skipTests}" substring="${analyzeType}"/>
+				</condition>	
+			</else>
+                </if>
+                <if>
+                        <equals arg1="${_zaproxyExecute}" arg2="true"/>
+                        <then>
+
+				<delete dir="${zaproxy.report.dir}/${analyzeType}" />
+				<mkdir dir="${zaproxy.report.dir}/${analyzeType}" />
+                
+				<if>
+		                        <equals arg1="${analyzeTarget}" arg2="analizeGovWayConsole"/>
+		                        <then>
+						<antcall target="analizeGovWayConsole">
+							<param name="zaproxy.govwayConsole.url" value="${analyzeTargetUrl}"/>
+							<param name="zaproxy.govwayConsole.username" value="${analyzeUsername}"/>
+							<param name="zaproxy.govwayConsole.password" value="${analyzePassword}"/>
+							<param name="zaproxy.govwayConsole.scanTypes" value="${analyzeScanTypes}"/>
+							<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/${analyzeType}" />
+							<param name="zaproxy.report.fileNamePattern" value="zap_report_SCAN_TYPE_${analyzeType}.ext" />
+							<param name="zaproxy.report.title" value="${analyzeTitle}" />
+							<param name="zaproxy.report.description" value="${analyzeDescription}" />
+						</antcall>
+					</then>
+				</if>
+
+			</then>
+                </if>
+	</target>
+
+	<!-- Effettuata tutti i test -->
+	<target name="analizeGovWay" depends="analizeGovWayAPI"/> <!-- da agganciare ,analizeGovWayConsoles"/> -->
 </project>

@@ -30,7 +30,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
@@ -68,7 +68,7 @@ public class DateConverter  implements Converter {
 
 		if(StringUtils.isEmpty(value)){
 			if(!this.isConsentiDataVuota()){
-				String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.dataObbligatoria",value);
+				String msg = Jsf1Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.dataObbligatoria",value);
 				FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,msg,null);
 				throw new ConverterException(m);
 			}
@@ -82,7 +82,7 @@ public class DateConverter  implements Converter {
 				result = sdf.parse(value);
 			} catch (Exception e) {
 				DateConverter.log.error(e.getMessage());
-				String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DateConverter.DATE_PATTERN);
+				String msg = Jsf1Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DateConverter.DATE_PATTERN);
 				FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,msg,null);
 				throw new ConverterException(m);
 			}
@@ -110,7 +110,7 @@ public class DateConverter  implements Converter {
 					result = sdf.format(date);
 				} catch (Exception e) {
 					DateConverter.log.error(e.getMessage());
-					String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DateConverter.DATE_PATTERN);
+					String msg = Jsf1Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DateConverter.DATE_PATTERN);
 					FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,msg,null);
 					throw new ConverterException(m);
 				}
@@ -122,7 +122,7 @@ public class DateConverter  implements Converter {
 			try {
 				result = sdf.format(value);
 			} catch (Exception e) {
-				String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DateConverter.DATE_PATTERN);
+				String msg = Jsf1Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DateConverter.DATE_PATTERN);
 				FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,msg,null);
 				throw new ConverterException(m);
 			}

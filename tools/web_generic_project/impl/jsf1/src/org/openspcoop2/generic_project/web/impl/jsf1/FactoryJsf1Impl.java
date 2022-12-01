@@ -95,7 +95,7 @@ public class FactoryJsf1Impl implements WebGenericProjectFactory{
 
 	@Override
 	public Utils getUtils() throws FactoryException {
-		return org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils.getInstance();
+		return org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils.getInstance();
 	}
 
 	@Override

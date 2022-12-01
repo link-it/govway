@@ -31,7 +31,7 @@ import org.openspcoop2.generic_project.web.form.CostantiForm;
 import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
 import org.openspcoop2.generic_project.web.impl.jsf1.CostantiJsf1Impl;
-import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils;
 import org.openspcoop2.generic_project.web.input.FormField;
 import org.openspcoop2.generic_project.web.mbean.IManagedBean;
 
@@ -79,7 +79,7 @@ public abstract class BaseForm implements Form {
 	public String getNomeForm() {
 		if(this.nome != null){
 			try{
-				String tmp = Utils.getInstance().getMessageFromResourceBundle(this.nome);
+				String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(this.nome);
 
 				if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 					return tmp;

@@ -44,7 +44,7 @@ public class LanguageForm extends BaseForm  implements Form,Serializable {
 	 */
 	private static final long serialVersionUID = 1L; 
 
-	private LoginBean mBean = null;
+	private transient LoginBean mBean = null;
 	private SelectList lingua = null; 
 
 	public LanguageForm(){

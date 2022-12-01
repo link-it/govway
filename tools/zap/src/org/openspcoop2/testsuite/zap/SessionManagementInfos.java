@@ -33,6 +33,30 @@ import org.zaproxy.clientapi.core.ApiResponseSet;
  */
 public class SessionManagementInfos {
 
+	/*
+	 *  Open URL: http://zap/xml/sessionManagement/view/getSupportedSessionManagementMethods/?apikey=govway-test_20221201_161531084
+    	Methods: 3
+
+	 'scriptBasedSessionManagement'
+		Open URL: http://zap/xml/sessionManagement/view/getSessionManagementMethodConfigParams/?apikey=govway-test_20221201_161531084&methodName=scriptBasedSessionManagement&
+			params: 2
+			param 1
+				'name'='scriptName'
+				'mandatory'='true'
+			param 2
+				'name'='scriptConfigParams'
+				'mandatory'='false'
+
+	 'cookieBasedSessionManagement'
+		Open URL: http://zap/xml/sessionManagement/view/getSessionManagementMethodConfigParams/?apikey=govway-test_20221201_161531084&methodName=cookieBasedSessionManagement&
+			params: 0
+
+	 'httpAuthSessionManagement'
+		Open URL: http://zap/xml/sessionManagement/view/getSessionManagementMethodConfigParams/?apikey=govway-test_20221201_161531084&methodName=httpAuthSessionManagement&
+			params: 0
+
+	 */
+	
 	public static void main(String[] args) throws Exception {
 				
 		ZAPContext context = new ZAPContext(args, SessionManagementInfos.class.getName(), "");

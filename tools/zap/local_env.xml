@@ -11,6 +11,10 @@
 	<!-- Parametri connessione GovWay -->
 	<property name="govway.endpoint" value="http://127.0.0.1:8080"/>
 	<property name="govway.ente" value="ENTE"/>
+	<property name="govway.console.config.username" value="amministratore"/>
+	<property name="govway.console.config.password" value="123456"/>
+	<property name="govway.console.monitor.username" value="operatore"/>
+	<property name="govway.console.monitor.password" value="123456"/>
 
 	<!-- https://www.zaproxy.org/ -->
 	<!-- https://github.com/zaproxy/zap-api-java -->
@@ -34,6 +38,12 @@
 	<property name="zaproxy.soap" value=""/>
 	<property name="zaproxy.soap.targetUrl" value=""/>
 
+	<!-- Parametri verifica govwayConsole -->
+	<property name="zaproxy.govwayConsole.url" value=""/>
+	<property name="zaproxy.govwayConsole.username" value=""/>
+	<property name="zaproxy.govwayConsole.password" value=""/>
+	<property name="zaproxy.govwayConsole.scanTypes" value=""/>
+
 	<!-- Parametri generazione Reports (https://www.zaproxy.org/docs/desktop/addons/report-generation/api/) -->
 	<property name="zaproxy.report.title" value="GovWay" />
 	<property name="zaproxy.report.description" value="GovWay" />
@@ -44,6 +54,7 @@
 	 .ext verrà convertito con l'estensione corretta rispetto al template
 	-->
 	<property name="zaproxy.report.fileNamePattern" value="zap_report_{{yyyy-MM-dd}}.ext" />
+	<property name="zaproxy.report.fileNamePatternConsole" value="zap_report_SCAN_TYPE_{{yyyy-MM-dd}}.ext" /> <!-- la keyword SCAN_TYPE viene sostituita con il tipo di analisi -->
 	<property name="zaproxy.report.dir" value="reports" />
 	<property name="zaproxy.report.display" value="false" />
 	<!-- 

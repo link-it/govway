@@ -83,7 +83,7 @@ public class ZAPReport {
 		else {
 			List<String> includedConfidences = getAllIncludedConfidences();
 			String [] split = this.includedConfidences.split("\\|");
-			if(split!=null && split.length>1) {
+			if(split!=null && split.length>0) {
 				for (String s : split) {
 					if(!includedConfidences.contains(s)) {
 						throw new Exception("ERROR: argument 'report-includedConfidences'='"+this.includedConfidences+"' unknown confidence '"+s+"' ; usable: "+includedConfidences+usageMsg);
@@ -104,7 +104,7 @@ public class ZAPReport {
 		else {
 			List<String> includedRisks = getAllIncludedRisks();
 			String [] split = this.includedRisks.split("\\|");
-			if(split!=null && split.length>1) {
+			if(split!=null && split.length>0) {
 				for (String s : split) {
 					if(!includedRisks.contains(s)) {
 						throw new Exception("ERROR: argument 'report-includedRisks'='"+this.includedRisks+"' unknown confidence '"+s+"' ; usable: "+includedRisks+usageMsg);
@@ -220,7 +220,7 @@ public class ZAPReport {
 					throw new Exception("ERROR: argument 'report-sections'='"+sections+"' unknown; template '"+template+"' without sections"+usageMsg);
 				}
 				String [] split = sections.split("\\|");
-				if(split!=null && split.length>1) {
+				if(split!=null && split.length>0) {
 					for (String s : split) {
 						if(!sectionsCheck.contains(s)) {
 							throw new Exception("ERROR: argument 'report-sections'='"+sections+"' unknown section '"+s+"' ; usable: "+sectionsCheck+usageMsg);

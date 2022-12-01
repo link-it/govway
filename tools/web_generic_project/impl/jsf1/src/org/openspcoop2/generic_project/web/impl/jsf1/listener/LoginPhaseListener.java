@@ -32,7 +32,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.generic_project.web.impl.jsf1.filter.PrincipalFilter;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.LoginBean;
-import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils;
 
 
 /**
@@ -87,7 +87,7 @@ public class LoginPhaseListener implements PhaseListener {
 	        
 	        //se non sono nella pagina di login e se non sono loggato
 	        if (!allowedPage && !isLogged) {
-	        	addError(fc, Utils.getInstance().getMessageFromResourceBundle("login.form.autenticazioneRichiesta", "commonsMessages"));
+	        	addError(fc, Jsf1Utils.getInstance().getMessageFromResourceBundle("login.form.autenticazioneRichiesta", "commonsMessages"));
 	            NavigationHandler nh = fc.getApplication().getNavigationHandler();
 	            nh.handleNavigation(fc, null, "login");
 	        }

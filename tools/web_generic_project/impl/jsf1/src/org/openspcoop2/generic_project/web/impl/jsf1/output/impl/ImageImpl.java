@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf1.output.impl;
 
-import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils;
 import org.openspcoop2.generic_project.web.output.Image;
 import org.openspcoop2.generic_project.web.output.OutputType;
 
@@ -69,7 +69,7 @@ public class ImageImpl extends TextImpl implements Image {
 	@Override
 	public String getTitle() {
 		try{
-			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.title);
+			String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(this.title);
 
 			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 				return tmp;
@@ -81,7 +81,7 @@ public class ImageImpl extends TextImpl implements Image {
 	@Override
 	public String getAlt() {
 		try{
-			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.alt);
+			String tmp = Jsf1Utils.getInstance().getMessageFromResourceBundle(this.alt);
 
 			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 				return tmp;

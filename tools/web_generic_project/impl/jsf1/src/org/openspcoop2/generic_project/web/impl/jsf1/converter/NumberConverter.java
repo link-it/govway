@@ -29,7 +29,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 
-import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Jsf1Utils;
 //import org.openspcoop2.utils.LoggerWrapperFactory;
 //import org.slf4j.Logger;
 
@@ -72,7 +72,7 @@ public class NumberConverter implements Converter{
 			return Long.parseLong(value);
 
 		
-		String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoNonValidoConParametri",value);
+		String msg = Jsf1Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoNonValidoConParametri",value);
 		FacesMessage mm = new FacesMessage(FacesMessage.SEVERITY_ERROR,msg,null);
 		throw new ConverterException(mm);
 
