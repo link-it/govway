@@ -15,5 +15,4 @@ Guida alla Console di Gestione
         configurazione/index
 	handling-errors/index
         avanzate/index
-        release-process/index
 

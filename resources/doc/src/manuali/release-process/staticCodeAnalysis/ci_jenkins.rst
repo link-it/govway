@@ -9,32 +9,32 @@ Per evitare il degrado ad ogni commit sul `master dei sorgenti del progetto <htt
 
 L'analisi produce un `report di dettaglio <https://jenkins.link.it/govway/job/GovWay/lastCompletedBuild/spotbugs/>`_ sulle vulnerabilità trovate. Per ogni vulnerabilità identificata vengono forniti maggiori dettagli come la severità, la categoria (es. Security), il tipo (codice del pattern che identifica il bug), il package e la classe dove è stato rilevato (es. :numref:`spotbugs_vulnerability_details`). 
 
-.. figure:: ../../_figure_console/spotbugs_vulnerability_details.png
+.. figure:: ../_figure_console/spotbugs_vulnerability_details.png
   :scale: 60%
   :name: spotbugs_vulnerability_details
 
-  SpotBugs Dependency-Check: dettaglio di una vulnerabilità
+  SpotBugs: dettaglio di una vulnerabilità
 
 Nella `homepage dell'ambiente CI Jenkins di GovWay <https://jenkins.link.it/govway/job/GovWay/>`_ è anche disponibile un report che visualizza il trend delle vulnerabilità rispetto ai commit effettuati nel tempo (es. :numref:`spotbugs_vulnerability_trend`).
 
-.. figure:: ../../_figure_console/spotbugs_vulnerability_trend.png
+.. figure:: ../_figure_console/spotbugs_vulnerability_trend.png
   :scale: 80%
   :name: spotbugs_vulnerability_trend
 
-  SpotBugs Dependency-Check Trend
+  SpotBugs Warnings Trend
 
 Sono inoltre disponibili `report di dettaglio in vari formati <https://jenkins.link.it/govway-testsuite/static_analysis/>`_ (:numref:`spotbugs_maven_report_elenco_ci`). 
 
-.. figure:: ../../_figure_console/spotbugs_maven_report_elenco.png
+.. figure:: ../_figure_console/spotbugs_maven_report_elenco.png
   :scale: 80%
   :name: spotbugs_maven_report_elenco_ci
 
-  SpotBugs Dependency-Check: report in vari formati
+  SpotBugs: report in vari formati
 
 La figura :numref:`spotbugs_maven_report_ci` mostra un esempio di report nel formato HTML.
 
-.. figure:: ../../_figure_console/spotbugs_maven_report.png
+.. figure:: ../_figure_console/spotbugs_maven_report.png
   :scale: 60%
   :name: spotbugs_maven_report_ci
 
-  SpotBugs Dependency-Check: html report
+  SpotBugs: html report

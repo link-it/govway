@@ -5,7 +5,7 @@ Avvisi di Sicurezza
 
 Le vulnerabilità identificate nel processo di verifica, descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_ci`, sono classificate per severità rispetto al `CVSS 3.1 scoring system <https://nvd.nist.gov/vuln-metrics/cvss>`_ sintetizzato dalla tabella riportata nella figura :numref:`cvss30`.
 
-.. figure:: ../../../_figure_console/cvss30.png
+.. figure:: ../../_figure_console/cvss30.png
   :scale: 90%
   :name: cvss30
 

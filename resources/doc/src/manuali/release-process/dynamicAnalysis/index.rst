@@ -9,10 +9,11 @@ L'analisi viene effettuata ad ogni commit sul `master dei sorgenti del progetto 
 
 All'interno degli oltre 13.000 test precedentemente indicati, quelli mirati agli aspetti di sicurezza vengono descritti nella sezione :ref:`releaseProcessGovWay_dynamicAnalysis_security`.
 
-Viene inoltre utilizzato il tool `OWASP ZAP Proxy <https://www.zaproxy.org/>`_ per verificare sia il componente runtime di GovWay che le API REST e le console di configurazione e monitoraggio.
+Viene inoltre utilizzato il tool `OWASP ZAP Proxy <https://www.zaproxy.org/>`_ per verificare sia il componente runtime di GovWay che le API REST e le console di configurazione e monitoraggio come descritto nella sezione :ref:`releaseProcessGovWay_dynamicAnalysis_zap`.
 
 .. toctree::
         :maxdepth: 2
         
 	ci_jenkins
         security/index
+	zap/index

@@ -40,7 +40,7 @@ L'esempio seguente attiva l'analisi dei sorgenti solamente per le utilità di ba
 
 I reports prodotti nella directory 'spotbugs-reports' sono analizzabili tramite la `SpotBugs GUI <https://spotbugs.readthedocs.io/en/stable/gui.html>`_ avviabile tramite lo script presente in `tools/spotbugs/startSpotBugsAnalysisConsole.sh <https://github.com/link-it/govway/blob/master/tools/spotbugs/startSpotBugsAnalysisConsole.sh>`_. La figura :numref:`SpotBugs_eclipse_config` mostra un esempio di report analizzato con la console di SpotBugs.
 
-.. figure:: ../../_figure_console/SpotBugs_gui.png
+.. figure:: ../_figure_console/SpotBugs_gui.png
   :scale: 60%
   :name: SpotBugs_gui
 

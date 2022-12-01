@@ -1,6 +1,6 @@
 .. _releaseProcessGovWay_dynamicAnalysis_ci:
 
-GovWay Jenkins
+Functional tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ vengono avviati test mirati ad identificare problematiche e vulnerabilità del software.
@@ -21,13 +21,13 @@ Vengono avviati oltre 8.700 test realizzati con il tool `TestNG <https://testng.
 
 L'analisi produce un `report di dettaglio TestNG <https://jenkins.link.it/govway/job/GovWay/lastCompletedBuild/testngreports/>`_ e un `report di dettaglio JUnit <https://jenkins.link.it/govway/job/GovWay/lastCompletedBuild/testngreports/>`_ che si differenzia per il tool di test utilizzato (es. :numref:`dynamicAnalysis_testng_details` e :numref:`dynamicAnalysis_junit_details`). 
 
-.. figure:: ../../_figure_console/dynamicAnalysis_testng_details.png
+.. figure:: ../_figure_console/dynamicAnalysis_testng_details.png
   :scale: 60%
   :name: dynamicAnalysis_testng_details
 
   TestNG: dettagli dei test
 
-.. figure:: ../../_figure_console/dynamicAnalysis_junit_details.png
+.. figure:: ../_figure_console/dynamicAnalysis_junit_details.png
   :scale: 60%
   :name: dynamicAnalysis_junit_details
 
@@ -35,13 +35,13 @@ L'analisi produce un `report di dettaglio TestNG <https://jenkins.link.it/govway
 
 Nella `homepage dell'ambiente CI Jenkins di GovWay <https://jenkins.link.it/govway/job/GovWay/>`_ è anche disponibile un report che visualizza il trend delle problematiche rilevate rispetto ai commit effettuati nel tempo (es. :numref:`dynamicAnalysis_testng_trend` e :numref:`dynamicAnalysis_junit_trend`).
 
-.. figure:: ../../_figure_console/dynamicAnalysis_testng_trend.png
+.. figure:: ../_figure_console/dynamicAnalysis_testng_trend.png
   :scale: 80%
   :name: dynamicAnalysis_testng_trend
 
   TestNG Results Trend
 
-.. figure:: ../../_figure_console/dynamicAnalysis_junit_trend.png
+.. figure:: ../_figure_console/dynamicAnalysis_junit_trend.png
   :scale: 80%
   :name: dynamicAnalysis_junit_trend
 
@@ -49,7 +49,7 @@ Nella `homepage dell'ambiente CI Jenkins di GovWay <https://jenkins.link.it/govw
 
 Sono inoltre disponibili `report di dettaglio in vari formati <https://jenkins.link.it/govway-testsuite/>`_ (:numref:`dynamicAnalysis_reports_elenco`). 
 
-.. figure:: ../../_figure_console/dynamicAnalysis_reports_elenco.png
+.. figure:: ../_figure_console/dynamicAnalysis_reports_elenco.png
   :scale: 80%
   :name: dynamicAnalysis_reports_elenco
 
