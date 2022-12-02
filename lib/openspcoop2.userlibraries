@@ -131,7 +131,7 @@
 	<archive path="/op2_3.3.dev/lib/json/json-path-2.7.0-gov4j-1.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-smart-2.4.8.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-lib-2.4-jdk15.jar"/>
-	<archive path="/op2_3.3.dev/lib/json/jettison-1.5.1.jar"/>
+	<archive path="/op2_3.3.dev/lib/json/jettison-1.5.2.jar"/>
 	<!-- log -->
         <archive path="/op2_3.3.dev/lib/log/slf4j-api-2.0.3-gov4j-1.jar"/>
 	<archive path="/op2_3.3.dev/lib/log/log4j-1.2-api-2.19.0.jar"/>

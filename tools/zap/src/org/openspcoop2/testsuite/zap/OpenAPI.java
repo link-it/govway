@@ -68,7 +68,7 @@ public class OpenAPI {
 		
 		ZAPReport report = new ZAPReport(args, OpenAPI.class.getName(), ZAPContext.prefix+" "+openApiUsage, ZAPContext.startArgs+openApiArgs, api);
 		
-		api.context.excludeFromContext(contextName, ".*");
+		//api.context.excludeFromContext(contextName, ".*");
 		api.context.includeInContext(contextName, targetUrl);
 		
 		api.context.setContextInScope(contextName, "true");

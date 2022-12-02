@@ -73,12 +73,11 @@ public class Soap {
 		
 		ClientApi api = context.getClientApi();
 		String contextName = context.getContextName();
-		@SuppressWarnings("unused")
 		String contextId = context.getContextId();
 		
 		ZAPReport report = new ZAPReport(args, Soap.class.getName(), ZAPContext.prefix+" "+openApiUsage, ZAPContext.startArgs+openApiArgs, api);
 		
-		api.context.excludeFromContext(contextName, ".*");
+		//api.context.excludeFromContext(contextName, ".*");
 		api.context.includeInContext(contextName, targetUrl);
 		
 		api.context.setContextInScope(contextName, "true");
