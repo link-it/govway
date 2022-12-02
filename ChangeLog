@@ -1,5 +1,13 @@
 2022-12-02  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto OP-1507
+	Effettuando un export contenente la configurazione di un soggetto che non rappresenta il soggetto di default (dichiarato nell'installer) nella configurazione sorgente, 
+	e successivamente importando l'archivio zip ottenuto in una installazione dove tale soggetto rappresenta quello di default,
+	si ottevena una inconsistenza sul database segnalata dalla console di configurazione al momento del login.
+
+2022-12-02  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, Utils]
 	Risolto Bug OP-1505
 	Con interfacce OpenAPI complesse di grandi dimensioni la validazione dei contenuti utilizzando la libreria "swagger-request-validator" impiegava diversi secondi ad inizializzare lo schema,

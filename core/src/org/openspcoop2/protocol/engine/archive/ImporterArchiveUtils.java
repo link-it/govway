@@ -82,6 +82,7 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -1171,14 +1172,32 @@ public class ImporterArchiveUtils {
 				
 				// --- check soggetto default ---
 				
+				protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
+				IDSoggetto soggettoDefaultProtocollo = this.importerEngine.getSoggettoDefault( protocolFactory.getProtocol());
+								
 				// non devono essere importati soggetti di default diversi da quelli presenti
 				if(archiveSoggetto.getSoggettoConfigurazione().isDominioDefault()) {
-					protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
-					IDSoggetto soggettoDefaultProtocollo = this.importerEngine.getSoggettoDefault( protocolFactory.getProtocol());
 					if(soggettoDefaultProtocollo!=null) {
 						if(!soggettoDefaultProtocollo.equals(idSoggetto)) {
 							// imposto a false il dominio di default
 							archiveSoggetto.getSoggettoConfigurazione().setDominioDefault(false);
+						}
+					}
+				}
+				
+				// se il soggetto che sto importando è il soggetto di default, deve avere la stessa pdd e deve rimanere soggetto di default
+				if(soggettoDefaultProtocollo!=null) {
+					if(soggettoDefaultProtocollo.equals(idSoggetto)) {
+						archiveSoggetto.getSoggettoConfigurazione().setDominioDefault(true);
+						try {
+							org.openspcoop2.core.registry.Soggetto soggettoDefault = this.importerEngine.getSoggettoRegistro(soggettoDefaultProtocollo);
+							if(soggettoDefault!=null && soggettoDefault.getPortaDominio()!=null) {
+								if(!soggettoDefault.getPortaDominio().equals(archiveSoggetto.getSoggettoRegistro().getPortaDominio())) {
+									archiveSoggetto.getSoggettoRegistro().setPortaDominio(soggettoDefault.getPortaDominio());
+								}
+							}
+						}catch( DriverRegistroServiziNotFound notFound) {
+							// ignore
 						}
 					}
 				}
@@ -1285,9 +1304,6 @@ public class ImporterArchiveUtils {
 				if(archiveSoggetto.getSoggettoRegistro().getCodiceIpa()==null ||
 						archiveSoggetto.getSoggettoRegistro().getIdentificativoPorta()==null){
 					
-					if(protocolFactory==null) {
-						protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
-					}
 					ITraduttore traduttore = protocolFactory.createTraduttore();
 					
 					if(archiveSoggetto.getSoggettoRegistro().getCodiceIpa()==null){
