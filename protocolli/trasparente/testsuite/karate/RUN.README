@@ -296,7 +296,10 @@ Di seguito vengono descritti i test del package 'validazione':
    ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.parametri  
 
 - 'multipart', verifica la funzionalità descritta in 'https://swagger.io/docs/specification/describing-request-body/multipart-requests/' e 'https://swagger.io/docs/specification/describing-request-body/file-upload/'.
-  ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.multipart   
+  ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.multipart  
+
+- 'swagger_request_validator', verifica la funzionalità di validazione dei contenuti effettuata con la libreria "swagger-request-validator" (https://bitbucket.org/atlassian/swagger-request-validator). In particolar modo viene verificata la validazione di una API complessa di dimensioni notevoli.
+  ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.swagger_request_validator   
 
 Di seguito vengono descritti i test del package 'trasformazione':
 
