@@ -12,6 +12,7 @@ Avvisi di Sicurezza 2022
 .. toctree::
         :maxdepth: 2
         
+	CVE-2022-40150
 	CVE-2022-40154
 	CVE-2022-31692
 	CVE-2022-34169
