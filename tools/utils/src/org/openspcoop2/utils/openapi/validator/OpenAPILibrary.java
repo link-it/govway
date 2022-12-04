@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.openapi.validator;
 
+import java.io.Serializable;
+
 /**
  * OpenAPILibrary
  *
@@ -28,7 +30,7 @@ package org.openspcoop2.utils.openapi.validator;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum OpenAPILibrary {
+public enum OpenAPILibrary implements Serializable {
 
 	json_schema, openapi4j, swagger_request_validator
 	

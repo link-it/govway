@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.utils.openapi.validator;
 
+import java.io.Serializable;
+
 /**
  * OpenapiApi4jValidatorConfig
  * 
@@ -27,7 +29,9 @@ package org.openspcoop2.utils.openapi.validator;
  * @version $Rev$, $Date$
  *
  */
-public class OpenapiLibraryValidatorConfig {
+public class OpenapiLibraryValidatorConfig implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private OpenAPILibrary openApiLibrary = OpenAPILibrary.json_schema;
 	

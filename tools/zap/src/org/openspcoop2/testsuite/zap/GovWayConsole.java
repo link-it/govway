@@ -56,7 +56,7 @@ public class GovWayConsole {
 		}
 		String url = _url;
 		if(!url.endsWith("/")) {
-			url+=url+"/";
+			url=url+"/";
 		}
 		
 		String username = null;
@@ -111,19 +111,23 @@ public class GovWayConsole {
 		
 		ZAPReport report = new ZAPReport(args, GovWayConsole.class.getName(), ZAPContext.prefix+" "+consoleUsage, ZAPContext.startArgs+consoleArgs, api);
 		
-		api.context.includeInContext(contextName, url);
+		String loginUrl = url+"login.do";
+		String logoutUrl = url+"logout.do";
+		//String logoutUrl = url+"log.*.do";
+		
+		api.context.includeInContext(contextName, url.substring(0, (url.length()-1))+".*");
+		api.context.excludeFromContext(contextName, logoutUrl);
 		api.context.setContextInScope(contextName, "true");
 		
 		
         // Prepare the configuration in a format similar to how URL parameters are formed. This
         // means that any value we add for the configuration values has to be URL encoded.
 		
-		String loginUrl = url+"login.do";
-				
 		String loginRequestData = "login={%username%}&password={%password%}";
 			
         StringBuilder formBasedConfig = new StringBuilder();
         formBasedConfig.append("loginUrl=").append(URLEncoder.encode(loginUrl, Charset.UTF_8.getValue()));
+        formBasedConfig.append("&loginPageUrl=").append(URLEncoder.encode(loginUrl, Charset.UTF_8.getValue()));
         formBasedConfig
                 .append("&loginRequestData=")
                 .append(URLEncoder.encode(loginRequestData, Charset.UTF_8.getValue()));
@@ -132,6 +136,7 @@ public class GovWayConsole {
                         + formBasedConfig.toString());
         api.authentication.setAuthenticationMethod(
         		contextId, "formBasedAuthentication", formBasedConfig.toString());
+        api.authentication.setLoggedInIndicator(contextId, "\\QProfilo:\\E");
         System.out.println(
                 "Authentication config: "
                         + api.authentication.getAuthenticationMethod(contextId).toString(0));
@@ -159,13 +164,40 @@ public class GovWayConsole {
                         + api.sessionManagement.getSessionManagementMethod(contextId).toString(0));
         
         
-        String recurse = "true";
-        String inscopeonly = "true"; 
+        String recurse = "True";
+        //String inscopeonly = "True"; 
         
         if(spider) {
 	        System.out.println("Spider scan: " + url);
-	        //ApiResponse resp = api.spider.scan(url, null, recurse, contextName, "False");
-	        ApiResponse resp = api.spider.scanAsUser(contextId, userId, url, "100000", recurse, "false");
+	        
+	        api.spider.setOptionParseRobotsTxt(false);
+	        //api.spider.enableAllDomainsAlwaysInScope();
+	        //api.spider.setOptionAcceptCookies(true);
+	        //api.spider.setOptionMaxDepth(100);
+
+	        //api.spider.setOptionSkipURLString(logoutUrl);
+	        
+	        // IGNORE_COMPLETELY, IGNORE_VALUE, USE_ALL
+	        /*
+	         * https://www.zaproxy.org/docs/desktop/addons/spider/options/#query-parameters-handling
+	         * Ignore parameters completely - if www.example.org/?bar=456 is visited, then www.example.org/?foo=123 will not be visited
+	         * Consider only parameter’s name (ignore parameter’s value) - if www.example.org/?foo=123 is visited, then www.example.org/?foo=456 will not be visited, but www.example.org/?bar=789 or www.example.org/?foo=456&bar=123 will be visited
+	         * Consider both parameter’s name and value - if www.example.org/?123 is visited, any other uri that is different (including, for example, www.example.org/?foo=456 or www.example.org/?bar=abc) will be visited
+	         */
+	        api.spider.setOptionHandleODataParametersVisited(true);
+	        ApiResponse resp = api.spider.optionHandleODataParametersVisited();
+	        ApiResponseElement re = (ApiResponseElement) resp;
+	        System.out.println(re.getName()+"="+re.getValue());
+	        
+	        api.spider.setOptionHandleParameters("IGNORE_VALUE");
+	        resp = api.spider.optionHandleParameters();
+	        System.out.println(re.getName()+"="+re.getValue());
+	       
+	        
+	        api.forcedUser.setForcedUser(contextId, userId);
+		       
+	        //ApiResponse resp = api.spider.scan(url, "100000", recurse, contextName, "False");
+	        resp = api.spider.scanAsUser(contextId, userId, url, "100000", recurse, "False");
 	        
 	        int progress;
 	
@@ -200,10 +232,11 @@ public class GovWayConsole {
 
 	        System.out.println("Spider generate report ...");
 	        
-	        String title = report.getTitle().replace("SCAN_TYPE", "spider");
-	        
 			for (ZAPReportTemplate rt : report.getTemplates()) {
-				api.reports.generate(title, 
+				
+				String fileScanTypeName = rt.fileName.replace("SCAN_TYPE", "active");
+				
+				api.reports.generate(report.getTitle(), 
 						rt.template, 
 						rt.theme,
 						report.getDescription(),
@@ -213,7 +246,7 @@ public class GovWayConsole {
 						report.getIncludedConfidences(),
 						report.getIncludedRisks(),
 		        		null, 
-		        		rt.fileName, 
+		        		fileScanTypeName, 
 		        		report.getDir(), 
 		        		report.isDisplay()+"");
 			}
@@ -225,7 +258,15 @@ public class GovWayConsole {
         
         if(active) {
 	        System.out.println("Active scan: " + url);
-	        ApiResponse resp = api.ascan.scan(url, recurse, inscopeonly, null, null, null);
+	        
+
+	        api.forcedUser.setForcedUser(contextId, userId);
+	        
+	        //api.ascan.setOptionRescanInAttackMode(false);
+	        
+	        //ApiResponse resp = api.ascan.scan(url, recurse, inscopeonly, null, null, null);
+	        ApiResponse resp =  api.ascan.scanAsUser(url, contextId, userId, recurse, null, null, null);
+	        
 	        
 	        int progress;
 	
@@ -247,10 +288,11 @@ public class GovWayConsole {
 
 	        System.out.println("Active generate report ...");
 	        
-	        String title = report.getTitle().replace("SCAN_TYPE", "active");
-	        
-			for (ZAPReportTemplate rt : report.getTemplates()) {
-				api.reports.generate(title, 
+	        for (ZAPReportTemplate rt : report.getTemplates()) {
+	        	
+	        	String fileScanTypeName = rt.fileName.replace("SCAN_TYPE", "active");
+	  	       	        	
+				api.reports.generate(report.getTitle(), 
 						rt.template, 
 						rt.theme,
 						report.getDescription(),
@@ -260,7 +302,7 @@ public class GovWayConsole {
 						report.getIncludedConfidences(),
 						report.getIncludedRisks(),
 		        		null, 
-		        		rt.fileName, 
+		        		fileScanTypeName, 
 		        		report.getDir(), 
 		        		report.isDisplay()+"");
 			}

@@ -522,7 +522,7 @@
 			<param name="analyzeTargetUrl" value="${govway.endpoint}/govwayConsole"/>
 			<param name="analyzeUsername" value="${govway.console.config.username}"/>
 			<param name="analyzePassword" value="${govway.console.config.password}"/>
-			<param name="analyzeScanTypes" value="spider"/>
+			<param name="analyzeScanTypes" value="spider"/> <!--|active"/>-->
 			<param name="analyzeTitle" value="GovWay Console di Configurazione"/>
 			<param name="analyzeDescription" value="Analisi per la console di configurazione di GovWay"/>
 		</antcall>

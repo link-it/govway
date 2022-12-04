@@ -63,12 +63,16 @@ public class Soap {
 			soapPath = null;
 		}
 		
-		String targetUrl = null;
+		String _targetUrl = null;
 		if(args.length>(index+1)) {
-			targetUrl = args[index+1];
+			_targetUrl = args[index+1];
 		}
-		if(targetUrl==null || StringUtils.isEmpty(targetUrl)) {
+		if(_targetUrl==null || StringUtils.isEmpty(_targetUrl)) {
 			throw new Exception("ERROR: argument 'soapTargetUrl' undefined"+usageMsg);
+		}
+		String targetUrl = _targetUrl;
+		if(!targetUrl.endsWith("/")) {
+			targetUrl=targetUrl+"/";
 		}
 		
 		ClientApi api = context.getClientApi();
@@ -78,8 +82,7 @@ public class Soap {
 		ZAPReport report = new ZAPReport(args, Soap.class.getName(), ZAPContext.prefix+" "+openApiUsage, ZAPContext.startArgs+openApiArgs, api);
 		
 		//api.context.excludeFromContext(contextName, ".*");
-		api.context.includeInContext(contextName, targetUrl);
-		
+		api.context.includeInContext(contextName, targetUrl.substring(0, (targetUrl.length()-1))+".*");
 		api.context.setContextInScope(contextName, "true");
 		
 		api.sessionManagement.setSessionManagementMethod(contextId, "httpAuthSessionManagement", "");

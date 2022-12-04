@@ -17,4 +17,13 @@
       <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
       <vulnerabilityName>CVE-2022-41854</vulnerabilityName>
    </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: snakeyaml-1.33-gov4j-1.jar
+      Vulnerabilità descritta come: "SnakeYaml's Constructor() class does not restrict types which can be instantiated during deserialization. Deserializing yaml content provided by an attacker can lead to remote code execution. We recommend using SnakeYaml's SafeConsturctor when parsing untrusted content to restrict deserialization."
+      La libreria viene utilizzata solamente per la gestione delle interfacce yaml caricate sulla console dagli amministratori. Non viene utilizzata per input fornito dinamicamente nelle richieste gestite dal Gateway.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
+      <vulnerabilityName>CVE-2022-1471</vulnerabilityName>
+   </suppress>
 </suppressions>

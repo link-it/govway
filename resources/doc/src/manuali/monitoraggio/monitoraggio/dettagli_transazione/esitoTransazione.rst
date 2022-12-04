@@ -77,7 +77,7 @@ Ciascun esito riportato nella tabella precedente è riconducibile ad una tra le 
  Completata con Successo           0,12,38,48,39,47,2,28,19,21,8,34,35   
  Fault Applicativo                 2
  Richiesta Scartata                16,41,42,15,43,44,13,4,33
- Errore di Consegna                2,10,11,29,30,40
+ Errore di Consegna                10,11,29,30,40
  Autorizzazione Negata             17
  Policy Controllo Traffico Violate 18,20
  Errori Servizio I.M. MessageBox   6,7,8,9

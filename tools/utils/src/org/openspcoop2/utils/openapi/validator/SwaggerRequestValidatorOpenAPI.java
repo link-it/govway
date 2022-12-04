@@ -77,7 +77,7 @@ public class SwaggerRequestValidatorOpenAPI implements Serializable {
 		return this.openApiSwagger;
 	}
 
-	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("SwaggerRequestValidatorOpenAPI");
+	private transient org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("SwaggerRequestValidatorOpenAPI");
 	public void init() throws ProcessingException, IOException {
 		if(this.openApiSwagger!=null) {
 			return;
