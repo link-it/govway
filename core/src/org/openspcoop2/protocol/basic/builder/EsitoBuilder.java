@@ -533,6 +533,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			backwardCompatibilityActor = (String) backwardCompatibilityActorObject;
 		}
 		
+		Object customActorObject = message.getContextProperty(CostantiProtocollo.CUSTOM_ACTOR);
+		String customActor = null;
+		if(customActorObject!=null){
+			customActor = (String) customActorObject;
+		}
+		
 		boolean faultInternalError = actor!=null && org.openspcoop2.message.constants.Costanti.DEFAULT_SOAP_FAULT_ACTOR.equals(actor);
 		if(faultInternalError) {
 			return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
@@ -551,7 +557,10 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		boolean faultActorBackwardCompatibility = (backwardCompatibilityActor!=null &&
 				backwardCompatibilityActor.equals(actor));
 		
-		if(faultActorOpenSPCoopV2 || faultActorBackwardCompatibility){
+		boolean faultActorCustom = (customActor!=null &&
+				customActor.equals(actor));
+		
+		if(faultActorOpenSPCoopV2 || faultActorBackwardCompatibility || faultActorCustom){
 
 			// L'errore puo' essere generato da GovWay, l'errore puo' essere un :
 			// msg di errore 4XX

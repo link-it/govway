@@ -60,6 +60,8 @@ public class CostantiProtocollo {
     /** Definisce le costanti che contengono informazioni per retro-compatibilita' */
 	public final static MapKey<String> BACKWARD_COMPATIBILITY_ACTOR = Map.newMapKey("BACKWARD_COMPATIBILITY_ACTOR");
 	public final static MapKey<String> BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE = Map.newMapKey("BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE");
+	
+	public final static MapKey<String> CUSTOM_ACTOR = Map.newMapKey("CUSTOM_ACTOR");
     
     /** String che rappresenta il messaggio per un qualsiasi errore di processamento: SistemaNonDisponibile*/
     public final static String SISTEMA_NON_DISPONIBILE = "Sistema non disponibile";
