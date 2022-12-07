@@ -1523,7 +1523,7 @@ public class UtentiHelper extends ConsoleHelper {
 					checkPassword=false;
 				}
 				if(checkPassword){
-					if (pwsu.equals("")) {
+					if (pwsu==null || pwsu.equals("")) {
 						if (tmpElenco.equals("")) {
 							tmpElenco = UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD;
 						} else {
@@ -1924,7 +1924,7 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			// Campi obbligatori
-			if (newpw.equals("") || confpw.equals("")) {
+			if ( (newpw==null || newpw.equals("")) || (confpw==null || confpw.equals("")) ) {
 				this.pd.setMessage("Dati incompleti. E' necessario indicare una password");
 				return false;
 			}

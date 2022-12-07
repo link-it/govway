@@ -1604,12 +1604,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 							&& StringUtils.isEmpty(tipoCredenzialiSSLAliasCertificatoSubject);
 					visualizzaDownload = tipoCredenzialiSSLStatoElaborazioneCertificato.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD);
 				}
+				boolean aggiuntoWizardStep = false;
 				if(!add && visualizzaDownload) {
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);
 					de.setValue(tipoCredenzialiSSLStatoElaborazioneCertificato);
 					de.setType(DataElementType.HIDDEN);
 					dati.add(de);
+					aggiuntoWizardStep = true;
 				}
 				
 
@@ -1977,12 +1979,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 					dati.add(de);					
 					
 					// data element per pilotare la label del  tasto carica
-					de = new DataElement();
-					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);
-					de.setLabel("");
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(tipoCredenzialiSSLStatoElaborazioneCertificato);
-					dati.add(de);
+					if(!aggiuntoWizardStep) {
+						de = new DataElement();
+						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);
+						de.setLabel("");
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(tipoCredenzialiSSLStatoElaborazioneCertificato);
+						dati.add(de);
+					}
 					
 				} else {
 					
@@ -5372,12 +5376,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 						&& StringUtils.isEmpty(tipoCredenzialiSSLAliasCertificatoSubject);
 				visualizzaDownload = tipoCredenzialiSSLStatoElaborazioneCertificato.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD);
 			}
+			boolean aggiuntoWizardStep = false;
 			if(!add && visualizzaDownload) {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);
 				de.setValue(tipoCredenzialiSSLStatoElaborazioneCertificato);
 				de.setType(DataElementType.HIDDEN);
 				dati.add(de);
+				aggiuntoWizardStep = true;
 			}
 			
 
@@ -5741,12 +5747,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				
 				// data element per pilotare la label del  tasto carica
-				de = new DataElement();
-				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);
-				de.setLabel("");
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(tipoCredenzialiSSLStatoElaborazioneCertificato);
-				dati.add(de);
+				if(!aggiuntoWizardStep) {
+					de = new DataElement();
+					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);
+					de.setLabel("");
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(tipoCredenzialiSSLStatoElaborazioneCertificato);
+					dati.add(de);
+				}
 				
 			} else {
 				

@@ -75,12 +75,12 @@ public class GestoreAutorizzazioni {
 			utentiCore = new UtentiCore(core);
 		}
 	}
-	public static boolean autorizzazioneUtente(boolean singlePdD,Logger log,String nomeServlet,LoginHelper loginHelper) throws Exception{
+	public static boolean autorizzazioneUtente(boolean singlePdD,Logger log,String nomeServlet,LoginHelper loginHelper, StringBuilder bfError) throws Exception{
 		if(GestoreAutorizzazioni.permessi==null)
 			GestoreAutorizzazioni.init(singlePdD);
 		
 		
-		return GestoreAutorizzazioni.permessi.permettiVisualizzazione(log, nomeServlet,loginHelper);
+		return GestoreAutorizzazioni.permessi.permettiVisualizzazione(log, nomeServlet,loginHelper, bfError);
 	}
 	
 	// Raccolta servlet in funzionalita
@@ -482,14 +482,23 @@ public class GestoreAutorizzazioni {
 	}
 	
 	
-	public boolean permettiVisualizzazione(Logger log,String nomeServlet,LoginHelper loginHelper) throws Exception{
+	public boolean permettiVisualizzazione(Logger log,String nomeServlet,LoginHelper loginHelper, StringBuilder bfError) throws Exception{
 		
 		String login = ServletUtils.getUserLoginFromSession(loginHelper.getSession());
 		User user = null;
 		try{
+			if(utentiCore==null) {
+				if(bfError!=null) {
+					bfError.append("Utenti Core is null");
+				}
+				return false;
+			}
 			user = utentiCore.getUser(login);
 		}catch(Exception e){
 			ControlStationCore.logError(e.getMessage(), e);
+			if(bfError!=null) {
+				bfError.append("Utente non recuperato: "+e.getMessage());
+			}
 			return false;
 		}
 		
@@ -498,13 +507,29 @@ public class GestoreAutorizzazioni {
 		
 		// Check appartenenza
 		if(this.singlePdD==false && this.servletPdD.contains(nomeServlet)){
-			return this.permessiPdD.or(user.getPermessi());
+			boolean p = this.permessiPdD.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione !singlePdD");
+			}
+			return p;
 		}else if(this.singlePdD && this.servletPdDSinglePdD.contains(nomeServlet)){
-			return this.permessiPdDSinglePdD.or(user.getPermessi());
+			boolean p = this.permessiPdDSinglePdD.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione singlePdD");
+			}
+			return p;
 		}else if(this.servletSoggetti.contains(nomeServlet)){
-			return this.permessiSoggetti.or(user.getPermessi());
+			boolean p = this.permessiSoggetti.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione dei soggetti");
+			}
+			return p;
 		}else if(this.servletAccordiCooperazione.contains(nomeServlet)){
-			return this.permessiAccordiCooperazione.or(user.getPermessi());
+			boolean p = this.permessiAccordiCooperazione.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione degli accordi di cooperazione");
+			}
+			return p;
 		}else if(this.servletAccordiServizio.contains(nomeServlet)){
 			//controllo che la servlet richiesta sia consentita per il profilo dell'utente
 			boolean servletOk = this.permessiAccordiServizio.or(user.getPermessi());
@@ -516,61 +541,154 @@ public class GestoreAutorizzazioni {
 			if(servletOk && tipoAccordo != null){
 				// per gli accordi parte comune servono i diritti 'S'
 				if(tipoAccordo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE)){
-					if(!user.getPermessi().isServizi())
+					if(!user.getPermessi().isServizi()) {
+						if(bfError!=null) {
+							bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione delle API");
+						}
 						return false;
+					}
 				} else 
 					// per gli accordi di servizio composti servono i diritti 'P'
 					if(tipoAccordo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO)){
-						if(!user.getPermessi().isAccordiCooperazione())
+						if(!user.getPermessi().isAccordiCooperazione()) {
+							if(bfError!=null) {
+								bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione degli accordi di cooperazione (servizi composti)");
+							}
 							return false;
+						}
 				} else {
 					// tipo accordo con valore non buono
+					if(bfError!=null) {
+						bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione delle API (tipoAccordo '"+tipoAccordo+"' non valido)");
+					}
 					return false;
 				}
 			}
 			
 			return servletOk;
 		}else if(this.servletServizi.contains(nomeServlet)){
-			return this.permessiServizi.or(user.getPermessi());
+			boolean p = this.permessiServizi.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione dei servizi");
+			}
+			return p;
 		}else if(this.servletRuoli.contains(nomeServlet)){
-			return this.permessiRuoli.or(user.getPermessi());
+			boolean p = this.permessiRuoli.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione dei ruoli");
+			}
+			return p;
 		}else if(this.servletScope.contains(nomeServlet)){
-			return this.permessiScope.or(user.getPermessi());
+			boolean p = this.permessiScope.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione degli scope");
+			}
+			return p;
 		}else if(this.servletPorteDelegate.contains(nomeServlet)){
-			return this.permessiPorteDelegate.or(user.getPermessi());
+			boolean p = this.permessiPorteDelegate.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione delle porte delegate");
+			}
+			return p;
 		}else if(this.servletPorteApplicative.contains(nomeServlet)){
-			return this.permessiPorteApplicative.or(user.getPermessi());
+			boolean p = this.permessiPorteApplicative.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione delle porte applicativa");
+			}
+			return p;
 		}else if(this.servletServiziApplicativi.contains(nomeServlet)){
-			return this.permessiServiziApplicativi.or(user.getPermessi());
+			boolean p = this.permessiServiziApplicativi.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione dei servizi applicativi");
+			}
+			return p;
 		}else if(this.servletConnettoriCustom.contains(nomeServlet)){
-			return this.permessiConnettoriCustom.or(user.getPermessi());
+			boolean p = this.permessiConnettoriCustom.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione dei connettori custom");
+			}
+			return p;
 		}else if(this.servletPackage.contains(nomeServlet)){
-			return this.permessiPackage.or(user.getPermessi());
+			boolean p = this.permessiPackage.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione dei packages");
+			}
+			return p;
 		}else if(this.servletAuditing.contains(nomeServlet)){
-			return this.permessiAuditing.or(user.getPermessi());
+			boolean p = this.permessiAuditing.or(user.getPermessi());if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione dell'auditing");
+			}
+			return p;
 		}else if(this.servletConfigurazione.contains(nomeServlet)){
-			return this.permessiConfigurazione.or(user.getPermessi());
+			boolean p = this.permessiConfigurazione.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione delle pagine di configurazione");
+			}
+			return p;
 		}else if(this.servletGestioneUtenti.contains(nomeServlet)){
-			return this.permessiGestioneUtenti.or(user.getPermessi());
+			boolean p = this.permessiGestioneUtenti.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione per gli utenti");
+			}
+			return p;
 		}else if(this.singlePdD && this.servletTracciamento.contains(nomeServlet)){
-			return this.permessiTracciamento.or(user.getPermessi());
+			boolean p = this.permessiTracciamento.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione per il tracciamento");
+			}
+			return p;
 		}else if(this.singlePdD && this.servletDiagnostica.contains(nomeServlet)){
-			return this.permessiDiagnostica.or(user.getPermessi());
+			boolean p = this.permessiDiagnostica.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione per la diagnostica");
+			}
+			return p;
 		}else if(this.servletMonitoraggioApplicativo.contains(nomeServlet)){
-			return this.permessiMonitoraggioApplicativo.or(user.getPermessi());
+			boolean p = this.permessiMonitoraggioApplicativo.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione per la coda messaggi");
+			}
+			return p;
 		}else if(this.servletLibraryVersion.contains(nomeServlet)){
-			return this.permessiLibraryVersion.or(user.getPermessi());
+			boolean p = this.permessiLibraryVersion.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione per la versione delle librerie");
+			}
+			return p;
 		}else if(this.servletChangePWD_Modalita.contains(nomeServlet)){
-			return this.permessiChangePWD_Modalita.or(user.getPermessi());
+			boolean p = this.permessiChangePWD_Modalita.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione per il cambio password");
+			}
+			return p;
 		}else if(this.servletOperazioni.contains(nomeServlet)){
-			return this.permessiOperazioni.or(user.getPermessi());
+			boolean p = this.permessiOperazioni.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione per la coda operazioni remote");
+			}
+			return p;
 		}else if(this.servletProtocolProperties.contains(nomeServlet)){
-			return this.permessiProtocolProperties.or(user.getPermessi());
+			boolean p = this.permessiProtocolProperties.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione per le proprietà dei protocolli");
+			}
+			return p;
 		}else if(this.servletGruppi.contains(nomeServlet)){
-			return this.permessiGruppi.or(user.getPermessi());
+			boolean p = this.permessiGruppi.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione dei gruppi");
+			}
+			return p;
 		}else if(this.servletRegistro.contains(nomeServlet)){
-			return this.permessiRegistro.or(user.getPermessi());
+			boolean p = this.permessiRegistro.or(user.getPermessi());
+			if(!p && bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione del registro");
+			}
+			return p;
 		}else{
+			if(bfError!=null) {
+				bfError.append("servlet richiesta non autorizzata; non risulta censita");
+			}
 			log.error("Servlet richiesta non gestita: "+nomeServlet);
 			return false;
 		}

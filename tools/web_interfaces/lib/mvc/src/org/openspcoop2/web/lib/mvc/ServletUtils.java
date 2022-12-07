@@ -21,12 +21,14 @@
 package org.openspcoop2.web.lib.mvc;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -481,7 +483,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new HashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
 			}
 			
 			Map<String, Object> mapTabId = null;
@@ -520,7 +522,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new HashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
 			}
 			
 			Map<String, Object> mapTabId = null;
@@ -568,7 +570,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new HashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
 			}
 			
 			Map<String, Object> mapTabId = null;
@@ -614,7 +616,7 @@ public class ServletUtils {
 		Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 		
 		if(sessionMap == null) {
-			sessionMap = new HashMap<String, Map<String,Object>>();
+			sessionMap = new ConcurrentHashMap<String, Map<String,Object>>();
 		}
 		
 		Map<String, Object> mapDest = null;
@@ -626,7 +628,12 @@ public class ServletUtils {
 			Date date = new Date(0l); // imposto una data molto vecchia
 			String idSessionTab = null;
 			
-			for (String idSessioneTmp : sessionMap.keySet()) {
+			List<String> keys = new ArrayList<>();
+			for (String mapTabKey : sessionMap.keySet()) {
+				keys.add(mapTabKey);
+			}
+			
+			for (String idSessioneTmp : keys) {
 				Map<String, Object> mapTmp = sessionMap.get(idSessioneTmp);
 				Date dTmp = (Date) mapTmp.get(Costanti.SESSION_ATTRIBUTE_TAB_MAP_CREATION_DATE);
 				
@@ -667,12 +674,17 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new HashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
+			}
+			
+			List<String> keys = new ArrayList<>();
+			for (String mapTabKey : sessionMap.keySet()) {
+				keys.add(mapTabKey);
 			}
 			
 			Object obj = null;
 			// la remove deve essere fatta da tutti i tab session
-			for (String mapTabKey : sessionMap.keySet()) {
+			for (String mapTabKey : keys) {
 				Map<String, Object> mapTabId = sessionMap.get(mapTabKey);
 				// se il tab e' quello corrente allora restituisco anche l'oggetto
 				if(tabId.equals(mapTabKey)) {
