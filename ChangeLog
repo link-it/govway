@@ -1,3 +1,10 @@
+2022-12-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1509
+	La modifica del keystore di un applicativo ModI andava in errore.
+	Nel file di log veniva riportato l'errore: "Parametro [confSSLCredWizStep] Duplicato."
+
 2022-12-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

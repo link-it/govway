@@ -51,26 +51,48 @@ public class EsitiPropertiesSQLInitializer {
 		
 		StringBuilder sbInit = new StringBuilder();
 		
+		String completateConSuccesso = "Completata con Successo";
+		String faultApplicativo = "Fault Applicativo";
+		String richiestaScartata = "Richiesta Scartata";
+		String erroriConsegna = "Errore di Consegna";
+		String autorizzazioneNegata = "Autorizzazione Negata";
+		String policyViolata = "Policy Controllo Traffico Violate";
+		String erroriIM = "Errori Servizio IntegrationManager/MessageBox";
+		String erroriRichiesta = "Errori Processamento Richiesta";
+		String erroriRisposta = "Errori Processamento Risposta";
+		String erroreGenerico = "Errore Generico";
+		
+		int completateConSuccesso_code = 1;
+		int faultApplicativo_code = 2;
+		int richiestaScartata_code = 3;
+		int erroriConsegna_code = 4;
+		int autorizzazioneNegata_code = 5;
+		int policyViolata_code = 6;
+		int erroriIM_code = 7;
+		int erroriRichiesta_code = 8;
+		int erroriRisposta_code = 9;
+		int erroreGenerico_code = 10;
+		
 		sbInit.append("-- classe esiti\n");
-		sbInit.append(buildClassInsert(1, 1, "Completata con Successo"));
+		sbInit.append(buildClassInsert(completateConSuccesso_code, completateConSuccesso));
 		sbInit.append("\n");
-		sbInit.append(buildClassInsert(2, 2, "Fault Applicativo"));
+		sbInit.append(buildClassInsert(faultApplicativo_code, faultApplicativo));
 		sbInit.append("\n");
-		sbInit.append(buildClassInsert(3, 3, "Richiesta Scartata"));
+		sbInit.append(buildClassInsert(richiestaScartata_code, richiestaScartata));
 		sbInit.append("\n");
-		sbInit.append(buildClassInsert(4, 4, "Errore di Consegna"));
+		sbInit.append(buildClassInsert(erroriConsegna_code, erroriConsegna));
 		sbInit.append("\n");
-		sbInit.append(buildClassInsert(5, 5, "Autorizzazione Negata"));
+		sbInit.append(buildClassInsert(autorizzazioneNegata_code, autorizzazioneNegata));
 		sbInit.append("\n");
-		sbInit.append(buildClassInsert(6, 6, "Policy Controllo Traffico Violate"));
+		sbInit.append(buildClassInsert(policyViolata_code, policyViolata));
 		sbInit.append("\n");
-		sbInit.append(buildClassInsert(7, 7, "Errori Servizio IntegrationManager/MessageBox"));
+		sbInit.append(buildClassInsert(erroriIM_code, erroriIM));
 		sbInit.append("\n");
-		sbInit.append(buildClassInsert(8, 8, "Errori Processamento Richiesta"));
+		sbInit.append(buildClassInsert(erroriRichiesta_code, erroriRichiesta));
 		sbInit.append("\n");
-		sbInit.append(buildClassInsert(9, 9, "Errori Processamento Risposta"));
+		sbInit.append(buildClassInsert(erroriRisposta_code, erroriRisposta));
 		sbInit.append("\n");
-		sbInit.append(buildClassInsert(10, 10, "Errore Generico"));
+		sbInit.append(buildClassInsert(erroreGenerico_code, erroreGenerico));
 		sbInit.append("\n");
 
 		
@@ -81,34 +103,34 @@ public class EsitiPropertiesSQLInitializer {
 			
 			int classCode = -1;
 			if(esitiProperties.getEsitiCodeOk_senzaFaultApplicativo().contains(code)) {
-				classCode = 1; // Completata con Successo
+				classCode = completateConSuccesso_code; // Completata con Successo
 			}
 			else if(esitiProperties.getEsitiCodeFaultApplicativo().contains(code)) {
-				classCode = 2; // Fault Applicativo
+				classCode = faultApplicativo_code; // Fault Applicativo
 			}
 			else if(esitiProperties.getEsitiCodeRichiestaScartate().contains(code)) {
-				classCode = 3; // Richiesta Scartata
+				classCode = richiestaScartata_code; // Richiesta Scartata
 			}
 			else if(esitiProperties.getEsitiCodeErroriConsegna().contains(code)) {
-				classCode = 4; // Errore di Consegna
+				classCode = erroriConsegna_code; // Errore di Consegna
 			}
 			else if(esitiProperties.getEsitiCodeAutorizzazioneNegata().contains(code)) {
-				classCode = 5; // Autorizzazione Negata
+				classCode = autorizzazioneNegata_code; // Autorizzazione Negata
 			}
 			else if(esitiProperties.getEsitiCodeControlloTrafficoPolicyViolate().contains(code)) {
-				classCode = 6; // Policy Controllo Traffico Violate
+				classCode = policyViolata_code; // Policy Controllo Traffico Violate
 			}
 			else if(esitiProperties.getEsitiCodeServizioIntegrationManager().contains(code)) {
-				classCode = 7; // Errori Servizio I.M. MessageBox
+				classCode = erroriIM_code; // Errori Servizio I.M. MessageBox
 			}
 			else if(esitiProperties.getEsitiCodeErroriProcessamentoRichiesta().contains(code)) {
-				classCode = 8; // Errori Processamento Richiesta
+				classCode = erroriRichiesta_code; // Errori Processamento Richiesta
 			}
 			else if(esitiProperties.getEsitiCodeErroriProcessamentoRisposta().contains(code)) {
-				classCode = 9; // Errori Processamento Risposta
+				classCode = erroriRisposta_code; // Errori Processamento Risposta
 			}
 			else if(esitiProperties.getEsitiCodeErroriGenerici().contains(code)) {
-				classCode = 10; // Errore Generico
+				classCode = erroreGenerico_code; // Errore Generico
 			}
 			else {
 				throw new Exception("Classificazione del codice '"+code+"' non riuscita");
@@ -125,7 +147,7 @@ public class EsitiPropertiesSQLInitializer {
 			sb.append(" , ");
 			sb.append("'").append(esitiProperties.getEsitoDescription(code).replaceAll("'", "''")).append("'");
 			sb.append(" , ");
-			sb.append(classCode);
+			sb.append("(select id from ").append(CostantiDB.TRANSAZIONI_CLASSE_ESITI).append(" WHERE govway_status="+classCode+")");
 			sb.append(" );");
 			
 			sbInit.append(sb.toString());
@@ -139,12 +161,10 @@ public class EsitiPropertiesSQLInitializer {
 		
 	}
 	
-	private static String buildClassInsert(int id, int code, String detail) {
+	private static String buildClassInsert(int code, String detail) {
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
 		sb.append(CostantiDB.TRANSAZIONI_CLASSE_ESITI);
-		sb.append(" (id, govway_status, govway_status_detail) VALUES ( ");
-		sb.append(id);
-		sb.append(" , ");
+		sb.append(" (govway_status, govway_status_detail) VALUES ( ");
 		sb.append(code);
 		sb.append(" , ");
 		sb.append("'").append(detail).append("'");
