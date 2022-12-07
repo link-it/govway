@@ -1,6 +1,13 @@
 2022-12-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
+	Risolto Bug OP-1513
+	Utilizzando il database SQLServer l'accesso alla pagina di configurazione di una erogazione o fruizione produceva il seguente errore SQL: 
+	"ERROR <20-10-2022 14:03:03.969> at org.openspcoop2.core.mapping.DBMappingUtils._mappingErogazionePortaApplicativaList: Ambiguous column name 'descrizione'.
+
+2022-12-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
 	Risolto Bug OP-1511
 	La selezione della modalità 'interfaccia avanzata', tramite la voce presente nel menù in alto a destro,
 	veniva riportata erroneamente anche accedendo al profilo dell'utenza, 

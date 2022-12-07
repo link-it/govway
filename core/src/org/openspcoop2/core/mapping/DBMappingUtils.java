@@ -235,8 +235,8 @@ public class DBMappingUtils {
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default");
-			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".nome");
-			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".descrizione");
+			sqlQueryObject.addSelectAliasField(CostantiDB.MAPPING_EROGAZIONE_PA,"nome","nomeMapping");
+			sqlQueryObject.addSelectAliasField(CostantiDB.MAPPING_EROGAZIONE_PA,"descrizione","descrizioneMapping");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".id");
 			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE+".nome_porta");
 			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione = ?");
@@ -250,10 +250,10 @@ public class DBMappingUtils {
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default",true);
 			if(orderByDescrizione) {
-				sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".descrizione");
+				sqlQueryObject.addOrderBy("descrizioneMapping");
 			}
 			else {
-				sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".nome");
+				sqlQueryObject.addOrderBy("nomeMapping");
 			}
 			sqlQueryObject.setSortType(true);
 			if(ricerca != null) {
@@ -278,8 +278,8 @@ public class DBMappingUtils {
 				Long id = risultato.getLong("id");
 //				Long idPorta = risultato.getLong("id_porta");
 //				Long idErogazione = risultato.getLong("id_erogazione");
-				String nome = risultato.getString("nome");
-				String descrizione = risultato.getString("descrizione");
+				String nome = risultato.getString("nomeMapping");
+				String descrizione = risultato.getString("descrizioneMapping");
 				Integer isDefaultInt = risultato.getInt("is_default");
 				boolean isDefault = isDefaultInt > 0 ;
 				
@@ -1238,8 +1238,8 @@ public class DBMappingUtils {
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default");
-			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".nome");
-			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".descrizione");
+			sqlQueryObject.addSelectAliasField(CostantiDB.MAPPING_FRUIZIONE_PD,"nome","nomeMapping");
+			sqlQueryObject.addSelectAliasField(CostantiDB.MAPPING_FRUIZIONE_PD,"descrizione","descrizioneMapping");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".id");
 			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".nome_porta");
 			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione = ?");
@@ -1253,10 +1253,10 @@ public class DBMappingUtils {
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default",true);
 			if(orderByDescrizione) {
-				sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".descrizione");
+				sqlQueryObject.addOrderBy("descrizioneMapping");
 			}
 			else {
-				sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".nome");
+				sqlQueryObject.addOrderBy("nomeMapping");
 			}
 			sqlQueryObject.setSortType(true);
 			if(ricerca != null) {
@@ -1281,8 +1281,8 @@ public class DBMappingUtils {
 				Long id = risultato.getLong("id");
 //				Long idPorta = risultato.getLong("id_porta");
 //				Long idFruizione = risultato.getLong("id_fruizione");
-				String nome = risultato.getString("nome");
-				String descrizione = risultato.getString("descrizione");
+				String nome = risultato.getString("nomeMapping");
+				String descrizione = risultato.getString("descrizioneMapping");
 				Integer isDefaultInt = risultato.getInt("is_default");
 				boolean isDefault = isDefaultInt > 0 ;
 				
