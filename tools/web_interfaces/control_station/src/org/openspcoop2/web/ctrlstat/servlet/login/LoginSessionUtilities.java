@@ -45,6 +45,19 @@ public class LoginSessionUtilities {
 		UtentiCore utentiCore = new UtentiCore(core);
 		
 		Boolean contaListe = core.isShowCountElementInLinkList();
+		
+		ServletUtils.setUserLoginIntoSession(session, login);
+		
+		ServletUtils.setContaListeIntoSession(session, contaListe);
+				
+		User user = utentiCore.getUser(login);
+		
+		ServletUtils.setUserIntoSession(request, session, user);
+	
+		setLoginParametersSession(request, session, core, user);
+	}
+	public static void setLoginParametersSession(HttpServletRequest request, HttpSession session, ControlStationCore core, User user) throws Exception{
+			
 		Boolean showAccordiAzioni = core.isShowAccordiColonnaAzioni();
 		Boolean gestioneInfoProtocol = core.isShowAccordiInformazioniProtocollo();
 		Boolean soggVirt = core.isShowGestioneSoggettiVirtuali();
@@ -54,16 +67,8 @@ public class LoginSessionUtilities {
 		
 		Boolean sameDBWebUI = core.isTracce_sameDBWebUI();
 		
-		ServletUtils.setUserLoginIntoSession(session, login);
-		
-		ServletUtils.setContaListeIntoSession(session, contaListe);
-				
-		User user = utentiCore.getUser(login);
-		
 		Boolean showAccordiCooperazione = user.getPermessi().isAccordiCooperazione();
 		
-		ServletUtils.setUserIntoSession(request, session, user);
-				
 		InterfaceType gui = user.getInterfaceType();
 		switch (gui) {
 			case AVANZATA:

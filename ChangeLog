@@ -1,6 +1,15 @@
 2022-12-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
+	Risolto Bug OP-1511
+	La selezione della modalità 'interfaccia avanzata', tramite la voce presente nel menù in alto a destro,
+	veniva riportata erroneamente anche accedendo al profilo dell'utenza, 
+	dove invece dovevano essere visualizzati solamente i criteri del profilo precedentemente resi persistenti e utilizzati al momento di un nuovo login.
+	Inoltre anche se veniva selezionata una modalità 'interfaccia avanzata', la selezione di connettori differenti da http (jms, file, ...) non era disponibile.
+
+2022-12-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
 	Risolto Bug OP-1509
 	La modifica del keystore di un applicativo ModI andava in errore.
 	Nel file di log veniva riportato l'errore: "Parametro [confSSLCredWizStep] Duplicato."

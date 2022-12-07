@@ -95,7 +95,8 @@ public final class UtenteChange extends Action {
 
 			InterfaceType interfaceType = null;
 			if(tipogui==null) {
-				interfaceType = utentiHelper.getTipoInterfaccia();
+				//interfaceType = utentiHelper.getTipoInterfaccia();
+				interfaceType = utentiCore.getUser(user.getLogin()).getInterfaceType();
 			}
 			else {
 				interfaceType = InterfaceType.convert(tipogui, true);
@@ -262,6 +263,7 @@ public final class UtenteChange extends Action {
 					if(changeGui != null) {
 						userFromSession.setInterfaceType(interfaceType);
 						ServletUtils.setUserIntoSession(request, session, userFromSession); // update in sessione.
+						LoginSessionUtilities.setLoginParametersSession(request, session, utentiCore, userFromSession);
 
 						if(utentiCore.isUtenzeModificaProfiloUtenteDaLinkAggiornaDB()) {
 							myS.setInterfaceType(interfaceType);
