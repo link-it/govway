@@ -27,7 +27,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-discovery-0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.11.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.8.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.9.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.5.4-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.5.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.5.4.jar"/>
@@ -935,7 +935,7 @@
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-io-2.11.0.jar"/>
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-net-3.8.0.jar"/>
+				<include name="commons-net-3.9.0.jar"/>
 				<include name="commons-validator-1.7.jar"/>
 				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
 				<include name="${commons_logging_jar}"/>

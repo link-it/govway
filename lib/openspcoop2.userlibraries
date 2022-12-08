@@ -5,7 +5,7 @@
         <archive path="/op2_3.3.dev/lib/ant/ant-contrib-1.0b3.jar"/>
 	<!-- commons -->
         <archive path="/op2_3.3.dev/lib/commons/commons-pool2-2.11.1.jar"/>
-        <archive path="/op2_3.3.dev/lib/commons/commons-net-3.8.0.jar"/>
+        <archive path="/op2_3.3.dev/lib/commons/commons-net-3.9.0.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-logging-1.2.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-lang-2.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-lang3-3.12.0.jar"/>

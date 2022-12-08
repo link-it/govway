@@ -103,6 +103,7 @@
 								<suppressionFile>${owasp.falsePositives.dir}/spring-web.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/spring-security-crypto.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/CVE-2021-37533.xml</suppressionFile>
 							</suppressionFiles>
 						</configuration>
 						<goals>
