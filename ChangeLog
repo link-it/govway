@@ -1,3 +1,18 @@
+2022-12-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Aggiunta funzionalità OP-1515
+	Per ogni certificato è adesso possibile accedere anche alle seguenti informazioni:
+	- verificare se una Certificate Policy è presente o meno sul certificato ed accedere alle informazioni interne della policy;
+	- verificare i basic constraints (CA, pathLen);
+	- ottenere le Authority Information Access presenti nel certificato: CA Issuers e OCSP;
+	- ottenere i CRL Distribution Points presenti nel certificato.
+
+2022-12-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolta la vulnerabilità CVE-2021-37533 relativa ai jar di terza parte, aggiornata libreria 'commons-net' alla versione 3.9.0.
+
 2022-12-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
@@ -20,6 +35,11 @@
 	Risolto Bug OP-1509
 	La modifica del keystore di un applicativo ModI andava in errore.
 	Nel file di log veniva riportato l'errore: "Parametro [confSSLCredWizStep] Duplicato."
+
+2022-12-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolta la vulnerabilità CVE-2022-40150 relativa ai jar di terza parte, aggiornata libreria 'jettison' alla versione 1.5.2.
 
 2022-12-02  Andrea Poli <apoli@link.it>
 

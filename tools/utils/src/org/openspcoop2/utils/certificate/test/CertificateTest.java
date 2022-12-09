@@ -25,11 +25,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bouncycastle.asn1.x509.GeneralName;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.AuthorityInformationAccess;
+import org.openspcoop2.utils.certificate.AuthorityKeyIdentifier;
+import org.openspcoop2.utils.certificate.BasicConstraints;
+import org.openspcoop2.utils.certificate.CRLDistributionPoint;
+import org.openspcoop2.utils.certificate.CRLDistributionPoints;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.CertificatePolicy;
+import org.openspcoop2.utils.certificate.CertificatePolicyEntry;
 import org.openspcoop2.utils.certificate.CertificatePrincipal;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.ExtendedKeyUsage;
@@ -394,6 +402,9 @@ public class CertificateTest {
 		CertificateInfo cerInfo = cer.getCertificate();
 		CertificatePrincipal cp = cerInfo.getSubject();
 		
+		
+		// *** OID (solo standard) ***
+		
 		List<OID> oid = cp.getOID();
 		System.out.println("Subject con i seguenti elementi: ["+oid+"]");
 		String attesi = "C, ST, L, O, OU, CN, EMAIL_ADDRESS, ORGANIZATION_IDENTIFIER";
@@ -655,8 +666,215 @@ public class CertificateTest {
 			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfo(OID.COUNTRY_OF_CITIZENSHIP.name(), defaultValue, 0)+"' differente da quello atteso '"+defaultValue+"'"));
 		}
 		
+		
+		
+		// ***** ID OID (anche custom) ***********
+		
+		List<String> id_oid = cp.getIdOID();
+		System.out.println("Subject con i seguenti elementi by id ["+id_oid+"]");
+		String attesi_id = OID.C.getID()+", "+OID.ST.getID()+", "+OID.L.getID()+", "+OID.O.getID()+", "+OID.OU.getID()+", "+OID.CN.getID()+", "+OID.EMAIL_ADDRESS.getID()+", "+OID.ORGANIZATION_IDENTIFIER.getID()+
+				", 2.9.9.98, 2.9.9.99";
+		Map<String, String> valoriAttesiById = new HashMap<String, String>();
+		valoriAttesiById.put(OID.C.getID(), "IT");
+		valoriAttesiById.put(OID.ST.getID(), "Pisa");
+		valoriAttesiById.put(OID.L.getID(), "Pisa");
+		valoriAttesiById.put(OID.O.getID(), "Link.it");
+		valoriAttesiById.put(OID.OU.getID(), "IPAIT-UO_TEST");
+		valoriAttesiById.put(OID.CN.getID(), "Esempio di Test - Servizi di InteroperabilitÃ  (prova)");
+		valoriAttesiById.put(OID.EMAIL_ADDRESS.getID(), "info@link.it");
+		valoriAttesiById.put(OID.ORGANIZATION_IDENTIFIER.getID(), "CF:IT-00012345678");
+		valoriAttesiById.put("2.9.9.98", "CF:IT-00099999999");
+		valoriAttesiById.put("2.9.9.99", "Prova di un valore complesso - test");
+		if(nomeCertificato.contains("multipleOU")) {
+			attesi_id = OID.C.getID()+", "+OID.ST.getID()+", "+OID.L.getID()+", "+OID.O.getID()+", "+OID.OU.getID()+", "+OID.OU.getID()+", "+OID.OU.getID()+", "+OID.CN.getID();
+			valoriAttesiById.put(OID.ST.getID(), "Italy");
+			valoriAttesiById.put(OID.L.getID(), "govway_l");
+			valoriAttesiById.put(OID.O.getID(), "govway_o");
+			valoriAttesiById.put(OID.CN.getID(), "govway_test_multiple_out");
+		}
+		
+		if(!id_oid.toString().equals("["+attesi_id+"]")) {
+			throw new Exception("Attesi identificativi di OID seguenti '"+("["+attesi_id+"]")+"', rilevati '"+id_oid.toString()+"'");
+		}
+		
+		tmp = attesi_id.split(",");
+		for (String s : tmp) {
+			s = s.trim();
+			
+			boolean casoSpecialeOU = nomeCertificato.contains("multipleOU") && OID.OU.getID().equals(s);
+			
+			int dimensioneAttesa = 1;
+			if(casoSpecialeOU) {
+				dimensioneAttesa = 3;
+			}
+			
+			String valoreAtteso = null;
+			if(!casoSpecialeOU) {
+				valoreAtteso = valoriAttesiById.get(s);
+				if(valoreAtteso==null) {
+					throw new Exception("Non è stato definito un valore atteso per '"+s+"'");
+				}
+			}
+			
+			if(casoSpecialeOU) {
+				if(cp.getInfosByIdOID(s)==null || cp.getInfosByIdOID(s).isEmpty()) {
+					throw new Exception("Atteso elemento '"+s+"' non rilevato");
+				}
+				List<String> v = cp.getInfosByIdOID(s);
+				if(v==null || v.size()!=3) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori, trovati:  "+v);
+				}
+				if(!v.contains("govway 1st OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway 1st OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				if(!v.contains("govway 2nd OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway 2nd OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				if(!v.contains("govway OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				
+				String vPos = cp.getInfoByIdOID(s, 0);
+				if(!"govway 1st OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway 1st OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+				vPos = cp.getInfoByIdOID(s, 1);
+				if(!"govway 2nd OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway 2nd OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+				vPos = cp.getInfoByIdOID(s, 2);
+				if(!"govway OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+			}
+			else {
+				if(cp.getInfoByIdOID(s)==null) {
+					throw new Exception("Atteso elemento '"+s+"' non rilevato");
+				}
+				String v = cp.getInfoByIdOID(s);
+				if(!valoreAtteso.equals(v)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore '"+valoreAtteso+"'; è stato rilevato invece il valore '"+v+"'");
+				}
+			}
+			
+			List<String> l = cp.getInfosByIdOID(s);
+			if(l==null || l.size()!=dimensioneAttesa) {
+				throw new Exception("Atteso elemento '"+s+"' con dimensione uguale a "+dimensioneAttesa);
+			}
+			
+			org.bouncycastle.asn1.ASN1ObjectIdentifier asn1 = new org.bouncycastle.asn1.ASN1ObjectIdentifier(s);
+			if(cp.getInfoByIdOID(asn1)==null) {
+				throw new Exception("Atteso OID '"+asn1+"' non rilevato");
+			}
+			l = cp.getInfosByIdOID(asn1);
+			if(l==null || l.size()!=dimensioneAttesa) {
+				throw new Exception("Atteso OID '"+asn1+"' con dimensione uguale a "+dimensioneAttesa);
+			}
+			
+			if(casoSpecialeOU) {
+				if(cp.getInfosByIdOID(asn1)==null || cp.getInfosByIdOID(asn1).isEmpty()) {
+					throw new Exception("Atteso elemento '"+s+"' non rilevato");
+				}
+				List<String> v = cp.getInfosByIdOID(asn1);
+				if(v==null || v.size()!=3) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori, trovati:  "+v);
+				}
+				if(!v.contains("govway 1st OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway 1st OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				if(!v.contains("govway 2nd OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway 2nd OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				if(!v.contains("govway OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				
+				String vPos = cp.getInfoByIdOID(asn1, 0);
+				if(!"govway 1st OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway 1st OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+				vPos = cp.getInfoByIdOID(asn1, 1);
+				if(!"govway 2nd OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway 2nd OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+				vPos = cp.getInfoByIdOID(asn1, 2);
+				if(!"govway OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+			}
+			else {
+				if(cp.getInfoByIdOID(asn1)==null) {
+					throw new Exception("Atteso elemento '"+s+"' non rilevato");
+				}
+				String v = cp.getInfoByIdOID(asn1);
+				if(!valoreAtteso.equals(v)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore '"+valoreAtteso+"'; è stato rilevato invece il valore '"+v+"'");
+				}
+			}
+		}
+		
+		if(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID())!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID())!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfosByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID())!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfosByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID())!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID(),0)!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(),0)!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		
+		defaultValue = "DEF_VALUE";
+		if(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfosByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfosByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue).get(0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfosByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue).get(0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfosByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfosByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue).get(0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfosByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue).get(0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue,0)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue, 0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue, 0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue,0)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue, 0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfoByIdOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue, 0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		
+		
+		// ***** KEY USAGE ********
+		
 		List<KeyUsage> keyUsage = cerInfo.getKeyUsage();
-		System.out.println("KeyUsage: ["+keyUsage+"]");
+		System.out.println("\nKeyUsage: ["+keyUsage+"]");
 		if(forSign) {
 			attesi = "DIGITAL_SIGNATURE, NON_REPUDIATION"; 
 		}
@@ -682,14 +900,31 @@ public class CertificateTest {
 				if(!cerInfo.hasKeyUsage(k)) {
 					throw new Exception("Atteso KeyUsage '"+k+"'; non è stato rilevato");
 				}
+				
+				if(!cerInfo.hasKeyUsageByArrayBooleanPosition(k.getX509CertificatePosition())) {
+					throw new Exception("Atteso KeyUsage '"+k+"' con position '"+k.getX509CertificatePosition()+"'; non è stato rilevato");
+				}
+				if(!cerInfo.hasKeyUsageByBouncycastleCode(k.getBouncyCastleCode())) {
+					throw new Exception("Atteso KeyUsage '"+k+"' con bc code '"+k.getBouncyCastleCode()+"'; non è stato rilevato");
+				}
 			}
 		}
 		if(cerInfo.hasKeyUsage(KeyUsage.KEY_AGREEMENT)) {
 			throw new Exception("KeyUsage '"+KeyUsage.KEY_AGREEMENT+"' rilevato ma non atteso");
 		}
+		if(cerInfo.hasKeyUsageByArrayBooleanPosition(KeyUsage.KEY_AGREEMENT.getX509CertificatePosition())) {
+			throw new Exception("KeyUsage '"+KeyUsage.KEY_AGREEMENT+"' con position '"+KeyUsage.KEY_AGREEMENT.getX509CertificatePosition()+"' rilevato ma non atteso");
+		}
+		if(cerInfo.hasKeyUsageByBouncycastleCode(KeyUsage.KEY_AGREEMENT.getBouncyCastleCode())) {
+			throw new Exception("KeyUsage '"+KeyUsage.KEY_AGREEMENT+"' con bc code '"+KeyUsage.KEY_AGREEMENT.getBouncyCastleCode()+"' rilevato ma non atteso");
+		}
+		
+		
+		
+		// ***** EXTENDED KEY USAGE ********
 		
 		List<ExtendedKeyUsage> extendedKeyUsage = cerInfo.getExtendedKeyUsage();
-		System.out.println("ExtendedKeyUsage: ["+extendedKeyUsage+"]");
+		System.out.println("\nExtendedKeyUsage: ["+extendedKeyUsage+"]");
 		if(forSign || forAuth) {
 			attesi = "SERVER_AUTH, CLIENT_AUTH"; 
 		}
@@ -712,15 +947,28 @@ public class CertificateTest {
 				if(!cerInfo.hasExtendedKeyUsage(k)) {
 					throw new Exception("Atteso ExtendedKeyUsage '"+k+"'; non è stato rilevato");
 				}
+				
+				if(!cerInfo.hasExtendedKeyUsageByOID(k.getId())) {
+					throw new Exception("Atteso ExtendedKeyUsage '"+k+"' oid:'"+k.getId()+"'; non è stato rilevato");
+				}
+				if(!cerInfo.hasExtendedKeyUsageByBouncycastleKeyPurposeId(k.getPurposeId().getId())) {
+					throw new Exception("Atteso ExtendedKeyUsage '"+k+"' bc id:'"+k.getPurposeId().getId()+"'; non è stato rilevato");
+				}
 			}
 		}
 		if(cerInfo.hasExtendedKeyUsage(ExtendedKeyUsage.DVCS)) {
 			throw new Exception("ExtendedKeyUsage '"+ExtendedKeyUsage.DVCS+"' rilevato ma non atteso");
 		}
+		if(cerInfo.hasExtendedKeyUsageByOID(ExtendedKeyUsage.DVCS.getId())) {
+			throw new Exception("ExtendedKeyUsage '"+ExtendedKeyUsage.DVCS+"' oid:'"+ExtendedKeyUsage.DVCS.getId()+"' rilevato ma non atteso");
+		}
+		if(cerInfo.hasExtendedKeyUsageByBouncycastleKeyPurposeId(ExtendedKeyUsage.DVCS.getPurposeId().getId())) {
+			throw new Exception("ExtendedKeyUsage '"+ExtendedKeyUsage.DVCS+"' bc id:'"+ExtendedKeyUsage.DVCS.getPurposeId().getId()+"' rilevato ma non atteso");
+		}
 		
 		List<String> extendedKeyUsageOID = cerInfo.getExtendedKeyUsageByOID();
 		if(forSign || forAuth) {
-			attesi = "1.3.6.1.5.5.7.3.1, 1.3.6.1.5.5.7.3.2";
+			attesi = "1.3.6.1.5.5.7.3.1, 1.3.6.1.5.5.7.3.2, 1.2.3.4, 1.2.3.4.1";
 		}
 		else {
 			attesi = "";
@@ -734,7 +982,593 @@ public class CertificateTest {
 			if(!extendedKeyUsageOID.toString().equals("["+attesi+"]")) {
 				throw new Exception("Attesi ExtendedKeyUsage OID seguenti '"+("["+attesi+"]")+"', rilevati '"+extendedKeyUsageOID.toString()+"'");
 			}
+			
+			tmp = attesi.split(",");
+			for (String s : tmp) {
+				s = s.trim();
+			
+				if(!cerInfo.hasExtendedKeyUsageByOID(s)) {
+					throw new Exception("Atteso ExtendedKeyUsage oid:'"+s+"'; non è stato rilevato");
+				}
+			}
 		}
 		
+		
+		
+		// ***** CERTIFICATE POLICY ********
+		
+		List<CertificatePolicy> l = cerInfo.getCertificatePolicies();
+		int sizeAttesi = 0;
+		if(forSign || forAuth) {
+			sizeAttesi = 3;
+		}
+		int sizeRiscontrati = l!=null ? l.size() : 0;
+		if(sizeAttesi != sizeRiscontrati) {
+			throw new Exception("Attesi "+sizeAttesi+" certificate policy, riscontrate: "+sizeRiscontrati);
+		}
+		if(l!=null) {
+			for (int i = 0; i < l.size(); i++) {
+				
+				if(i==0) {
+					attesi = "1.2.3.5";
+				}
+				else if(i==1) {
+					attesi = "1.5.6.7.8";
+				}
+				else if(i==2) {
+					attesi = "1.3.5.8";
+				}
+				
+				CertificatePolicy certificatePolicy = l.get(i);
+				System.out.println("\nCertificatePolicy: ");
+				System.out.println(certificatePolicy);
+				
+				if(!attesi.equals(certificatePolicy.getOID())) {
+					throw new Exception("Attesa certificate policy '"+attesi+"', riscontrata: "+certificatePolicy.getOID());
+				}
+				
+				CertificatePolicy cerTest = cerInfo.getCertificatePolicy(attesi);
+				if(cerTest==null) {
+					throw new Exception("Attesa certificate policy '"+attesi+"', non riscontrata");
+				}
+				if(!attesi.equals(cerTest.getOID())) {
+					throw new Exception("Attesa certificate policy '"+attesi+"', riscontrata: "+cerTest.getOID());
+				}
+				
+				cerTest = cerInfo.getCertificatePolicyByOID(attesi);
+				if(cerTest==null) {
+					throw new Exception("Attesa certificate policy '"+attesi+"', non riscontrata");
+				}
+				if(!attesi.equals(cerTest.getOID())) {
+					throw new Exception("Attesa certificate policy '"+attesi+"', riscontrata: "+cerTest.getOID());
+				}
+				
+				boolean exists = cerInfo.hasCertificatePolicy(attesi);
+				if(!exists) {
+					throw new Exception("Attesa certificate policy '"+attesi+"', non riscontrata");
+				}
+				
+				String qualifierId = "1.3.6.1.5.5.7.2.1";
+				String qualifierId2 = "1.3.6.1.5.5.7.2.2";
+				
+				if(i==0 || i==1) {
+					exists = certificatePolicy.hasCertificatePolicyQualifier(qualifierId);
+					if(exists) {
+						throw new Exception("Rilevato certificate policy qualifier non atteso '"+qualifierId+"'");
+					}
+					
+					CertificatePolicyEntry ce = certificatePolicy.getQualifier(qualifierId);
+					if(ce!=null) {
+						throw new Exception("Rilevato certificate policy qualifier non atteso '"+ce.getOID()+"'");
+					}
+					
+				}
+				else {
+					exists = certificatePolicy.hasCertificatePolicyQualifier(qualifierId);
+					if(!exists) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"'; non rilevato");
+					}
+					
+					String url1 = "http://my.host.example.com/";
+					
+					CertificatePolicyEntry ce = certificatePolicy.getQualifier(qualifierId);
+					if(ce==null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"'; non rilevato");
+					}
+					if(!qualifierId.equals(ce.getOID())) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"'; rilevato '"+ce.getOID()+"'");
+					}
+					if(!ce.containsValue(url1)) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"' con url '"+url1+"'; non rilevato");
+					}
+					String value = ce.getValue(0);
+					if(!url1.equals(value)) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"' con url '"+url1+"'; rilevato '"+value+"'");
+					}
+					
+					ce = certificatePolicy.getQualifier(0);
+					if(ce==null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"'; non rilevato");
+					}
+					if(!qualifierId.equals(ce.getOID())) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"'; rilevato '"+ce.getOID()+"'");
+					}
+					if(!ce.containsValue(url1)) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"' con url '"+url1+"'; non rilevato");
+					}
+					value = ce.getValue(0);
+					if(!url1.equals(value)) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"' con url '"+url1+"'; rilevato '"+value+"'");
+					}
+					
+					String url2 = "http://my.your.example.com/";
+					
+					ce = certificatePolicy.getQualifier(1);
+					if(ce==null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"'; non rilevato");
+					}
+					if(!qualifierId.equals(ce.getOID())) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"'; rilevato '"+ce.getOID()+"'");
+					}
+					if(!ce.containsValue(url2)) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"' con url '"+url1+"'; non rilevato");
+					}
+					value = ce.getValue(0);
+					if(!url2.equals(value)) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId+"' con url '"+url1+"'; rilevato '"+value+"'");
+					}
+					
+					
+					
+					
+					ce = certificatePolicy.getQualifier(qualifierId2);
+					if(ce==null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"'; non rilevato");
+					}
+					if(!qualifierId2.equals(ce.getOID())) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"'; rilevato '"+ce.getOID()+"'");
+					}
+					value = ce.getValue(0);
+					if(value!=null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con null value; rilevato '"+value+"'");
+					}
+					
+					ce = certificatePolicy.getQualifier(2);
+					if(ce==null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"'; non rilevato");
+					}
+					if(!qualifierId2.equals(ce.getOID())) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"'; rilevato '"+ce.getOID()+"'");
+					}
+					value = ce.getValue(0);
+					if(value!=null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con null value; rilevato '"+value+"'");
+					}
+					
+					String testo = "Explicit Text Here";
+					
+					ce = ce.getEntry(0);
+					if(ce==null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con valore interno; non rilevato");
+					}
+					if(!ce.containsValue(testo)) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con valore interno '"+testo+"'; non rilevato");
+					}
+					value = ce.getValue(0);
+					if(!testo.equals(value)) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con valore interno '"+testo+"'; rilevato '"+value+"'");
+					}
+					
+					testo = "Organisation Name";
+
+					ce = ce.getEntry(0);
+					if(ce==null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con valore interno.interno; non rilevato");
+					}
+					if(!ce.containsValue(testo)) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con valore interno.interno '"+testo+"'; non rilevato");
+					}
+					value = ce.getValue(0);
+					if(!testo.equals(value)) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con valore interno.interno '"+testo+"'; rilevato '"+value+"'");
+					}
+					
+					int sizeAttesoInterno3Livello = 4;
+					
+					ce = ce.getEntry(0);
+					if(ce==null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con valore interno.interno.interno; non rilevato");
+					}
+					if(ce.getValues()==null) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con valori interno.interno.interno.interno; non rilevato");
+					}
+					if(ce.getValues().size() != sizeAttesoInterno3Livello) {
+						throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con "+sizeAttesoInterno3Livello+" valori interno.interno.interno.interno; rilevati: "+ce.getValues().size());
+					}
+					
+					for (int j = 1; j < 5; j++) {
+						String valoreAtteso = j+"";
+						if(!ce.containsValue(valoreAtteso)) {
+							throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con valore interno.interno.interno.interno '"+valoreAtteso+"'; non rilevato");
+						}
+						value = ce.getValue((j-1));
+						if(!valoreAtteso.equals(value)) {
+							throw new Exception("Atteso certificate policy qualifier '"+qualifierId2+"' con valore interno.interno.interno.interno '"+valoreAtteso+"'; rilevato '"+value+"'");
+						}
+					}
+				}
+			}
+		}
+
+		
+		// ***** BASIC CONSTRAINTS ********
+		
+		System.out.println("\nBasicConstraints isCA:"+cerInfo.isCA()+" pathLen:"+cerInfo.getPathLen());
+		BasicConstraints bc = cerInfo.getBasicConstraints();
+		if(forSign || forAuth) {
+			System.out.println("\t pathLen (from object):"+bc.getPathLen());
+		}
+
+		
+		// ***** AUTHORITY KEY IDENTIFIER *****
+		
+		AuthorityKeyIdentifier aki = cerInfo.getAuthorityKeyIdentifier();
+		if(aki!=null) {
+			System.out.println("\nAuthorityKeyIdentifier: "+aki.getBase64KeyIdentifier());
+		}
+		
+		
+		// ***** AUTHORITY INFORMATION ACCESS *****
+		
+		AuthorityInformationAccess aia = cerInfo.getAuthorityInformationAccess();
+		if(forSign || forAuth) {
+			System.out.println("\nAuthorityInformationAccess");
+			System.out.println("\tCAIssuers:");
+			for (String ca : aia.getCAIssuers()) {
+				System.out.println("\t\t"+ca);	
+			}
+			System.out.println("\tOCSP:");
+			for (String ocsp : aia.getOCSPs()) {
+				System.out.println("\t\t"+ocsp);	
+			}
+			
+			
+			// ### CAISSUER#
+			
+			String CAIssuer1 = "http://ca.govway.org/testCA1.crt";
+			String CAIssuer2 = "https://ca.govway.org/testCA2.crt";
+						
+			sizeRiscontrati = aia.getCAIssuers().size();
+			sizeAttesi = 2;
+			if(sizeAttesi!=sizeRiscontrati) {
+				throw new Exception("Attesi "+sizeAttesi+" CAIssuers, riscontrate: "+sizeRiscontrati);
+			}
+			
+			for (int i = 0; i < aia.getCAIssuers().size(); i++) {
+				String ca = aia.getCAIssuers().get(i);
+				
+				String attesa = null;
+				if(i==0) {
+					attesa = CAIssuer1;
+				}
+				else {
+					attesa = CAIssuer2;
+				}
+				
+				if(ca==null) {
+					throw new Exception("Attesa CAIssuer '"+attesa+"'; non rilevata");
+				}
+				if(!attesa.equals(ca)) {
+					throw new Exception("Atteso CAIssuer '"+attesa+"'; rilevata '"+ca+"'");
+				}
+							
+				ca = aia.getCAIssuer(i);
+				if(ca==null) {
+					throw new Exception("Attesa CAIssuer '"+attesa+"' (index); non rilevata");
+				}
+				if(!attesa.equals(ca)) {
+					throw new Exception("Atteso CAIssuer '"+attesa+"' (index); rilevata '"+ca+"'");
+				}
+				
+				if(!aia.containsCAIssuer(attesa)) {
+					throw new Exception("Atteso CAIssuer '"+attesa+"'; non rilevata (contains)");
+				}
+			}
+			
+			sizeRiscontrati = aia.getObjectCAIssuers().size();
+			sizeAttesi = 2;
+			if(sizeAttesi!=sizeRiscontrati) {
+				throw new Exception("Attesi "+sizeAttesi+" CAIssuers (object), riscontrate: "+sizeRiscontrati);
+			}
+			
+			for (int i = 0; i < aia.getObjectCAIssuers().size(); i++) {
+				GeneralName caName = aia.getObjectCAIssuers().get(i);
+				
+				String attesa = null;
+				int tagName = 6;
+				if(i==0) {
+					attesa = CAIssuer1;
+				}
+				else {
+					attesa = CAIssuer2;
+				}
+				
+				if(caName==null) {
+					throw new Exception("Attesa CAIssuer '"+attesa+"'; non rilevata");
+				}
+				
+				String ca=caName.getName()!=null ? caName.getName().toString() : null;
+				if(ca==null) {
+					throw new Exception("Attesa CAIssuer '"+attesa+"'; non rilevata");
+				}
+				if(!attesa.equals(ca)) {
+					throw new Exception("Atteso CAIssuer '"+attesa+"'; rilevata '"+ca+"'");
+				}
+				
+				int tagNameCa = caName.getTagNo();
+				if(tagName!=tagNameCa) {
+					throw new Exception("Atteso CAIssuer tagName '"+tagName+"'; rilevata '"+tagNameCa+"'");
+				}
+							
+				caName = aia.getObjectCAIssuer(i);
+				if(caName==null) {
+					throw new Exception("Attesa CAIssuer '"+attesa+"'; non rilevata");
+				}
+				
+				ca=caName.getName()!=null ? caName.getName().toString() : null;
+				if(ca==null) {
+					throw new Exception("Attesa CAIssuer '"+attesa+"' (index); non rilevata");
+				}
+				if(!attesa.equals(ca)) {
+					throw new Exception("Atteso CAIssuer '"+attesa+"' (index); rilevata '"+ca+"'");
+				}
+				
+				tagNameCa = caName.getTagNo();
+				if(tagName!=tagNameCa) {
+					throw new Exception("Atteso CAIssuer tagName '"+tagName+"'; rilevata '"+tagNameCa+"'");
+				}
+				
+				if(!aia.containsCAIssuer(attesa)) {
+					throw new Exception("Atteso CAIssuer '"+attesa+"'; non rilevata (contains)");
+				}
+				if(!aia.containsCAIssuer(tagName, attesa)) {
+					throw new Exception("Atteso CAIssuer '"+attesa+"'; non rilevata (contains-tagName)");
+				}
+			}
+			
+			// ### OCSP#
+			
+			String OCSP1 = "http://ocsp.govway.org/test1";
+			String OCSP2 = "https://ocsp.govway.org/test2";
+			String OCSP3 = "https://ocsp.govway.org/test3";
+			
+			sizeRiscontrati = aia.getOCSPs().size();
+			sizeAttesi = 3;
+			if(sizeAttesi!=sizeRiscontrati) {
+				throw new Exception("Attesi "+sizeAttesi+" OCSPs, riscontrate: "+sizeRiscontrati);
+			}
+			
+			for (int i = 0; i < aia.getOCSPs().size(); i++) {
+				String ca = aia.getOCSPs().get(i);
+				
+				String attesa = null;
+				if(i==0) {
+					attesa = OCSP1;
+				}
+				else if(i==1) {
+					attesa = OCSP2;
+				}
+				else {
+					attesa = OCSP3;
+				}
+				
+				if(ca==null) {
+					throw new Exception("Attesa OCSP '"+attesa+"'; non rilevata");
+				}
+				if(!attesa.equals(ca)) {
+					throw new Exception("Atteso OCSP '"+attesa+"'; rilevata '"+ca+"'");
+				}
+							
+				ca = aia.getOCSP(i);
+				if(ca==null) {
+					throw new Exception("Attesa OCSP '"+attesa+"' (index); non rilevata");
+				}
+				if(!attesa.equals(ca)) {
+					throw new Exception("Atteso OCSP '"+attesa+"' (index); rilevata '"+ca+"'");
+				}
+				
+				if(!aia.containsOCSP(attesa)) {
+					throw new Exception("Atteso OCSP '"+attesa+"'; non rilevata (contains)");
+				}
+			}
+			
+			sizeRiscontrati = aia.getObjectOCSPs().size();
+			sizeAttesi = 3;
+			if(sizeAttesi!=sizeRiscontrati) {
+				throw new Exception("Attesi "+sizeAttesi+" OCSPs (object), riscontrate: "+sizeRiscontrati);
+			}
+			
+			for (int i = 0; i < aia.getObjectOCSPs().size(); i++) {
+				GeneralName caName = aia.getObjectOCSPs().get(i);
+				
+				String attesa = null;
+				int tagName = 6;
+				if(i==0) {
+					attesa = OCSP1;
+				}
+				else if(i==1) {
+					attesa = OCSP2;
+				}
+				else {
+					attesa = OCSP3;
+				}
+				
+				if(caName==null) {
+					throw new Exception("Attesa OCSP '"+attesa+"'; non rilevata");
+				}
+				
+				String ca=caName.getName()!=null ? caName.getName().toString() : null;
+				if(ca==null) {
+					throw new Exception("Attesa OCSP '"+attesa+"'; non rilevata");
+				}
+				if(!attesa.equals(ca)) {
+					throw new Exception("Atteso OCSP '"+attesa+"'; rilevata '"+ca+"'");
+				}
+				
+				int tagNameCa = caName.getTagNo();
+				if(tagName!=tagNameCa) {
+					throw new Exception("Atteso OCSP tagName '"+tagName+"'; rilevata '"+tagNameCa+"'");
+				}
+							
+				caName = aia.getObjectOCSP(i);
+				if(caName==null) {
+					throw new Exception("Attesa OCSP '"+attesa+"'; non rilevata");
+				}
+				
+				ca=caName.getName()!=null ? caName.getName().toString() : null;
+				if(ca==null) {
+					throw new Exception("Attesa OCSP '"+attesa+"' (index); non rilevata");
+				}
+				if(!attesa.equals(ca)) {
+					throw new Exception("Atteso OCSP '"+attesa+"' (index); rilevata '"+ca+"'");
+				}
+				
+				tagNameCa = caName.getTagNo();
+				if(tagName!=tagNameCa) {
+					throw new Exception("Atteso OCSP tagName '"+tagName+"'; rilevata '"+tagNameCa+"'");
+				}
+				
+				if(!aia.containsOCSP(attesa)) {
+					throw new Exception("Atteso OCSP '"+attesa+"'; non rilevata (contains)");
+				}
+				if(!aia.containsOCSP(tagName, attesa)) {
+					throw new Exception("Atteso OCSP '"+attesa+"'; non rilevata (contains-tagName)");
+				}
+			}
+			
+		}
+		
+		// ***** CRL *****
+				
+		CRLDistributionPoints points = CRLDistributionPoints.getCRLDistributionPoints(cerInfo.getEncoded());
+		if(forSign || forAuth) {
+			System.out.println("\nCRLDistributionPoints");
+			
+			String CRL1 = "http://crl.govway.org/test1.crl";
+			String CRL2 = "https://crl.govway.org/test2.pem";
+			
+			for (int j = 0; j < points.getCRLDistributionPoints().size(); j++) {
+				CRLDistributionPoint crl = points.getCRLDistributionPoints().get(j);
+				System.out.println("\tPoint:");
+				System.out.println("\t\tAddress (size:"+crl.getDistributionPointNames().size()+")");
+				for (String point : crl.getDistributionPointNames()) {
+					System.out.println("\t\t\t"+point);	
+				}
+				System.out.println("\t\tPointType:"+crl.getDistributionPointType());
+				System.out.println("\t\tReason:"+crl.getReasonFlags());
+				System.out.println("\t\tCAIssuers (size:"+crl.getCRLIssuers().size()+")");
+				for (String crlIssuer : crl.getCRLIssuers()) {
+					System.out.println("\t\t\t"+crlIssuer);	
+				}
+								
+				sizeRiscontrati = crl.getDistributionPointNames().size();
+				sizeAttesi = 1;
+				if(sizeAttesi!=sizeRiscontrati) {
+					throw new Exception("Attesi "+sizeAttesi+" OCSPs, riscontrate: "+sizeRiscontrati);
+				}
+				
+				for (int i = 0; i < crl.getDistributionPointNames().size(); i++) {
+					String ca = crl.getDistributionPointNames().get(i);
+					
+					String attesa = null;
+					if(j==0) {
+						attesa = CRL1;
+					}
+					else {
+						attesa = CRL2;
+					}
+					
+					if(ca==null) {
+						throw new Exception("Attesa DistributionPointName '"+attesa+"'; non rilevata");
+					}
+					if(!attesa.equals(ca)) {
+						throw new Exception("Atteso DistributionPointName '"+attesa+"'; rilevata '"+ca+"'");
+					}
+								
+					ca = crl.getDistributionPointName(i);
+					if(ca==null) {
+						throw new Exception("Attesa DistributionPointName '"+attesa+"' (index); non rilevata");
+					}
+					if(!attesa.equals(ca)) {
+						throw new Exception("Atteso DistributionPointName '"+attesa+"' (index); rilevata '"+ca+"'");
+					}
+					
+					if(!crl.containsDistributionPointName(attesa)) {
+						throw new Exception("Atteso DistributionPointName '"+attesa+"'; non rilevata (contains)");
+					}
+				}
+				
+				sizeRiscontrati = crl.getObjectDistributionPointNames().size();
+				sizeAttesi = 3;
+				if(sizeAttesi!=3) {
+					throw new Exception("Attesi "+sizeAttesi+" DistributionPointNames (object), riscontrate: "+sizeRiscontrati);
+				}
+				
+				for (int i = 0; i < crl.getObjectDistributionPointNames().size(); i++) {
+					GeneralName caName = crl.getObjectDistributionPointNames().get(i);
+					
+					String attesa = null;
+					int tagName = 6;
+					if(j==0) {
+						attesa = CRL1;
+					}
+					else {
+						attesa = CRL2;
+					}
+					
+					if(caName==null) {
+						throw new Exception("Attesa DistributionPointName '"+attesa+"'; non rilevata");
+					}
+					
+					String ca=caName.getName()!=null ? caName.getName().toString() : null;
+					if(ca==null) {
+						throw new Exception("Attesa DistributionPointName '"+attesa+"'; non rilevata");
+					}
+					if(!attesa.equals(ca)) {
+						throw new Exception("Atteso DistributionPointName '"+attesa+"'; rilevata '"+ca+"'");
+					}
+					
+					int tagNameCa = caName.getTagNo();
+					if(tagName!=tagNameCa) {
+						throw new Exception("Atteso DistributionPointName tagName '"+tagName+"'; rilevata '"+tagNameCa+"'");
+					}
+								
+					caName = crl.getObjectDistributionPointName(i);
+					if(caName==null) {
+						throw new Exception("Attesa DistributionPointName '"+attesa+"'; non rilevata");
+					}
+					
+					ca=caName.getName()!=null ? caName.getName().toString() : null;
+					if(ca==null) {
+						throw new Exception("Attesa DistributionPointName '"+attesa+"' (index); non rilevata");
+					}
+					if(!attesa.equals(ca)) {
+						throw new Exception("Atteso DistributionPointName '"+attesa+"' (index); rilevata '"+ca+"'");
+					}
+					
+					tagNameCa = caName.getTagNo();
+					if(tagName!=tagNameCa) {
+						throw new Exception("Atteso DistributionPointName tagName '"+tagName+"'; rilevata '"+tagNameCa+"'");
+					}
+					
+					if(!crl.containsDistributionPointName(attesa)) {
+						throw new Exception("Atteso DistributionPointName '"+attesa+"'; non rilevata (contains)");
+					}
+					if(!crl.containsDistributionPointName(tagName, attesa)) {
+						throw new Exception("Atteso DistributionPointName '"+attesa+"'; non rilevata (contains-tagName)");
+					}
+				}
+			}
+		}
 	}
 }

@@ -9,7 +9,16 @@ openssl req -new -config govway_test_openssl_csr.conf -keyout govway_test_oid_au
 openssl x509 -req -days 36500 -in govway_test_oid_auth.csr -signkey govway_test_oid_auth.key -sha256 -out govway_test_oid_auth.cer -extensions auth_cert -extfile govway_test_openssl_csr.conf
 
 Per verificare extensions:
-penssl req -text -in govway_test_oid_auth.csr | grep -A 6 "Requested Extensions:"
+openssl req -text -in govway_test_oid_auth.csr | grep -A 6 "Requested Extensions:"
 openssl x509 -text -noout -in govway_test_oid_auth.cer | grep -A10 "X509v3 extensions:"
+
+Per verificare Certificate Policies:
+openssl x509 -text -noout -in govway_test_oid_auth.cer | grep -A 10 "X509v3 Certificate Policies"
+
+Per verificare Authority Information Access:
+openssl x509 -text -noout -in govway_test_oid_auth.cer | grep -A 5 "Authority Information Access"
+
+Per verificare X509v3 CRL Distribution Points:
+openssl x509 -text -noout -in govway_test_oid_auth.cer | grep -A 6 "X509v3 CRL Distribution Points"
 
 Per entrambi usare come password 123456 e lasciare i default proposti

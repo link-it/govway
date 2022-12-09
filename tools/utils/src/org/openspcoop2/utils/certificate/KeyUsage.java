@@ -91,8 +91,11 @@ public enum KeyUsage {
 		return hasKeyUsage(x509.getCertificate());
 	}
 	public boolean hasKeyUsage(X509Certificate x509) {
-		if(x509.getKeyUsage()!=null && x509.getKeyUsage().length>this.arrayBooleanPosition) {
-			return x509.getKeyUsage()[this.arrayBooleanPosition];
+		return existsKeyUsageByArrayBooleanPosition(x509, this.arrayBooleanPosition);
+	}
+	public static boolean existsKeyUsageByArrayBooleanPosition(X509Certificate x509, int arrayBooleanPosition) {
+		if(x509.getKeyUsage()!=null && x509.getKeyUsage().length>arrayBooleanPosition) {
+			return x509.getKeyUsage()[arrayBooleanPosition];
 		}
 		return false;
 	}
@@ -111,12 +114,15 @@ public enum KeyUsage {
 	}
 	
 	public boolean hasKeyUsage(byte[]encoded) {
+		return existsKeyUsageByBouncycastleCode(encoded, this.bouncyValue);
+	}
+	public static boolean existsKeyUsageByBouncycastleCode(byte[]encoded, int bouncyValue) {
 		org.bouncycastle.asn1.x509.Certificate c =org.bouncycastle.asn1.x509.Certificate.getInstance(encoded);
 		Extensions exts = c.getTBSCertificate().getExtensions();
 		if (exts != null){
 			org.bouncycastle.asn1.x509.KeyUsage ku = org.bouncycastle.asn1.x509.KeyUsage.fromExtensions(exts);
 			if(ku!=null) {
-				return ku.hasUsages(this.bouncyValue);
+				return ku.hasUsages(bouncyValue);
 			}
 		}
 		return false;

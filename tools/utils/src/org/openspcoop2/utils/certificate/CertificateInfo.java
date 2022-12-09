@@ -32,6 +32,7 @@ import java.security.SignatureException;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertStore;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
@@ -46,6 +47,7 @@ import java.util.List;
 import javax.security.auth.x500.X500Principal;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 
@@ -142,6 +144,17 @@ public class CertificateInfo implements Serializable {
 		return this.certificate;
 	}
 	
+	public String getPEMEncoded() throws UtilsException {
+		return CertificateUtils.toPEM(this.certificate);
+	}
+	public byte[] getEncoded() throws UtilsException {
+		try {
+			return this.certificate.getEncoded();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
+	
 	public byte[] digest() throws CertificateException {
 		return this.digest("MD5");
 	}
@@ -214,6 +227,12 @@ public class CertificateInfo implements Serializable {
 	public boolean hasKeyUsage(String keyUsage) {
 		return hasKeyUsage(KeyUsage.valueOf(keyUsage.toUpperCase()));
 	}
+	public boolean hasKeyUsageByArrayBooleanPosition(int arrayBooleanPosition) {
+		return KeyUsage.existsKeyUsageByArrayBooleanPosition(this.certificate, arrayBooleanPosition);
+	}
+	public boolean hasKeyUsageByBouncycastleCode(int bouncycastelValue) throws CertificateEncodingException {
+		return KeyUsage.existsKeyUsageByBouncycastleCode(this.certificate.getEncoded(), bouncycastelValue);
+	}
 	
 	public List<ExtendedKeyUsage> getExtendedKeyUsage() throws CertificateParsingException{
 		return ExtendedKeyUsage.getKeyUsage(this.certificate);
@@ -227,7 +246,63 @@ public class CertificateInfo implements Serializable {
 	public boolean hasExtendedKeyUsage(String keyUsage) throws CertificateParsingException {
 		return hasExtendedKeyUsage(ExtendedKeyUsage.valueOf(keyUsage.toUpperCase()));
 	}
+	public boolean hasExtendedKeyUsageByOID(String oid) throws CertificateParsingException {
+		return ExtendedKeyUsage.existsKeyUsageByOID(this.certificate,oid);
+	}
+	public boolean hasExtendedKeyUsageByBouncycastleKeyPurposeId(String oid) throws CertificateEncodingException {
+		return ExtendedKeyUsage.existsKeyUsageByBouncycastleKeyPurposeId(this.certificate.getEncoded(),oid);
+	}
 	
+	public List<CertificatePolicy> getCertificatePolicies() throws CertificateParsingException, CertificateEncodingException {
+		return CertificatePolicy.getCertificatePolicies(this.certificate.getEncoded());
+	}
+	public CertificatePolicy getCertificatePolicy(String oid) throws CertificateParsingException, CertificateEncodingException {
+		return getCertificatePolicyByOID(oid);
+	}
+	public CertificatePolicy getCertificatePolicyByOID(String oid) throws CertificateParsingException, CertificateEncodingException {
+		if(oid==null) {
+			throw new CertificateParsingException("Param oid undefined");
+		}
+		List<CertificatePolicy> l = getCertificatePolicies();
+		if(l!=null && !l.isEmpty()) {
+			for (CertificatePolicy certificatePolicy : l) {
+				if(oid.equals(certificatePolicy.getOID())) {
+					return certificatePolicy;
+				}
+			}
+		}
+		return null;
+	}
+	public boolean hasCertificatePolicy(String oid) throws CertificateParsingException, CertificateEncodingException {
+		if(oid==null) {
+			throw new CertificateParsingException("Param oid undefined");
+		}
+		return this.getCertificatePolicyByOID(oid)!=null;
+	}
+	
+	public BasicConstraints getBasicConstraints() throws CertificateParsingException, CertificateEncodingException {
+		return BasicConstraints.getBasicConstraints(this.certificate.getEncoded());
+	}
+	public boolean isCA() throws CertificateParsingException, CertificateEncodingException {
+		BasicConstraints bc = this.getBasicConstraints();
+		return bc !=null ? bc.isCA() : false;
+	}
+	public long getPathLen() throws CertificateParsingException, CertificateEncodingException {
+		BasicConstraints bc = this.getBasicConstraints();
+		return bc !=null ? bc.getPathLen() : -1;
+	}
+	
+	public AuthorityKeyIdentifier getAuthorityKeyIdentifier() throws CertificateParsingException, CertificateEncodingException {
+		return AuthorityKeyIdentifier.getAuthorityKeyIdentifier(this.certificate.getEncoded());
+	}
+	
+	public AuthorityInformationAccess getAuthorityInformationAccess() throws CertificateParsingException, CertificateEncodingException {
+		return AuthorityInformationAccess.getAuthorityInformationAccess(this.certificate.getEncoded());
+	}
+	
+	public CRLDistributionPoints getCRLDistributionPoints() throws CertificateParsingException, CertificateEncodingException {
+		return CRLDistributionPoints.getCRLDistributionPoints(this.certificate.getEncoded());
+	}
 	
     /**
      * Utility method to test if a certificate is self-issued. This is

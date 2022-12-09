@@ -720,5 +720,19 @@ public class CertificateUtils {
 		}
 		
 	} 
+	
+	public static String toPEM(java.security.cert.X509Certificate cert) throws UtilsException {
+		try {
+			java.io.StringWriter sw = new java.io.StringWriter();
+		    try (org.bouncycastle.openssl.jcajce.JcaPEMWriter pw = new org.bouncycastle.openssl.jcajce.JcaPEMWriter(sw)) {
+		        pw.writeObject(cert);
+		    }
+		    sw.flush();
+		    sw.close();
+		    return sw.toString();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
 }
 

@@ -165,8 +165,7 @@ public class GovWayConsole {
         
         
         String recurse = "True";
-        //String inscopeonly = "True"; 
-        
+       
         if(spider) {
 	        System.out.println("Spider scan: " + url);
 	        
@@ -195,6 +194,7 @@ public class GovWayConsole {
 	       
 	        
 	        api.forcedUser.setForcedUser(contextId, userId);
+	        api.forcedUser.setForcedUserModeEnabled(true);
 		       
 	        //ApiResponse resp = api.spider.scan(url, "100000", recurse, contextName, "False");
 	        resp = api.spider.scanAsUser(contextId, userId, url, "100000", recurse, "False");
@@ -261,9 +261,14 @@ public class GovWayConsole {
 	        
 
 	        api.forcedUser.setForcedUser(contextId, userId);
+	        api.forcedUser.setForcedUserModeEnabled(true);
 	        
 	        //api.ascan.setOptionRescanInAttackMode(false);
 	        
+	        //api.ascan.addExcludedParam("__prevTabKey__", "Any", "*");
+	        //api.ascan.addExcludedParam("__tabKey__", "Any", "*");
+	        
+	        //String inscopeonly = "True"; 
 	        //ApiResponse resp = api.ascan.scan(url, recurse, inscopeonly, null, null, null);
 	        ApiResponse resp =  api.ascan.scanAsUser(url, contextId, userId, recurse, null, null, null);
 	        

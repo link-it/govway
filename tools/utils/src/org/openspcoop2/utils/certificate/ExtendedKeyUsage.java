@@ -129,19 +129,28 @@ public enum ExtendedKeyUsage {
 		return hasKeyUsage(x509.getCertificate());
 	}
 	public boolean hasKeyUsage(X509Certificate x509) throws CertificateParsingException {
+		return existsKeyUsageByOID(x509, this.oid);
+	}
+	public static boolean existsKeyUsageByOID(X509Certificate x509, String oid) throws CertificateParsingException {
 		if(x509.getExtendedKeyUsage()!=null) {
-			return x509.getExtendedKeyUsage().contains(this.oid);
+			return x509.getExtendedKeyUsage().contains(oid);
 		}
 		return false;
 	}
 	
 	public boolean hasKeyUsage(byte[]encoded) {
+		return existsKeyUsageByBouncycastleKeyPurposeId(encoded, this.purposeId);
+	}
+	public static boolean existsKeyUsageByBouncycastleKeyPurposeId(byte[]encoded, String keyPurposeId)  {
+		return existsKeyUsageByBouncycastleKeyPurposeId(encoded, org.bouncycastle.asn1.x509.KeyPurposeId.getInstance(new org.bouncycastle.asn1.ASN1ObjectIdentifier(keyPurposeId)));
+	}
+	public static boolean existsKeyUsageByBouncycastleKeyPurposeId(byte[]encoded, org.bouncycastle.asn1.x509.KeyPurposeId keyPurposeId)  {
 		org.bouncycastle.asn1.x509.Certificate c =org.bouncycastle.asn1.x509.Certificate.getInstance(encoded);
 		Extensions exts = c.getTBSCertificate().getExtensions();
 		if (exts != null){
 			org.bouncycastle.asn1.x509.ExtendedKeyUsage eKey = org.bouncycastle.asn1.x509.ExtendedKeyUsage.fromExtensions(exts);
 			if(eKey!=null) {
-				return eKey.hasKeyPurposeId(this.purposeId);
+				return eKey.hasKeyPurposeId(keyPurposeId);
 			}
 		}
 		return false;
