@@ -11,6 +11,7 @@ si può invece far riferimento al file ChangeLog di questa versione.
 
    Per la versione 3.3.9 utilizzare l'ultima patch version che risolve bug importanti descritti nelle sezioni:
 
+   - :ref:`3.3.9.3_bug`
    - :ref:`3.3.9.2_bug`
    - :ref:`3.3.9.1_bug`
 
@@ -21,7 +22,9 @@ si può invece far riferimento al file ChangeLog di questa versione.
 	correlazione
 	integrazione
 	generazioneTokenJWT
+	credenzialiSSL
 	bug
 	bug_p1
 	bug_p2
+	bug_p3
 
