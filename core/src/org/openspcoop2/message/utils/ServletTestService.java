@@ -778,6 +778,100 @@ public class ServletTestService extends HttpServlet {
 			}
 			
 			
+			// x-www-form-urlencoded
+			boolean echoFormUrlEncoded = false;
+			StringBuilder sbEchoFormUrlEncoded = new StringBuilder();
+			String contentTypeEchoFormUrlEncoded = null;
+			String _form_urlencoded = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncoded");
+			if(_form_urlencoded!=null && _form_urlencoded.equalsIgnoreCase("true")){
+				if(req.getContentType()!=null && ContentTypeUtilities.isMatch(HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED, req.getContentType())) {
+					Enumeration<String> en = req.getParameterNames();
+					if(en!=null) {
+						
+						String tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedPrefix");
+						String prefix = null;
+						if(tmp!=null && !"".equals(tmp)) {
+							prefix = tmp;
+						}
+						
+						String wrapKep="";
+						tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedWrapKey");
+						if(tmp!=null && !"".equals(tmp)) {
+							wrapKep = tmp;
+						}
+						
+						String wrapValue="";
+						tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedWrapValue");
+						if(tmp!=null && !"".equals(tmp)) {
+							wrapValue = tmp;
+						}
+						
+						String separatorKeyValue="=";
+						tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedSeparatorKeyValue");
+						if(tmp!=null && !"".equals(tmp)) {
+							separatorKeyValue = tmp;
+						}
+						
+						String separator="&";
+						tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedSeparator");
+						if(tmp!=null && !"".equals(tmp)) {
+							separator = tmp;
+						}
+						
+						while (en.hasMoreElements()) {
+							String key = (String) en.nextElement();
+							if(key!=null && !key.startsWith("replyFormUrlEncoded")) {
+								
+								tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncoded_ignoreParam_"+key);
+								if("true".equals(tmp)) {
+									continue;
+								}
+															
+								String value = req.getParameter(key);
+								if(value!=null) {
+									
+									tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncoded_renameParam_"+key);
+									if(tmp!=null && !"".equals(tmp)) {
+										key=tmp;
+									}
+									
+									if(sbEchoFormUrlEncoded.length()>0) {
+										sbEchoFormUrlEncoded.append(separator);
+									}
+									else {
+										if(prefix!=null) {
+											sbEchoFormUrlEncoded.append(prefix);
+										}
+									}
+									sbEchoFormUrlEncoded.append(wrapKep);
+									sbEchoFormUrlEncoded.append(key);
+									sbEchoFormUrlEncoded.append(wrapKep);
+									sbEchoFormUrlEncoded.append(separatorKeyValue);
+									sbEchoFormUrlEncoded.append(wrapValue);
+									sbEchoFormUrlEncoded.append(value);
+									sbEchoFormUrlEncoded.append(wrapValue);
+								}
+							}
+						}
+						
+						tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedSuffix");
+						if(tmp!=null && !"".equals(tmp)) {
+							sbEchoFormUrlEncoded.append(tmp);
+						}
+						
+						echoFormUrlEncoded = sbEchoFormUrlEncoded.length()>0;
+						if(echoFormUrlEncoded) {
+							contentTypeEchoFormUrlEncoded = req.getContentType();
+							tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedContentType");
+							if(tmp!=null && !"".equals(tmp)) {
+								contentTypeEchoFormUrlEncoded = tmp;
+							}
+							
+						}
+					}
+				}
+			}
+			
 			
 			
 			// opzioni tunnel SOAP
@@ -1289,6 +1383,30 @@ public class ServletTestService extends HttpServlet {
 				 res.getOutputStream().write(problemDetailSerialization);
 				 res.getOutputStream().flush();
 				 res.getOutputStream().close();
+			}
+			else if(echoFormUrlEncoded) {
+				
+				if(headers!=null && !headers.isEmpty()) {
+	            	Iterator<String> itHdr = headers.keySet().iterator();
+	            	while (itHdr.hasNext()) {
+						String returnHeaderKey = (String) itHdr.next();
+						List<String> returnHeaderValue = headers.get(returnHeaderKey);
+						if(returnHeaderValue!=null && !returnHeaderValue.isEmpty()) {
+							for (String value : returnHeaderValue) {
+								res.addHeader(returnHeaderKey, value);	
+							}
+						}
+					}
+	            }
+				 
+				res.setContentType(contentTypeEchoFormUrlEncoded);
+				 
+				res.setStatus(returnCode);
+				
+				res.getOutputStream().write(sbEchoFormUrlEncoded.toString().getBytes());
+				res.getOutputStream().flush();
+				res.getOutputStream().close();
+				
 			}
 			else{
 				

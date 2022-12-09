@@ -1,5 +1,12 @@
 2022-12-09  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug OP-1517
+	La negoziazione di un token in modalità 'SignedJWT' utilizzando un keystore di tipo 'JWK Set' falliva con il seguente errore: 
+	"Errore avvenuto durante la consegna HTTP: (Errore di Connessione) JWT Signature keystore password undefined".
+
+2022-12-09  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, Utils]
 	Aggiunta funzionalità OP-1515
 	Per ogni certificato è adesso possibile accedere anche alle seguenti informazioni:

@@ -431,7 +431,7 @@ public class TokenUtilities {
 			throw new Exception("JWT Signature keystore file undefined");
 		}
 		String keystorePassword = policy.getJwtSignKeystorePassword();
-		if(keystorePassword==null) {
+		if(keystorePassword==null && !"jwk".equalsIgnoreCase(keystoreType)) {
 			throw new Exception("JWT Signature keystore password undefined");
 		}
 		String keyAlias = policy.getJwtSignKeyAlias();

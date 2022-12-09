@@ -65,6 +65,9 @@ public class JWKSet {
 		this.jwk_set = list;
 	}
 	
+	public JWKSet() {
+
+	}
 	
 	
 	public void addJwk(JWK jwk) {

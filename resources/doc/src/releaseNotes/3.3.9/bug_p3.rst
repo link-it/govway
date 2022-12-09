@@ -7,6 +7,8 @@ Sono stati risolti i seguenti bug:
 
 - con interfacce OpenAPI complesse di grandi dimensioni la validazione dei contenuti utilizzando la libreria "swagger-request-validator" impiegava diversi secondi ad inizializzare lo schema, anche per richieste successive alla prima dove le informazioni vengono salvate in cache;
 
+- la negoziazione di un token in modalità 'SignedJWT' utilizzando un keystore di tipo 'JWK Set' falliva con il seguente errore: "Errore avvenuto durante la consegna HTTP: (Errore di Connessione) JWT Signature keystore password undefined";
+
 - sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
 
 	- CVE-2021-37533: aggiornata libreria 'commons-net' alla versione 3.9.0;

@@ -1,0 +1,17 @@
+Generazione delle chiavi di test utilizzate poi nelle configurazioni:
+
+openssl genrsa -passout pass:123456 -out testJWKrsaprivkey.pem 2048
+openssl rsa -in testJWKrsaprivkey.pem -pubout -outform DER -out testJWKrsapubkey.der
+openssl rsa -in testJWKrsaprivkey.pem -pubout -outform PEM -out testJWKrsapubkey.pem
+openssl pkcs8 -topk8 -inform PEM -outform DER -in testJWKrsaprivkey.pem -out testJWKrsaprivkey.der -nocrypt
+
+Dalle chiave pubbliche e private sopra, è possibile generare i corrispettivi jwks utilizzando il convertitore online in https://8gwifi.org/jwkconvertfunctions.jsp
+Attenzione che il json ottenuto non è all'interno di una struttura keys e quindi va inserito all'interno:
+     {"keys":[ JSON_OTTENUTO ]} 
+
+In alternativa è possibile utilizzare i comandi seguenti:
+
+java -classpath openspcoop2_utils_BUILD-90e36977.jar:lib/security/*:lib/cxf/*:lib/jackson/*:lib/swagger/* org.openspcoop2.utils.certificate.JWKPublicKeyConverter testJWKrsapubkey.der testJWKpublic.jwk true false
+
+java -classpath openspcoop2_utils_BUILD-90e36977.jar:lib/security/*:lib/cxf/*:lib/jackson/*:lib/swagger/* org.openspcoop2.utils.certificate.JWKPrivateKeyConverter testJWKrsapubkey.der testJWKrsaprivkey.der testJWKprivate.jwk true false 
+

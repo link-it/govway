@@ -628,10 +628,20 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					throw new Exception(esitoNegoziazione.getDetails(),esitoNegoziazione.getEccezioneProcessamento());
 				}
 				if(esitoNegoziazione.isInCache()) {
-					this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; expire in ("+sdf.format(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn())+")");
+					if(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
+						this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; expire in ("+sdf.format(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn())+")");
+					}
+					else {
+						this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; no expire");
+					}
 				}
 				else {
-					this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; expire in ("+sdf.format(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn())+")");
+					if(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
+						this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; expire in ("+sdf.format(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn())+")");
+					}
+					else {
+						this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; no expire");
+					}
 				}
 				
 				if(n.getValue()!=null) {

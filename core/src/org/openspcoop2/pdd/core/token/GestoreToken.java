@@ -3874,7 +3874,7 @@ public class GestoreToken {
 					throw new Exception("JWT Signature keystore file undefined");
 				}
 				String keystorePassword = policyNegoziazioneToken.getJwtSignKeystorePassword();
-				if(keystorePassword==null) {
+				if(keystorePassword==null && !"jwk".equalsIgnoreCase(keystoreType)) {
 					throw new Exception("JWT Signature keystore password undefined");
 				}
 				keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
@@ -4951,7 +4951,7 @@ public class GestoreToken {
 			throw new Exception("JWT Signature keystore file undefined");
 		}
 		String keystorePassword = policyAttributeAuthority.getRequestJwtSignKeystorePassword();
-		if(keystorePassword==null) {
+		if(keystorePassword==null && !"jwk".equalsIgnoreCase(keystoreType)) {
 			throw new Exception("JWT Signature keystore password undefined");
 		}
 		String keyAlias = policyAttributeAuthority.getRequestJwtSignKeyAlias();

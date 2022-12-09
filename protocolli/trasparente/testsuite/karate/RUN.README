@@ -218,6 +218,9 @@
 
 - Creare la cartella /tmp/govway-testsuite dove l'application server deve avere i permessi di scrittura
 
+- Copiare i certificati 'jwk' definiti nel file jwks/JWKs.README in /etc/govway/keys:
+  cp jwks/testJWKprivate.jwk /etc/govway/keys/
+  cp jwks/testJWKpublic.jwk /etc/govway/keys/
 
 Per eseguire i test:
 	ant run_test
