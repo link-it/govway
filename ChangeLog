@@ -1,5 +1,11 @@
 2022-12-12  Andrea Poli <apoli@link.it>
 
+	* [InstallerVersioneBinaria]	
+	Risolto Bug OP-1520
+	Negli script SQL per SQLServer viene aggiunta una nota iniziale che indica il charset da utilizzare (UTF-8) e la collection che deve essere case sensitive.
+
+2022-12-12  Andrea Poli <apoli@link.it>
+
 	* Rilasciata versione 3.3.9.p3
 
 2022-12-09  Andrea Poli <apoli@link.it>

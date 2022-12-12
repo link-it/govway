@@ -11,7 +11,7 @@ seguenti:
 
 #.  Creare un database, per ospitare le tabelle dell'applicazione,
     avente il nome indicato durante la fase di setup. Il charset da
-    utilizzare è UTF-8.
+    utilizzare è UTF-8, la collection deve essere case sensitive.
 
 #.  Impostare i permessi di accesso in modo che l'utente creato al passo
     1 abbia i diritti di lettura/scrittura sul database creato al *passo
