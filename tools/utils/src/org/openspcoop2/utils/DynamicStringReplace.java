@@ -467,6 +467,7 @@ public class DynamicStringReplace {
 		List<String> arrayMapPosition = new ArrayList<String>();
 		boolean nameContainsPoint = name.contains(".");
 		if(nameContainsPoint && complexField){
+			
 			// Devo convertire i punti dentro le quadre che potrebbero far parte delle chiavi
 			StringBuilder sbFormat = new StringBuilder();
 			boolean start = false;
@@ -486,6 +487,26 @@ public class DynamicStringReplace {
 				}
 			}
 			String newName = sbFormat.toString();
+			
+//			sbFormat = new StringBuilder();
+//			start = false;
+//			for (int i = 0; i < newName.length(); i++) {
+//				char c = newName.charAt(i);
+//				if((!start) && (c == '(')) {
+//					start = true;
+//				}
+//				if((start) && (c == ')')) {
+//					start = false;
+//				}
+//				if(start && c == '.') {
+//					sbFormat.append('_');
+//				}
+//				else {
+//					sbFormat.append(c);
+//				}
+//			}
+//			newName = sbFormat.toString();
+			
 			//System.out.println("OLD ["+name+"]");
 			//System.out.println("NEW ["+newName+"]");
 			nameContainsPoint = newName.contains(".");
@@ -535,6 +556,7 @@ public class DynamicStringReplace {
 				if(sP.length()>2) {
 					sP = sP.substring(1, sP.length()-1);
 				}
+				//System.out.println("METODO getMethod["+getMethod+"] ["+sP+"] ");
 				if(sP.contains(",")) {
 					parametersObject = new ArrayList<String>();
 					parametersClass = new ArrayList<Class<?>>();

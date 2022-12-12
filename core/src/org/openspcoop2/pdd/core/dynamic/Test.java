@@ -43,7 +43,9 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PddProperties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.Utilities;
@@ -218,6 +220,7 @@ public class Test {
 		connettoreMsg.setPropertiesTrasporto(new HashMap<String, List<String>>());
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header1", "Valore1");
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header2", "Valore2");
+		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header3.1", "Valore3.1");
 		
 		connettoreMsg.setPropertiesUrlBased(new HashMap<String, List<String>>());
 		TransportUtils.addParameter(connettoreMsg.getPropertiesUrlBased(),"P1", "Valore1URL");
@@ -257,6 +260,10 @@ public class Test {
 		requestInfo.setIdentitaPdD(new IDSoggetto("TIPO", null)); // volutamente null
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, requestInfo);
 				
+		URLProtocolContext urlProtocolContext = new URLProtocolContextImpl(log);
+		urlProtocolContext.setHeaders(connettoreMsg.getPropertiesTrasporto());
+		requestInfo.setProtocolContext(urlProtocolContext);
+		
 		DynamicInfo dInfo = new DynamicInfo(connettoreMsg, pddContext);
 		
 		
@@ -510,6 +517,26 @@ public class Test {
 		if(value!=null) {
 			throw new Exception("Expected null value, found '"+value+"'");
 		}	
+		
+		expr = prefix + "{transportContext:headerFirstValue(Header3.1)}";
+		DynamicUtils.validate("testHeaderParametroConPunto", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPunto", expr, dynamicMap, pddContext);
+		System.out.println("testHeaderLowerCase: "+value+"\n\n");
+		expected = "Valore3.1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{transportContext:headerValues(Header3.1)[0]}";
+		DynamicUtils.validate("testHeaderParametroConPuntoEArray", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPuntoEArray", expr, dynamicMap, pddContext);
+		System.out.println("testHeaderLowerCase: "+value+"\n\n");
+		expected = "Valore3.1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		
 		
 		expr = prefix + "{query:P1}";
 		DynamicUtils.validate("testUrl", expr, addPrefixError);
