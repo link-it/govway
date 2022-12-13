@@ -239,6 +239,7 @@ public class Test {
 						
 		PdDContext pddContext = new PdDContext();
 		MapKey<String> TEST1 = org.openspcoop2.utils.Map.newMapKey("TEST1");
+		MapKey<String> TEST2 = org.openspcoop2.utils.Map.newMapKey("TEST2.1.a.2.3");
 		pddContext.addObject(TEST1, "VALORE DI ESEMPIO");
 		
 		boolean bufferMessage_readOnly = true;
@@ -263,6 +264,8 @@ public class Test {
 		URLProtocolContext urlProtocolContext = new URLProtocolContextImpl(log);
 		urlProtocolContext.setHeaders(connettoreMsg.getPropertiesTrasporto());
 		requestInfo.setProtocolContext(urlProtocolContext);
+		
+		pddContext.addObject(TEST2, urlProtocolContext);
 		
 		DynamicInfo dInfo = new DynamicInfo(connettoreMsg, pddContext);
 		
@@ -468,6 +471,35 @@ public class Test {
 		}
 		
 		
+		expr = prefix + "{context:[TEST2.1.a.2.3].headerFirstValue(Header3.1)}";
+		DynamicUtils.validate("testContextHeaderParametroConPuntoMethod", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testContextHeaderParametroConPuntoMethod", expr, dynamicMap, pddContext);
+		System.out.println("testContextHeaderParametroConPuntoMethod: "+value+"\n\n");
+		expected = "Valore3.1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:(TEST2.1.a.2.3).headerFirstValue(Header3.1)}";
+		DynamicUtils.validate("testContextHeaderParametroConPuntoMethod2", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testContextHeaderParametroConPuntoMethod2", expr, dynamicMap, pddContext);
+		System.out.println("testContextHeaderParametroConPuntoMethod2: "+value+"\n\n");
+		expected = "Valore3.1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{context:[TEST2.1.a.2.3].headerValues(Header3.1)[0]}";
+		DynamicUtils.validate("testContextHeaderParametroConPuntoEArray", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testContextHeaderParametroConPuntoEArray", expr, dynamicMap, pddContext);
+		System.out.println("testContextHeaderParametroConPuntoEArray: "+value+"\n\n");
+		expected = "Valore3.1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		
+		
 		expr = prefix + "{header:Header1}";
 		DynamicUtils.validate("testHeader", expr, addPrefixError);
 		value = DynamicUtils.convertDynamicPropertyValue("testHeader", expr, dynamicMap, pddContext);
@@ -518,10 +550,19 @@ public class Test {
 			throw new Exception("Expected null value, found '"+value+"'");
 		}	
 		
-		expr = prefix + "{transportContext:headerFirstValue(Header3.1)}";
+		expr = prefix + "{header:[Header3.1]}";
 		DynamicUtils.validate("testHeaderParametroConPunto", expr, addPrefixError);
 		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPunto", expr, dynamicMap, pddContext);
-		System.out.println("testHeaderLowerCase: "+value+"\n\n");
+		System.out.println("testHeaderParametroConPunto: "+value+"\n\n");
+		expected = "Valore3.1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{transportContext:headerFirstValue(Header3.1)}";
+		DynamicUtils.validate("testHeaderParametroConPuntoMethod", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPuntoMethod", expr, dynamicMap, pddContext);
+		System.out.println("testHeaderParametroConPuntoMethod: "+value+"\n\n");
 		expected = "Valore3.1";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
@@ -530,7 +571,7 @@ public class Test {
 		expr = prefix + "{transportContext:headerValues(Header3.1)[0]}";
 		DynamicUtils.validate("testHeaderParametroConPuntoEArray", expr, addPrefixError);
 		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPuntoEArray", expr, dynamicMap, pddContext);
-		System.out.println("testHeaderLowerCase: "+value+"\n\n");
+		System.out.println("testHeaderParametroConPuntoEArray: "+value+"\n\n");
 		expected = "Valore3.1";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");

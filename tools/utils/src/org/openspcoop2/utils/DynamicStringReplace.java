@@ -344,21 +344,88 @@ public class DynamicStringReplace {
 		
 		// Se l'oggetto è una mappa provo ad estrarre l'oggetto indicato.
 		if(object instanceof List<?> || object instanceof Map<?,?> || object instanceof Object[]){
-		
+				
 			String position = value;
 			String newValue = value;
 			boolean existsUlterioreParametro = false;
-			if(value.contains(".")){
-				position = value.substring(0, value.indexOf("."));
-				try{
-					newValue = value.substring(value.indexOf(".")+1);
-				}catch(Throwable e){
-					// ignore
+			boolean valueContainsPoint = value.contains(".");
+			if(valueContainsPoint && complexField){
+				
+				// Devo convertire i punti dentro le quadre che potrebbero far parte delle chiavi
+				StringBuilder sbFormat = new StringBuilder();
+				boolean start = false;
+				for (int i = 0; i < value.length(); i++) {
+					char c = value.charAt(i);
+					if((!start) && (c == '[')) {
+						start = true;
+					}
+					if((start) && (c == ']')) {
+						start = false;
+					}
+					if(start && c == '.') {
+						sbFormat.append('_');
+					}
+					else {
+						sbFormat.append(c);
+					}
+				}
+				String internalNewValue = sbFormat.toString();
+				
+				// Devo convertire i punti dentro le tonde che potrebbero far parte delle chiavi
+				sbFormat = new StringBuilder();
+				start = false;
+				for (int i = 0; i < internalNewValue.length(); i++) {
+					char c = internalNewValue.charAt(i);
+					if((!start) && (c == '(')) {
+						start = true;
+					}
+					if((start) && (c == ')')) {
+						start = false;
+					}
+					if(start && c == '.') {
+						sbFormat.append('_');
+					}
+					else {
+						sbFormat.append(c);
+					}
+				}
+				internalNewValue = sbFormat.toString();
+				
+				//System.out.println("OLD ["+value+"]");
+				//System.out.println("NEW ["+internalNewValue+"]");
+				
+				int indexOfPoint = internalNewValue.indexOf(".");
+				if(indexOfPoint>0) {
+					position = value.substring(0, indexOfPoint);
+					try{
+						newValue = value.substring(indexOfPoint+1);
+					}catch(Throwable e){
+						// ignore
+					}
+				}
+				else {
+					position = value;
+					newValue = null;
+				}
+				if(position!=null) {
+					if( (position.startsWith("[") || position.startsWith("("))
+							&& 
+							position.length()>1) {
+						position = position.substring(1);
+					}
+					if( (position.endsWith("]") || position.endsWith(")"))
+							&& 
+							position.length()>1) {
+						position = position.substring(0,(position.length()-1));
+					}
+					//System.out.println("position ["+position+"]");
 				}
 				if(newValue!=null && StringUtils.isNotEmpty(newValue.trim())) {
 					existsUlterioreParametro=true;
 				}
 			}
+			
+			
 			
 			Object oInternal = null;
 			
@@ -488,24 +555,25 @@ public class DynamicStringReplace {
 			}
 			String newName = sbFormat.toString();
 			
-//			sbFormat = new StringBuilder();
-//			start = false;
-//			for (int i = 0; i < newName.length(); i++) {
-//				char c = newName.charAt(i);
-//				if((!start) && (c == '(')) {
-//					start = true;
-//				}
-//				if((start) && (c == ')')) {
-//					start = false;
-//				}
-//				if(start && c == '.') {
-//					sbFormat.append('_');
-//				}
-//				else {
-//					sbFormat.append(c);
-//				}
-//			}
-//			newName = sbFormat.toString();
+			// Devo convertire i punti dentro le tonde che potrebbero far parte delle chiavi
+			sbFormat = new StringBuilder();
+			start = false;
+			for (int i = 0; i < newName.length(); i++) {
+				char c = newName.charAt(i);
+				if((!start) && (c == '(')) {
+					start = true;
+				}
+				if((start) && (c == ')')) {
+					start = false;
+				}
+				if(start && c == '.') {
+					sbFormat.append('_');
+				}
+				else {
+					sbFormat.append(c);
+				}
+			}
+			newName = sbFormat.toString();
 			
 			//System.out.println("OLD ["+name+"]");
 			//System.out.println("NEW ["+newName+"]");
