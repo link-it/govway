@@ -1,3 +1,10 @@
+2022-12-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1524
+	Dopo aver effettuando un export di una API, la successiva importazione dell’archivio in un’installazione in cui il soggetto di default indicato nell'installer differisce, 
+	provoca un fallimento dell'import poichè viene erroneamente richiesta la presenza del soggetto originale da cui era stato fatto l'export.
+
 2022-12-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

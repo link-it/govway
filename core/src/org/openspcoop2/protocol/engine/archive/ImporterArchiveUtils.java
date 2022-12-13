@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.engine.archive;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,6 +216,47 @@ public class ImporterArchiveUtils {
 			
 			ArchiveEsitoImport esito = new ArchiveEsitoImport();
 			
+			// Soggetto Default
+			Map<String, IDSoggetto> mapIdSoggettoDefault = new HashMap<>();
+			Map<String, org.openspcoop2.core.registry.Soggetto> mapSoggettoDefault = new HashMap<>();
+			Map<String, Boolean> mapAPIconReferente = new HashMap<>();
+			if(this.protocolFactoryManager==null) {
+				throw new Exception("ProtocolFactoryManager not initialized");
+			}
+			Enumeration<String> pEnum = this.protocolFactoryManager.getProtocolFactories().keys();
+			if(pEnum!=null) {
+				while (pEnum.hasMoreElements()) {
+					String protocollo = (String) pEnum.nextElement();
+					IDSoggetto soggettoDefaultProtocollo = this.importerEngine.getSoggettoDefault( protocollo );
+					if(soggettoDefaultProtocollo==null) {
+						throw new Exception("IDSoggetto di default non trovato per il protocollo '"+protocollo+"'");
+					}
+					mapIdSoggettoDefault.put(protocollo, soggettoDefaultProtocollo);
+					
+					org.openspcoop2.core.registry.Soggetto soggettoDefault = null;
+					try {
+						soggettoDefault = this.importerEngine.getSoggettoRegistro(soggettoDefaultProtocollo);
+						if(soggettoDefault!=null) {
+							mapSoggettoDefault.put(protocollo, soggettoDefault);
+						}
+					}catch( DriverRegistroServiziNotFound notFound) {
+						// ignore
+					}
+					if(soggettoDefault==null) {
+						throw new Exception("Soggetto di default non trovato per il protocollo '"+protocollo+"'");
+					}
+					
+					IProtocolFactory<?> pf = this.protocolFactoryManager.getProtocolFactoryByName(protocollo);
+					boolean supportoReferente = false;
+					if(pf!=null) {
+						supportoReferente = pf.createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
+					}
+					mapAPIconReferente.put(protocollo, supportoReferente);
+				}
+			}
+			
+			
+			
 			
 			// Pdd
 			for (int i = 0; i < archive.getPdd().size(); i++) {
@@ -355,7 +397,8 @@ public class ImporterArchiveUtils {
 					this.importSoggetto(archiveSoggetto, detail,
 							isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
 							isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
-							isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials);
+							isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials,
+							mapIdSoggettoDefault, mapSoggettoDefault);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -403,7 +446,8 @@ public class ImporterArchiveUtils {
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoServizioParteComune);
 				try{
 					archiveAccordoServizioParteComune.update();
-					this.importAccordoServizioParteComune(archiveAccordoServizioParteComune, utilizzoAzioniDiretteInAccordoAbilitato, detail);
+					this.importAccordoServizioParteComune(archiveAccordoServizioParteComune, utilizzoAzioniDiretteInAccordoAbilitato, detail,
+							mapIdSoggettoDefault, mapAPIconReferente);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -422,10 +466,22 @@ public class ImporterArchiveUtils {
 				ArchiveAccordoServizioParteSpecifica archiveAccordoServizioParteSpecifica =
 						archive.getAccordiServizioParteSpecifica().get(i);
 				archiveAccordoServizioParteSpecifica.update();
-				IDAccordo idAccordo = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteComune();
-				if(this.importerEngine.existsAccordoServizioParteComune(idAccordo)){
+				IDAccordo idAccordoServizioParteComune = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteComune();
+				
+				IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idAccordoServizioParteComune.getSoggettoReferente().getTipo());
+				boolean APIconReferente = mapAPIconReferente.get(protocolFactory.getProtocol());
+				if(!APIconReferente) {
+					IDSoggetto soggettoDefaultProtocollo = mapIdSoggettoDefault.get(protocolFactory.getProtocol()); 
+					if(!idAccordoServizioParteComune.getSoggettoReferente().equals(soggettoDefaultProtocollo)) {
+						idAccordoServizioParteComune.getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+						idAccordoServizioParteComune.getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+						archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().setAccordoServizioParteComune(this.idAccordoFactory.getUriFromIDAccordo(idAccordoServizioParteComune));
+					}
+				}
+				
+				if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioParteComune)){
 					// verifico la tipologia
-					AccordoServizioParteComune aspc = this.importerEngine.getAccordoServizioParteComune(idAccordo);
+					AccordoServizioParteComune aspc = this.importerEngine.getAccordoServizioParteComune(idAccordoServizioParteComune);
 					if(aspc.getServizioComposto()!=null){
 						listAccordiServizioParteSpecifica_serviziComposti.add(archiveAccordoServizioParteSpecifica);	
 					}else{
@@ -457,7 +513,8 @@ public class ImporterArchiveUtils {
 							isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 							isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
 							detail,
-							listMappingErogazionePA);
+							listMappingErogazionePA,
+							mapIdSoggettoDefault, mapAPIconReferente);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -472,7 +529,8 @@ public class ImporterArchiveUtils {
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoServizioComposto);
 				try{
 					archiveAccordoServizioComposto.update();
-					this.importAccordoServizioComposto(archiveAccordoServizioComposto, utilizzoAzioniDiretteInAccordoAbilitato, detail);
+					this.importAccordoServizioComposto(archiveAccordoServizioComposto, utilizzoAzioniDiretteInAccordoAbilitato, detail,
+							mapIdSoggettoDefault, mapAPIconReferente);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -491,7 +549,8 @@ public class ImporterArchiveUtils {
 							isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 							isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
 							detail,
-							listMappingErogazionePA);
+							listMappingErogazionePA,
+							mapIdSoggettoDefault, mapAPIconReferente);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -1149,7 +1208,8 @@ public class ImporterArchiveUtils {
 	public void importSoggetto(ArchiveSoggetto archiveSoggetto,ArchiveEsitoImportDetail detail,
 			boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
 			boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
-			boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials){
+			boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials,
+			Map<String, IDSoggetto> mapIdSoggettoDefault, Map<String, org.openspcoop2.core.registry.Soggetto> mapSoggettoDefault){
 		
 		IDSoggetto idSoggetto = archiveSoggetto.getIdSoggetto();
 		IProtocolFactory<?> protocolFactory = null;
@@ -1173,7 +1233,8 @@ public class ImporterArchiveUtils {
 				// --- check soggetto default ---
 				
 				protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
-				IDSoggetto soggettoDefaultProtocollo = this.importerEngine.getSoggettoDefault( protocolFactory.getProtocol());
+				//IDSoggetto soggettoDefaultProtocollo = this.importerEngine.getSoggettoDefault( protocolFactory.getProtocol());
+				IDSoggetto soggettoDefaultProtocollo = mapIdSoggettoDefault.get(protocolFactory.getProtocol());
 								
 				// non devono essere importati soggetti di default diversi da quelli presenti
 				if(archiveSoggetto.getSoggettoConfigurazione().isDominioDefault()) {
@@ -1189,16 +1250,17 @@ public class ImporterArchiveUtils {
 				if(soggettoDefaultProtocollo!=null) {
 					if(soggettoDefaultProtocollo.equals(idSoggetto)) {
 						archiveSoggetto.getSoggettoConfigurazione().setDominioDefault(true);
-						try {
-							org.openspcoop2.core.registry.Soggetto soggettoDefault = this.importerEngine.getSoggettoRegistro(soggettoDefaultProtocollo);
+						//try {
+							//org.openspcoop2.core.registry.Soggetto soggettoDefault = this.importerEngine.getSoggettoRegistro(soggettoDefaultProtocollo);
+							org.openspcoop2.core.registry.Soggetto soggettoDefault = mapSoggettoDefault.get(protocolFactory.getProtocol());
 							if(soggettoDefault!=null && soggettoDefault.getPortaDominio()!=null) {
 								if(!soggettoDefault.getPortaDominio().equals(archiveSoggetto.getSoggettoRegistro().getPortaDominio())) {
 									archiveSoggetto.getSoggettoRegistro().setPortaDominio(soggettoDefault.getPortaDominio());
 								}
 							}
-						}catch( DriverRegistroServiziNotFound notFound) {
+						//}catch( DriverRegistroServiziNotFound notFound) {
 							// ignore
-						}
+						//}
 					}
 				}
 				
@@ -1823,11 +1885,28 @@ public class ImporterArchiveUtils {
 	
 	public void importAccordoServizioParteComune(ArchiveAccordoServizioParteComune archiveAccordoServizioParteComune,
 			boolean utilizzoAzioniDiretteInAccordoAbilitato,
-			ArchiveEsitoImportDetail detail){
+			ArchiveEsitoImportDetail detail,
+			Map<String, IDSoggetto> mapIdSoggettoDefault, Map<String, Boolean> mapAPIconReferente){
 		
 		IDAccordo idAccordoServizioParteComune = archiveAccordoServizioParteComune.getIdAccordoServizioParteComune();
 		IDSoggetto idSoggettoReferente = archiveAccordoServizioParteComune.getIdSoggettoReferente();
 		try{
+			// --- fix soggetto referente --
+			IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggettoReferente.getTipo());
+			boolean APIconReferente = mapAPIconReferente.get(protocolFactory.getProtocol());
+			if(!APIconReferente) {
+				IDSoggetto soggettoDefaultProtocollo = mapIdSoggettoDefault.get(protocolFactory.getProtocol()); 
+				if(!idSoggettoReferente.equals(soggettoDefaultProtocollo)) {
+					archiveAccordoServizioParteComune.getAccordoServizioParteComune().getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+					archiveAccordoServizioParteComune.getAccordoServizioParteComune().getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+					idSoggettoReferente.setTipo(soggettoDefaultProtocollo.getTipo());
+					idSoggettoReferente.setNome(soggettoDefaultProtocollo.getNome());
+					idAccordoServizioParteComune.getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+					idAccordoServizioParteComune.getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+				}
+			}
+			
+			
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioParteComune)){
@@ -1837,11 +1916,14 @@ public class ImporterArchiveUtils {
 			}
 			
 				
+			
 			// --- check elementi riferiti ---
 			
 			// soggetto referente
-			if(this.importerEngine.existsSoggettoRegistro(idSoggettoReferente) == false ){
-				throw new Exception("Soggetto proprietario ["+idSoggettoReferente+"] non esistente");
+			if(APIconReferente) {
+				if(this.importerEngine.existsSoggettoRegistro(idSoggettoReferente) == false ){
+					throw new Exception("Soggetto proprietario ["+idSoggettoReferente+"] non esistente");
+				}
 			}
 			
 			// gruppi
@@ -1862,10 +1944,12 @@ public class ImporterArchiveUtils {
 						
 
 			// ---- visibilita' oggetto riferiti ---
-			org.openspcoop2.core.registry.Soggetto soggetto = this.importerEngine.getSoggettoRegistro(idSoggettoReferente);
-			if(this.importerEngine.isVisioneOggettiGlobale(this.userLogin)==false){
-				if(this.userLogin.equals(soggetto.getSuperUser())==false){
-					throw new Exception("Il soggetto referente ["+idSoggettoReferente+"] non è visibile/utilizzabile dall'utente collegato ("+this.userLogin+")");
+			if(APIconReferente) {
+				org.openspcoop2.core.registry.Soggetto soggetto = this.importerEngine.getSoggettoRegistro(idSoggettoReferente);
+				if(this.importerEngine.isVisioneOggettiGlobale(this.userLogin)==false){
+					if(this.userLogin.equals(soggetto.getSuperUser())==false){
+						throw new Exception("Il soggetto referente ["+idSoggettoReferente+"] non è visibile/utilizzabile dall'utente collegato ("+this.userLogin+")");
+					}
 				}
 			}
 			
@@ -1966,13 +2050,29 @@ public class ImporterArchiveUtils {
 	
 	public void importAccordoServizioComposto(ArchiveAccordoServizioComposto archiveAccordoServizioComposto,
 			boolean utilizzoAzioniDiretteInAccordoAbilitato,
-			ArchiveEsitoImportDetail detail){
+			ArchiveEsitoImportDetail detail,
+			Map<String, IDSoggetto> mapIdSoggettoDefault, Map<String, Boolean> mapAPIconReferente){
 		
 		IDAccordo idAccordoServizioComposto = archiveAccordoServizioComposto.getIdAccordoServizioParteComune();
 		IDSoggetto idSoggettoReferente = archiveAccordoServizioComposto.getIdSoggettoReferente();
 		IDAccordoCooperazione idAccordoCooperazione = archiveAccordoServizioComposto.getIdAccordoCooperazione();
 		List<IDServizio> idServiziComponenti = archiveAccordoServizioComposto.getIdServiziComponenti();
 		try{
+			// --- fix soggetto referente --
+			IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggettoReferente.getTipo());
+			boolean APIconReferente = mapAPIconReferente.get(protocolFactory.getProtocol());
+			if(!APIconReferente) {
+				IDSoggetto soggettoDefaultProtocollo = mapIdSoggettoDefault.get(protocolFactory.getProtocol()); 
+				if(!idSoggettoReferente.equals(soggettoDefaultProtocollo)) {
+					archiveAccordoServizioComposto.getAccordoServizioParteComune().getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+					archiveAccordoServizioComposto.getAccordoServizioParteComune().getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+					idSoggettoReferente.setTipo(soggettoDefaultProtocollo.getTipo());
+					idSoggettoReferente.setNome(soggettoDefaultProtocollo.getNome());
+					idAccordoServizioComposto.getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+					idAccordoServizioComposto.getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+				}
+			}
+			
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioComposto)){
@@ -1982,11 +2082,14 @@ public class ImporterArchiveUtils {
 			}
 			
 				
+			
 			// --- check elementi riferiti ---
 			
-			// soggetto
-			if(this.importerEngine.existsSoggettoRegistro(idSoggettoReferente) == false ){
-				throw new Exception("Soggetto proprietario ["+idSoggettoReferente+"] non esistente");
+			// soggetto referente
+			if(APIconReferente) {
+				if(this.importerEngine.existsSoggettoRegistro(idSoggettoReferente) == false ){
+					throw new Exception("Soggetto proprietario ["+idSoggettoReferente+"] non esistente");
+				}
 			}
 			
 			// accordo cooperazione
@@ -2029,11 +2132,13 @@ public class ImporterArchiveUtils {
 			
 
 			// ---- visibilita' oggetto riferiti ---
-			// soggetto
-			org.openspcoop2.core.registry.Soggetto soggetto = this.importerEngine.getSoggettoRegistro(idSoggettoReferente);
-			if(this.importerEngine.isVisioneOggettiGlobale(this.userLogin)==false){
-				if(this.userLogin.equals(soggetto.getSuperUser())==false){
-					throw new Exception("Il soggetto referente ["+idSoggettoReferente+"] non è visibile/utilizzabile dall'utente collegato ("+this.userLogin+")");
+			// soggetto referente
+			if(APIconReferente) {
+				org.openspcoop2.core.registry.Soggetto soggetto = this.importerEngine.getSoggettoRegistro(idSoggettoReferente);
+				if(this.importerEngine.isVisioneOggettiGlobale(this.userLogin)==false){
+					if(this.userLogin.equals(soggetto.getSuperUser())==false){
+						throw new Exception("Il soggetto referente ["+idSoggettoReferente+"] non è visibile/utilizzabile dall'utente collegato ("+this.userLogin+")");
+					}
 				}
 			}
 			// accordo cooperazione
@@ -2331,7 +2436,8 @@ public class ImporterArchiveUtils {
 			boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
 			ArchiveEsitoImportDetail detail,
-			List<MappingErogazionePortaApplicativa> listMappingErogazionePA){
+			List<MappingErogazionePortaApplicativa> listMappingErogazionePA,
+			Map<String, IDSoggetto> mapIdSoggettoDefault, Map<String, Boolean> mapAPIconReferente){
 		
 		IDAccordo idAccordoServizioParteComune = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteComune();
 		IDServizio idAccordoServizioParteSpecifica = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica();
@@ -2370,6 +2476,17 @@ public class ImporterArchiveUtils {
 			}
 			
 			// accordo di servizio parte comune
+			IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggettoErogatore.getTipo());
+			boolean APIconReferente = mapAPIconReferente.get(protocolFactory.getProtocol());
+			if(!APIconReferente) {
+				// Lascio il codice, ma lo switch viene effettuato prima durante la divisione asps che implementano accordi di servizio parte comune e composti
+				IDSoggetto soggettoDefaultProtocollo = mapIdSoggettoDefault.get(protocolFactory.getProtocol()); 
+				if(!idAccordoServizioParteComune.getSoggettoReferente().equals(soggettoDefaultProtocollo)) {
+					idAccordoServizioParteComune.getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+					idAccordoServizioParteComune.getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+					archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().setAccordoServizioParteComune(this.idAccordoFactory.getUriFromIDAccordo(idAccordoServizioParteComune));
+				}
+			}
 			if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioParteComune) == false ){
 				throw new Exception(labelAccordoParteComune+" ["+idAccordoServizioParteComune+"] non esistente");
 			}

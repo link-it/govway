@@ -21,8 +21,10 @@
 package org.openspcoop2.protocol.engine.archive;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
@@ -57,7 +59,9 @@ import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.AbstractArchiveGenericProperties;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
@@ -103,6 +107,7 @@ public class DeleterArchiveUtils {
 	private String userLogin;
 	private boolean deletePolicyConfigurazione;
 	private boolean deletePluginConfigurazione;
+	private ProtocolFactoryManager protocolFactoryManager;
 	
 	public DeleterArchiveUtils(AbstractArchiveEngine importerEngine,Logger log,
 			String userLogin,
@@ -113,6 +118,7 @@ public class DeleterArchiveUtils {
 		this.userLogin = userLogin;
 		this.deletePolicyConfigurazione = deletePolicyConfigurazione;
 		this.deletePluginConfigurazione = deletePluginConfigurazione;
+		this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
 	}
 	
 	private static String NEW_LINE = "\n\t\t";
@@ -123,6 +129,33 @@ public class DeleterArchiveUtils {
 		try{
 			
 			ArchiveEsitoDelete esito = new ArchiveEsitoDelete();
+			
+			// Soggetto Default
+			Map<String, IDSoggetto> mapIdSoggettoDefault = new HashMap<>();
+			Map<String, Boolean> mapAPIconReferente = new HashMap<>();
+			if(this.protocolFactoryManager==null) {
+				throw new Exception("ProtocolFactoryManager not initialized");
+			}
+			Enumeration<String> pEnum = this.protocolFactoryManager.getProtocolFactories().keys();
+			if(pEnum!=null) {
+				while (pEnum.hasMoreElements()) {
+					String protocollo = (String) pEnum.nextElement();
+					IDSoggetto soggettoDefaultProtocollo = this.importerEngine.getSoggettoDefault( protocollo );
+					if(soggettoDefaultProtocollo==null) {
+						throw new Exception("IDSoggetto di default non trovato per il protocollo '"+protocollo+"'");
+					}
+					mapIdSoggettoDefault.put(protocollo, soggettoDefaultProtocollo);
+										
+					IProtocolFactory<?> pf = this.protocolFactoryManager.getProtocolFactoryByName(protocollo);
+					boolean supportoReferente = false;
+					if(pf!=null) {
+						supportoReferente = pf.createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
+					}
+					mapAPIconReferente.put(protocollo, supportoReferente);
+				}
+			}
+			
+			
 			
 			
 			
@@ -388,7 +421,8 @@ public class DeleterArchiveUtils {
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoServizioComposto);
 				try{
 					archiveAccordoServizioComposto.update();
-					this.deleteAccordoServizioComposto(archiveAccordoServizioComposto, detail);
+					this.deleteAccordoServizioComposto(archiveAccordoServizioComposto, detail,
+							mapIdSoggettoDefault, mapAPIconReferente);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -421,7 +455,8 @@ public class DeleterArchiveUtils {
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoServizioParteComune);
 				try{
 					archiveAccordoServizioParteComune.update();
-					this.deleteAccordoServizioParteComune(archiveAccordoServizioParteComune, detail);
+					this.deleteAccordoServizioParteComune(archiveAccordoServizioParteComune, detail,
+							mapIdSoggettoDefault, mapAPIconReferente);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -1428,10 +1463,24 @@ public class DeleterArchiveUtils {
 	
 	
 	public void deleteAccordoServizioParteComune(ArchiveAccordoServizioParteComune archiveAccordoServizioParteComune,
-			ArchiveEsitoImportDetail detail){
+			ArchiveEsitoImportDetail detail,
+			Map<String, IDSoggetto> mapIdSoggettoDefault, Map<String, Boolean> mapAPIconReferente){
 		
 		IDAccordo idAccordoServizioParteComune = archiveAccordoServizioParteComune.getIdAccordoServizioParteComune();
 		try{
+			// --- fix soggetto referente --
+			IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idAccordoServizioParteComune.getSoggettoReferente().getTipo());
+			boolean APIconReferente = mapAPIconReferente.get(protocolFactory.getProtocol());
+			if(!APIconReferente) {
+				IDSoggetto soggettoDefaultProtocollo = mapIdSoggettoDefault.get(protocolFactory.getProtocol()); 
+				if(!idAccordoServizioParteComune.getSoggettoReferente().equals(soggettoDefaultProtocollo)) {
+					archiveAccordoServizioParteComune.getAccordoServizioParteComune().getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+					archiveAccordoServizioParteComune.getAccordoServizioParteComune().getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+					idAccordoServizioParteComune.getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+					idAccordoServizioParteComune.getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+				}
+			}
+			
 			// --- check esistenza ---
 			if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioParteComune)==false){
 				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
@@ -1472,10 +1521,24 @@ public class DeleterArchiveUtils {
 	
 	
 	public void deleteAccordoServizioComposto(ArchiveAccordoServizioComposto archiveAccordoServizioComposto,
-			ArchiveEsitoImportDetail detail){
+			ArchiveEsitoImportDetail detail,
+			Map<String, IDSoggetto> mapIdSoggettoDefault, Map<String, Boolean> mapAPIconReferente){
 		
 		IDAccordo idAccordoServizioComposto = archiveAccordoServizioComposto.getIdAccordoServizioParteComune();
 		try{
+			// --- fix soggetto referente --
+			IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idAccordoServizioComposto.getSoggettoReferente().getTipo());
+			boolean APIconReferente = mapAPIconReferente.get(protocolFactory.getProtocol());
+			if(!APIconReferente) {
+				IDSoggetto soggettoDefaultProtocollo = mapIdSoggettoDefault.get(protocolFactory.getProtocol()); 
+				if(!idAccordoServizioComposto.getSoggettoReferente().equals(soggettoDefaultProtocollo)) {
+					archiveAccordoServizioComposto.getAccordoServizioParteComune().getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+					archiveAccordoServizioComposto.getAccordoServizioParteComune().getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+					idAccordoServizioComposto.getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+					idAccordoServizioComposto.getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+				}
+			}
+			
 			// --- check esistenza ---
 			if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioComposto)==false){
 				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);

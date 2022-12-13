@@ -21,8 +21,12 @@
 package org.openspcoop2.protocol.engine.archive;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -30,6 +34,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.utils.resources.MapReader;
 
 /**
  *  ArchiveValidator
@@ -73,6 +78,44 @@ public class ArchiveValidator {
 		
 		ImporterInformationMissingUtils importerInformationMissingUtils = 
 				new ImporterInformationMissingUtils(importInformationMissingCollection, this.registryReader, validazioneDocumenti, protocolFactory, userLogin, archive);
+		
+		// Soggetto Default
+		Map<String, IDSoggetto> mapIdSoggettoDefault = new HashMap<>();
+		Map<String, Boolean> mapAPIconReferente = new HashMap<>();
+		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		if(protocolFactoryManager==null) {
+			throw new Exception("ProtocolFactoryManager not initialized");
+		}
+		Enumeration<String> pEnum = protocolFactoryManager.getProtocolFactories().keys();
+		if(pEnum!=null) {
+			while (pEnum.hasMoreElements()) {
+				String protocollo = (String) pEnum.nextElement();
+				
+				MapReader<String, String> mapTipoSoggettoDefault = protocolFactoryManager.getDefaultOrganizationTypes();
+				if(mapTipoSoggettoDefault==null || mapTipoSoggettoDefault.size()<=0) {
+					throw new Exception("TipiSoggetto di default non trovato per il protocollo '"+protocollo+"'");
+				}
+				
+				String tipoSoggettoDefault = mapTipoSoggettoDefault.get(protocollo);
+				if(tipoSoggettoDefault==null) {
+					throw new Exception("TipoSoggetto di default non trovato per il protocollo '"+protocollo+"'");
+				}
+				
+				IDSoggetto soggettoDefaultProtocollo = this.registryReader.getIdSoggettoDefault(tipoSoggettoDefault);
+				if(soggettoDefaultProtocollo==null) {
+					throw new Exception("IDSoggetto di default non trovato per il protocollo '"+protocollo+"'");
+				}
+				mapIdSoggettoDefault.put(protocollo, soggettoDefaultProtocollo);
+								
+				IProtocolFactory<?> pf = protocolFactoryManager.getProtocolFactoryByName(protocollo);
+				boolean supportoReferente = false;
+				if(pf!=null) {
+					supportoReferente = pf.createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
+				}
+				mapAPIconReferente.put(protocollo, supportoReferente);
+			}
+		}
+		
 		
 		// ArchiveInformationMissing
 		if(archive.getInformationMissing()!=null){
@@ -126,8 +169,11 @@ public class ArchiveValidator {
 					break;
 				}
 			}
-			if(!found)
-				importerInformationMissingUtils.validateAndFillAccordoServizioParteSpecifica(archive.getAccordiServizioParteSpecifica().get(i));
+			if(!found) {
+				importerInformationMissingUtils.validateAndFillAccordoServizioParteSpecifica(archive.getAccordiServizioParteSpecifica().get(i),
+						mapIdSoggettoDefault,
+						mapAPIconReferente);
+			}
 		}
 
 		// Accordi di Servizio Composti
@@ -138,7 +184,9 @@ public class ArchiveValidator {
 		
 		// Accordi di Servizio Parte Specifica Composti
 		for (ArchiveAccordoServizioParteSpecifica archiveAccordoServizioParteSpecifica : listServiziImplementanoAccordiServizioCompostoPresentiArchivio) {
-			importerInformationMissingUtils.validateAndFillAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica);
+			importerInformationMissingUtils.validateAndFillAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica,
+					mapIdSoggettoDefault,
+					mapAPIconReferente);
 		}
 		
 		// Fruizioni

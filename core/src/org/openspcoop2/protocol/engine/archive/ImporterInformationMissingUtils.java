@@ -50,6 +50,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.xml.MessageXMLUtils;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.information_missing.ConditionType;
 import org.openspcoop2.protocol.information_missing.ConditionsType;
@@ -94,6 +95,7 @@ public class ImporterInformationMissingUtils {
 	private AbstractXMLUtils xmlUtils;
 	private IRegistryReader registryReader;
 	private Archive archive;
+	private ProtocolFactoryManager protocolFactoryManager;
 	
 	public ImporterInformationMissingUtils(ImportInformationMissingCollection importInformationMissingCollection,IRegistryReader registryReader,
 			boolean validateDocuments,IProtocolFactory<?> protocolFactory, String userLogin, Archive archive) throws Exception{
@@ -107,6 +109,7 @@ public class ImporterInformationMissingUtils {
 		this.xmlUtils = MessageXMLUtils.DEFAULT;
 		this.registryReader = registryReader;
 		this.archive = archive;
+		this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
 	}
 	
 	
@@ -1513,7 +1516,9 @@ public class ImporterInformationMissingUtils {
 //		return false;
 //	}
 	
-	public void validateAndFillAccordoServizioParteSpecifica(ArchiveAccordoServizioParteSpecifica archiveAsps) throws Exception{
+	public void validateAndFillAccordoServizioParteSpecifica(ArchiveAccordoServizioParteSpecifica archiveAsps,
+			Map<String, IDSoggetto> mapIdSoggettoDefault,
+			Map<String, Boolean> mapAPIconReferente) throws Exception{
 		
 		// *** object id ***
 		AccordoServizioParteSpecifica asps = archiveAsps.getAccordoServizioParteSpecifica();
@@ -1535,8 +1540,7 @@ public class ImporterInformationMissingUtils {
 		}
 		
 		
-		try{
-		
+		try{			
 			// *** Verifica riferimento Parte Comune ***
 			AccordoServizioParteComune aspc = null;
 			if(asps.getAccordoServizioParteComune()!=null && !"".equals(asps.getAccordoServizioParteComune().trim())){
@@ -1549,7 +1553,21 @@ public class ImporterInformationMissingUtils {
 						uriAPC = ImporterInformationMissingSetter.replaceSoggettoErogatore(uriAPC, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 					}
 					
-					aspc = this.registryReader.getAccordoServizioParteComune(this.idAccordoFactory.getIDAccordoFromUri(uriAPC));
+					IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromUri(uriAPC);
+					
+					// Gestione SoggettoReferente per verifica riferimento Parte Comune ***
+					IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(asps.getTipoSoggettoErogatore());
+					boolean APIconReferente = mapAPIconReferente.get(protocolFactory.getProtocol());
+					if(!APIconReferente) {
+						IDSoggetto soggettoDefaultProtocollo = mapIdSoggettoDefault.get(protocolFactory.getProtocol()); 
+						if(!idAccordo.getSoggettoReferente().equals(soggettoDefaultProtocollo)) {
+							idAccordo.getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+							idAccordo.getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+						}
+					}
+					
+					// Verifica
+					aspc = this.registryReader.getAccordoServizioParteComune(idAccordo);
 					if(aspc==null){
 						throw new Exception("getAccordoServizioParteComune return null"); 
 					}
