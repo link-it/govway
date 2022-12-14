@@ -711,7 +711,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										  	<script type="text/javascript" nonce="<%= randomNonce %>">
 													$(document).ready(function(){
 														$('#ds_limit_bottom').change(function() {
-															<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>CambiaVisualizzazione(document.form.limit.options[selectedIndex].value);
+															<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>CambiaVisualizzazione(document.form.limit.options[this.selectedIndex].value);
 														});
 													});
 												</script>

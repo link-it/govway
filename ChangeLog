@@ -1,3 +1,10 @@
+2022-12-14  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1526
+	La selezione di un numero di Entries da visualizzare differente dal defautl provocava uno stato di attesa infinito della console, 
+	causato dall'errore: "Uncaught ReferenceError: selectedIndex is not defined".
+
 2022-12-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
