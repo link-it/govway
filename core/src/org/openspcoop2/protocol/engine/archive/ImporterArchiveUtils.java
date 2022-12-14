@@ -46,6 +46,8 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
@@ -77,6 +79,8 @@ import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
@@ -1880,8 +1884,69 @@ public class ImporterArchiveUtils {
 	
 	
 	
-	
-	
+	private void modifyUriAccordoCorrelato(AccordoServizioParteComune aspc, IDSoggetto soggettoDefaultProtocollo) {
+		if(aspc!=null) {
+			if(aspc.sizeProtocolPropertyList()>0) {
+				for (ProtocolProperty pp : aspc.getProtocolPropertyList()) {
+					if(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName()) && pp.getValue()!=null && StringUtils.isNotEmpty(pp.getValue())) {
+						modifyUriAccordo(pp, soggettoDefaultProtocollo);
+					}
+				}
+			}
+			if(aspc.sizeResourceList()>0) {
+				for (Resource r : aspc.getResourceList()) {
+					if(r.sizeProtocolPropertyList()>0) {
+						for (ProtocolProperty pp : r.getProtocolPropertyList()) {
+							if(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName()) && pp.getValue()!=null && StringUtils.isNotEmpty(pp.getValue())) {
+								modifyUriAccordo(pp, soggettoDefaultProtocollo);
+							}
+						}
+					}
+				}
+			}
+			if(aspc.sizePortTypeList()>0) {
+				for (PortType pt : aspc.getPortTypeList()) {
+					if(pt.sizeProtocolPropertyList()>0) {
+						for (ProtocolProperty pp : pt.getProtocolPropertyList()) {
+							if(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName()) && pp.getValue()!=null && StringUtils.isNotEmpty(pp.getValue())) {
+								modifyUriAccordo(pp, soggettoDefaultProtocollo);
+							}
+						}
+					}
+					if(pt.sizeAzioneList()>0) {
+						for (Operation op : pt.getAzioneList()) {
+							if(op.sizeProtocolPropertyList()>0) {
+								for (ProtocolProperty pp : op.getProtocolPropertyList()) {
+									if(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName()) && pp.getValue()!=null && StringUtils.isNotEmpty(pp.getValue())) {
+										modifyUriAccordo(pp, soggettoDefaultProtocollo);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	private void modifyUriAccordo(ProtocolProperty pp, IDSoggetto soggettoDefaultProtocollo) {
+		if(pp!=null && CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName()) && pp.getValue()!=null && StringUtils.isNotEmpty(pp.getValue())) {
+			String uri = pp.getValue();
+			try {
+				IDAccordo idUri = this.idAccordoFactory.getIDAccordoFromUri(uri);
+				if(idUri!=null && idUri.getSoggettoReferente()!=null) {
+					if(!idUri.getSoggettoReferente().equals(soggettoDefaultProtocollo)) {
+						idUri.getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
+						idUri.getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+						String newUri = this.idAccordoFactory.getUriFromIDAccordo(idUri);
+						pp.setValue(newUri);
+						//this.log.info("MODIFICATO old["+uri+"] nuovo["+newUri+"]");
+					}
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+		}
+	}
 	
 	public void importAccordoServizioParteComune(ArchiveAccordoServizioParteComune archiveAccordoServizioParteComune,
 			boolean utilizzoAzioniDiretteInAccordoAbilitato,
@@ -1903,6 +1968,9 @@ public class ImporterArchiveUtils {
 					idSoggettoReferente.setNome(soggettoDefaultProtocollo.getNome());
 					idAccordoServizioParteComune.getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
 					idAccordoServizioParteComune.getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+				}
+				if(CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
+					modifyUriAccordoCorrelato(archiveAccordoServizioParteComune.getAccordoServizioParteComune(), soggettoDefaultProtocollo);
 				}
 			}
 			
@@ -2070,6 +2138,9 @@ public class ImporterArchiveUtils {
 					idSoggettoReferente.setNome(soggettoDefaultProtocollo.getNome());
 					idAccordoServizioComposto.getSoggettoReferente().setTipo(soggettoDefaultProtocollo.getTipo());
 					idAccordoServizioComposto.getSoggettoReferente().setNome(soggettoDefaultProtocollo.getNome());
+				}
+				if(CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
+					modifyUriAccordoCorrelato(archiveAccordoServizioComposto.getAccordoServizioParteComune(), soggettoDefaultProtocollo);
 				}
 			}
 			
