@@ -3,6 +3,8 @@
 Avvisi di Sicurezza 2022
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_securityAdvisory_2022_CVE-2022-46364`
+- :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_securityAdvisory_2022_CVE-2022-41915`
 - :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_securityAdvisory_2022_CVE-2021-37533`
 - :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_securityAdvisory_2022_CVE-2022-40150`
 - :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_securityAdvisory_2022_CVE-2022-40154`
@@ -14,6 +16,8 @@ Avvisi di Sicurezza 2022
 .. toctree::
         :maxdepth: 2
         
+	CVE-2022-46364
+	CVE-2022-41915
 	CVE-2021-37533
 	CVE-2022-40150
 	CVE-2022-40154
