@@ -1,3 +1,10 @@
+2022-12-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2022-46364: aggiornate librerie 'org.apache.cxf:cxf-*' alla versione 3.5.5 (e dipendenza org.ow2.asm:asm alla versione 9.4);
+	- CVE-2022-41915: aggiornate librerie 'io.netty:netty-*' alla versione 4.1.86.Final.
+
 2022-12-14  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

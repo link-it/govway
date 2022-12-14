@@ -28,9 +28,9 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.11.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.9.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.5.4-gov4j-1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.5.4.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.5.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.5.5-gov4j-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.5.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.5.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-core-2.3.0.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.7.jar"/>

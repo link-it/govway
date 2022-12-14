@@ -59,7 +59,7 @@
 			<include name="cxf-core-*.jar"/>
 			<include name="cxf-rt-rs-json-basic-*.jar"/>
 			<include name="cxf-rt-rs-security-jose-*.jar"/>
-			<include name="asm-9.3.jar"/>
+			<include name="asm-9.4.jar"/>
 			<include name="woodstox-core-6.4.0.jar"/>
 			<include name="xmlschema-core-2.3.0.jar"/>
 		</fileset>
