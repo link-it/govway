@@ -1,3 +1,11 @@
+2022-12-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1528
+	Utilizzando PKCS12 e CRL in formato PEM, nell'application server JBoss EAP 7.3 (all'ultimo patch level) si otteneva il seguente errore: 
+	"java.lang.NoClassDefFoundError: org/bouncycastle/util/encoders/Base64 
+	 at org.bouncycastle.jcajce.provider.asymmetric.x509.PEMUtil.readPEMObject()"
+
 2022-12-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

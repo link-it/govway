@@ -11,6 +11,8 @@
 		-->
 		<resources>
 			<resource-root path="lib/bcprov-ext-jdk18on-1.72.jar" use-physical-code-source="true"/>
+			<resource-root path="lib/bcpkix-jdk18on-1.72.jar" use-physical-code-source="true"/>
+			<resource-root path="lib/bcutil-jdk18on-1.72.jar" use-physical-code-source="true"/>
 		</resources>
 		<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
 		<exclude-subsystems>
@@ -22,6 +24,8 @@
 			<module name="org.slf4j" />
 			<module name="org.apache.log4j" />
 			<module name="org.apache.commons.logging"/>
+
+			<module name="org.bouncycastle"/>
 
 			<!-- non sono caricati da wf18 con java11:
 			<module name="com.fasterxml.jackson.core.jackson-core" />
