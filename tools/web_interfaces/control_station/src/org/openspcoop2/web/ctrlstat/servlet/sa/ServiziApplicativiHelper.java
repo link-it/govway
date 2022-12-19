@@ -1465,7 +1465,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 	public boolean servizioApplicativoCheckData(TipoOperazione tipoOperazione, String[] soggettiList, long idProvOld,
 			String ruoloFruitoreParam, String ruoloErogatore, List<ExtendedConnettore> listExtendedConnettore,
-			ServizioApplicativo saOld)
+			ServizioApplicativo saOld, StringBuilder sbWarningChange)
 			throws Exception {
 		try {
 			
@@ -1637,9 +1637,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 
 			IDSoggetto ids = null;
+			String portaDominioSoggetto = null;
 			if(this.core.isRegistroServiziLocale()){
 				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(newProv);
 				ids = new IDSoggetto(mySogg.getTipo(), mySogg.getNome());
+				portaDominioSoggetto = mySogg.getPortaDominio();
 			}else{
 				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(newProv);
 				ids = new IDSoggetto(mySogg.getTipo(), mySogg.getNome());
@@ -1675,6 +1677,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if (tipoOperazione.equals(TipoOperazione.CHANGE)) {
 				
 				String oldTipoAuth = null;
+				String oldTokenPolicy = null;
 				TipologiaFruizione tipologiaFruizione = null;
 				if(saOld!=null) {
 					tipologiaFruizione = TipologiaFruizione.toEnumConstant(saOld.getTipologiaFruizione());
@@ -1689,22 +1692,109 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					else {
 						oldTipoAuth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
 					}
+					oldTokenPolicy = saOld.getInvocazionePorta().getCredenziali(0).getTokenPolicy();
 				}
 				
-				String tipoauth = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+				String tipoauthAttuale = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+				String tipoauth = tipoauthAttuale;
+				boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauth);
+				if(tokenWithHttpsEnabledByConfigSA) {
+					tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+				}
+				boolean tokenModiPDNDOauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH.equals(tipoauth);
+				if(tokenModiPDNDOauth) {
+					tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN;
+				}
 				
+				boolean changeTipoAuth = false;
 				if(oldTipoAuth!=null && !oldTipoAuth.equals(tipoauth)) {
+					changeTipoAuth=true;
+				}
+				boolean segnalaWarning = false;
+				if(changeTipoAuth && oldTokenPolicy!=null) {
+					
+					boolean tokenWithHttsSupportato = false;
+					boolean dominioEsterno = this.pddCore.isPddEsterna(portaDominioSoggetto);
+					if(dominioEsterno && protocollo!=null) {
+						ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+						tokenWithHttsSupportato = protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportatoAutenticazioneApplicativiHttpsConToken();
+					}
+					
+					boolean tokenModIPDND = this.saCore.isPolicyGestioneTokenPDND(oldTokenPolicy);
+					if(tokenWithHttsSupportato) {
+						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(oldTipoAuth)) {
+							if(tokenModIPDND) {
+								oldTipoAuth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND;
+							}
+							else {
+								oldTipoAuth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH;
+							}
+						}
+						else {
+							if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(oldTipoAuth)){
+								if(tokenModIPDND) {
+									oldTipoAuth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND;
+								}
+								else {
+									oldTipoAuth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH;
+								}
+							}
+						}
+					}
+
+					if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(oldTipoAuth) && ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauthAttuale)) {
+						// aggiungere il certificato deve essere possibile
+						changeTipoAuth=false;
+					}
+					else if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(oldTipoAuth) && ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauthAttuale)) {
+						// eliminare il certificato non andrebbe permesso se usato
+						// questo vincolo viene rilasciato per consentirlo da console, 
+						// tanto poi eventualmente il runtime lo segnala e una nuova aggiunta dell'applicativo non è concessa nell'erogazione che richiede il certificato.
+						// mentre quello autorizzato andrà poi eliminato.
+						segnalaWarning = true;
+					}
+					else if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH.equals(oldTipoAuth) && ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauthAttuale)) {
+						// aggiungere il certificato deve essere possibile
+						changeTipoAuth=false;
+					}
+					else if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(oldTipoAuth) && ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH.equals(tipoauthAttuale)) {
+						// eliminare il certificato non andrebbe permesso se usato
+						// questo vincolo viene rilasciato per consentirlo da console, 
+						// tanto poi eventualmente il runtime lo segnala e una nuova aggiunta dell'applicativo non è concessa nell'erogazione che richiede il certificato.
+						// mentre quello autorizzato andrà poi eliminato.
+						segnalaWarning = true;
+					}
+					
+				}
+				
+				if(changeTipoAuth) {
 					// controllo che non sia usato in qualche PD
 					
+					StringBuilder sbWarningDetails = new StringBuilder();
+										
 					FiltroRicercaPorteDelegate filtro = new FiltroRicercaPorteDelegate();
 					filtro.setTipoSoggetto(idSA.getIdSoggettoProprietario().getTipo());
 					filtro.setNomeSoggetto(idSA.getIdSoggettoProprietario().getNome());
 					filtro.setNomeServizioApplicativo(idSA.getNome());
 					List<IDPortaDelegata> list = this.porteDelegateCore.getAllIdPorteDelegate(filtro);
 					if(list!=null && list.size()>0) {
-						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione trasporto) di "+
-								list.size()+" fruizion"+(list.size()>1?"i":"e"));
-						return false;
+						String msg = "l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione trasporto) di "+
+								list.size()+" fruizion"+(list.size()>1?"i":"e");
+						if(segnalaWarning) {
+							if(sbWarningDetails.length()>0) {
+								sbWarningDetails.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+							}
+							sbWarningDetails.append("- "+msg);
+						}
+						else {
+							this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; "+msg);
+							return false;
+						}
+					}
+					
+					String tipoTrasporto = "trasporto";
+					if(this.isProfiloModIPA(protocollo)) {
+						tipoTrasporto = "messaggio";
 					}
 					
 					FiltroRicercaPorteApplicative filtroPA = new FiltroRicercaPorteApplicative();
@@ -1714,9 +1804,18 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					filtroPA.setIdServizioApplicativoAutorizzato(idServizioApplicativoAutorizzato);
 					List<IDPortaApplicativa> listPA = this.porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
 					if(listPA!=null && listPA.size()>0) {
-						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione trasporto) di "+
-								listPA.size()+" erogazion"+(listPA.size()>1?"i":"e"));
-						return false;
+						String msg = "l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione "+tipoTrasporto+") di "+
+								listPA.size()+" erogazion"+(listPA.size()>1?"i":"e");
+						if(segnalaWarning) {
+							if(sbWarningDetails.length()>0) {
+								sbWarningDetails.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+							}
+							sbWarningDetails.append("- "+msg);
+						}
+						else {
+							this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; "+msg);
+							return false;
+						}
 					}
 					
 					filtro = new FiltroRicercaPorteDelegate();
@@ -1725,18 +1824,44 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					filtro.setNomeServizioApplicativoToken(idSA.getNome());
 					list = this.porteDelegateCore.getAllIdPorteDelegate(filtro);
 					if(list!=null && list.size()>0) {
-						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione token) di "+
-								list.size()+" fruizion"+(list.size()>1?"i":"e"));
-						return false;
+						String msg = "l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione token) di "+
+								list.size()+" fruizion"+(list.size()>1?"i":"e");
+						if(segnalaWarning) {
+							if(sbWarningDetails.length()>0) {
+								sbWarningDetails.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+							}
+							sbWarningDetails.append("- "+msg);
+						}
+						else {
+							this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; "+msg);
+							return false;
+						}
 					}
 					
 					filtroPA = new FiltroRicercaPorteApplicative();
 					filtroPA.setIdServizioApplicativoAutorizzatoToken(idServizioApplicativoAutorizzato);
 					listPA = this.porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
 					if(listPA!=null && listPA.size()>0) {
-						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione token) di "+
-								listPA.size()+" erogazion"+(listPA.size()>1?"i":"e"));
-						return false;
+						String msg = "l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione token) di "+
+								listPA.size()+" erogazion"+(listPA.size()>1?"i":"e");
+						if(segnalaWarning) {
+							if(sbWarningDetails.length()>0) {
+								sbWarningDetails.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+							}
+							sbWarningDetails.append("- "+msg);
+						}
+						else {
+							this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; "+msg);
+							return false;
+						}
+					}
+					
+					if(segnalaWarning && sbWarningDetails.length()>0) {
+						sbWarningChange.append("Il certificato di firma dell'applicativo potrebbe essere richiesto per fruire di una API.");
+						sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						sbWarningChange.append("Verificare le configurazioni dove risulta associato l'applicativo:");
+						sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						sbWarningChange.append(sbWarningDetails.toString());
 					}
 				}
 				
@@ -2245,6 +2370,68 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					}
 					return false;
 				}
+				
+				String oldTokenPolicy = null;
+				if (tipoOperazione.equals(TipoOperazione.CHANGE)) {
+					if(saOld!=null && saOld.getInvocazionePorta()!=null && saOld.getInvocazionePorta().sizeCredenzialiList()>0) {
+						// prendo il primo
+						oldTokenPolicy = saOld.getInvocazionePorta().getCredenziali(0).getTokenPolicy();
+					}
+				}
+				
+				if(oldTokenPolicy!=null && !oldTokenPolicy.equals(tokenPolicy)) {
+					// controllo che non sia usato in qualche PD
+					
+					FiltroRicercaPorteDelegate filtro = new FiltroRicercaPorteDelegate();
+					filtro.setTipoSoggetto(idSA.getIdSoggettoProprietario().getTipo());
+					filtro.setNomeSoggetto(idSA.getIdSoggettoProprietario().getNome());
+					filtro.setNomeServizioApplicativo(idSA.getNome());
+					List<IDPortaDelegata> list = this.porteDelegateCore.getAllIdPorteDelegate(filtro);
+					if(list!=null && list.size()>0) {
+						this.pd.setMessage("Non &egrave; possibile modificare la token policy poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione trasporto) di "+
+								list.size()+" fruizion"+(list.size()>1?"i":"e"));
+						return false;
+					}
+					
+					String tipoTrasporto = "trasporto";
+					if(this.isProfiloModIPA(protocollo)) {
+						tipoTrasporto = "messaggio";
+					}
+					
+					FiltroRicercaPorteApplicative filtroPA = new FiltroRicercaPorteApplicative();
+					IDServizioApplicativo idServizioApplicativoAutorizzato = new IDServizioApplicativo();
+					idServizioApplicativoAutorizzato.setIdSoggettoProprietario(new IDSoggetto(idSA.getIdSoggettoProprietario().getTipo(), idSA.getIdSoggettoProprietario().getNome()));
+					idServizioApplicativoAutorizzato.setNome(idSA.getNome());
+					filtroPA.setIdServizioApplicativoAutorizzato(idServizioApplicativoAutorizzato);
+					List<IDPortaApplicativa> listPA = this.porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
+					if(listPA!=null && listPA.size()>0) {
+						this.pd.setMessage("Non &egrave; possibile modificare la token policy poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione "+tipoTrasporto+") di "+
+								listPA.size()+" erogazion"+(listPA.size()>1?"i":"e"));
+						return false;
+					}
+					
+					filtro = new FiltroRicercaPorteDelegate();
+					filtro.setTipoSoggetto(idSA.getIdSoggettoProprietario().getTipo());
+					filtro.setNomeSoggetto(idSA.getIdSoggettoProprietario().getNome());
+					filtro.setNomeServizioApplicativoToken(idSA.getNome());
+					list = this.porteDelegateCore.getAllIdPorteDelegate(filtro);
+					if(list!=null && list.size()>0) {
+						this.pd.setMessage("Non &egrave; possibile modificare la token policy poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione token) di "+
+								list.size()+" fruizion"+(list.size()>1?"i":"e"));
+						return false;
+					}
+					
+					filtroPA = new FiltroRicercaPorteApplicative();
+					filtroPA.setIdServizioApplicativoAutorizzatoToken(idServizioApplicativoAutorizzato);
+					listPA = this.porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
+					if(listPA!=null && listPA.size()>0) {
+						this.pd.setMessage("Non &egrave; possibile modificare la token policy poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione token) di "+
+								listPA.size()+" erogazion"+(listPA.size()>1?"i":"e"));
+						return false;
+					}
+				}
+				
+				
 			} 
 
 			// erogatore

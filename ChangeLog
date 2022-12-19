@@ -1,3 +1,18 @@
+2022-12-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1530
+	La modifica delle credenziali di un applicativo di dominio esterno, per il profilo di interoperabilità ModI, 
+	non funzionava nel caso di credenziali di tipo 'Authorization PDND' o 'Authorization OAuth' nei seguenti casi:
+	- modificare il valore dell'identificativo;
+	- aggiungere o eliminare un certificato X.509 all'autorizzazione per gestire l'integrità.
+	Inoltre, per qualsiasi profilo di interoperabilità, era erroneamente concesso modificare la token policy associata ad un applicativo 
+	anche se quest'ultimo risultava censito puntualmente nel controllo degli accessi di una erogazione o fruizione.
+	Infine è stato corretto un problema che si poteva presentare importando un archivio contenente 2 applicativi con profilo di interoperabilità ModI di dominio esterno, 
+	uno definito con credenziale 'Authorization ModI' tramite un certificato x.509 ed uno definito con credenziale 'Authorization PDND + Integrity' contenente lo stesso certificato x.509.
+	Il caricamento falliva segnalando erroneamnete la duplicazione dell'associazione del certificato x.509 ai due applicativi, 
+	mentre doveva essere permesso poichè uno dei due viene riconosciuto tramite l'identificativo della token policy e non tramite il certificato (poi utilizzato per la verifica dell'integrità).
+
 2022-12-19  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

@@ -356,6 +356,42 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	@Override
+	public void setMessage(String message, boolean append) throws Exception {
+		this.setMessage(message, append, null);
+	}
+	@Override
+	public void setMessage(String message, boolean append, String type) throws Exception {
+		
+		org.openspcoop2.web.lib.mvc.MessageType messageType = org.openspcoop2.web.lib.mvc.MessageType.ERROR;
+		if(type!=null) {
+			try {
+				messageType = org.openspcoop2.web.lib.mvc.MessageType.fromValue(type);
+			}catch(Throwable t) {}
+			if(messageType==null) {
+				try {
+					messageType = org.openspcoop2.web.lib.mvc.MessageType.valueOf(type.toUpperCase());
+				}catch(Throwable t) {}
+			}
+			if(messageType==null) {
+				messageType = org.openspcoop2.web.lib.mvc.MessageType.ERROR;
+			}
+		}
+		
+		if(this.pd!=null) {
+			StringBuilder sb = new StringBuilder();
+			if(append) {
+				String actualMsg = this.pd.getMessage();
+				if(actualMsg!=null && StringUtils.isNotEmpty(actualMsg)) {
+					sb.append(actualMsg);
+					sb.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				}
+			}
+			sb.append(message);
+			this.pd.setMessage(message, messageType);
+		}
+	}
+	
+	@Override
 	public boolean isEditModeInProgress() throws Exception{
 		String editMode = this.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		return ServletUtils.isEditModeInProgress(editMode);		

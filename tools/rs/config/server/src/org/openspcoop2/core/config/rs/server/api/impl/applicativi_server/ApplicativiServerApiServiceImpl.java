@@ -184,7 +184,8 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 					-1,
 					sa.getTipologiaFruizione(),
 					sa.getTipologiaErogazione(),
-					listExtendedConnettore, sa
+					listExtendedConnettore, sa,
+					new StringBuilder()
 				)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -479,7 +480,8 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 					oldSa.getIdSoggetto(),
 					newSa.getTipologiaFruizione(),
 					newSa.getTipologiaErogazione(),
-					listExtendedConnettore, newSa
+					listExtendedConnettore, newSa,
+					new StringBuilder()
 				)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}

@@ -57,4 +57,7 @@ public interface IConsoleHelper {
 	public boolean isModalitaStandard();
 	
 	public String getSoggettoMultitenantSelezionato();
+	
+	public void setMessage(String message, boolean append) throws Exception;
+	public void setMessage(String message, boolean append, String type) throws Exception;
 }

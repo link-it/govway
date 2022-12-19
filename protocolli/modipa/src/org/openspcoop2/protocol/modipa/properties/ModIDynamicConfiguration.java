@@ -88,12 +88,12 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.properties.SubtitleConsoleItem;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortTypeAzioni;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRisorse;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplicativi;
-import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -670,10 +670,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 
 			}
 	
+			CertificateInfo cert = null;
 			if(!esterno) {
 			
-				CertificateInfo cert = null;
-				
 				if(verifyKeystoreConfig) {
 					// NOTA: se si attiva anche la validazione durante il change binary, poi non si riesce a modificarlo poiche' la password o l'alis, o qualche parametro non è compatibile con il nuovo archivio.
 					
@@ -826,11 +825,12 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				}
 			}
 			
+			String tokenPolicyName = null;
 			if(!esterno) {
+				
 				BooleanProperty booleanModeItemTokenValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_ID);
 				if(booleanModeItemTokenValue!=null && booleanModeItemTokenValue.getValue()!=null && booleanModeItemTokenValue.getValue()) {
 					
-					String tokenPolicyName = null;
 					StringProperty tokenPolicyItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_ID);
 					if(tokenPolicyItemValue==null || tokenPolicyItemValue.getValue()==null || StringUtils.isEmpty(tokenPolicyItemValue.getValue()) || 
 							ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(tokenPolicyItemValue.getValue())) {
@@ -901,6 +901,118 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 							throw new ProtocolException(e.getMessage(),e);
 						}
 					}
+				}
+				
+				if(ConsoleOperationType.CHANGE.equals(consoleOperationType)) {
+					
+					BooleanProperty booleanModeItemSicurezzaMessaggioValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_ID);
+					boolean sicurezzaMessaggio = false;
+					if(booleanModeItemSicurezzaMessaggioValue!=null && booleanModeItemSicurezzaMessaggioValue.getValue()!=null) {
+						sicurezzaMessaggio = booleanModeItemSicurezzaMessaggioValue.getValue();
+					}
+					
+					ServizioApplicativo sa = null;
+					try {
+						sa = configIntegrationReader.getServizioApplicativo(id);
+					}catch(Throwable t) {}
+					if(sa!=null) {
+						String oldTokenPolicyName = null;
+						String oldCnSubject = null;
+						//String oldCnIssuer = null;
+						if(sa.sizeProtocolPropertyList()>0) {
+							for (org.openspcoop2.core.config.ProtocolProperty pp : sa.getProtocolPropertyList()) {
+								if(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_ID.equals(pp.getName())) {
+									oldTokenPolicyName = pp.getValue();
+								}
+								else if(ModIConsoleCostanti.MODIPA_KEY_CN_SUBJECT_ID.equals(pp.getName())) {
+									oldCnSubject = pp.getValue();
+								}
+//								else if(ModIConsoleCostanti.MODIPA_KEY_CN_ISSUER_ID.equals(pp.getName())) {
+//									oldCnIssuer = pp.getValue();
+//								}
+							}
+						}
+						
+						StringBuilder sbWarningChange = new StringBuilder();
+						if(oldTokenPolicyName!=null && StringUtils.isNotEmpty(oldTokenPolicyName) && !"-".equals(oldTokenPolicyName)) {
+							if(tokenPolicyName==null || StringUtils.isEmpty(tokenPolicyName)) {
+								sbWarningChange.append("L'applicativo potrebbe essere stato associato ad una erogazione o fruizione che richiede la token policy '"+oldTokenPolicyName+"' eliminata.");
+								sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								sbWarningChange.append("Verificare le configurazioni dove risulta associato l'applicativo.");
+							}
+							else if(!oldTokenPolicyName.equals(tokenPolicyName)) {
+								sbWarningChange.append("L'applicativo potrebbe essere stato associato ad una erogazione o fruizione che richiede la precedente token policy '"+oldTokenPolicyName+"' modificata in '"+tokenPolicyName+"'.");
+								sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								sbWarningChange.append("Verificare le configurazioni dove risulta associato l'applicativo.");
+							}
+						}
+						
+						if(oldCnSubject!=null && StringUtils.isNotEmpty(oldCnSubject)) {
+							if(!sicurezzaMessaggio) {
+								if(sbWarningChange.length()>0) {
+									sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+									sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								}
+								sbWarningChange.append("L'applicativo potrebbe essere stato associato ad una erogazione o fruizione che richiede il certificato eliminato ("+oldCnSubject+").");
+								sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								sbWarningChange.append("Verificare le configurazioni dove risulta associato l'applicativo.");
+							}
+						}
+						
+						/*
+						boolean certWarning = false;
+						if(oldCnSubject!=null && StringUtils.isNotEmpty(oldCnSubject)) {
+							if(cert==null || cert.getSubject()==null) {
+								if(sbWarningChange.length()>0) {
+									sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+									sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								}
+								sbWarningChange.append("L'applicativo potrebbe essere stato associato ad una erogazione o fruizione che richiede il certificato eliminato ("+oldCnSubject+").");
+								sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								sbWarningChange.append("Verificare le configurazioni dove risulta associato l'applicativo.");
+								certWarning = true;
+							}
+							else if(!oldCnSubject.equals(cert.getSubject().toString())) {
+								if(sbWarningChange.length()>0) {
+									sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+									sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								}
+								sbWarningChange.append("L'applicativo potrebbe essere stato associato ad una erogazione o fruizione che richiede il precedente certificato ("+oldCnSubject+").");
+								sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								sbWarningChange.append("Verificare le configurazioni dove risulta associato l'applicativo.");
+								certWarning = true;
+							}
+						}
+						
+						if(!certWarning && oldCnIssuer!=null && StringUtils.isNotEmpty(oldCnIssuer)) {
+							if(cert==null || cert.getIssuer()==null) {
+								if(sbWarningChange.length()>0) {
+									sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+									sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								}
+								sbWarningChange.append("L'applicativo potrebbe essere stato associato ad una erogazione o fruizione che richiede il certificato eliminato (subject["+oldCnSubject+"] issuer["+oldCnIssuer+"]).");
+								sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								sbWarningChange.append("Verificare le configurazioni dove risulta associato l'applicativo.");
+							}
+							else if(!oldCnIssuer.equals(cert.getIssuer().toString())) {
+								if(sbWarningChange.length()>0) {
+									sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+									sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								}
+								sbWarningChange.append("L'applicativo potrebbe essere stato associato ad una erogazione o fruizione che richiede il precedente certificato (subject["+oldCnSubject+"] issuer["+oldCnIssuer+"]).");
+								sbWarningChange.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+								sbWarningChange.append("Verificare le configurazioni dove risulta associato l'applicativo.");
+							}
+						}
+						*/
+						
+						if(sbWarningChange.length()>0) {
+							try {
+								consoleHelper.setMessage(sbWarningChange.toString(), true, "warn");
+							}catch(Throwable t) {}
+						}
+					}
+					
 				}
 			}
 		}

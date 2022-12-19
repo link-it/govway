@@ -943,7 +943,7 @@ public final class ServiziApplicativiAdd extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = saHelper.servizioApplicativoCheckData(TipoOperazione.ADD, soggettiList, -1, ruoloFruitore, ruoloErogatore,
-					listExtendedConnettore, null);
+					listExtendedConnettore, null, new StringBuilder());
 			
 			// updateDynamic
 			if(isOk) {

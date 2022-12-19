@@ -170,7 +170,8 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					-1,
 					sa.getTipologiaFruizione(),
 					sa.getTipologiaErogazione(),
-					listExtendedConnettore, null
+					listExtendedConnettore, null,
+					new StringBuilder()
 				)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -487,7 +488,8 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					oldSa.getIdSoggetto(),
 					newSa.getTipologiaFruizione(),
 					newSa.getTipologiaErogazione(),
-					listExtendedConnettore, newSa
+					listExtendedConnettore, newSa,
+					new StringBuilder()
 				)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -572,7 +574,8 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					oldSa.getIdSoggetto(),
 					oldSa.getTipologiaFruizione(),
 					oldSa.getTipologiaErogazione(),
-					listExtendedConnettore, oldSa
+					listExtendedConnettore, oldSa,
+					new StringBuilder()
 				)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}

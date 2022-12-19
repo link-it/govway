@@ -1570,18 +1570,30 @@ public class ImporterArchiveUtils {
 							c = credenziali.getUser();
 							break;
 						case SSL:
-							if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
-								saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
-								c = "X.509";
-								if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
-									soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
-								}
+							
+							boolean tokenWithHttpsEnabled = false;
+							ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+							String protocollo = protocolFactoryManager.getProtocolByOrganizationType(idSoggettoProprietario.getTipo());
+							tokenWithHttpsEnabled = protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportatoAutenticazioneApplicativiHttpsConToken();
+							if(tokenWithHttpsEnabled && credenziali.getTokenPolicy()!=null && StringUtils.isNotEmpty(credenziali.getTokenPolicy())) {
+								saFound = this.importerEngine.getServizioApplicativoCredenzialiToken(credenziali.getTokenPolicy(), credenziali.getUser());
+								c = credenziali.getUser();
+								tipo = org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN;
 							}
 							else {
-								saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
-								c = credenziali.getSubject();
-								if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
-									soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
+								if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
+									saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
+									c = "X.509";
+									if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
+										soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
+									}
+								}
+								else {
+									saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
+									c = credenziali.getSubject();
+									if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
+										soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
+									}
 								}
 							}
 							break;

@@ -1613,8 +1613,9 @@ public final class ServiziApplicativiChange extends Action {
 			}
 
 			// Controlli sui campi immessi
+			StringBuilder sbWarningCheck = new StringBuilder();
 			boolean isOk = saHelper.servizioApplicativoCheckData(TipoOperazione.CHANGE, null, idProv, ruoloFruitore, ruoloErogatore,
-					listExtendedConnettore, sa);
+					listExtendedConnettore, sa, sbWarningCheck);
 			
 			// updateDynamic
 			if(isOk) {
@@ -2218,6 +2219,12 @@ public final class ServiziApplicativiChange extends Action {
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
+			if(sbWarningCheck!=null && sbWarningCheck.length()>0) {
+				if(pd.getMessage()==null || StringUtils.isEmpty(pd.getMessage())) {
+					pd.setMessage(sbWarningCheck.toString(), MessageType.WARN);
+				}
+			}
+			
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.CHANGE());
 
 		} catch (Exception e) {
