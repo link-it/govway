@@ -717,8 +717,10 @@ public final class AuthorizationFilter implements Filter {
 			}
 		}
 		
-		// token attuale viene invalidato e ne viene generato uno nuovo
-		ServletUtils.generaESalvaTokenCSRF(request, session);
+		// Controllo se devo generare un nuovo token CSRF
+		if(isGeneraNuovoTokenCSRF(request, loginHelper)) {
+			ServletUtils.generaESalvaTokenCSRF(request, session);
+		}
 		
 		return msg;
 	}
@@ -738,5 +740,17 @@ public final class AuthorizationFilter implements Filter {
 		}
 		
 		return false;
+	}
+	
+	private boolean isGeneraNuovoTokenCSRF(HttpServletRequest request, LoginHelper loginHelper) throws Exception{
+		// token attuale viene invalidato e ne viene generato uno nuovo
+		// tranne che per le richieste verso la servlet informazioniUtilizzoOggettoRegistro
+		String urlRichiesta = request.getRequestURI();
+		if ((urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) != -1))  {
+			ControlStationCore.logDebug("Richiesta Risorsa ["+urlRichiesta+"], Token CSRF non verra' aggiornato.");
+			return false;
+		}
+		
+		return true;
 	}
 }

@@ -1,3 +1,11 @@
+2022-12-19  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1532
+	Il controllo CSRF falliva erroneamente dopo un controllo dei riferimenti di un oggetto in 2 scenari d'uso differenti:
+	- entrando nel dettaglio un soggetto (o un applicativo o ruolo o scope), controllando i riferimenti dell'oggetto e successivamneto provandolo a salvare;
+	- nelle liste controllando i riferimenti di un oggetto e successivamente provandolo ad eliminare.
+
 2022-12-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
