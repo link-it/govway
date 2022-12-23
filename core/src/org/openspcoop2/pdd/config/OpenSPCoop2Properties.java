@@ -512,6 +512,30 @@ public class OpenSPCoop2Properties {
 				// Warning
 				this.isControlloRisorseRegistriRaggiungibilitaTotale();
 				this.isControlloRisorseRegistrazioneEvento();
+				if(this.isAbilitatoControlloRisorseDB()) {
+					this.getNumeroIterazioniFalliteControlloRisorseDB();
+					this.getIterazioniFalliteCheckIntervalControlloRisorseDB();
+				}
+				if(this.isAbilitatoControlloRisorseJMS()) {
+					this.getNumeroIterazioniFalliteControlloRisorseJMS();
+					this.getIterazioniFalliteCheckIntervalControlloRisorseJMS();
+				}
+				if(this.isAbilitatoControlloRisorseTracciamentiPersonalizzati()) {
+					this.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati();
+					this.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati();
+				}
+				if(this.isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati()) {
+					this.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati();
+					this.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati();
+				}
+				if(this.isAbilitatoControlloRisorseConfigurazione()) {
+					this.getNumeroIterazioniFalliteControlloRisorseConfigurazione();
+					this.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione();
+				}
+				if(this.isAbilitatoControlloRisorseRegistriServizi()) {
+					this.getNumeroIterazioniFalliteControlloRisorseRegistriServizi();
+					this.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi();
+				}
 			}
 
 
@@ -7643,6 +7667,120 @@ public class OpenSPCoop2Properties {
 
 		return this.isControlloRisorseRegistriRaggiungibilitaTotale;
 	}
+	
+	
+	private Integer getNumeroIterazioniFalliteControlloRisorseDB = null;
+	public int getNumeroIterazioniFalliteControlloRisorseDB() {	
+		if(this.getNumeroIterazioniFalliteControlloRisorseDB==null){
+			this.getNumeroIterazioniFalliteControlloRisorseDB = getNumeroIterazioniFalliteControlloRisorse("db");
+		}
+		return this.getNumeroIterazioniFalliteControlloRisorseDB;
+	}
+	private Integer getNumeroIterazioniFalliteControlloRisorseJMS = null;
+	public int getNumeroIterazioniFalliteControlloRisorseJMS() {	
+		if(this.getNumeroIterazioniFalliteControlloRisorseJMS==null){
+			this.getNumeroIterazioniFalliteControlloRisorseJMS = getNumeroIterazioniFalliteControlloRisorse("jms");
+		}
+		return this.getNumeroIterazioniFalliteControlloRisorseJMS;
+	}
+	private Integer getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati = null;
+	public int getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati() {	
+		if(this.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati==null){
+			this.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati = getNumeroIterazioniFalliteControlloRisorse("tracciamento");
+		}
+		return this.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati;
+	}
+	private Integer getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati = null;
+	public int getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati() {	
+		if(this.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati==null){
+			this.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati = getNumeroIterazioniFalliteControlloRisorse("msgdiagnostici");
+		}
+		return this.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati;
+	}
+	private Integer getNumeroIterazioniFalliteControlloRisorseConfigurazione = null;
+	public int getNumeroIterazioniFalliteControlloRisorseConfigurazione() {	
+		if(this.getNumeroIterazioniFalliteControlloRisorseConfigurazione==null){
+			this.getNumeroIterazioniFalliteControlloRisorseConfigurazione = getNumeroIterazioniFalliteControlloRisorse("configurazione");
+		}
+		return this.getNumeroIterazioniFalliteControlloRisorseConfigurazione;
+	}
+	private Integer getNumeroIterazioniFalliteControlloRisorseRegistriServizi = null;
+	public int getNumeroIterazioniFalliteControlloRisorseRegistriServizi() {	
+		if(this.getNumeroIterazioniFalliteControlloRisorseRegistriServizi==null){
+			this.getNumeroIterazioniFalliteControlloRisorseRegistriServizi = getNumeroIterazioniFalliteControlloRisorse("registri");
+		}
+		return this.getNumeroIterazioniFalliteControlloRisorseRegistriServizi;
+	}
+	private int getNumeroIterazioniFalliteControlloRisorse(String tipo) {	
+		try{  
+			String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo+".iterazioni"); 
+			if(value==null){
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+".iterazioni' non impostata, viene utilizzato il default=1");
+				return 1;
+			}
+			return Integer.valueOf(value);
+		}catch(java.lang.Exception e) {
+			this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+"' non impostata, viene utilizzato il default=1, errore:"+e.getMessage(),e);
+			return 1;
+		}
+	}
+	
+	private Integer getIterazioniFalliteCheckIntervalControlloRisorseDB = null;
+	public int getIterazioniFalliteCheckIntervalControlloRisorseDB() {	
+		if(this.getIterazioniFalliteCheckIntervalControlloRisorseDB==null){
+			this.getIterazioniFalliteCheckIntervalControlloRisorseDB = getIterazioniFalliteCheckIntervalControlloRisorse("db");
+		}
+		return this.getIterazioniFalliteCheckIntervalControlloRisorseDB;
+	}
+	private Integer getIterazioniFalliteCheckIntervalControlloRisorseJMS = null;
+	public int getIterazioniFalliteCheckIntervalControlloRisorseJMS() {	
+		if(this.getIterazioniFalliteCheckIntervalControlloRisorseJMS==null){
+			this.getIterazioniFalliteCheckIntervalControlloRisorseJMS = getIterazioniFalliteCheckIntervalControlloRisorse("jms");
+		}
+		return this.getIterazioniFalliteCheckIntervalControlloRisorseJMS;
+	}
+	private Integer getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati = null;
+	public int getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati() {	
+		if(this.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati==null){
+			this.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati = getIterazioniFalliteCheckIntervalControlloRisorse("tracciamento");
+		}
+		return this.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati;
+	}
+	private Integer getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati = null;
+	public int getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati() {	
+		if(this.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati==null){
+			this.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati = getIterazioniFalliteCheckIntervalControlloRisorse("msgdiagnostici");
+		}
+		return this.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati;
+	}
+	private Integer getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione = null;
+	public int getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione() {	
+		if(this.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione==null){
+			this.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione = getIterazioniFalliteCheckIntervalControlloRisorse("configurazione");
+		}
+		return this.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione;
+	}
+	private Integer getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi = null;
+	public int getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi() {	
+		if(this.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi==null){
+			this.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi = getIterazioniFalliteCheckIntervalControlloRisorse("registri");
+		}
+		return this.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi;
+	}
+	private int getIterazioniFalliteCheckIntervalControlloRisorse(String tipo) {	
+		try{  
+			String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo+".checkInterval"); 
+			if(value==null){
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+".checkInterval' non impostata, viene utilizzato il default=500");
+				return 500;
+			}
+			return Integer.valueOf(value);
+		}catch(java.lang.Exception e) {
+			this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+".checkInterval' non impostata, viene utilizzato il default=500, errore:"+e.getMessage(),e);
+			return 500;
+		}
+	}
+	
 	/**
 	 * Restituisce l'intervallo per il timer di Threshold
 	 *

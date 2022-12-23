@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.threads.BaseThread;
@@ -188,10 +189,27 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 						try{
 							for(int i=0; i< this.tipiMsgDiagnosticiPersonalizzati.size(); i++){
 								tipoMsgDiagnostico = this.tipiMsgDiagnosticiPersonalizzati.get(i);
-								this.logger.debug("Controllo MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"]");
-								this.msgDiagnosticiPersonalizzati.get(i).isAlive();
+								this.logger.debug("Controllo MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati()+")");
+								Throwable t = null;
+								for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati(); j++) {
+									try {
+										this.logger.debug("MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] check '"+j+"' ...");
+										this.msgDiagnosticiPersonalizzati.get(i).isAlive();
+										this.logger.debug("MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] check '"+j+"' ok");
+										t=null;
+										break;
+									}catch(Throwable tAlive) {
+										this.logger.debug("MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] check '"+j+"' failed: "+tAlive.getMessage());
+										t = tAlive;
+										// faccio un altro tentativo
+										Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati());
+									}
+								}
+								if(t!=null) {
+									throw t;
+								}
 							}
-						}catch(Exception e){
+						}catch(Throwable e){
 							risorsaNonDisponibile = "[MessaggioDiagnosticoAppender "+tipoMsgDiagnostico+"]";
 							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
@@ -202,9 +220,26 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					// Database
 					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseDB()){
 						try{
-							this.logger.debug("Controllo Database");
-							this.dbManager.isAlive();
-						}catch(Exception e){
+							this.logger.debug("Controllo Database (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseDB()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseDB()+")");
+							Throwable t = null;
+							for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseDB(); j++) {
+								try {
+									this.logger.debug("Database check '"+j+"' ...");
+									this.dbManager.isAlive();
+									this.logger.debug("Database check '"+j+"' ok");
+									t=null;
+									break;
+								}catch(Throwable tAlive) {
+									this.logger.debug("Database check '"+j+"' failed: "+tAlive.getMessage());
+									t = tAlive;
+									// faccio un altro tentativo
+									Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseDB());
+								}
+							}
+							if(t!=null) {
+								throw t;
+							}	
+						}catch(Throwable e){
 							risorsaNonDisponibile = "[Database]";
 							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
@@ -216,9 +251,26 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					if(this.propertiesReader.isServerJ2EE()){
 						if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseJMS()){
 							try{
-								this.logger.debug("Controllo BrokerJMS");
-								this.queueManager.isAlive();
-							}catch(Exception e){
+								this.logger.debug("Controllo BrokerJMS (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseJMS()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseJMS()+")");
+								Throwable t = null;
+								for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseJMS(); j++) {
+									try {
+										this.logger.debug("BrokerJMS check '"+j+"' ...");
+										this.queueManager.isAlive();
+										this.logger.debug("BrokerJMS check '"+j+"' ok");
+										t=null;
+										break;
+									}catch(Throwable tAlive) {
+										this.logger.debug("BrokerJMS check '"+j+"' failed: "+tAlive.getMessage());
+										t = tAlive;
+										// faccio un altro tentativo
+										Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseJMS());
+									}
+								}
+								if(t!=null) {
+									throw t;
+								}	
+							}catch(Throwable e){
 								risorsaNonDisponibile = "[Broker JMS]";
 								TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 								this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
@@ -230,9 +282,26 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					// Configurazione
 					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseConfigurazione()){
 						try{
-							this.logger.debug("Controllo Configurazione");
-							this.configPdDReader.isAlive();
-						}catch(Exception e){
+							this.logger.debug("Controllo Configurazione (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseConfigurazione()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione()+")");
+							Throwable t = null;
+							for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseConfigurazione(); j++) {
+								try {
+									this.logger.debug("Configurazione check '"+j+"' ...");
+									this.configPdDReader.isAlive();
+									this.logger.debug("Configurazione check '"+j+"' ok");
+									t=null;
+									break;
+								}catch(Throwable tAlive) {
+									this.logger.debug("Configurazione check '"+j+"' failed: "+tAlive.getMessage());
+									t = tAlive;
+									// faccio un altro tentativo
+									Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione());
+								}
+							}
+							if(t!=null) {
+								throw t;
+							}	
+						}catch(Throwable e){
 							risorsaNonDisponibile = "[Configurazione]";
 							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
@@ -257,7 +326,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 									true,
 									true,
 									true, null);
-						}catch(Exception e){
+						}catch(Throwable e){
 							risorsaNonDisponibile = "[Validazione semantica della Configurazione]";
 							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
@@ -268,9 +337,26 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					// Registro dei Servizi
 					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseRegistriServizi()){
 						try{
-							this.logger.debug("Controllo Registri dei Servizi");
-							this.registriPdDReader.isAlive(this.propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale());
-						}catch(Exception e){
+							this.logger.debug("Controllo Registri dei Servizi (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseRegistriServizi()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi()+")");
+							Throwable t = null;
+							for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseRegistriServizi(); j++) {
+								try {
+									this.logger.debug("Registri dei Servizi check '"+j+"' ...");
+									this.registriPdDReader.isAlive(this.propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale());
+									this.logger.debug("Registri dei Servizi check '"+j+"' ok");
+									t=null;
+									break;
+								}catch(Throwable tAlive) {
+									this.logger.debug("Registri dei Servizi check '"+j+"' failed: "+tAlive.getMessage());
+									t = tAlive;
+									// faccio un altro tentativo
+									Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi());
+								}
+							}
+							if(t!=null) {
+								throw t;
+							}	
+						}catch(Throwable e){
 							risorsaNonDisponibile = "[Registri dei Servizi]";
 							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
@@ -292,7 +378,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 									true,
 									true,
 									null);
-						}catch(Exception e){
+						}catch(Throwable e){
 							risorsaNonDisponibile = "[Validazione semantica del Registri dei Servizi]";
 							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
@@ -306,10 +392,27 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 						try{
 							for(int i=0; i< this.tipiTracciamentiPersonalizzati.size(); i++){
 								tipoTracciamento = this.tipiTracciamentiPersonalizzati.get(i);
-								this.logger.debug("Controllo TracciamentoPersonalizzato ["+tipoTracciamento+"]");
-								this.tracciamentiPersonalizzati.get(i).isAlive();
+								this.logger.debug("Controllo TracciamentoPersonalizzato ["+tipoTracciamento+"] (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati()+")");
+								Throwable t = null;
+								for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati(); j++) {
+									try {
+										this.logger.debug("TracciamentoPersonalizzato ["+tipoTracciamento+"] check '"+j+"' ...");
+										this.tracciamentiPersonalizzati.get(i).isAlive();
+										this.logger.debug("TracciamentoPersonalizzato ["+tipoTracciamento+"] check '"+j+"' ok");
+										t=null;
+										break;
+									}catch(Throwable tAlive) {
+										this.logger.debug("TracciamentoPersonalizzato ["+tipoTracciamento+"] check '"+j+"' failed: "+tAlive.getMessage());
+										t = tAlive;
+										// faccio un altro tentativo
+										Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati());
+									}
+								}
+								if(t!=null) {
+									throw t;
+								}
 							}
-						}catch(Exception e){
+						}catch(Throwable e){
 							risorsaNonDisponibile = "[TracciamentoAppender "+tipoTracciamento+"]";
 							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
@@ -320,9 +423,26 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 						// nel tracciamento considero anche le transazioni
 						if(checkRisorseDisponibili && this.propertiesReader.isTransazioniUsePddRuntimeDatasource()==false) {
 							try{
-								this.logger.debug("Controllo Database Transazioni");
-								this.dbTransazioniManager.isAlive();
-							}catch(Exception e){
+								this.logger.debug("Controllo Database Transazioni (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati()+")");
+								Throwable t = null;
+								for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati(); j++) {
+									try {
+										this.logger.debug("Database Transazioni check '"+j+"' ...");
+										this.dbTransazioniManager.isAlive();
+										this.logger.debug("Database Transazioni check '"+j+"' ok");
+										t=null;
+										break;
+									}catch(Throwable tAlive) {
+										this.logger.debug("Database Transazioni check '"+j+"' failed: "+tAlive.getMessage());
+										t = tAlive;
+										// faccio un altro tentativo
+										Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati());
+									}
+								}
+								if(t!=null) {
+									throw t;
+								}
+							}catch(Throwable e){
 								risorsaNonDisponibile = "[DatabaseTransazioni]";
 								TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 								this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
