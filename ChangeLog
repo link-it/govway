@@ -1,5 +1,10 @@
 2022-12-28  Andrea Poli <apoli@link.it>
 
+	* [Utils]
+	Aggiunto supporto per leggere dai certificati le informazioni riguardanti i 'subject alternative names'.
+
+2022-12-28  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug OP-1534
 	Le operazioni riguardanti richieste definite tramite WSDL con stile rpc, non venivano riconosciute dal processo di lettura delle informazioni SOAP in streaming.

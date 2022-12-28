@@ -304,6 +304,14 @@ public class CertificateInfo implements Serializable {
 		return CRLDistributionPoints.getCRLDistributionPoints(this.certificate.getEncoded());
 	}
 	
+	public SubjectAlternativeNames getSubjectAlternativeNames() throws CertificateParsingException, CertificateEncodingException {
+		return SubjectAlternativeNames.getSubjectAlternativeNames(this.certificate.getEncoded());
+	}
+	public List<String> getAlternativeNames() throws CertificateParsingException, CertificateEncodingException {
+		SubjectAlternativeNames subjectAlternativeNames = this.getSubjectAlternativeNames();
+		return subjectAlternativeNames !=null ? subjectAlternativeNames.getAlternativeNames() : null;
+	}
+	
     /**
      * Utility method to test if a certificate is self-issued. This is
      * the case iff the subject and issuer X500Principals are equal.

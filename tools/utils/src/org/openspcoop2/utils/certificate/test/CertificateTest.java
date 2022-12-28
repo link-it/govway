@@ -44,6 +44,7 @@ import org.openspcoop2.utils.certificate.ExtendedKeyUsage;
 import org.openspcoop2.utils.certificate.KeyUsage;
 import org.openspcoop2.utils.certificate.OID;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.utils.certificate.SubjectAlternativeNames;
 
 /**
  * CertificateTest
@@ -1567,6 +1568,165 @@ public class CertificateTest {
 					if(!crl.containsDistributionPointName(tagName, attesa)) {
 						throw new Exception("Atteso DistributionPointName '"+attesa+"'; non rilevata (contains-tagName)");
 					}
+				}
+			}
+		}
+		
+		// ***** SUBJECT ALTERNATIVE NAMES *****
+		
+		SubjectAlternativeNames san = cerInfo.getSubjectAlternativeNames();
+		if(forSign || forAuth) {
+			System.out.println("\nSubjectAlternativeNames");
+			for (String an : san.getAlternativeNames()) {
+				System.out.println("\t"+an);	
+			}
+
+			
+			String AlternativeName1 = "esempio-domain1.com";
+			String AlternativeName2 = "www.esempio-altro-dominio.com";
+			String AlternativeName3 = "esempio-domain3.org";
+					
+			sizeRiscontrati = cerInfo.getAlternativeNames().size();
+			sizeAttesi = 3;
+			if(sizeAttesi!=sizeRiscontrati) {
+				throw new Exception("Attesi "+sizeAttesi+" AlternativeNames, riscontrati: "+sizeRiscontrati);
+			}
+			
+			for (int i = 0; i < cerInfo.getAlternativeNames().size(); i++) {
+				String an = cerInfo.getAlternativeNames().get(i);
+				
+				String attesa = null;
+				if(i==0) {
+					attesa = AlternativeName1;
+				}
+				else if(i==1) {
+					attesa = AlternativeName2;
+				}
+				else {
+					attesa = AlternativeName3;
+				}
+				
+				if(an==null) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"'; non rilevata");
+				}
+				if(!attesa.equals(an)) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"'; rilevata '"+an+"'");
+				}
+							
+				an = cerInfo.getAlternativeNames().get(i);
+				if(an==null) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"' (index); non rilevata");
+				}
+				if(!attesa.equals(an)) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"' (index); rilevata '"+an+"'");
+				}
+				
+				if(!san.containsAlternativeName(attesa)) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"'; non rilevata (contains)");
+				}
+			}
+			
+			sizeRiscontrati = san.getAlternativeNames().size();
+			sizeAttesi = 3;
+			if(sizeAttesi!=sizeRiscontrati) {
+				throw new Exception("Attesi "+sizeAttesi+" AlternativeNames, riscontrati: "+sizeRiscontrati);
+			}
+			
+			for (int i = 0; i < san.getAlternativeNames().size(); i++) {
+				String an = san.getAlternativeNames().get(i);
+				
+				String attesa = null;
+				if(i==0) {
+					attesa = AlternativeName1;
+				}
+				else if(i==1) {
+					attesa = AlternativeName2;
+				}
+				else {
+					attesa = AlternativeName3;
+				}
+				
+				if(an==null) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"'; non rilevata");
+				}
+				if(!attesa.equals(an)) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"'; rilevata '"+an+"'");
+				}
+							
+				an = san.getAlternativeName(i);
+				if(an==null) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"' (index); non rilevata");
+				}
+				if(!attesa.equals(an)) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"' (index); rilevata '"+an+"'");
+				}
+				
+				if(!san.containsAlternativeName(attesa)) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"'; non rilevata (contains)");
+				}
+			}
+			
+			sizeRiscontrati = san.getObjectAlternativeNames().size();
+			sizeAttesi = 3;
+			if(sizeAttesi!=sizeRiscontrati) {
+				throw new Exception("Attesi "+sizeAttesi+" AlternativeNames (object), riscontrate: "+sizeRiscontrati);
+			}
+			
+			for (int i = 0; i < san.getObjectAlternativeNames().size(); i++) {
+				GeneralName caName = san.getObjectAlternativeNames().get(i);
+				
+				String attesa = null;
+				int tagName = 2;
+				if(i==0) {
+					attesa = AlternativeName1;
+				}
+				else if(i==1) {
+					attesa = AlternativeName2;
+				}
+				else {
+					attesa = AlternativeName3;
+				}
+				
+				if(caName==null) {
+					throw new Exception("Attesa AlternativeName '"+attesa+"'; non rilevata");
+				}
+				
+				String ca=caName.getName()!=null ? caName.getName().toString() : null;
+				if(ca==null) {
+					throw new Exception("Attesa AlternativeName '"+attesa+"'; non rilevata");
+				}
+				if(!attesa.equals(ca)) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"'; rilevata '"+ca+"'");
+				}
+				
+				int tagNameCa = caName.getTagNo();
+				if(tagName!=tagNameCa) {
+					throw new Exception("Atteso AlternativeName tagName '"+tagName+"'; rilevata '"+tagNameCa+"'");
+				}
+							
+				caName = san.getObjectAlternativeName(i);
+				if(caName==null) {
+					throw new Exception("Attesa AlternativeName '"+attesa+"'; non rilevata");
+				}
+				
+				ca=caName.getName()!=null ? caName.getName().toString() : null;
+				if(ca==null) {
+					throw new Exception("Attesa AlternativeName '"+attesa+"' (index); non rilevata");
+				}
+				if(!attesa.equals(ca)) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"' (index); rilevata '"+ca+"'");
+				}
+				
+				tagNameCa = caName.getTagNo();
+				if(tagName!=tagNameCa) {
+					throw new Exception("Atteso AlternativeName tagName '"+tagName+"'; rilevata '"+tagNameCa+"'");
+				}
+				
+				if(!san.containsAlternativeName(attesa)) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"'; non rilevata (contains)");
+				}
+				if(!san.containsAlternativeName(tagName, attesa)) {
+					throw new Exception("Atteso AlternativeName '"+attesa+"'; non rilevata (contains-tagName)");
 				}
 			}
 		}
