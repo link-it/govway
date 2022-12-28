@@ -1165,7 +1165,7 @@ public class WSDLValidator {
 				else {
 					errorMsgValidazioneXSDBuilder.append("Response");
 				}
-				errorMsgValidazioneXSDBuilder.append("content not conform to ").append(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()?"WSDL":"API").append(" specification; ");
+				errorMsgValidazioneXSDBuilder.append(" content not conform to ").append(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()?"WSDL":"API").append(" specification; ");
 			}
 			errorMsgValidazioneXSDBuilder.append(e.getMessage());
 			errorMsgValidazioneXSD = errorMsgValidazioneXSDBuilder.toString();

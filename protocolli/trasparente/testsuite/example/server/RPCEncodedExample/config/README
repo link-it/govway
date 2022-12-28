@@ -1,0 +1,4 @@
+Per generare classi:
+java -classpath "lib/axis14/*":"lib/commons/*":"lib/javax/*":"lib/shared/*" org.apache.axis.wsdl.WSDL2Java -o src/ -p org.openspcoop2.example.server.rpc.encoded -a -s config/rpcEncodedExample.wsdl 
+
+Si genera con axis14 perchè encoded non supportato da cxf.

@@ -304,6 +304,9 @@ Di seguito vengono descritti i test del package 'validazione':
 - 'swagger_request_validator', verifica la funzionalità di validazione dei contenuti effettuata con la libreria "swagger-request-validator" (https://bitbucket.org/atlassian/swagger-request-validator). In particolar modo viene verificata la validazione di una API complessa di dimensioni notevoli.
   ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.swagger_request_validator   
 
+- 'rpc', verifica il funzionamento con messaggi definiti in WSDL con stile RPC e use literal o encoded. I test oltre alla validazione verificano anche il riconoscimento dell'operazione tramite l'ottimizzazione soap reader.
+  ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.rpc 
+
 Di seguito vengono descritti i test del package 'trasformazione':
 
 - 'form', verifica la trasformazione utilizzata per riconoscere casi di errori generati durante la certificazione di uno SPIDProvider 

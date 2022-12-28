@@ -1,3 +1,12 @@
+2022-12-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1534
+	Le operazioni riguardanti richieste definite tramite WSDL con stile rpc, non venivano riconosciute dal processo di lettura delle informazioni SOAP in streaming.
+	Nell'intervento è stato risolto anche un problema di caching delle richieste, 
+	in cui l'azione riconosciuta veniva erroneamente associata anche all'oggetto in cache memorizzato con una chiave che non presentava informazioni specifiche sull'operazione (root element)
+	e l'oggetto veniva poi utilizzato su successive richieste, in alcune condizioni limite di errore, nelle quali veniva quindi individuata una azione errata.
+
 2022-12-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

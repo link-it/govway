@@ -11,5 +11,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3.9_lib"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3.9_lib_karate"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3.9_lib_stub"/>
+	<classpathentry kind="lib" path="lib/openspcoop2_protocol-trasparente_rpc_literal_example_skeleton.jar"/>
+	<classpathentry kind="lib" path="lib/openspcoop2_protocol-trasparente_rpc_literal_example_stub.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,0 +1,180 @@
+<!-- Definizione WSDL -->
+<wsdl:definitions targetNamespace="http://openspcoop2.org/ValidazioneContenutiWS/Service" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:service="http://openspcoop2.org/ValidazioneContenutiWS/Service" xmlns:types="http://openspcoop2.org/ValidazioneContenutiWS/Service/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+
+  <wsdl:types>
+<xsd:schema targetNamespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+     <!-- Nominativo -->
+     <xsd:element name="nominativo" type="nominativoType"/>
+     <xsd:complexType name="nominativoType">
+	    <xsd:simpleContent>
+		<xsd:extension base="xsd:string">
+		   <xsd:attribute name="ruolo" type="xsd:string" use="required"/>
+		</xsd:extension>
+	    </xsd:simpleContent>
+     </xsd:complexType>
+
+     <!-- Indirizzo -->
+     <xsd:element name="indirizzo" type="indirizzoType"/>
+     <xsd:simpleType name="indirizzoType">
+       <xsd:restriction base="xsd:string">
+       </xsd:restriction>
+     </xsd:simpleType>
+
+     <!-- Data -->
+     <xsd:element name="ora-registrazione" type="xsd:dateTime" />
+ 
+     <!-- Messaggio Risposta -->
+   <xsd:element name="esito" type="esitoType" />
+   <xsd:complexType name="esitoType">
+      <xsd:sequence>
+         <xsd:element name="code" type="xsd:string"/>
+         <xsd:element name="reason" type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+     
+
+   <!-- Caso xsi:type -->
+   <xsd:complexType name="MessaggioType">
+      <xsd:sequence>
+         <xsd:element name="dati" type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="FixedMessaggioType">
+      <xsd:complexContent>
+         <xsd:restriction base="MessaggioType">
+            <xsd:sequence>
+               <xsd:element name="dati" type="xsd:string" fixed="test"/>
+            </xsd:sequence>
+         </xsd:restriction>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="Fixed2MessaggioType">
+      <xsd:complexContent>
+         <xsd:restriction base="MessaggioType">
+            <xsd:sequence>
+               <xsd:element name="dati" type="xsd:string" fixed="test2"/>
+            </xsd:sequence>
+         </xsd:restriction>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+</xsd:schema>
+  </wsdl:types>
+
+
+
+<!-- ********* Messaggi ************* -->
+
+<!-- operation:RPCL-element  -->
+<wsdl:message name="RichiestaRPCL-element">
+	<wsdl:part element="types:nominativo" name="nominativoUtente"/>
+	<wsdl:part element="types:indirizzo" name="indirizzoUtente"/>
+	<wsdl:part element="types:ora-registrazione" name="oraRegistrazioneUtente"/>
+</wsdl:message>
+<wsdl:message name="RispostaRPCL-element">
+	<wsdl:part element="types:esito" name="esitoRegistrazione"/>
+</wsdl:message>
+
+<!-- operation:RPCL-type  -->
+<wsdl:message name="RichiestaRPCL-type">
+	<wsdl:part type="types:nominativoType" name="nominativo"/>
+   <wsdl:part type="xsd:string" name="indirizzo"/>
+   <wsdl:part type="xsd:dateTime" name="ora-registrazione"/>
+	<wsdl:part type="xsd:string" name="idstring"/>
+	<wsdl:part type="xsd:int" name="idint"/>
+</wsdl:message>
+<wsdl:message name="RispostaRPCL-type">
+   <wsdl:part type="types:esitoType" name="esito"/>
+</wsdl:message>
+   
+   <!-- operation:RPCL-xsitype  -->
+   <wsdl:message name="RichiestaRPCL-xsitype">
+      <wsdl:part type="types:FixedMessaggioType" name="richiestaEsempioXSI"/>
+   </wsdl:message>
+   <wsdl:message name="RispostaRPCL-xsitype">
+      <wsdl:part type="types:FixedMessaggioType" name="rispostaEsempioXSI"/>
+      <wsdl:part type="xsd:string" name="esito"/>
+   </wsdl:message>
+
+
+
+
+
+<!-- ********* PortType ********* -->
+
+<wsdl:portType name="ServiceRPCLiteral">
+
+      <wsdl:operation name="RPCL-element">
+         <wsdl:input message="service:RichiestaRPCL-element" name="richiestaRPCL-element"/>
+         <wsdl:output message="service:RispostaRPCL-element" name="rispostaRPCL-element"/>
+      </wsdl:operation>
+
+      <wsdl:operation name="RPCL-type">
+         <wsdl:input message="service:RichiestaRPCL-type" name="richiestaRPCL-type"/>
+         <wsdl:output message="service:RispostaRPCL-type" name="rispostaRPCL-type"/>
+      </wsdl:operation>
+   
+   <wsdl:operation name="RPCL-xsitype">
+      <wsdl:input message="service:RichiestaRPCL-xsitype" name="richiestaRPCL-xsitype"/>
+      <wsdl:output message="service:RispostaRPCL-xsitype" name="rispostaRPCL-xsitype"/>
+   </wsdl:operation>
+
+</wsdl:portType>
+
+
+<!-- **** Binding **** -->
+
+<wsdl:binding name="ServiceRPCLiteralBinding" 
+              type="service:ServiceRPCLiteral">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="RPCL-element">
+         <wsdlsoap:operation soapAction="RPCL-element"/>
+         <wsdl:input name="richiestaRPCL-element">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="rispostaRPCL-element">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="RPCL-type">
+         <wsdlsoap:operation soapAction="RPCL-type"/>
+         <wsdl:input name="richiestaRPCL-type">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="rispostaRPCL-type">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+   
+   <wsdl:operation name="RPCL-xsitype">
+      <wsdlsoap:operation soapAction="RPCL-xsitype"/>
+      <wsdl:input name="richiestaRPCL-xsitype">
+         <wsdlsoap:body use="literal" parts="richiestaEsempioXSI"/>
+      </wsdl:input>
+      <wsdl:output name="rispostaRPCL-xsitype">
+         <wsdlsoap:body use="literal" parts="rispostaEsempioXSI esito"/>
+      </wsdl:output>
+   </wsdl:operation>
+
+</wsdl:binding>
+
+
+
+<!-- ***** service ********* -->
+
+<wsdl:service name="ServiceRPCLiteral">
+      <wsdl:port binding="service:ServiceRPCLiteralBinding" name="ServiceRPCLiteral">
+        <wsdlsoap:address location="http://127.0.0.1:8080/ServiceRPCLiteral"/>
+      </wsdl:port>
+</wsdl:service>
+
+
+
+</wsdl:definitions>

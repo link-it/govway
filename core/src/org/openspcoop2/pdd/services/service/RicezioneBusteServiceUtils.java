@@ -225,6 +225,9 @@ public class RicezioneBusteServiceUtils {
 			if(idServizio==null){
 				try{
 					idServizio = serviceIdentificationReader.convertToIDServizio(idPA);
+					if(idServizio!=null) {
+						idServizio = idServizio.clone(); // effettuo clone altrimenti nella cache viene memorizzata l'azione impostata dopo!
+					}
 				}catch(RegistryNotFound notFound){
 					if(res!=null) {
 						logCore.debug("Conversione Dati PortaDelegata in identificativo servizio fallita (notFound): "+notFound.getMessage(),notFound);
@@ -316,6 +319,9 @@ public class RicezioneBusteServiceUtils {
 			RequestInfoConfigUtilities.checkRequestInfoConfig(paDefault, logCore, protocolServiceBinding, soapStreamReader, requestInfo);
 			// Aggiorno chiave per considerare anche il soapStreamReader
 			GestoreRichieste.updateRequestConfig(logCore, requestInfo, protocolServiceBinding, soapStreamReader);
+			if(requestInfo!=null && requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getIdServizio()!=null) {
+				idServizio = requestInfo.getRequestConfig().getIdServizio(); // se ho fatto lo switch per chiave più specifica per soap, uso il nuovo oggetto per evitare che nella chiave precedente venga memorizzata l'azione
+			}
 			
 			// provo a leggere anche l'azione
 			// l'eventuale errore lo genero dopo

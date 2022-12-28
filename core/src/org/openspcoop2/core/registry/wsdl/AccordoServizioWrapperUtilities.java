@@ -348,7 +348,8 @@ public class AccordoServizioWrapperUtilities {
 	}
 	
 	public static void setMessageInputSoapBindingInformation(BindingOperation bindingOperation,Logger logger,
-			Operation operationAS,PortType ptAS, HashMap<String,QName> mapPartQName){
+			Operation operationAS,PortType ptAS, HashMap<String,QName> mapPartQName,
+			String wsdlTargetNamespace){
 		String nomeOperation = operationAS.getNome();
 		String nomePortType = ptAS.getNome();
 		BindingInput bindingInput = bindingOperation.getBindingInput();
@@ -359,14 +360,15 @@ public class AccordoServizioWrapperUtilities {
 				for(int j=0; j<extendibleElementsMessageInput.size(); j++){
 					ExtensibilityElement elem = (ExtensibilityElement) extendibleElementsMessageInput.get(j);
 					logger.debug("esamino binding extendibles di tipo:"+elem.getClass().getName()+" instance of SOAPBody:"+(elem instanceof SOAPBody));
-					setPartMessageSoapBindingOperationInfo(elem, logger, operationAS, ptAS, true, operationAS.getMessageInput(), mapPartQName);
+					setPartMessageSoapBindingOperationInfo(elem, logger, operationAS, ptAS, true, operationAS.getMessageInput(), mapPartQName, wsdlTargetNamespace);
 				}
 			}
 		}
 	}
 	
 	public static void setMessageOutputSoapBindingInformation(BindingOperation bindingOperation,Logger logger,
-			Operation operationAS,PortType ptAS, HashMap<String,QName> mapPartQName){
+			Operation operationAS,PortType ptAS, HashMap<String,QName> mapPartQName,
+			String wsdlTargetNamespace){
 		String nomeOperation = operationAS.getNome();
 		String nomePortType = ptAS.getNome();
 		BindingOutput bindingOutput = bindingOperation.getBindingOutput();
@@ -377,7 +379,7 @@ public class AccordoServizioWrapperUtilities {
 				for(int j=0; j<extendibleElementsMessageOutput.size(); j++){
 					ExtensibilityElement elem = (ExtensibilityElement) extendibleElementsMessageOutput.get(j);
 					logger.debug("esamino binding extendibles di tipo:"+elem.getClass().getName()+" instance of SOAPBody:"+(elem instanceof SOAPBody));
-					setPartMessageSoapBindingOperationInfo(elem, logger, operationAS, ptAS, false, operationAS.getMessageOutput(), mapPartQName);
+					setPartMessageSoapBindingOperationInfo(elem, logger, operationAS, ptAS, false, operationAS.getMessageOutput(), mapPartQName, wsdlTargetNamespace);
 				}
 			}
 		}
@@ -385,7 +387,8 @@ public class AccordoServizioWrapperUtilities {
 	
 	public static void setPartMessageSoapBindingOperationInfo(ExtensibilityElement elem,Logger logger,
 			Operation operationAS,PortType ptAS, boolean inputMessage, Message message,
-			HashMap<String,QName> mapPartQName){
+			HashMap<String,QName> mapPartQName,
+			String wsdlTargetNamespace){
 		
 		String nomeOperation = operationAS.getNome();
 		String tipoMessage = "message-input";
@@ -397,7 +400,11 @@ public class AccordoServizioWrapperUtilities {
 		if(elem instanceof SOAPBody){
 			SOAPBody soapBody = (SOAPBody) elem;
 			message.setUse(BindingUse.toEnumConstant(soapBody.getUse()));
-			message.setSoapNamespace(soapBody.getNamespaceURI());
+			if(soapBody.getNamespaceURI()!=null) {
+				message.setSoapNamespace(soapBody.getNamespaceURI());
+			}else {
+				message.setSoapNamespace(wsdlTargetNamespace);
+			}
 			StringBuilder bf = new StringBuilder();
 			List<?> listParts = soapBody.getParts();
 			if(listParts!=null){
@@ -475,7 +482,11 @@ public class AccordoServizioWrapperUtilities {
 		else if(elem instanceof javax.wsdl.extensions.soap12.SOAP12Body){
 			javax.wsdl.extensions.soap12.SOAP12Body soapBody = (javax.wsdl.extensions.soap12.SOAP12Body) elem;
 			message.setUse(BindingUse.toEnumConstant(soapBody.getUse()));
-			message.setSoapNamespace(soapBody.getNamespaceURI());
+			if(soapBody.getNamespaceURI()!=null) {
+				message.setSoapNamespace(soapBody.getNamespaceURI());
+			}else {
+				message.setSoapNamespace(wsdlTargetNamespace);
+			}
 			StringBuilder bf = new StringBuilder();
 			List<?> listParts = soapBody.getParts();
 			if(listParts!=null){
@@ -656,10 +667,10 @@ public class AccordoServizioWrapperUtilities {
 						setOperationSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS);
 											
 						// Raccolgo Message-Input
-						setMessageInputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS, mapOperationTo_mapPartQName_input.get(operationAS.getNome()));
+						setMessageInputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS, mapOperationTo_mapPartQName_input.get(operationAS.getNome()), wsdl.getTargetNamespace());
 						
 						// Raccolgo Message-Output
-						setMessageOutputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS, mapOperationTo_mapPartQName_output.get(operationAS.getNome()));
+						setMessageOutputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS, mapOperationTo_mapPartQName_output.get(operationAS.getNome()), wsdl.getTargetNamespace());
 						
 						ptAS.addAzione(operationAS);
 					}		
@@ -771,8 +782,8 @@ public class AccordoServizioWrapperUtilities {
 										
 //												System.out.println("WRAPPED DOCUMENT LITERAL");
 //												
-//												System.out.println("ROOT ELEMENT NAME:"+rootElement.getLocalName());
-//												System.out.println("ROOT ELEMENT NAMESPACE:"+rootElement.getNamespaceURI());
+//												System.out.println("ROOT ELEMENT NAME:"+rootElementLocalName);
+//												System.out.println("ROOT ELEMENT NAMESPACE:"+rootElementNamespace);
 //												
 //												System.out.println("SOAP NAMESPACE: "+argumentsOperation.getSoapNamespace());
 //												System.out.println("ELEMENT NAME: "+part.getElementName());
@@ -801,8 +812,37 @@ public class AccordoServizioWrapperUtilities {
 									}
 								}
 							}
+							else if(CostantiRegistroServizi.WSDL_STYLE_RPC.equals(style) 
+									// va bene anche per encoded 
+									// && CostantiRegistroServizi.WSDL_USE_LITERAL.equals(use) 
+									&& rootElementLocalName.equals(op.getNome()) // deve essere uguale su RPC
+									){
+								
+								//System.out.println("RPC '"+use+"'");
+										
+								//System.out.println("ROOT ELEMENT NAME:"+rootElementLocalName);
+								//System.out.println("ROOT ELEMENT NAMESPACE:"+rootElementNamespace);
+										
+								//System.out.println("SOAP NAMESPACE: "+argumentsOperation.getSoapNamespace());
+										
+								boolean match = true;
+								if(argumentsOperation.getSoapNamespace()==null) {
+									if(rootElementNamespace!=null) {
+										match=false;
+									}
+								}
+								else {
+									if(!argumentsOperation.getSoapNamespace().equals(rootElementNamespace)) {
+										match=false;
+									}
+								}
+								if(match) {
+									//System.out.println("FIND OP!!! ["+op.getNome()+"]");
+									return op.getNome();
+								}
+							}
 						}catch(Exception e){
-							this.logger.debug("@@@searchOperationName Azione ["+op.getNome()+"] mismatch rootElement["+rootElementLocalName+"]: "+e.getMessage());
+							this.logger.debug("@@@searchOperationName Azione ["+op.getNome()+"] mismatch rootElement["+rootElementLocalName+"] namespace["+rootElementNamespace+"]: "+e.getMessage());
 							//e.printStackTrace(SyOstem.out);
 						}
 					}

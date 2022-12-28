@@ -1,0 +1,8 @@
+Per generare classi:
+java -classpath "lib/cxf/*:lib/javax/*:lib/jax/*:lib/shared/*:lib/log/*:lib/commons/*:lib/security/*" org.apache.cxf.tools.wsdlto.WSDLToJava -d src -p org.openspcoop2.example.server.rpc.literal.skeleton -impl -server config/rpcLiteralExample.wsdl 
+java -classpath "lib/cxf/*:lib/javax/*:lib/jax/*:lib/shared/*:lib/log/*:lib/commons/*:lib/security/*" org.apache.cxf.tools.wsdlto.WSDLToJava -d src -p org.openspcoop2.example.server.rpc.literal.stub -client config/rpcLiteralExample.wsdl 
+
+java -classpath "lib/cxf/*:lib/javax/*:lib/jax/*:lib/shared/*:lib/log/*:lib/commons/*:lib/security/*" org.apache.cxf.tools.wsdlto.WSDLToJava -d src -p org.openspcoop2.example.server.rpc.literal.skeleton_namespace_ridefinito -impl -server config/rpcLiteralExample_vNamespaceRidefinito.wsdl
+java -classpath "lib/cxf/*:lib/javax/*:lib/jax/*:lib/shared/*:lib/log/*:lib/commons/*:lib/security/*" org.apache.cxf.tools.wsdlto.WSDLToJava -d src -p org.openspcoop2.example.server.rpc.literal.stub_namespace_ridefinito -client config/rpcLiteralExample_vNamespaceRidefinito.wsdl
+
+Si genera solo il literal, perchè encoded non è più supportato da cxf.

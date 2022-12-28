@@ -333,14 +333,16 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									if(opOpenSPCoop.getMessageInput()!=null){
 										AccordoServizioWrapperUtilities.
 											setMessageInputSoapBindingInformation(bindingOperationWSDL, log, 
-													opOpenSPCoop, ptOpenSPCoop, mapPartQName_input);
+													opOpenSPCoop, ptOpenSPCoop, mapPartQName_input,
+													wsdl.getTargetNamespace());
 									}
 									
 									// Raccolgo Message-Output
 									if(opOpenSPCoop.getMessageOutput()!=null){
 										AccordoServizioWrapperUtilities.
 											setMessageOutputSoapBindingInformation(bindingOperationWSDL, log, 
-													opOpenSPCoop, ptOpenSPCoop, mapPartQName_output);
+													opOpenSPCoop, ptOpenSPCoop, mapPartQName_output,
+													wsdl.getTargetNamespace());
 									}
 									
 								}
