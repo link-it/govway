@@ -155,6 +155,7 @@ import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiRest;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
@@ -1951,11 +1952,18 @@ public class ConfigurazionePdDReader {
 
 			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			
+			boolean rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified();
+			if(pd!=null && pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
+				boolean default_rpcAcceptRootElementUnqualified = rpcAcceptRootElementUnqualified;
+				rpcAcceptRootElementUnqualified = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(pd.getProprietaList(), CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RPC_ACCEPT_ROOT_ELEMENT_UNQUALIFIED_ENABLED, default_rpcAcceptRootElementUnqualified);
+			}
+			
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, requestInfo, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
 					pattern, forceRegistryBased, forcePluginBased, this.log, false,
 					bufferMessage_readOnly, 
-					headerIntegrazione!=null ? headerIntegrazione.getIdTransazione() : null);
+					headerIntegrazione!=null ? headerIntegrazione.getIdTransazione() : null,
+					rpcAcceptRootElementUnqualified);
 
 			// Se non ho riconosciuto una azione a questo punto, 
 			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException
@@ -2966,11 +2974,18 @@ public class ConfigurazionePdDReader {
 
 			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			
+			boolean rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified();
+			if(pa!=null && pa.getProprietaList()!=null && !pa.getProprietaList().isEmpty()) {
+				boolean default_rpcAcceptRootElementUnqualified = rpcAcceptRootElementUnqualified;
+				rpcAcceptRootElementUnqualified = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(pa.getProprietaList(), CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RPC_ACCEPT_ROOT_ELEMENT_UNQUALIFIED_ENABLED, default_rpcAcceptRootElementUnqualified);
+			}
+			
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, requestInfo, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
 					pattern, forceRegistryBased, forcePluginBased, this.log, true,
 					bufferMessage_readOnly, 
-					headerIntegrazione!=null ? headerIntegrazione.getIdTransazione() : null);
+					headerIntegrazione!=null ? headerIntegrazione.getIdTransazione() : null,
+					rpcAcceptRootElementUnqualified);
 
 			// Se non ho riconosciuto una azione a questo punto, 
 			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException

@@ -977,7 +977,7 @@ public class ValidatoreMessaggiApplicativiRest {
 		}
 		return null;
 	}
-	protected static boolean readBooleanValueWithDefault(List<Proprieta> proprieta, String nome, boolean defaultValue) {
+	public static boolean readBooleanValueWithDefault(List<Proprieta> proprieta, String nome, boolean defaultValue) {
 		String valueS = ValidatoreMessaggiApplicativiRest.readValue(proprieta, nome);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_ENABLED.equals(valueS.trim())) {

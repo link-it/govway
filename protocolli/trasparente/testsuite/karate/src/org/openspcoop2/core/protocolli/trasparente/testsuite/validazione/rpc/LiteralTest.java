@@ -256,6 +256,82 @@ public class LiteralTest extends ConfigLoader {
 	
 	
 	
+	// ***** RPC TYPE (TEST ROOT ELEMENT) ****
+	
+	// NOTA: test migliori per questo caso sono fatti in rpc_element_*
+	
+	private static String content_rpc_type_rootElementUnqualfied = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+			"   <soapenv:Header/>\n"+
+			"   <soapenv:Body>\n"+
+			"      <RPCL-type>\n"+
+			"         <nominativo ruolo=\"test\">test</nominativo>\n"+
+			"         <indirizzo>test</indirizzo>\n"+
+			"         <ora-registrazione>2022-12-27T15:22:41.220+01:00</ora-registrazione>\n"+
+			"         <idstring>3</idstring>\n"+
+			"         <idint>3</idint>\n"+
+			"      </RPCL-type>\n"+
+			"   </soapenv:Body>\n"+
+			"</soapenv:Envelope>";
+		
+	@Test
+	public void erogazione_rpc_type_rootElementUnqualfied() throws Exception {
+		_test(TipoServizio.EROGAZIONE, content_rpc_type_rootElementUnqualfied, SERVER_VALIDATION, API_SENZA_VALIDAZIONE, "RPCL-type",
+				"Unmarshalling Error: cvc-elt.4.2: Cannot resolve 'nominativoType' to a type definition for element 'nominativo'."); // e' il backend CXF che non riconosce
+	}
+	@Test
+	public void fruizione_rpc_type_rootElementUnqualfied() throws Exception {
+		_test(TipoServizio.FRUIZIONE, content_rpc_type_rootElementUnqualfied, SERVER_VALIDATION, API_SENZA_VALIDAZIONE, "RPCL-type",
+				"Unmarshalling Error: cvc-elt.4.2: Cannot resolve 'nominativoType' to a type definition for element 'nominativo'."); // e' il backend CXF che non riconosce
+	}
+	
+	@Test
+	public void erogazione_rpc_type_rootElementUnqualfied_validazioneGovWay() throws Exception {
+		_test(TipoServizio.EROGAZIONE, content_rpc_type_rootElementUnqualfied, SERVER_VALIDATION, API_CON_VALIDAZIONE, "RPCL-type",
+				"Required input parameter '[xsi:type=\"{http://www.w3.org/2001/XMLSchema\"}int]idint' undefined in 5 body root-element(s) founded: {null}nominativo,{null}indirizzo,{null}ora-registrazione,{null}idstring,{null}idint");
+	}
+	@Test
+	public void fruizione_rpc_type_rootElementUnqualfied_validazioneGovWay() throws Exception {
+		_test(TipoServizio.FRUIZIONE, content_rpc_type_rootElementUnqualfied, SERVER_VALIDATION, API_CON_VALIDAZIONE, "RPCL-type",
+				"Required input parameter '[xsi:type=\"{http://www.w3.org/2001/XMLSchema\"}int]idint' undefined in 5 body root-element(s) founded: {null}nominativo,{null}indirizzo,{null}ora-registrazione,{null}idstring,{null}idint");
+	}
+	
+	@Test
+	public void erogazione_rpc_type_rootElementUnqualfied_configPropertiesNotAccepted() throws Exception {
+		_test(TipoServizio.EROGAZIONE, content_rpc_type_rootElementUnqualfied, SERVER_VALIDATION, API_SOAP_NAMESPACE_RIDEFINITO, "RPCL-type",
+				"Operation undefined in the API specification");
+	}
+	@Test
+	public void fruizione_rpc_type_rootElementUnqualfied_configPropertiesNotAccepted() throws Exception {
+		_test(TipoServizio.FRUIZIONE, content_rpc_type_rootElementUnqualfied, SERVER_VALIDATION, API_SOAP_NAMESPACE_RIDEFINITO, "RPCL-type",
+				"Operation undefined in the API specification");
+	}
+		
+	private static String content_rpc_type_rootElementNamespaceDifferente = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:serDIFFERENTE=\"http://openspcoop2.org/ValidazioneContenutiWS/ServiceDIFFERENTE\">\n"+
+			"   <soapenv:Header/>\n"+
+			"   <soapenv:Body>\n"+
+			"      <serDIFFERENTE:RPCL-type>\n"+
+			"         <nominativo ruolo=\"test\">test</nominativo>\n"+
+			"         <indirizzo>test</indirizzo>\n"+
+			"         <ora-registrazione>2022-12-27T15:22:41.220+01:00</ora-registrazione>\n"+
+			"         <idstring>3</idstring>\n"+
+			"         <idint>3</idint>\n"+
+			"      </serDIFFERENTE:RPCL-type>\n"+
+			"   </soapenv:Body>\n"+
+			"</soapenv:Envelope>";
+	
+	@Test
+	public void erogazione_rpc_type_rootElementNamespaceDifferente() throws Exception {
+		_test(TipoServizio.EROGAZIONE, content_rpc_type_rootElementNamespaceDifferente, SERVER_VALIDATION, API_SENZA_VALIDAZIONE, "RPCL-type",
+				"Operation undefined in the API specification");
+	}
+	@Test
+	public void fruizione_rpc_type_rootElementNamespaceDifferente() throws Exception {
+		_test(TipoServizio.FRUIZIONE, content_rpc_type_rootElementNamespaceDifferente, SERVER_VALIDATION, API_SENZA_VALIDAZIONE, "RPCL-type",
+				"Operation undefined in the API specification");
+	}
+	
+	
+	
 	// ***** RPC ELEMENT ****
 	
 	@Test
@@ -379,6 +455,101 @@ public class LiteralTest extends ConfigLoader {
 				null);
 	}
 	
+	
+	
+	// ***** RPC ELEMENT (TEST ROOT ELEMENT) ****
+	
+	private static String content_rpc_element_rootElementUnqualfied = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:typ=\"http://openspcoop2.org/ValidazioneContenutiWS/Service/types\">\n"+
+			"   <soapenv:Header/>\n"+
+			"   <soapenv:Body>\n"+
+			"      <RPCL-element>\n"+
+			"         <typ:nominativo ruolo=\"test\">test</typ:nominativo>\n"+
+			"         <typ:indirizzo>test</typ:indirizzo>\n"+
+			"         <typ:ora-registrazione>2022-12-27T15:22:41.220+01:00</typ:ora-registrazione>\n"+
+			"      </RPCL-element>\n"+
+			"   </soapenv:Body>\n"+
+			"</soapenv:Envelope>";
+	
+	@Test
+	public void erogazione_rpc_element_rootElementUnqualfied() throws Exception {
+		_test(TipoServizio.EROGAZIONE, content_rpc_element_rootElementUnqualfied, SERVER_VALIDATION, API_SENZA_VALIDAZIONE, "RPCL-element",
+				null);
+	}
+	@Test
+	public void fruizione_rpc_element_rootElementUnqualfied() throws Exception {
+		_test(TipoServizio.FRUIZIONE, content_rpc_element_rootElementUnqualfied, SERVER_VALIDATION, API_SENZA_VALIDAZIONE, "RPCL-element",
+				null);
+	}
+	
+	@Test
+	public void erogazione_rpc_element_rootElementUnqualfied_validazioneGovWay() throws Exception {
+		_test(TipoServizio.EROGAZIONE, content_rpc_element_rootElementUnqualfied, SERVER_VALIDATION, API_CON_VALIDAZIONE, "RPCL-element",
+				null);
+	}
+	@Test
+	public void fruizione_rpc_element_rootElementUnqualfied_validazioneGovWay() throws Exception {
+		_test(TipoServizio.FRUIZIONE, content_rpc_element_rootElementUnqualfied, SERVER_VALIDATION, API_CON_VALIDAZIONE, "RPCL-element",
+				null);
+	}
+	
+	@Test
+	public void erogazione_rpc_element_rootElementUnqualfied_configPropertiesNotAccepted() throws Exception {
+		_test(TipoServizio.EROGAZIONE, content_rpc_element_rootElementUnqualfied, SERVER_VALIDATION, API_SOAP_NAMESPACE_RIDEFINITO, "RPCL-element",
+				"Operation undefined in the API specification");
+	}
+	@Test
+	public void fruizione_rpc_element_rootElementUnqualfied_configPropertiesNotAccepted() throws Exception {
+		_test(TipoServizio.FRUIZIONE, content_rpc_element_rootElementUnqualfied, SERVER_VALIDATION, API_SOAP_NAMESPACE_RIDEFINITO, "RPCL-element",
+				"Operation undefined in the API specification");
+	}
+	
+	@Test
+	public void erogazione_rpc_element_rootElementUnqualfied_configPropertiesNotAccepted_validazioneGovWayFallita() throws Exception {
+		_test(TipoServizio.EROGAZIONE, content_rpc_element_rootElementUnqualfied, SERVER_VALIDATION, API_SOAP_NAMESPACE_RIDEFINITO, "RPCL-element",
+				"RPCL-element", // riconosco l'azione tramite la url 
+				"Unqualified rpc request element 'RPCL-element' by WSDL specification 'gw/ENTE:RPCLiteralTestSoapNamespaceRidefinito:1' (port-type:ServiceRPCLiteral, operation:RPCL-element)");
+	}
+	@Test
+	public void fruizione_rpc_element_rootElementUnqualfied_configPropertiesNotAccepted_validazioneGovWayFallita() throws Exception {
+		_test(TipoServizio.FRUIZIONE, content_rpc_element_rootElementUnqualfied, SERVER_VALIDATION, API_SOAP_NAMESPACE_RIDEFINITO, "RPCL-element",
+				"RPCL-element", // riconosco l'azione tramite la url 
+				"Unqualified rpc request element 'RPCL-element' by WSDL specification 'gw/ENTE:RPCLiteralTestSoapNamespaceRidefinito:1' (port-type:ServiceRPCLiteral, operation:RPCL-element)");
+	}
+	
+	private static String content_rpc_element_rootElementNamespaceDifferente = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:serDIFFERENTE=\"http://openspcoop2.org/ValidazioneContenutiWS/ServiceDIFFERENTE\" xmlns:typ=\"http://openspcoop2.org/ValidazioneContenutiWS/Service/types\">\n"+
+			"   <soapenv:Header/>\n"+
+			"   <soapenv:Body>\n"+
+			"      <serDIFFERENTE:RPCL-element>\n"+
+			"         <typ:nominativo ruolo=\"test\">test</typ:nominativo>\n"+
+			"         <typ:indirizzo>test</typ:indirizzo>\n"+
+			"         <typ:ora-registrazione>2022-12-27T15:22:41.220+01:00</typ:ora-registrazione>\n"+
+			"      </serDIFFERENTE:RPCL-element>\n"+
+			"   </soapenv:Body>\n"+
+			"</soapenv:Envelope>";
+	
+	@Test
+	public void erogazione_rpc_element_rootElementNamespaceDifferente() throws Exception {
+		_test(TipoServizio.EROGAZIONE, content_rpc_element_rootElementNamespaceDifferente, SERVER_VALIDATION, API_SENZA_VALIDAZIONE, "RPCL-element",
+				"Operation undefined in the API specification");
+	}
+	@Test
+	public void fruizione_rpc_element_rootElementNamespaceDifferente() throws Exception {
+		_test(TipoServizio.FRUIZIONE, content_rpc_element_rootElementNamespaceDifferente, SERVER_VALIDATION, API_SENZA_VALIDAZIONE, "RPCL-element",
+				"Operation undefined in the API specification");
+	}
+	
+	@Test
+	public void erogazione_rpc_element_rootElementNamespaceDifferente_validazioneGovWay() throws Exception {
+		_test(TipoServizio.EROGAZIONE, content_rpc_element_rootElementNamespaceDifferente, SERVER_VALIDATION, API_CON_VALIDAZIONE, "RPCL-element",
+				"RPCL-element", // riconosco l'azione tramite la url 
+				"Invalid rpc request element 'RPCL-element' by WSDL specification 'gw/ENTE:RPCLiteralTest:1' (port-type:ServiceRPCLiteral, operation:RPCL-element): expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/ServiceDIFFERENTE'");
+	}
+	@Test
+	public void fruizione_rpc_element_rootElementNamespaceDifferente_validazioneGovWay() throws Exception {
+		_test(TipoServizio.FRUIZIONE, content_rpc_element_rootElementNamespaceDifferente, SERVER_VALIDATION, API_CON_VALIDAZIONE, "RPCL-element",
+				"RPCL-element", // riconosco l'azione tramite la url 
+				"Invalid rpc request element 'RPCL-element' by WSDL specification 'gw/ENTE:RPCLiteralTest:1' (port-type:ServiceRPCLiteral, operation:RPCL-element): expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/ServiceDIFFERENTE'");
+	}
 	
 	
 	
@@ -816,12 +987,23 @@ public class LiteralTest extends ConfigLoader {
 			boolean serverValidationEnabled,
 			String api, String operazione,
 			String msgErrore) throws Exception {
+		return _test(
+				tipoServizio, content,
+				serverValidationEnabled,
+				api, operazione, null,
+				msgErrore);
+	}
+	private static HttpResponse _test(
+			TipoServizio tipoServizio, String content,
+			boolean serverValidationEnabled,
+			String api, String operazione, String operazioneUrl,
+			String msgErrore) throws Exception {
 		
 		waitStartServer();
 		
 		return _testNoWaitServer(tipoServizio, content, 
 				serverValidationEnabled, 
-				api, operazione, 
+				api, operazione, operazioneUrl,
 				msgErrore);
 		
 	}
@@ -830,12 +1012,26 @@ public class LiteralTest extends ConfigLoader {
 			boolean serverValidationEnabled,
 			String api, String operazione,
 			String msgErrore) throws Exception {
+		return _testNoWaitServer(
+				tipoServizio, content,
+				serverValidationEnabled,
+				api, operazione, null,
+				msgErrore);
+	}
+	protected static HttpResponse _testNoWaitServer(
+			TipoServizio tipoServizio, String content,
+			boolean serverValidationEnabled,
+			String api, String operazione, String operazioneUrl,
+			String msgErrore) throws Exception {
 
 		
 		
 		String url = tipoServizio == TipoServizio.EROGAZIONE
 				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+api+"/v1/"
 				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+api+"/v1/";
+		if(operazioneUrl!=null) {
+			url = url + operazioneUrl;
+		}
 		url = correctUrl(tipoServizio, serverValidationEnabled, api, url);
 
 
@@ -843,7 +1039,7 @@ public class LiteralTest extends ConfigLoader {
 		
 		String contentTypeRequest = HttpConstants.CONTENT_TYPE_SOAP_1_1+";charset=utf-8";
 		String contentTypeResponse = contentTypeRequest;
-		if(msgErrore!=null) {
+		if(msgErrore!=null && !msgErrore.contains("Unmarshalling Error: cvc-elt.4.2")) {
 			contentTypeResponse = HttpConstants.CONTENT_TYPE_SOAP_1_1;
 		}
 		request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+operazione+"\"");
@@ -893,7 +1089,8 @@ public class LiteralTest extends ConfigLoader {
         	}
         	Assert.assertTrue(errore.contains(msgErrore));
 		}
-		else {
+		
+		if(msgErrore==null || msgErrore.contains("Unmarshalling Error: cvc-elt.4.2")) {
 			String action = response.getHeaderFirstValue("GovWay-Action");
 			assertNotNull(action);
 			assertEquals(action, operazione);

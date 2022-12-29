@@ -1,3 +1,11 @@
+2022-12-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1534
+	Aggiunta proprietà 'validation.rpc.rootElementUnqualified.accept', configurabile nell'erogazione o nella fruizione, 
+	che consente di indicare se devono essere accettate o meno richieste RPC il cui root-element non appartiene ad alcun namespace. 
+	Il comportamento di default del prodotto è di accettare le richieste per essere compatibile con framework soap datati.
+
 2022-12-28  Andrea Poli <apoli@link.it>
 
 	* [Utils]

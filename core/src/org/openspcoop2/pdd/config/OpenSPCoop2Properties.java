@@ -1957,6 +1957,7 @@ public class OpenSPCoop2Properties {
 			this.isValidazioneContenutiApplicativi_bufferContentRead();
 			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione();
 			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione();
+			this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified();
 			this.isValidazioneContenutiApplicativi_checkSoapAction();
 			this.getValidazioneContenutiApplicativi_json_policyAdditionalProperties();
 			this.getValidazioneContenutiApplicativi_openApi_jsonValidator();
@@ -20512,6 +20513,31 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione;
+	}
+	
+	private Boolean isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified = null;
+	public boolean isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.rpc.rootElement.unqualified.accept";
+		if(this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified = true;
+			}
+		}
+
+		return this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified;
 	}
 	
 	private Boolean isValidazioneContenutiApplicativi_checkSoapAction = null;

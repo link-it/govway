@@ -32,6 +32,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
@@ -95,6 +96,9 @@ public class WSDLValidator {
 	private QName rpcChildElementNamespaceAggiunto;
 	private QName rpcChildElementXSITypeAggiunto;
 	
+	/** Nodo rpc root element */
+	private boolean rpcAcceptRootElementUnqualified;
+
 	/** Prefix error */
 	private boolean addPrefixError = true;
 	public boolean isAddPrefixError() {
@@ -114,15 +118,16 @@ public class WSDLValidator {
 		}
 	}
 	public WSDLValidator(OpenSPCoop2Message msg,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
-			boolean gestioneXsiType_rpcLiteral, boolean addPrefixError,
+			boolean gestioneXsiType_rpcLiteral, boolean rpcAcceptRootElementUnqualified, boolean addPrefixError,
 			boolean bufferMessage_readOnly, String idTransazione)throws WSDLException{
-		this(msg.getMessageType(), _getEnvelopeCatchException(msg,bufferMessage_readOnly,idTransazione), xmlUtils, accordoServizioWrapper, log, gestioneXsiType_rpcLiteral, addPrefixError);
+		this(msg.getMessageType(), _getEnvelopeCatchException(msg,bufferMessage_readOnly,idTransazione), xmlUtils, accordoServizioWrapper, log, 
+				gestioneXsiType_rpcLiteral, rpcAcceptRootElementUnqualified, addPrefixError);
 		this.openspcoop2Message = msg;
 	}
 	// Il costruttore sottostante non puo' sfruttare la funzionalita' addNamespaceXSITypeIfNotExists
 	// per questo e' stato reso privato, poiche' tale funzionalita' richiede openspcoop2Message
 	private WSDLValidator(MessageType messageType, Element element,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
-			boolean gestioneXsiType_rpcLiteral, boolean addPrefixError)throws WSDLException{
+			boolean gestioneXsiType_rpcLiteral, boolean rpcAcceptRootElementUnqualified, boolean addPrefixError)throws WSDLException{
 		
 		this.messageType = messageType;
 		
@@ -152,6 +157,8 @@ public class WSDLValidator {
 		this.accordoServizioWrapper = accordoServizioWrapper;
 		
 		this.gestioneXsiType_rpcLiteral = gestioneXsiType_rpcLiteral;
+		
+		this.rpcAcceptRootElementUnqualified = rpcAcceptRootElementUnqualified;
 		
 		this.addPrefixError = addPrefixError;
 	}
@@ -1127,22 +1134,26 @@ public class WSDLValidator {
 				}
 			}
 			
-			// Il controlllo sul namespaceRPC è opzionale.
-			// Viene effettuato in caso di validazione 'openspcoop' solo se dichiarato.
+			// Controllo sul namespace RPC.
 			if(namespaceRPC!=null && rpcElement!=null){
 				this.logger.debug("CheckRPCNamespace");
-				if(rpcElement.getNamespaceURI()==null){
-					if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-						throw new WSDLValidatorException("Unqualified rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by WSDL specification '"+uriAccordo+"' (port-type:"+portType+", operation:"+operation+")");
-					}else{
-						throw new WSDLValidatorException("Unqualified rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by API specification '"+uriAccordo+"' (service:"+portType+", operation:"+operation+")");
+				
+				if( (rpcElement.getNamespaceURI()==null || StringUtils.isEmpty(rpcElement.getNamespaceURI())) ){
+					if(!this.rpcAcceptRootElementUnqualified) {
+						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
+							throw new WSDLValidatorException("Unqualified rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by WSDL specification '"+uriAccordo+"' (port-type:"+portType+", operation:"+operation+")");
+						}else{
+							throw new WSDLValidatorException("Unqualified rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by API specification '"+uriAccordo+"' (service:"+portType+", operation:"+operation+")");
+						}
 					}
 				}
-				if(!rpcElement.getNamespaceURI().equals(namespaceRPC)){
-					if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-						throw new WSDLValidatorException("Invalid rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by WSDL specification '"+uriAccordo+"' (port-type:"+portType+", operation:"+operation+"): expected namespace '"+namespaceRPC+"'; found namespace '"+rpcElement.getNamespaceURI()+"'");
-					}else{
-						throw new WSDLValidatorException("Invalid rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by API specification '"+uriAccordo+"' (service:"+portType+", operation:"+operation+"): expected namespace '"+namespaceRPC+"'; found namespace '"+rpcElement.getNamespaceURI()+"'");
+				else {
+					if(!rpcElement.getNamespaceURI().equals(namespaceRPC)){
+						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
+							throw new WSDLValidatorException("Invalid rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by WSDL specification '"+uriAccordo+"' (port-type:"+portType+", operation:"+operation+"): expected namespace '"+namespaceRPC+"'; found namespace '"+rpcElement.getNamespaceURI()+"'");
+						}else{
+							throw new WSDLValidatorException("Invalid rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by API specification '"+uriAccordo+"' (service:"+portType+", operation:"+operation+"): expected namespace '"+namespaceRPC+"'; found namespace '"+rpcElement.getNamespaceURI()+"'");
+						}
 					}
 				}
 			}

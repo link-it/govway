@@ -116,6 +116,80 @@ public class EncodedTest extends ConfigLoader {
 	
 	
 	
+	// ***** RPC ELEMENT (TEST ROOT ELEMENT) ****
+	
+	private static String content_rpc_element_rootElementUnqualfied = "<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:typ=\"http://openspcoop2.org/ValidazioneContenutiWS/Service/types\">\n"+
+			"   <soapenv:Header/>\n"+
+			"   <soapenv:Body>\n"+
+			"      <RPCE-element soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n"+
+			"         <typ:nominativo xsi:type=\"typ:nominativoType\" ruolo=\"test\">test</typ:nominativo>\n"+
+			"         <typ:indirizzo xsi:type=\"typ:indirizzoType\">test</typ:indirizzo>\n"+
+			"         <typ:ora-registrazione xsi:type=\"xsd:dateTime\">2022-12-27T15:22:41.220+01:00</typ:ora-registrazione>\n"+
+			"      </RPCE-element>\n"+
+			"   </soapenv:Body>\n"+
+			"</soapenv:Envelope>";
+	
+	@Test
+	public void erogazione_rpc_element_rootElementUnqualfied() throws Exception {
+		LiteralTest._testNoWaitServer(TipoServizio.EROGAZIONE, content_rpc_element_rootElementUnqualfied, true, API_SENZA_VALIDAZIONE, "RPCE-element",
+				null);
+	}
+	@Test
+	public void fruizione_rpc_element_rootElementUnqualfied() throws Exception {
+		LiteralTest._testNoWaitServer(TipoServizio.FRUIZIONE, content_rpc_element_rootElementUnqualfied, true, API_SENZA_VALIDAZIONE, "RPCE-element",
+				null);
+	}
+	
+	@Test
+	public void erogazione_rpc_element_rootElementUnqualfied_validazioneGovWay() throws Exception {
+		LiteralTest._testNoWaitServer(TipoServizio.EROGAZIONE, content_rpc_element_rootElementUnqualfied, true, API_CON_VALIDAZIONE, "RPCE-element",
+				null);
+	}
+	@Test
+	public void fruizione_rpc_element_rootElementUnqualfied_validazioneGovWay() throws Exception {
+		LiteralTest._testNoWaitServer(TipoServizio.FRUIZIONE, content_rpc_element_rootElementUnqualfied, true, API_CON_VALIDAZIONE, "RPCE-element",
+				null);
+	}
+	
+	private static String content_rpc_element_rootElementNamespaceDifferente = "<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:elemDIFFERENTE=\"http://openspcoop2.org/ValidazioneContenutiWS/Service/element-exampleDIFFERENTE\" xmlns:typ=\"http://openspcoop2.org/ValidazioneContenutiWS/Service/types\">\n"+
+			"   <soapenv:Header/>\n"+
+			"   <soapenv:Body>\n"+
+			"      <elemDIFFERENTE:RPCE-element soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n"+
+			"         <typ:nominativo xsi:type=\"typ:nominativoType\" ruolo=\"test\">test</typ:nominativo>\n"+
+			"         <typ:indirizzo xsi:type=\"typ:indirizzoType\">test</typ:indirizzo>\n"+
+			"         <typ:ora-registrazione xsi:type=\"xsd:dateTime\">2022-12-27T15:22:41.220+01:00</typ:ora-registrazione>\n"+
+			"      </elemDIFFERENTE:RPCE-element>\n"+
+			"   </soapenv:Body>\n"+
+			"</soapenv:Envelope>";
+	
+	@Test
+	public void erogazione_rpc_element_rootElementNamespaceDifferente() throws Exception {
+		LiteralTest._testNoWaitServer(TipoServizio.EROGAZIONE, content_rpc_element_rootElementNamespaceDifferente, true, API_SENZA_VALIDAZIONE, "RPCE-element",
+				"Operation undefined in the API specification");
+	}
+	@Test
+	public void fruizione_rpc_element_rootElementNamespaceDifferente() throws Exception {
+		LiteralTest._testNoWaitServer(TipoServizio.FRUIZIONE, content_rpc_element_rootElementNamespaceDifferente, true, API_SENZA_VALIDAZIONE, "RPCE-element",
+				"Operation undefined in the API specification");
+	}
+	
+	@Test
+	public void erogazione_rpc_element_rootElementNamespaceDifferente_validazioneGovWay() throws Exception {
+		LiteralTest._testNoWaitServer(TipoServizio.EROGAZIONE, content_rpc_element_rootElementNamespaceDifferente, true, API_CON_VALIDAZIONE, "RPCE-element",
+				"RPCE-element", // riconosco l'azione tramite la url 
+				"Invalid rpc request element 'RPCE-element' by WSDL specification 'gw/ENTE:RPCEncodedTest:1' (port-type:ServiceRPCEncoded, operation:RPCE-element): expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-example'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-exampleDIFFERENTE'");
+	}
+	@Test
+	public void fruizione_rpc_element_rootElementNamespaceDifferente_validazioneGovWay() throws Exception {
+		LiteralTest._testNoWaitServer(TipoServizio.FRUIZIONE, content_rpc_element_rootElementNamespaceDifferente, true, API_CON_VALIDAZIONE, "RPCE-element",
+				"RPCE-element", // riconosco l'azione tramite la url 
+				"Invalid rpc request element 'RPCE-element' by WSDL specification 'gw/ENTE:RPCEncodedTest:1' (port-type:ServiceRPCEncoded, operation:RPCE-element): expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-example'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-exampleDIFFERENTE'");
+	}
+	
+	
+	
+	
+	
 	
 	// ***** RPC XSI TYPE ****
 		

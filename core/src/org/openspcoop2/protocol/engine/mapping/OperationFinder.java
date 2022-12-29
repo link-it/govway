@@ -67,7 +67,8 @@ public class OperationFinder {
 			ModalitaIdentificazioneAzione modalitaIdentificazione, String pattern, 
 			boolean forceRegistryBased, boolean forcePluginBased,
 			Logger log, boolean portaApplicativa,
-			boolean bufferMessage_readOnly , String idTransazione) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
+			boolean bufferMessage_readOnly , String idTransazione,
+			boolean rpcAcceptRootElementUnqualified) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 		
 		try{
 
@@ -246,7 +247,8 @@ public class OperationFinder {
 							OperationFinder.checkIDServizioPerRiconoscimentoAzione(idServizio, modalitaIdentificazione);
 							org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = registroServiziManager.getServiceBinding(idServizio, requestInfo);
 							if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBinding)){
-								azione = OperationFinder.searchOperationByWsdlInRequestMessage(message, soapStreamReader, requestInfo, registroServiziManager, idServizio, log);
+								azione = OperationFinder.searchOperationByWsdlInRequestMessage(message, soapStreamReader, requestInfo, registroServiziManager, idServizio, log,
+										rpcAcceptRootElementUnqualified);
 							}
 							else {
 								azione = OperationFinder.searchOperationByRestInRequestMessage(transportContext, requestInfo, registroServiziManager, idServizio, log, 
@@ -286,7 +288,8 @@ public class OperationFinder {
 					OperationFinder.checkIDServizioPerRiconoscimentoAzione(idServizio, modalitaIdentificazione);
 					org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = registroServiziManager.getServiceBinding(idServizio, requestInfo);
 					if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBinding)){
-						azione = OperationFinder.searchOperationByWsdlInRequestMessage(message, soapStreamReader, requestInfo, registroServiziManager, idServizio, log);
+						azione = OperationFinder.searchOperationByWsdlInRequestMessage(message, soapStreamReader, requestInfo, registroServiziManager, idServizio, log,
+								rpcAcceptRootElementUnqualified);
 					}
 					else{
 						azione = OperationFinder.searchOperationByRestInRequestMessage(transportContext, requestInfo, registroServiziManager, idServizio, log, 
@@ -338,17 +341,22 @@ public class OperationFinder {
 	
 	
 	
-	public static String searchOperationByWsdlInRequestMessage(OpenSPCoop2Message msg, OpenSPCoop2MessageSoapStreamReader soapStreamReaderParam, RequestInfo requestInfo, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return searchOperationByWsdl(true, msg, soapStreamReaderParam, requestInfo, registroServiziReader, idServizio, log);
+	public static String searchOperationByWsdlInRequestMessage(OpenSPCoop2Message msg, OpenSPCoop2MessageSoapStreamReader soapStreamReaderParam, RequestInfo requestInfo, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log,
+			boolean rpcAcceptRootElementUnqualified) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return searchOperationByWsdl(true, msg, soapStreamReaderParam, requestInfo, registroServiziReader, idServizio, log,
+				rpcAcceptRootElementUnqualified);
 	}
-//	public static String searchOperationByWsdlInResponseMessage(OpenSPCoop2Message msg, RequestInfo requestInfo, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-//		return searchOperationByWsdl(false, msg, requestInfo, registroServiziReader, idServizio, log);
+//	public static String searchOperationByWsdlInResponseMessage(OpenSPCoop2Message msg, RequestInfo requestInfo, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log,
+//		boolean rpcAcceptRootElementUnqualified) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+//		return searchOperationByWsdl(false, msg, requestInfo, registroServiziReader, idServizio, log,
+//				rpcAcceptRootElementUnqualified);
 //	}
-	private static String searchOperationByWsdl(boolean isRichiesta,OpenSPCoop2Message msg, OpenSPCoop2MessageSoapStreamReader soapStreamReaderParam, RequestInfo requestInfo, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+	private static String searchOperationByWsdl(boolean isRichiesta,OpenSPCoop2Message msg, OpenSPCoop2MessageSoapStreamReader soapStreamReaderParam, RequestInfo requestInfo, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log,
+			boolean rpcAcceptRootElementUnqualified) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper wrapper = registroServiziReader.getWsdlAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false,false,requestInfo);
 		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities wrapperUtilities = 
 				new org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities(log,wrapper);
-		return wrapperUtilities.searchOperationName(isRichiesta, wrapper.getNomePortType(), msg, soapStreamReaderParam);
+		return wrapperUtilities.searchOperationName(isRichiesta, wrapper.getNomePortType(), msg, soapStreamReaderParam, rpcAcceptRootElementUnqualified);
 	}
 	
 	public static String searchOperationByRestInRequestMessage(TransportRequestContext transportContext, RequestInfo requestInfo, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log,

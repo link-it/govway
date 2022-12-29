@@ -36,6 +36,7 @@ import javax.wsdl.extensions.soap.SOAPHeaderFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.MessagePart;
@@ -703,7 +704,8 @@ public class AccordoServizioWrapperUtilities {
 	
 	/** Search action  */
 	
-	public String searchOperationName(boolean isRichiesta, String portType, OpenSPCoop2Message messageParam, OpenSPCoop2MessageSoapStreamReader soapStreamReaderParam) throws DriverRegistroServiziException{
+	public String searchOperationName(boolean isRichiesta, String portType, OpenSPCoop2Message messageParam, OpenSPCoop2MessageSoapStreamReader soapStreamReaderParam,
+			boolean rpcAcceptRootElementUnqualified) throws DriverRegistroServiziException{
 		
 		try{
 			if(this.accordoServizioWrapper==null){
@@ -833,7 +835,14 @@ public class AccordoServizioWrapperUtilities {
 								}
 								else {
 									if(!argumentsOperation.getSoapNamespace().equals(rootElementNamespace)) {
-										match=false;
+										if(rootElementNamespace==null || StringUtils.isEmpty(rootElementNamespace)) {
+											if(!rpcAcceptRootElementUnqualified) {
+												match=false;
+											}
+										}
+										else {
+											match=false;
+										}
 									}
 								}
 								if(match) {
@@ -852,7 +861,8 @@ public class AccordoServizioWrapperUtilities {
 			// Altrimenti utilizzero' il validatore wsdl
 			if(messageParam!=null) {
 				boolean addPrefixError = true;
-				WSDLValidator wsdlValidator = new WSDLValidator(messageParam, this.xmlUtils, this.accordoServizioWrapper, this.logger, false, addPrefixError,
+				WSDLValidator wsdlValidator = new WSDLValidator(messageParam, this.xmlUtils, this.accordoServizioWrapper, this.logger, 
+						false, rpcAcceptRootElementUnqualified, addPrefixError,
 						false, null);
 				for (int i = 0; i < this.accordoServizioWrapper.sizePortTypeList(); i++) {
 					PortType pt = this.accordoServizioWrapper.getPortType(i);

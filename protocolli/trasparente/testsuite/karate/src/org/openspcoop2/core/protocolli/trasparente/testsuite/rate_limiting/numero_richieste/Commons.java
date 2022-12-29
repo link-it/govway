@@ -57,7 +57,7 @@ public class Commons {
 				assertEquals(Integer.valueOf(0), polInfo.richiesteAttive);
 				
 				if(policyType!=null) {
-					// Devo controllarlo somanete se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
+					// Devo controllarlo solamente se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
 					assertEquals(policyType.toLabel(), polInfo.sincronizzazione);
 				}
 				
@@ -94,7 +94,7 @@ public class Commons {
 				assertEquals(Integer.valueOf(0), polInfo.richiesteAttive);
 				
 				if(policyType!=null) {
-					// Devo controllarlo somanete se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
+					// Devo controllarlo solamente se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
 					assertEquals(policyType.toLabel(), polInfo.sincronizzazione);
 				}
 				
