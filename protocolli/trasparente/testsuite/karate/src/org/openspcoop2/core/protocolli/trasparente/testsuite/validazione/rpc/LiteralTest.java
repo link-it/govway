@@ -507,13 +507,13 @@ public class LiteralTest extends ConfigLoader {
 	public void erogazione_rpc_element_rootElementUnqualfied_configPropertiesNotAccepted_validazioneGovWayFallita() throws Exception {
 		_test(TipoServizio.EROGAZIONE, content_rpc_element_rootElementUnqualfied, SERVER_VALIDATION, API_SOAP_NAMESPACE_RIDEFINITO, "RPCL-element",
 				"RPCL-element", // riconosco l'azione tramite la url 
-				"Unqualified rpc request element 'RPCL-element' by WSDL specification 'gw/ENTE:RPCLiteralTestSoapNamespaceRidefinito:1' (port-type:ServiceRPCLiteral, operation:RPCL-element)");
+				"Unqualified rpc request element 'RPCL-element' by WSDL specification");
 	}
 	@Test
 	public void fruizione_rpc_element_rootElementUnqualfied_configPropertiesNotAccepted_validazioneGovWayFallita() throws Exception {
 		_test(TipoServizio.FRUIZIONE, content_rpc_element_rootElementUnqualfied, SERVER_VALIDATION, API_SOAP_NAMESPACE_RIDEFINITO, "RPCL-element",
 				"RPCL-element", // riconosco l'azione tramite la url 
-				"Unqualified rpc request element 'RPCL-element' by WSDL specification 'gw/ENTE:RPCLiteralTestSoapNamespaceRidefinito:1' (port-type:ServiceRPCLiteral, operation:RPCL-element)");
+				"Unqualified rpc request element 'RPCL-element' by WSDL specification");
 	}
 	
 	private static String content_rpc_element_rootElementNamespaceDifferente = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:serDIFFERENTE=\"http://openspcoop2.org/ValidazioneContenutiWS/ServiceDIFFERENTE\" xmlns:typ=\"http://openspcoop2.org/ValidazioneContenutiWS/Service/types\">\n"+
@@ -542,13 +542,13 @@ public class LiteralTest extends ConfigLoader {
 	public void erogazione_rpc_element_rootElementNamespaceDifferente_validazioneGovWay() throws Exception {
 		_test(TipoServizio.EROGAZIONE, content_rpc_element_rootElementNamespaceDifferente, SERVER_VALIDATION, API_CON_VALIDAZIONE, "RPCL-element",
 				"RPCL-element", // riconosco l'azione tramite la url 
-				"Invalid rpc request element 'RPCL-element' by WSDL specification 'gw/ENTE:RPCLiteralTest:1' (port-type:ServiceRPCLiteral, operation:RPCL-element): expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/ServiceDIFFERENTE'");
+				"expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/ServiceDIFFERENTE'");
 	}
 	@Test
 	public void fruizione_rpc_element_rootElementNamespaceDifferente_validazioneGovWay() throws Exception {
 		_test(TipoServizio.FRUIZIONE, content_rpc_element_rootElementNamespaceDifferente, SERVER_VALIDATION, API_CON_VALIDAZIONE, "RPCL-element",
 				"RPCL-element", // riconosco l'azione tramite la url 
-				"Invalid rpc request element 'RPCL-element' by WSDL specification 'gw/ENTE:RPCLiteralTest:1' (port-type:ServiceRPCLiteral, operation:RPCL-element): expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/ServiceDIFFERENTE'");
+				"expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/ServiceDIFFERENTE'");
 	}
 	
 	

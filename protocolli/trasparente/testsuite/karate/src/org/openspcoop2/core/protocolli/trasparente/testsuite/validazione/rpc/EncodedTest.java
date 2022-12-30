@@ -177,13 +177,13 @@ public class EncodedTest extends ConfigLoader {
 	public void erogazione_rpc_element_rootElementNamespaceDifferente_validazioneGovWay() throws Exception {
 		LiteralTest._testNoWaitServer(TipoServizio.EROGAZIONE, content_rpc_element_rootElementNamespaceDifferente, true, API_CON_VALIDAZIONE, "RPCE-element",
 				"RPCE-element", // riconosco l'azione tramite la url 
-				"Invalid rpc request element 'RPCE-element' by WSDL specification 'gw/ENTE:RPCEncodedTest:1' (port-type:ServiceRPCEncoded, operation:RPCE-element): expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-example'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-exampleDIFFERENTE'");
+				"expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-example'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-exampleDIFFERENTE'");
 	}
 	@Test
 	public void fruizione_rpc_element_rootElementNamespaceDifferente_validazioneGovWay() throws Exception {
 		LiteralTest._testNoWaitServer(TipoServizio.FRUIZIONE, content_rpc_element_rootElementNamespaceDifferente, true, API_CON_VALIDAZIONE, "RPCE-element",
 				"RPCE-element", // riconosco l'azione tramite la url 
-				"Invalid rpc request element 'RPCE-element' by WSDL specification 'gw/ENTE:RPCEncodedTest:1' (port-type:ServiceRPCEncoded, operation:RPCE-element): expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-example'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-exampleDIFFERENTE'");
+				"expected namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-example'; found namespace 'http://openspcoop2.org/ValidazioneContenutiWS/Service/element-exampleDIFFERENTE'");
 	}
 	
 	
