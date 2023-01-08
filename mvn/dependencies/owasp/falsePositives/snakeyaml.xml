@@ -26,4 +26,22 @@
       <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
       <vulnerabilityName>CVE-2022-1471</vulnerabilityName>
    </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: snakeyaml-1.33-gov4j-1.jar
+      Vulnerabilità descritta come: "Parsing malicious or large YAML documents can consume excessive amounts of CPU or memory."
+      La libreria viene utilizzata solamente per la gestione delle interfacce yaml caricate sulla console dagli amministratori. Non viene utilizzata per input fornito dinamicamente nelle richieste gestite dal Gateway.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
+      <cve>CVE-2022-3064</cve>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: snakeyaml-1.33-gov4j-1.jar
+      Vulnerabilità descritta come: "Due to unbounded alias chasing, a maliciously crafted YAML file can cause the system to consume significant system resources. If parsing user input, this may be used as a denial of service vector."
+      La libreria viene utilizzata solamente per la gestione delle interfacce yaml caricate sulla console dagli amministratori. Non viene utilizzata per input fornito dinamicamente nelle richieste gestite dal Gateway.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
+      <cve>CVE-2021-4235</cve>
+   </suppress>
 </suppressions>

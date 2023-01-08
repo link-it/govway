@@ -48,4 +48,18 @@
       <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
       <vulnerabilityName>Disallow calling helperMissing and blockHelperMissing directly</vulnerabilityName>
    </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: swagger-codegen-cli-3.0.18-gov4j-4.jar: handlebars-v4.0.4.js
+      ]]></notes>
+      <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
+      <vulnerabilityName>handlebars issue: 1495</vulnerabilityName>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: swagger-codegen-cli-3.0.18-gov4j-4.jar: handlebars-v4.0.4.js
+      ]]></notes>
+      <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
+      <vulnerabilityName>handlebars issue: 1633</vulnerabilityName>
+   </suppress>
 </suppressions>
