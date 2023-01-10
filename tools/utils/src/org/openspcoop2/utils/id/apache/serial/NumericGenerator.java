@@ -20,7 +20,7 @@
  * - Gestione caratteri massimi per numeri e cifre
  * - Possibilità di utilizzare lowerCase e/o upperCase
  * 
- * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
  */
 
 package org.openspcoop2.utils.id.apache.serial;
