@@ -154,6 +154,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 	private Map<String, Object> httpStore = null;
 	private Map<String, Object> crlCertstore = null;
 	private Map<String, Object> sslSocketFactory = null;
+	private Map<String, Object> externalResource = null;
 	
 	private transient org.openspcoop2.utils.Semaphore semaphoreTemplate = null; // possono essere alimentati da thread differenti
 	private Map<String, Object> template = null;
@@ -373,6 +374,9 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		}
 		if(this.sslSocketFactory!=null) {
 			clone.sslSocketFactory = this.sslSocketFactory;
+		}
+		if(this.externalResource!=null) {
+			clone.externalResource = this.externalResource;
 		}
 
 		if(this.template!=null) {
@@ -1309,6 +1313,31 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 			return null;
 		}
 		return this.sslSocketFactory.get(key);
+	}
+	
+	public void addExternalResource(String key, Object resource, String idTransazione) {
+		 
+		
+		if(this.semaphoreStore==null) {
+			// serializzazione da transient
+			initSemaphoreStore();
+		}
+		
+		this.semaphoreStore.acquireThrowRuntime("addExternalResource", idTransazione);
+		try {
+			if(this.externalResource==null) {
+				this.externalResource = new HashMap<String, Object>(3);
+			}
+			this.externalResource.put(key, resource);
+		}finally {
+			this.semaphoreStore.release("addExternalResource", idTransazione);
+		}
+	}
+	public Object getExternalResource(String key) {
+		if(this.externalResource==null) {
+			return null;
+		}
+		return this.externalResource.get(key);
 	}
 
 	

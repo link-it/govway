@@ -29,11 +29,13 @@ import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
+import javax.security.auth.x500.X500Principal;
 
 import org.apache.cxf.common.util.Base64UrlUtility;
 import org.apache.cxf.rt.security.crypto.MessageDigestUtils;
@@ -231,6 +233,36 @@ public class KeyStore {
 		}	
 	}
 	
+	public Certificate getCertificateBySubject(X500Principal principal) throws UtilsException{
+		try{
+			if(principal==null) {
+				return null;
+			}
+			Enumeration<String> aliases = this.keystore.aliases();
+			while (aliases.hasMoreElements()) {
+				String alias = (String) aliases.nextElement();
+				Certificate cer = this.keystore.getCertificate(alias);
+				if(cer instanceof X509Certificate) {
+					X509Certificate x509 = (X509Certificate) cer;
+					X500Principal subject = x509.getSubjectX500Principal();
+					if(principal.equals(subject)) {
+						return cer;
+					}
+				}
+			}
+			return null;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}	
+	}
+	public boolean existsCertificateBySubject(X500Principal principal) throws UtilsException{
+		try{
+			return this.getCertificateBySubject(principal)!=null;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}	
+	}
+	
 	public String getDigestMD5UrlEncoded(String alias) throws UtilsException{
 		return this.getDigestUrlEncoded(alias, MessageDigestUtils.ALGO_MD5);
 	}
@@ -296,4 +328,53 @@ public class KeyStore {
 	public java.security.Provider getKeystoreProvider() {
 		return this.keystore.getProvider();
 	}
+	
+	public void putCertificate(String alias, Certificate cert, boolean overwriteIfExists) throws UtilsException {
+		if(this.existsAlias(alias)) {
+			if(overwriteIfExists) {
+				try {
+					this.keystore.deleteEntry(alias);
+				}catch(Throwable t) {
+					throw new UtilsException(t.getMessage(),t);
+				}
+			}
+			else {
+				return;
+			}
+		}
+		try {
+			this.keystore.setCertificateEntry(alias, cert);
+		}catch(Throwable t) {
+			throw new UtilsException(t.getMessage(),t);
+		}
+	}
+	public void putAllCertificate(KeyStore keystore, boolean overwriteIfExists) throws UtilsException {
+		if(keystore!=null) {
+			Enumeration<String> aliases = keystore.aliases();
+			if(aliases!=null) {
+				while (aliases.hasMoreElements()) {
+					String alias = (String) aliases.nextElement();
+					if(this.existsAlias(alias)) {
+						if(overwriteIfExists) {
+							try {
+								this.keystore.deleteEntry(alias);
+							}catch(Throwable t) {
+								throw new UtilsException(t.getMessage(),t);
+							}
+						}
+						else {
+							continue;
+						}
+					}
+					Certificate cert = keystore.getCertificate(alias);
+					try {
+						this.keystore.setCertificateEntry(alias, cert);
+					}catch(Throwable t) {
+						throw new UtilsException(t.getMessage(),t);
+					}
+				}
+			}
+		}
+	}
+	
 }

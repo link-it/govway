@@ -31,6 +31,7 @@ import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509CRL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -91,15 +92,36 @@ public class CRLCertstore implements Serializable {
 		return crlPathsList;
 	}
 	
-	public CRLCertstore(String crlPaths) throws UtilsException {
-		List<String> crlPathsList = readCrlPaths(crlPaths);
-		this._init(crlPathsList);
-	}
-	public CRLCertstore(List<String> crlPaths) throws UtilsException{
-		this._init(crlPaths);
+	public static String convertToCrlPaths(List<String> crlPathsList) {
+		StringBuilder sb = new StringBuilder();
+		if(crlPathsList==null || crlPathsList.isEmpty()) {
+			return null;
+		}
+		for (String path : crlPathsList) {
+			if(sb.length()>0) {
+				sb.append(",");
+			}
+			sb.append(path);
+		}
+		return sb.toString();
 	}
 	
-	private void _init(List<String> crlPaths) throws UtilsException{
+	public CRLCertstore(String crlPaths) throws UtilsException {
+		this(crlPaths, null);
+	}
+	public CRLCertstore(String crlPaths, Map<String, byte[]> localResources) throws UtilsException {
+		List<String> crlPathsList = readCrlPaths(crlPaths);
+		this._init(crlPathsList, localResources);
+	}
+	
+	public CRLCertstore(List<String> crlPaths) throws UtilsException{
+		this(crlPaths, null);
+	}
+	public CRLCertstore(List<String> crlPaths, Map<String, byte[]> localResources) throws UtilsException{
+		this._init(crlPaths, localResources);
+	}
+	
+	private void _init(List<String> crlPaths, Map<String, byte[]> localResources) throws UtilsException{
 		
 		try{
 			if(crlPaths==null || crlPaths.isEmpty()){
@@ -111,6 +133,16 @@ public class CRLCertstore implements Serializable {
 			
 			for (String crlPath : crlPaths) {
 
+				if(localResources!=null && !localResources.isEmpty() && localResources.containsKey(crlPath)) {
+					
+					byte[] r = localResources.get(crlPath);
+					if(r!=null && r.length>0) {
+						this.crlBytes.add(r);
+					}
+					
+					continue;
+				}
+				
 				InputStream isStore = null;
 				try{
 					File fStore = new File(crlPath);

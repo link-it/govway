@@ -25,6 +25,7 @@ import java.security.cert.CertStore;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.security.SecurityException;
 
@@ -45,22 +46,29 @@ public class CRLCertstore implements Serializable {
 	private org.openspcoop2.utils.certificate.CRLCertstore crl = null;
 	
 	public CRLCertstore(String crlPaths) throws SecurityException {
+		this(crlPaths, null);
+	}
+	public CRLCertstore(String crlPaths, Map<String, byte[]> localResources) throws SecurityException {
 		List<String> crlPathsList = org.openspcoop2.utils.certificate.CRLCertstore.readCrlPaths(crlPaths);
 		try {
-			this._init(crlPathsList);
+			this._init(crlPathsList, localResources);
 		}catch(Throwable t) {
 			throw new SecurityException(t.getMessage(),t);
 		}
 	}
+	
 	public CRLCertstore(List<String> crlPaths) throws SecurityException{
+		this(crlPaths, null);
+	}
+	public CRLCertstore(List<String> crlPaths, Map<String, byte[]> localResources) throws SecurityException{
 		try {
-			this._init(crlPaths);
+			this._init(crlPaths, localResources);
 		}catch(Throwable t) {
 			throw new SecurityException(t.getMessage(),t);
 		}
 	}
 
-	private void _init(List<String> crlPaths) throws SecurityException{
+	private void _init(List<String> crlPaths, Map<String, byte[]> localResources) throws SecurityException{
 		try{
 			this.crl = new org.openspcoop2.utils.certificate.CRLCertstore(crlPaths);
 		}catch(Exception e){
@@ -91,6 +99,10 @@ public class CRLCertstore implements Serializable {
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
 		}
+	}
+	
+	public org.openspcoop2.utils.certificate.CRLCertstore getWrappedCRLCertStore() {
+		return this.crl;
 	}
 	
 }

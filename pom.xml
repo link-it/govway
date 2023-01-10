@@ -53,6 +53,10 @@
 		<testsuite.pdd.group>pdd</testsuite.pdd.group>
 		<testsuite.pdd.sql.group>pdd.sql</testsuite.pdd.sql.group>
 
+		<!-- testsuite (openssl config) -->
+		<testsuite.utils.openssl.cmd>/usr/bin/openssl</testsuite.utils.openssl.cmd>
+		<testsuite.utils.openssl.waitStartupServerOcspMs>5000</testsuite.utils.openssl.waitStartupServerOcspMs>
+
 		<!-- testsuite (database config) -->
 		<testsuite.utils.sql.tipoDatabase>postgresql</testsuite.utils.sql.tipoDatabase>
 		<testsuite.utils.sql.connectionUrl>jdbc:postgresql://localhost/govway</testsuite.utils.sql.connectionUrl>

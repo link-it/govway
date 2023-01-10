@@ -47,6 +47,7 @@ public class MimeTypeConstants {
 	public final static String MEDIA_TYPE_FORM_DATA= "multipart/form-data";
 	public final static String MEDIA_TYPE_JSON_PROBLEM_DETAILS_RFC_7807 = "application/problem+json";
 	public final static String MEDIA_TYPE_XML_PROBLEM_DETAILS_RFC_7807 = "application/problem+xml";
-	
+	public final static String MEDIA_TYPE_OCSP_REQUEST = "application/ocsp-request";
+	public final static String MEDIA_TYPE_OCSP_RESPONSE = "application/ocsp-response";
 }
 

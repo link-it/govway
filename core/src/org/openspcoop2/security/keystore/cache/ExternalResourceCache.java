@@ -20,42 +20,33 @@
 
 package org.openspcoop2.security.keystore.cache;
 
-import java.util.Map;
-
 import org.openspcoop2.security.SecurityException;
-import org.openspcoop2.security.keystore.CRLCertstore;
+import org.openspcoop2.security.keystore.ExternalResource;
+import org.openspcoop2.utils.transport.http.ExternalResourceConfig;
 
 /**
- * CRLCertstoreCache
+ * ExternalResourceCache
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class CRLCertstoreCache extends AbstractKeystoreCache<CRLCertstore> {
+public class ExternalResourceCache extends AbstractKeystoreCache<ExternalResource> {	
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public CRLCertstore createKeystore(String key, Object... params) throws SecurityException{
+	public ExternalResource createKeystore(String key, Object... params) throws SecurityException{
 		if(params==null){
 			throw new SecurityException("Params is null");
 		}
 		if(params.length==0){
-			String propertyCrlPath = key;
-			return new CRLCertstore(propertyCrlPath);
+			return new ExternalResource(key, key, new ExternalResourceConfig()); // l'id della risorsa esterna è la url stessa della risorsa, non serve un id aggiuntivo
 		}
 		else if(params.length==1){
-			if( ! (params[0] instanceof Map ) ){
-				throw new SecurityException("Param[0] must be Map<String, byte[]>");
+			if( ! (params[0] instanceof ExternalResourceConfig) ){
+				throw new SecurityException("Param[0] must be ExternalResourceConfig");
 			}
-			Map<String, byte[]>  localResources = null;
-			try {
-				localResources = (Map<String, byte[]> ) params[0];
-			}catch(Throwable t) {
-				throw new SecurityException("Param[0] must be Map<String, byte[]>: "+t.getMessage(),t);
-			}
-			String propertyCrlPath = key;
-			return new CRLCertstore(propertyCrlPath, localResources);
+			ExternalResourceConfig externalConfig = (ExternalResourceConfig) params[0];
+			return new ExternalResource(key, key, externalConfig); // l'id della risorsa esterna è la url stessa della risorsa, non serve un id aggiuntivo
 		}
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");

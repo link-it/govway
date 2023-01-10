@@ -312,6 +312,10 @@ public class CertificateInfo implements Serializable {
 		return subjectAlternativeNames !=null ? subjectAlternativeNames.getAlternativeNames() : null;
 	}
 	
+	public Extensions getExtensions() throws CertificateParsingException, CertificateEncodingException {
+		return Extensions.getExtensions(this.certificate.getEncoded());
+	}
+	
     /**
      * Utility method to test if a certificate is self-issued. This is
      * the case iff the subject and issuer X500Principals are equal.
@@ -356,7 +360,10 @@ public class CertificateInfo implements Serializable {
 		}
 	}
 	public void checkValid() throws CertificateExpiredException, CertificateNotYetValidException {
-		this.certificate.checkValidity(DateManager.getDate());
+		checkValid(DateManager.getDate());
+	}
+	public void checkValid(Date date) throws CertificateExpiredException, CertificateNotYetValidException {
+		this.certificate.checkValidity(date!=null ? date : DateManager.getDate());
 	}
 	
 	public boolean isValid(CertStore crlCertstore, KeyStore trustStore) {
@@ -368,8 +375,11 @@ public class CertificateInfo implements Serializable {
 		}
 	}
 	public void checkValid(CertStore crlCertstore, KeyStore trustStore) throws CertPathValidatorException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, SecurityException, NoSuchAlgorithmException {
+		checkValid(crlCertstore, trustStore, DateManager.getDate());
+	}
+	public void checkValid(CertStore crlCertstore, KeyStore trustStore, Date date) throws CertPathValidatorException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, SecurityException, NoSuchAlgorithmException {
 		PKIXParameters pkixParameters = new PKIXParameters(trustStore.getKeystore());
-		pkixParameters.setDate(DateManager.getDate()); // per validare i certificati scaduti
+		pkixParameters.setDate(date!=null ? date : DateManager.getDate()); // per validare i certificati scaduti
 		pkixParameters.addCertStore(crlCertstore);
 		pkixParameters.setRevocationEnabled(true);
 		CertPathValidator certPathValidator = org.openspcoop2.utils.certificate.CertificateFactory.getCertPathValidator();
@@ -464,6 +474,14 @@ public class CertificateInfo implements Serializable {
 			}
 		}
 	}
+	
+    public boolean equals(X500Principal principal) {
+    	if(principal==null) {
+    		return false;
+    	}
+    	X500Principal subject = this.certificate.getSubjectX500Principal();
+    	return principal.equals(subject);
+    }
 	
 	@Override
 	public String toString() {

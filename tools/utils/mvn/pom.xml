@@ -70,6 +70,8 @@
 									<classfileset dir="build_testunits" includes="**/*.class"/>
 									<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
 									<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
+                        						<jvmarg value="-DopensslCmd=${testsuite.utils.openssl.cmd}" />
+                        						<jvmarg value="-DwaitStartupServerMs=${testsuite.utils.openssl.waitStartupServerOcspMs}" />
 								</testng>
 
 								<delete dir="build_testunits"/>

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -41,6 +42,7 @@ import org.openspcoop2.utils.certificate.CertificatePolicyEntry;
 import org.openspcoop2.utils.certificate.CertificatePrincipal;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.ExtendedKeyUsage;
+import org.openspcoop2.utils.certificate.Extensions;
 import org.openspcoop2.utils.certificate.KeyUsage;
 import org.openspcoop2.utils.certificate.OID;
 import org.openspcoop2.utils.certificate.PrincipalType;
@@ -1730,5 +1732,168 @@ public class CertificateTest {
 				}
 			}
 		}
+		
+		// ***** EXTENSIONS *****
+		
+		Extensions exts = cerInfo.getExtensions();
+		if(forSign || forAuth) {
+			
+			System.out.println("\nExtensions: "+exts.getOIDs());
+			System.out.println("\nCriticalExtensions: "+exts.getCriticalOIDs());
+			System.out.println("\nNonCriticalExtensions: "+exts.getNonCriticalOIDs());
+			
+			List<org.bouncycastle.asn1.ASN1ObjectIdentifier> lExpected = new ArrayList<>();
+			lExpected.add(new org.bouncycastle.asn1.ASN1ObjectIdentifier("2.5.29.19")); // basicConstraints
+			lExpected.add(new org.bouncycastle.asn1.ASN1ObjectIdentifier("2.5.29.14")); // subjectKeyIdentifier
+			org.bouncycastle.asn1.ASN1ObjectIdentifier keyUsageID = new org.bouncycastle.asn1.ASN1ObjectIdentifier("2.5.29.15");
+			lExpected.add(keyUsageID); // keyUsage
+			lExpected.add(new org.bouncycastle.asn1.ASN1ObjectIdentifier("2.5.29.37")); // extendedKeyUsage
+			lExpected.add(new org.bouncycastle.asn1.ASN1ObjectIdentifier("2.5.29.32")); // certificatePolicies
+			lExpected.add(new org.bouncycastle.asn1.ASN1ObjectIdentifier("2.5.29.31")); // cRLDistributionPoints
+			lExpected.add(new org.bouncycastle.asn1.ASN1ObjectIdentifier("1.3.6.1.5.5.7.1.1")); // authorityInfoAccess
+			lExpected.add(new org.bouncycastle.asn1.ASN1ObjectIdentifier("2.5.29.17")); // subjectAlternativeName
+			
+			List<org.bouncycastle.asn1.ASN1ObjectIdentifier> lCriticalExpected = new ArrayList<>();
+			lCriticalExpected.add(keyUsageID);
+			
+			List<org.bouncycastle.asn1.ASN1ObjectIdentifier> lNonCriticalExpected = new ArrayList<>();
+			lNonCriticalExpected.addAll(lExpected);
+			lNonCriticalExpected.remove(keyUsageID);
+			
+			List<org.bouncycastle.asn1.ASN1ObjectIdentifier> lFounded = exts.getASN1OIDs();
+			if(lFounded==null || lFounded.isEmpty()) {
+				throw new Exception("Attese extensions");
+			}
+			if(lFounded.size()!=lExpected.size()) {
+				throw new Exception("Attese "+lExpected.size()+" extensions, founded "+lFounded.size());
+			}
+			for (org.bouncycastle.asn1.ASN1ObjectIdentifier asn1Id : lExpected) {
+				
+				if(!lFounded.contains(asn1Id)) {
+					throw new Exception("Attesa extension asn1 id '"+asn1Id+"' non trovata");
+				}
+				
+				if(!exts.hasExtension(asn1Id)) {
+					throw new Exception("Attesa extension asn1 id '"+asn1Id+"' non trovata (hasExtensions(asn1))");
+				}
+				if(!exts.hasExtension(asn1Id.getId())) {
+					throw new Exception("Attesa extension asn1 id '"+asn1Id+"' non trovata (hasExtensions(string))");
+				}
+				
+				boolean isCritical = lCriticalExpected.contains(asn1Id);
+				
+				if(isCritical) {
+					if(!exts.hasCriticalExtension(asn1Id)) {
+						throw new Exception("Attesa critical extension asn1 id '"+asn1Id+"' non trovata (hasExtensions(asn1))");
+					}
+					if(!exts.hasCriticalExtension(asn1Id.getId())) {
+						throw new Exception("Attesa critical extension asn1 id '"+asn1Id+"' non trovata (hasExtensions(string))");
+					}
+					if(exts.hasNonCriticalExtension(asn1Id)) {
+						throw new Exception("Non attesa non-critical extension asn1 id '"+asn1Id+"' trovata (hasExtensions(asn1))");
+					}
+					if(exts.hasNonCriticalExtension(asn1Id.getId())) {
+						throw new Exception("Non attesa non-critical extension asn1 id '"+asn1Id+"' trovata (hasExtensions(string))");
+					}
+				}
+				else {
+					if(!exts.hasNonCriticalExtension(asn1Id)) {
+						throw new Exception("Attesa non-critical extension asn1 id '"+asn1Id+"' non trovata (hasExtensions(asn1))");
+					}
+					if(!exts.hasNonCriticalExtension(asn1Id.getId())) {
+						throw new Exception("Attesa non-critical extension asn1 id '"+asn1Id+"' non trovata (hasExtensions(string))");
+					}
+					if(exts.hasCriticalExtension(asn1Id)) {
+						throw new Exception("Non attesa critical extension asn1 id '"+asn1Id+"' trovata (hasExtensions(asn1))");
+					}
+					if(exts.hasCriticalExtension(asn1Id.getId())) {
+						throw new Exception("Non attesa critical extension asn1 id '"+asn1Id+"' trovata (hasExtensions(string))");
+					}
+				}
+				
+				Extension ext = exts.getExtension(keyUsageID);
+				if(ext==null) {
+					throw new Exception("Attesa extension asn1 id '"+asn1Id+"' non trovata (getExtension(asn1))");
+				}
+				ext = exts.getExtension(keyUsageID.getId());
+				if(ext==null) {
+					throw new Exception("Attesa extension asn1 id '"+asn1Id+"' non trovata (getExtension(string))");
+				}
+				
+			}
+			
+			List<String> lFoundedId = exts.getOIDs();
+			if(lFoundedId==null || lFoundedId.isEmpty()) {
+				throw new Exception("Attese extensions id");
+			}
+			if(lFoundedId.size()!=lExpected.size()) {
+				throw new Exception("Attese "+lExpected.size()+" extensions, founded "+lFoundedId.size());
+			}
+			for (org.bouncycastle.asn1.ASN1ObjectIdentifier asn1Id : lExpected) {
+				
+				if(!lFoundedId.contains(asn1Id.getId())) {
+					throw new Exception("Attesa extension id '"+asn1Id+"' non trovata");
+				}
+				
+			}
+			
+			lFounded = exts.getCriticalASN1OIDs();
+			if(lFounded==null || lFounded.isEmpty()) {
+				throw new Exception("Attese critical extensions");
+			}
+			if(lFounded.size()!=lCriticalExpected.size()) {
+				throw new Exception("Attese "+lCriticalExpected.size()+" critical extensions, founded "+lFounded.size());
+			}
+			for (org.bouncycastle.asn1.ASN1ObjectIdentifier asn1Id : lCriticalExpected) {
+				if(!lFounded.contains(asn1Id)) {
+					throw new Exception("Attesa critical extension asn1 id '"+asn1Id+"' non trovata");
+				}
+			}
+			
+			lFoundedId = exts.getCriticalOIDs();
+			if(lFoundedId==null || lFoundedId.isEmpty()) {
+				throw new Exception("Attese critical extensions id");
+			}
+			if(lFoundedId.size()!=lCriticalExpected.size()) {
+				throw new Exception("Attese "+lCriticalExpected.size()+" critical extensions, founded "+lFoundedId.size());
+			}
+			for (org.bouncycastle.asn1.ASN1ObjectIdentifier asn1Id : lCriticalExpected) {
+				
+				if(!lFoundedId.contains(asn1Id.getId())) {
+					throw new Exception("Attesa critical extension id '"+asn1Id+"' non trovata");
+				}
+				
+			}
+			
+			lFounded = exts.getNonCriticalASN1OIDs();
+			if(lFounded==null || lFounded.isEmpty()) {
+				throw new Exception("Attese non-critical extensions");
+			}
+			if(lFounded.size()!=lNonCriticalExpected.size()) {
+				throw new Exception("Attese "+lNonCriticalExpected.size()+" critical extensions, founded "+lFounded.size());
+			}
+			for (org.bouncycastle.asn1.ASN1ObjectIdentifier asn1Id : lNonCriticalExpected) {
+				if(!lFounded.contains(asn1Id)) {
+					throw new Exception("Attesa non-critical extension asn1 id '"+asn1Id+"' non trovata");
+				}
+			}
+			
+			lFoundedId = exts.getNonCriticalOIDs();
+			if(lFoundedId==null || lFoundedId.isEmpty()) {
+				throw new Exception("Attese non-critical extensions id");
+			}
+			if(lFoundedId.size()!=lNonCriticalExpected.size()) {
+				throw new Exception("Attese "+lNonCriticalExpected.size()+" critical extensions, founded "+lFoundedId.size());
+			}
+			for (org.bouncycastle.asn1.ASN1ObjectIdentifier asn1Id : lNonCriticalExpected) {
+				
+				if(!lFoundedId.contains(asn1Id.getId())) {
+					throw new Exception("Attesa non-critical extension id '"+asn1Id+"' non trovata");
+				}
+				
+			}
+		}
+		
+		System.out.println("");
 	}
 }

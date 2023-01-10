@@ -20,9 +20,12 @@
 
 package org.openspcoop2.security.keystore.cache;
 
+import java.util.Map;
+
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
+import org.openspcoop2.security.keystore.ExternalResource;
 import org.openspcoop2.security.keystore.HttpStore;
 import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
@@ -31,6 +34,7 @@ import org.openspcoop2.security.keystore.MultiKeystore;
 import org.openspcoop2.security.keystore.SSLSocketFactory;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.cache.Cache;
+import org.openspcoop2.utils.transport.http.ExternalResourceConfig;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 
 /**
@@ -50,6 +54,7 @@ public class GestoreKeystoreCache {
 	private static final HttpStoreCache httpStoreCache = new HttpStoreCache();
 	private static final CRLCertstoreCache crlCertstoreCache = new CRLCertstoreCache();
 	private static final SSLSocketFactoryCache sslSocketFactoryCache = new SSLSocketFactoryCache();
+	private static final ExternalResourceCache externalResourceCache = new ExternalResourceCache();
 	private static boolean cacheEnabled = false;
 	
 	public static void setKeystoreCacheParameters(boolean cacheEnabled,int cacheLifeSecond,int cacheSize){
@@ -62,6 +67,7 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.httpStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.crlCertstoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.sslSocketFactoryCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
+		GestoreKeystoreCache.externalResourceCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 	}
 	public static void setKeystoreCacheJCS(boolean cacheEnabled,int cacheLifeSecond, Cache cacheJCS){
 		GestoreKeystoreCache.cacheEnabled = cacheEnabled;
@@ -73,9 +79,11 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.httpStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.crlCertstoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.sslSocketFactoryCache.setCacheJCS(cacheLifeSecond, cacheJCS);
+		GestoreKeystoreCache.externalResourceCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 	}
 	public static void setKeystoreCacheJCS_crlLifeSeconds(int cacheCrlLifeSecond){
 		GestoreKeystoreCache.crlCertstoreCache.updateCacheLifeSecond(cacheCrlLifeSecond);
+		GestoreKeystoreCache.externalResourceCache.updateCacheLifeSecond(cacheCrlLifeSecond); // Per adesso utilizzo la stessa impostazione che consente di indicare un tempo minore rispetto al resto della cache
 	}
 	
 	
@@ -471,6 +479,24 @@ public class GestoreKeystoreCache {
 		}
 		return k;
 	}
+	public static CRLCertstore getCRLCertstore(RequestInfo requestInfo,String crlPath, Map<String, byte[]> localResources) throws SecurityException{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && crlPath!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getCRLCertstore(crlPath);
+			if(o!=null && o instanceof CRLCertstore) {
+				return (CRLCertstore) o;
+			}
+		}
+		CRLCertstore k = null;
+		if(GestoreKeystoreCache.cacheEnabled)
+			k = GestoreKeystoreCache.crlCertstoreCache.getKeystoreAndCreateIfNotExists(crlPath, localResources);
+		else
+			k = new CRLCertstore(crlPath, localResources);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addCRLCertstore(crlPath, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
 	
 	public static SSLSocketFactory getSSLSocketFactory(RequestInfo requestInfo,SSLConfig sslConfig) throws SecurityException{
 		String sslConfigKey = sslConfig.toString();
@@ -490,5 +516,24 @@ public class GestoreKeystoreCache {
 			requestInfo.getRequestConfig().addSSLSocketFactory(sslConfigKey, k, requestInfo.getIdTransazione());
 		}
 		return k;	
+	}
+	
+	public static ExternalResource getExternalResource(RequestInfo requestInfo,String resource, ExternalResourceConfig externalConfig) throws SecurityException{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && resource!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getExternalResource(resource);
+			if(o!=null && o instanceof ExternalResource) {
+				return (ExternalResource) o;
+			}
+		}
+		ExternalResource k = null;
+		if(GestoreKeystoreCache.cacheEnabled)
+			k = GestoreKeystoreCache.externalResourceCache.getKeystoreAndCreateIfNotExists(resource, externalConfig); // gestito nell'oggetto ExternalResourceCache l'utilizzo della risorsa come id
+		else
+			k = new ExternalResource(resource, resource, externalConfig); // l'id della risorsa esterna è la url stessa della risorsa, non serve un id aggiuntivo
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addExternalResource(resource, k, requestInfo.getIdTransazione());
+		}
+		return k;
 	}
 }

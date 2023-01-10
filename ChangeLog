@@ -1,3 +1,11 @@
+2023-01-10  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-1459
+	Aggiunte utilità che consentono di gestire validazione dei certificati tramite protocollo OCSP.
+	Rivista utility 'ArchiveLoader' per essere in grado di caricare certificati 'pkcs7' e certificate chains.
+	Aggiunto supporto per accedere alle extensioni presenti nei certificati.
+
 2022-12-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

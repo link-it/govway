@@ -25,6 +25,7 @@ import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -40,30 +41,36 @@ import org.openspcoop2.utils.UtilsException;
 public class ArchiveLoader {
 
 	public static Certificate load(byte[] content) throws UtilsException {
-		return _load(ArchiveType.CER, content, -1, null, null);
+		return _load(ArchiveType.CER, content, -1, null, null, false);
+	}
+	public static Certificate loadChain(byte[] content) throws UtilsException {
+		return _load(ArchiveType.CER, content, -1, null, null, true);
+	}
+	public static Certificate load(byte[] content, boolean chain) throws UtilsException {
+		return _load(ArchiveType.CER, content, -1, null, null, chain);
 	}
 	
 	public static Certificate loadFromKeystorePKCS12(byte[] content, int position, String password) throws UtilsException {
-		return _load(ArchiveType.PKCS12, content, position, null, password);
+		return _load(ArchiveType.PKCS12, content, position, null, password, false);
 	}
 	public static Certificate loadFromKeystorePKCS12(byte[] content, String alias, String password) throws UtilsException {
-		return _load(ArchiveType.PKCS12, content, -1, alias, password);
+		return _load(ArchiveType.PKCS12, content, -1, alias, password, false);
 	}
 	
 	public static Certificate loadFromKeystoreJKS(byte[] content, int position, String password) throws UtilsException {
-		return _load(ArchiveType.JKS, content, position, null, password);
+		return _load(ArchiveType.JKS, content, position, null, password, false);
 	}
 	public static Certificate loadFromKeystoreJKS(byte[] content, String alias, String password) throws UtilsException {
-		return _load(ArchiveType.JKS, content, -1, alias, password);
+		return _load(ArchiveType.JKS, content, -1, alias, password, false);
 	}
 	
 	public static Certificate load(ArchiveType type, byte[] content, int position, String password) throws UtilsException {
-		return _load(type, content, position, null, password);
+		return _load(type, content, position, null, password, false);
 	}
 	public static Certificate load(ArchiveType type, byte[] content, String alias, String password) throws UtilsException {
-		return _load(type, content, -1, alias, password);
+		return _load(type, content, -1, alias, password, false);
 	}
-	private static Certificate _load(ArchiveType type, byte[] content, int position, String alias, String password) throws UtilsException {
+	private static Certificate _load(ArchiveType type, byte[] content, int position, String alias, String password, boolean chain) throws UtilsException {
 		
 		try {
 		
@@ -126,12 +133,37 @@ public class ArchiveLoader {
 	
 			case CER:
 				
-				CertificateFactory fact = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
-				X509Certificate cer = (X509Certificate) fact.generateCertificate(new ByteArrayInputStream(content));
 				if(alias==null) {
 					alias = "cert";
 				}
-				return new Certificate(alias, cer);
+				
+				CertificateFactory fact = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
+				if(chain) {
+					try(ByteArrayInputStream bin = new ByteArrayInputStream(content)){
+						Collection<? extends java.security.cert.Certificate> certs = fact.generateCertificates(bin);
+						return loadCertificateChain(certs, alias);
+					}
+				}
+				else {
+					// provo prima a caricarlo come chain
+					// I formati pkcs7 devono ad esempio essere caricati tramite la primitiva generateCertificates
+					Collection<? extends java.security.cert.Certificate> certs = null;
+					try(ByteArrayInputStream bin = new ByteArrayInputStream(content)){
+						certs = fact.generateCertificates(bin);
+					}catch(Throwable t) {
+						// ignore
+					}
+					
+					if(certs==null || certs.isEmpty()) {
+						try(ByteArrayInputStream bin = new ByteArrayInputStream(content)){
+							X509Certificate cer = (X509Certificate) fact.generateCertificate(bin);
+							return new Certificate(alias, cer);
+						}
+					}
+					else {
+						return loadCertificateChain(certs, alias);
+					}
+				}
 				
 			default:
 				break;
@@ -144,6 +176,35 @@ public class ArchiveLoader {
 		}
 	} 	
 	
+	private static Certificate loadCertificateChain(Collection<? extends java.security.cert.Certificate> certs, String alias) throws UtilsException {
+		if(certs==null || certs.isEmpty()) {
+			throw new UtilsException("Certificates not found");
+		}
+		int cList = 0;
+		X509Certificate cer = null;
+		List<X509Certificate> listChain = null;
+		for (Object c : certs) {
+			if(c instanceof X509Certificate) {
+				X509Certificate tmp = (X509Certificate) c;
+				if(cList==0) {
+					cer = tmp;
+				}
+				else {
+					if(listChain==null) {
+						listChain = new ArrayList<>();
+					}
+					listChain.add(tmp);
+				}
+				cList++;
+			}
+		}
+		if(listChain!=null) {
+			return new Certificate(alias, cer, listChain);
+		}
+		else {
+			return new Certificate(alias, cer);
+		}
+	}
 	
 	public static List<String> readAliasesInKeystorePKCS12(byte[] content, String password) throws UtilsException {
 		return _readAliases(ArchiveType.PKCS12, content, password);
