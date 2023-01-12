@@ -7,6 +7,8 @@ All'interno degli oltre 13.000 test descritti nella sezione :ref:`releaseProcess
 
 Ulteriori test mirati agli aspetti di sicurezza vengono effettuati utilizzando il tool `OWASP ZAP Proxy <https://www.zaproxy.org/>`_ descritto nella sezione :ref:`releaseProcessGovWay_dynamicAnalysis_zap`.
 
+Se i test rilevano un nuovo problema o una regressione viene avviata una gestione della vulnerabilità come descritto nel manuale :ref:`vulnerabilityManagement`.
+
 .. toctree::
         :maxdepth: 2
         

@@ -1,7 +1,7 @@
 .. _releaseProcessGovWay_thirdPartyDynamicAnalysis_skip:
 
-Falsi Positivi
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+OWASP Dependency-Check Falsi Positivi
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 **Librerie utilizzate solo a scopo di test**
@@ -28,7 +28,7 @@ Per evitare la verifica, le librerie utilizzate solamente dalle testsuite e non 
 
 **Falsi Positivi**
 
-Nell'utilizzo del plugin vengono aggiunte le configurazioni che permettono di registrare dei falsi positivi rispetto al progetto.
+Nell'utilizzo del plugin vengono aggiunte le configurazioni che permettono di registrare dei falsi positivi rispetto al progetto, individuati nella :ref:`vulnerabilityManagement`.
 Di seguito il frammento del file `mvn/dependencies/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/pom.xml>`_ che evidenza come venga utilizzato il plugin owasp configurato con i suppressionFiles:
 
 ::
@@ -64,24 +64,18 @@ Esaminando nel dettaglio i file che definiscono i falsi positivi:
 
 - swagger-codegen-linkit.xml: esclude i jar inclusi nel file `mvn/dependencies/swagger-codegen/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/swagger-codegen/pom.xml>`_ poichè vengono utilizzati solamente durante lo sviluppo per generare alcune classi e non a runtime dal Gateway.
 
-- commons-discovery.xml: :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip_registry_CVE-2022-0869`
+- commons-discovery.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2022-0869`
 
-- snakeyaml.xml: :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip_registry_CVE-2022-38752`
+- snakeyaml.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2022-38752`
 
-- spring-web.xml: :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip_registry_CVE-2016-1000027`
+- spring-web.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2016-1000027`
 
-- spring-security-crypto.xml: :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip_registry_CVE-2020-5408`
+- spring-security-crypto.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2020-5408`
 
-- xercesImpl.xml: :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip_registry_CVE-2017-10355`
+- xercesImpl.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2017-10355`
 
 - console-back-office.xml: esclude i jar inclusi nel file `mvn/dependencies/faces/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/faces/pom.xml>`_ poichè utilizzati dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
 
   .. note::
 
      È in corso una attività di revisione dei jar utilizzati dalle console al fine di superare tutte le vulnerabilità note.
-
-
-.. toctree::
-        :maxdepth: 2
-        
-	registry/index

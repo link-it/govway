@@ -43,10 +43,15 @@ pdf-howto:
 	cd howto; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c .. -Dproject="How-to" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
 	@echo "Producing pdf How to ok"
 
-pdf-release-process:
-	@echo "Producing pdf Processo di Rilascio to ..."
-	cd release-process; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c .. -Dproject="Processo di Rilascio" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
-	@echo "Producing pdf Processo di Rilascio to ok"
+pdf-validation-process:
+	@echo "Producing pdf Processo di Validazione to ..."
+	cd validation-process; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c .. -Dproject="Processo di Validazione" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
+	@echo "Producing pdf Processo di Validazione to ok"
+
+vulnerability-management:
+	@echo "Producing pdf Gestione delle Vulnerabilità to ..."
+	cd vulnerability-management; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c .. -Dproject="Gestione delle Vulnerabilità" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
+	@echo "Producing pdf Gestione delle Vulnerabilità to ok"
 
 post:
 	sh ./postprocess.sh
