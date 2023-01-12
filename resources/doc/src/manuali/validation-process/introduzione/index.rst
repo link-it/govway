@@ -3,7 +3,7 @@
 Introduzione
 -------------------------------
 
-Ogni versione candidata al rilascio viene verificata tramite 3 tipi di controlli di sicurezza al fine di assicurarne la stabilità e l'assenza di vulnerabilità note.
+Ogni versione viene verificata tramite 3 tipi di controlli di sicurezza al fine di assicurarne la stabilità e l'assenza di vulnerabilità note.
 
 - :ref:`releaseProcessGovWay_staticCodeAnalysis`: identifica possibili vulnerabilità all'interno del codice sorgente tramite il tool `SpotBugs <https://spotbugs.github.io/>`_.
 

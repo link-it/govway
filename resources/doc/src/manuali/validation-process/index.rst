@@ -1,5 +1,5 @@
 ================================
-Processo di Rilascio
+Processo di Validazione
 ================================
 
 .. toctree::
