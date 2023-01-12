@@ -46,4 +46,4 @@ Se il processo di verifica, descritto nella sezione :ref:`releaseProcessGovWay_t
 	ci_jenkins
 	maven
 	securityAdvisory/index
-	skip
+	skip/index
