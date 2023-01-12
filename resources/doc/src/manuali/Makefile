@@ -16,7 +16,7 @@ clean:
 	rm -rf _build
 	rm -rf */_build
 
-pdf: pdf-manuale-installazione pdf-manuale-gestione pdf-manuale-monitoraggio pdf-scenari-applicativi pdf-howto pdf-release-process
+pdf: pdf-manuale-installazione pdf-manuale-gestione pdf-manuale-monitoraggio pdf-scenari-applicativi pdf-howto pdf-validation-process pdf-vulnerability-management
 
 pdf-manuale-installazione:
 	@echo "Producing pdf Manuale Installazione ..."
@@ -48,7 +48,7 @@ pdf-validation-process:
 	cd validation-process; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c .. -Dproject="Processo di Validazione" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
 	@echo "Producing pdf Processo di Validazione to ok"
 
-vulnerability-management:
+pdf-vulnerability-management:
 	@echo "Producing pdf Gestione delle Vulnerabilità to ..."
 	cd vulnerability-management; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c .. -Dproject="Gestione delle Vulnerabilità" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
 	@echo "Producing pdf Gestione delle Vulnerabilità to ok"
