@@ -17,8 +17,6 @@ Le tempistiche di risoluzione delle vulnerabilità sono classificate rispetto al
 
 I tempi sono calcolati rispetto alla data di identificazione dell'impatto della vulnerabilità sul prodotto (true positive).
 
-La prossima versione del software che risolve la vulnerabilità varia in funzione della severità: può essere contenuta in una patch version rispetto all'ultima versione stabile (severità critical e high) o in una successiva minor version. 
-
 .. table:: Avvisi di Sicurezza: tempi di risoluzione
    :widths: 35 65
    :class: longtable
