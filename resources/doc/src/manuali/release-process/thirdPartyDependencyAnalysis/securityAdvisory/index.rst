@@ -13,9 +13,9 @@ Le vulnerabilità identificate nel processo di verifica, descritto nella sezione
 
 **Tempi di Risoluzione**
 
-Le tempistiche di risoluzione delle vulnerabilità sono classificabili rispetto alla loro severità. 
+Le tempistiche di risoluzione delle vulnerabilità sono classificate rispetto alla loro severità e garantite per le versioni Enterprise del prodotto. Per la versione community i fix saranno applicati sulle prime versioni in rilascio. In caso di vulnerabilità molto impattanti saranno prodotte patch version immediate anche per le versioni community.
 
-I tempi sono calcolati rispetto alla data di registrazione della vulnerabilità come avviso di sicurezza nel registro descritto di seguito.
+I tempi sono calcolati rispetto alla data di identificazione dell'impatto della vulnerabilità sul prodotto (true positive).
 
 La prossima versione del software che risolve la vulnerabilità varia in funzione della severità: può essere contenuta in una patch version rispetto all'ultima versione stabile (severità critical e high) o in una successiva minor version. 
 
