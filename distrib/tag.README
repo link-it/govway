@@ -31,6 +31,7 @@ Per creare una tag version:
 
 10. Sistemare la documentazione e soprattutto il documento di ReleaseNotes
       Inoltre aggiungere la corretta versione. 
+10b. Vedere se esistono segnalazioni di vulnerabilità in vulnerability-management/securityAdvisory/*, registrate in data successiva all'ultimo rilascio, in cui deve essere indicata la fix version sostituendo la frase: "prima versione in rilascio".
 
 11. Aggiungere la versione in rilascio come versione delle interfacce OpenAPI dei servizi in tools/rs/*
     - tools/rs/config/server/src/schemi/govway_rs-api_config.yaml

@@ -39,6 +39,16 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 .. toctree::
         :maxdepth: 1
 
+        Processo di Validazione <validation-process/index>
+
+.. toctree::
+        :maxdepth: 1
+
+        Gestione delle Vulnerabilità <vulnerability-management/index>
+
+.. toctree::
+        :maxdepth: 1
+
         Release Notes <releaseNotes/index>
 
 
