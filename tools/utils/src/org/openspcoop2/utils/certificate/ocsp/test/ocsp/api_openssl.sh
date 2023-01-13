@@ -192,7 +192,7 @@ extendedKeyUsage = clientAuth
 [ server_cert ]
 basicConstraints = CA:FALSE
 nsCertType = server
-nsComment = "OpenSSL Generated server Certificate"
+nsComment = "OpenSSL Generated Server Certificate"
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer:always
 keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
@@ -202,7 +202,7 @@ extendedKeyUsage = serverAuth
 [ clientserver_cert ]
 basicConstraints = CA:FALSE
 nsCertType = server,client
-nsComment = "OpenSSL Generated server Certificate"
+nsComment = "OpenSSL Generated Client e Server Certificate"
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer:always
 keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
@@ -371,6 +371,8 @@ function certificato_ee {
 SOGGETTO="$1"
 EE_SUBJECT="$2"
 TIPO="$3"
+# Fisso entrambe le caratteristiche per facilità nei test
+TIPO="clientserver"
 WORKDIR="$4"
 
         NOME_NOSPAZI="${SOGGETTO// /_}"
@@ -398,7 +400,8 @@ then
 
 	        openssl genrsa -out ${PKI_DIR}/private/ee_${NOME_NOSPAZI}_${CommonName}.key.pem 2048
 
-        	cat /dev/urandom |tr -dc '[:alnum:][:digit:]_.;,@%#!^&*()+-'|head -c 16 > ${PKI_DIR}/private/ee_${NOME_NOSPAZI}_${CommonName}.README.txt
+        	#cat /dev/urandom |tr -dc '[:alnum:][:digit:]_.;,@%#!^&*()+-'|head -c 16 > ${PKI_DIR}/private/ee_${NOME_NOSPAZI}_${CommonName}.README.txt
+		echo "123456" > ${PKI_DIR}/private/ee_${NOME_NOSPAZI}_${CommonName}.README.txt
 	        openssl rsa \
         	-in  ${PKI_DIR}/private/ee_${NOME_NOSPAZI}_${CommonName}.key.pem \
 	        -aes128 \

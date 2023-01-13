@@ -1494,7 +1494,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE = "Algoritmo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE = "Item Idle Time (Secondi)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE = "Item Life Time (Secondi)";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CRL_LIFE_CACHE = "CRL Life Time (Secondi)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CRL_LIFE_CACHE = "CRL/OCSP Life Time (Secondi)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU = "LRU";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU = "MRU";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD = "Porta Delegata";

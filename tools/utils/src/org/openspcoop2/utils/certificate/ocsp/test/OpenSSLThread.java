@@ -108,7 +108,7 @@ public class OpenSSLThread extends AbstractBaseThread {
 	}
 	
 	@Override
-	protected void close() {
+	public synchronized void close() {
 		
 		if(this.process!=null) {
 			this.process.descendants().forEach(ph -> {
@@ -116,22 +116,29 @@ public class OpenSSLThread extends AbstractBaseThread {
 			});
 	
 			this.process.destroy();
+			
+			this.process = null;
 		}
 		
 		if(this.fCert!=null) {
 			this.fCert.delete();
+			this.fCert = null;
 		}
 		if(this.fKey!=null) {
 			this.fKey.delete();
+			this.fKey = null;
 		}
 		if(this.fCA!=null) {
 			this.fCA.delete();
+			this.fCA = null;
 		}
 		if(this.fIndex!=null) {
 			this.fIndex.delete();
+			this.fIndex = null;
 		}
 		if(this.fScript!=null) {
 			this.fScript.delete();
+			this.fScript = null;
 		}
 	}
 

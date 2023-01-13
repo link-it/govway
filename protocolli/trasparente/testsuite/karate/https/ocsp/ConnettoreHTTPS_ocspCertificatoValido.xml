@@ -1,0 +1,151 @@
+Esempio di connettore da impostare in apache tomcat 5.x, 6.x, 7.x e 8.x (per tomcat8 solamente versioni inferiori a 8.5.x):
+
+<Connector port="8450" protocol="HTTP/1.1" SSLEnabled="true"
+           maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
+           emptySessionPath="true"
+           scheme="https" secure="true" clientAuth="false" sslProtocol = "TLS"
+           keystoreFile="/etc/govway/keys/ocsp/testClient.p12"
+           keystoreType="PKCS12"
+           keystorePass="123456"/>
+
+
+Esempio di connettore da impostare in apache tomcat 8.5.x e 9.x (viene aggiunto l'attributo keyAlias):
+
+<Connector port="8450" protocol="HTTP/1.1" SSLEnabled="true"
+           maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
+           emptySessionPath="true"
+           scheme="https" secure="true" clientAuth="false" sslProtocol = "TLS"
+	   keyAlias="testclient"
+           keystoreFile="/etc/govway/keys/ocsp/testClient.p12"
+           keystoreType="PKCS12"
+           keystorePass="123456"/>
+
+
+Esempio di connettore da impostare nel file server.xml del Tomcat presente nelle versioni 4.x, 5.x e 6.x di JBoss:
+
+<Connector port="8450" protocol="HTTP/1.1" SSLEnabled="true" 
+           address="${jboss.bind.address}"
+           maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
+           emptySessionPath="true"
+           scheme="https" secure="true" clientAuth="false" sslProtocol = "TLS"
+           keystoreFile="/etc/govway/keys/ocsp/testClient.p12"
+           keystoreType="PKCS12"
+           keystorePass="123456"/>
+
+
+Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di JBoss 7.x:
+
+	...
+        <subsystem xmlns="urn:jboss:domain:web:1.1" default-virtual-server="default-host" native="false">
+            <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/>
+            ...
+            <connector name="httpsOCSPValid" protocol="HTTP/1.1" scheme="https" socket-binding="httpsOCSPValid" secure="true">
+                <ssl name="https" password="123456" certificate-key-file="/etc/govway/keys/ocsp/testClient.jks" verify-client="false"/>
+            </connector>
+	    ...
+	    <virtual-server ...>
+            </virtual-server>
+        </subsystem>
+	...
+    </profile> 
+    ....
+    <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
+        ...
+        <socket-binding name="httpsOCSPValid" port="8450"/>
+        ...
+    </socket-binding-group>
+
+
+
+Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) da Wildfly 25 (Elytron subsystem):
+
+    <subsystem xmlns="urn:wildfly:elytron:xx" ....>
+            <providers>
+		...
+	    </sasl>
+            <tls>
+                <key-stores>
+                    <key-store name="applicationKS">
+			...
+                    </key-store>
+		    <key-store name="openspcoop2ocspValidKeyStore">
+		        <credential-reference clear-text="123456"/>
+		        <implementation type="PKCS12"/>
+		        <file path="/etc/govway/keys/ocsp/testClient.p12"/>
+		    </key-store>
+                </key-stores>
+                <key-managers>
+                    <key-manager name="applicationKM" ...>
+                        ...
+                    </key-manager>
+		    <key-manager name="openspcoop2ocspValidKeyManager" key-store="openspcoop2ocspValidKeyStore" alias-filter="testclient">
+		        <credential-reference clear-text="123456"/> <!-- password chiave privata -->
+		    </key-manager>
+                </key-managers>
+                <server-ssl-contexts>
+                    <server-ssl-context name="applicationSSC" .../>
+		    <server-ssl-context name="openspcoop2ocspValid" need-client-auth="false" key-manager="openspcoop2ocspValidKeyManager" />
+                </server-ssl-contexts>
+            </tls>
+    </subsystem> 
+    ...
+    <profile>
+        ...
+	<subsystem xmlns="urn:jboss:domain:undertow:1.0">
+		<http-listener name="default" socket-binding="http"/>
+                ...
+		<https-listener name="httpsOCSPValid" socket-binding="httpsOCSPValid" ssl-context="openspcoop2ocspValid"/>
+            	...
+		<host ...>
+			...
+		</<host>
+        </subsystem>
+        ...
+    </profile>
+    ....
+    <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
+        ...
+        <socket-binding name="httpsOCSPValid" port="${jboss.https.port:8450}"/>
+        ...
+    </socket-binding-group>
+
+
+
+Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di Wildfly (10-24):
+
+
+    <management>
+	<security-realms>
+	    ...
+	    <security-realm name="openspcoop2ocspValid">
+                <server-identities>
+                        <ssl>
+                                <keystore path="/etc/govway/keys/ocsp/testClient.jks" keystore-password="123456" alias="testclient" key-password="123456" />
+                        </ssl>
+                </server-identities>
+            </security-realm>
+	    ...
+	</security-realms>
+	...
+    </management>
+    ...
+    <profile>
+        ...
+	<subsystem xmlns="urn:jboss:domain:undertow:1.0">
+		<http-listener name="default" socket-binding="http"/>
+                ...
+		<https-listener name="httpsOCSPValid" socket-binding="httpsOCSPValid" security-realm="openspcoop2ocspValid"/>   
+            	...
+		<host ...>
+			...
+		</<host>
+        </subsystem>
+        ...
+    </profile>
+    ....
+    <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
+        ...
+        <socket-binding name="httpsOCSPValid" port="${jboss.https.port:8450}"/>
+        ...
+    </socket-binding-group>
+

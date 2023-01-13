@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -36,7 +37,6 @@ import org.openspcoop2.utils.certificate.CRLDistributionPoints;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
-import org.slf4j.Logger;
 
 /**
  * OCSPRequestParams
@@ -64,11 +64,11 @@ public class CRLParams {
 		this.crlCertstore = crlCertstore;
 	}
 	
-	public static CRLParams build(Logger log, X509Certificate certificate, String crlInputConfig, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException, UtilsMultiException {
+	public static CRLParams build(LoggerBuffer log, X509Certificate certificate, String crlInputConfig, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException, UtilsMultiException {
 		CertificateInfo cer = new CertificateInfo(certificate, "ocspVerifica");
 		return build(log, cer, crlInputConfig, trustStore, config, reader);
 	}
-	public static CRLParams build(Logger log, CertificateInfo certificate, String crlInputConfig, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException, UtilsMultiException {
+	public static CRLParams build(LoggerBuffer log, CertificateInfo certificate, String crlInputConfig, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException, UtilsMultiException {
 	
 		if(config==null) {
 			throw new UtilsException("Param config is null");
@@ -95,7 +95,7 @@ public class CRLParams {
 								String p = crlPath.trim();
 								if(!crlPaths.contains(p)) {
 									crlPaths.add(p);
-									log.debug("CRL: add config path '"+p+"'");
+									log.debug("OCSP-CRL: add config path '"+p+"'");
 								}
 							}
 						}
@@ -114,7 +114,7 @@ public class CRLParams {
 							String p = crlPath.trim();
 							if(!crlPaths.contains(p)) {
 								crlPaths.add(p);
-								log.debug("CRL: add alternative config path '"+p+"'");
+								log.debug("OCSP-CRL: add alternative config path '"+p+"'");
 							}
 						}
 					}
@@ -145,10 +145,10 @@ public class CRLParams {
 													}
 													localResources.put(crlPath, crl);
 													crlPaths.add(crlPath);
-													log.debug("CRL: add external resource '"+crlPath+"'");
+													log.debug("OCSP-CRL: add external resource '"+crlPath+"'");
 												}catch(Throwable t) {
 													String msgError = "[crl: "+crlPath+"] retrieve failed: "+t.getMessage();
-													log.debug(msgError,t);
+													log.debug("OCSP-CRL "+msgError,t);
 													listExceptions.add(new Exception(msgError,t));
 												}
 											}
@@ -199,13 +199,22 @@ public class CRLParams {
 			if(config.getCrlTrustStoreSource()!=null && !config.getCrlTrustStoreSource().isEmpty()) {
 				for (CertificateSource s : config.getCrlTrustStoreSource()) {
 					if(CertificateSource.CONFIG.equals(s)) {
-						if(crlTrustStore==null) {
-							crlTrustStore = trustStore;
+						if(trustStore!=null) {
+							try {
+								if(crlTrustStore==null) {
+									java.security.KeyStore ks = java.security.KeyStore.getInstance("jks");
+									ks.load(null, null);
+									crlTrustStore = new KeyStore(ks);
+								}
+							}catch(Throwable t) {
+								String msgError = "OCSP-CRL [crlssuer: CONFIG] retrieve failed: "+t.getMessage();
+								log.debug(msgError,t);
+							}
+							if(crlTrustStore!=null) {
+								crlTrustStore.putAllCertificate(trustStore, false);
+							}
+							log.debug("OCSP-CRL: add certificate in truststore config");
 						}
-						else {
-							crlTrustStore.putAllCertificate(trustStore, false);
-						}
-						log.debug("CRL: add certificate in truststore config");
 					}
 					else if(CertificateSource.ALTERNATIVE_CONFIG.equals(s)) {
 						KeyStore alternativeTrustStore = null;
@@ -213,13 +222,20 @@ public class CRLParams {
 							alternativeTrustStore = reader.getCrlAlternativeTrustStore();
 						}
 						if(alternativeTrustStore!=null) {
-							if(crlTrustStore==null) {
-								crlTrustStore = alternativeTrustStore;
+							try {
+								if(crlTrustStore==null) {
+									java.security.KeyStore ks = java.security.KeyStore.getInstance("jks");
+									ks.load(null, null);
+									crlTrustStore = new KeyStore(ks);
+								}
+							}catch(Throwable t) {
+								String msgError = "OCSP-CRL [crlssuer: ALTERNATIVE_CONFIG] retrieve failed: "+t.getMessage();
+								log.debug(msgError,t);
 							}
-							else {
+							if(crlTrustStore!=null) {
 								crlTrustStore.putAllCertificate(alternativeTrustStore, false);
 							}
-							log.debug("CRL: add certificate in alternative truststore config");
+							log.debug("OCSP-CRL: add certificate in alternative truststore config");
 						}
 					}
 					else if(CertificateSource.AUTHORITY_INFORMATION_ACCESS.equals(s)) {
@@ -253,10 +269,10 @@ public class CRLParams {
 															}
 															crlTrustStore.putCertificate("crlIssuerCert-"+indexCrl, cer.getCertificate().getCertificate(), false);
 															indexCrl++;
-															log.debug("CRL: add certificate retrieved from '"+crlPath+"'");
+															log.debug("OCSP-CRL: add certificate retrieved from '"+crlPath+"'");
 														}
 													}catch(Throwable t) {
-														String msgError = "[crlssuer: "+crlPath+"] retrieve failed: "+t.getMessage();
+														String msgError = "OCSP-CRL [crlssuer: "+crlPath+"] retrieve failed: "+t.getMessage();
 														log.debug(msgError,t);
 													}
 												}
@@ -289,7 +305,7 @@ public class CRLParams {
 													}
 													crlTrustStore.putCertificate("aiaIssuerCert-"+indexAia, cer.getCertificate().getCertificate(), false);
 													indexAia++;
-													log.debug("CRL-AIA: add certificate retrieved from '"+urlIssuer+"'");
+													log.debug("OCSP-CRL-AIA: add certificate retrieved from '"+urlIssuer+"'");
 												}
 											}
 										}

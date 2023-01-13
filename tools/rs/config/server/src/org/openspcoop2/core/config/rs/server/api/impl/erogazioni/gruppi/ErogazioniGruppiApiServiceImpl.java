@@ -267,6 +267,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					null,							// httpsalgoritmokey,
 	        		null,							// httpsKeyAlias
 	        		null,							// httpsTrustStoreCRLs
+	        		null,							// httpsTrustStoreOCSPPolicy
 					null,							// proxy_enabled, 
 					null,							// proxy_hostname, 
 					null,							// proxy_port, 

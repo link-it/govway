@@ -139,7 +139,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	httpstipokey, httpspwdkey, httpspwdprivatekey,
 	httpsalgoritmokey,
 	httpsKeyAlias,
-	httpsTrustStoreCRLs;
+	httpsTrustStoreCRLs,
+	httpsTrustStoreOCSPPolicy;
 	private String httpshostverifyS, httpsstatoS;
 	private boolean httpshostverify, httpsstato, httpsTrustVerifyCert;
 	private String nomeSoggettoErogatore = "";
@@ -349,6 +350,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 			this.httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			this.httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
+			this.httpsTrustStoreOCSPPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(this.endpointtype)){
 				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -1615,7 +1617,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								this.httpspwdprivatekeytrust, this.httpspathkey,
 								this.httpstipokey, this.httpspwdkey, 
 								this.httpspwdprivatekey, this.httpsalgoritmokey,
-								this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+								this.httpsKeyAlias, this.httpsTrustStoreCRLs, this.httpsTrustStoreOCSPPolicy,
 								this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -1690,7 +1692,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
 					this.httpsalgoritmokey,
-					this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+					this.httpsKeyAlias, this.httpsTrustStoreCRLs, this.httpsTrustStoreOCSPPolicy,
 					this.tipoconn,this.versione,this.validazioneDocumenti,null,this.autenticazioneHttp,
 					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 					this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
@@ -1831,7 +1833,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								this.httpspathkey, this.httpstipokey,
 								this.httpspwdkey, this.httpspwdprivatekey,
 								this.httpsalgoritmokey, 
-								this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+								this.httpsKeyAlias, this.httpsTrustStoreCRLs, this.httpsTrustStoreOCSPPolicy,
 								this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -1974,7 +1976,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.httpspathkey, this.httpstipokey,
 						this.httpspwdkey, this.httpspwdprivatekey,
 						this.httpsalgoritmokey,
-						this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+						this.httpsKeyAlias, this.httpsTrustStoreCRLs, this.httpsTrustStoreOCSPPolicy,
 						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 						this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
@@ -2093,7 +2095,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								this.httpspathkey, this.httpstipokey,
 								this.httpspwdkey, this.httpspwdprivatekey,
 								this.httpsalgoritmokey, 
-								this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+								this.httpsKeyAlias, this.httpsTrustStoreCRLs, this.httpsTrustStoreOCSPPolicy,
 								this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 

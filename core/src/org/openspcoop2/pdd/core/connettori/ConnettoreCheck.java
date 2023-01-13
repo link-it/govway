@@ -59,8 +59,11 @@ import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityUtil
 import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
 import org.openspcoop2.protocol.registry.CertificateUtils;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.ocsp.OCSPValidatorImpl;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -756,8 +759,21 @@ public class ConnettoreCheck {
 		SSLContext sslContext = null;
 		if(sslContextProperties!=null){
 			
+			OCSPValidatorImpl ocspValidator = null;
+			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY)!=null){
+				String policyType = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+				if(policyType!=null && StringUtils.isNotEmpty(policyType)) {
+					GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(null);
+					String crlInputConfig = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+					LoggerBuffer lb = new LoggerBuffer();
+					lb.setLogDebug(log);
+					lb.setLogError(log);
+					ocspValidator = new OCSPValidatorImpl(lb, crlInputConfig, policyType, ocspResourceReader);
+				}
+			}
+			
 			StringBuilder bfSSLConfig = new StringBuilder();
-			sslContext = SSLUtilities.generateSSLContext(sslContextProperties, bfSSLConfig);
+			sslContext = SSLUtilities.generateSSLContext(sslContextProperties, ocspValidator, bfSSLConfig);
 			
 		}
 		

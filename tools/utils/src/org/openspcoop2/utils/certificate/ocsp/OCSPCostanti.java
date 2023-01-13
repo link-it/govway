@@ -35,8 +35,6 @@ public class OCSPCostanti {
 	
 	public final static String PROPERTY_SUFFIX_LABEL = "label";
 	
-	public final static String PROPERTY_SUFFIX_WARNING_ONLY = "warningOnly";
-	
 	public final static String PROPERTY_SUFFIX_CERTIFICATE_CHAIN_VERIFY = "certificateChainVerify";
 	
 	public final static String PROPERTY_SUFFIX_CHECK_VALIDITY = "checkValidity";
@@ -57,6 +55,7 @@ public class OCSPCostanti {
 		
 	public final static String PROPERTY_SUFFIX_URL_SOURCE = "url.source";
 	public final static String PROPERTY_SUFFIX_URL_ALTERNATIVE = "url.alternative";
+	public final static String PROPERTY_SUFFIX_URL_ALTERNATIVE_CA = "url.alternative.ca";
 	public final static String PROPERTY_SUFFIX_URL_NOT_FOUND_REJECTS_CERTIFICATE = "url.notFound.rejectsCertificate";
 	public final static String PROPERTY_SUFFIX_URL_NOT_FOUND_REJECTS_CA = "url.notFound.rejectsCA";
 	public final static String PROPERTY_SUFFIX_URL_BREAK_STATUS = "url.breakStatus";

@@ -657,6 +657,18 @@ public class ConsoleProperties {
 		return 10;
 	}
 	
+	public String getOCSPConfigurazione() throws Exception{
+		return this.readProperty(false, "ocsp.config");
+	}
+	public boolean isOCSPRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "ocsp.required");
+		return (b!=null && b.getValue()!=null) ? b.getValue() : false;
+	}
+	public boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "ocsp.https.verificaServerDisabilitata.policyChoice");
+		return (b!=null && b.getValue()!=null) ? b.getValue() : false;
+	}
+	
 	public boolean isVerificaCertificati_sceltaClusterId() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "verificaCertificati.sceltaClusterId");
 		return (b!=null && b.getValue()!=null) ? b.getValue() : true;

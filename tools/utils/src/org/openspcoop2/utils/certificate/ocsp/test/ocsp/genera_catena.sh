@@ -41,5 +41,17 @@ cp ${SOGGETTO}/ca/index.txt .
 cp ${SOGGETTO}/ca/certs/ocsp_TEST.cert.pem .
 cp ${SOGGETTO}/ca/private/ocsp_TEST.key.pem .
 cp ${SOGGETTO}/ca/certs/ca_TEST.cert.pem .
+cp ${SOGGETTO}/ca/private/ca_TEST.key.pem .
 cp ${SOGGETTO}/ca/certs/ee*.pem .
+cp ${SOGGETTO}/ca/private/ee*.pem .
+cp ${SOGGETTO}/ca/private/ee*.README.txt .
 keytool -importcert -alias ca -file ca_TEST.cert.pem -keystore ca_TEST.jks -storepass 123456 -storetype JKS -trustcacerts -noprompt
+echo "123456" > password
+openssl pkcs12 -export -out test.p12 -inkey ee_TEST_test.esempio.it.key.pem -in ee_TEST_test.esempio.it.cert.pem -name test -passout file:password -passin file:ee_TEST_test.esempio.it.README.txt -certfile ca_TEST.cert.pem
+openssl pkcs12 -export -out testClient.p12 -inkey ee_TEST_Client-test.esempio.it.key.pem -in ee_TEST_Client-test.esempio.it.cert.pem -name testclient -passout file:password -passin file:ee_TEST_Client-test.esempio.it.README.txt -certfile ca_TEST.cert.pem
+keytool -importkeystore -srckeystore test.p12 -srcstoretype PKCS12 -destkeystore test.jks -deststoretype JKS -srcstorepass 123456 -deststorepass 123456 -srcalias test -destalias test -srckeypass 123456 -destkeypass 123456 -noprompt
+keytool -importkeystore -srckeystore testClient.p12 -srcstoretype PKCS12 -destkeystore testClient.jks -deststoretype JKS -srcstorepass 123456 -deststorepass 123456 -srcalias testclient -destalias testclient -srckeypass 123456 -destkeypass 123456 -noprompt
+
+rm -f password
+
+echo "NOTE: invoke revoca.sh per attuare la revoca"

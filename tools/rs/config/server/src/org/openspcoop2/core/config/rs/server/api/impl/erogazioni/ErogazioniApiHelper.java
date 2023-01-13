@@ -730,6 +730,7 @@ public class ErogazioniApiHelper {
         		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
         		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
         		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
+        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),				// httpsTrustStoreOCSPPolicy
         		null, 								// tipoconn Da debug = null.	
         		as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
@@ -1509,6 +1510,7 @@ public class ErogazioniApiHelper {
         		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
         		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
         		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
+        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),				// httpsTrustStoreOCSPPolicy
         		null, 								// tipoconn Da debug = null.	
         		asps.getVersione().toString(), //as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
@@ -1665,6 +1667,7 @@ public class ErogazioniApiHelper {
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
         		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
         		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
+        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),				// httpsTrustStoreOCSPPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
 				evalnull( () -> proxy.getHostname() ),

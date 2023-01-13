@@ -676,6 +676,9 @@ components:
         truststore_crl:
           type: string
           maxLength: 4000
+        truststore_ocsp_policy:
+          type: string
+          maxLength: 255
     BaseKeyStore:
       type: object
       required: 

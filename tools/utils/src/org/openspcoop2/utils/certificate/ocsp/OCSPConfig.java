@@ -45,8 +45,6 @@ public class OCSPConfig {
 	
 	private String label;
 	
-	private boolean warningOnly;
-	
 	private boolean certificateChainVerify = true;
 	
 	private boolean checkValidity = true;
@@ -67,6 +65,7 @@ public class OCSPConfig {
 	
 	private List<CertificateSource> responderUrlSource = new ArrayList<>();
 	private List<String> alternativeResponderUrl;
+	private List<String> alternativeResponderUrlCA;
 	private boolean rejectsCertificateWithoutResponderUrl = true;
 	private boolean rejectsCAWithoutResponderUrl = false;
 	private List<OCSPResponseCode> responderBreakStatus = null;
@@ -111,10 +110,6 @@ public class OCSPConfig {
 	}
 	public String getLabel() {
 		return this.label;
-	}
-
-	public boolean isWarningOnly() {
-		return this.warningOnly;
 	}
 	
 	public boolean isCertificateChainVerify() {
@@ -167,6 +162,9 @@ public class OCSPConfig {
 	}
 	public List<String> getAlternativeResponderUrl() {
 		return this.alternativeResponderUrl;
+	}
+	public List<String> getAlternativeResponderUrlCA() {
+		return this.alternativeResponderUrlCA;
 	}
 	public boolean isRejectsCertificateWithoutResponderUrl() {
 		return this.rejectsCertificateWithoutResponderUrl;
@@ -267,8 +265,6 @@ public class OCSPConfig {
 		this.type = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_TYPE, true);	
 		this.label = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_LABEL, true);	
 		
-		this.warningOnly = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_WARNING_ONLY, false, false);	
-		
 		this.certificateChainVerify = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CERTIFICATE_CHAIN_VERIFY, false, true);	
 		
 		this.checkValidity = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CHECK_VALIDITY, false, true);	
@@ -319,6 +315,7 @@ public class OCSPConfig {
 		}
 		
 		this.alternativeResponderUrl = getListProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_URL_ALTERNATIVE, false, null);
+		this.alternativeResponderUrlCA = getListProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_URL_ALTERNATIVE_CA, false, null);
 		this.rejectsCertificateWithoutResponderUrl = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_URL_NOT_FOUND_REJECTS_CERTIFICATE, false, true);	
 		this.rejectsCAWithoutResponderUrl = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_URL_NOT_FOUND_REJECTS_CA, false, false);	
 		this.responderBreakStatus = getOCSPResponseCodeProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_URL_BREAK_STATUS, false, null);	

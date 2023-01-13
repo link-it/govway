@@ -272,20 +272,7 @@ public class SSLUtilities {
 		if(trustAllCertsManager==null) {
 			// Create a trust manager that does not validate certificate chains
 			trustAllCertsManager = new TrustManager[]{
-			    new X509TrustManager() {
-			        @Override
-					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-			            return null;
-			        }
-			        @Override
-					public void checkClientTrusted(
-			            java.security.cert.X509Certificate[] certs, String authType) {
-			        }
-			        @Override
-					public void checkServerTrusted(
-			            java.security.cert.X509Certificate[] certs, String authType) {
-			        }
-			    }
+			    new SSLTrustAllManager()
 			};
 		}
 	}
@@ -297,10 +284,13 @@ public class SSLUtilities {
 	}
 	
 	public static SSLContext generateSSLContext(SSLConfig sslConfig, StringBuilder bfLog) throws UtilsException{
+		return generateSSLContext(sslConfig, null, bfLog);
+	}
+	public static SSLContext generateSSLContext(SSLConfig sslConfig, IOCSPValidator ocspValidator, StringBuilder bfLog) throws UtilsException{
 
 		// Gestione https
 		SSLContext sslContext = null;
-
+		
 		bfLog.append("Creo contesto SSL...\n");
 		KeyManager[] km = null;
 		TrustManager[] tm = null;
@@ -436,6 +426,7 @@ public class SSLUtilities {
 	
 	
 			// Autenticazione SERVER
+			KeyStore truststoreParam = null;
 			if(sslConfig.isTrustAllCerts()) {
 				bfLog.append("Gestione trust all certs...\n");
 				tm = getTrustAllCertsManager();
@@ -465,7 +456,6 @@ public class SSLUtilities {
 					}
 					bfLog.append("\tTruststore HSM["+hsmTruststore+"]\n");
 					
-					KeyStore truststoreParam = null;
 					@SuppressWarnings("unused")
 					Provider truststoreProvider = null;
 					if(sslConfig.getTrustStore()!=null) {
@@ -541,6 +531,14 @@ public class SSLUtilities {
 						throw new UtilsException(e.getMessage(),e);
 					}
 				}
+			}
+			
+			if(ocspValidator!=null) {
+				if(ocspValidator.getTrustStore()==null && truststoreParam!=null) {
+					ocspValidator.setTrustStore(new org.openspcoop2.utils.certificate.KeyStore(truststoreParam));
+				}
+				tm = OCSPTrustManager.wrap(tm, ocspValidator);
+				ocspValidator.setOCSPTrustManager(OCSPTrustManager.read(tm));
 			}
 	
 			// Creo contesto SSL

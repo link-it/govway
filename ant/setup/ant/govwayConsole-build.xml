@@ -231,6 +231,13 @@
 			<param name="token" value="hsm.config"/>
 			<param name="value" value="${work_dir}/hsm.properties"/>
 		</antcall>
+	
+		<!-- OCSP CONFIG DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="ocsp.config"/>
+			<param name="value" value="${work_dir}/ocsp.properties"/>
+		</antcall>
 
 		<!-- RATE LIMITING -->
 		<antcall target="set_property">

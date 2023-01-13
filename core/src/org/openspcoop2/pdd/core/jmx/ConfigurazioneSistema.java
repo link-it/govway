@@ -72,6 +72,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -230,11 +231,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_SSL)){
-			return this.getInformazioniSSL(false,false,false);
+			return this.getInformazioniSSL(false,false,false,false);
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_COMPLETE_SSL)){
-			return this.getInformazioniSSL(true,true,true);
+			return this.getInformazioniSSL(true,true,true,true);
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH)){
@@ -622,7 +623,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		return null;
 	}
 	
-	public String getInformazioniSSL(boolean cipherSuites, boolean providerInfo, boolean hsmInfo){
+	public String getInformazioniSSL(boolean cipherSuites, boolean providerInfo, boolean hsmInfo, boolean ocspInfo){
 		try{
 			StringBuilder bf = new StringBuilder();
 			bf.append("SupportedProtocols: "+SSLUtilities.getSSLSupportedProtocols());
@@ -673,6 +674,19 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				}
 				else {
 					bf.append("HSM disabled"); 
+				}
+				bf.append("\n");
+			}
+			
+			
+			if(ocspInfo) {
+				bf.append("\n");
+				OCSPManager ocspManager = OCSPManager.getInstance();
+				if(ocspManager!=null) {
+					bf.append("OCSP policy registered: "+ocspManager.getOCSPConfigTypes());
+				}
+				else {
+					bf.append("OCSP disabled"); 
 				}
 				bf.append("\n");
 			}

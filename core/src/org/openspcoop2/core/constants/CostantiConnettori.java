@@ -103,6 +103,7 @@ public class CostantiConnettori {
     public static final String CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM = "trustManagementAlgorithm";
     public static final String CONNETTORE_HTTPS_TRUST_STORE_TYPE = "trustStoreType";
     public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLs = "trustStoreCRLs";
+    public static final String CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY = "trustStoreOCSPPolicy";
     public static final String CONNETTORE_HTTPS_KEY_STORE_LOCATION = "keyStoreLocation";
     public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = "keyStorePassword";
     public static final String CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM = "keyManagementAlgorithm";

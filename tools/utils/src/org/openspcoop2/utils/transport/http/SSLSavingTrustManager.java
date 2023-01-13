@@ -23,6 +23,7 @@ package org.openspcoop2.utils.transport.http;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 /**
@@ -36,24 +37,39 @@ public class SSLSavingTrustManager implements X509TrustManager {
 
 	private X509TrustManager tm;
 	private X509Certificate[] chain;
+	private boolean processClient;
 
 	public X509Certificate[] getPeerCertificates() {
 		return this.chain;
 	}
 
 	public SSLSavingTrustManager(X509TrustManager tm) {
+		this(tm, false);
+	}
+	public SSLSavingTrustManager(X509TrustManager tm, boolean processClient) {
 		this.tm = tm;
+		this.processClient = processClient;
 	}
 
 	@Override
 	public X509Certificate[] getAcceptedIssuers() {
-		throw new UnsupportedOperationException();
+		if(this.processClient) {
+			return this.tm.getAcceptedIssuers();
+		}
+		else {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	@Override
 	public void checkClientTrusted(X509Certificate[] chain, String authType)
 			throws CertificateException {
-		throw new UnsupportedOperationException();
+		if(this.processClient) {
+			this.tm.checkClientTrusted(chain, authType);
+		}
+		else {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	@Override
@@ -63,4 +79,39 @@ public class SSLSavingTrustManager implements X509TrustManager {
 		this.tm.checkServerTrusted(chain, authType);
 	}
 
+	public static TrustManager[] wrap(TrustManager[] tmArray) {
+		if(tmArray!=null && tmArray.length>0) {
+			for (int i = 0; i < tmArray.length; i++) {
+				TrustManager tm = tmArray[i];
+				if(tm!=null && tm instanceof X509TrustManager) {
+					// wrap
+
+					// clono perche' nel caso di SSLTrustAll si tratta di una istanza statica
+					TrustManager[] cloned = new TrustManager[tmArray.length];
+					for (int j = 0; j < tmArray.length; j++) {
+						if(j == i) {
+							cloned[j] = new SSLSavingTrustManager((X509TrustManager)tm, true);
+						}
+						else {
+							cloned[j] = tmArray[j];
+						}
+					}
+					return cloned;
+				}
+			}
+		}
+		return tmArray;
+	}
+	
+	public static SSLSavingTrustManager read(TrustManager[] tmArray) {
+		if(tmArray!=null && tmArray.length>0) {
+			for (int i = 0; i < tmArray.length; i++) {
+				TrustManager tm = tmArray[i];
+				if(tm!=null && tm instanceof SSLSavingTrustManager) {
+					return (SSLSavingTrustManager) tm;
+				}
+			}
+		}
+		return null;
+	}
 }

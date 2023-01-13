@@ -35,6 +35,9 @@ public class BaseTrustStore  {
   
   @Schema(description = "")
   private String truststoreCrl = null;
+  
+  @Schema(description = "")
+  private String truststoreOcspPolicy = null;
  /**
    * Get truststorePath
    * @return truststorePath
@@ -94,6 +97,25 @@ public class BaseTrustStore  {
     return this;
   }
 
+ /**
+   * Get truststoreOcspPolicy
+   * @return truststoreOcspPolicy
+  **/
+  @JsonProperty("truststore_ocsp_policy")
+  @Valid
+ @Size(max=255)  public String getTruststoreOcspPolicy() {
+    return this.truststoreOcspPolicy;
+  }
+
+  public void setTruststoreOcspPolicy(String truststoreOcspPolicy) {
+    this.truststoreOcspPolicy = truststoreOcspPolicy;
+  }
+
+  public BaseTrustStore truststoreOcspPolicy(String truststoreOcspPolicy) {
+    this.truststoreOcspPolicy = truststoreOcspPolicy;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -103,6 +125,7 @@ public class BaseTrustStore  {
     sb.append("    truststorePath: ").append(BaseTrustStore.toIndentedString(this.truststorePath)).append("\n");
     sb.append("    truststorePassword: ").append(BaseTrustStore.toIndentedString(this.truststorePassword)).append("\n");
     sb.append("    truststoreCrl: ").append(BaseTrustStore.toIndentedString(this.truststoreCrl)).append("\n");
+    sb.append("    truststoreOcspPolicy: ").append(BaseTrustStore.toIndentedString(this.truststoreOcspPolicy)).append("\n");
     sb.append("}");
     return sb.toString();
   }

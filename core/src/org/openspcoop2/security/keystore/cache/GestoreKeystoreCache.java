@@ -20,6 +20,7 @@
 
 package org.openspcoop2.security.keystore.cache;
 
+import java.security.cert.X509Certificate;
 import java.util.Map;
 
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -31,10 +32,13 @@ import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.MerlinTruststore;
 import org.openspcoop2.security.keystore.MultiKeystore;
+import org.openspcoop2.security.keystore.OCSPResponse;
 import org.openspcoop2.security.keystore.SSLSocketFactory;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.cache.Cache;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.transport.http.ExternalResourceConfig;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 
 /**
@@ -55,6 +59,7 @@ public class GestoreKeystoreCache {
 	private static final CRLCertstoreCache crlCertstoreCache = new CRLCertstoreCache();
 	private static final SSLSocketFactoryCache sslSocketFactoryCache = new SSLSocketFactoryCache();
 	private static final ExternalResourceCache externalResourceCache = new ExternalResourceCache();
+	private static final OCSPResponseCache ocspResponseCache = new OCSPResponseCache();
 	private static boolean cacheEnabled = false;
 	
 	public static void setKeystoreCacheParameters(boolean cacheEnabled,int cacheLifeSecond,int cacheSize){
@@ -68,6 +73,7 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.crlCertstoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.sslSocketFactoryCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.externalResourceCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
+		GestoreKeystoreCache.ocspResponseCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 	}
 	public static void setKeystoreCacheJCS(boolean cacheEnabled,int cacheLifeSecond, Cache cacheJCS){
 		GestoreKeystoreCache.cacheEnabled = cacheEnabled;
@@ -80,9 +86,11 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.crlCertstoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.sslSocketFactoryCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.externalResourceCache.setCacheJCS(cacheLifeSecond, cacheJCS);
+		GestoreKeystoreCache.ocspResponseCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 	}
 	public static void setKeystoreCacheJCS_crlLifeSeconds(int cacheCrlLifeSecond){
 		GestoreKeystoreCache.crlCertstoreCache.updateCacheLifeSecond(cacheCrlLifeSecond);
+		GestoreKeystoreCache.ocspResponseCache.updateCacheLifeSecond(cacheCrlLifeSecond);
 		GestoreKeystoreCache.externalResourceCache.updateCacheLifeSecond(cacheCrlLifeSecond); // Per adesso utilizzo la stessa impostazione che consente di indicare un tempo minore rispetto al resto della cache
 	}
 	
@@ -533,6 +541,44 @@ public class GestoreKeystoreCache {
 			k = new ExternalResource(resource, resource, externalConfig); // l'id della risorsa esterna è la url stessa della risorsa, non serve un id aggiuntivo
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addExternalResource(resource, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
+	public static OCSPResponse getOCSPResponse(RequestInfo requestInfo,IOCSPValidator ocspValidator, X509Certificate cert) throws SecurityException{
+		if(cert==null) {
+			throw new SecurityException("Certificate is null");
+		}
+		CertificateInfo certInfo = new CertificateInfo(cert, "cer");
+		return getOCSPResponse(requestInfo, ocspValidator, certInfo);
+	}
+	public static OCSPResponse getOCSPResponse(RequestInfo requestInfo,IOCSPValidator ocspValidator, CertificateInfo cert) throws SecurityException{
+		if(cert==null) {
+			throw new SecurityException("Certificate is null");
+		}
+		String pem = null;
+		try {
+			pem = cert.getPEMEncoded();
+		}catch(Throwable t) {
+			throw new SecurityException(t.getMessage(),t);
+		}
+		if(pem==null) {
+			throw new SecurityException("Certificate PEM Encoding is null");
+		}
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getOCSPResponse(pem);
+			if(o!=null && o instanceof OCSPResponse) {
+				return (OCSPResponse) o;
+			}
+		}
+		OCSPResponse k = null;
+		if(GestoreKeystoreCache.cacheEnabled)
+			k = GestoreKeystoreCache.ocspResponseCache.getKeystoreAndCreateIfNotExists(pem, ocspValidator, cert.getCertificate());
+		else
+			k = new OCSPResponse(ocspValidator, cert.getCertificate()); 
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addOCSPResponse(pem, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}

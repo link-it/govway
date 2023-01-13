@@ -50,6 +50,7 @@ import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
@@ -405,6 +406,21 @@ public class InitListener implements ServletContextListener {
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
+				InitListener.log.error(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new RuntimeException(msgErrore,e);
+			}
+			
+			// inizializzo OCSP Manager
+			try {
+				String ocspConfig = consoleProperties.getOCSPConfigurazione();
+				if(StringUtils.isNotEmpty(ocspConfig)) {
+					File f = new File(ocspConfig);
+					OCSPManager.init(f, consoleProperties.isOCSPRequired(), log);
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();
 				InitListener.log.error(
 						//					throw new ServletException(
 						msgErrore,e);

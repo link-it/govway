@@ -1137,6 +1137,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					String httpsalgoritmokey = null;
 					String httpsKeyAlias = null;
 					String httpsTrustStoreCRLs = null;
+					String httpsTrustStoreOCSPPolicy = null;
 					boolean httpsstato = false;
 					String httpskeystore = null;
 					if (httpstipologia == null && props!=null) {
@@ -1165,6 +1166,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 						httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
 						httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+						httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 						if (httpspathkey == null) {
 							httpsstato = false;
 							httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -1386,7 +1388,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey,
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 							tipoconn, connettoreDebug,
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,

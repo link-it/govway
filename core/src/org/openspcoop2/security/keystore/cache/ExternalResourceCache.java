@@ -55,6 +55,6 @@ public class ExternalResourceCache extends AbstractKeystoreCache<ExternalResourc
 
 	@Override
 	public String getPrefixKey() {
-		return "CRLCertstore ";
+		return "ExternalResource ";
 	}
 }

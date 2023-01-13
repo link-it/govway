@@ -85,6 +85,22 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs).trim();
 				propertiesHTTPS.setTrustStoreCRLsLocation(tmp);
 			}
+			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY)!=null){
+				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY).trim();
+				propertiesHTTPS.setTrustStoreOCSPPolicy(tmp);
+			}
+		}
+		else if(propertiesHTTPS.isTrustAllCerts()){
+			// potrei accettare qualsiasi certificato ma validarlo rispetto a OCSP
+			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY)!=null){
+				String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY).trim();
+				propertiesHTTPS.setTrustStoreOCSPPolicy(tmp);
+				
+				if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)!=null){
+					tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs).trim();
+					propertiesHTTPS.setTrustStoreCRLsLocation(tmp);
+				}
+			}
 		}
 		
 		// AUTENTICAZIONE CLIENT

@@ -236,6 +236,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegExpException;
@@ -21772,6 +21773,26 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.TEXT);
 				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs);
 				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs));
+				dati.add(de);
+				
+			}
+			
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_OCSP_POLICY);
+				String ocspPolicy = connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+				String value = null;
+				try {
+					if(ocspPolicy!=null) {
+						String label = OCSPManager.getInstance().getOCSPConfig(ocspPolicy).getLabel();
+						value = ((label!=null && StringUtils.isNotEmpty(label)) ? label : ocspPolicy);
+					}
+				}catch(Throwable t) {
+					value = ocspPolicy;	
+				}
+				de.setValue(value);
 				dati.add(de);
 				
 			}

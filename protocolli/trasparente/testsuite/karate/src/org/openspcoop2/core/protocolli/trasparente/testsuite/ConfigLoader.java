@@ -23,6 +23,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -174,12 +175,58 @@ public class ConfigLoader {
     public static void resetCache() throws Exception {
         
     	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
+    	logger.debug("---- resetAllCache ----");
     	
         String jmx_user = prop.getProperty("jmx_username");
         String jmx_pass = prop.getProperty("jmx_password"); 
     	
         String[] govwayCaches = prop.getProperty("jmx_cache_resources").split(",");
         for (String resource : govwayCaches) {
+            logger.debug("Resetto cache: " + resource);
+            String url = prop.getProperty("govway_base_path") + "/check?methodName=resetCache&resourceName=" + resource;
+            org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
+        }
+
+    }
+    
+    public static void resetCache_excludeCachePrimoLivello() throws Exception {
+    	resetCache(true, "DatiRichieste");
+    }
+    
+    public static void resetCachePrimoLivello() throws Exception {
+    	resetCache(false, "DatiRichieste");
+    }
+    
+    public static void resetCache(boolean useForSkip, String ... cache) throws Exception {
+        
+    	if(cache==null || cache.length<=0) {
+    		resetCache();
+    		return;
+    	}
+    	
+    	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
+    	logger.debug("---- resetCache useForSkip:"+useForSkip+" cache:"+Arrays.asList(cache)+" ----");
+    	    	
+        String jmx_user = prop.getProperty("jmx_username");
+        String jmx_pass = prop.getProperty("jmx_password"); 
+    	
+        String[] govwayCaches = prop.getProperty("jmx_cache_resources").split(",");
+        for (String resource : govwayCaches) {
+        	boolean found = false;
+    		for (String skipc : cache) {
+				if(resource.equals(skipc)) {
+					found = true;
+					break;
+				}
+			}
+        	if(useForSkip && found) {
+        		logger.debug("Skip reset cache: " + resource);
+				continue;
+        	}
+        	else if(!useForSkip && !found) {
+        		logger.debug("Salto reset cache perchè non richiesto: " + resource);
+				continue;
+        	}
             logger.debug("Resetto cache: " + resource);
             String url = prop.getProperty("govway_base_path") + "/check?methodName=resetCache&resourceName=" + resource;
             org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);

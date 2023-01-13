@@ -26,6 +26,7 @@ import java.security.Security;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -140,7 +141,11 @@ public class OCSPTest {
 			String host = "govway.org";
 			int port = 443;
 			
+			// valido
 			_check(host, port, "govway");
+			
+			// validazione completata, anche se prima viene invocata una url inesistente
+			_check(host, port, "govway-alternative-url");
 			
 			System.out.println("\n\nTest 'checkGovWay' terminato");
 			
@@ -162,6 +167,8 @@ public class OCSPTest {
 			_check(host, port, "google");
 			
 			System.out.println("\n\nTest 'checkGoogle' terminato");
+			
+			
 			
 		}finally {
 			Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
@@ -469,8 +476,17 @@ public class OCSPTest {
 			System.out.println("CRL: null");
 		}
 		
-		OCSPRequestParams params = OCSPRequestParams.build(log, cert.getCertificate().getCertificate(), trustStore, config, ocspResourceReader);
-		CertificateStatus certificatePrincipalStatus = OCSPValidator.check(log, params, crlInput);
+		LoggerBuffer lb = new LoggerBuffer();
+		lb.setLogDebug(log);
+		lb.setLogError(log);
+		StringBuilder sbLog = new StringBuilder();
+		lb.setSbDebug(sbLog);
+		lb.setLogErrorInDebug(true);
+		lb.addSeverityPrefix(true);
+		
+		OCSPRequestParams params = OCSPRequestParams.build(lb, cert.getCertificate().getCertificate(), trustStore, config, ocspResourceReader);
+		CertificateStatus certificatePrincipalStatus = OCSPValidator.check(lb, params, crlInput);
+		System.out.println(sbLog.toString());
 		System.out.println("Stato: "+certificatePrincipalStatus);
 		if(!expected.equals(certificatePrincipalStatus.getCode())) {
 			throw new Exception("Atteso stato '"+expected+"'");
@@ -515,8 +531,9 @@ public class OCSPTest {
 				System.out.println("CRL: null");
 			}
 			
-			params = OCSPRequestParams.build(log, c.getCertificate(), trustStore, config, ocspResourceReader);
-			certificatePrincipalStatus = OCSPValidator.check(log, params, crlInput);
+			params = OCSPRequestParams.build(lb, c.getCertificate(), trustStore, config, ocspResourceReader);
+			certificatePrincipalStatus = OCSPValidator.check(lb, params, crlInput);
+			System.out.println(sbLog.toString());
 			System.out.println("Stato: "+certificatePrincipalStatus);
 			if(!expected.equals(certificatePrincipalStatus.getCode())) {
 				throw new Exception("Atteso stato '"+expected+"'");

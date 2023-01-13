@@ -60,7 +60,12 @@ public enum OCSPResponseCode {
 	UNAUTHORIZED(OCSPResp.UNAUTHORIZED),  // 6
 	
 	// Unknown
-	UNKNOWN(-1);
+	UNKNOWN(-1),
+	
+	// Situazioni limite prima di avere una risposta
+	OCSP_BUILD_REQUEST_FAILED(-2),
+	OCSP_INVOKE_FAILED(-3);
+	
 	
 	private int code;
 	
@@ -88,6 +93,10 @@ public enum OCSPResponseCode {
             return "Unauthorized request";
         case MALFORMED_REQUEST:
         	return "Malformed request";
+        case OCSP_BUILD_REQUEST_FAILED:
+        	return "OCSP build request signed failed";
+        case OCSP_INVOKE_FAILED:
+        	return "OCSP invoke failed";
         default:
         	return "Error";
 		}
@@ -123,6 +132,12 @@ public enum OCSPResponseCode {
 		}
 		else if(code == UNKNOWN.code) {
 			return OCSPResponseCode.UNKNOWN;
+		}
+		else if(code == OCSP_BUILD_REQUEST_FAILED.code) {
+			return OCSPResponseCode.OCSP_BUILD_REQUEST_FAILED;
+		}
+		else if(code == OCSP_INVOKE_FAILED.code) {
+			return OCSPResponseCode.OCSP_INVOKE_FAILED;
 		}
 		
 		return OCSPResponseCode.UNKNOWN;

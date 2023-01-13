@@ -20,17 +20,18 @@
 
 package org.openspcoop2.security.keystore;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.io.Serializable;
 
 import javax.net.ssl.SSLContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
@@ -83,7 +84,7 @@ public class SSLSocketFactory implements Serializable {
 							this.sslConfig.setKeyStore(keystore.getKeystore(), keystore.isKeystoreHsm());
 						}catch(Exception e) {
 							String msgError = "Lettura keystore '"+this.sslConfig.getKeyStoreLocation()+"' dalla cache fallita: "+e.getMessage();
-							logError(msgError, e);
+							this.sslConfig.getLoggerBuffer().error(msgError, e);
 						}
 					}
 					if(this.sslConfig.getTrustStoreLocation()!=null) {
@@ -93,7 +94,7 @@ public class SSLSocketFactory implements Serializable {
 							this.sslConfig.setTrustStore(truststore.getKeystore(), truststore.isKeystoreHsm());
 						}catch(Exception e) {
 							String msgError = "Lettura truststore '"+this.sslConfig.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage();
-							logError(msgError, e);
+							this.sslConfig.getLoggerBuffer().error(msgError, e);
 						}
 					}
 					if(this.sslConfig.getTrustStoreCRLsLocation()!=null) {
@@ -101,20 +102,27 @@ public class SSLSocketFactory implements Serializable {
 							this.sslConfig.setTrustStoreCRLs(GestoreKeystoreCache.getCRLCertstore(requestInfo, this.sslConfig.getTrustStoreCRLsLocation()).getCertStore());
 						}catch(Exception e) {
 							String msgError = "Lettura CRLs '"+this.sslConfig.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage();
-							logError(msgError, e);
+							this.sslConfig.getLoggerBuffer().error(msgError, e);
+						}
+					}
+					
+					IOCSPValidator ocspValidator = null;
+					if(this.sslConfig.getTrustStoreOCSPPolicy()!=null){
+						String policyType = this.sslConfig.getTrustStoreOCSPPolicy();
+						if(policyType!=null && StringUtils.isNotEmpty(policyType)) {
+							GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(requestInfo);
+							String crlInputConfig = this.sslConfig.getTrustStoreCRLsLocation();
+							ocspValidator = new GestoreOCSPValidator(requestInfo, this.sslConfig.getLog4jBuffer(), crlInputConfig, policyType, ocspResourceReader);
 						}
 					}
 					
 					StringBuilder bfSSLConfig = new StringBuilder();
-					SSLContext sslContext = SSLUtilities.generateSSLContext(this.sslConfig, bfSSLConfig);
+					SSLContext sslContext = SSLUtilities.generateSSLContext(this.sslConfig, ocspValidator, bfSSLConfig);
 					this.sslSocketFactory = sslContext.getSocketFactory();
 					
-					if(this.sslConfig.getSbDebug()!=null) {
+					if(this.sslConfig.getLoggerBuffer()!=null) {
 						String msgDebug = bfSSLConfig.toString();
-						if(this.sslConfig.getSbDebug().length()>0) {
-							this.sslConfig.getSbDebug().append("\n");
-						}
-						this.sslConfig.getSbDebug().append(msgDebug);		
+						this.sslConfig.getLoggerBuffer().debug(msgDebug);		
 					}
 				}
 
@@ -129,37 +137,5 @@ public class SSLSocketFactory implements Serializable {
 		return this.sslSocketFactory;
 	}	
 
-	private void logError(String msgError, Exception e) throws IOException {
-		if(this.sslConfig.getSbError()!=null || this.sslConfig.getSbDebug()!=null) {
-			if(this.sslConfig.getSbError()!=null) {
-				if(this.sslConfig.getSbError().length()>0) {
-					this.sslConfig.getSbError().append("\n");
-				}
-				this.sslConfig.getSbError().append(msgError);
-			}
-			if(this.sslConfig.getSbDebug()!=null) {
-				if(this.sslConfig.getSbDebug().length()>0) {
-					this.sslConfig.getSbDebug().append("\n");
-				}
-				this.sslConfig.getSbDebug().append(msgError);
-			}
-			try( ByteArrayOutputStream out = new ByteArrayOutputStream(); PrintStream ps = new PrintStream(out);){
-				e.printStackTrace(ps);
-				ps.flush();
-				out.flush();
-				if(this.sslConfig.getSbError()!=null) {
-					if(this.sslConfig.getSbError().length()>0) {
-						this.sslConfig.getSbError().append("\n");
-					}
-					this.sslConfig.getSbError().append(out.toString());
-				}
-				if(this.sslConfig.getSbDebug()!=null) {
-					if(this.sslConfig.getSbDebug().length()>0) {
-						this.sslConfig.getSbDebug().append("\n");
-					}
-					this.sslConfig.getSbDebug().append(out.toString());
-				}
-			}
-		}
-	}
+
 }

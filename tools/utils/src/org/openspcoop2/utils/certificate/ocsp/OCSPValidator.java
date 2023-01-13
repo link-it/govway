@@ -54,8 +54,10 @@ import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.certificate.CRLDistributionPoint;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.ExtendedKeyUsage;
@@ -81,10 +83,22 @@ import org.slf4j.Logger;
 public class OCSPValidator {
 
 	public static CertificateStatus check(Logger log, OCSPRequestParams params) throws UtilsException {
-		return check(log, params, null);
+		LoggerBuffer lb = new LoggerBuffer();
+		lb.setLogDebug(log);
+		lb.setLogError(log);
+		return check(lb, params, null);
 	}
 	public static CertificateStatus check(Logger log, OCSPRequestParams params, String crlInput) throws UtilsException {
-
+		LoggerBuffer lb = new LoggerBuffer();
+		lb.setLogDebug(log);
+		lb.setLogError(log);
+		return check(lb, params, crlInput);
+	}
+	public static CertificateStatus check(LoggerBuffer log, OCSPRequestParams params) throws UtilsException {
+		return check(log, params, null);
+	}
+	public static CertificateStatus check(LoggerBuffer log, OCSPRequestParams params, String crlInput) throws UtilsException {
+	
 		if(params==null) {
 			throw new UtilsException("Params is null");
 		}
@@ -132,7 +146,7 @@ public class OCSPValidator {
 		throw new UtilsException("Certificate chain too big");
 	}
 
-	private static CertificateStatus _check(Logger log, OCSPRequestParams params, String crlInput) throws UtilsException {
+	private static CertificateStatus _check(LoggerBuffer log, OCSPRequestParams params, String crlInput) throws UtilsException {
 
 		if(params==null) {
 			throw new UtilsException("Params is null");
@@ -145,7 +159,7 @@ public class OCSPValidator {
 			throw new UtilsException("OCSP config not provided");
 		}
 
-		String prefixCert = "[certificate: "+params.getCertificate().getSubjectDN()+"] ";
+		String prefixCert = "OCSP [certificate: "+params.getCertificate().getSubjectDN()+"] ";
 
 		CertificateInfo certificateInfo = new CertificateInfo(params.getCertificate(), "certificate");
 		log.debug(prefixCert+"issuer: "+params.getCertificate().getIssuerDN());
@@ -201,11 +215,11 @@ public class OCSPValidator {
 				}
 			}
 		}catch(CertificateExpiredException t) {
-			return CertificateStatus.EXPIRED(t.getMessage(), certificateInfo.getNotAfter());
+			return CertificateStatus.EXPIRED(prefixCert+t.getMessage(), certificateInfo.getNotAfter());
 		}catch(CertificateNotYetValidException t) {
-			return CertificateStatus.EXPIRED(t.getMessage(), certificateInfo.getNotBefore());
+			return CertificateStatus.EXPIRED(prefixCert+t.getMessage(), certificateInfo.getNotBefore());
 		}catch(Throwable t) {
-			return CertificateStatus.EXPIRED(t.getMessage(), certificateInfo.getNotAfter());
+			return CertificateStatus.EXPIRED(prefixCert+t.getMessage(), certificateInfo.getNotAfter());
 		}
 		
 		if(certificateInfo.isSelfSigned()) {
@@ -254,31 +268,58 @@ public class OCSPValidator {
 
 			String prefix =prefixCert+ "["+responderURI+"] ";
 
+			OCSPResponseCode responseCode = null;
+			UtilsException error = null;
+			
+			OCSPRequestSigned ocspRequest = null;
 			try {
-
 				log.debug(prefix+"Build request ...");
-				OCSPRequestSigned ocspRequest = buildOCSPReq(log, prefix, params);
-
-				log.debug(prefix+"Invoke ocsp ...");
-				OCSPResp ocspResponse = invokeOCSP(ocspRequest, responderURI, params);
-
-				log.debug(prefix+"Analyze response ...");
-				OCSPResponseCode responseCode = OCSPResponseCode.toOCSPResponseCode(ocspResponse.getStatus());
-
-				if(OCSPResponseCode.SUCCESSFUL.equals(responseCode)) {
-					if(ocspResponse.getResponseObject()==null) {
-						throw new Exception("OCSP response object not found");
+				ocspRequest = buildOCSPReq(log, prefix, params);
+			}catch(Throwable t) {
+				responseCode = OCSPResponseCode.OCSP_BUILD_REQUEST_FAILED;
+				error = new UtilsException(prefixCert+"(url: "+responderURI+"): "+t.getMessage(),t);
+				log.error(prefix+"costruzione richiesta fallita: "+t.getMessage(),t);
+				// gestito sotto con gli stati throw error;
+			}
+				
+			BasicOCSPResp ocspResp = null;
+			if(ocspRequest!=null) {
+				try {
+					log.debug(prefix+"Invoke ocsp ...");
+					OCSPResp ocspResponse = invokeOCSP(ocspRequest, responderURI, params);
+	
+					log.debug(prefix+"Analyze response ...");
+					responseCode = OCSPResponseCode.toOCSPResponseCode(ocspResponse.getStatus());
+	
+					if(OCSPResponseCode.SUCCESSFUL.equals(responseCode)) {
+						if(ocspResponse.getResponseObject()==null) {
+							throw new Exception("OCSP response object not found");
+						}
+						else if (ocspResponse.getResponseObject() instanceof BasicOCSPResp) {
+							ocspResp = (BasicOCSPResp) ocspResponse.getResponseObject();
+						} else {
+							throw new Exception("Invalid or unknown OCSP response");
+						}
 					}
-					else if (ocspResponse.getResponseObject() instanceof BasicOCSPResp) {
-						BasicOCSPResp ocspResp = (BasicOCSPResp) ocspResponse.getResponseObject();
-						return analyzeResponse(log, prefix, params, date, ocspRequest, ocspResp);
-					} else {
-						throw new Exception("Invalid or unknown OCSP response");
-					}
+					
+				}catch(Throwable t) {
+					responseCode = OCSPResponseCode.OCSP_INVOKE_FAILED;
+					error = new UtilsException(prefixCert+"(url: "+responderURI+"): "+t.getMessage(),t);
+					log.error(prefix+"invocazione servizio ocsp fallita: "+t.getMessage(),t);
+					// gestito sotto con gli stati throw error;
+				}
+			}
+				
+			try {
+				if(OCSPResponseCode.SUCCESSFUL.equals(responseCode) && ocspResp!=null) {
+					return analyzeResponse(log, prefix, params, date, ocspRequest, ocspResp);
 				}
 				else {
 					
 					String msgFailed = responseCode.getMessage();
+					if(error!=null) {
+						msgFailed = msgFailed+"; "+error.getMessage();
+					}
 					String exceptionMessage = "OCSP response error ("+responseCode.getCode()+" - "+responseCode.name()+"): "+msgFailed;
 					
 					if(params.getConfig().getResponderBreakStatus()==null || 
@@ -307,7 +348,7 @@ public class OCSPValidator {
 		throw new UtilsException("OCSP analysis failed.\n"+sbError.toString());
 	}
 
-	private static OCSPRequestSigned buildOCSPReq(Logger log, String prefix, OCSPRequestParams params) throws UtilsException {
+	private static OCSPRequestSigned buildOCSPReq(LoggerBuffer log, String prefix, OCSPRequestParams params) throws UtilsException {
 
 		try {
 
@@ -433,7 +474,7 @@ public class OCSPValidator {
 
 	}
 
-	private static CertificateStatus analyzeResponse(Logger log, String prefix, OCSPRequestParams params, Date date, OCSPRequestSigned requestSigned, BasicOCSPResp basicOcspResponse)
+	private static CertificateStatus analyzeResponse(LoggerBuffer log, String prefix, OCSPRequestParams params, Date date, OCSPRequestSigned requestSigned, BasicOCSPResp basicOcspResponse)
 			throws UtilsException {
 
 		// Verifico la risposta ottenuta dal OCSP
@@ -488,7 +529,7 @@ public class OCSPValidator {
 
 	}
 
-	private static void verifyResponse(Logger log, String prefix, OCSPRequestParams params, Date date, OCSPRequestSigned requestSigned, BasicOCSPResp basicOcspResponse) throws UtilsException {
+	private static void verifyResponse(LoggerBuffer log, String prefix, OCSPRequestParams params, Date date, OCSPRequestSigned requestSigned, BasicOCSPResp basicOcspResponse) throws UtilsException {
 
 		List<X509CertificateHolder> certs = new ArrayList<>(Arrays.asList(basicOcspResponse.getCerts())); 
 		try {
@@ -536,7 +577,7 @@ public class OCSPValidator {
 		verifyNonceOrDates(log, prefix, params, requestSigned, basicOcspResponse, date);
 	}
 	
-	private static X509Certificate readSigningCertByResponderId(Logger log, List<X509CertificateHolder> certs, BasicOCSPResp basicOcspResponse) throws UtilsException {
+	private static X509Certificate readSigningCertByResponderId(LoggerBuffer log, List<X509CertificateHolder> certs, BasicOCSPResp basicOcspResponse) throws UtilsException {
 		
 		if(basicOcspResponse.getResponderId()==null) {
 			throw new UtilsException("OSPC Response does not contain responder id");
@@ -545,6 +586,8 @@ public class OCSPValidator {
 		if(responderId==null) {
 			throw new UtilsException("OSPC Response does not contain responder id (asn1)");
 		}
+		
+		List<Throwable> listThrowable = new ArrayList<>();
 		
 		if (certs!=null && !certs.isEmpty()) {
 
@@ -563,6 +606,7 @@ public class OCSPValidator {
 						}
 					} catch (Throwable t) {
 						log.debug("check (responderName) failed: "+t.getMessage(),t);
+						listThrowable.add(t);
 					}
 				}
 			} else if (responderKey != null) {
@@ -589,15 +633,27 @@ public class OCSPValidator {
 						}
 					} catch (Throwable t) {
 						log.debug("check (responderKey) failed: "+t.getMessage(),t);
+						listThrowable.add(t);
 					}
 				}
+			}
+		}
+		
+		if(!listThrowable.isEmpty()) {
+			if(listThrowable.size()==1) {
+				Throwable t = listThrowable.get(0);
+				throw new UtilsException("OCSP Response signature unverifiable: signing cert not found; "+t.getMessage(),t);
+			}
+			else {
+				UtilsMultiException multi = new UtilsMultiException("OCSP Response signature unverifiable: signing cert not found; multiple exception",listThrowable.toArray(new Throwable[1]));
+				throw new UtilsException(multi.getMessage(),multi);
 			}
 		}
 		
 		return null;
 	}
 	
-	private static void verifySigningCert(Logger log, String prefix, X509Certificate signingCert, OCSPRequestParams params, Date date) throws UtilsException {
+	private static void verifySigningCert(LoggerBuffer log, String prefix, X509Certificate signingCert, OCSPRequestParams params, Date date) throws UtilsException {
 		
 		// Un responder OCSP può firmare le risposte in 3 modi (https://www.rfc-editor.org/rfc/rfc6960#section-2.6):
 		// 1) La risposta viene firmata utilizzando lo stesso certificato della CA che ha emesso i certificati che si controlla.
@@ -789,7 +845,7 @@ public class OCSPValidator {
 		
 	}
 	
-	private static void verifyNonceOrDates(Logger log, String prefix, OCSPRequestParams params, OCSPRequestSigned requestSigned, BasicOCSPResp basicOcspResponse, Date date) throws UtilsException {
+	private static void verifyNonceOrDates(LoggerBuffer log, String prefix, OCSPRequestParams params, OCSPRequestSigned requestSigned, BasicOCSPResp basicOcspResponse, Date date) throws UtilsException {
 		// https://www.rfc-editor.org/rfc/rfc6960#section-4.4.1
 		
 		// The nonce cryptographically binds a request and a response to prevent replay attacks.  
@@ -854,7 +910,7 @@ public class OCSPValidator {
 		
 	}
 	
-	private static CertificateStatus _checkCRL(Logger log, OCSPRequestParams params, String crlInput, Date date, String prefix) throws UtilsException {
+	private static CertificateStatus _checkCRL(LoggerBuffer log, OCSPRequestParams params, String crlInput, Date date, String prefix) throws UtilsException {
 		
 		log.debug(prefix+"Build CRL request ...");
 		

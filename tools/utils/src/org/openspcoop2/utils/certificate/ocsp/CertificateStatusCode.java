@@ -38,4 +38,12 @@ public enum CertificateStatusCode implements Serializable{
 	
 	// Casi errore:
 	REVOKED, EXPIRED, UNKNOWN;
+	
+	public boolean isValid() {
+		return !isInvalid();
+	}
+	
+	public boolean isInvalid() {
+		return this.equals(REVOKED) || this.equals(EXPIRED) || this.equals(UNKNOWN);
+	}
 }

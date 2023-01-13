@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -28,7 +29,9 @@ import javax.net.ssl.TrustManagerFactory;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -53,7 +56,7 @@ public class ConnettoreHTTPSUtils {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs){
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy){
 		
 		connettore.setCustom(true);
 		
@@ -114,6 +117,22 @@ public class ConnettoreHTTPSUtils {
 				prop.setValore(httpsalgoritmo);
 			connettore.addProperty(prop);
 		
+		}
+		
+		if(httpsTrustStoreOCSPPolicy!=null && !"".equals(httpsTrustStoreOCSPPolicy)) {
+			prop = new org.openspcoop2.core.config.Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			prop.setValore(httpsTrustStoreOCSPPolicy);
+			connettore.addProperty(prop);
+			
+			if(!httpsTrustVerifyCert) {
+				if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+					prop.setValore(httpsTrustStoreCRLs);
+					connettore.addProperty(prop);
+				}
+			}
 		}
 
 		if (httpsstato) {
@@ -187,7 +206,7 @@ public class ConnettoreHTTPSUtils {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
 			String user, String pwd){
 		
 		connettore.setCustom(true);
@@ -265,6 +284,23 @@ public class ConnettoreHTTPSUtils {
 
 		}
 		
+		
+		if(httpsTrustStoreOCSPPolicy!=null && !"".equals(httpsTrustStoreOCSPPolicy)) {
+			prop = new org.openspcoop2.core.registry.Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			prop.setValore(httpsTrustStoreOCSPPolicy);
+			connettore.addProperty(prop);
+			
+			if(!httpsTrustVerifyCert) {
+				if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+					prop.setValore(httpsTrustStoreCRLs);
+					connettore.addProperty(prop);
+				}
+			}
+		}
+		
 		if (httpsstato) {
 
 			prop = new org.openspcoop2.core.registry.Property();
@@ -336,7 +372,7 @@ public class ConnettoreHTTPSUtils {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey, 
-			String httpsKeyAlias, String httpsTrustStoreCRLs,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
 			String stato,
 			ControlStationCore core,ConsoleHelper consoleHelper, int pageSize, boolean addUrlParameter,
 			String prefix, boolean forceHttpsClient,
@@ -510,10 +546,79 @@ public class ConnettoreHTTPSUtils {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 		dati.addElement(de);
 
+		SortedMap<String> _ocsp = OCSPManager.getInstance().getOCSPConfigTypesLabels();
+		List<String> _ocsp_types = new ArrayList<>();
+		List<String> _ocsp_labels = new ArrayList<>();
+		if(_ocsp!=null && !_ocsp.isEmpty()) {
+			for (String type : _ocsp.keys()) {
+				_ocsp_types.add(type);
+				_ocsp_labels.add(_ocsp.get(type));
+			}
+		}
+		List<String> ocsp_types = new ArrayList<>();
+		List<String> ocsp_labels = new ArrayList<>();
+		boolean ocspEnabled = _ocsp_types!=null && !_ocsp_types.isEmpty();
+		if(ocspEnabled) {
+			ocsp_types.add("");
+			ocsp_types.addAll(_ocsp_types);
+			ocsp_labels.add("-");
+			ocsp_labels.addAll(_ocsp_labels);
+		}
+		
+		boolean crlWithOCSPEnabledTrustAllHttpsServer = 
+				ocspEnabled &&
+				core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata() &&
+				httpsTrustStoreOCSPPolicy!=null &&
+				!"".equals(httpsTrustStoreOCSPPolicy);
+				
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+		if(ocspEnabled && (httpsTrustVerifyCert || core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata())) {
+			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+				de.setType(DataElementType.SELECT);
+				de.setValues(ocsp_types);
+				de.setLabels(ocsp_labels);
+				de.setPostBack(core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata());
+				if(httpsTrustStoreOCSPPolicy==null) {
+					httpsTrustStoreOCSPPolicy = "";
+				}	
+				de.setSelected(httpsTrustStoreOCSPPolicy);
+			}else{
+				de.setType(DataElementType.HIDDEN);
+				
+				if(httpsTrustStoreOCSPPolicy!=null &&
+						!"".equals(httpsTrustStoreOCSPPolicy)){
+					
+					String label = null;
+					for (int i = 0; i < ocsp_types.size(); i++) {
+						String type = ocsp_types.get(i);
+						if(type!=null && type.equals(httpsTrustStoreOCSPPolicy)) {
+							label = ocsp_labels.get(i);
+						}
+					}
+					if(label!=null) {
+						DataElement deLABEL = new DataElement();
+						de.setType(DataElementType.TEXT);
+						deLABEL.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+						deLABEL.setValue(label);
+						deLABEL.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY+"__LABEL");
+						dati.addElement(deLABEL);
+					}
+				}
+			}
+			de.setSize(pageSize);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setValue(httpsTrustStoreOCSPPolicy);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 		de.setValue(httpsTrustStoreCRLs);
-		if(httpsTrustVerifyCert) {
+		if(httpsTrustVerifyCert || crlWithOCSPEnabledTrustAllHttpsServer) {
 			de.setNote(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_NOTE);
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setType(DataElementType.TEXT_AREA);	
@@ -761,7 +866,7 @@ public class ConnettoreHTTPSUtils {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
 			String stato,
 			ControlStationCore core,int pageSize){
 		
@@ -824,6 +929,14 @@ public class ConnettoreHTTPSUtils {
 		de.setValue(httpsTrustStoreCRLs);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
+		de.setSize(pageSize);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+		de.setValue(httpsTrustStoreOCSPPolicy);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 		de.setSize(pageSize);
 		dati.addElement(de);
 		

@@ -124,6 +124,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,	// this.httpsalgoritmokey, 
 				null,	// httpsKeyAlias
 				null,	// httpsTrustStoreCRLs
+        		null,	// httpsTrustStoreOCSPPolicy
 				null,																//	tipoconn (personalizzato)
 				ServletUtils.boolToCheckBoxStatus(false),										 	//autenticazioneHttp,
 				ServletUtils.boolToCheckBoxStatus(false),	
@@ -224,6 +225,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,  //this.httpsalgoritmokey,
 				null,  //httpsKeyAlias
 				null,  //httpsTrustStoreCRLs
+        		null,  //httpsTrustStoreOCSPPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,
@@ -319,6 +321,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,  //this.httpsalgoritmokey,
 				null,  //httpsKeyAlias
 				null,  //httpsTrustStoreCRLs
+        		null,  //httpsTrustStoreOCSPPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,

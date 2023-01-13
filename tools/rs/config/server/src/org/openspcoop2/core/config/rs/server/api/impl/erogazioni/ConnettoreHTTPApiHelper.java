@@ -131,6 +131,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey, 
         		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
         		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
+        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),					// httpsTrustStoreOCSPPolicy
 				null,																//	tipoconn (personalizzato)
 				ServletUtils.boolToCheckBoxStatus( http_stato ),										 	//autenticazioneHttp,
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
@@ -235,6 +236,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
         		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
         		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
+        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),				// httpsTrustStoreOCSPPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
 				evalnull( () -> proxy.getHostname() ),
@@ -339,6 +341,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
         		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
         		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
+        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),				// httpsTrustStoreOCSPPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
 				evalnull( () -> proxy.getHostname() ),
@@ -425,6 +428,10 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 			
 			httpsServer.setTruststoreCrl(
 					evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs))
+				);
+			
+			httpsServer.setTruststoreOcspPolicy(
+					evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY))
 				);
 			
 			if(httpsServer.getAlgoritmo()!=null || httpsServer.getTruststorePassword()!=null ||

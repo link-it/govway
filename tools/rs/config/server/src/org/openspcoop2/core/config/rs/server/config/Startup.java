@@ -36,6 +36,7 @@ import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
@@ -234,6 +235,25 @@ public class Startup implements ServletContextListener {
 				throw new RuntimeException(msgErrore,e);
 			}
 			Startup.log.info("Inizializzazione HSM effettuata con successo");
+			
+			
+			Startup.log.info("Inizializzazione OCSP in corso...");
+			try {
+				ServerProperties serverProperties = ServerProperties.getInstance();
+				
+				String ocspConfig = serverProperties.getOCSPConfigurazione();
+				if(StringUtils.isNotEmpty(ocspConfig)) {
+					File f = new File(ocspConfig);
+					OCSPManager.init(f, serverProperties.isOCSPRequired(), log);
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();
+				Startup.log.error(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new RuntimeException(msgErrore,e);
+			}
+			Startup.log.info("Inizializzazione OCSP effettuata con successo");
 			
 			Startup.initializedResources = true;
 			

@@ -23,11 +23,14 @@ package org.openspcoop2.utils.certificate.ocsp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
@@ -54,6 +57,9 @@ public class OCSPManager {
 	private HashMap<String, OCSPConfig> hsmOCSPConfigMapIDtoConfig = new HashMap<String, OCSPConfig>();
 	
 	private HashMap<String, String> hsmOCSPConfigMapTypeToID = new HashMap<String, String>();
+	private HashMap<String, String> hsmOCSPConfigMapLabelToID = new HashMap<String, String>();
+	
+	private SortedMap<String> hsmOCSPConfigSortedMapTypeLabel = new SortedMap<>();
 	
 	private OCSPManager(File f, boolean throwNotExists, Logger log) throws UtilsException {
 		if(!f.exists()) {
@@ -109,11 +115,16 @@ public class OCSPManager {
 		}
 		
 		if(!idKeystore.isEmpty()) {
+			
+			List<String> types = new ArrayList<>();
+			List<String> labels = new ArrayList<>();
+			
 			for (String idK : idKeystore) {
 				String prefix = OCSPCostanti.PROPERTY_PREFIX + idK + ".";
 				Properties pKeystore = Utilities.readProperties(prefix, p);
 				OCSPConfig ocspConfig = new OCSPConfig(idK, pKeystore, log);
 				
+				// type (value è id del ocsp.properties)
 				boolean alreadyExists = false;
 				for (String type : this.hsmOCSPConfigMapTypeToID.keySet()) {
 					if(ocspConfig.getType().equalsIgnoreCase(type)) {
@@ -121,12 +132,41 @@ public class OCSPManager {
 					}
 				}
 				if(alreadyExists) {
-					throw new UtilsException("Same ocsp label found for responder '"+this.hsmOCSPConfigMapTypeToID.get(ocspConfig.getType())+"' e '"+idK+"'");
+					throw new UtilsException("Same ocsp type found for responder '"+this.hsmOCSPConfigMapTypeToID.get(ocspConfig.getType())+"' e '"+idK+"'");
 				}
 				this.hsmOCSPConfigMapTypeToID.put(ocspConfig.getType(), idK);
 				
+				// label (value è id del ocsp.properties)
+				alreadyExists = false;
+				for (String label : this.hsmOCSPConfigMapLabelToID.keySet()) {
+					if(ocspConfig.getLabel().equalsIgnoreCase(label)) {
+						alreadyExists = true;
+					}
+				}
+				if(alreadyExists) {
+					throw new UtilsException("Same ocsp label found for responder '"+this.hsmOCSPConfigMapLabelToID.get(ocspConfig.getLabel())+"' e '"+idK+"'");
+				}
+				this.hsmOCSPConfigMapLabelToID.put(ocspConfig.getLabel(), idK);
+				
+				// id di ocsp.properties to config
 				this.hsmOCSPConfigMapIDtoConfig.put(idK, ocspConfig);
-				log.info("OCSP config "+idK+" registrato (OCSP Type:"+ocspConfig.getType()+")");				
+								
+				log.info("OCSP config "+idK+" registrato (OCSP Type:"+ocspConfig.getType()+")");
+				
+				types.add(ocspConfig.getType());
+				labels.add(ocspConfig.getLabel());
+			}
+			
+			// SortedMap by label
+			Map<String, String> m = new HashMap<>();
+			for (int i = 0; i < types.size(); i++) {
+				String type = types.get(i);
+				String label = labels.get(i);
+				m.put(label, type);
+			}
+			Collections.sort(labels);
+			for (String l : labels) {
+				this.hsmOCSPConfigSortedMapTypeLabel.add(m.get(l), l);	
 			}
 		}
 		else {
@@ -155,6 +195,18 @@ public class OCSPManager {
 			}
 		}
 		return l;
+	}
+	public List<String> getOCSPConfigLabels() {
+		List<String> l = new ArrayList<String>();
+		if(!this.hsmOCSPConfigMapLabelToID.isEmpty()) {
+			for (String label : this.hsmOCSPConfigMapLabelToID.keySet()) {
+				l.add(label);
+			}
+		}
+		return l;
+	}
+	public SortedMap<String> getOCSPConfigTypesLabels() {
+		return this.hsmOCSPConfigSortedMapTypeLabel;
 	}
 	
 	public boolean existsOCSPConfig(String ocspConfigType) {

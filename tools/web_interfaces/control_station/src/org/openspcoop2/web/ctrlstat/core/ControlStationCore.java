@@ -1150,6 +1150,12 @@ public class ControlStationCore {
 		return this.isClusterDinamico_enabled;
 	}
 	
+	/** OCSP */
+	private boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = false;
+	public boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata() {
+		return this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata;
+	}
+	
 	/** Certificati */
 	private int verificaCertificati_warning_expirationDays;
 	private boolean verificaCertificati_sceltaClusterId;
@@ -2540,6 +2546,9 @@ public class ControlStationCore {
 		/** Cluster dinamico */
 		this.isClusterDinamico_enabled = core.isClusterDinamico_enabled;
 		
+		/** OCSP */
+		this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata; 
+		
 		/** Certificati */
 		this.verificaCertificati_warning_expirationDays = core.verificaCertificati_warning_expirationDays;
 		this.verificaCertificati_sceltaClusterId = core.verificaCertificati_sceltaClusterId; 
@@ -2965,6 +2974,7 @@ public class ControlStationCore {
 			}
 			this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = consoleProperties.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
 			this.isClusterDinamico_enabled = consoleProperties.isClusterDinamico_enabled();
+			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
 			this.verificaCertificati_warning_expirationDays = consoleProperties.getVerificaCertificati_warning_expirationDays();
 			this.verificaCertificati_sceltaClusterId = consoleProperties.isVerificaCertificati_sceltaClusterId();
 		

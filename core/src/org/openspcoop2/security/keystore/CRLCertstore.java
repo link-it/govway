@@ -70,7 +70,7 @@ public class CRLCertstore implements Serializable {
 
 	private void _init(List<String> crlPaths, Map<String, byte[]> localResources) throws SecurityException{
 		try{
-			this.crl = new org.openspcoop2.utils.certificate.CRLCertstore(crlPaths);
+			this.crl = new org.openspcoop2.utils.certificate.CRLCertstore(crlPaths, localResources);
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
 		}

@@ -23,7 +23,9 @@ import java.io.Serializable;
 import java.security.cert.CRLReason;
 import java.util.Date;
 
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.transport.http.OCSPResponseException;
 
 /**
  * CertificateStatus
@@ -106,6 +108,38 @@ public class CertificateStatus implements Serializable {
 	public boolean isEXPIRED() {
 		return CertificateStatusCode.EXPIRED.equals(this.code);
 	}
+	public boolean isValid() {
+		return this.code!=null ? this.code.isValid() : false;
+	}
+	public void checkValid() throws UtilsException, OCSPResponseException {
+		if(this.code==null) {
+			throw new UtilsException("CertificateStatusCode unspecified");
+		}
+		switch (this.code) {
+		case REVOKED:
+		case EXPIRED:
+		case UNKNOWN:
+			StringBuilder sb = new StringBuilder("Certificate ");
+			sb.append(this.code.name().toLowerCase());
+			if(this.revocationTime!=null) {
+				sb.append(" in date '"+DateUtils.getSimpleDateFormatMs().format(this.revocationTime)+"'");
+			}
+			if(this.revocationReason!=null) {
+				sb.append(" (Reason: ").append(this.revocationReason).append(")");
+			}
+			if(this.details!=null) {
+				sb.append(": ").append(this.details);
+			}
+			throw new OCSPResponseStatusException(this, sb.toString());
+		default:
+			if(this.code.isInvalid()) {
+				throw new OCSPResponseStatusException(this, "Certificate status code '"+this.code+"'");
+			}
+			break;
+		}
+	}
+	
+	
 	
 	public static CertificateStatus GOOD() {
 		CertificateStatus s = new CertificateStatus();

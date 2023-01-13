@@ -1031,6 +1031,8 @@ public class HttpUtilities {
 		InputStream finTrustStore = null;
 		try {
 			SSLContext sslContext = null;
+			OCSPTrustManager ocspTrustManager = null;
+			
 			if(request.isTrustAllCerts() || request.getTrustStore()!=null || request.getTrustStorePath()!=null){
 				
 				KeyManager[] km = null;
@@ -1233,6 +1235,12 @@ public class HttpUtilities {
 					tm = trustManagerFactory.getTrustManagers();
 				}
 				
+				if(request.getOcspValidator()!=null) {
+					tm = OCSPTrustManager.wrap(tm, request.getOcspValidator());
+					ocspTrustManager = OCSPTrustManager.read(tm);
+					request.getOcspValidator().setOCSPTrustManager(ocspTrustManager);
+				}
+				
 				sslContext = SSLContext.getInstance(SSLUtilities.getSafeDefaultProtocol()); // ritorna l'ultima versione disponibile
 				
 				if(request.isSecureRandom()) {
@@ -1404,6 +1412,11 @@ public class HttpUtilities {
 			// fine HTTP.
 			httpConn.disconnect();
 	
+			// certificati server
+			if(ocspTrustManager!=null) {
+				response.setServerCertificate(ocspTrustManager.getPeerCertificates());
+			}
+			
 			return response;
 		}catch(Exception e){
 			try{

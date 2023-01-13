@@ -271,6 +271,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 			String httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			String httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
+			String httpsTrustStoreOCSPPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -1187,6 +1188,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 						httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
 						httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+						httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 						if (httpspathkey == null) {
 							httpsstato = false;
 							httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -1331,7 +1333,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey, 
 								httpspwdprivatekey, httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage, true,
@@ -1362,7 +1364,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey,
 								httpspwdprivatekey, httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage,
@@ -1425,7 +1427,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey, httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 					tipoconn,versione,validazioneDocumenti,backToStato,autenticazioneHttp,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
@@ -1533,7 +1535,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 							tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage, true,
@@ -1565,7 +1567,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey,
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage,
@@ -1657,7 +1659,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey, 
 								httpspwdprivatekey, httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 								tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage, true,
@@ -1694,7 +1696,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 							tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage,
@@ -1915,7 +1917,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey, httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -2024,7 +2026,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpskeystore, httpspwdprivatekeytrust,
 								httpspathkey, httpstipokey, httpspwdkey,
 								httpspwdprivatekey, httpsalgoritmokey, 
-								httpsKeyAlias, httpsTrustStoreCRLs,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null,
@@ -2056,7 +2058,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey,
 								httpspwdprivatekey, httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage,

@@ -258,6 +258,13 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "hsm.required"));
 	}
 	
+	
+	public String getOCSPConfigurazione() throws UtilsException {
+		return this.readProperty(false, "ocsp.config");
+	}
+	public boolean isOCSPRequired() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "ocsp.required"));
+	}	
 
 	
 	

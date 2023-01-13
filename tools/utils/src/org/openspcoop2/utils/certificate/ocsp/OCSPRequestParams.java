@@ -25,13 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.AuthorityInformationAccess;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
-import org.slf4j.Logger;
 
 /**
  * OCSPRequestParams
@@ -131,11 +131,11 @@ public class OCSPRequestParams {
 		this.reader = reader;
 	}
 	
-	public static OCSPRequestParams build(Logger log, X509Certificate certificate, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException {
+	public static OCSPRequestParams build(LoggerBuffer log, X509Certificate certificate, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException {
 		CertificateInfo cer = new CertificateInfo(certificate, "ocspVerifica");
 		return build(log, cer, trustStore, config, reader);
 	}
-	public static OCSPRequestParams build(Logger log, CertificateInfo certificate, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException {
+	public static OCSPRequestParams build(LoggerBuffer log, CertificateInfo certificate, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException {
 	
 		if(config==null) {
 			throw new UtilsException("Param config is null");
@@ -169,7 +169,7 @@ public class OCSPRequestParams {
 							params.issuerCertificate = (X509Certificate) trustStore.getCertificateBySubject(params.certificate.getIssuerX500Principal());
 							if(params.issuerCertificate!=null) {
 								params.issuerTrustStore = trustStore;
-								log.debug("IssuerCertificate: use truststore config");
+								log.debug("OCSP IssuerCertificate: use truststore config");
 								break;
 							}
 						}
@@ -183,7 +183,7 @@ public class OCSPRequestParams {
 							params.issuerCertificate = (X509Certificate) alternativeTrustStore.getCertificateBySubject(params.certificate.getIssuerX500Principal());
 							if(params.issuerCertificate!=null) {
 								params.issuerTrustStore = alternativeTrustStore;
-								log.debug("IssuerCertificate: use alternative truststore config");
+								log.debug("OCSP IssuerCertificate: use alternative truststore config");
 								break;
 							}
 						}
@@ -204,7 +204,7 @@ public class OCSPRequestParams {
 											if(cer!=null && cer.getCertificate()!=null) {
 												params.issuerCertificate = cer.getCertificate().getCertificate();
 												if(params.issuerCertificate!=null) {
-													log.debug("IssuerCertificate: retrieved from external url '"+urlIssuer+"'");
+													log.debug("OCSP IssuerCertificate: retrieved from external url '"+urlIssuer+"'");
 													break;
 												}
 											}
@@ -227,7 +227,7 @@ public class OCSPRequestParams {
 					if(params.signerCertificate==null) {
 						throw new Exception("Not found");
 					}
-					log.debug("SignerCertificate: retrieved from truststore config (alias:"+config.getAliasCertificateSigner()+")");
+					log.debug("OCSP SignerCertificate: retrieved from truststore config (alias:"+config.getAliasCertificateSigner()+")");
 				}catch(Throwable t) {
 					throw new UtilsException("Get signer certificate failed: "+t.getMessage(),t);
 				}
@@ -235,7 +235,7 @@ public class OCSPRequestParams {
 			else {
 				params.signerTrustStore = signerTrustStore;
 				if(signerTrustStore!=null) {
-					log.debug("SignerCertificate: use truststore config");
+					log.debug("OCSP SignerCertificate: use truststore config");
 				}
 			}
 			
@@ -247,11 +247,12 @@ public class OCSPRequestParams {
 						throw new UtilsException("Unsupported");
 					}
 					else if(CertificateSource.ALTERNATIVE_CONFIG.equals(s)) {
-						if(config.getAlternativeResponderUrl()!=null && !config.getAlternativeResponderUrl().isEmpty()) {
-							for (String url : config.getAlternativeResponderUrl()) {
+						List<String> alternativeUrl = params.isCA ? config.getAlternativeResponderUrlCA() : config.getAlternativeResponderUrl();
+						if(alternativeUrl!=null && !alternativeUrl.isEmpty()) {
+							for (String url : alternativeUrl) {
 								if(!params.responderURIs.contains(url)) {
 									params.responderURIs.add(url);
-									log.debug("ResponderURL: add alternative url '"+url+"'");
+									log.debug("OCSP ResponderURL: add alternative url '"+url+"'");
 								}
 							}
 						}
@@ -265,7 +266,7 @@ public class OCSPRequestParams {
 									String urlOcsp = ocsps.get(0);
 									if(!params.responderURIs.contains(urlOcsp)) {
 										params.responderURIs.add(urlOcsp);
-										log.debug("ResponderURL: add external url '"+urlOcsp+"'");
+										log.debug("OCSP ResponderURL: add external url '"+urlOcsp+"'");
 									}
 								}
 							}

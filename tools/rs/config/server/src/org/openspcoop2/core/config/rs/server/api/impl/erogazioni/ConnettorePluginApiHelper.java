@@ -113,6 +113,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				null,	// this.httpsalgoritmokey, 
 				null,	// httpsKeyAlias
 				null,	// httpsTrustStoreCRLs
+        		null,	// httpsTrustStoreOCSPPolicy
 				conn.getPlugin(),																//	tipoconn (personalizzato)
 				ServletUtils.boolToCheckBoxStatus(false),										 	//autenticazioneHttp,
 				ServletUtils.boolToCheckBoxStatus(false),	
@@ -187,6 +188,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				null,				// this.httpsalgoritmokey,
 				null,					// httpsKeyAlias
         		null,					// httpsTrustStoreCRLs
+        		null,					// httpsTrustStoreOCSPPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,
@@ -268,6 +270,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 						null,				// this.httpsalgoritmokey,
 						null,					// httpsKeyAlias
 						null,					// httpsTrustStoreCRLs
+		        		null,					// httpsTrustStoreOCSPPolicy
 
 						ServletUtils.boolToCheckBoxStatus( false ),	
 						null,

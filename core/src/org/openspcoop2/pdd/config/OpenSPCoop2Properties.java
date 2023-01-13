@@ -9451,6 +9451,55 @@ public class OpenSPCoop2Properties {
 	}
 	
 
+	
+	
+	/* ********  OCSP  ******** */
+	
+	private String getOCSPConfig = null;
+	public String getOCSPConfig(){
+		if(this.getOCSPConfig==null){
+			String pName = "org.openspcoop2.pdd.ocsp.config";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					if(!"".equals(value)) {
+						this.getOCSPConfig = value;
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine OCSP errore:"+e.getMessage(),e);
+				this.getOCSPConfig = null;
+			}
+		}
+		return this.getOCSPConfig;
+	}
+	
+	private Boolean isOCSPConfigRequired= null;
+	public boolean isOCSPConfigRequired(){
+		if(this.isOCSPConfigRequired==null){
+			String pName = "org.openspcoop2.pdd.ocsp.required";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isOCSPConfigRequired = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					this.isOCSPConfigRequired = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.isOCSPConfigRequired = false;
+			}
+		}
+		return this.isOCSPConfigRequired;
+	}
+	
+	
 
 	/* ********  NODE RECEIVER  ******** */
 

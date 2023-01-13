@@ -704,6 +704,13 @@
 						<param name="value" value="${work_dir}/hsm.properties"/>
 					</antcall>
 
+					<!-- OCSP -->
+					<antcall target="set_property">
+					    <param name="file" value="${configFile}"/>
+						<param name="token" value="ocsp.config"/>
+						<param name="value" value="${work_dir}/ocsp.properties"/>
+					</antcall>
+
 					<!-- LOG (servizi rest) -->
 					<antcall target="set_property">
 					    <param name="file" value="${configFile}"/>

@@ -155,6 +155,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 	private Map<String, Object> crlCertstore = null;
 	private Map<String, Object> sslSocketFactory = null;
 	private Map<String, Object> externalResource = null;
+	private Map<String, Object> ocspResponse = null;
 	
 	private transient org.openspcoop2.utils.Semaphore semaphoreTemplate = null; // possono essere alimentati da thread differenti
 	private Map<String, Object> template = null;
@@ -377,6 +378,9 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		}
 		if(this.externalResource!=null) {
 			clone.externalResource = this.externalResource;
+		}
+		if(this.ocspResponse!=null) {
+			clone.ocspResponse = this.ocspResponse;
 		}
 
 		if(this.template!=null) {
@@ -1338,6 +1342,31 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 			return null;
 		}
 		return this.externalResource.get(key);
+	}
+	
+	public void addOCSPResponse(String key, Object resource, String idTransazione) {
+		 
+		
+		if(this.semaphoreStore==null) {
+			// serializzazione da transient
+			initSemaphoreStore();
+		}
+		
+		this.semaphoreStore.acquireThrowRuntime("addOCSPResponse", idTransazione);
+		try {
+			if(this.ocspResponse==null) {
+				this.ocspResponse = new HashMap<String, Object>(3);
+			}
+			this.ocspResponse.put(key, resource);
+		}finally {
+			this.semaphoreStore.release("addOCSPResponse", idTransazione);
+		}
+	}
+	public Object getOCSPResponse(String key) {
+		if(this.ocspResponse==null) {
+			return null;
+		}
+		return this.ocspResponse.get(key);
 	}
 
 	

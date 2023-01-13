@@ -202,6 +202,7 @@ import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.certificate.CertificateFactory;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
@@ -2714,6 +2715,26 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			
+			/* ----------- Gestori OCSP ------------ */
+			try {
+				String ocspConfig = propertiesReader.getOCSPConfig();
+				if(StringUtils.isNotEmpty(ocspConfig)) {
+					File f = new File(ocspConfig);
+					OCSPManager.init(f, propertiesReader.isOCSPConfigRequired(), log);
+					OCSPManager ocspManager = OCSPManager.getInstance();
+					String msgInit = "Gestore OCSP inizializzato; policy registrate: "+ocspManager.getOCSPConfigTypes();
+					log.info(msgInit);
+					logCore.info(msgInit);
+				}
+			} catch (Exception e) {
+				logCore.error("Inizializzazione Gestore OCSP non riuscita: "+e.getMessage(),e);
+				msgDiag.logStartupError(e,"Inizializzazione Gestore OCSP");
+				return;
+			}
+			
+			
+			
 		
 		
 			/* ----------- Inizializzazione Risorse JMX ------------ */
@@ -2923,7 +2944,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO(), Costanti.isTRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE(),
 						Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS(), Costanti.isTRANSACTION_ERROR_INSTANCE_ID_ABILITATO(), Costanti.isTRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE(),
 						infoConfigSistema.getInformazioniDatabase(), infoConfigSistema.getInformazioniAltriDatabase(),
-						infoConfigSistema.getInformazioniSSL(true,true,true),
+						infoConfigSistema.getInformazioniSSL(true,true,true,true),
 						infoConfigSistema.getInformazioniCryptographyKeyLength(),
 						infoConfigSistema.getInformazioniCharset(),
 						infoConfigSistema.getInformazioniInternazionalizzazione(true),

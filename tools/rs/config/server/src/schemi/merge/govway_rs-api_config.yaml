@@ -9092,6 +9092,9 @@ components:
         truststore_crl:
           maxLength: 4000
           type: "string"
+        truststore_ocsp_policy:
+          maxLength: 255
+          type: "string"
     BaseKeyStore:
       required:
       - "key_password"

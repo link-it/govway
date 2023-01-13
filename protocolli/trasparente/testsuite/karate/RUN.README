@@ -132,15 +132,30 @@
 - Per i test sulle credenziali aggiungere in govway_local.properties la configurazione che si trova in 'src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/govway_local.properties.adjunct'.
   Inoltre copiare il truststore src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/applicativoCertExampleTrustStore.jks in /etc/govway/keys/applicativoCertExampleTrustStore.jks
 
-- Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444 e 8445 utilizzando le configurazioni presenti nella directory config_https:
+- Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444, 8445, 8450 e 8451 utilizzando le configurazioni presenti nella directory https:
   a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
-        Esempio in config_https/ConnettoreHTTPS_withClientAuth.xml
-        La configurazione del connettore assume che il keystore config_https/jks/erogatore.jks sia stato copiato in /etc/govway/keys
+        Esempio in https/base/ConnettoreHTTPS_withClientAuth.xml
+        La configurazione del connettore assume che il keystore https/base/jks/erogatore.jks sia stato copiato in /etc/govway/keys
   b) un connettore HTTPS senza autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8445)
-        Esempio in config_https/ConnettoreHTTPS_noClientAuth.xml
-        La configurazione del connettore assume che il keystore config_https/jks/erogatore.jks sia stato copiato in /etc/govway/keys
-  c) Configurazione della JVM dell'A.S. in modo che utilizzi il truststore config_https/jks/erogatore.jks
-       Indicazioni descritte per JBoss in config_https/configurazioneTrustStoreJBOSS.txt
+        Esempio in https/base/ConnettoreHTTPS_noClientAuth.xml
+        La configurazione del connettore assume che il keystore https/base/jks/erogatore.jks sia stato copiato in /etc/govway/keys
+  c) i test richiedono che i keystore presenti in https/base/jks/* siano stati copiati in /etc/govway/keys
+  d) Configurazione della JVM dell'A.S. in modo che utilizzi il truststore https/base/jks/erogatore.jks
+       Indicazioni descritte per JBoss in https/base/configurazioneTrustStoreJBOSS.txt
+  e) un connettore HTTPS senza autenticazione client, utilizzato per test OCSP, con certificato server valido (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8450)
+        Esempio in https/ocsp/ConnettoreHTTPS_ocspCertificatoValido.xml
+        La configurazione del connettore assume che il keystore https/ocsp/jks/testClient.p12 sia stato copiato in /etc/govway/keys/ocsp/
+  f) un connettore HTTPS senza autenticazione client, utilizzato per test OCSP, con certificato server revocato (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8451)
+        Esempio in https/ocsp/ConnettoreHTTPS_ocspCertificatoRevocato.xml
+        La configurazione del connettore assume che il keystore https/ocsp/jks/test.p12 sia stato copiato in /etc/govway/keys/ocsp/
+  e) i test richiedono che i keystore presenti in https/ocsp/jks/* siano stati copiati in /etc/govway/keys/ocsp/
+  f) i test richiedono che sia copiato il file https/ocsp/ocsp.properties in /etc/govway/
+
+- Per i test OCSP inoltre Impostare in <console_local.properties>:
+
+	# Indicazione se la scelta della policy OCSP deve apparire in caso di verifica server https disabilitata
+	ocsp.https.verificaServerDisabilitata.policyChoice=true
+  In modo che la console consenta di impostare una policy OCSP anche se è disabilitata la verifica server del connettore https.
 
 - Configurare nuove utenze nel container per poter gestire l'autenticazione tramite principal.
   Seguire le indicazioni presenti in Esempio in ./protocolli/trasparente/testsuite/deploy/principal/README.txt
@@ -424,4 +439,8 @@ Di seguito vengono descritti i test del package 'other':
 
 - 'api_grandi', verifica l'utilizzo di API REST con un numero elevato di risorse
    ant run_test -Ddelete=false -Dload=false -Dpackage=other.api_grandi -Dtest=RestTest
+
+- 'ocsp', verifica l'utilizzo del servizio OCSP
+   ant run_test -Ddelete=false -Dload=false -Dpackage=other.ocsp
+
 

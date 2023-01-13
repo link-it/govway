@@ -469,6 +469,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String httpsalgoritmokey = "";
 			String httpsKeyAlias = null;
 			String httpsTrustStoreCRLs = null;
+			String httpsTrustStoreOCSPPolicy = null;
 			boolean autenticazioneToken = false;
 			String token_policy = null;
 			String proxy_enabled = null, proxy_hostname  = null,proxy_port  = null,proxy_username  = null,proxy_password = null;
@@ -703,6 +704,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
 					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+					httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 					if (httpspathkey == null) {
 						httpsstato = false;
 						httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -859,7 +861,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey, httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 					tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, this.id,
 					nomeservizio, tiposervizio, versioneservizio.intValue()+"", null, null, null, null, true,
 					isConnettoreCustomUltimaImmagineSalvata, 

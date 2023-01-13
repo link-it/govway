@@ -25,6 +25,10 @@ import java.io.Serializable;
 import java.security.KeyStore;
 import java.security.cert.CertStore;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.LoggerBuffer;
+import org.slf4j.Logger;
+
 
 /**
  * SSLConfig
@@ -58,6 +62,8 @@ public class SSLConfig implements Serializable  {
 	private String trustStoreCRLsLocation;
 	// CertStore
 	private transient CertStore trustStoreCRLs;
+	// OCSP Policy
+	private String trustStoreOCSPPolicy;
 	
 	
 	// AUTENTICAZIONE CLIENT:
@@ -93,6 +99,7 @@ public class SSLConfig implements Serializable  {
 	// Utilities
 	private StringBuilder sbError;
 	private StringBuilder sbDebug;
+	private transient Logger logger;
 	
 	@Override
 	public String toString() {
@@ -130,6 +137,14 @@ public class SSLConfig implements Serializable  {
 			sb.append("trustManagementAlgorithm=").append(this.trustManagementAlgorithm);
 			sb.append(" ");
 			sb.append("trustStoreCRLsLocation=").append(this.trustStoreCRLsLocation);
+			sb.append(" ");
+			sb.append("trustStoreOCSPPolicy=").append(this.trustStoreOCSPPolicy);
+			sb.append(" ");
+		}
+		else if(this.trustStoreOCSPPolicy!=null && StringUtils.isNotEmpty(this.trustStoreOCSPPolicy)){
+			sb.append("trustStoreCRLsLocation=").append(this.trustStoreCRLsLocation);
+			sb.append(" ");
+			sb.append("trustStoreOCSPPolicy=").append(this.trustStoreOCSPPolicy);
 			sb.append(" ");
 		}
 		
@@ -241,6 +256,13 @@ public class SSLConfig implements Serializable  {
 		this.trustStoreCRLs = trustStoreCRLs;
 	}
 
+	public String getTrustStoreOCSPPolicy() {
+		return this.trustStoreOCSPPolicy;
+	}
+	public void setTrustStoreOCSPPolicy(String trustStoreOCSPPolicy) {
+		this.trustStoreOCSPPolicy = trustStoreOCSPPolicy;
+	}
+	
 	public String getKeyStoreLocation() {
 		return this.keyStoreLocation;
 	}
@@ -348,5 +370,25 @@ public class SSLConfig implements Serializable  {
 
 	public void setSbDebug(StringBuilder sbDebug) {
 		this.sbDebug = sbDebug;
+	}
+	
+	public void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+	
+	public LoggerBuffer getLoggerBuffer() {
+		LoggerBuffer lb = new LoggerBuffer();
+		lb.setSbDebug(this.sbDebug);
+		lb.setSbError(this.sbError);
+		lb.setLogErrorInDebug(true);
+		return lb;
+	}
+	public LoggerBuffer getLog4jBuffer() {
+		LoggerBuffer lb = new LoggerBuffer();
+		lb.setLogError(this.logger);
+		if(this.sbDebug!=null) {
+			lb.setLogDebug(this.logger);
+		}
+		return lb;
 	}
 }

@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.security.cert.X509Certificate;
+
 /**
  * Classe che contiene la risposta http
  *
@@ -31,6 +33,14 @@ public class HttpResponse extends AbstractHttp {
 
 	private int resultHTTPOperation;
 	
+	private X509Certificate[] serverCertificate;
+	
+	public X509Certificate[] getServerCertificate() {
+		return this.serverCertificate;
+	}
+	public void setServerCertificate(X509Certificate[] serverCertificate) {
+		this.serverCertificate = serverCertificate;
+	}
 	public int getResultHTTPOperation() {
 		return this.resultHTTPOperation;
 	}
