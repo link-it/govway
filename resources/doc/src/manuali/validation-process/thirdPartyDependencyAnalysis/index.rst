@@ -18,13 +18,12 @@ La verifica può essere attivata anche manualmente, effettuando il checkout dei 
 
 Nel caso in cui il processo di verifica, descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_ci`, rilevasse una vulnerabilità, viene avviata una gestione della vulnerabilità come descritto in :ref:`vulnerabilityManagement`.
 
-Altrimenti, se a valle dell'analisi della vulnerabilità riscontrata si riscrontrasse un falso positivo (:ref:`vulnerabilityManagement_skip_registry`), questa verrebbe registrata come tale nella configurazione del tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_, in modo che successive verifiche non ne segnalino più la presenza. Maggiori dettagli sulla modalità di registrazione dei falsi positivi nel tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_ vengono forniti nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip`.
+Altrimenti, se a valle dell'analisi della vulnerabilità rilevata, si riscontrasse un falso positivo (:ref:`vulnerabilityManagement_skip_registry`), questa verrebbe registrata come tale nella configurazione del tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_, in modo che successive verifiche non ne segnalino più la presenza. Maggiori dettagli sulla modalità di registrazione dei falsi positivi nel tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_ vengono forniti nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip`.
 
-Nota:
+.. note::
+   Per evitare che il progetto erediti possibili vulnerabilità da software terze parti non utilizzati, tutte e sole le librerie terza parte utilizzate nel progetto govway sono definite puntualmente nei file `mvn/dependencies/*/pom.xml <https://github.com/link-it/govway/tree/master/mvn/dependencies>`_.
 
-Per evitare che il progetto erediti possibili vulnerabilità da software terze parti non utilizzati, tutte e sole le librerie terza parte utilizzate nel progetto govway sono definite puntualmente nei file `mvn/dependencies/*/pom.xml <https://github.com/link-it/govway/tree/master/mvn/dependencies>`_.
-
-Per ognuna di tali librerie, maven è configurato per il download puntuale del solo archivio jar interessato, escludendo esplicitamente il download ricorsivo degli archivi jar indicati come dipendenze, utilizzando l'elemento `'exclusions' <https://maven.apache.org/guides/introduction/introduction-to-optional-and-excludes-dependencies.html>`_, come mostrato di seguito:
+   Per ognuna di tali librerie, maven è configurato per il download puntuale del solo archivio jar interessato, escludendo esplicitamente il download ricorsivo degli archivi jar indicati come dipendenze, utilizzando l'elemento `'exclusions' <https://maven.apache.org/guides/introduction/introduction-to-optional-and-excludes-dependencies.html>`_, come mostrato di seguito:
 
 ::
 
