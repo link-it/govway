@@ -3,9 +3,9 @@
 SpotBugs Eclipse Plugin
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-In questa sezione viene descritto come sia utilizzabile il `plugin per Eclipse <https://spotbugs.readthedocs.io/en/latest/eclipse.html>`_ per verificare i sorgenti.
+In questa sezione viene descritto come utilizzare il `plugin per Eclipse <https://spotbugs.readthedocs.io/en/latest/eclipse.html>`_ per la verifica del codice sorgente.
 
-Come prerequisito deve essere verificato che il plugin sia stato installato tramite 'Eclipse Marketplace' come mostrato nella figura :numref:`SpotBugs_eclipse_markeplace`.
+Come prerequisito il plugin deve essere stato installato tramite 'Eclipse Marketplace' come mostrato nella figura :numref:`SpotBugs_eclipse_markeplace`.
 
 .. figure:: ../_figure_console/SpotBugs_eclipse_markeplace.png
   :scale: 80%

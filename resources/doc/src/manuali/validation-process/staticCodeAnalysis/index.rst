@@ -3,19 +3,16 @@
 Static Code Analysis
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Identifica possibili vulnerabilità all'interno del codice sorgente tramite il tool `SpotBugs <https://spotbugs.github.io/>`_.
-
-`SpotBugs <https://spotbugs.github.io/>`_ è un tool che analizza il codice per trovare possibili problemi cercando pattern riconducibili a bug difficili da individuare con i test dinamici (:ref:`releaseProcessGovWay_dynamicAnalysis`). 
-
-Utilizzare uno strumento che ispezioni i sorgenti ogni volta che qualcosa viene modificato impedisce al codice di peggiorare lentamente senza che nessuno se ne accorga fino a quando non è troppo tardi. Per tale motivo ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ viene effettuata automaticamente una verifica dei sorgenti nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway/job/GovWay/>`_. Maggiori dettagli vengono forniti nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_ci`.
+In questa fase vengono identificate possibili vulnerabilità all'interno del codice sorgente tramite il tool `SpotBugs <https://spotbugs.github.io/>`_, cercando pattern riconducibili a bug improbabili da individuare tramite test dinamici (:ref:`releaseProcessGovWay_dynamicAnalysis`).
 
 Il tool viene utilizzato fin dalle fasi di sviluppo dai programmatori tramite il `plugin per Eclipse <https://spotbugs.readthedocs.io/en/latest/eclipse.html>`_ come descritto nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_eclipse`.
 
 Effettuato il checkout dei `dei sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_, è possibile anche avviare manualmente una analisi statica come descritto nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_maven`.
 
+In ogni caso, ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ viene effettuata automaticamente una verifica dei sorgenti nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway/job/GovWay/>`_. Maggiori dettagli vengono forniti nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_ci`.
+
 .. note::
       I problemi di sicurezza relativi alle librerie terza parte utilizzate sono trattati separatamente con il lavoro di analisi descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis` e di conseguenza il codice sorgente di tali librerie è escluso dall'analisi del codice statico.
-
 
 Di seguito vengono forniti i criteri di esecuzione dell'analisi statica tramite il tool 'SpotBugs':
 

@@ -3,11 +3,28 @@
 Third Party Dependency Analysis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Le librerie incluse nel progetto govway vengono definite nei file `mvn/dependencies/*/pom.xml <https://github.com/link-it/govway/tree/master/mvn/dependencies>`_ del progetto.
+Ogni libreria terza parte utilizzata da GovWay viene sottoposta a verifica di possibile presenza di vulnerabilità di sicurezza note tramite il tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_. la cui configurazione può essere consultata nel file `mvn/dependencies/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/pom.xml>`_.
 
-Poiché Maven risolve le dipendenze in modo transitivo, e siccome si vuole escludere che vengano inclusi nel progetto librerie terza parte non censite puntualmente, ogni definizione di un jar viene configurata per escludere qualsiasi dipendenza a sua volta richiesta.
+Il tool è configurato per utilizzare le seguenti base dati di vulnerabilità note:
 
-Ogni dipendenza di un jar è definita con la seguente struttura dove viene definito l'elemento `'exclusions' <https://maven.apache.org/guides/introduction/introduction-to-optional-and-excludes-dependencies.html>`_:
+- `National Vulnerability Database <https://nvd.nist.gov/>`_;
+- `NPM Public Advisories <https://www.npmjs.com/advisories>`_;
+- `RetireJS <https://retirejs.github.io/retire.js/>`_;
+- `Sonatype OSS Index <https://ossindex.sonatype.org/>`_.
+
+L'analisi viene effettuata in automatico ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_, come descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_ci`.
+
+La verifica può essere attivata anche manualmente, effettuando il checkout dei `sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ come descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_maven`.
+
+Nel caso in cui il processo di verifica, descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_ci`, rilevasse una vulnerabilità, viene avviata una gestione della vulnerabilità come descritto in :ref:`vulnerabilityManagement`.
+
+Altrimenti, se a valle dell'analisi della vulnerabilità riscontrata si riscrontrasse un falso positivo (:ref:`vulnerabilityManagement_skip_registry`), questa verrebbe registrata come tale nella configurazione del tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_, in modo che successive verifiche non ne segnalino più la presenza. Maggiori dettagli sulla modalità di registrazione dei falsi positivi nel tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_ vengono forniti nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip`.
+
+Nota:
+
+Per evitare che il progetto erediti possibili vulnerabilità da software terze parti non utilizzati, tutte e sole le librerie terza parte utilizzate nel progetto govway sono definite puntualmente nei file `mvn/dependencies/*/pom.xml <https://github.com/link-it/govway/tree/master/mvn/dependencies>`_.
+
+Per ognuna di tali librerie, maven è configurato per il download puntuale del solo archivio jar interessato, escludendo esplicitamente il download ricorsivo degli archivi jar indicati come dipendenze, utilizzando l'elemento `'exclusions' <https://maven.apache.org/guides/introduction/introduction-to-optional-and-excludes-dependencies.html>`_, come mostrato di seguito:
 
 ::
 
@@ -23,18 +40,6 @@ Ogni dipendenza di un jar è definita con la seguente struttura dove viene defin
 		</exclusions>
 	</dependency>
 
-Ogni libreria terza parte utilizzata viene verifica affinche non sia soggette a vulnerabilità di sicurezza note tramite il tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_ configurato nel file `mvn/dependencies/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/pom.xml>`_. Il tool è configurato per utilizzare le seguenti base dati delle vulnerabilità note:
-
-- `National Vulnerability Database <https://nvd.nist.gov/>`_;
-- `NPM Public Advisories <https://www.npmjs.com/advisories>`_;
-- `RetireJS <https://retirejs.github.io/retire.js/>`_;
-- `Sonatype OSS Index <https://ossindex.sonatype.org/>`_.
-
-L'analisi viene effettuata ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ dove viene avviata automaticamente una verifica delle librerie nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway/job/GovWay/>`_. Maggiori dettagli vengono forniti nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_ci`.
-
-È attuabile anche una verifica manuale, effettuando il checkout dei `dei sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ ed avviando una analisi come descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_maven`.
-
-Se il processo di verifica, descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_ci`, rileva una vulnerabilità viene avviata una gestione della vulnerabilità come descritto nel manuale :ref:`vulnerabilityManagement`. L'analisi di dettaglio della vulnerabilità può classificarla essere un falso positivo (:ref:`vulnerabilityManagement_skip_registry`) ed in tal caso viene registrato come tale sul tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_, in modo che successive verifiche non segnalino più la vulnerabilità. Maggiori dettagli sulla modalità di registrazione dei falsi positivi nel tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_ vengono forniti nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip`.
 
 .. toctree::
         :maxdepth: 2

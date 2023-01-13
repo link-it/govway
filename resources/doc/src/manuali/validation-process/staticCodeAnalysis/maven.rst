@@ -3,7 +3,7 @@
 SpotBugs Maven Plugin
 ~~~~~~~~~~~~~~~~~~~~~
 
-Effettuato il checkout dei `dei sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_, è possibile avviare manualmente una analisi statica utilizzando il seguente comando maven nella radice del progetto:
+Effettuato il checkout dei `dei sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_, è possibile avviare manualmente l'analisi statica del codice utilizzando il seguente comando maven nella radice del progetto:
 
 ::
 
