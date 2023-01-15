@@ -19,7 +19,9 @@
  */
 package org.openspcoop2.core.protocolli.trasparente.testsuite.other.ocsp;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 
 /**
@@ -29,6 +31,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 * @author $Author$
 * @version $Rev$, $Date$
 */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TlsTest extends ConfigLoader {
 
 	public final static String api = "TestOCSPConnettoreHTTPS";
@@ -37,6 +40,9 @@ public class TlsTest extends ConfigLoader {
 	
 	public final static int waitStartupServer = Integer.valueOf(
 			System.getProperty("ocsp.waitStartupServer"));
+	
+	public final static int waitStopServer = Integer.valueOf(
+			System.getProperty("ocsp.waitStopServer"));
 	
 	@Test
 	public void govway() throws Exception {
@@ -57,14 +63,14 @@ public class TlsTest extends ConfigLoader {
 	@Test
 	public void case2_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case2", 
 				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED);
 	}
 	@Test
 	public void case2_no_nonce_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-no-nonce", 
 				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED);
 	}
@@ -72,7 +78,7 @@ public class TlsTest extends ConfigLoader {
 	@Test
 	public void case2_certificateRevoked() throws Exception {
 		Utils.composedTestError(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
 				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED);
@@ -80,7 +86,7 @@ public class TlsTest extends ConfigLoader {
 	@Test
 	public void case2_no_nonce_certificateRevoked() throws Exception {
 		Utils.composedTestError(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-no-nonce-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
 				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED);
@@ -89,7 +95,7 @@ public class TlsTest extends ConfigLoader {
 	@Test
 	public void case2_differente_nonce_certificateValid() throws Exception {
 		Utils.composedTestError(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-different-nonce", 
 				Utils.CERTIFICATE_VALID_DIFFERENT_NONCE, !Utils.ERROR_CACHED, // l'errore non è una risposta OCSP valida quindi non viene cachata
 				Utils.CERTIFICATE_VALID_CASE2_DIFFERENT_NONCE_CONNECTION_REFUSED);
@@ -99,14 +105,14 @@ public class TlsTest extends ConfigLoader {
 	@Test
 	public void case3_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case3", 
 				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED);
 	}
 	@Test
 	public void case3_no_nonce_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-no-nonce", 
 				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED);
 	}
@@ -114,7 +120,7 @@ public class TlsTest extends ConfigLoader {
 	@Test
 	public void case3_certificateRevoked() throws Exception {
 		Utils.composedTestError(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
 				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED);
@@ -122,7 +128,7 @@ public class TlsTest extends ConfigLoader {
 	@Test
 	public void case3_no_nonce_certificateRevoked() throws Exception {
 		Utils.composedTestError(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-no-nonce-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
 				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED);
@@ -132,7 +138,7 @@ public class TlsTest extends ConfigLoader {
 	@Test
 	public void case3_no_extendedKeyUsage_certificateValid() throws Exception {
 		Utils.composedTestError(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-no-extended-key-usage", 
 				Utils.CERTIFICATE_VALID_KEY_USAGE_NOT_FOUND, !Utils.ERROR_CACHED, // l'errore non è una risposta OCSP valida quindi non viene cachata
 				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED);
@@ -141,7 +147,7 @@ public class TlsTest extends ConfigLoader {
 	@Test
 	public void case3_no_ca_certificateValid() throws Exception {
 		Utils.composedTestError(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-no-ca", 
 				Utils.CERTIFICATE_VALID_UNAUTHORIZED_DIFFERENT_ISSUER_CERTIFICATE, !Utils.ERROR_CACHED, // l'errore non è una risposta OCSP valida quindi non viene cachata
 				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED);

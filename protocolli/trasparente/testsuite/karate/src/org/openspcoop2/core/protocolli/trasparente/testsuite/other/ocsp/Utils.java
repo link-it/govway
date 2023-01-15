@@ -159,46 +159,80 @@ public class Utils {
 			 fKey = "crl/ExampleClient1.key";
 		 }
 		
-		OpenSSLThread sslThread = new OpenSSLThread(opensslCommand, port, fCert, fKey, "ocsp/ca_TEST.cert.pem", "ocsp/index.txt", forceWrongNonceResponseValue);
-		try {
-			sslThread.start();
-			//System.out.println("START");
-			
-			Utilities.sleep(waitStartupServer);
-		}catch(Throwable t) {
-			// ignore
-		}
-		return sslThread;
+		 boolean started = false;
+		 int index = 0;
+		 OpenSSLThread sslThread = null;
+		 int tentativi = 30; // quando succede l'errore di indirizzo già utilizzato è perchè impiega molto tempo a rilasciare la porta in ambiente jenkins
+		 while(!started && index<tentativi) {
+		 
+			 sslThread = new OpenSSLThread(opensslCommand, port, fCert, fKey, "ocsp/ca_TEST.cert.pem", "ocsp/index.txt", forceWrongNonceResponseValue);
+			 try {
+				 try {
+					 sslThread.start();
+					 System.out.println("START, sleep ...");
+					
+					 Utilities.sleep(waitStartupServer);
+				 }catch(Throwable t) {
+					 // ignore
+				 }
+				 
+				 started = sslThread.debugMsg(false);
+			 }finally {
+				 if(!started) {
+					 index++;
+					 System.out.println("NOT STARTED (iteration: "+index+")");
+					 // rilascio risorse
+					 sslThread.setStop(true);
+					 sslThread.waitShutdown(200, 10000);
+					 sslThread.close();
+				 }
+			 }
+			 			 
+		 }
+		
+		 System.out.println("STARTED");
+		 
+		 return sslThread;
 	}
 	
-	private static void stopOpenSSLThread(OpenSSLThread sslThread) throws Exception {
+	private static void stopOpenSSLThread(OpenSSLThread sslThread, int waitStopServer) throws Exception {
 		sslThread.setStop(true);
 		sslThread.waitShutdown(200, 10000);
 		sslThread.close();
+		
+		// anche se il processo esce, il rilascio della porta serve impiega più tempo
+		try {
+			System.out.println("STOP, sleep ...");
+			
+			Utilities.sleep(waitStopServer);
+		}catch(Throwable t) {
+			// ignore
+		}
+		System.out.println("STOP");
 	}
 	
 	public static void composedTestSuccess(Logger logCore, String api,
-			String opensslCommand, int waitStartupServer,
+			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, 
 			String connectionRefusedMsg) throws Exception {
 		_composedTest(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				action, 
 				null, false,
 				connectionRefusedMsg);
 	}
 	public static void composedTestError(Logger logCore, String api,
-			String opensslCommand, int waitStartupServer,
+			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, String msgErrore, boolean errorCached,
 			String connectionRefusedMsg) throws Exception {
 		_composedTest(logCore, api,
-				opensslCommand, waitStartupServer,
+				opensslCommand, waitStartupServer, waitStopServer,
 				action, 
 				msgErrore, errorCached,
 				connectionRefusedMsg);
 	}
 	private static void _composedTest(Logger logCore, String api,
-			String opensslCommand, int waitStartupServer,
+			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, 
 			String msgErrore, boolean errorCached,
 			String connectionRefusedMsg) throws Exception {
@@ -225,7 +259,7 @@ public class Utils {
 			Utils.get(logCore, api, action, msgErrore);
 		}
 		finally {
-			Utils.stopOpenSSLThread(sslThread);
+			Utils.stopOpenSSLThread(sslThread, waitStopServer);
 		}
 		
 		// Deve continuare a funzionare per via della cache
