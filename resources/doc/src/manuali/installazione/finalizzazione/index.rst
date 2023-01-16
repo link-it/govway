@@ -91,6 +91,12 @@ tematiche:
    Il Cryptographic Token Interface Standard, PKCS#11, definisce interfacce di programmazione native per token crittografici, come acceleratori crittografici hardware e smartcard. 
    Per consentire a GovWay di accedere ai token PKCS#11 nativi è necessario configurare correttamente il provider PKCS#11 e registrarlo tra i token conosciuti da GovWay seguendo le indicazioni descritte nella sezione :ref:`pkcs11Install`. 
 
+#. *Online Certificate Status Protocol (OCSP)*
+
+   Il protocollo Online Certificate Status Protocol (OCSP), descritto nel RFC 2560, consente di verificare la validità di un certificato senza ricorrere alle liste di revoca dei certificati (CRL).
+   Le modalità di verifica possono differire per svariati motivi: dove reperire la url del servizio OCSP a cui richiedere la validità del certificato e il certificato dell'Issuer che lo ha emesso, come comportarsi se un servizio non è disponibile, eventuale validazione CRL alternativa etc.
+   GovWay consente di definire differenti policy OCSP che saranno disponibili per la scelta in fase di configurazione di una funzionalità che richiede la validazione di un certificato; in ognuna delle policy sarà possibile configurare modalità di verifica dei certificati differenti descritte nella sezione :ref:`ocspInstall`. 
+
 #. *API di Configurazione e Monitoraggio*
 
    GovWay fornisce sia una console che dei servizi che espongono API REST per la sua configurazione e per il monitoraggio.
@@ -131,6 +137,12 @@ tematiche:
    A partire dalla versione 25 di wildfly, nella configurazione di default è abilitato un application-security-domain 'other' che rende obbligatoria la presenza di credenziali valide per invocare i contesti di GovWay. 
    Questa configurazione deve essere disabilitata come indicato nella sezione :ref:`securityDomainOther`.
 
+#. *Cache*
+
+   In GovWay è possibile abilitare l'utilizzo di cache che mantengono i dati di configurazioni acceduti, i keystore e i certificati, il risultato dei processi di validazione, autenticazione, autorizzazione e altri aspetti minori.
+   Ogni funzionalità è associata ad una cache dedicata i cui parametri sono configurabili come indicato nella sezione :ref:`govWayCaches`.
+ 
+
 .. toctree::
         :maxdepth: 2
 
@@ -141,9 +153,11 @@ tematiche:
 	tempiRisposta
 	cachingRisposta
 	pkcs11
+        ocsp/index
 	apiRest
 	cluster/index
 	ssl/index
         idmEsterno
 	wildflyUrlEncoded
 	securityDomainOther
+	cache

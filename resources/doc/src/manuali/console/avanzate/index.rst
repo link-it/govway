@@ -15,6 +15,7 @@ Funzionalità Avanzate
         header_integrazione/index.rst
         connettori/index.rst
 	pkcs11
+	ocsp
 	correlazione
 	opzioniAvanzate
 	fileTrace/index.rst

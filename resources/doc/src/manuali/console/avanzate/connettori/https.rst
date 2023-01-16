@@ -44,10 +44,11 @@ il significato dei parametri:
    -  **Path**: Path dove è localizzato il truststore contenente i
       certificati server trusted.
 
-   -  **Tipo** (jks, pkcs12, jceks, bks, uber e gkr): Tipologia del
-      TrustStore (default: jks)
+   -  **Tipo** (jks, pkcs12): Tipologia del TrustStore (default: jks). Se registrati saranno disponibili anche i tipi di keystore PKCS11; per ulteriori dettagli si rimanda alla sezione :ref:`pkcs11`.
 
-   -  **Password**: Password per l'accesso al TrustStore
+   -  **Password**: Password per l'accesso al TrustStore.
+
+   -  **OCSP Policy**: Policy OCSP da utilizzare per validare il certificato server; per ulteriori dettagli si rimanda alla sezione :ref:`ocsp`.
 
    -  **CRL File(s)**: Path dove è presente una CRL da utilizzare per validare i certificati server. L'indicazione di una CRL è opzionale e ne possono essere indicate più di una separando i path con la virgola.
 
@@ -59,11 +60,10 @@ il significato dei parametri:
       Ridefinisci): Consente di riutilizzare i medesimi riferimenti del
       TrustStore anche per il KeyStore o in alternativa ridefinirli.
 
-   -  **Tipo (solo se Dati di Accesso ridefiniti)** (jks, pkcs12, jceks,
-      bks, uber e gkr): Tipologia del Keystore (default: jks)
+   -  **Tipo (solo se Dati di Accesso ridefiniti)** (jks, pkcs12): Tipologia del Keystore (default: jks). Se registrati saranno disponibili anche i tipi di keystore PKCS11; per ulteriori dettagli si rimanda alla sezione :ref:`pkcs11`.
 
    -  **Password (solo se Dati di Accesso ridefiniti)**: Password per
-      l'accesso al Keystore
+      l'accesso al Keystore.
 
    -  **Password Chiave Privata**: Password per accedere alla chiave
       privata presente nel keystore.

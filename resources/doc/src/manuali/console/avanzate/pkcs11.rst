@@ -3,7 +3,7 @@
 Device PKCS11
 --------------
 
-Nella sezione :ref:`pkcs11Install` è documentato come configurare GovWay per poter utilizzare token PKCS11.
+Nella sezione :ref:`pkcs11Install` del manuale di installazione è documentato come configurare GovWay per poter utilizzare token PKCS11.
 
 Una volta registrati, i token saranno selezionabili tra i tipi di keystore disponibili (es. :numref:`pkcs11ConnettoreHTTPS`) per tutte le funzionalità che richiedono l'utilizzo di una chiave X.509.
 

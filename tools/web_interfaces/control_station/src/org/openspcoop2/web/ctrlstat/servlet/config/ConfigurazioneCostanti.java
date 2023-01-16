@@ -653,7 +653,7 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_REGISTRY = "Cache (Registro API)";
 	
-	public final static String LABEL_CONFIGURAZIONE_CACHE_CONFIG = "Cache (Configurazione della Porta)";
+	public final static String LABEL_CONFIGURAZIONE_CACHE_CONFIG = "Cache (Configurazione del Gateway)";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_AUTHZ = "Cache (Dati di Autorizzazione)";
 	

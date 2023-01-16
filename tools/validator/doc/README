@@ -7,7 +7,7 @@ location: tools/validator
 L'applicazione permette di validare un registroServizi (nei formati gestiti da OpenSPCoop: xml,db,uddi,web,ws) o una configurazione della porta di dominio (xml o db)
 
 
-1.1 Registro dei Servizi di OpenSPCoop
+1.1 Registro API
 
 Per abilitare la validazione di un registro deve essere impostato a 'true' la voce 'validazioneRegistroServizi' nel file tools/validator/local_env.xml
 La sorgente deve essere un registro dei servizi in uno dei formati supportati da OpenSPCoop: xml,db,uddi,web,ws.
@@ -17,7 +17,7 @@ Un esempio lo si puo' trovare in tools/validator/deploy/properties/registroServi
 
 
 
-1.2 Configurazione della Porta di Dominio
+1.2 Configurazione del Gateway
 
 Per abilitare la validazione di una configurazione xml deve essere impostato a 'true' la voce 'validazioneConfigurazione' nel file tools/validator/local_env.xml
 La sorgente deve essere una configurazione in uno dei formati supportati da OpenSPCoop: xml o db.

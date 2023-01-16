@@ -2414,10 +2414,6 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				}
 			}
 		}
-		
-		/*
-		 * TODO: Configurazione della PortaDiDominio anche proprio nel file/db
-		 */
 
 	}
 	

@@ -73,7 +73,8 @@ UPDATE configurazione set consegna_lifecache='-1';
 UPDATE configurazione set dati_richieste_statocache='abilitato';
 UPDATE configurazione set dati_richieste_dimensionecache='15000';
 UPDATE configurazione set dati_richieste_algoritmocache='lru';
-UPDATE configurazione set dati_richieste_lifecache='7200';
+-- usare un intervallo uguale a quello minimo impostato in registro, config e keystore (anche crl)
+UPDATE configurazione set dati_richieste_lifecache='1800';
 
 -- Configurazione CORS
 UPDATE configurazione set cors_stato='abilitato';

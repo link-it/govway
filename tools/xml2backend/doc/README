@@ -7,7 +7,7 @@ location: tools/xml2backend
 L'applicazione permette di trasformare configurazioni e registri in formato xml, in altri formati.
 
 
-1.1 Registro dei Servizi di OpenSPCoop
+1.1 Registro API
 
 Per abilitare la conversione di un registro xml deve essere impostato a 'true' la voce 'conversioneRegistroServizi' nel file tools/xml2backend/local_env.xml.
 La sorgente deve essere un registro dei servizi in formato xml che segue l'xsd in src/schemi/registroServizi.xsd, e deve essere indicato il path del file nella voce 'sorgenteRegistroServizi' del file tools/xml2backend/local_env.xml. Un esempio lo si puo' trovare in tools/xml2backend/deploy/example/registroServizi.xml.
@@ -15,7 +15,7 @@ Il tipo di destinazione (uddi/web/db) deve essere indicato nella voce 'tipoRegis
 
 
 
-1.2 Configurazione della Porta di Dominio
+1.2 Configurazione del Gateway
 
 Per abilitare la conversione di una configurazione xml deve essere impostato a 'true' la voce 'conversioneConfigurazione' nel file tools/xml2backend/local_env.xml
 La sorgente deve essere una configurazione in formato xml che segue l'xsd in src/schemi/config.xsd, e deve essere indicato il path del file nella voce 'sorgenteConfigurazione' del file tools/xml2backend/local_env.xml. Un esempio lo si puo' trovare in tools/xml2backend/deploy/example/config.xml.
