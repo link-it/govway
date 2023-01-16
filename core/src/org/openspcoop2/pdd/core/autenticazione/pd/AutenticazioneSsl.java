@@ -41,8 +41,13 @@ import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
+import org.openspcoop2.utils.transport.http.OCSPResponseException;
 
 /**
  * Classe che implementa una autenticazione BASIC.
@@ -110,6 +115,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     		boolean trustStore = false;
     		KeyStore trustStoreCertificatiX509 = null;
     		CertStore trustStoreCertificatiX509_crls = null;
+    		IOCSPValidator ocspValidator = null;
     		try {
     			checkValid = CostantiProprieta.isAutenticazioneHttpsValidityCheck(proprieta, op2Properties.isAutenticazioneHttpsPortaDelegataValidityCheck());
     			trustStore = CostantiProprieta.isAutenticazioneHttpsTrustStore(proprieta, op2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath());
@@ -129,11 +135,36 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     				
     				if(trustStoreCertificatiX509!=null) {
     					String crl = CostantiProprieta.getAutenticazioneHttpsTrustStoreCRLs(proprieta, op2Properties.getAutenticazioneHttpsPortaDelegataTruststoreCRLs());
-        				if(crl!=null) {
+    					
+						boolean crlByOcsp = false;
+						String ocspPolicy = CostantiProprieta.getAutenticazioneHttpsTrustStoreOCSPPolicy(proprieta, op2Properties.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy());
+						if(ocspPolicy!=null) {
+							LoggerBuffer lb = new LoggerBuffer();
+							lb.setLogDebug(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+							lb.setLogError(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+							GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(requestInfo);
+							try {
+								ocspValidator = new GestoreOCSPValidator(requestInfo, lb, 
+										trustStoreCertificatiX509,
+										crl, 
+										ocspPolicy, 
+										ocspResourceReader);
+							}catch(Exception e){
+								throw new Exception("Errore durante l'inizializzazione del gestore della policy OCSP ("+ocspPolicy+"): "+e.getMessage());
+							}
+							if(ocspValidator!=null) {
+								GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
+								if(gOcspValidator.getOcspConfig()!=null) {
+									crlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+								}
+							}
+						}
+						
+						if(crl!=null && !crlByOcsp) {
     						try {
     							trustStoreCertificatiX509_crls = GestoreKeystoreCaching.getCRLCertstore(requestInfo, crl).getCertStore();
     						}catch(Exception e){
-    							throw new Exception("Richiesta autenticazione ssl del gateway gestore delle credenziali; errore durante la lettura delle CRLs ("+crl+"): "+e.getMessage());
+    							throw new Exception("Errore durante la lettura delle CRLs ("+crl+"): "+e.getMessage());
     						}
     					}
     				}
@@ -189,6 +220,24 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 	    			return esito;
 	    		}
     		}
+    		
+    		if(ocspValidator!=null) {
+				try {
+					ocspValidator.valid(certificate.getCertificate());
+				}catch(Throwable t) {
+					esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
+	    					ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl(CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE+": "+t.getMessage(),subject));
+	    			esito.setClientAuthenticated(false);
+	    			esito.setClientIdentified(false);
+	    			if(!(t instanceof OCSPResponseException)) {
+	    				esito.setNoCache(true);
+	    			}
+	    			if(wwwAuthenticateConfig!=null) {
+	    				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
+	    			}
+	    			return esito;
+				}
+			}
 
     	}
     	

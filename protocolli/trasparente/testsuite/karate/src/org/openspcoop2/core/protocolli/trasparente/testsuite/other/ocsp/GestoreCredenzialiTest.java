@@ -88,8 +88,7 @@ public class GestoreCredenzialiTest extends ConfigLoader {
 	
 	@Test
 	public void crl_certificateValid() throws Exception {
-		Utils.get(logCore, api, soggetto_caseCRL, "case2", 
-				null);
+		Utils.get(logCore, api, soggetto_caseCRL, "case2");
 	}
 	
 	@Test

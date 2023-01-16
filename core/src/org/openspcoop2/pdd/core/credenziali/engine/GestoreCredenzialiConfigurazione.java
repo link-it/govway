@@ -410,36 +410,61 @@ public class GestoreCredenzialiConfigurazione {
 		
 		if(key1!=null) {
 			value = p.getProperty(key1);
-			if(value!=null && !StringUtils.isEmpty(value.trim())) {
-				return value.trim();
+			if(value!=null) {
+				if(!StringUtils.isEmpty(value.trim())) {
+					return value.trim();
+				}
+				else {
+					return null; // e' stata definita vuota per disattivare una opzione generale
+				}
 			}
 		}
 		
 		if(key2!=null) {
 			value = p.getProperty(key2);
-			if(value!=null && !StringUtils.isEmpty(value.trim())) {
-				return value.trim();
+			if(value!=null) {
+				if(!StringUtils.isEmpty(value.trim())) {
+					return value.trim();
+				}
+				else {
+					return null; // e' stata definita vuota per disattivare una opzione generale
+				}
 			}
 		}
 		
 		if(key3!=null) {
 			value = p.getProperty(key3);
-			if(value!=null && !StringUtils.isEmpty(value.trim())) {
-				return value.trim();
+			if(value!=null) {
+				if(!StringUtils.isEmpty(value.trim())) {
+					return value.trim();
+				}
+				else {
+					return null; // e' stata definita vuota per disattivare una opzione generale
+				}
 			}
 		}
 		
 		if(key4!=null) {
 			value = p.getProperty(key4);
-			if(value!=null && !StringUtils.isEmpty(value.trim())) {
-				return value.trim();
+			if(value!=null) {
+				if(!StringUtils.isEmpty(value.trim())) {
+					return value.trim();
+				}
+				else {
+					return null; // e' stata definita vuota per disattivare una opzione generale
+				}
 			}
 		}
 		
 		if(key5!=null) {
 			value = p.getProperty(key5);
-			if(value!=null && !StringUtils.isEmpty(value.trim())) {
-				return value.trim();
+			if(value!=null) {
+				if(!StringUtils.isEmpty(value.trim())) {
+					return value.trim();
+				}
+				else {
+					return null; // e' stata definita vuota per disattivare una opzione generale
+				}
 			}
 		}
 		

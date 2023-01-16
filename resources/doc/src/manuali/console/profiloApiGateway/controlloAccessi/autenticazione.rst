@@ -40,6 +40,7 @@ Durante il processo di autenticazione https, sull'eventuale certificato client p
 - *authentication.https.truststore.enabled* : (true/false, default:false) consente di abilitare l'utilizzo di un truststore per verificare i certificati ricevuti; 
 - *authentication.https.truststore*, *authentication.https.truststore.password* e *authentication.https.truststore.type* : parametri che definiscono un truststore da utilizzare per la verifica dei certificati ricevuti;
 - *authentication.https.truststore.crls*: in presenza di un truststore, è possibile indicare delle CRLs per verificare se un certificato risultato revocato. 
+- *authentication.https.truststore.ocspPolicy*: in alternativa alla validazione tramite CRL è possibile associare una policy OCSP indicando uno dei tipi registrati nel file *<directory-lavoro>/ocsp.properties* come proprietà 'ocsp.<idPolicy>.type'; per ulteriori dettagli si rimanda alle sezioni :ref:`ocspInstall` e :ref:`ocspConfig`.
 
 
 **- http-basic**

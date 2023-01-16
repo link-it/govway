@@ -50,7 +50,7 @@ public class DBVerifier {
 	}
 	
 	public static void verify(String idTransazione, 
-			long esitoExpected, String msgErrore) throws Exception  {
+			long esitoExpected, String ... msgErrore) throws Exception  {
 		
 		// La scrittura su database avviene dopo aver risposto al client
 		
@@ -78,7 +78,7 @@ public class DBVerifier {
 	}
 	
 	private static void _verify(String idTransazione, 
-			long esitoExpected, String msgErrore) throws Exception  {
+			long esitoExpected, String ... msgErroreParam) throws Exception  {
 		
 		
 		String query = "select count(*) from transazioni where id = ?";
@@ -118,12 +118,14 @@ public class DBVerifier {
 				
 		// diagnostici
 		
-		if(msgErrore!=null) {
-			query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+msgErrore.replaceAll("'", "''")+"%'";
-			log().info(query);
+		if(msgErroreParam!=null && msgErroreParam.length>0) {
+			for (String msgErrore : msgErroreParam) {
+				query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+msgErrore.replaceAll("'", "''")+"%'";
+				log().info(query);
 		
-			count = dbUtils().readValue(query, Integer.class, idTransazione);
-			assertTrue(msg+" Cerco dettaglio '"+msgErrore+"'; count trovati: "+count+"", (count>0));
+				count = dbUtils().readValue(query, Integer.class, idTransazione);
+				assertTrue(msg+" Cerco dettaglio '"+msgErrore+"'; count trovati: "+count+"", (count>0));
+			}
 		}
 
 		

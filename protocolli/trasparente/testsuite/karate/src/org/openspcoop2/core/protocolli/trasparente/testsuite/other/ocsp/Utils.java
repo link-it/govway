@@ -25,8 +25,11 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -95,6 +98,9 @@ public class Utils {
 	public static final String API_UNAVAILABLE = "APIUnavailable";
 	public static final String API_UNAVAILABLE_MESSAGE = "The API Implementation is temporary unavailable";
 	
+	public static final String PROXY_CREDENTIALS_ID = "PROXY_ID";
+	public static final String PROXY_CREDENTIALS_MSG = "Ottenute credenziali di accesso ( SSL-Subject '%' ) fornite da "+PROXY_CREDENTIALS_ID;
+	
 	public static final boolean ERROR_CACHED = true;
 	
 	private static void verifyKo(HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay) {
@@ -112,38 +118,99 @@ public class Utils {
 		
 	}
 	
-	public static HttpResponse get(Logger logCore, String api, String soggetto, String operazione, String msgErrore) throws Exception {
+	public static HttpResponse get(Logger logCore, String api, String soggetto, String operazione, String ... msgErrore) throws Exception {
 		return test(HttpRequestMethod.GET, null, null,
 				logCore, api, soggetto, operazione, msgErrore);
 	}
+	public static HttpResponse get(Logger logCore, TipoServizio tipoServizio, String api, String soggetto, String operazione, String ... msgErrore) throws Exception {
+		return test(tipoServizio, HttpRequestMethod.GET, null, null,
+				logCore, api, soggetto, operazione, msgErrore);
+	}
 	public static HttpResponse test(HttpRequestMethod method, String contentType, byte[] content,
-			Logger logCore, String api, String soggetto, String operazione, String msgErrore) throws Exception {
+			Logger logCore, String api, String soggetto, String operazione, String ... msgErroreParam) throws Exception {
+		return test(TipoServizio.EROGAZIONE, method, contentType, content,
+				logCore, api, soggetto, operazione, msgErroreParam);
+	}
+	public static HttpResponse test(TipoServizio tipoServizio, HttpRequestMethod method, String contentType, byte[] content,
+			Logger logCore, String api, String soggetto, String operazione, String ... msgErroreParam) throws Exception {
 		
-	
-		String url = System.getProperty("govway_base_path") + "/"+soggetto+"/"+api+"/v1/"+operazione;
+		String url = tipoServizio == TipoServizio.EROGAZIONE
+				? System.getProperty("govway_base_path") + "/"+soggetto+"/"+api+"/v1/"+operazione
+				: System.getProperty("govway_base_path") + "/out/"+soggetto+"/SoggettoInternoTest/"+api+"/v1/"+operazione;
 		
 		HttpRequest request = new HttpRequest();
 		
-		if(GestoreCredenzialiTest.api.equals(api)) {
-			if(GestoreCredenzialiTest.soggetto_caseCRL.equals(soggetto)) {
-				if(operazione.contains("-revoked")) {
-					if(operazione.contains("case2")) {
-						request.addHeader("X-Erogazione-SSL-Cert", getUrlEncodedRevokedCert());
+		List<String> msgErroreList = new ArrayList<>();
+		if(msgErroreParam!=null && msgErroreParam.length>0) {
+			for (String msgError : msgErroreParam) {
+				if(msgError!=null) {
+					msgErroreList.add(msgError);
+				}
+			}
+		}
+		boolean attesoErrore = !msgErroreList.isEmpty();
+		
+		if(GestoreCredenzialiTest.api.equals(api) || AutenticazioneHttpsTest.api.equals(api)) {
+			
+			String nomeHeaderCertificato = (tipoServizio == TipoServizio.EROGAZIONE) ? "X-Erogazione-SSL-Cert" : "X-Fruizione-SSL-Cert";
+			
+			boolean addCheckMsgDiagnosticoCredenziali = true;
+			if(!msgErroreList.isEmpty()) {
+				addCheckMsgDiagnosticoCredenziali = false;
+				for (String msgErrore : msgErroreList) {
+					if(msgErrore.contains("Certificate revoked in date") && !GestoreCredenzialiTest.api.equals(api)) {
+						addCheckMsgDiagnosticoCredenziali = true;
+					}
+				}
+			}
+			//System.out.println("CHECK MSG: "+addCheckMsgDiagnosticoCredenziali);
+			
+			if(GestoreCredenzialiTest.soggetto_caseCRL.equals(soggetto) || AutenticazioneHttpsTest.soggetto_xca.equals(soggetto)) {
+				
+				if(addCheckMsgDiagnosticoCredenziali) {
+					if(GestoreCredenzialiTest.soggetto_caseCRL.equals(soggetto)) {
+						msgErroreList.add(PROXY_CREDENTIALS_MSG.replace(PROXY_CREDENTIALS_ID, "WebServerErogazioniSoggettoOCSPCaseCRL"));
 					}
 					else {
-						request.addHeader("X-Erogazione-SSL-Cert", getUrlEncodedExpiredCert());
+						msgErroreList.add(PROXY_CREDENTIALS_MSG.replace(PROXY_CREDENTIALS_ID,
+								(tipoServizio == TipoServizio.EROGAZIONE) ? "WebServerErogazioniSoggettoHttpsXca" : "WebServerFruizioniSoggettoHttpsXca"));
+					}
+				}
+				
+				if(operazione.contains("-revoked")) {
+					if(operazione.contains("case2")) {
+						request.addHeader(nomeHeaderCertificato, getUrlEncodedRevokedCert());
+					}
+					else {
+						request.addHeader(nomeHeaderCertificato, getUrlEncodedExpiredCert());
 					}
 				}
 				else {
-					request.addHeader("X-Erogazione-SSL-Cert", getUrlEncodedValidCert());
+					request.addHeader(nomeHeaderCertificato, getUrlEncodedValidCert());
 				}
 			}
 			else {
+				
+				if(addCheckMsgDiagnosticoCredenziali) {
+					if(AutenticazioneHttpsTest.soggetto_ocsp.equals(soggetto)) {
+						msgErroreList.add(PROXY_CREDENTIALS_MSG.replace(PROXY_CREDENTIALS_ID,
+								(tipoServizio == TipoServizio.EROGAZIONE) ? "WebServerErogazioniSoggettoHttpsOcsp" : "WebServerFruizioniSoggettoHttpsOcsp"));
+					}
+					else {
+						if(operazione.contains("case2")) {
+							msgErroreList.add(PROXY_CREDENTIALS_MSG.replace(PROXY_CREDENTIALS_ID, "WebServerErogazioniSoggettoOCSPCase2"));
+						}
+						else {
+							msgErroreList.add(PROXY_CREDENTIALS_MSG.replace(PROXY_CREDENTIALS_ID, "WebServerErogazioniSoggettoOCSPCase3"));
+						}
+					}
+				}
+				
 				if(operazione.contains("-revoked")) {
-					request.addHeader("X-Erogazione-SSL-Cert", getBase64RevokedCert());
+					request.addHeader(nomeHeaderCertificato, getBase64RevokedCert());
 				}
 				else {
-					request.addHeader("X-Erogazione-SSL-Cert", getBase64ValidCert());
+					request.addHeader(nomeHeaderCertificato, getBase64ValidCert());
 				}
 			}
 		}
@@ -166,7 +233,7 @@ public class Utils {
 		assertNotNull(idTransazione);
 		
 		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
-		if(msgErrore!=null) {
+		if(attesoErrore) {
 			int code = -1;
 			String error = null;
 			String msg = null;
@@ -178,11 +245,17 @@ public class Utils {
 			msg = Utils.API_UNAVAILABLE_MESSAGE;
 			checkErrorTypeGovWay = false;
 			
-			if(GestoreCredenzialiTest.api.equals(api)) {
+			if(GestoreCredenzialiTest.api.equals(api) || AutenticazioneHttpsTest.api.equals(api)) {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
 				code = 401;
-				error = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.FORWARD_PROXY_AUTHENTICATION_REQUIRED;
-				msg = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.FORWARD_PROXY_AUTHENTICATION_REQUIRED_MESSAGE;
+				if(GestoreCredenzialiTest.api.equals(api)) {
+					error = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.FORWARD_PROXY_AUTHENTICATION_REQUIRED;
+					msg = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.FORWARD_PROXY_AUTHENTICATION_REQUIRED_MESSAGE;
+				}
+				else {
+					error = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.AUTHENTICATION_FAILED;
+					msg = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.AUTHENTICATION_FAILED_MESSAGE;
+				}
 			}
 			
 			Utils.verifyKo(response, error, code, msg, checkErrorTypeGovWay);
@@ -190,7 +263,11 @@ public class Utils {
 		else {
 			Utils.verifyOk(response, 200, contentType);
 		}
-				
+		
+		String [] msgErrore = null;
+		if(msgErroreList!=null && !msgErroreList.isEmpty()) {
+			msgErrore = msgErroreList.toArray(new String[1]);
+		}
 		DBVerifier.verify(idTransazione, esitoExpected, msgErrore);
 		
 		return response;
@@ -267,27 +344,47 @@ public class Utils {
 		System.out.println("STOP");
 	}
 	
+	public static void composedTestSuccess(Logger logCore, TipoServizio tipoServizio, String api, String soggetto,
+			String opensslCommand, int waitStartupServer, int waitStopServer,
+			String action, 
+			String connectionRefusedMsg) throws Exception {
+		_composedTest(logCore, tipoServizio, api, soggetto,
+				opensslCommand, waitStartupServer, waitStopServer,
+				action, 
+				null, false,
+				connectionRefusedMsg);
+	}
 	public static void composedTestSuccess(Logger logCore, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, 
 			String connectionRefusedMsg) throws Exception {
-		_composedTest(logCore, api, soggetto,
+		_composedTest(logCore, TipoServizio.EROGAZIONE, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				action, 
 				null, false,
+				connectionRefusedMsg);
+	}
+	public static void composedTestError(Logger logCore, TipoServizio tipoServizio, String api, String soggetto,
+			String opensslCommand, int waitStartupServer, int waitStopServer,
+			String action, String msgErrore, boolean errorCached,
+			String connectionRefusedMsg) throws Exception {
+		_composedTest(logCore, tipoServizio, api, soggetto,
+				opensslCommand, waitStartupServer, waitStopServer,
+				action, 
+				msgErrore, errorCached,
 				connectionRefusedMsg);
 	}
 	public static void composedTestError(Logger logCore, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, String msgErrore, boolean errorCached,
 			String connectionRefusedMsg) throws Exception {
-		_composedTest(logCore, api, soggetto,
+		_composedTest(logCore, TipoServizio.EROGAZIONE, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				action, 
 				msgErrore, errorCached,
 				connectionRefusedMsg);
 	}
-	private static void _composedTest(Logger logCore, String api, String soggetto,
+	private static void _composedTest(Logger logCore, TipoServizio tipoServizio, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, 
 			String msgErrore, boolean errorCached,
@@ -296,7 +393,7 @@ public class Utils {
 		ConfigLoader.resetCache();
 		
 		// attendo errore connection refused
-		Utils.get(logCore, api, soggetto, action, 
+		Utils.get(logCore, tipoServizio, api, soggetto, action, 
 				connectionRefusedMsg);
 		
 		OpenSSLThread sslThread = null;
@@ -312,7 +409,7 @@ public class Utils {
 		
 				
 		try {
-			Utils.get(logCore, api, soggetto, action, msgErrore);
+			Utils.get(logCore, tipoServizio, api, soggetto, action, msgErrore);
 		}
 		finally {
 			Utils.stopOpenSSLThread(sslThread, waitStopServer);
@@ -320,30 +417,32 @@ public class Utils {
 		
 		// Deve continuare a funzionare per via della cache
 		if(msgErrore==null || errorCached) {
-			Utils.get(logCore, api, soggetto, action, 
+			Utils.get(logCore, tipoServizio, api, soggetto, action, 
 					msgErrore);
 		}
 		else {
-			Utils.get(logCore, api, soggetto, action, 
+			Utils.get(logCore, tipoServizio, api, soggetto, action, 
 					connectionRefusedMsg);
 		}
 		
 		ConfigLoader.resetCache_excludeCachePrimoLivello();
 		
 		// Deve continuare a funzionare per via della cache di secondo livello 'DatiRichieste'
-		if(msgErrore==null || errorCached) {
-			Utils.get(logCore, api, soggetto, action, 
+		// Fa eccezione l'autenticazione https il cui risultato non viene salvato nella cache di secondo livello
+		if( !AutenticazioneHttpsTest.api.equals(api) &&
+				(msgErrore==null || errorCached)) {
+			Utils.get(logCore, tipoServizio, api, soggetto, action, 
 					msgErrore);
 		}
 		else {
-			Utils.get(logCore, api, soggetto, action, 
+			Utils.get(logCore, tipoServizio, api, soggetto, action, 
 					connectionRefusedMsg);
 		}
 		
 		ConfigLoader.resetCachePrimoLivello();
 		
 		// attendo errore connection refused
-		Utils.get(logCore, api, soggetto, action, 
+		Utils.get(logCore, tipoServizio, api, soggetto, action, 
 				connectionRefusedMsg);
 		
 	}

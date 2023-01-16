@@ -162,6 +162,7 @@ public class CostantiProprieta {
 	public static final String AUTENTICAZIONE_HTTPS_TRUSTSTORE_PASSWORD = "authentication.https.truststore.password";
 	public static final String AUTENTICAZIONE_HTTPS_TRUSTSTORE_TYPE = "authentication.https.truststore.type";
 	public static final String AUTENTICAZIONE_HTTPS_TRUSTSTORE_CRLS = "authentication.https.truststore.crls";
+	public static final String AUTENTICAZIONE_HTTPS_TRUSTSTORE_OCSP_POLICY = "authentication.https.truststore.ocspPolicy";
 	
 	public static boolean isAutenticazioneHttpsValidityCheck(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, AUTENTICAZIONE_HTTPS_VALIDITY_CHECK, defaultValue, AUTENTICAZIONE_VALUE_ENABLED, AUTENTICAZIONE_VALUE_DISABLED);
@@ -221,6 +222,13 @@ public class CostantiProprieta {
 	}
 	public static String getAutenticazioneHttpsTrustStoreCRLs(List<Proprieta> proprieta, String crlsDefaultValue) {
 		String crls = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE_CRLS);
+		if(crls==null) {
+			crls = crlsDefaultValue;
+		}
+		return crls;
+	}
+	public static String getAutenticazioneHttpsTrustStoreOCSPPolicy(List<Proprieta> proprieta, String crlsDefaultValue) {
+		String crls = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE_OCSP_POLICY);
 		if(crls==null) {
 			crls = crlsDefaultValue;
 		}

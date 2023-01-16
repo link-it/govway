@@ -7,7 +7,6 @@
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.nome=WebServerErogazioniSoggettoOCSPCase2
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase3.nome=WebServerErogazioniSoggettoOCSPCase3
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.nome=WebServerErogazioniSoggettoOCSPCaseCRL
-
 #
 # Modalità di autenticazione da parte di GovWay del webServer (none/ssl/basic/principal)
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.autenticazioneCanale=none
@@ -43,4 +42,42 @@ org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTe
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.header.ssl.certificate.truststore.validityCheck=false
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.header.ssl.certificate.truststore.crls=/etc/govway/keys/xca/ExampleCA.crl
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.header.ssl.certificate.truststore.ocspPolicy=alternativeCrlCheck
+# ================================================
+
+# ================================================
+# Ulteriore configurazione per autenticazione HTTPS per mediazione tramite WebServer (Fruizioni/Erogazioni)
+#
+# Nome del WebServer che media le comunicazioni https con GovWay
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.nome=WebServerFruizioniSoggettoHttpsOcsp
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.nome=WebServerFruizioniSoggettoHttpsXca
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.nome=WebServerErogazioniSoggettoHttpsOcsp
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.nome=WebServerErogazioniSoggettoHttpsXca
+#
+# Modalità di autenticazione da parte di GovWay del webServer (none/ssl/basic/principal)
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.autenticazioneCanale=none
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.autenticazioneCanale=none
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.autenticazioneCanale=none
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.autenticazioneCanale=none
+#
+# Credenziale da inoltrare obbligatoria (none/atLeastOne/ssl/basic/principal)
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.modalita=ssl
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.modalita=ssl
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.modalita=ssl
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.modalita=ssl
+# 
+# Il WebServer, se effettua autenticazione https può inoltrare le informazioni sul certificato client tramite i seguenti header http.
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.header.ssl.certificate.url_decode_or_base64_decode=true
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.header.ssl.certificate.url_decode_or_base64_decode=true
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.header.ssl.certificate.url_decode_or_base64_decode=true
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.header.ssl.certificate.url_decode_or_base64_decode=true
+#
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.header.ssl.certificate.replaceCharacters=false
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.header.ssl.certificate.replaceCharacters=false
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.header.ssl.certificate.replaceCharacters=false
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.header.ssl.certificate.replaceCharacters=false
+#
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.header.ssl.certificate.truststore.path=
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.header.ssl.certificate.truststore.path=
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsOcsp.header.ssl.certificate.truststore.path=
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestAutenticazioneHttpsXca.header.ssl.certificate.truststore.path=
 # ================================================

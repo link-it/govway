@@ -45,17 +45,17 @@ public class TlsTest extends ConfigLoader {
 	
 	@Test
 	public void govway() throws Exception {
-		Utils.get(logCore, api, soggetto, "govway", null);
+		Utils.get(logCore, api, soggetto, "govway");
 	}
 	
 	@Test
 	public void govway_alternative_url() throws Exception {
-		Utils.get(logCore, api, soggetto, "govway-alternative-url", null);
+		Utils.get(logCore, api, soggetto, "govway-alternative-url");
 	}
 	
 	@Test
 	public void google() throws Exception {
-		Utils.get(logCore, api, soggetto, "google", null);
+		Utils.get(logCore, api, soggetto, "google");
 	}
 	
 	

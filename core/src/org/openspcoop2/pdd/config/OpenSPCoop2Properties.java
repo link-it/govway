@@ -1470,12 +1470,14 @@ public class OpenSPCoop2Properties {
 				this.getAutenticazioneHttpsPortaDelegataTruststoreType();
 				this.getAutenticazioneHttpsPortaDelegataTruststorePassword();
 				this.getAutenticazioneHttpsPortaDelegataTruststoreCRLs();
+				this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy();
 			}
 			this.isAutenticazioneHttpsPortaApplicativaValidityCheck();
 			if(this.getAutenticazioneHttpsPortaApplicativaTruststorePath()!=null) {
 				this.getAutenticazioneHttpsPortaApplicativaTruststoreType();
 				this.getAutenticazioneHttpsPortaApplicativaTruststorePassword();
 				this.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs();
+				this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy();
 			}
 			this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari();
 			this.getRealmAutenticazioneHttpsWWWAuthenticateConfig();
@@ -17614,6 +17616,26 @@ public class OpenSPCoop2Properties {
 		return this.getAutenticazioneHttpsPortaDelegataTruststoreCRLs;
 	}
 	
+	private String getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy = null;
+	private Boolean getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy_read = null;
+	public String getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy() throws Exception {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.truststore.ocspPolicy";
+		if(this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy_read == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy = value;
+				}
+			}catch(java.lang.Exception e) {
+				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}
+			this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy_read = true;
+		}
+
+		return this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy;
+	}
+	
 	private Boolean isAutenticazioneHttpsPortaApplicativaValidityCheck = null;
 	public boolean isAutenticazioneHttpsPortaApplicativaValidityCheck() {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.validityCheck";
@@ -17727,6 +17749,26 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs;
+	}
+	
+	private String getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy = null;
+	private Boolean getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy_read = null;
+	public String getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy() throws Exception {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.truststore.ocspPolicy";
+		if(this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy_read == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy = value;
+				}
+			}catch(java.lang.Exception e) {
+				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}
+			this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy_read = true;
+		}
+
+		return this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy;
 	}
 	
 	
