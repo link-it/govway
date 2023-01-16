@@ -17,6 +17,7 @@ Se i test rilevano un nuovo problema o una regressione viene avviata una gestion
 	modi
 	messageSecurity
 	certificate
+	ocsp
 	cors
 	xxe
 	zap/index

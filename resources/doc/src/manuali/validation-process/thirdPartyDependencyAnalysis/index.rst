@@ -10,7 +10,8 @@ Il tool è configurato per utilizzare le seguenti base dati di vulnerabilità no
 - `National Vulnerability Database <https://nvd.nist.gov/>`_;
 - `NPM Public Advisories <https://www.npmjs.com/advisories>`_;
 - `RetireJS <https://retirejs.github.io/retire.js/>`_;
-- `Sonatype OSS Index <https://ossindex.sonatype.org/>`_.
+- `Sonatype OSS Index <https://ossindex.sonatype.org/>`_;
+- `CISA Known Exploited Vulnerabilities Catalog <https://www.cisa.gov/known-exploited-vulnerabilities-catalog>`_.
 
 L'analisi viene effettuata in automatico ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_, come descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_ci`.
 
