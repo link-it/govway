@@ -27,6 +27,7 @@ import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.ocsp.IOCSPResourceReader;
+import org.openspcoop2.utils.certificate.ocsp.OCSPConfig;
 import org.openspcoop2.utils.certificate.ocsp.OCSPValidatorImpl;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.openspcoop2.utils.transport.http.OCSPResponseException;
@@ -100,5 +101,8 @@ public class GestoreOCSPValidator implements IOCSPValidator {
 	@Override
 	public void setOCSPTrustManager(OCSPTrustManager trustManager) {
 		this.validatorImpl.setOCSPTrustManager(trustManager);
+	}
+	public OCSPConfig getOcspConfig() {
+		return this.validatorImpl.getOcspConfig();
 	}
 }

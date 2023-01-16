@@ -44,12 +44,16 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateDecodeConfig;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 
 /**     
  * GestoreCredenzialiEngine
@@ -260,8 +264,32 @@ public class GestoreCredenzialiEngine {
 		}
 		boolean trustStoreCertificatiX509_checkValid = configurazione.isHeaderSslCertificateTrustStoreCheckValid();
 		CertStore trustStoreCertificatiX509_crls = null;
+		
+		IOCSPValidator ocspValidator = null;
 		if(trustStoreCertificatiX509!=null) {
-			if(configurazione.getHeaderSslCertificateCrlX509()!=null) {
+			boolean crlByOcsp = false;
+			if(configurazione.getHeaderSslCertificateOcspPolicy()!=null) {
+				LoggerBuffer lb = new LoggerBuffer();
+				lb.setLogDebug(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+				lb.setLogError(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+				GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(this.requestInfo);
+				try {
+					ocspValidator = new GestoreOCSPValidator(this.requestInfo, lb, 
+							trustStoreCertificatiX509,
+							configurazione.getHeaderSslCertificateCrlX509(), 
+							configurazione.getHeaderSslCertificateOcspPolicy(), 
+							ocspResourceReader);
+				}catch(Exception e){
+					throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gateway gestore delle credenziali; errore durante l'inizializzazione del gestore della policy OCSP ("+configurazione.getHeaderSslCertificateOcspPolicy()+"): "+e.getMessage());
+				}
+				if(ocspValidator!=null) {
+					GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
+					if(gOcspValidator.getOcspConfig()!=null) {
+						crlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+					}
+				}
+			}
+			if(configurazione.getHeaderSslCertificateCrlX509()!=null && !crlByOcsp) {
 				try {
 					trustStoreCertificatiX509_crls = GestoreKeystoreCaching.getCRLCertstore(this.requestInfo, configurazione.getHeaderSslCertificateCrlX509()).getCertStore();
 				}catch(Exception e){
@@ -535,6 +563,15 @@ public class GestoreCredenzialiEngine {
 					else if(trustStoreCertificatiX509_checkValid){
 						try {
 							cer.getCertificate().checkValid();
+						}catch(Throwable t) {
+							throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+									buildWWWAuthSSL(),
+									"Certificato presente nell'header '"+headerNameSSLCertificate+"' non valido: "+t.getMessage());
+						}
+					}
+					if(ocspValidator!=null) {
+						try {
+							ocspValidator.valid(cer.getCertificate().getCertificate());
 						}catch(Throwable t) {
 							throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 									buildWWWAuthSSL(),

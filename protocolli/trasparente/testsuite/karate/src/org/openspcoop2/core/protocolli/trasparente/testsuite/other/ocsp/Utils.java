@@ -23,17 +23,25 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.other.ocsp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.ocsp.test.OCSPTest;
 import org.openspcoop2.utils.certificate.ocsp.test.OpenSSLThread;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
+import org.springframework.web.util.UriUtils;
 
 /**
 * Utils
@@ -44,18 +52,30 @@ import org.slf4j.Logger;
 */
 public class Utils {
 
+	public static final String PROPERTY_OCSP_OPENSSL_COMMAND = "ocsp.opensslCommand";
+	public static final String PROPERTY_OCSP_WAIT_STARTUP_SERVER = "ocsp.waitStartupServer";
+	public static final String PROPERTY_OCSP_WAIT_STOP_SERVER = "ocsp.waitStopServer";
+	
 	private static final int PORT_CASE2 = 64900;
 	private static final int PORT_CASE3 = 64901;
 	private static final int PORT_CASE2_DIFFERENT_NONCE = 64902;
 	
 	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
+	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = 
+			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
 	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=Client-test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
+	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = 
+			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=Client-test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
 	
 	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2+"");
+	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE2+"");
 	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED = CERTIFICATE_VALID_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2+"");
+	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE2+"");
 	
 	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE3+"");
+	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE3+"");
 	public static final String CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED = CERTIFICATE_VALID_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE3+"");
+	public static final String CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE3+"");
 	
 	public static final String CERTIFICATE_REVOKED_CASE2_DIFFERENT_NONCE_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2_DIFFERENT_NONCE+"");
 	public static final String CERTIFICATE_VALID_CASE2_DIFFERENT_NONCE_CONNECTION_REFUSED = CERTIFICATE_VALID_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2_DIFFERENT_NONCE+"");
@@ -67,6 +87,10 @@ public class Utils {
 	public static final String CERTIFICATE_VALID_UNAUTHORIZED_DIFFERENT_ISSUER_CERTIFICATE = "OCSP [certificate: CN=Client-test.esempio.it, O=Esempio, C=it] OCSP analysis failed (url: http://127.0.0.1:64901): Signing certificate is not authorized to sign OCSP responses: unauthorized different issuer certificate 'C=IT,ST=Italy,L=Pisa,O=Example,CN=ExampleCA'";
 	
 	public static final String CERTIFICATE_REVOKED_CESSATION_OF_OPERATION = "Certificate revoked in date '%' (Reason: CESSATION_OF_OPERATION)";
+	
+	public static final String CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE = "Certificate revoked (Reason: UNSPECIFIED): Certificate not valid (CRL): Certificate revocation after %, reason: keyCompromise";
+	
+	public static final String CERTIFICATE_CRL_EXPIRED = "Certificate expired in date '%': OCSP [certificate: C=IT,ST=Italy,L=Pisa,O=Example,CN=ExampleClientScaduto] certificate expired on %";
 	
 	public static final String API_UNAVAILABLE = "APIUnavailable";
 	public static final String API_UNAVAILABLE_MESSAGE = "The API Implementation is temporary unavailable";
@@ -88,17 +112,42 @@ public class Utils {
 		
 	}
 	
-	public static HttpResponse get(Logger logCore, String api, String operazione, String msgErrore) throws Exception {
+	public static HttpResponse get(Logger logCore, String api, String soggetto, String operazione, String msgErrore) throws Exception {
 		return test(HttpRequestMethod.GET, null, null,
-				logCore, api, operazione, msgErrore);
+				logCore, api, soggetto, operazione, msgErrore);
 	}
 	public static HttpResponse test(HttpRequestMethod method, String contentType, byte[] content,
-			Logger logCore, String api, String operazione, String msgErrore) throws Exception {
+			Logger logCore, String api, String soggetto, String operazione, String msgErrore) throws Exception {
 		
 	
-		String url = System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+api+"/v1/"+operazione;
+		String url = System.getProperty("govway_base_path") + "/"+soggetto+"/"+api+"/v1/"+operazione;
 		
 		HttpRequest request = new HttpRequest();
+		
+		if(GestoreCredenzialiTest.api.equals(api)) {
+			if(GestoreCredenzialiTest.soggetto_caseCRL.equals(soggetto)) {
+				if(operazione.contains("-revoked")) {
+					if(operazione.contains("case2")) {
+						request.addHeader("X-Erogazione-SSL-Cert", getUrlEncodedRevokedCert());
+					}
+					else {
+						request.addHeader("X-Erogazione-SSL-Cert", getUrlEncodedExpiredCert());
+					}
+				}
+				else {
+					request.addHeader("X-Erogazione-SSL-Cert", getUrlEncodedValidCert());
+				}
+			}
+			else {
+				if(operazione.contains("-revoked")) {
+					request.addHeader("X-Erogazione-SSL-Cert", getBase64RevokedCert());
+				}
+				else {
+					request.addHeader("X-Erogazione-SSL-Cert", getBase64ValidCert());
+				}
+			}
+		}
+		
 		request.setReadTimeout(20000);
 		request.setMethod(method);
 		request.setContentType(contentType);
@@ -128,6 +177,13 @@ public class Utils {
 			error = Utils.API_UNAVAILABLE;
 			msg = Utils.API_UNAVAILABLE_MESSAGE;
 			checkErrorTypeGovWay = false;
+			
+			if(GestoreCredenzialiTest.api.equals(api)) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
+				code = 401;
+				error = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.FORWARD_PROXY_AUTHENTICATION_REQUIRED;
+				msg = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.FORWARD_PROXY_AUTHENTICATION_REQUIRED_MESSAGE;
+			}
 			
 			Utils.verifyKo(response, error, code, msg, checkErrorTypeGovWay);
 		}
@@ -211,27 +267,27 @@ public class Utils {
 		System.out.println("STOP");
 	}
 	
-	public static void composedTestSuccess(Logger logCore, String api,
+	public static void composedTestSuccess(Logger logCore, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, 
 			String connectionRefusedMsg) throws Exception {
-		_composedTest(logCore, api,
+		_composedTest(logCore, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				action, 
 				null, false,
 				connectionRefusedMsg);
 	}
-	public static void composedTestError(Logger logCore, String api,
+	public static void composedTestError(Logger logCore, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, String msgErrore, boolean errorCached,
 			String connectionRefusedMsg) throws Exception {
-		_composedTest(logCore, api,
+		_composedTest(logCore, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				action, 
 				msgErrore, errorCached,
 				connectionRefusedMsg);
 	}
-	private static void _composedTest(Logger logCore, String api,
+	private static void _composedTest(Logger logCore, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, 
 			String msgErrore, boolean errorCached,
@@ -240,7 +296,7 @@ public class Utils {
 		ConfigLoader.resetCache();
 		
 		// attendo errore connection refused
-		Utils.get(logCore, api, action, 
+		Utils.get(logCore, api, soggetto, action, 
 				connectionRefusedMsg);
 		
 		OpenSSLThread sslThread = null;
@@ -256,7 +312,7 @@ public class Utils {
 		
 				
 		try {
-			Utils.get(logCore, api, action, msgErrore);
+			Utils.get(logCore, api, soggetto, action, msgErrore);
 		}
 		finally {
 			Utils.stopOpenSSLThread(sslThread, waitStopServer);
@@ -264,10 +320,11 @@ public class Utils {
 		
 		// Deve continuare a funzionare per via della cache
 		if(msgErrore==null || errorCached) {
-			Utils.get(logCore, api, action, msgErrore);
+			Utils.get(logCore, api, soggetto, action, 
+					msgErrore);
 		}
 		else {
-			Utils.get(logCore, api, action, 
+			Utils.get(logCore, api, soggetto, action, 
 					connectionRefusedMsg);
 		}
 		
@@ -275,18 +332,52 @@ public class Utils {
 		
 		// Deve continuare a funzionare per via della cache di secondo livello 'DatiRichieste'
 		if(msgErrore==null || errorCached) {
-			Utils.get(logCore, api, action, msgErrore);
+			Utils.get(logCore, api, soggetto, action, 
+					msgErrore);
 		}
 		else {
-			Utils.get(logCore, api, action, 
+			Utils.get(logCore, api, soggetto, action, 
 					connectionRefusedMsg);
 		}
 		
 		ConfigLoader.resetCachePrimoLivello();
 		
 		// attendo errore connection refused
-		Utils.get(logCore, api, action, 
+		Utils.get(logCore, api, soggetto, action, 
 				connectionRefusedMsg);
+		
+	}
+	
+	public static String getBase64ValidCert() throws Exception {
+		return getBase64Cert("ee_TEST_Client-test.esempio.it.cert.pem");
+	}
+	public static String getBase64RevokedCert() throws Exception {
+		return getBase64Cert( "ee_TEST_test.esempio.it.cert.pem");
+	}
+	private static String getBase64Cert(String fileName) throws Exception {
+		
+		try(InputStream is = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/ocsp/"+fileName);){
+			byte [] certBytes = Utilities.getAsByteArray(is);
+			return Base64Utilities.encodeAsString(ArchiveLoader.load(certBytes).getCertificate().getCertificate().getEncoded());
+		}
+		
+	}
+	
+	public static String getUrlEncodedValidCert() throws Exception {
+		return getUrlEncodedCert("ExampleClient1.crt");
+	}
+	public static String getUrlEncodedRevokedCert() throws Exception {
+		return getUrlEncodedCert("ExampleClientRevocato.crt");
+	}
+	public static String getUrlEncodedExpiredCert() throws Exception {
+		return getUrlEncodedCert("ExampleClientScaduto.crt");
+	}
+	private static String getUrlEncodedCert(String fileName) throws Exception {
+		
+		try(InputStream is = new FileInputStream("/etc/govway/keys/xca/"+fileName)){
+			String s = Utilities.getAsString(is, Charset.UTF_8.getValue());
+			return UriUtils.encode(s, Charset.UTF_8.getValue());
+		}
 		
 	}
 }

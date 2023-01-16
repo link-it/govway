@@ -157,6 +157,8 @@
 	ocsp.https.verificaServerDisabilitata.policyChoice=true
   In modo che la console consenta di impostare una policy OCSP anche se è disabilitata la verifica server del connettore https.
 
+- Per i test OCSP aggiungere in govway_local.properties la configurazione che si trova in 'src/org/openspcoop2/core/protocolli/trasparente/testsuite/other/ocsp/govway_local.properties.adjunct'.
+
 - Configurare nuove utenze nel container per poter gestire l'autenticazione tramite principal.
   Seguire le indicazioni presenti in Esempio in ./protocolli/trasparente/testsuite/deploy/principal/README.txt
 

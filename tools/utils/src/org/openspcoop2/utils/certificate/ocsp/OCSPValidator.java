@@ -935,7 +935,7 @@ public class OCSPValidator {
 			} catch (Throwable t) {
 				CertificateStatus cs = CertificateStatus.REVOKED(CRLReason.UNSPECIFIED, null);
 				String eMessage = t.getMessage();
-				String msgError = "Signing certificate not valid (CA: "+CA+"): "+eMessage;
+				String msgError = "Certificate not valid (CA: "+CA+"): "+eMessage;
 				log.error(msgError, t);
 				cs.setDetails(msgError);
 				return cs;
@@ -977,7 +977,7 @@ public class OCSPValidator {
 					}
 				}
 			}
-			String msgError = "Signing certificate not valid (CRL): "+eMessage;
+			String msgError = "Certificate not valid (CRL): "+eMessage;
 			log.error(msgError, t);
 			cs.setDetails(msgError);
 			return cs;

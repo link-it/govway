@@ -1,0 +1,46 @@
+# ================================================
+# Ulteriore configurazione per OCSP per mediazione tramite WebServer (Erogazioni)
+#
+# NOTA: si aggiunge alla configurazione govway_local.properties.adjunct presente in src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/
+#
+# Nome del WebServer che media le comunicazioni https con GovWay
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.nome=WebServerErogazioniSoggettoOCSPCase2
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase3.nome=WebServerErogazioniSoggettoOCSPCase3
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.nome=WebServerErogazioniSoggettoOCSPCaseCRL
+
+#
+# Modalità di autenticazione da parte di GovWay del webServer (none/ssl/basic/principal)
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.autenticazioneCanale=none
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase3.autenticazioneCanale=none
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.autenticazioneCanale=none
+#
+# Credenziale da inoltrare obbligatoria (none/atLeastOne/ssl/basic/principal)
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.modalita=ssl
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase3.modalita=ssl
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.modalita=ssl
+# 
+# Il WebServer, se effettua autenticazione https può inoltrare le informazioni sul certificato client tramite i seguenti header http.
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.header.ssl.certificate.url_decode_or_base64_decode=true
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase3.header.ssl.certificate.url_decode_or_base64_decode=true
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.header.ssl.certificate.url_decode_or_base64_decode=true
+#
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.header.ssl.certificate.replaceCharacters=false
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase3.header.ssl.certificate.replaceCharacters=false
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.header.ssl.certificate.replaceCharacters=false
+#
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.header.ssl.certificate.truststore.path=/etc/govway/keys/ocsp/ca_TEST.jks
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.header.ssl.certificate.truststore.password=123456
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.header.ssl.certificate.truststore.validityCheck=true
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase2.header.ssl.certificate.truststore.ocspPolicy=signedByResponderCertificate_case2
+#
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase3.header.ssl.certificate.truststore.path=/etc/govway/keys/ocsp/ca_TEST.jks
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase3.header.ssl.certificate.truststore.password=123456
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase3.header.ssl.certificate.truststore.validityCheck=true
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCase3.header.ssl.certificate.truststore.ocspPolicy=signedByResponderCertificate_case3
+#
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.header.ssl.certificate.truststore.path=/etc/govway/keys/xca/trustStore_ca.jks
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.header.ssl.certificate.truststore.password=123456
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.header.ssl.certificate.truststore.validityCheck=false
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.header.ssl.certificate.truststore.crls=/etc/govway/keys/xca/ExampleCA.crl
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTestOCSPCaseCRL.header.ssl.certificate.truststore.ocspPolicy=alternativeCrlCheck
+# ================================================

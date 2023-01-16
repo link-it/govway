@@ -117,6 +117,7 @@ public class GestoreCredenzialiConfigurazione {
 	private String headerSslCertificateTrustStoreType;
 	private boolean headerSslCertificateTrustStoreCheckValid = true;
 	private String headerSslCertificateCrlX509;
+	private String headerSslCertificateOcspPolicy;
 
 	private String headerPrincipal;
 	
@@ -328,6 +329,11 @@ public class GestoreCredenzialiConfigurazione {
 				if(crls!=null && StringUtils.isNotEmpty(crls)) {
 					this.headerSslCertificateCrlX509 = crls;
 				}
+				
+				String ocspPolicy = getProperty(p, "header.ssl.certificate.truststore.ocspPolicy", protocollo, idSoggetto);
+				if(ocspPolicy!=null && StringUtils.isNotEmpty(ocspPolicy)) {
+					this.headerSslCertificateOcspPolicy = ocspPolicy;
+				}
 			}
 		}
 		
@@ -535,6 +541,9 @@ public class GestoreCredenzialiConfigurazione {
 	}
 	public String getHeaderSslCertificateCrlX509() {
 		return this.headerSslCertificateCrlX509;
+	}
+	public String getHeaderSslCertificateOcspPolicy() {
+		return this.headerSslCertificateOcspPolicy;
 	}
 	
 	public String getHeaderPrincipal() {

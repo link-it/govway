@@ -83,13 +83,20 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
       # Indicazione se deve essere verificata la scadenza dei certificati verificati (default:true)
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.validityCheck=false
 
-   È infine possibile indicare delle CRLs per verificare se un certificato risultato revocato.
+   È inoltre possibile indicare delle CRLs per verificare se un certificato risultato revocato.
    Con la presenza di CRLs la validazione rispetto alla scadenza viene effettuata per default e non serve abilitarla puntualmente.
 
    ::
 
       # Elenco delle CRL per verificare i certificati ricevuti
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.crls=PATH1.crl,PATH2.crl...
+
+   In alternativa alla validazione tramite CRL è possibile associare una policy OCSP indicando uno dei tipi registrati nel file *<directory-lavoro>/ocsp.properties* come proprietà 'ocsp.<idPolicy>.type'; per ulteriori dettagli si rimanda alle sezioni :ref:`ocspInstall` e :ref:`ocspConfig`.
+
+   ::
+
+      # Policy OCSP utilizzata per verificare i certificati ricevuti
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.ocspPolicy=INDICARE_TIPO_POLICY
 
 #. Se il frontend inserisce in un header http il principal dell'identità relativa al chiamante, deve essere indicato il nome di tale header tramite la seguente configurazione:
 

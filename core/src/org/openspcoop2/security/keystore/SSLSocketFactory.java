@@ -97,22 +97,30 @@ public class SSLSocketFactory implements Serializable {
 							this.sslConfig.getLoggerBuffer().error(msgError, e);
 						}
 					}
-					if(this.sslConfig.getTrustStoreCRLsLocation()!=null) {
-						try {
-							this.sslConfig.setTrustStoreCRLs(GestoreKeystoreCache.getCRLCertstore(requestInfo, this.sslConfig.getTrustStoreCRLsLocation()).getCertStore());
-						}catch(Exception e) {
-							String msgError = "Lettura CRLs '"+this.sslConfig.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage();
-							this.sslConfig.getLoggerBuffer().error(msgError, e);
-						}
-					}
 					
 					IOCSPValidator ocspValidator = null;
+					boolean crlByOcsp = false;
 					if(this.sslConfig.getTrustStoreOCSPPolicy()!=null){
 						String policyType = this.sslConfig.getTrustStoreOCSPPolicy();
 						if(policyType!=null && StringUtils.isNotEmpty(policyType)) {
 							GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(requestInfo);
 							String crlInputConfig = this.sslConfig.getTrustStoreCRLsLocation();
 							ocspValidator = new GestoreOCSPValidator(requestInfo, this.sslConfig.getLog4jBuffer(), crlInputConfig, policyType, ocspResourceReader);
+							if(ocspValidator!=null) {
+								GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
+								if(gOcspValidator.getOcspConfig()!=null) {
+									crlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+								}
+							}
+						}
+					}
+					
+					if(this.sslConfig.getTrustStoreCRLsLocation()!=null && !crlByOcsp) {
+						try {
+							this.sslConfig.setTrustStoreCRLs(GestoreKeystoreCache.getCRLCertstore(requestInfo, this.sslConfig.getTrustStoreCRLsLocation()).getCertStore());
+						}catch(Exception e) {
+							String msgError = "Lettura CRLs '"+this.sslConfig.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage();
+							this.sslConfig.getLoggerBuffer().error(msgError, e);
 						}
 					}
 					

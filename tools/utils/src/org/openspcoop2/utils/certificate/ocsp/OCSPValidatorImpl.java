@@ -93,4 +93,7 @@ public class OCSPValidatorImpl implements IOCSPValidator {
 		this.ocspTrustManager = trustManager;
 	}
 
+	public OCSPConfig getOcspConfig() {
+		return this.ocspConfig;
+	}
 }

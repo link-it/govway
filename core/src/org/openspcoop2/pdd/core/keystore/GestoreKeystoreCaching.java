@@ -19,14 +19,18 @@
  */
 package org.openspcoop2.pdd.core.keystore;
 
+import java.security.cert.X509Certificate;
+
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
+import org.openspcoop2.security.keystore.ExternalResource;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.MerlinTruststore;
 import org.openspcoop2.security.keystore.MultiKeystore;
+import org.openspcoop2.security.keystore.OCSPResponse;
 import org.openspcoop2.security.keystore.SSLSocketFactory;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.Utilities;
@@ -34,6 +38,9 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.cache.CacheType;
+import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.transport.http.ExternalResourceConfig;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
 
@@ -399,5 +406,16 @@ public class GestoreKeystoreCaching {
 	
 	public static SSLSocketFactory getSSLSocketFactory(RequestInfo requestInfo,SSLConfig sslConfig) throws SecurityException{
 		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getSSLSocketFactory(requestInfo,sslConfig);
+	}
+	
+	public static ExternalResource getExternalResource(RequestInfo requestInfo,String resource, ExternalResourceConfig externalConfig) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getExternalResource(requestInfo, resource, externalConfig);
+	}
+	
+	public static OCSPResponse getOCSPResponse(RequestInfo requestInfo,IOCSPValidator ocspValidator, X509Certificate cert) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getOCSPResponse(requestInfo, ocspValidator, cert);
+	}
+	public static OCSPResponse getOCSPResponse(RequestInfo requestInfo,IOCSPValidator ocspValidator, CertificateInfo cert) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getOCSPResponse(requestInfo, ocspValidator, cert);
 	}
 }
