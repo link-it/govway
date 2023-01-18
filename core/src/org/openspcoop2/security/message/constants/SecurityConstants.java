@@ -242,6 +242,7 @@ public class SecurityConstants {
     public static final String SIGNATURE_ALGORITHM = ConfigurationConstants.SIG_ALGO;
     public static final String SIGNATURE_KEY_IDENTIFIER = ConfigurationConstants.SIG_KEY_ID;
     public static final String SIGNATURE_CRL = "signatureCRL";
+    public static final String SIGNATURE_OCSP = "signatureOCSP";
     public static final String SIGNATURE_VERIFICATION_PROPERTY_REF_ID = ConfigurationConstants.SIG_VER_PROP_REF_ID;
     public static final String SIGNATURE_VERIFICATION_PROPERTY_FILE = ConfigurationConstants.SIG_VER_PROP_FILE;
     public static final String SIGNATURE_MODE = "signatureMode";
@@ -303,11 +304,13 @@ public class SecurityConstants {
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_FILE = "joseUseHeaders.truststore.file";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD = "joseUseHeaders.truststore.password";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_CRL =  "joseUseHeaders.truststore.crl";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_OCSP =  "joseUseHeaders.truststore.ocsp";
     
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE = RSSecurityConstants.RSSEC_KEY_STORE_TYPE+".ssl";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE = RSSecurityConstants.RSSEC_KEY_STORE_FILE+".ssl";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD = RSSecurityConstants.RSSEC_KEY_STORE_PSWD+".ssl";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.crl";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_OCSP =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.ocsp";
     
     public static final String JOSE_USE_HEADERS_KEYSTORE_TYPE = "joseUseHeaders.keystore.type";
     public static final String JOSE_USE_HEADERS_KEYSTORE_FILE = "joseUseHeaders.keystore.file";
@@ -512,9 +515,11 @@ public class SecurityConstants {
     public static final String KEYSTORE_FILE = "keystoreFile";
     public static final String KEYSTORE_PASSWORD = "keystorePassword";
     public static final String KEYSTORE_PRIVATE_KEY_PASSWORD = "keystorePrivateKeyPassword";
+    public static final String KEYSTORE_OCSP_POLICY = "keystoreOcspPolicy";
      
     public static final String TRUSTSTORE_TYPE = "truststoreType";
     public static final String TRUSTSTORE_FILE = "truststoreFile";
     public static final String TRUSTSTORE_PASSWORD = "truststorePassword";
+    public static final String TRUSTSTORE_OCSP_POLICY = "truststoreOcspPolicy";
     
 }

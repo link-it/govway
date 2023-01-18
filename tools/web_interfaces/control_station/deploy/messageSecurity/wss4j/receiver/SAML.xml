@@ -200,7 +200,16 @@ provider="org.openspcoop2.security.message.wss4j.SAMLReceiverProvider">
 			      	<property name="signatureUser" />
 			</item>
 			-->
+			<item type="select" name="keystoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
+				<property name="signatureOCSP" />
+			</item>
 			<item type="checkbox" name="enableRevocation" label="CRL" reloadOnChange="true" defaultSelected="false">
+				<conditions>
+					<condition and="false">
+						<defined not="true" name="keystoreOcspPolicy"/>
+						<equals name="keystoreOcspPolicy" value=""/>
+					</condition>
+				</conditions>
 				<property name="enableRevocation" />
 			</item>	
 			<item type="textarea" name="crlFiles" label="CRL File(s)" required="true" note="Elencare più file separandoli con la ','">
@@ -210,6 +219,15 @@ provider="org.openspcoop2.security.message.wss4j.SAMLReceiverProvider">
 					</condition>
 				</conditions>
 			      	<property name="org.apache.ws.security.crypto.merlin.x509crl.file" properties="signaturePropRefId" />
+			</item>
+			<item type="textarea" name="crlFilesOcsp" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition and="true">
+						<defined name="keystoreOcspPolicy"/>
+						<equals not="true" name="keystoreOcspPolicy" value=""/>
+					</condition>
+				</conditions>
+			      	<property name="signatureCRL" />
 			</item>
 
 		</subsection>

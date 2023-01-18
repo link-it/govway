@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.CRLCertstore;
@@ -37,8 +38,12 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.certificate.ocsp.IOCSPResourceReader;
+import org.openspcoop2.utils.certificate.ocsp.OCSPResourceReader;
+import org.openspcoop2.utils.certificate.ocsp.OCSPValidatorImpl;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.slf4j.Logger;
 
 /**
@@ -100,40 +105,40 @@ public class CertificateUtils {
 	
 	public static String toStringKeyStore(KeystoreParams params,
 			String separator, String newLine) {
-		return _toString(true, params.getKeyAlias(), null,
+		return _toString(true, params.getKeyAlias(), null, null,
 				params.getPath(), params.getType(), 
 				separator, newLine);
 	}
 	public static String toStringKeyStore(String storePath, String storeType,
 			String keyAlias,
 			String separator, String newLine) {
-		return _toString(true, keyAlias, null,
+		return _toString(true, keyAlias, null, null,
 				storePath, storeType, 
 				separator, newLine);
 	}
 	public static String toStringTrustStore(KeystoreParams params,
 			String separator, String newLine) {
-		return _toString(false, params.getKeyAlias(), params.getCrls(),
+		return _toString(false, params.getKeyAlias(), params.getCrls(), params.getOcspPolicy(),
 				params.getPath(), params.getType(), 
 				separator, newLine);
 	}
 	public static String toStringTrustStore(String storePath, String storeType,
-			String trustCRL,
+			String trustCRL, String ocspPolicy,
 			String separator, String newLine) {
 		return toStringTrustStore(storePath, storeType,
-				trustCRL,
+				trustCRL, ocspPolicy,
 				null,
 				separator, newLine);
 	}
 	public static String toStringTrustStore(String storePath, String storeType,
-			String trustCRL,
+			String trustCRL, String ocspPolicy,
 			String certAlias,
 			String separator, String newLine) {
-		return _toString(false, certAlias, trustCRL,
+		return _toString(false, certAlias, trustCRL, ocspPolicy,
 				storePath, storeType, 
 				separator, newLine);
 	}
-	public static String _toString(boolean keystore, String keyAlias, String trustCRL,
+	public static String _toString(boolean keystore, String keyAlias, String trustCRL, String ocspPolicy,
 			String storePath, String storeType, 
 			String separator, String newLine) {
 		
@@ -153,6 +158,13 @@ public class CertificateUtils {
 			sb.append(CostantiLabel.CRLs);
 			sb.append(separator);
 			sb.append(trustCRL);
+		}
+		
+		if(!keystore && ocspPolicy!=null) {
+			sb.append(newLine);
+			sb.append(CostantiLabel.OCSP_POLICY);
+			sb.append(separator);
+			sb.append(ocspPolicy);
 		}
 		
 		if(keyAlias!=null) {
@@ -349,16 +361,16 @@ public class CertificateUtils {
 
 	}
 	
-	public static CertificateCheck checkTrustStore(String trustStore, boolean classpathSupported, String type, String password, String trustStoreCrls,
+	public static CertificateCheck checkTrustStore(String trustStore, boolean classpathSupported, String type, String password, String trustStoreCrls, String ocspPolicy,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws Exception{
-		return checkTrustStore(trustStore, classpathSupported, type, password, trustStoreCrls, null,
+		return checkTrustStore(trustStore, classpathSupported, type, password, trustStoreCrls, ocspPolicy, null,
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	public static CertificateCheck checkTrustStore(String trustStore, boolean classpathSupported, String type, String password, String trustStoreCrls,String certAlias,
+	public static CertificateCheck checkTrustStore(String trustStore, boolean classpathSupported, String type, String password, String trustStoreCrls,String ocspPolicy,String certAlias,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws Exception{
@@ -385,7 +397,7 @@ public class CertificateUtils {
 				
 				String storeDetails = null;
 				if(addCertificateDetails) {
-					storeDetails = toStringTrustStore(trustStore, type, trustStoreCrls, certAlias, separator, newLine);
+					storeDetails = toStringTrustStore(trustStore, type, trustStoreCrls, ocspPolicy, certAlias, separator, newLine);
 				}
 				String errorDetails = CostantiLabel.TRUSTSTORE;
 				if(!addCertificateDetails) {
@@ -405,17 +417,17 @@ public class CertificateUtils {
 				keystoreBytes = FileSystemUtilities.readBytesFromFile(f);
 			}
 		}
-		return checkStore(false, certAlias, trustStoreCrls,
+		return checkStore(false, certAlias, trustStoreCrls, ocspPolicy,
 				trustStore, keystoreBytes, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	public static CertificateCheck checkTrustStore(byte[] trustStore, String type, String password, String trustStoreCrls,
+	public static CertificateCheck checkTrustStore(byte[] trustStore, String type, String password, String trustStoreCrls, String ocspPolicy,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws Exception{
-		return checkStore(false, null, trustStoreCrls,
+		return checkStore(false, null, trustStoreCrls, ocspPolicy,
 				CostantiLabel.STORE_CARICATO_BASEDATI, trustStore, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
@@ -468,7 +480,7 @@ public class CertificateUtils {
 				keystoreBytes = FileSystemUtilities.readBytesFromFile(f);
 			}
 		}
-		return checkStore(true, aliasKey, null,
+		return checkStore(true, aliasKey, null, null,
 				keyStore, keystoreBytes, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
@@ -478,13 +490,13 @@ public class CertificateUtils {
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws Exception{
-		return checkStore(true, aliasKey, null,
+		return checkStore(true, aliasKey, null, null,
 				CostantiLabel.STORE_CARICATO_BASEDATI, keyStore, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	private static CertificateCheck checkStore(boolean keystore, String aliasKey, String trustStoreCrls,
+	private static CertificateCheck checkStore(boolean keystore, String aliasKey, String trustStoreCrls, String ocspPolicy,
 			String storePath, byte[] storeBytes, String type, String password,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
@@ -498,12 +510,44 @@ public class CertificateUtils {
 				storeDetails = toStringKeyStore(storePath, type, aliasKey, separator, newLine);
 			}
 			else {
-				storeDetails = toStringTrustStore(storePath, type, trustStoreCrls, aliasKey, separator, newLine);
+				storeDetails = toStringTrustStore(storePath, type, trustStoreCrls, ocspPolicy, aliasKey, separator, newLine);
 			}
 		}
+				
+		org.openspcoop2.utils.certificate.KeyStore store = null;
+		try {
+			if(HSMUtils.isKeystoreHSM(type)) {
+				store = HSMManager.getInstance().getKeystore(type);
+			}
+			else {
+				store = new org.openspcoop2.utils.certificate.KeyStore(storeBytes, type, password);
+			}
+		}catch(Throwable t) {
+			CertificateCheck esito = new CertificateCheck();
+			esito.setStatoCheck(StatoCheck.ERROR);
+			esito.addError(storePath, "Non è possibile accedere al "+(keystore ? CostantiLabel.KEYSTORE : CostantiLabel.TRUSTSTORE)+": "+t.getMessage(), storeDetails);
+			return esito;
+		}
 		
+		IOCSPValidator ocspValidator = null;
 		CRLCertstore crls = null;		
-		if(!keystore && trustStoreCrls!=null) {
+		if(!keystore && (trustStoreCrls!=null || ocspPolicy!=null)) {
+			
+			boolean crlByOcsp = false;
+			if(ocspPolicy!=null) {
+				LoggerBuffer lb = new LoggerBuffer();
+				lb.setLogDebug(log);
+				lb.setLogError(log);
+				IOCSPResourceReader ocspResourceReader = new OCSPResourceReader();
+				ocspValidator = new OCSPValidatorImpl(lb, store, trustStoreCrls, ocspPolicy, ocspResourceReader);
+				if(ocspValidator!=null) {
+					OCSPValidatorImpl gOcspValidator = (OCSPValidatorImpl) ocspValidator;
+					if(gOcspValidator.getOcspConfig()!=null) {
+						crlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+					}
+				}
+			}
+			
 			List<String> crlList = CRLCertstore.readCrlPaths(trustStoreCrls);
 			if(crlList!=null && !crlList.isEmpty()) {
 				for (String path : crlList) {
@@ -531,23 +575,10 @@ public class CertificateUtils {
 					}					
 				}
 				
-				crls = new CRLCertstore(trustStoreCrls);
+				if(!crlByOcsp) {
+					crls = new CRLCertstore(trustStoreCrls);
+				}
 			}
-		}
-		
-		org.openspcoop2.utils.certificate.KeyStore store = null;
-		try {
-			if(HSMUtils.isKeystoreHSM(type)) {
-				store = HSMManager.getInstance().getKeystore(type);
-			}
-			else {
-				store = new org.openspcoop2.utils.certificate.KeyStore(storeBytes, type, password);
-			}
-		}catch(Throwable t) {
-			CertificateCheck esito = new CertificateCheck();
-			esito.setStatoCheck(StatoCheck.ERROR);
-			esito.addError(storePath, "Non è possibile accedere al "+(keystore ? CostantiLabel.KEYSTORE : CostantiLabel.TRUSTSTORE)+": "+t.getMessage(), storeDetails);
-			return esito;
 		}
 		
 		CertificateCheck esito = new CertificateCheck();
@@ -666,6 +697,9 @@ public class CertificateUtils {
 					else {
 						certificate.getCertificate().checkValid(crls.getCertStore(), store);
 					}
+					if(ocspValidator!=null) {
+						ocspValidator.valid(certificate.getCertificate().getCertificate());
+					}
 				}catch(Throwable t) {
 					check = false;
 					String msgErrore = "Certificato non valido: "+t.getMessage();
@@ -685,6 +719,10 @@ public class CertificateUtils {
 							else {
 								caChain.checkValid(crls.getCertStore(), store);
 							}
+							// La validazione della catena viene effettuata direttamente dal ocsp validator se previsto dalla policy
+//							if(ocspValidator!=null) {
+//								ocspValidator.valid(certificate.getCertificate().getCertificate());
+//							}
 						}catch(Throwable t) {
 							check = false;
 							String msgErrore = ("Un certificato della catena "+credenziale_caChain+" non risulta valido: "+t.getMessage());

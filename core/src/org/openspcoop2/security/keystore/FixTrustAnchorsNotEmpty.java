@@ -20,10 +20,7 @@
 
 package org.openspcoop2.security.keystore;
 
-import java.io.InputStream;
 import java.security.KeyStore;
-import java.security.cert.CertificateFactory;
-import java.util.Enumeration;
 
 import org.openspcoop2.security.SecurityException;
 
@@ -36,51 +33,10 @@ import org.openspcoop2.security.SecurityException;
  */
 public class FixTrustAnchorsNotEmpty {
 	
-	private static CertificateFactory cf = null;
-	private static java.security.cert.Certificate certFix = null;
-	private static synchronized void initCertificateFactory(){
-		if(FixTrustAnchorsNotEmpty.cf==null){
-			InputStream is = null;
-			try{
-				FixTrustAnchorsNotEmpty.cf = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
-				is = FixTrustAnchorsNotEmpty.class.getResourceAsStream("/org/openspcoop2/security/keystore/FixTrustAnchorsParameterMustBeNonEmpty.cer");
-				FixTrustAnchorsNotEmpty.certFix = FixTrustAnchorsNotEmpty.cf.generateCertificate(is);
-			}catch(Exception e){
-				e.printStackTrace(System.out);
-			}finally{
-				try{
-					if(is!=null){
-						is.close();
-					}
-				}catch(Exception eClose){
-					// close
-				}
-			}
-		}
-	}
-	
 	public static void addCertificate(KeyStore keystore) throws SecurityException{
 
 		try{
-			
-			// Se esiste un certificato non devo fare altro
-			Enumeration<String> aliases = keystore.aliases();
-			while (aliases.hasMoreElements()) {
-				String alias = aliases.nextElement();
-				//System.out.println("ALIAS["+alias+"] ...");
-				if(keystore.isCertificateEntry(alias)){
-					//System.out.println("TROVATO!!!!");
-					return;
-				}
-			}
-			//System.out.println("NON TROVATO!");
-			
-			if(FixTrustAnchorsNotEmpty.cf==null){
-				FixTrustAnchorsNotEmpty.initCertificateFactory();
-			}
-			keystore.setCertificateEntry("FixTrustAnchorsParameterMustBeNonEmpty", FixTrustAnchorsNotEmpty.certFix);
-			//System.out.println("AGGIUNTO");
-
+			org.openspcoop2.utils.certificate.FixTrustAnchorsNotEmpty.addCertificate(keystore);
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
 		}

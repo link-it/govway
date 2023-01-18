@@ -338,6 +338,12 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				pTruststore.put(KeystoreConstants.PROPERTY_CRL, trustStoreCertificati.getSecurityMessageTruststoreCRLs());
 				secProperties.put(SecurityConstants.ENABLE_REVOCATION, SecurityConstants.TRUE);
 			}
+			if(trustStoreCertificati.getSecurityMessageTruststoreOCSPPolicy()!=null) {
+				secProperties.put(SecurityConstants.SIGNATURE_OCSP, trustStoreCertificati.getSecurityMessageTruststoreOCSPPolicy());
+				if(trustStoreCertificati.getSecurityMessageTruststoreCRLs()!=null) {
+					secProperties.put(SecurityConstants.SIGNATURE_CRL, trustStoreCertificati.getSecurityMessageTruststoreCRLs());
+				}
+			}
 			secProperties.put(SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID, pTruststore);
 			if(corniceSicurezza) {
 				secProperties.put(SecurityConstants.SIGNATURE_PROPERTY_REF_ID, pTruststore);

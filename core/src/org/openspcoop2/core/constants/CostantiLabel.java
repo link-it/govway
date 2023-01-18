@@ -70,6 +70,7 @@ public final class CostantiLabel {
 	public final static String TRUSTSTORE = "TrustStore";
 	public final static String CRL = "CRL";
 	public final static String CRLs = "CRLs";
+	public final static String OCSP_POLICY = "OCSP Policy";
 	public final static String KEY_ALIAS = "Key Alias";
 	public final static String CERTIFICATE_ALIAS = "Certificate Alias";
 	public final static String ALIAS = "Alias";
@@ -295,4 +296,5 @@ public final class CostantiLabel {
 	public static final String MODIPA_STORE_TYPE_LABEL = "Tipo";
 	public static final String MODIPA_TRUSTSTORE_CRLS_LABEL = "CRL File(s)";
 	public static final String MODIPA_KEY_ALIAS_LABEL = "Alias Chiave Privata";
+	public static final String MODIPA_TRUSTSTORE_OCSP_LABEL = "OCSP Policy";
 }

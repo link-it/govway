@@ -23,8 +23,10 @@ package org.openspcoop2.security.message.wss4j;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.security.KeyStore;
 import java.security.Principal;
 import java.security.PublicKey;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
+import org.apache.wss4j.common.crypto.Merlin;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.WSDataRef;
@@ -59,7 +62,12 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.KeystoreConstants;
+import org.openspcoop2.security.keystore.MerlinTruststore;
+import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
 import org.openspcoop2.security.message.AbstractSOAPMessageSecurityReceiver;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
@@ -68,8 +76,11 @@ import org.openspcoop2.security.message.engine.MessageUtilities;
 import org.openspcoop2.security.message.engine.WSSUtilities;
 import org.openspcoop2.security.message.utils.AttachmentProcessingPart;
 import org.openspcoop2.security.message.utils.AttachmentsConfigReaderUtils;
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.id.IDUtilities;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 
 
 
@@ -91,6 +102,8 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 	}
 	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message messageParam,Busta busta,
 			boolean bufferMessage_readOnly, String idTransazione, org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
+		boolean certError = false;
+		boolean ocspError = false;
 		try{
 			
 			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
@@ -113,7 +126,7 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			Exchange ex = new ExchangeImpl();
 	        ex.setInMessage(msgCtx);
 			msgCtx.setContent(SOAPMessage.class, soapMessage);
-	        setIncomingProperties(wssContext,inHandler,msgCtx,requestInfo);
+	        setIncomingProperties(wssContext,inHandler,msgCtx,requestInfo,ctx);
 	        
 	        
 	        // ** Registro attachments da trattare **/
@@ -152,9 +165,41 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			
 			// ** Lettura Subject Certificato e informazioni relative al processamento effettuato **/
 			
-			this.examineResults(msgCtx, wssContext.getActor());
-						
-		} catch (Exception e) {
+			boolean validateX509 = this.examineResults(msgCtx, wssContext.getActor());
+			
+			
+			// ** Validazione CRL se non effettuata dall'handler (indicazione arriva dal metodo examineResults) **
+			
+			if(validateX509) {
+				if(this.x509Certificate!=null && this.crlX509!=null) {
+					try {
+						CertificateInfo certificatoInfo = new CertificateInfo(this.x509Certificate, "x509");
+						certificatoInfo.checkValid(this.crlX509.getCertStore(), this.trustStore);
+					}catch(Throwable e) {
+						certError = true;
+						throw new Exception(e.getMessage(),e);
+					}
+				}	
+			}
+			
+			// ** Lettura Subject Certificato e informazioni relative al processamento effettuato **/
+			
+			if(this.ocspValidator!=null) {
+				X509Certificate cert = this.x509Certificate;
+				if(cert==null && this.x509Certificates!=null && this.x509Certificates.length>0) {
+					cert = this.x509Certificates[0];
+				}
+				if(cert!=null) {
+					try {
+						this.ocspValidator.valid(cert);
+					}catch(Throwable e) {
+						ocspError = true;
+						throw e;
+					}
+				}
+			}			
+			
+		} catch (Throwable e) {
 			
 			SecurityException wssException = null;
 			
@@ -211,7 +256,13 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 				bout.close();
 				printStream.close();
 				
-				if(bout.toString().contains(".processor.SignatureProcessor")){
+				if(certError) {
+					signature = true; // per adesso avviene solo con SAML
+				}
+				else if(ocspError) {
+					signature = true;
+				}
+				else if(bout.toString().contains(".processor.SignatureProcessor")){
 					signature = true;
 				}
 				else if(bout.toString().contains(".processor.SignatureConfirmationProcessor")){
@@ -283,9 +334,16 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 		return this.publicKey;
 	}
 
-	
-	private void setIncomingProperties(MessageSecurityContext wssContext,WSS4JInInterceptor interceptor, SoapMessage msgCtx, RequestInfo requestInfo) {
+	private IOCSPValidator ocspValidator;
+	private org.openspcoop2.utils.certificate.KeyStore trustStore = null;
+	private CRLCertstore crlX509 = null;
+	private void setIncomingProperties(MessageSecurityContext wssContext,WSS4JInInterceptor interceptor, SoapMessage msgCtx, RequestInfo requestInfo,
+			org.openspcoop2.utils.Map<Object> ctx) throws SecurityException {
 		Map<String,Object> wssIncomingProperties =  wssContext.getIncomingProperties();
+		String ocspPolicy = null;
+		String crls = null;
+		Properties pTrustStore = null;
+		boolean samlSigned = false;
 		if (wssIncomingProperties != null && wssIncomingProperties.size() > 0) {
 			for (String key : wssIncomingProperties.keySet()) {
 				Object oValue = wssIncomingProperties.get(key);
@@ -293,7 +351,14 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 				if(oValue!=null && oValue instanceof String) {
 					value = (String) oValue;
 				}
-				if(SecurityConstants.PASSWORD_CALLBACK_REF.equals(key)) {
+				if(SecurityConstants.ACTION.equals(key)) {
+					msgCtx.put(key, value);
+					interceptor.setProperty(key, value);
+					if(value!=null && value.contains(SecurityConstants.ACTION_SAML_TOKEN_SIGNED)) {
+						samlSigned = true;
+					}
+				}
+				else if(SecurityConstants.PASSWORD_CALLBACK_REF.equals(key)) {
 					msgCtx.put(key, oValue);
 				}
 				else if(SecurityConstants.SIGNATURE_PROPERTY_REF_ID.equals(key) || 
@@ -311,6 +376,11 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 						if(oValue!=null && oValue instanceof Properties) {
 							Properties p = (Properties) oValue;
 							p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, requestInfo);
+							if(SecurityConstants.SIGNATURE_PROPERTY_REF_ID.equals(key) || 
+									SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID.equals(key) || 
+									SecurityConstants.SIGNATURE_TRUSTSTORE_PROPERTY_REF_ID.equals(key) ) {
+								pTrustStore = p;
+							}
 						}
 					}
 				}
@@ -318,6 +388,12 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 					// backward compatibility per adeguamento costante rispetto a wss4j 2.3.x
 					msgCtx.put(SecurityConstants.ENCRYPTION_ACTION, value);
 					interceptor.setProperty(SecurityConstants.ENCRYPTION_ACTION, value);
+				}
+				else if(SecurityConstants.SIGNATURE_OCSP.equals(key)) {
+					ocspPolicy = value;
+				}
+				else if(SecurityConstants.SIGNATURE_CRL.equals(key)) {
+					crls = value;
 				}
 				else{
 					msgCtx.put(key, value);
@@ -329,10 +405,114 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			interceptor.setProperty(SecurityConstants.ACTOR, wssContext.getActor());
 			msgCtx.put(SecurityConstants.ACTOR, wssContext.getActor());
 		}
+		
+		String prefixTrustStore = null;
+		if(pTrustStore!=null && !pTrustStore.isEmpty()) {
+			String trustStoreLocation = null;
+			try {
+				//
+				// Load the TrustStore (serve ad avere x509 in alcuni casi durante l'esamina della risposta)
+				//
+				prefixTrustStore = org.openspcoop2.security.keystore.MerlinProvider.readPrefix(pTrustStore);
+				
+				trustStoreLocation = pTrustStore.getProperty(prefixTrustStore + Merlin.TRUSTSTORE_FILE);
+				String trustStorePassword = null;
+				String trustStoreType = null;
+				if (trustStoreLocation == null) {
+					trustStoreLocation = pTrustStore.getProperty(prefixTrustStore + Merlin.KEYSTORE_FILE);
+					if (trustStoreLocation == null) {
+						trustStoreLocation = pTrustStore.getProperty(prefixTrustStore + Merlin.OLD_KEYSTORE_FILE);
+					}
+					if (trustStoreLocation != null) {
+						trustStorePassword = pTrustStore.getProperty(prefixTrustStore + Merlin.KEYSTORE_PASSWORD);
+						if (trustStorePassword != null) {
+							trustStorePassword = trustStorePassword.trim();
+						}
+						trustStoreType = pTrustStore.getProperty(prefixTrustStore + Merlin.KEYSTORE_TYPE, KeyStore.getDefaultType());
+						if (trustStoreType != null) {
+							trustStoreType = trustStoreType.trim();
+						}
+					}
+				}
+				else {
+					trustStorePassword = pTrustStore.getProperty(prefixTrustStore + Merlin.TRUSTSTORE_PASSWORD);
+					if (trustStorePassword != null) {
+						trustStorePassword = trustStorePassword.trim();
+					}
+					trustStoreType = pTrustStore.getProperty(prefixTrustStore + Merlin.TRUSTSTORE_TYPE, KeyStore.getDefaultType());
+					if (trustStoreType != null) {
+						trustStoreType = trustStoreType.trim();
+					}
+				}
+				if (trustStoreLocation != null) {
+					trustStoreLocation = trustStoreLocation.trim();
+					MerlinTruststore merlinTs = GestoreKeystoreCache.getMerlinTruststore(requestInfo, trustStoreLocation, trustStoreType, 
+							trustStorePassword);
+					if(merlinTs==null) {
+						throw new Exception("Accesso al truststore '"+trustStoreLocation+"' non riuscito");
+					}
+					if(merlinTs.getTrustStore()==null) {
+						throw new Exception("Accesso al truststore '"+trustStoreLocation+"' non riuscito");
+					}
+					this.trustStore = merlinTs.getTrustStore();
+				}
+			}catch(Exception e) {
+				throw new SecurityException("[Truststore-File] '"+trustStoreLocation+"': "+e.getMessage(),e);
+			}
+		}
+		
+		boolean crlByOcsp = false;
+		if(ocspPolicy!=null&& !"".equals(ocspPolicy)) {
+			
+			if(this.trustStore!=null) {
+				LoggerBuffer lb = new LoggerBuffer();
+				lb.setLogDebug(wssContext.getLog());
+				lb.setLogError(wssContext.getLog());
+				GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(requestInfo);
+				IOCSPValidator ocspValidator = null;
+				try {
+					ocspValidator = new GestoreOCSPValidator(requestInfo, lb, 
+							this.trustStore,
+							crls, 
+							ocspPolicy, 
+							ocspResourceReader);
+				}catch(Exception e){
+					throw new SecurityException("SignatureVerifier; ocsp initialization (policy:'"+ocspPolicy+"') failed: "+e.getMessage(),e);
+				}
+				if(ocspValidator!=null) {
+					this.ocspValidator = ocspValidator;
+					GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
+					if(gOcspValidator.getOcspConfig()!=null) {
+						crlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+					}
+				}
+			}
+			
+			if(crlByOcsp) {
+				// la validazione crl viene fatta tramite tool ocsp
+				msgCtx.put(SecurityConstants.ENABLE_REVOCATION, SecurityConstants.FALSE);
+				interceptor.setProperty(SecurityConstants.ENABLE_REVOCATION, SecurityConstants.FALSE);
+			}
+		}
+		
+		if(samlSigned && !crlByOcsp && this.trustStore!=null) {
+			String trustStoreCRLs = null;
+			try {
+				trustStoreCRLs = pTrustStore.getProperty(prefixTrustStore + Merlin.X509_CRL_FILE);
+				if(trustStoreCRLs!=null) {
+					trustStoreCRLs = trustStoreCRLs.trim();
+					this.crlX509 = GestoreKeystoreCache.getCRLCertstore(requestInfo, trustStoreCRLs);
+				}
+			}catch(Exception e) {
+				throw new SecurityException("[Truststore-CRLs] '"+trustStoreCRLs+"': "+e.getMessage(),e);
+			}
+		}
     }
 
-	private void examineResults(SoapMessage msgCtx, String actor) {
+	private boolean examineResults(SoapMessage msgCtx, String actor) {
 				
+		boolean validateX509 = false;
+		
 		List<?> results = (List<?>) msgCtx.get(WSHandlerConstants.RECV_RESULTS);
 		//System.out.println("Potential number of usernames: " + results.size());
 		for (int i = 0; results != null && i < results.size(); i++) {
@@ -378,6 +558,31 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 							Principal principal =  (Principal) oPrincipal;
 							if(principal!=null) {
 								this.certificate = principal.getName();
+							}
+							if(oPrincipal instanceof org.apache.wss4j.common.principal.SAMLTokenPrincipalImpl) {
+								org.apache.wss4j.common.principal.SAMLTokenPrincipalImpl samlPrincipal = (org.apache.wss4j.common.principal.SAMLTokenPrincipalImpl) oPrincipal;
+								if(samlPrincipal.getToken()!=null) {
+									if(samlPrincipal.getToken().getSignatureKeyInfo()!=null) {
+										if(samlPrincipal.getToken().getSignatureKeyInfo().getCerts()!=null) {
+											if(this.x509Certificates==null) {
+												this.x509Certificates = samlPrincipal.getToken().getSignatureKeyInfo().getCerts();
+											}
+										}
+										else if(samlPrincipal.getToken().getSignatureKeyInfo().getPublicKey()!=null) {
+											if(this.x509Certificate==null && this.trustStore!=null) {
+												try {
+													Certificate c = this.trustStore.getCertificateByPublicKey(samlPrincipal.getToken().getSignatureKeyInfo().getPublicKey());
+													if(c!=null && (c instanceof X509Certificate)) {
+														this.x509Certificate = (X509Certificate) c;
+														validateX509 = true; // in saml handler non viene validato il certificato rispetto alla crl
+													}
+												}catch(Throwable t) {
+													// ignore
+												}
+											}
+										}
+									}
+								}
 							}
 						}
 	
@@ -454,6 +659,11 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 						}
 						
 					}
+					
+					if( actionGet == WSConstants.ST_SIGNED ) {
+						
+					}
+					
 				}
 				
 			}
@@ -484,6 +694,8 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			}
 		}
 		*/
+		
+		return validateX509;
 	}
 	
 

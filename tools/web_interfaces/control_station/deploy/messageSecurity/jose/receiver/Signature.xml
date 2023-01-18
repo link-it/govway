@@ -221,13 +221,32 @@
 			    <property name="rs.security.keystore.password.ssl" />
 			</item>
 
+			<!-- utilizzo keystore per https, anche se si tratta comunque di un truststore che viene usato sotto per i certificati -->
+			<item type="select" name="keystoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.ssl.ocsp" />
+			</item>
 			<item type="checkbox" name="joseUseHeaders.ssl.enableRevocation" label="CRL" reloadOnChange="true" defaultSelected="false">
+				<conditions>
+					<condition and="false">
+						<defined not="true" name="keystoreOcspPolicy"/>
+						<equals name="keystoreOcspPolicy" value=""/>
+					</condition>
+				</conditions>
 				<property name="joseUseHeaders.ssl.enableRevocation" />
 			</item>	
 			<item type="textarea" name="joseUseHeaders.ssl.crlFiles" label="CRL File(s)" required="true" note="Elencare più file separandoli con la ','">
 				<conditions>
 					<condition>
 						<selected name="joseUseHeaders.ssl.enableRevocation"/>
+					</condition>
+				</conditions>
+			      	<property name="rs.security.keystore.ssl.crl" />
+			</item>
+			<item type="textarea" name="joseUseHeaders.ssl.crlFilesOcsp" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition and="true">
+						<defined name="keystoreOcspPolicy"/>
+						<equals not="true" name="keystoreOcspPolicy" value=""/>
 					</condition>
 				</conditions>
 			      	<property name="rs.security.keystore.ssl.crl" />
@@ -263,13 +282,31 @@
 			    <property name="joseUseHeaders.truststore.password" />
 			</item>
 
+			<item type="select" name="truststoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
+				<property name="signatureOCSP" />
+			</item>
 			<item type="checkbox" name="enableRevocation" label="CRL" reloadOnChange="true" defaultSelected="false">
+				<conditions>
+					<condition and="false">
+						<defined not="true" name="truststoreOcspPolicy"/>
+						<equals name="truststoreOcspPolicy" value=""/>
+					</condition>
+				</conditions>
 				<property name="enableRevocation" />
 			</item>	
 			<item type="textarea" name="crlFiles" label="CRL File(s)" required="true" note="Elencare più file separandoli con la ','">
 				<conditions>
 					<condition>
 						<selected name="enableRevocation"/>
+					</condition>
+				</conditions>
+			      	<property name="signatureCRL" />
+			</item>
+			<item type="textarea" name="crlFilesOcsp" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition and="true">
+						<defined name="truststoreOcspPolicy"/>
+						<equals not="true" name="truststoreOcspPolicy" value=""/>
 					</condition>
 				</conditions>
 			      	<property name="signatureCRL" />

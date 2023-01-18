@@ -26,6 +26,7 @@ import java.net.URI;
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.cert.CertStore;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.util.Properties;
@@ -69,6 +70,7 @@ import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -285,6 +287,75 @@ public class JsonUtils {
 			throw new UtilsException("Key with alias '"+alias+"' unknonw");
 		}
 		return jsonWebKey;
+	}
+	
+	public static KeyStore getKeyStore(Properties props) throws Exception {
+		Object oKeystore = props.get(RSSecurityConstants.RSSEC_KEY_STORE);
+		if(oKeystore!=null && oKeystore instanceof KeyStore) {
+			return (KeyStore) oKeystore;
+		}
+		else if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
+			KeyStore k = new KeyStore((java.security.KeyStore) oKeystore);
+			return k;
+		}
+		else {
+			String fileK = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+			if(fileK!=null) {
+				String password = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
+				String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+				
+				if(password==null || "".equals(password)){
+					throw new Exception("Keystore password undefined");
+				}
+				if(type==null || "".equals(type)){
+					type = "jks";
+				}
+				if("jwk".equalsIgnoreCase(type)) {
+					return null;
+				}
+				
+				File file = new File(fileK);
+				if(file.exists()) {
+					return new KeyStore(file.getAbsolutePath(), type, password);
+				}
+				else {
+					InputStream is = JsonUtils.class.getResourceAsStream(fileK);
+					File fTmp = null;
+					try {
+						if(is!=null) {
+							byte[] f = Utilities.getAsByteArray(is);
+							fTmp = File.createTempFile("keystore", ".tmp");
+							FileSystemUtilities.writeFile(fTmp, f);
+							return new KeyStore(fTmp.getAbsolutePath(), type, password);
+						}
+					}finally {
+						try {
+							if(is!=null) {
+								is.close();
+							}
+						}catch(Exception e) {}
+						try {
+							if(fTmp!=null) {
+								fTmp.delete();
+							}
+						}catch(Exception e) {
+							// delete
+						}
+					}
+				}	
+			}
+		}
+		return null;
+	}
+	public static Certificate getCertificateKey(Properties props) throws Exception {
+		KeyStore keystore = getKeyStore(props);
+		if(keystore!=null) {
+			String alias = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
+			if(alias!=null || !"".equals(alias)){
+				return keystore.getCertificate(alias);
+			}
+		}
+		return null;
 	}
 	
 	public static SecretKeyPkcs11 getSecretKeyPKCS11(Properties props) throws Exception {
@@ -715,26 +786,34 @@ public class JsonUtils {
 	}
 	
 	public static void validate(CertificateInfo certificatoInfo,
-			KeyStore trustStoreCertificatiX509, CertStore crlX509, String headerName,
+			KeyStore trustStoreCertificatiX509, CertStore crlX509, IOCSPValidator ocspValidatorX509, String headerName,
 			boolean verifaCA) throws Exception {
 		if(trustStoreCertificatiX509!=null) {
+			String prefisso = headerName!=null ? ("Certificato presente nell'header '"+headerName+"' ") : "Certificato di firma ";
 			if(verifaCA && certificatoInfo.isVerified(trustStoreCertificatiX509, true)==false) {
-				throw new Exception("Certificato presente nell'header '"+headerName+"' non è verificabile rispetto alle CA conosciute");
+				throw new Exception(prefisso+"non è verificabile rispetto alle CA conosciute");
 			}
 			try {
 				certificatoInfo.checkValid();
 			}catch(CertificateExpiredException e) {
-				throw new Exception("Certificato presente nell'header '"+headerName+"' scaduto: "+e.getMessage(),e);
+				throw new Exception(prefisso+"scaduto: "+e.getMessage(),e);
 			}catch(CertificateNotYetValidException e) {
-				throw new Exception("Certificato presente nell'header '"+headerName+"' non ancora valido: "+e.getMessage(),e);
+				throw new Exception(prefisso+"non ancora valido: "+e.getMessage(),e);
 			}catch(Exception e) {
-				throw new Exception("Certificato presente nell'header '"+headerName+"' non valido: "+e.getMessage(),e);
+				throw new Exception(prefisso+"non valido: "+e.getMessage(),e);
+			}
+			if(ocspValidatorX509!=null) {
+				try {
+					ocspValidatorX509.valid(certificatoInfo.getCertificate());
+				}catch(Exception e) {
+					throw new Exception(prefisso+"non valido: "+e.getMessage(),e);
+				}
 			}
 			if(crlX509!=null) {
 				try {
 					certificatoInfo.checkValid(crlX509, trustStoreCertificatiX509);
 				}catch(Exception e) {
-					throw new Exception("Certificato presente nell'header '"+headerName+"' non valido: "+e.getMessage(),e);
+					throw new Exception(prefisso+"non valido: "+e.getMessage(),e);
 				}
 			}
 		}

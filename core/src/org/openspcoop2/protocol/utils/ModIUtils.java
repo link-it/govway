@@ -93,6 +93,7 @@ public class ModIUtils {
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_STORE_TYPE = "type";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_STORE_PATH = "path";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_STORE_CRLS = "crls";
+	public static final String API_IMPL_SICUREZZA_MESSAGGIO_STORE_OCSP_POLICY = "ocsp";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_KEY_ALIAS = "key-alias";
 	
 	// COSTANTI SERVIZIO
@@ -676,6 +677,7 @@ public class ModIUtils {
 			String type = null;
 			String path = null;
 			String crl = null;
+			String ocsp = null;
 			String aliasKey = null;
 			@SuppressWarnings("unused")
 			boolean keystoreModePath = false;
@@ -685,11 +687,13 @@ public class ModIUtils {
 				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE;
 				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH;
 				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS;
+				ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY;
 			}
 			else if(truststore) {
 				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE;
 				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH;
 				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS;
+				ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY;
 			}
 			else {
 				type = CostantiDB.MODIPA_KEYSTORE_TYPE;
@@ -738,6 +742,11 @@ public class ModIUtils {
 			if(crl!=null) {
 				String vCrl = getStringValue(protocolPropertyList, crl);
 				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_STORE_CRLS,vCrl);
+			}
+			
+			if(ocsp!=null) {
+				String vOcsp = getStringValue(protocolPropertyList, ocsp);
+				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_STORE_OCSP_POLICY,vOcsp);
 			}
 			
 			if(aliasKey!=null) {
@@ -924,6 +933,7 @@ public class ModIUtils {
 			String archive = null;
 			String password = null;
 			String crl = null;
+			String ocsp = null;
 			String aliasKey = null;
 			@SuppressWarnings("unused")
 			boolean keystoreModePath = false;
@@ -934,12 +944,14 @@ public class ModIUtils {
 				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH;
 				password = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD;
 				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS;
+				ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY;
 			}
 			else if(truststore) {
 				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE;
 				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH;
 				password = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD;
 				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS;
+				ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY;
 			}
 			else {
 				type = CostantiDB.MODIPA_KEYSTORE_TYPE;
@@ -997,6 +1009,11 @@ public class ModIUtils {
 				vCrl = getStringValue(protocolPropertyList, crl);
 			}
 			
+			String vOcsp = null;
+			if(ocsp!=null) {
+				vOcsp = getStringValue(protocolPropertyList, ocsp);
+			}
+			
 			String vAliasKey = null;
 			if(aliasKey!=null) {
 				vAliasKey = getStringValue(protocolPropertyList, aliasKey);
@@ -1008,6 +1025,7 @@ public class ModIUtils {
 			keystoreParams.setStore(vStore);
 			keystoreParams.setPassword(vPassword);
 			keystoreParams.setCrls(vCrl);
+			keystoreParams.setOcspPolicy(vOcsp);
 			keystoreParams.setKeyAlias(vAliasKey);
 		}
 	

@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -39,6 +40,7 @@ import org.openspcoop2.utils.certificate.ocsp.test.OCSPTest;
 import org.openspcoop2.utils.certificate.ocsp.test.OpenSSLThread;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -93,7 +95,21 @@ public class Utils {
 	
 	public static final String CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE = "Certificate revoked (Reason: UNSPECIFIED): Certificate not valid (CRL): Certificate revocation after %, reason: keyCompromise";
 	
+	public static final String CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE_WSS = "A security error was encountered when verifying the message ; Certificate revocation after";
+	
+	public static final String CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE_SAML = "Certificate revocation after %, reason: keyCompromise";
+	
 	public static final String CERTIFICATE_CRL_EXPIRED = "Certificate expired in date '%': OCSP [certificate: C=IT,ST=Italy,L=Pisa,O=Example,CN=ExampleClientScaduto] certificate expired on %";
+	
+	public static final String CERTIFICATE_CRL_EXPIRED_WSS_SAML = "Certificate expired in date '%': OCSP [certificate: CN=ExampleClientScaduto, O=Example, L=Pisa, ST=Italy, C=IT] NotAfter: %";
+	
+	public static final String CERTIFICATE_CRL_EXPIRED_WSS_SAML_2 = "Could not validate certificate: NotAfter";
+	
+	public static final String CERTIFICATE_CRL_EXPIRED_WSS = "A security error was encountered when verifying the message ; certificate expired on";
+	
+	public static final String CERTIFICATE_CRL_EXPIRED_JOSE_X5C = "Signature verification failure: Process 'x5c' error: Certificato presente nell'header 'x5c' scaduto: certificate expired on ";
+	
+	public static final String CERTIFICATE_CRL_EXPIRED_JOSE_X5U = "Signature verification failure: Process 'x5u' error: Certificato presente nell'header 'x5u' scaduto: certificate expired on ";
 	
 	public static final String API_UNAVAILABLE = "APIUnavailable";
 	public static final String API_UNAVAILABLE_MESSAGE = "The API Implementation is temporary unavailable";
@@ -103,10 +119,21 @@ public class Utils {
 	
 	public static final boolean ERROR_CACHED = true;
 	
-	private static void verifyKo(HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay) {
-		
-		org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.verifyKo(response, error, code, errorMsg, checkErrorTypeGovWay);
-		
+//	private static void verifyKo(HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay) {
+//		
+//		org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.verifyKo(response, error, code, errorMsg, checkErrorTypeGovWay);
+//		
+//	}
+	
+	private static void verifyKoRest(Logger log,HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay) {
+		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.
+			verifyKo(response, error, code, errorMsg, checkErrorTypeGovWay, 
+					true, null, log);
+	}
+	private static void verifyKoSoap(Logger log,HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, String soapPrefixError, String errorHttp) {
+		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.
+			verifyKo(response, error, code, errorMsg, checkErrorTypeGovWay, 
+					false, soapPrefixError, errorHttp, log);
 	}
 	
 	private static void verifyOk(HttpResponse response, int code, String expectedContentType) {
@@ -215,6 +242,10 @@ public class Utils {
 			}
 		}
 		
+		if(HttpRequestMethod.POST.equals(method) && HttpConstants.CONTENT_TYPE_SOAP_1_1.equals(contentType)) {
+			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, operazione);
+		}
+		
 		request.setReadTimeout(20000);
 		request.setMethod(method);
 		request.setContentType(contentType);
@@ -229,8 +260,16 @@ public class Utils {
 			throw t;
 		}
 
-		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		String idTransazioneHeader = "GovWay-Transaction-ID";
+		String idTransazione = response.getHeaderFirstValue(idTransazioneHeader);
 		assertNotNull(idTransazione);
+		
+		if(WSSecuritySignatureTest.api.equals(api) || 
+				api.startsWith(WSSecuritySAMLTokenTest.api_saml_prefix) ||
+				api.startsWith(JoseSignatureTest.api_prefix)) {
+			idTransazione = response.getHeaderFirstValue("GovWay-Erogazione-Transaction-ID");
+			assertNotNull(idTransazione);
+		}
 		
 		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		if(attesoErrore) {
@@ -238,12 +277,15 @@ public class Utils {
 			String error = null;
 			String msg = null;
 			boolean checkErrorTypeGovWay = true;
+			boolean soap = false;
+			String soapPrefixError = null;
 		
 			esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
 			code = 503;
 			error = Utils.API_UNAVAILABLE;
 			msg = Utils.API_UNAVAILABLE_MESSAGE;
 			checkErrorTypeGovWay = false;
+			boolean errorHttpNull = false;
 			
 			if(GestoreCredenzialiTest.api.equals(api) || AutenticazioneHttpsTest.api.equals(api)) {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
@@ -258,7 +300,34 @@ public class Utils {
 				}
 			}
 			
-			Utils.verifyKo(response, error, code, msg, checkErrorTypeGovWay);
+			if(WSSecuritySignatureTest.api.equals(api) || 
+					api.startsWith(WSSecuritySAMLTokenTest.api_saml_prefix)) {
+				soap = true;
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_SICUREZZA_MESSAGGIO_RICHIESTA);
+				code = 400;
+				soapPrefixError = "Client";
+				error = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.BAD_REQUEST;
+				msg = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.BAD_REQUEST_MESSAGE;
+				errorHttpNull = true;
+			}
+			else if(api.startsWith(JoseSignatureTest.api_prefix)) {
+				soap = false;
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_SICUREZZA_MESSAGGIO_RICHIESTA);
+				code = 400;
+				soapPrefixError = "Client";
+				error = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.BAD_REQUEST;
+				msg = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.BAD_REQUEST_MESSAGE;
+				errorHttpNull = true;
+			}
+			
+			String errorHttp = errorHttpNull ? null : error;
+			
+			if(soap) {
+				Utils.verifyKoSoap(logCore, response, error, code, msg, checkErrorTypeGovWay, soapPrefixError, errorHttp);
+			}
+			else {
+				Utils.verifyKoRest(logCore, response, error, code, msg, checkErrorTypeGovWay);
+			}
 		}
 		else {
 			Utils.verifyOk(response, 200, contentType);
@@ -392,9 +461,33 @@ public class Utils {
 		
 		ConfigLoader.resetCache();
 		
+		boolean get = true;
+		String contentType = null;
+		byte[]content = null;
+		HttpRequestMethod method = null;
+		if(WSSecuritySignatureTest.api.equals(api) || api.startsWith(WSSecuritySAMLTokenTest.api_saml_prefix)) {
+			get = false;
+			contentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+			content = Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes();
+			method = HttpRequestMethod.POST;
+		}
+		else if(api.startsWith(JoseSignatureTest.api_prefix)) {
+			get = false;
+			contentType = HttpConstants.CONTENT_TYPE_JSON;
+			content = Bodies.getJson(Bodies.SMALL_SIZE).getBytes();
+			method = HttpRequestMethod.PUT;
+		}
+		
 		// attendo errore connection refused
-		Utils.get(logCore, tipoServizio, api, soggetto, action, 
-				connectionRefusedMsg);
+		if(get) {
+			Utils.get(logCore, tipoServizio, api, soggetto, action, 
+					connectionRefusedMsg);
+		}
+		else {
+			Utils.test(tipoServizio, method, contentType, content,
+					logCore, api, soggetto, action, 
+					connectionRefusedMsg);
+		}
 		
 		OpenSSLThread sslThread = null;
 		if(action.contains("case3")) {
@@ -409,7 +502,15 @@ public class Utils {
 		
 				
 		try {
-			Utils.get(logCore, tipoServizio, api, soggetto, action, msgErrore);
+			if(get) {
+				Utils.get(logCore, tipoServizio, api, soggetto, action, 
+						msgErrore);
+			}
+			else {
+				Utils.test(tipoServizio, method, contentType, content,
+						logCore, api, soggetto, action, 
+						msgErrore);
+			}
 		}
 		finally {
 			Utils.stopOpenSSLThread(sslThread, waitStopServer);
@@ -417,12 +518,26 @@ public class Utils {
 		
 		// Deve continuare a funzionare per via della cache
 		if(msgErrore==null || errorCached) {
-			Utils.get(logCore, tipoServizio, api, soggetto, action, 
-					msgErrore);
+			if(get) {
+				Utils.get(logCore, tipoServizio, api, soggetto, action, 
+						msgErrore);
+			}
+			else {
+				Utils.test(tipoServizio, method, contentType, content,
+						logCore, api, soggetto, action, 
+						msgErrore);
+			}
 		}
 		else {
-			Utils.get(logCore, tipoServizio, api, soggetto, action, 
-					connectionRefusedMsg);
+			if(get) {
+				Utils.get(logCore, tipoServizio, api, soggetto, action, 
+						connectionRefusedMsg);
+			}
+			else {
+				Utils.test(tipoServizio, method, contentType, content,
+						logCore, api, soggetto, action, 
+						connectionRefusedMsg);
+			}
 		}
 		
 		ConfigLoader.resetCache_excludeCachePrimoLivello();
@@ -431,19 +546,40 @@ public class Utils {
 		// Fa eccezione l'autenticazione https il cui risultato non viene salvato nella cache di secondo livello
 		if( !AutenticazioneHttpsTest.api.equals(api) &&
 				(msgErrore==null || errorCached)) {
-			Utils.get(logCore, tipoServizio, api, soggetto, action, 
-					msgErrore);
+			if(get) {
+				Utils.get(logCore, tipoServizio, api, soggetto, action, 
+						msgErrore);
+			}
+			else {
+				Utils.test(tipoServizio, method, contentType, content,
+						logCore, api, soggetto, action, 
+						msgErrore);
+			}
 		}
 		else {
-			Utils.get(logCore, tipoServizio, api, soggetto, action, 
-					connectionRefusedMsg);
+			if(get) {
+				Utils.get(logCore, tipoServizio, api, soggetto, action, 
+						connectionRefusedMsg);
+			}
+			else {
+				Utils.test(tipoServizio, method, contentType, content,
+						logCore, api, soggetto, action, 
+						connectionRefusedMsg);
+			}
 		}
 		
 		ConfigLoader.resetCachePrimoLivello();
 		
 		// attendo errore connection refused
-		Utils.get(logCore, tipoServizio, api, soggetto, action, 
-				connectionRefusedMsg);
+		if(get) {
+			Utils.get(logCore, tipoServizio, api, soggetto, action, 
+					connectionRefusedMsg);
+		}
+		else {
+			Utils.test(tipoServizio, method, contentType, content,
+					logCore, api, soggetto, action, 
+					connectionRefusedMsg);
+		}
 		
 	}
 	

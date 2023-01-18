@@ -34,6 +34,7 @@ public class KeystoreParams {
 	private String type;
 	private String password;
 	private String crls;
+	private String ocspPolicy;
 	private String keyAlias;
 	private String keyPassword;
 	
@@ -66,6 +67,12 @@ public class KeystoreParams {
 	}
 	public void setCrls(String crls) {
 		this.crls = crls;
+	}
+	public String getOcspPolicy() {
+		return this.ocspPolicy;
+	}
+	public void setOcspPolicy(String ocspPolicy) {
+		this.ocspPolicy = ocspPolicy;
 	}
 	public String getKeyAlias() {
 		return this.keyAlias;

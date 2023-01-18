@@ -68,16 +68,7 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 	private org.openspcoop2.utils.certificate.KeyStore op2TrustStore;
 	private Boolean useBouncyCastleProviderDirective = null;
 	
-	@Override
-	public void loadProperties(Properties properties, ClassLoader loader, PasswordEncryptor passwordEncryptor)
-			throws WSSecurityException, IOException {
-
-		if (properties == null) {
-			return;
-		}
-		this.properties = properties;
-		this.passwordEncryptor = passwordEncryptor;
-
+	public static String readPrefix(Properties properties) {
 		String prefix = PREFIX;
 		for (Object key : properties.keySet()) {
 			if (key instanceof String) {
@@ -90,6 +81,20 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 				}
 			}
 		}
+		return prefix;
+	}
+	
+	@Override
+	public void loadProperties(Properties properties, ClassLoader loader, PasswordEncryptor passwordEncryptor)
+			throws WSSecurityException, IOException {
+
+		if (properties == null) {
+			return;
+		}
+		this.properties = properties;
+		this.passwordEncryptor = passwordEncryptor;
+
+		String prefix = readPrefix(properties);
 
 		
 		//
@@ -212,7 +217,7 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 					throw new Exception("Accesso al truststore '"+trustStoreLocation+"' non riuscito");
 				}
 				if(merlinTs.getTrustStore()==null) {
-					throw new Exception("Accesso al truststore '"+keyStoreLocation+"' non riuscito");
+					throw new Exception("Accesso al truststore '"+trustStoreLocation+"' non riuscito");
 				}
 				this.op2TrustStore = merlinTs.getTrustStore();
 				this.truststore = this.op2TrustStore.getKeystore();

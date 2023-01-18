@@ -14,6 +14,7 @@ Per poter effettuare la validazione, deve essere configurato opportunamente GovW
 - *trustStore.tipo* (obbligatorio): indica il tipo di trustStore (JKS)
 - *trustStore.password* (obbligatorio): password per accedere al trustStore
 - *trustStore.crls* (opzionale): permette di indicare un elenco, separato da virgola, di file CRL.
+- *trustStore.ocspPolicy* (opzionale): in alternativa alla validazione tramite CRL è possibile associare una policy OCSP indicando uno dei tipi registrati nel file *<directory-lavoro>/ocsp.properties* come proprietà 'ocsp.<idPolicy>.type'; per ulteriori dettagli si rimanda alle sezioni :ref:`ocspInstall` e :ref:`ocspConfig`.
 
 La configurazione sopra indicata rappresenta la configurazione di default che verrà proposta durante la gestione di una erogazione o di una fruizione. È sempre possibile ridefinire per ogni singola API tale configurazione
 

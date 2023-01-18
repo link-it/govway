@@ -51,7 +51,9 @@ openssl pkcs12 -export -out test.p12 -inkey ee_TEST_test.esempio.it.key.pem -in 
 openssl pkcs12 -export -out testClient.p12 -inkey ee_TEST_Client-test.esempio.it.key.pem -in ee_TEST_Client-test.esempio.it.cert.pem -name testclient -passout file:password -passin file:ee_TEST_Client-test.esempio.it.README.txt -certfile ca_TEST.cert.pem
 keytool -importkeystore -srckeystore test.p12 -srcstoretype PKCS12 -destkeystore test.jks -deststoretype JKS -srcstorepass 123456 -deststorepass 123456 -srcalias test -destalias test -srckeypass 123456 -destkeypass 123456 -noprompt
 keytool -importkeystore -srckeystore testClient.p12 -srcstoretype PKCS12 -destkeystore testClient.jks -deststoretype JKS -srcstorepass 123456 -deststorepass 123456 -srcalias testclient -destalias testclient -srckeypass 123456 -destkeypass 123456 -noprompt
-
+keytool -importcert -alias ca -file ca_TEST.cert.pem -keystore ca_certificati_TEST.jks -storepass 123456 -storetype JKS -trustcacerts -noprompt
+keytool -importcert -alias test -file ee_TEST_test.esempio.it.cert.pem -keystore ca_certificati_TEST.jks -storepass 123456 -storetype JKS -trustcacerts -noprompt
+keytool -importcert -alias testclient -file ee_TEST_Client-test.esempio.it.cert.pem -keystore ca_certificati_TEST.jks -storepass 123456 -storetype JKS -trustcacerts -noprompt
 rm -f password
 
 echo "NOTE: invoke revoca.sh per attuare la revoca"

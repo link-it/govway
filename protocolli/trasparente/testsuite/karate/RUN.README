@@ -150,6 +150,8 @@
         La configurazione del connettore assume che il keystore https/ocsp/jks/test.p12 sia stato copiato in /etc/govway/keys/ocsp/
   e) i test richiedono che i keystore presenti in https/ocsp/jks/* siano stati copiati in /etc/govway/keys/ocsp/
   f) i test richiedono che sia copiato il file https/ocsp/ocsp.properties in /etc/govway/
+  g) i test richiedono che i certificati ee_TEST_test.esempio.it.cert.pem e ee_TEST_Client-test.esempio.it.cert.pem presenti in https/ocsp/jks/ siano recuperabili rispettivamente con le seguenti url 'http://127.0.0.1:8080/ee_TEST_test.esempio.it.cert.pem' e 'http://127.0.0.1:8080/ee_TEST_Client-test.esempio.it.cert.pem'
+  i) i test richiedono che i certificati ExampleClient1.crt, ExampleClientRevocato.crt e ExampleClientScaduto.crt presenti in https/ocsp/crl siano recuperabili rispettivamente con le seguenti url 'http://127.0.0.1:8080/ExampleClient1.crt', 'http://127.0.0.1:8080/ExampleClientRevocato.crt' e 'http://127.0.0.1:8080/ExampleClientScaduto.crt'
 
 - Per i test OCSP inoltre Impostare in <console_local.properties>:
 

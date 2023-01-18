@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,19 +32,29 @@ import java.util.Properties;
 
 import javax.crypto.SecretKey;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.logging.log4j.Level;
 import org.apache.xml.security.encryption.XMLCipher;
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.CRLCertstore;
 import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.ocsp.IOCSPResourceReader;
+import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
+import org.openspcoop2.utils.certificate.ocsp.OCSPResourceReader;
+import org.openspcoop2.utils.certificate.ocsp.OCSPValidatorImpl;
+import org.openspcoop2.utils.certificate.ocsp.test.OCSPTest;
+import org.openspcoop2.utils.certificate.ocsp.test.OpenSSLThread;
 import org.openspcoop2.utils.certificate.test.KeystoreTest;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.slf4j.Logger;
@@ -81,6 +92,22 @@ public class TestEncrypt {
 			useP11asTrustStore = Boolean.valueOf(args[1]);
 		}
 		
+		String com = null;
+		if(args!=null && args.length>2) {
+			String tmp = args[2];
+			if(tmp!=null && StringUtils.isNotEmpty(tmp)) {
+				com = tmp;
+			}
+		}
+		
+		String waitStartupServer = null;
+		if(args!=null && args.length>3) {
+			String tmp = args[3];
+			if(tmp!=null && StringUtils.isNotEmpty(tmp)) {
+				waitStartupServer = tmp;
+			}
+		}
+		
 		InputStream isKeystoreJKS = null;
 		File fKeystoreJKS = null;
 		InputStream isKeystoreP12 = null;
@@ -113,6 +140,31 @@ public class TestEncrypt {
 		
 		InputStream jwk_symmetric_isKeystore = null;
 		File jwk_symmetric_fKeystore = null;
+		
+		InputStream isKeystore_crl_valid = null;
+		File fKeystore_crl_valid = null;
+		InputStream isKeystore_crl_expired = null;
+		File fKeystore_crl_expired = null;
+		InputStream isKeystore_crl_revoked = null;
+		File fKeystore_crl_revoked = null;
+		InputStream isTruststore_crl = null;
+		File fTruststore_crl = null;
+		InputStream is_crl = null;
+		File f_crl = null;
+		
+		File fCertX509_crl_valid = null;
+		File fCertX509_crl_expired = null;
+		File fCertX509_crl_revoked = null;
+		
+		InputStream isKeystore_ocsp_valid = null;
+		File fKeystore_ocsp_valid = null;
+		InputStream isKeystore_ocsp_revoked = null;
+		File fKeystore_ocsp_revoked = null;
+		InputStream isTruststore_ocsp = null;
+		File fTruststore_ocsp = null;
+		
+		File fCertX509_ocsp_valid = null;
+		File fCertX509_ocsp_revoked = null;
 		try{
 			System.out.println("env SOFTHSM2_CONF: "+System.getenv("SOFTHSM2_CONF"));
 			
@@ -164,6 +216,38 @@ public class TestEncrypt {
 			jwk_symmetric_fKeystore = File.createTempFile("keystore", ".jwk");
 			FileSystemUtilities.writeFile(jwk_symmetric_fKeystore, Utilities.getAsByteArray(jwk_symmetric_isKeystore));
 			
+			isKeystore_crl_valid = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/ExampleClient1.p12");
+			fKeystore_crl_valid = File.createTempFile("keystore", ".p12");
+			FileSystemUtilities.writeFile(fKeystore_crl_valid, Utilities.getAsByteArray(isKeystore_crl_valid));
+			
+			isKeystore_crl_expired = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/ExampleClientScaduto.p12");
+			fKeystore_crl_expired = File.createTempFile("keystore", ".p12");
+			FileSystemUtilities.writeFile(fKeystore_crl_expired, Utilities.getAsByteArray(isKeystore_crl_expired));
+			
+			isKeystore_crl_revoked = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/ExampleClientRevocato.p12");
+			fKeystore_crl_revoked = File.createTempFile("keystore", ".p12");
+			FileSystemUtilities.writeFile(fKeystore_crl_revoked, Utilities.getAsByteArray(isKeystore_crl_revoked));
+			
+			isTruststore_crl = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/trustStore_ca_certificati.jks");
+			fTruststore_crl = File.createTempFile("truststore", ".jks");
+			FileSystemUtilities.writeFile(fTruststore_crl, Utilities.getAsByteArray(isTruststore_crl));
+			
+			is_crl = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/ExampleCA.crl");
+			f_crl = File.createTempFile("lista", ".crl");
+			FileSystemUtilities.writeFile(f_crl, Utilities.getAsByteArray(is_crl));
+			
+			isKeystore_ocsp_valid = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/ocsp/testClient.p12");
+			fKeystore_ocsp_valid = File.createTempFile("keystore", ".p12");
+			FileSystemUtilities.writeFile(fKeystore_ocsp_valid, Utilities.getAsByteArray(isKeystore_ocsp_valid));
+			
+			isKeystore_ocsp_revoked = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/ocsp/test.p12");
+			fKeystore_ocsp_revoked = File.createTempFile("keystore", ".p12");
+			FileSystemUtilities.writeFile(fKeystore_ocsp_revoked, Utilities.getAsByteArray(isKeystore_ocsp_revoked));
+			
+			isTruststore_ocsp = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/ocsp/ca_certificati_TEST.jks");
+			fTruststore_ocsp = File.createTempFile("truststore", ".jks");
+			FileSystemUtilities.writeFile(fTruststore_ocsp, Utilities.getAsByteArray(isTruststore_ocsp));
+			
 			String passwordChiavePrivata = "key123456";
 			String passwordStore = "123456";
 			String alias = "openspcoop";
@@ -182,6 +266,81 @@ public class TestEncrypt {
 			if(!"jks".equalsIgnoreCase(truststore.getKeystoreType())) {
 				throw new Exception("Atteso tipo JKS, trovato '"+truststore.getKeystoreType()+"'");
 			}
+			
+			KeyStore keystoreP12_crl_valid = new KeyStore(fKeystore_crl_valid.getAbsolutePath(), "pkcs12", passwordStore);
+			if(!"pkcs12".equalsIgnoreCase(keystoreP12_crl_valid.getKeystoreType())) {
+				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12_crl_valid.getKeystoreType()+"'");
+			}
+			
+			KeyStore keystoreP12_crl_expired = new KeyStore(fKeystore_crl_expired.getAbsolutePath(), "pkcs12", passwordStore);
+			if(!"pkcs12".equalsIgnoreCase(keystoreP12_crl_expired.getKeystoreType())) {
+				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12_crl_expired.getKeystoreType()+"'");
+			}
+			
+			KeyStore keystoreP12_crl_revoked = new KeyStore(fKeystore_crl_revoked.getAbsolutePath(), "pkcs12", passwordStore);
+			if(!"pkcs12".equalsIgnoreCase(keystoreP12_crl_revoked.getKeystoreType())) {
+				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12_crl_revoked.getKeystoreType()+"'");
+			}
+			
+			KeyStore truststoreCRL = new KeyStore(fTruststore_crl.getAbsolutePath(), passwordStore);
+			if(!"jks".equalsIgnoreCase(truststoreCRL.getKeystoreType())) {
+				throw new Exception("Atteso tipo JKS, trovato '"+truststoreCRL.getKeystoreType()+"'");
+			}
+			
+			CRLCertstore crl = new CRLCertstore(f_crl.getAbsolutePath());
+			
+			fCertX509_crl_valid =  File.createTempFile("certValid", ".cer");
+			FileSystemUtilities.writeFile(fCertX509_crl_valid, truststoreCRL.getCertificate("ExampleClient1").getEncoded());
+			
+			fCertX509_crl_expired =  File.createTempFile("certExpired", ".cer");
+			FileSystemUtilities.writeFile(fCertX509_crl_expired, truststoreCRL.getCertificate("ExampleClientScaduto").getEncoded());
+			
+			fCertX509_crl_revoked =  File.createTempFile("certRevoked", ".cer");
+			FileSystemUtilities.writeFile(fCertX509_crl_revoked, truststoreCRL.getCertificate("ExampleClientRevocato").getEncoded());
+			
+			
+			
+			KeyStore keystoreP12_ocsp_valid = new KeyStore(fKeystore_ocsp_valid.getAbsolutePath(), "pkcs12", passwordStore);
+			if(!"pkcs12".equalsIgnoreCase(keystoreP12_ocsp_valid.getKeystoreType())) {
+				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12_ocsp_valid.getKeystoreType()+"'");
+			}
+			
+			KeyStore keystoreP12_ocsp_revoked = new KeyStore(fKeystore_ocsp_revoked.getAbsolutePath(), "pkcs12", passwordStore);
+			if(!"pkcs12".equalsIgnoreCase(keystoreP12_ocsp_revoked.getKeystoreType())) {
+				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12_ocsp_revoked.getKeystoreType()+"'");
+			}
+			
+			KeyStore truststoreOCSP = new KeyStore(fTruststore_ocsp.getAbsolutePath(), passwordStore);
+			if(!"jks".equalsIgnoreCase(truststoreOCSP.getKeystoreType())) {
+				throw new Exception("Atteso tipo JKS, trovato '"+truststoreOCSP.getKeystoreType()+"'");
+			}
+			
+			IOCSPResourceReader ocspResourceReader = new OCSPResourceReader();
+			LoggerBuffer lb = new LoggerBuffer();
+			lb.setLogError(log);
+			lb.setLogDebug(log);
+			File f = null;
+			try(InputStream is = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/ocsp_test.properties")){
+				
+				byte[] content = Utilities.getAsByteArray(is);
+				
+				f = File.createTempFile("test", ".properties");
+				FileSystemUtilities.writeFile(f, content);
+			
+				OCSPManager.init(f.getAbsoluteFile(), true, log);
+			}
+			finally {
+				if(f!=null) {
+					f.delete();
+				}
+			}
+			IOCSPValidator ocspValidator = new OCSPValidatorImpl(lb, truststoreOCSP, null, "signedByResponderCertificate_case2", ocspResourceReader);
+			
+			fCertX509_ocsp_valid =  File.createTempFile("certValid", ".cer");
+			FileSystemUtilities.writeFile(fCertX509_ocsp_valid, truststoreOCSP.getCertificate("testclient").getEncoded());
+			
+			fCertX509_ocsp_revoked =  File.createTempFile("certRevoked", ".cer");
+			FileSystemUtilities.writeFile(fCertX509_ocsp_revoked, truststoreOCSP.getCertificate("test").getEncoded());
 
 			String aliasP11 = KeystoreTest.ALIAS_PKCS11_SERVER2;
 			HashMap<String, String> keystoreP11_mapAliasPassword = new HashMap<>();
@@ -419,6 +578,154 @@ public class TestEncrypt {
 			
 			
 			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_CRL.equals(tipoTest)) {
+				// valid
+				keystore_mapAliasPassword.put("exampleclient1", "123456");
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL, false, 
+						fKeystore_crl_valid, null, "ExampleClient1", fTruststore_crl, null,
+						truststoreCRL, keystoreP12_crl_valid, keystore_mapAliasPassword, null,
+						crl, null);
+				// expired
+				keystore_mapAliasPassword.put("exampleclientscaduto", "123456");
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL, false, 
+						fKeystore_crl_expired, null, "ExampleClientScaduto", fTruststore_crl, null,
+						truststoreCRL, keystoreP12_crl_expired, keystore_mapAliasPassword, null,
+						crl, null);
+				// revoked
+				keystore_mapAliasPassword.put("exampleclientrevocato", "123456");
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL, false, 
+						fKeystore_crl_revoked, null, "ExampleClientRevocato", fTruststore_crl, null,
+						truststoreCRL, keystoreP12_crl_revoked, keystore_mapAliasPassword, null,
+						crl, null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipoTest)) {
+				// valid
+				keystore_mapAliasPassword.put("exampleclient1", "123456");
+				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_valid.getAbsolutePath()));
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM, false, 
+						fKeystore_crl_valid, null, "ExampleClient1", fTruststore_crl, jwtHeader,
+						truststoreCRL, keystoreP12_crl_valid, keystore_mapAliasPassword, null,
+						crl, null);
+				jwtHeader.setX509Url(null);
+				// expired
+				keystore_mapAliasPassword.put("exampleclientscaduto", "123456");
+				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_expired.getAbsolutePath()));
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM, false, 
+						fKeystore_crl_expired, null, "ExampleClientScaduto", fTruststore_crl, jwtHeader,
+						truststoreCRL, keystoreP12_crl_expired, keystore_mapAliasPassword, null,
+						crl, null);
+				jwtHeader.setX509Url(null);
+				// revoked
+				keystore_mapAliasPassword.put("exampleclientrevocato", "123456");
+				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_revoked.getAbsolutePath()));
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM, false, 
+						fKeystore_crl_revoked, null, "ExampleClientRevocato", fTruststore_crl, jwtHeader,
+						truststoreCRL, keystoreP12_crl_revoked, keystore_mapAliasPassword, null,
+						crl, null);
+				jwtHeader.setX509Url(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
+				// valid
+				keystore_mapAliasPassword.put("exampleclient1", "123456");
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY, false, 
+						fKeystore_crl_valid, null, "ExampleClient1", fTruststore_crl, jwtHeader,
+						truststoreCRL, keystoreP12_crl_valid, keystore_mapAliasPassword, null,
+						crl, null);
+				// expired
+				keystore_mapAliasPassword.put("exampleclientscaduto", "123456");
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY, false, 
+						fKeystore_crl_expired, null, "ExampleClientScaduto", fTruststore_crl, jwtHeader,
+						truststoreCRL, keystoreP12_crl_expired, keystore_mapAliasPassword, null,
+						crl, null);
+				// revoked
+				keystore_mapAliasPassword.put("exampleclientrevocato", "123456");
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY, false, 
+						fKeystore_crl_revoked, null, "ExampleClientRevocato", fTruststore_crl, jwtHeader,
+						truststoreCRL, keystoreP12_crl_revoked, keystore_mapAliasPassword, null,
+						crl, null);
+			}
+			
+			
+			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP.equals(tipoTest)) {
+				OpenSSLThread sslThread = TestSignature.newOpenSSLThread(com, waitStartupServer);
+				Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+				try {
+					// valid
+					keystore_mapAliasPassword.put("testclient", "123456");
+					testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP, false, 
+							fKeystore_ocsp_valid, null, "testclient", fTruststore_ocsp, null,
+							truststoreOCSP, keystoreP12_ocsp_valid, keystore_mapAliasPassword, null,
+							null, ocspValidator);
+					// revoked
+					keystore_mapAliasPassword.put("test", "123456");
+					testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP, false, 
+							fKeystore_ocsp_revoked, null, "test", fTruststore_ocsp, null,
+							truststoreOCSP, keystoreP12_ocsp_revoked, keystore_mapAliasPassword, null,
+							null, ocspValidator);
+				}
+				finally {
+					Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+					TestSignature.stopOpenSSLThread(sslThread, waitStartupServer);
+				}
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipoTest)) {
+				OpenSSLThread sslThread = TestSignature.newOpenSSLThread(com, waitStartupServer);
+				Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+				try {
+					// valid
+					keystore_mapAliasPassword.put("testclient", "123456");
+					jwtHeader.setX509Url(new URI("file://"+fCertX509_ocsp_valid.getAbsolutePath()));
+					testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM, false, 
+							fKeystore_ocsp_valid, null, "testclient", fTruststore_ocsp, jwtHeader,
+							truststoreOCSP, keystoreP12_ocsp_valid, keystore_mapAliasPassword, null,
+							null, ocspValidator);
+					jwtHeader.setX509Url(null);
+					// revoked
+					keystore_mapAliasPassword.put("test", "123456");
+					jwtHeader.setX509Url(new URI("file://"+fCertX509_ocsp_revoked.getAbsolutePath()));
+					testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM, false, 
+							fKeystore_ocsp_revoked, null, "test", fTruststore_ocsp, jwtHeader,
+							truststoreOCSP, keystoreP12_ocsp_revoked, keystore_mapAliasPassword, null,
+							null, ocspValidator);
+					jwtHeader.setX509Url(null);
+				}
+				finally {
+					Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+					TestSignature.stopOpenSSLThread(sslThread, waitStartupServer);
+				}
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
+				OpenSSLThread sslThread = TestSignature.newOpenSSLThread(com, waitStartupServer);
+				Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+				try {
+					// valid
+					keystore_mapAliasPassword.put("testclient", "123456");
+					testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY, false, 
+							fKeystore_ocsp_valid, null, "testclient", fTruststore_ocsp, jwtHeader,
+							truststoreOCSP, keystoreP12_ocsp_valid, keystore_mapAliasPassword, null,
+							null, ocspValidator);
+					// revoked
+					keystore_mapAliasPassword.put("test", "123456");
+					testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY, false, 
+							fKeystore_ocsp_revoked, null, "test", fTruststore_ocsp, jwtHeader,
+							truststoreOCSP, keystoreP12_ocsp_revoked, keystore_mapAliasPassword, null,
+							null, ocspValidator);
+				}
+				finally {
+					Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+					TestSignature.stopOpenSSLThread(sslThread, waitStartupServer);
+				}
+			}
+			
+			
+			
 
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipoTest)) {
 				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK, useP11asTrustStore, 
@@ -578,6 +885,233 @@ public class TestEncrypt {
 				jwtHeader.setX509Url(null);
 				jwtHeader.setKid(null);
 			}
+			
+			
+			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_CRL_KEYSTORE.equals(tipoTest)) {
+				
+				// valid
+				String aliasCrl = "ExampleClient1";
+				keystore_mapAliasPassword.put("exampleclient1", "123456");
+				jwtHeader.addX509cert((X509Certificate)keystoreP12_crl_valid.getCertificate(aliasCrl));
+				jwtHeader.setX509IncludeCertSha1(true);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(aliasCrl);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_CRL_KEYSTORE, false, 
+						keystoreP12_crl_valid, truststoreCRL, aliasCrl, passwordStore, jwtHeader,
+						keystore_mapAliasPassword,
+						crl, null);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(null);
+				
+				// expired
+				aliasCrl = "ExampleClientScaduto";
+				keystore_mapAliasPassword.put("exampleclientscaduto", "123456");
+				jwtHeader.addX509cert((X509Certificate)keystoreP12_crl_expired.getCertificate(aliasCrl));
+				jwtHeader.setX509IncludeCertSha1(true);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(aliasCrl);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_CRL_KEYSTORE, false, 
+						keystoreP12_crl_expired, truststoreCRL, aliasCrl, passwordStore, jwtHeader,
+						keystore_mapAliasPassword,
+						crl, null);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(null);
+				
+				// revoked
+				aliasCrl = "ExampleClientRevocato";
+				keystore_mapAliasPassword.put("exampleclientrevocato", "123456");
+				jwtHeader.addX509cert((X509Certificate)keystoreP12_crl_revoked.getCertificate(aliasCrl));
+				jwtHeader.setX509IncludeCertSha1(true);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(aliasCrl);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_CRL_KEYSTORE, false, 
+						keystoreP12_crl_revoked, truststoreCRL, aliasCrl, passwordStore, jwtHeader,
+						keystore_mapAliasPassword,
+						crl, null);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM.equals(tipoTest)) {
+				
+				// valid
+				String aliasCrl = "ExampleClient1";
+				keystore_mapAliasPassword.put("exampleclient1", "123456");
+				jwtHeader.addX509cert((X509Certificate)keystoreP12_crl_valid.getCertificate(aliasCrl));
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(true);
+				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_valid.getAbsolutePath()));
+				jwtHeader.setKid(aliasCrl);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM, false, 
+						keystoreP12_crl_valid, truststoreCRL, aliasCrl, passwordStore, jwtHeader,
+						keystore_mapAliasPassword,
+						crl, null);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setX509Url(null);
+				jwtHeader.setKid(null);
+				
+				// expired
+				aliasCrl = "ExampleClientScaduto";
+				keystore_mapAliasPassword.put("exampleclientscaduto", "123456");
+				jwtHeader.addX509cert((X509Certificate)keystoreP12_crl_expired.getCertificate(aliasCrl));
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(true);
+				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_expired.getAbsolutePath()));
+				jwtHeader.setKid(aliasCrl);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM, false, 
+						keystoreP12_crl_expired, truststoreCRL, aliasCrl, passwordStore, jwtHeader,
+						keystore_mapAliasPassword,
+						crl, null);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setX509Url(null);
+				jwtHeader.setKid(null);
+				
+				// revoked
+				aliasCrl = "ExampleClientRevocato";
+				keystore_mapAliasPassword.put("exampleclientrevocato", "123456");
+				jwtHeader.addX509cert((X509Certificate)keystoreP12_crl_revoked.getCertificate(aliasCrl));
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(true);
+				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_revoked.getAbsolutePath()));
+				jwtHeader.setKid(aliasCrl);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM, false, 
+						keystoreP12_crl_revoked, truststoreCRL, aliasCrl, passwordStore, jwtHeader,
+						keystore_mapAliasPassword,
+						crl, null);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setX509Url(null);
+				jwtHeader.setKid(null);
+			}
+			
+			
+			
+			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_OCSP_KEYSTORE.equals(tipoTest)) {
+				OpenSSLThread sslThread = TestSignature.newOpenSSLThread(com, waitStartupServer);
+				Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+				try {
+					// valid
+					String aliasOcsp = "testclient";
+					keystore_mapAliasPassword.put("testclient", "123456");
+					jwtHeader.addX509cert((X509Certificate)keystoreP12_ocsp_valid.getCertificate(aliasOcsp));
+					jwtHeader.setX509IncludeCertSha1(true);
+					jwtHeader.setX509IncludeCertSha256(false);
+					jwtHeader.setKid(aliasOcsp);
+					
+					testJsonKeystore(TipoTest.JSON_ENCRYPT_OCSP_KEYSTORE, false, 
+							keystoreP12_ocsp_valid, truststoreOCSP, aliasOcsp, passwordStore, jwtHeader,
+							keystore_mapAliasPassword,
+							null, ocspValidator);
+					
+					jwtHeader.getX509c().clear();
+					jwtHeader.setX509IncludeCertSha1(false);
+					jwtHeader.setX509IncludeCertSha256(false);
+					jwtHeader.setKid(null);
+					
+					// revoked
+					aliasOcsp = "test";
+					keystore_mapAliasPassword.put("test", "123456");
+					jwtHeader.addX509cert((X509Certificate)keystoreP12_ocsp_revoked.getCertificate(aliasOcsp));
+					jwtHeader.setX509IncludeCertSha1(true);
+					jwtHeader.setX509IncludeCertSha256(false);
+					jwtHeader.setKid(aliasOcsp);
+					
+					testJsonKeystore(TipoTest.JSON_ENCRYPT_OCSP_KEYSTORE, false, 
+							keystoreP12_ocsp_revoked, truststoreOCSP, aliasOcsp, passwordStore, jwtHeader,
+							keystore_mapAliasPassword,
+							null, ocspValidator);
+					
+					jwtHeader.getX509c().clear();
+					jwtHeader.setX509IncludeCertSha1(false);
+					jwtHeader.setX509IncludeCertSha256(false);
+					jwtHeader.setKid(null);
+				}
+				finally {
+					Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+					TestSignature.stopOpenSSLThread(sslThread, waitStartupServer);
+				}
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_OCSP_KEYSTORE_HEADER_CUSTOM.equals(tipoTest)) {
+				OpenSSLThread sslThread = TestSignature.newOpenSSLThread(com, waitStartupServer);
+				Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+				try {
+					// valid
+					String aliasOcsp = "testclient";
+					keystore_mapAliasPassword.put("testclient", "123456");
+					jwtHeader.addX509cert((X509Certificate)keystoreP12_ocsp_valid.getCertificate(aliasOcsp));
+					jwtHeader.setX509IncludeCertSha1(false);
+					jwtHeader.setX509IncludeCertSha256(true);
+					jwtHeader.setX509Url(new URI("file://"+fCertX509_ocsp_valid.getAbsolutePath()));
+					jwtHeader.setKid(aliasOcsp);
+					
+					testJsonKeystore(TipoTest.JSON_ENCRYPT_OCSP_KEYSTORE_HEADER_CUSTOM, false, 
+							keystoreP12_ocsp_valid, truststoreOCSP, aliasOcsp, passwordStore, jwtHeader,
+							keystore_mapAliasPassword,
+							null, ocspValidator);
+					
+					jwtHeader.getX509c().clear();
+					jwtHeader.setX509IncludeCertSha1(false);
+					jwtHeader.setX509IncludeCertSha256(false);
+					jwtHeader.setX509Url(null);
+					jwtHeader.setKid(null);
+					
+					// revoked
+					aliasOcsp = "test";
+					keystore_mapAliasPassword.put("test", "123456");
+					jwtHeader.addX509cert((X509Certificate)keystoreP12_ocsp_revoked.getCertificate(aliasOcsp));
+					jwtHeader.setX509IncludeCertSha1(false);
+					jwtHeader.setX509IncludeCertSha256(true);
+					jwtHeader.setX509Url(new URI("file://"+fCertX509_ocsp_revoked.getAbsolutePath()));
+					jwtHeader.setKid(aliasOcsp);
+					
+					testJsonKeystore(TipoTest.JSON_ENCRYPT_OCSP_KEYSTORE_HEADER_CUSTOM, false, 
+							keystoreP12_ocsp_revoked, truststoreOCSP, aliasOcsp, passwordStore, jwtHeader,
+							keystore_mapAliasPassword,
+							null, ocspValidator);
+					
+					jwtHeader.getX509c().clear();
+					jwtHeader.setX509IncludeCertSha1(false);
+					jwtHeader.setX509IncludeCertSha256(false);
+					jwtHeader.setX509Url(null);
+					jwtHeader.setKid(null);
+				}
+				finally {
+					Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+					TestSignature.stopOpenSSLThread(sslThread, waitStartupServer);
+				}
+			}
+			
+			
 			
 			
 		
@@ -804,130 +1338,334 @@ public class TestEncrypt {
 				if(isKeystoreJKS!=null){
 					isKeystoreJKS.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(fKeystoreJKS!=null){
 					fKeystoreJKS.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(isKeystoreP12!=null){
 					isKeystoreP12.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(fKeystoreP12!=null){
 					fKeystoreP12.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(isTruststore!=null){
 					isTruststore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(fTruststore!=null){
 					fTruststore.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			
 			try{
 				if(fKeystoreP11!=null){
 					fKeystoreP11.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(fTruststoreP11!=null){
 					fTruststoreP11.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			
 			try{
 				if(isKeystoreJCEKS!=null){
 					isKeystoreJCEKS.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(fKeystoreJCEKS!=null){
 					fKeystoreJCEKS.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			
 			try{
 				if(fCertX509!=null){
 					fCertX509.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(fCertX509_P11!=null){
 					fCertX509_P11.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			
 			try{
 				if(jwk_isKeystore!=null){
 					jwk_isKeystore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(jwk_fKeystore!=null){
 					jwk_fKeystore.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(jwk_isTruststore!=null){
 					jwk_isTruststore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(jwk_fTruststore!=null){
 					jwk_fTruststore.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			
 			try{
 				if(jwks_isKeystore!=null){
 					jwks_isKeystore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(jwks_fKeystore!=null){
 					jwks_fKeystore.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(jwks_isTruststore!=null){
 					jwks_isTruststore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(jwks_fTruststore!=null){
 					jwks_fTruststore.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			
 			try{
 				if(jwks_symmetric_isKeystore!=null){
 					jwks_symmetric_isKeystore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(jwks_symmetric_fKeystore!=null){
 					jwks_symmetric_fKeystore.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			
 			try{
 				if(jwk_symmetric_isKeystore!=null){
 					jwk_symmetric_isKeystore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(jwk_symmetric_fKeystore!=null){
 					jwk_symmetric_fKeystore.delete();
 				}
 			}catch(Exception e){
 				// delete
+			}
+			
+			
+			try{
+				if(isKeystore_crl_valid!=null){
+					isKeystore_crl_valid.close();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(fKeystore_crl_valid!=null){
+					fKeystore_crl_valid.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			
+			try{
+				if(isKeystore_crl_expired!=null){
+					isKeystore_crl_expired.close();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(fKeystore_crl_expired!=null){
+					fKeystore_crl_expired.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			
+			try{
+				if(isKeystore_crl_revoked!=null){
+					isKeystore_crl_revoked.close();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(fKeystore_crl_revoked!=null){
+					fKeystore_crl_revoked.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+
+			try{
+				if(isTruststore_crl!=null){
+					isTruststore_crl.close();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(fTruststore_crl!=null){
+					fTruststore_crl.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+
+			try{
+				if(is_crl!=null){
+					is_crl.close();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(f_crl!=null){
+					f_crl.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			
+			try{
+				if(fCertX509_crl_valid!=null){
+					fCertX509_crl_valid.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(fCertX509_crl_expired!=null){
+					fCertX509_crl_expired.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(fCertX509_crl_revoked!=null){
+					fCertX509_crl_revoked.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			
+			try{
+				if(isKeystore_ocsp_valid!=null){
+					isKeystore_ocsp_valid.close();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(fKeystore_ocsp_valid!=null){
+					fKeystore_ocsp_valid.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			
+			try{
+				if(isKeystore_ocsp_revoked!=null){
+					isKeystore_ocsp_revoked.close();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(fKeystore_ocsp_revoked!=null){
+					fKeystore_ocsp_revoked.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+
+			try{
+				if(isTruststore_ocsp!=null){
+					isTruststore_ocsp.close();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(fTruststore_ocsp!=null){
+					fTruststore_ocsp.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			
+			try{
+				if(fCertX509_ocsp_valid!=null){
+					fCertX509_ocsp_valid.delete();
+				}
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(fCertX509_ocsp_revoked!=null){
+					fCertX509_ocsp_revoked.delete();
+				}
+			}catch(Exception e){
+				// ignore
 			}
 		}
 	}
@@ -1097,6 +1835,13 @@ public class TestEncrypt {
 	
 	private static void testJsonProperties(TipoTest tipo, boolean useP11asTrustStore, File fKeystore, KeyStore keystore, String alias, File fTruststore, JwtHeaders headers,
 			KeyStore truststoreJKS,KeyStore keystoreJKS,HashMap<String, String> keystore_mapAliasPassword, JsonWebKeys jsonWebKeys) throws Exception {
+		testJsonProperties(tipo, useP11asTrustStore, fKeystore, keystore, alias, fTruststore, headers,
+				truststoreJKS,keystoreJKS, keystore_mapAliasPassword, jsonWebKeys,
+				null, null);
+	}
+	private static void testJsonProperties(TipoTest tipo, boolean useP11asTrustStore, File fKeystore, KeyStore keystore, String alias, File fTruststore, JwtHeaders headers,
+			KeyStore truststoreJKS,KeyStore keystoreJKS,HashMap<String, String> keystore_mapAliasPassword, JsonWebKeys jsonWebKeys,
+			CRLCertstore crl, IOCSPValidator ocspValidator) throws Exception {
 		
 		System.out.println("\n\n ============= "+getLabelTest(tipo,useP11asTrustStore)+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt \n");
@@ -1118,7 +1863,13 @@ public class TestEncrypt {
 				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12.equals(tipo) || 
 				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11.equals(tipo) || 
-				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo)) {
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_CRL.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
 			
 			encryptProps.put("rs.security.keystore.type", "jks");
 			
@@ -1148,6 +1899,16 @@ public class TestEncrypt {
 				 * */
 				encryptProps.put("rs.security.encryption.key.algorithm", "RSA1_5");
 
+			}
+			
+			if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL.equals(tipo) || 
+					TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipo) ||
+					TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipo) ||
+					TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP.equals(tipo) || 
+					TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo) ||
+					TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+				encryptProps.remove("rs.security.keystore.alias");
+				encryptProps.put("rs.security.keystore.alias", alias);
 			}
 			
 			if(headers!=null) {
@@ -1241,7 +2002,13 @@ public class TestEncrypt {
 				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12.equals(tipo) || 
 				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11.equals(tipo) || 
-				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo)) {
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_CRL.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
 			
 			if(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS.equals(tipo) || 
 					TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo)) {
@@ -1274,6 +2041,20 @@ public class TestEncrypt {
 						at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:899)
 				 * */
 				decryptProps.put("rs.security.encryption.key.algorithm", "RSA1_5");
+			}
+			else if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL.equals(tipo) || 
+					TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipo) ||
+					TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipo) ||
+					TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP.equals(tipo) || 
+					TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo) ||
+					TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+				decryptProps.put("rs.security.keystore.type", "pkcs12");
+				
+				decryptProps.remove("rs.security.keystore.alias");
+				decryptProps.put("rs.security.keystore.alias", alias);
+				
+				decryptProps.remove("rs.security.key.password");
+				decryptProps.put("rs.security.key.password", "123456");
 			}
 		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) || 
@@ -1356,7 +2137,36 @@ public class TestEncrypt {
 		// Verifica
 		JWTOptions optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
 		JsonDecrypt jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
-		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Certificato di firma scaduto: NotAfter:"
+						:
+						"Certificato di firma non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date:";
+				if("test".equals(alias)){
+					atteso = "Certificato di firma non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		// Verifica basata sull'header
 		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
@@ -1372,7 +2182,43 @@ public class TestEncrypt {
 				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
 				suffix = "-jksHDR";
 			}
-			decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+			if(crl!=null) {
+				jsonDecrypt.setCrlX509(crl.getCertStore());
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if(ocspValidator!=null) {
+				jsonDecrypt.setOcspValidatorX509(ocspValidator);
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+				try {
+					decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+					throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+				}catch(Exception e) {
+					String headerName = "x5c";
+					if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo)) {
+						headerName = "x5u";
+					}
+					else if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+						headerName = "kid";
+					}
+					String atteso = "ExampleClientScaduto".equals(alias) ? 
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' scaduto: NotAfter: "
+							:
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date";
+					if("test".equals(alias)){
+						atteso = "Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate revoked in date";
+					}
+					if(e.getMessage().contains(atteso)) {
+						System.out.println("Eccezione attesa: "+e.getMessage());
+					}else {
+						throw e;
+					}
+				}
+			}
+			else {
+				decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+			}
 		}
 		
 		System.out.println("\n\n");
@@ -1401,7 +2247,36 @@ public class TestEncrypt {
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
 		jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
-		decrypt(tipo, "encPublic-decryptPrivate-deflateProperties", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate-deflateProperties", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Certificato di firma scaduto: NotAfter:"
+						:
+						"Certificato di firma non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date:";
+				if("test".equals(alias)){
+					atteso = "Certificato di firma non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate-deflateProperties", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		// Verifica basata sull'header
 		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
@@ -1417,7 +2292,43 @@ public class TestEncrypt {
 				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
 				suffix = "-jksHDR";
 			}
-			decrypt(tipo, "encPublic-decryptPrivate-deflateProperties"+suffix, false, jsonDecrypt, attachEncrypt, jsonInput, options);
+			if(crl!=null) {
+				jsonDecrypt.setCrlX509(crl.getCertStore());
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if(ocspValidator!=null) {
+				jsonDecrypt.setOcspValidatorX509(ocspValidator);
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+				try {
+					decrypt(tipo, "encPublic-decryptPrivate-deflateProperties"+suffix, false, jsonDecrypt, attachEncrypt, jsonInput, options);
+					throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+				}catch(Exception e) {
+					String headerName = "x5c";
+					if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo)) {
+						headerName = "x5u";
+					}
+					else if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+						headerName = "kid";
+					}
+					String atteso = "ExampleClientScaduto".equals(alias) ? 
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' scaduto: NotAfter: "
+							:
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date";
+					if("test".equals(alias)){
+						atteso = "Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate revoked in date";
+					}
+					if(e.getMessage().contains(atteso)) {
+						System.out.println("Eccezione attesa: "+e.getMessage());
+					}else {
+						throw e;
+					}
+				}
+			}
+			else {
+				decrypt(tipo, "encPublic-decryptPrivate-deflateProperties"+suffix, false, jsonDecrypt, attachEncrypt, jsonInput, options);
+			}
 		}	
 		
 		encryptProps.remove("rs.security.encryption.zip.algorithm");
@@ -1447,7 +2358,36 @@ public class TestEncrypt {
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
 		jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Certificato di firma scaduto: NotAfter:"
+						:
+						"Certificato di firma non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date:";
+				if("test".equals(alias)){
+					atteso = "Certificato di firma non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		// Verifica basata sull'header
 		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
@@ -1463,7 +2403,43 @@ public class TestEncrypt {
 				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
 				suffix = "-jksHDR";
 			}
-			decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+			if(crl!=null) {
+				jsonDecrypt.setCrlX509(crl.getCertStore());
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if(ocspValidator!=null) {
+				jsonDecrypt.setOcspValidatorX509(ocspValidator);
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}	
+			if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+				try {
+					decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+					throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+				}catch(Exception e) {
+					String headerName = "x5c";
+					if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo)) {
+						headerName = "x5u";
+					}
+					else if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+						headerName = "kid";
+					}
+					String atteso = "ExampleClientScaduto".equals(alias) ? 
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' scaduto: NotAfter: "
+							:
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date";
+					if("test".equals(alias)){
+						atteso = "Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate revoked in date";
+					}
+					if(e.getMessage().contains(atteso)) {
+						System.out.println("Eccezione attesa: "+e.getMessage());
+					}else {
+						throw e;
+					}
+				}
+			}
+			else {
+				decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+			}
 		}
 		
 		System.out.println("\n\n");
@@ -1487,7 +2463,36 @@ public class TestEncrypt {
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
 		jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
-		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Certificato di firma scaduto: NotAfter:"
+						:
+						"Certificato di firma non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date:";
+				if("test".equals(alias)){
+					atteso = "Certificato di firma non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		// Verifica basata sull'header
 		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
@@ -1503,7 +2508,43 @@ public class TestEncrypt {
 				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
 				suffix = "-jksHDR";
 			}
-			decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+			if(crl!=null) {
+				jsonDecrypt.setCrlX509(crl.getCertStore());
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if(ocspValidator!=null) {
+				jsonDecrypt.setOcspValidatorX509(ocspValidator);
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+				try {
+					decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+					throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+				}catch(Exception e) {
+					String headerName = "x5c";
+					if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo)) {
+						headerName = "x5u";
+					}
+					else if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+						headerName = "kid";
+					}
+					String atteso = "ExampleClientScaduto".equals(alias) ? 
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' scaduto: NotAfter: "
+							:
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date";
+					if("test".equals(alias)){
+						atteso = "Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate revoked in date";
+					}
+					if(e.getMessage().contains(atteso)) {
+						System.out.println("Eccezione attesa: "+e.getMessage());
+					}else {
+						throw e;
+					}
+				}
+			}
+			else {
+				decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+			}
 		}
 		
 		System.out.println("\n\n");
@@ -1532,7 +2573,36 @@ public class TestEncrypt {
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
 		jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Certificato di firma scaduto: NotAfter:"
+						:
+						"Certificato di firma non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date:";
+				if("test".equals(alias)){
+					atteso = "Certificato di firma non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		// Verifica basata sull'header
 		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
@@ -1548,7 +2618,43 @@ public class TestEncrypt {
 				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
 				suffix = "-jksHDR";
 			}
-			decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+			if(crl!=null) {
+				jsonDecrypt.setCrlX509(crl.getCertStore());
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if(ocspValidator!=null) {
+				jsonDecrypt.setOcspValidatorX509(ocspValidator);
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+				try {
+					decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+					throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+				}catch(Exception e) {
+					String headerName = "x5c";
+					if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo)) {
+						headerName = "x5u";
+					}
+					else if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+						headerName = "kid";
+					}
+					String atteso = "ExampleClientScaduto".equals(alias) ? 
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' scaduto: NotAfter: "
+							:
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date";
+					if("test".equals(alias)){
+						atteso = "Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate revoked in date";
+					}
+					if(e.getMessage().contains(atteso)) {
+						System.out.println("Eccezione attesa: "+e.getMessage());
+					}else {
+						throw e;
+					}
+				}
+			}
+			else {
+				decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+			}
 		}
 		
 		encryptProps.remove("rs.security.encryption.zip.algorithm");
@@ -1578,7 +2684,36 @@ public class TestEncrypt {
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
 		jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+		}
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Certificato di firma scaduto: NotAfter:"
+						:
+						"Certificato di firma non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date:";
+				if("test".equals(alias)){
+					atteso = "Certificato di firma non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		// Verifica basata sull'header
 		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
@@ -1594,7 +2729,43 @@ public class TestEncrypt {
 				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
 				suffix = "-jksHDR";
 			}
-			decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+			if(crl!=null) {
+				jsonDecrypt.setCrlX509(crl.getCertStore());
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if(ocspValidator!=null) {
+				jsonDecrypt.setOcspValidatorX509(ocspValidator);
+				jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststoreJKS);
+			}
+			if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+				try {
+					decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+					throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+				}catch(Exception e) {
+					String headerName = "x5c";
+					if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo)) {
+						headerName = "x5u";
+					}
+					else if(TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY.equals(tipo) || TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+						headerName = "kid";
+					}
+					String atteso = "ExampleClientScaduto".equals(alias) ? 
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' scaduto: NotAfter: "
+							:
+							"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date";
+					if("test".equals(alias)){
+						atteso = "Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate revoked in date";
+					}
+					if(e.getMessage().contains(atteso)) {
+						System.out.println("Eccezione attesa: "+e.getMessage());
+					}else {
+						throw e;
+					}
+				}
+			}
+			else {
+				decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+			}
 		}
 
 		System.out.println("\n\n");
@@ -1604,6 +2775,13 @@ public class TestEncrypt {
 	
 	private static void testJsonKeystore(TipoTest tipo, boolean useP11asTrustStore, KeyStore keystore, KeyStore truststore, String alias, String passwordChiavePrivata, JwtHeaders headers,
 			HashMap<String, String> keystore_mapAliasPassword) throws Exception {
+		testJsonKeystore(tipo, useP11asTrustStore, keystore, truststore, alias, passwordChiavePrivata, headers,
+				keystore_mapAliasPassword,
+				null, null);
+	}
+	private static void testJsonKeystore(TipoTest tipo, boolean useP11asTrustStore, KeyStore keystore, KeyStore truststore, String alias, String passwordChiavePrivata, JwtHeaders headers,
+			HashMap<String, String> keystore_mapAliasPassword,
+			CRLCertstore crl, IOCSPValidator ocspValidator) throws Exception {
 		
 		System.out.println("\n\n ============= "+getLabelTest(tipo,useP11asTrustStore)+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt \n");
@@ -1658,13 +2836,75 @@ public class TestEncrypt {
 		// Verifica
 		JWTOptions optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
 		JsonDecrypt jsonDecrypt = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
-		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Certificato di firma scaduto: NotAfter:"
+						:
+						"Certificato di firma non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date:";
+				if("test".equals(alias)){
+					atteso = "Certificato di firma non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		// Verifica basata sull'header
 		String suffix = "";
 		jsonDecrypt = new JsonDecrypt(truststore,keystore,keystore_mapAliasPassword,optionsDecrypt);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
 		suffix = "-jksHDR";
-		decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String headerName = "kid";
+				if(TipoTest.JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM.equals(tipo) || TipoTest.JSON_ENCRYPT_OCSP_KEYSTORE_HEADER_CUSTOM.equals(tipo)) {
+					headerName = "x5u";
+				}
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' scaduto: NotAfter: "
+						:
+						"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date";
+				if("test".equals(alias)){
+					atteso = "Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		System.out.println("\n\n");
 		
@@ -1691,12 +2931,74 @@ public class TestEncrypt {
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
 		jsonDecrypt = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Certificato di firma scaduto: NotAfter:"
+						:
+						"Certificato di firma non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date:";
+				if("test".equals(alias)){
+					atteso = "Certificato di firma non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		// Verifica basata sull'header
 		jsonDecrypt = new JsonDecrypt(truststore,keystore,keystore_mapAliasPassword,optionsDecrypt);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
 		suffix = "-jksHDR";
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String headerName = "kid";
+				if(TipoTest.JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM.equals(tipo) || TipoTest.JSON_ENCRYPT_OCSP_KEYSTORE_HEADER_CUSTOM.equals(tipo)) {
+					headerName = "x5u";
+				}
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' scaduto: NotAfter: "
+						:
+						"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date";
+				if("test".equals(alias)){
+					atteso = "Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		System.out.println("\n\n");
 		
@@ -1719,12 +3021,74 @@ public class TestEncrypt {
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
 		jsonDecrypt = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
-		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Certificato di firma scaduto: NotAfter:"
+						:
+						"Certificato di firma non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date:";
+				if("test".equals(alias)){
+					atteso = "Certificato di firma non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		// Verifica basata sull'header
 		jsonDecrypt = new JsonDecrypt(truststore,keystore,keystore_mapAliasPassword,optionsDecrypt);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
 		suffix = "-jksHDR";
-		decrypt(tipo, "encPublic-decryptPrivate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String headerName = "kid";
+				if(TipoTest.JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM.equals(tipo) || TipoTest.JSON_ENCRYPT_OCSP_KEYSTORE_HEADER_CUSTOM.equals(tipo)) {
+					headerName = "x5u";
+				}
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' scaduto: NotAfter: "
+						:
+						"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date";
+				if("test".equals(alias)){
+					atteso = "Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		System.out.println("\n\n");
 		
@@ -1751,12 +3115,74 @@ public class TestEncrypt {
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
 		jsonDecrypt = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Certificato di firma scaduto: NotAfter:"
+						:
+						"Certificato di firma non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date:";
+				if("test".equals(alias)){
+					atteso = "Certificato di firma non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		// Verifica basata sull'header
 		jsonDecrypt = new JsonDecrypt(truststore,keystore,keystore_mapAliasPassword,optionsDecrypt);
+		if(crl!=null) {
+			jsonDecrypt.setCrlX509(crl.getCertStore());
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
+		if(ocspValidator!=null) {
+			jsonDecrypt.setOcspValidatorX509(ocspValidator);
+			jsonDecrypt.setTrustStoreVerificaCertificatiX509(truststore);
+		}
 		suffix = "-jksHDR";
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if("ExampleClientScaduto".equals(alias) || "ExampleClientRevocato".equals(alias) || "test".equals(alias)) {
+			try {
+				decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+				throw new Exception("Attesa eccezione certificato non valido (alias: "+alias+")");
+			}catch(Exception e) {
+				String headerName = "kid";
+				if(TipoTest.JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM.equals(tipo) || TipoTest.JSON_ENCRYPT_OCSP_KEYSTORE_HEADER_CUSTOM.equals(tipo)) {
+					headerName = "x5u";
+				}
+				String atteso = "ExampleClientScaduto".equals(alias) ? 
+						"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' scaduto: NotAfter: "
+						:
+						"Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date";
+				if("test".equals(alias)){
+					atteso = "Process '"+headerName+"' error: Certificato presente nell'header '"+headerName+"' non valido: Certificate revoked in date";
+				}
+				if(e.getMessage().contains(atteso)) {
+					System.out.println("Eccezione attesa: "+e.getMessage());
+				}else {
+					throw e;
+				}
+			}
+		}
+		else {
+			decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 
 		System.out.println("\n\n");
 		
@@ -2364,6 +3790,8 @@ public class TestEncrypt {
 		JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET,
 		JSON_ENCRYPT_PROPERTIES_JWK,
 		JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC,
+		JSON_ENCRYPT_PROPERTIES_CRL,
+		JSON_ENCRYPT_PROPERTIES_OCSP,
 		
 		JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM,
 		JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM,
@@ -2372,11 +3800,15 @@ public class TestEncrypt {
 		JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM,
 		JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM,
 		JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM,
+		JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM,
+		JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM,
 		
 		JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY,
 		JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM_KID_ONLY,
 		JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM_KID_ONLY,
 		JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY,
+		JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY,
+		JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY,
 		
 		JSON_ENCRYPT_JKS_KEYSTORE,
 		JSON_ENCRYPT_JKS_KEYSTORE_HEADER_CUSTOM,
@@ -2384,6 +3816,10 @@ public class TestEncrypt {
 		JSON_ENCRYPT_PKCS12_KEYSTORE_HEADER_CUSTOM,
 		JSON_ENCRYPT_PKCS11_KEYSTORE,
 		JSON_ENCRYPT_PKCS11_KEYSTORE_HEADER_CUSTOM,
+		JSON_ENCRYPT_CRL_KEYSTORE,
+		JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM,
+		JSON_ENCRYPT_OCSP_KEYSTORE,
+		JSON_ENCRYPT_OCSP_KEYSTORE_HEADER_CUSTOM,
 		
 		JSON_ENCRYPT_JKS_KEYSTORE_JCE,
 		JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM,

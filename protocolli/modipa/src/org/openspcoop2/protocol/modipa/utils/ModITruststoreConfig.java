@@ -47,6 +47,7 @@ public class ModITruststoreConfig {
 	private String securityMessageTruststorePath = null;
 	private String securityMessageTruststorePassword = null;
 	private String securityMessageTruststoreCRLs = null;
+	private String securityMessageTruststoreOCSPPolicy = null;
 	
 	public ModITruststoreConfig(boolean fruizione, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps, boolean ssl) throws ProtocolException {
 		
@@ -90,6 +91,9 @@ public class ModITruststoreConfig {
 
 				this.securityMessageTruststoreCRLs = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, 
 						ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS);
+				
+				this.securityMessageTruststoreOCSPPolicy = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, 
+						ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY);
 			}
 			else {
 				
@@ -119,6 +123,8 @@ public class ModITruststoreConfig {
 					}
 				
 					this.securityMessageTruststoreCRLs = ssl ? modIproperties.getSicurezzaMessaggio_ssl_trustStore_crls() : modIproperties.getSicurezzaMessaggio_certificati_trustStore_crls();
+				
+					this.securityMessageTruststoreOCSPPolicy = ssl ? modIproperties.getSicurezzaMessaggio_ssl_trustStore_ocsp_policy() : modIproperties.getSicurezzaMessaggio_certificati_trustStore_ocsp_policy();
 				}
 				
 			}
@@ -154,6 +160,10 @@ public class ModITruststoreConfig {
 
 	public String getSecurityMessageTruststoreCRLs() {
 		return this.securityMessageTruststoreCRLs;
+	}
+	
+	public String getSecurityMessageTruststoreOCSPPolicy() {
+		return this.securityMessageTruststoreOCSPPolicy;
 	}
 	
 }

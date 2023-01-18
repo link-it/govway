@@ -229,7 +229,7 @@ public class OCSPTest {
 		}
 	}
 	
-	private static String normalizeOpensslCommand(String opensslCmd) {
+	public static String normalizeOpensslCommand(String opensslCmd) {
 		String com = "/usr/bin/openssl";
 		if(opensslCmd!=null && StringUtils.isNotEmpty(opensslCmd) && !"${opensslCmd}".equals(opensslCmd)) {
 			String tmp = opensslCmd;
@@ -239,7 +239,7 @@ public class OCSPTest {
 		}
 		return com;
 	}
-	private static int normalizeWaitStartupServer(String waitStartupServer) {
+	public static int normalizeWaitStartupServer(String waitStartupServer) {
 		int WAIT_STARTUP_SERVER = 3000;
 		if(waitStartupServer!=null && StringUtils.isNotEmpty(waitStartupServer) && !"${waitStartupServerMs}".equals(waitStartupServer)) {
 			String tmp = waitStartupServer;

@@ -97,11 +97,13 @@ import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplica
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 
@@ -5635,6 +5637,19 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 							: 
 							ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD_LABEL);
 		configuration.addConsoleItem(passwordItem);
+				
+		StringConsoleItem ocspPolicyItem =  (StringConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.HIDDEN,
+						ssl ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_ID
+								:
+							  ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_ID, 
+						ssl ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_LABEL
+								:
+							  ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_LABEL		);
+		ocspPolicyItem.setRequired(false);
+		configuration.addConsoleItem(ocspPolicyItem);
 		
 		StringConsoleItem crlsItem =  (StringConsoleItem)
 				ProtocolPropertiesFactory.newConsoleItem(
@@ -5753,6 +5768,39 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			passwordItem.setRequired(requiredValue);
 		else 
 			passwordItem.setRequired(false);
+		
+		AbstractConsoleItem<?> ocspItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), 
+						ssl ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_ID
+							:
+							ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_ID	);
+		SortedMap<String> _ocsp = OCSPManager.getInstance().getOCSPConfigTypesLabels();
+		boolean ocsp = (ridefinisci && _ocsp!=null && !_ocsp.isEmpty());
+		ocspItem.setType(ocsp ? ConsoleItemType.SELECT : ConsoleItemType.HIDDEN);
+		if(ocsp) {
+			List<String> _ocsp_types = new ArrayList<>();
+			List<String> _ocsp_labels = new ArrayList<>();
+			if(_ocsp!=null && !_ocsp.isEmpty()) {
+				for (String type : _ocsp.keys()) {
+					_ocsp_types.add(type);
+					_ocsp_labels.add(_ocsp.get(type));
+				}
+			}
+			List<String> ocsp_types = new ArrayList<>();
+			List<String> ocsp_labels = new ArrayList<>();
+			boolean ocspEnabled = _ocsp_types!=null && !_ocsp_types.isEmpty();
+			if(ocspEnabled) {
+				ocsp_types.add("");
+				ocsp_types.addAll(_ocsp_types);
+				ocsp_labels.add("-");
+				ocsp_labels.addAll(_ocsp_labels);
+			}
+			for (int i = 0; i < ocsp_types.size(); i++) {
+				String type = ocsp_types.get(i);
+				String label = ocsp_labels.get(i);
+				((StringConsoleItem)ocspItem).addLabelValue(label, type);
+			}
+		}
 		
 		AbstractConsoleItem<?> crlsItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), 

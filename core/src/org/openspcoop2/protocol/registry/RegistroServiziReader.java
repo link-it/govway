@@ -3500,7 +3500,7 @@ public class RegistroServiziReader {
 			if(!httpsProp.isTrustAllCerts() && httpsProp.getTrustStoreLocation()!=null) {
 				try {
 					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(httpsProp.getTrustStoreLocation(), classpathSupported, httpsProp.getTrustStoreType(), 
-							httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(),
+							httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(), httpsProp.getTrustStoreOCSPPolicy(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
 							separator, newLine,
@@ -3508,7 +3508,7 @@ public class RegistroServiziReader {
 					
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(),
-								httpsProp.getTrustStoreCRLsLocation(), 
+								httpsProp.getTrustStoreCRLsLocation(), httpsProp.getTrustStoreOCSPPolicy(),
 								separator, newLine);
 					}
 				}catch(Throwable t) {
@@ -3677,7 +3677,7 @@ public class RegistroServiziReader {
 			if(truststoreParams!=null) {
 				try {
 					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
-							truststoreParams.getPassword(), truststoreParams.getCrls(),
+							truststoreParams.getPassword(), truststoreParams.getCrls(), truststoreParams.getOcspPolicy(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
 							separator, newLine,
@@ -3696,7 +3696,7 @@ public class RegistroServiziReader {
 			if(truststoreSslParams!=null) {
 				try {
 					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreSslParams.getPath(), classpathSupported, truststoreSslParams.getType(), 
-							truststoreSslParams.getPassword(), truststoreSslParams.getCrls(),
+							truststoreSslParams.getPassword(), truststoreSslParams.getCrls(), truststoreParams.getOcspPolicy(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
 							separator, newLine,

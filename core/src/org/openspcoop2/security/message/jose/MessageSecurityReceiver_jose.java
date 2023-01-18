@@ -40,6 +40,8 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
 import org.openspcoop2.security.message.AbstractRESTMessageSecurityReceiver;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -47,6 +49,7 @@ import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
@@ -54,6 +57,7 @@ import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
 import org.openspcoop2.utils.security.JsonVerifySignature;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 
 
 
@@ -228,7 +232,37 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				if(signatureCRL==null || "".equals(signatureCRL)) {
 					signatureCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_CRL);	
 				}
-				if(signatureCRL!=null && !"".equals(signatureCRL)) {
+				String signatureOCSP = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_OCSP);
+				if(signatureOCSP==null || "".equals(signatureOCSP)) {
+					signatureOCSP = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_OCSP);	
+				}
+				
+				boolean crlByOcsp = false;
+				if(this.jsonVerifierSignature.getTrustStoreCertificatiX509()!=null && signatureOCSP!=null && !"".equals(signatureOCSP)) {
+					LoggerBuffer lb = new LoggerBuffer();
+					lb.setLogDebug(messageSecurityContext.getLog());
+					lb.setLogError(messageSecurityContext.getLog());
+					GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(requestInfo);
+					IOCSPValidator ocspValidator = null;
+					try {
+						ocspValidator = new GestoreOCSPValidator(requestInfo, lb, 
+								this.jsonVerifierSignature.getTrustStoreCertificatiX509(),
+								signatureCRL, 
+								signatureOCSP, 
+								ocspResourceReader);
+					}catch(Exception e){
+						throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+"; ocsp initialization (policy:'"+signatureOCSP+"') failed: "+e.getMessage(),e);
+					}
+					if(ocspValidator!=null) {
+						this.jsonVerifierSignature.setOcspValidatorX509(ocspValidator);
+						GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
+						if(gOcspValidator.getOcspConfig()!=null) {
+							crlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+						}
+					}
+				}
+				
+				if(signatureCRL!=null && !"".equals(signatureCRL) && !crlByOcsp) {
 					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, signatureCRL);
 					if(crlCertstore==null) {
 						throw new Exception("Process CRL '"+signatureCRL+"' failed");
@@ -237,7 +271,34 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				
 				String httpsCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL);
-				if(httpsCRL!=null && !"".equals(httpsCRL)) {
+				String httpsOCSP = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_OCSP);
+				
+				boolean httpsCrlByOcsp = false;
+				if(this.jsonVerifierSignature.getTrustStoreHttps()!=null && httpsOCSP!=null && !"".equals(httpsOCSP)) {
+					LoggerBuffer lb = new LoggerBuffer();
+					lb.setLogDebug(messageSecurityContext.getLog());
+					lb.setLogError(messageSecurityContext.getLog());
+					GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(requestInfo);
+					IOCSPValidator ocspValidator = null;
+					try {
+						ocspValidator = new GestoreOCSPValidator(requestInfo, lb, 
+								this.jsonVerifierSignature.getTrustStoreHttps(),
+								httpsCRL, 
+								httpsOCSP, 
+								ocspResourceReader);
+					}catch(Exception e){
+						throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+"; ocsp initialization for https (policy:'"+signatureOCSP+"') failed: "+e.getMessage(),e);
+					}
+					if(ocspValidator!=null) {
+						this.jsonVerifierSignature.setOcspValidatorHttps(ocspValidator);
+						GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
+						if(gOcspValidator.getOcspConfig()!=null) {
+							httpsCrlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+						}
+					}
+				}
+				
+				if(httpsCRL!=null && !"".equals(httpsCRL) && !httpsCrlByOcsp) {
 					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, httpsCRL);
 					if(crlCertstore==null) {
 						throw new Exception("Process CRL '"+httpsCRL+"' failed");
@@ -380,7 +441,34 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				
 				String encryptionCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_CRL);
-				if(encryptionCRL!=null && !"".equals(encryptionCRL)) {
+				String encryptionOCSP = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_OCSP);
+				
+				boolean crlByOcsp = false;
+				if(this.jsonDecrypt.getTrustStoreVerificaCertificatiX509()!=null && encryptionOCSP!=null && !"".equals(encryptionOCSP)) {
+					LoggerBuffer lb = new LoggerBuffer();
+					lb.setLogDebug(messageSecurityContext.getLog());
+					lb.setLogError(messageSecurityContext.getLog());
+					GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(requestInfo);
+					IOCSPValidator ocspValidator = null;
+					try {
+						ocspValidator = new GestoreOCSPValidator(requestInfo, lb, 
+								this.jsonDecrypt.getTrustStoreVerificaCertificatiX509(),
+								encryptionCRL, 
+								encryptionOCSP, 
+								ocspResourceReader);
+					}catch(Exception e){
+						throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+"; ocsp initialization (policy:'"+encryptionOCSP+"') failed: "+e.getMessage(),e);
+					}
+					if(ocspValidator!=null) {
+						this.jsonDecrypt.setOcspValidatorX509(ocspValidator);
+						GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
+						if(gOcspValidator.getOcspConfig()!=null) {
+							crlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+						}
+					}
+				}
+				
+				if(encryptionCRL!=null && !"".equals(encryptionCRL) && !crlByOcsp) {
 					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, encryptionCRL);
 					if(crlCertstore==null) {
 						throw new Exception("Process CRL '"+encryptionCRL+"' failed");
@@ -389,7 +477,34 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				
 				String httpsCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL);
-				if(httpsCRL!=null && !"".equals(httpsCRL)) {
+				String httpsOCSP = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_OCSP);
+				
+				boolean httpsCrlByOcsp = false;
+				if(this.jsonDecrypt.getTrustStoreHttps()!=null && httpsOCSP!=null && !"".equals(httpsOCSP)) {
+					LoggerBuffer lb = new LoggerBuffer();
+					lb.setLogDebug(messageSecurityContext.getLog());
+					lb.setLogError(messageSecurityContext.getLog());
+					GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(requestInfo);
+					IOCSPValidator ocspValidator = null;
+					try {
+						ocspValidator = new GestoreOCSPValidator(requestInfo, lb, 
+								this.jsonDecrypt.getTrustStoreHttps(),
+								httpsCRL, 
+								httpsOCSP, 
+								ocspResourceReader);
+					}catch(Exception e){
+						throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+"; ocsp initialization for https (policy:'"+httpsOCSP+"') failed: "+e.getMessage(),e);
+					}
+					if(ocspValidator!=null) {
+						this.jsonDecrypt.setOcspValidatorHttps(ocspValidator);
+						GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
+						if(gOcspValidator.getOcspConfig()!=null) {
+							httpsCrlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+						}
+					}
+				}
+				
+				if(httpsCRL!=null && !"".equals(httpsCRL) && !httpsCrlByOcsp) {
 					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, httpsCRL);
 					if(crlCertstore==null) {
 						throw new Exception("Process CRL '"+httpsCRL+"' failed");

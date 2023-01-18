@@ -5195,7 +5195,7 @@ public class ConfigurazionePdDReader {
 			if(!httpsProp.isTrustAllCerts() && httpsProp.getTrustStoreLocation()!=null) {
 				try {
 					check = CertificateUtils.checkTrustStore(httpsProp.getTrustStoreLocation(), classpathSupported, httpsProp.getTrustStoreType(), 
-							httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(),
+							httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(), httpsProp.getTrustStoreOCSPPolicy(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
 							separator, newLine,
@@ -5203,7 +5203,7 @@ public class ConfigurazionePdDReader {
 					
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 						storeDetails = CertificateUtils.toStringTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(),
-								httpsProp.getTrustStoreCRLsLocation(), 
+								httpsProp.getTrustStoreCRLsLocation(), httpsProp.getTrustStoreOCSPPolicy(),
 								separator, newLine);
 					}
 				}catch(Throwable t) {
@@ -5270,7 +5270,7 @@ public class ConfigurazionePdDReader {
 			if(truststoreParams!=null) {
 				try {
 					check = CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
-							truststoreParams.getPassword(), truststoreParams.getCrls(),
+							truststoreParams.getPassword(), truststoreParams.getCrls(), truststoreParams.getOcspPolicy(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
 							separator, newLine,
@@ -5449,7 +5449,7 @@ public class ConfigurazionePdDReader {
 					}
 					
 					check = CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
-							truststoreParams.getPassword(), truststoreParams.getCrls(),
+							truststoreParams.getPassword(), truststoreParams.getCrls(), truststoreParams.getOcspPolicy(),
 							alias,
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
@@ -5568,7 +5568,7 @@ public class ConfigurazionePdDReader {
 					}
 					
 					check = CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
-							truststoreParams.getPassword(), truststoreParams.getCrls(),
+							truststoreParams.getPassword(), truststoreParams.getCrls(), truststoreParams.getOcspPolicy(),
 							truststoreParams.getKeyAlias(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
@@ -5992,7 +5992,7 @@ public class ConfigurazionePdDReader {
 						if(!httpsProp.isTrustAllCerts() && httpsProp.getTrustStoreLocation()!=null) {
 							try {
 								check = CertificateUtils.checkTrustStore(httpsProp.getTrustStoreLocation(), classpathSupported, httpsProp.getTrustStoreType(), 
-										httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(),
+										httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(), httpsProp.getTrustStoreOCSPPolicy(),
 										sogliaWarningGiorni, 
 										false, //addCertificateDetails, 
 										separator, newLine,
@@ -6000,7 +6000,7 @@ public class ConfigurazionePdDReader {
 								
 								if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 									storeDetails = CertificateUtils.toStringTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(),
-											httpsProp.getTrustStoreCRLsLocation(), 
+											httpsProp.getTrustStoreCRLsLocation(), httpsProp.getTrustStoreOCSPPolicy(),
 											separator, newLine);
 								}
 							}catch(Throwable t) {

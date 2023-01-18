@@ -622,6 +622,15 @@ public class Utilities {
 	public static void verifyKo(HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, 
 			boolean rest, String soapPrefixError,
 			Logger log) {
+		verifyKo(response, error, code, errorMsg, checkErrorTypeGovWay, 
+				rest, soapPrefixError,
+				error,
+				log);
+	}
+	public static void verifyKo(HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, 
+			boolean rest, String soapPrefixError,
+			String errorHTTP,
+			Logger log) {
 		
 		if(rest) {
 		
@@ -690,7 +699,7 @@ public class Utilities {
 						code, error, errorMsg, true, 
 						log);
 				
-				assertEquals(error, response.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
+				assertEquals(errorHTTP, response.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 				
 				if(code==504) {
 					assertNotNull(response.getHeaderFirstValue(HttpConstants.RETRY_AFTER));

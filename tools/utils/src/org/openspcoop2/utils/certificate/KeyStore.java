@@ -263,6 +263,33 @@ public class KeyStore {
 		}	
 	}
 	
+	public Certificate getCertificateByPublicKey(PublicKey publicKey) throws UtilsException{
+		try{
+			if(publicKey==null) {
+				return null;
+			}
+			Enumeration<String> aliases = this.keystore.aliases();
+			while (aliases.hasMoreElements()) {
+				String alias = (String) aliases.nextElement();
+				Certificate cer = this.keystore.getCertificate(alias);
+				PublicKey pk = cer.getPublicKey();
+				if(pk!=null && pk.equals(publicKey)) {
+					return cer;
+				}
+			}
+			return null;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}	
+	}
+	public boolean existsCertificateByPublicKey(PublicKey publicKey) throws UtilsException{
+		try{
+			return this.getCertificateByPublicKey(publicKey)!=null;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}	
+	}
+	
 	public String getDigestMD5UrlEncoded(String alias) throws UtilsException{
 		return this.getDigestUrlEncoded(alias, MessageDigestUtils.ALGO_MD5);
 	}

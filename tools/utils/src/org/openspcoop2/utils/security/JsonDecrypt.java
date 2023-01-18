@@ -54,6 +54,7 @@ import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 
 /**	
  * Encrypt
@@ -76,17 +77,35 @@ public class JsonDecrypt {
 	private KeyStore keyStore; // dove prendere la chiave privata
 	private HashMap<String, String> keystore_mapAliasPassword;
 	private KeyStore trustStoreVerificaCertificatiX509; // per verificare i certificati presenti nell'header 
-	
+	public void setTrustStoreVerificaCertificatiX509(KeyStore trustStoreVerificaCertificatiX509) {
+		this.trustStoreVerificaCertificatiX509 = trustStoreVerificaCertificatiX509;
+	}
+	public KeyStore getTrustStoreVerificaCertificatiX509() {
+		return this.trustStoreVerificaCertificatiX509;
+	}
+
 	private KeyStore trustStoreHttps; // per accedere ad un endpoint https dove scaricare i certificati
+	public KeyStore getTrustStoreHttps() {
+		return this.trustStoreHttps;
+	}
 	private CertStore crlHttps; // per verificare i certificati http server rispetto alle crl
 	public void setCrlHttps(CertStore crlHttps) {
 		this.crlHttps = crlHttps;
+	}
+	private IOCSPValidator ocspValidatorHttps; // per verificare i certificati http server rispetto a servizi OCSP
+	public void setOcspValidatorHttps(IOCSPValidator ocspValidator) {
+		this.ocspValidatorHttps = ocspValidator;
 	}
 		
 	private CertStore crlX509; // per verificare i certificati rispetto alle crl
 	public void setCrlX509(CertStore crlX509) {
 		this.crlX509 = crlX509;
 	}
+	private IOCSPValidator ocspValidatorX509; // per verificare i certificati rispetto a servizi OCSP
+	public void setOcspValidatorX509(IOCSPValidator ocspValidator) {
+		this.ocspValidatorX509 = ocspValidator;
+	}
+	
 	
 	public JsonDecrypt(Properties props, JWTOptions options) throws UtilsException{
 		try {
@@ -143,6 +162,16 @@ public class JsonDecrypt {
 			if(provider==null) {
 				throw new Exception("JweDecryptionProvider provider not found");
 			}
+			
+			try {
+				Certificate cert = JsonUtils.getCertificateKey(props);
+				if(cert!=null && cert instanceof X509Certificate) {
+					this.x509Certificate = (X509Certificate) cert;
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+			
 			return provider;
 			 
 		}finally {
@@ -187,6 +216,16 @@ public class JsonDecrypt {
 					}
 				}	
 			}
+			
+			try {
+				Certificate cert = keystore.getCertificate(alias);
+				if(cert!=null && cert instanceof X509Certificate) {
+					this.x509Certificate = (X509Certificate) cert;
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+			
 		}catch(Throwable t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.DECRYPT,JsonUtils.RECEIVER,t);
 		}
@@ -422,7 +461,7 @@ public class JsonDecrypt {
 					byte [] cer = Base64Utilities.decode(jweHeaders.getX509Chain().get(0));
 					CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
 					if(this.trustStoreVerificaCertificatiX509!=null) {
-						JsonUtils.validate(certificatoInfo, this.trustStoreVerificaCertificatiX509, this.crlX509, JwtHeaders.JWT_HDR_X5C, true);
+						JsonUtils.validate(certificatoInfo, this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_X5C, true);
 					}
 					provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
 				}catch(Exception e) {
@@ -465,7 +504,7 @@ public class JsonDecrypt {
 						HttpResponse httpResponse = null;
 						try {
 							if(this.trustStoreHttps!=null) {
-								httpResponse = HttpUtilities.getHTTPSResponse(path, this.trustStoreHttps.getKeystore(), this.crlHttps);
+								httpResponse = HttpUtilities.getHTTPSResponse(path, this.trustStoreHttps.getKeystore(), this.crlHttps, this.ocspValidatorHttps);
 							}
 							else {
 								httpResponse = HttpUtilities.getHTTPResponse(path);
@@ -488,7 +527,7 @@ public class JsonDecrypt {
 					if(x509) {
 						CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
 						if(this.trustStoreVerificaCertificatiX509!=null) {
-							JsonUtils.validate(certificatoInfo, this.trustStoreVerificaCertificatiX509, this.crlX509, JwtHeaders.JWT_HDR_X5U, true);
+							JsonUtils.validate(certificatoInfo, this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_X5U, true);
 						}
 						provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
 					}
@@ -542,7 +581,12 @@ public class JsonDecrypt {
 									X509Certificate x509Certificate = (X509Certificate) cer;
 									
 									// La validazione serve per verificare la data e il crl
-									JsonUtils.validate(new CertificateInfo(x509Certificate, kid), this.keyStore, this.crlX509, JwtHeaders.JWT_HDR_KID, false);
+									if(this.trustStoreVerificaCertificatiX509!=null) {
+										JsonUtils.validate(new CertificateInfo(x509Certificate, kid), this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false);
+									}
+									else {
+										JsonUtils.validate(new CertificateInfo(x509Certificate, kid), this.keyStore, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false);
+									}
 									
 									CertificateInfo certificatoInfo = new CertificateInfo(x509Certificate, kid);
 									provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
@@ -581,7 +625,12 @@ public class JsonDecrypt {
 						X509Certificate x509Certificate = (X509Certificate) cer;
 						
 						// La validazione serve per verificare la data e il crl
-						JsonUtils.validate(new CertificateInfo(x509Certificate, hdr), this.keyStore, this.crlX509, hdr, false);
+						if(this.trustStoreVerificaCertificatiX509!=null) {
+							JsonUtils.validate(new CertificateInfo(x509Certificate, hdr), this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, hdr, false);
+						}
+						else {
+							JsonUtils.validate(new CertificateInfo(x509Certificate, hdr), this.keyStore, this.crlX509, this.ocspValidatorX509, hdr, false);
+						}
 						
 						CertificateInfo certificatoInfo = new CertificateInfo(x509Certificate, "x5t");
 						provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
@@ -600,6 +649,16 @@ public class JsonDecrypt {
 					notPermitted = "; header trovati ma non abilitati all'utilizzo: "+hdrNotPermitted;
 				}
 				throw new Exception("Non è stato trovato alcun header che consentisse di recuperare il certificato per decifrare"+notPermitted);
+			}
+		}
+		else {
+			if(this.x509Certificate!=null && this.trustStoreVerificaCertificatiX509!=null) {
+				try {
+					CertificateInfo certificatoInfo = new CertificateInfo(this.x509Certificate, "x509");
+					JsonUtils.validate(certificatoInfo, this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, null, true);
+				}catch(Exception e) {
+					throw new Exception(e.getMessage(),e);
+				}
 			}
 		}
 		

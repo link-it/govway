@@ -1346,6 +1346,14 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 										sb.append("response-truststore-ssl-crls:").append(protocolProperty.getValue());
 										continue;
 									}
+									else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY.equals(protocolProperty.getName()) &&
+											StringUtils.isNotEmpty(protocolProperty.getValue())) {
+										if(sb.length()>0) {
+											sb.append("\n");
+										}
+										sb.append("response-truststore-ssl-ocsp-policy:").append(protocolProperty.getValue());
+										continue;
+									}
 								}
 								if(trustStore) {
 									if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE.equals(protocolProperty.getName()) &&
@@ -1370,6 +1378,14 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 											sb.append("\n");
 										}
 										sb.append("response-truststore-crls:").append(protocolProperty.getValue());
+										continue;
+									}
+									else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY.equals(protocolProperty.getName()) &&
+											StringUtils.isNotEmpty(protocolProperty.getValue())) {
+										if(sb.length()>0) {
+											sb.append("\n");
+										}
+										sb.append("response-truststore-ocsp-policy:").append(protocolProperty.getValue());
 										continue;
 									}
 								}
@@ -1681,6 +1697,14 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 							sb.append("request-truststore-ssl-crls:").append(protocolProperty.getValue());
 							continue;
 						}
+						else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY.equals(protocolProperty.getName()) &&
+								StringUtils.isNotEmpty(protocolProperty.getValue())) {
+							if(sb.length()>0) {
+								sb.append("\n");
+							}
+							sb.append("request-truststore-ssl-ocsp-policy:").append(protocolProperty.getValue());
+							continue;
+						}
 					}
 					if(trustStore) {
 						if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE.equals(protocolProperty.getName()) &&
@@ -1705,6 +1729,14 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 								sb.append("\n");
 							}
 							sb.append("request-truststore-crls:").append(protocolProperty.getValue());
+							continue;
+						}
+						else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY.equals(protocolProperty.getName()) &&
+								StringUtils.isNotEmpty(protocolProperty.getValue())) {
+							if(sb.length()>0) {
+								sb.append("\n");
+							}
+							sb.append("request-truststore-ocsp-policy:").append(protocolProperty.getValue());
 							continue;
 						}
 					}

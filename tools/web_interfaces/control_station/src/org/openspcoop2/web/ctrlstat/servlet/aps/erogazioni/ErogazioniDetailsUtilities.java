@@ -104,6 +104,7 @@ import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -2507,6 +2508,20 @@ public class ErogazioniDetailsUtilities {
 				sb.append(label);
 				sb.append(separator);
 				sb.append("(").append(type).append(") ").append(path);
+				
+				// OCSP
+				String ocsp = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_STORE_OCSP_POLICY);
+				if(StringUtils.isNotEmpty(ocsp)) {
+					sb.append(newLine);
+					sb.append(label).append(" ").append(CostantiLabel.MODIPA_TRUSTSTORE_OCSP_LABEL);
+					sb.append(separator);
+					try {
+						String labelOcsp = OCSPManager.getInstance().getOCSPConfig(ocsp).getLabel();
+						sb.append((labelOcsp!=null && StringUtils.isNotEmpty(labelOcsp)) ? labelOcsp : ocsp);
+					}catch(Throwable t) {
+						sb.append(ocsp);
+					}
+				}
 				
 				// CRL
 				String crl = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_STORE_CRLS);

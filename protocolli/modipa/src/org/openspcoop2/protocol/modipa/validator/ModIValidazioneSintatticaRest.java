@@ -524,6 +524,9 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			if(trustStoreCertificati.getSecurityMessageTruststoreCRLs()!=null) {
 				secProperties.put(SecurityConstants.SIGNATURE_CRL, trustStoreCertificati.getSecurityMessageTruststoreCRLs());
 			}
+			if(trustStoreCertificati.getSecurityMessageTruststoreOCSPPolicy()!=null) {
+				secProperties.put(SecurityConstants.SIGNATURE_OCSP, trustStoreCertificati.getSecurityMessageTruststoreOCSPPolicy());
+			}
 			if(securityConfig.isX5u()) {
 				if(trustStoreSsl!=null && trustStoreSsl.getSecurityMessageTruststorePath()!=null) {
 					secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE, trustStoreSsl.getSecurityMessageTruststorePath());
@@ -531,6 +534,9 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD, trustStoreSsl.getSecurityMessageTruststorePassword());
 					if(trustStoreSsl.getSecurityMessageTruststoreCRLs()!=null) {
 						secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL, trustStoreSsl.getSecurityMessageTruststoreCRLs());
+					}
+					if(trustStoreSsl.getSecurityMessageTruststoreOCSPPolicy()!=null) {
+						secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_OCSP, trustStoreSsl.getSecurityMessageTruststoreOCSPPolicy());
 					}
 				}
 			}

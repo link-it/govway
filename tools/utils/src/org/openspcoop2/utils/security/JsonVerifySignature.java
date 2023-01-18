@@ -48,6 +48,7 @@ import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 
 /**	
  * Encrypt
@@ -59,6 +60,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 public class JsonVerifySignature {
 
 	private JwsSignatureVerifier provider;
+	private Properties propsConfig;
 	private JWTOptions options;
 	private Properties properties;
 	private boolean dynamicProvider;
@@ -67,21 +69,36 @@ public class JsonVerifySignature {
 	private byte[] decodedPayloadAsByte;
 	
 	private KeyStore trustStoreCertificatiX509; // per verificare i certificati presenti nell'header
+	public KeyStore getTrustStoreCertificatiX509() {
+		return this.trustStoreCertificatiX509;
+	}
 	private JsonWebKeys jsonWebKeys; // dove prendere il certificato per validare rispetto al kid
 	
 	private KeyStore trustStoreHttps; // per accedere ad un endpoint https dove scaricare i certificati
+	public KeyStore getTrustStoreHttps() {
+		return this.trustStoreHttps;
+	}
 	private CertStore crlHttps; // per verificare i certificati http server rispetto alle crl
 	public void setCrlHttps(CertStore crlHttps) {
 		this.crlHttps = crlHttps;
+	}
+	private IOCSPValidator ocspValidatorHttps; // per verificare i certificati http server rispetto a servizi OCSP
+	public void setOcspValidatorHttps(IOCSPValidator ocspValidator) {
+		this.ocspValidatorHttps = ocspValidator;
 	}
 	
 	private CertStore crlX509; // per verificare i certificati rispetto alle crl
 	public void setCrlX509(CertStore crlX509) {
 		this.crlX509 = crlX509;
 	}
-	
+	private IOCSPValidator ocspValidatorX509; // per verificare i certificati rispetto a servizi OCSP
+	public void setOcspValidatorX509(IOCSPValidator ocspValidator) {
+		this.ocspValidatorX509 = ocspValidator;
+	}
+
 	public JsonVerifySignature(Properties props, JWTOptions options) throws UtilsException{
 		try {
+			this.propsConfig = props;
 			this.dynamicProvider = JsonUtils.isDynamicProvider(props); // rimuove l'alias
 			if(this.dynamicProvider) {
 				this.properties = props;
@@ -136,6 +153,9 @@ public class JsonVerifySignature {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
 			this.provider = JwsUtils.getPublicKeySignatureVerifier((X509Certificate) keystore.getCertificate(alias), algo);
 			this.options=options;
+			
+			this.trustStoreCertificatiX509 = keystore; // per abilitare la validazione crl o ocsp
+			
 		}catch(Throwable t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
@@ -152,6 +172,9 @@ public class JsonVerifySignature {
 				throw new Exception("(JCEKS) JwsSignatureVerifier init failed; check signature algorithm ("+signatureAlgorithm+")");
 			}
 			this.options=options;
+			
+			this.trustStoreCertificatiX509 = keystore; // per abilitare la validazione crl o ocsp
+			
 		}catch(Throwable t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
@@ -370,7 +393,7 @@ public class JsonVerifySignature {
 					byte [] cer = Base64Utilities.decode(jwsHeaders.getX509Chain().get(0));
 					CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
 					if(this.trustStoreCertificatiX509!=null) {
-						JsonUtils.validate(certificatoInfo, this.trustStoreCertificatiX509, this.crlX509, JwtHeaders.JWT_HDR_X5C, true);
+						JsonUtils.validate(certificatoInfo, this.trustStoreCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_X5C, true);
 					}
 					this.x509Certificate = certificatoInfo.getCertificate();
 					provider = JwsUtils.getPublicKeySignatureVerifier(this.x509Certificate, algo);
@@ -410,7 +433,7 @@ public class JsonVerifySignature {
 						HttpResponse httpResponse = null;
 						try {
 							if(this.trustStoreHttps!=null) {
-								httpResponse = HttpUtilities.getHTTPSResponse(path, this.trustStoreHttps.getKeystore(), this.crlHttps);
+								httpResponse = HttpUtilities.getHTTPSResponse(path, this.trustStoreHttps.getKeystore(), this.crlHttps, this.ocspValidatorHttps);
 							}
 							else {
 								httpResponse = HttpUtilities.getHTTPResponse(path);
@@ -432,7 +455,7 @@ public class JsonVerifySignature {
 					if(x509) {
 						CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
 						if(this.trustStoreCertificatiX509!=null) {
-							JsonUtils.validate(certificatoInfo, this.trustStoreCertificatiX509, this.crlX509, hdr, true);
+							JsonUtils.validate(certificatoInfo, this.trustStoreCertificatiX509, this.crlX509, this.ocspValidatorX509, hdr, true);
 						}
 						this.x509Certificate = certificatoInfo.getCertificate();
 						provider = JwsUtils.getPublicKeySignatureVerifier(this.x509Certificate, algo);
@@ -483,7 +506,7 @@ public class JsonVerifySignature {
 									this.x509Certificate = (X509Certificate) cer;
 									
 									// La validazione serve per verificare la data e il crl
-									JsonUtils.validate(new CertificateInfo(this.x509Certificate, kid), this.trustStoreCertificatiX509, this.crlX509, JwtHeaders.JWT_HDR_KID, false);
+									JsonUtils.validate(new CertificateInfo(this.x509Certificate, kid), this.trustStoreCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false);
 									
 									provider = JwsUtils.getPublicKeySignatureVerifier(this.x509Certificate, algo);
 								}
@@ -524,7 +547,7 @@ public class JsonVerifySignature {
 						this.x509Certificate = (X509Certificate) cer;
 						
 						// La validazione serve per verificare la data e il crl
-						JsonUtils.validate(new CertificateInfo(this.x509Certificate, hdr), this.trustStoreCertificatiX509, this.crlX509, hdr, false);
+						JsonUtils.validate(new CertificateInfo(this.x509Certificate, hdr), this.trustStoreCertificatiX509, this.crlX509, this.ocspValidatorX509, hdr, false);
 						
 						provider = JwsUtils.getPublicKeySignatureVerifier(this.x509Certificate, algo);
 					}
@@ -548,6 +571,22 @@ public class JsonVerifySignature {
 			if(this.x509Certificate==null && provider instanceof org.apache.cxf.rs.security.jose.jws.PublicKeyJwsSignatureVerifier) {
 				org.apache.cxf.rs.security.jose.jws.PublicKeyJwsSignatureVerifier certVer = (org.apache.cxf.rs.security.jose.jws.PublicKeyJwsSignatureVerifier) provider;
 				this.x509Certificate = certVer.getX509Certificate();
+				
+				KeyStore trustStore = this.trustStoreCertificatiX509;
+				if(trustStore==null) {
+					if(this.propsConfig!=null) {
+						trustStore = JsonUtils.getKeyStore(this.propsConfig);
+					}
+				}
+				
+				if(trustStore!=null) {
+					try {
+						CertificateInfo certificatoInfo = new CertificateInfo(this.x509Certificate, "x509");
+						JsonUtils.validate(certificatoInfo, trustStore, this.crlX509, this.ocspValidatorX509, null, true);
+					}catch(Exception e) {
+						throw new Exception(e.getMessage(),e);
+					}
+				}
 			}
 		}
 		
