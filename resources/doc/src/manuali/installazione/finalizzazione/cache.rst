@@ -99,7 +99,7 @@ Le cache utilizzate da govway e i valori di default associati sono i seguenti:
 
 **Cache di secondo livello**
 
-Esiste un'ulteriore cache denominata 'Dati delle Richieste' che funge da cache di secondo livello che consente di raccogliere tutti i dati di una richiesta (API, configurazioni, keystore, politiche di rate limiting ...) normalmente presenti in altre cache di primo livello con lo scopo di minimizzare l'accesso concorrente alle cache di primo livello per motivi di performance.
+Per minimizzare gli accessi concorrenti alle varie cache e ottenere miglioramenti prestazionali viene utilizzata un'ulteriore cache di secondo livello denominata 'Dati delle Richieste' che contiene tutti i dati principali raccolti durante la gestione della prima richiesta (API, configurazioni, keystore, politiche di rate limiting ...).
 
 	- Stato: abilitato
 	- Dimensione: 10000

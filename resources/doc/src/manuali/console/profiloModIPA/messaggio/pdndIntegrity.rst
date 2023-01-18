@@ -1,6 +1,6 @@
 .. _modipa_pdnd_integrity:
 
-ID_AUTH_REST_01 (PDND) + INTEGRITY_SOAP_01 / INTEGRITY_REST_01
+ID_AUTH tramite PDND + INTEGRITY_SOAP_01 / INTEGRITY_REST_01
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Il token di autenticazione ID_AUTH_REST_01 descritto nella sezione ':ref:`modipa_pdnd`' è utilizzabile in combinazione con il token di integrità descritto nella sezione ':ref:`modipa_idar03`' sia su API di tipo REST che di tipo SOAP.
