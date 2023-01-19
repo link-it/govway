@@ -1,0 +1,53 @@
+{
+    "connettore": {
+	    "tipo": "http",
+	    "debug":false,
+	    "endpoint": "https://ginovadifretta.it/petstore",
+
+	    "autenticazione_http": {
+		"username": "mario",
+		"password": "perbene"
+	    },
+
+	    "autenticazione_https": {
+		    "tipologia": "TLSv1.2",
+		    "hostname_verifier": true,
+		    "trust_all_server_certs": false,
+		    "server": {
+		        "truststore_path":  "/tmp/test.jks",
+		        "truststore_password": "123",
+		        "truststore_tipo": "jks",
+			"truststore_crl": "/tmp/test.crl",
+			"truststore_ocsp_policy" : "ocspPolicyID",
+			"algoritmo": "PKIX"
+		    },
+		    "client": {
+		        "keystore_path":  "/tmp/testClient.p12",
+		        "keystore_password": "123456",
+		        "keystore_tipo": "pkcs12",
+			"key_password": "keypass",
+			"key_alias": "testclient",
+			"algoritmo": "SunX509"
+		    }  
+		},
+
+	    
+	    "proxy": {
+		"hostname": "localhost",
+		"porta": 4040
+
+	    },
+
+	    "tempi_risposta": {
+		"connection_timeout": 10001,
+		"connection_read_timeout": 150200,
+		"tempo_medio_risposta": 134
+	    }
+
+   }
+
+
+}
+
+
+

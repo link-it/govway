@@ -53,6 +53,7 @@ Background:
 * def connettore = read('connettore_fruizione_http.json')
 * def connettore_pkcs11 = read('connettore_fruizione_http_pkcs11.json')
 * def connettore_pkcs12_trustAll = read('connettore_fruizione_http_trustAll_pkcs12.json')
+* def connettore_crl_ocsp = read('connettore_fruizione_http_crl_ocsp.json')
 
 * def info_generali = read('informazioni_generali_petstore.json')
 * def erogazione_versione = read('api_versione3.json')
@@ -293,6 +294,32 @@ Scenario: Update Fruizioni Connettore 204 (PKCS12 per keystore, trustAll)
     When method get
     Then status 200
     And match response == connettore_pkcs12_trustAll
+    
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@UpdateConnettore204_CRL_OCSP
+Scenario: Update Fruizioni Connettore 204 (CRL e OCSP)
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_crl_ocsp
+    And params query_params
+    When method put
+    Then status 204
+   
+   Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    And match response == connettore_crl_ocsp
     
     * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })

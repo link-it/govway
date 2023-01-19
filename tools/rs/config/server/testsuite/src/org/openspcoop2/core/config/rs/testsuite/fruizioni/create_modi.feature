@@ -109,6 +109,7 @@ Examples:
 |fruizione_modi_soap_iu_indirizzo_ip.json|
 |fruizione_modi_soap_risposta_truststore_ridefinito.json|
 |fruizione_modi_soap_risposta_truststore_ridefinito_hsm.json|
+|fruizione_modi_soap_risposta_truststore_ridefinito_ocsp.json|
 |fruizione_modi_soap_ttl_risposta.json|
 |fruizione_modi_soap_wsato_verifica_risposta.json|
 |fruizione_modi_soap_wsato_verifica_risposta_disabilitata.json|
@@ -160,6 +161,7 @@ Examples:
 |fruizione_modi_rest_ttl_risposta.json|
 |fruizione_modi_rest_risposta_truststore_ridefinito.json|
 |fruizione_modi_rest_risposta_truststore_ridefinito_hsm.json|
+|fruizione_modi_rest_risposta_truststore_ridefinito_ocsp.json|
 |fruizione_modi_rest_audience_verifica_risposta.json|
 |fruizione_modi_rest_audience_verifica_risposta_disabilitata.json|
 
