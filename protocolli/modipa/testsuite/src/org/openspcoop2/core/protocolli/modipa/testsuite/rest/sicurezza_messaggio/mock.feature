@@ -52,7 +52,8 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 	isTest('manomissione-token-risposta-idar03') || isTest('manomissione-token-risposta-idar0302') || isTest('manomissione-payload-risposta-idar0302') || 
 	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato') ||
 	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato-richiesta') ||
-	isTest('doppi-header-token-date-differenti-richiesta')
+	isTest('doppi-header-token-date-differenti-richiesta') ||
+	isTest('connettivita-base-truststore-ca-ocsp')
     
     # Controllo che al server non siano arrivate le informazioni di sicurezza
     * match requestHeaders['Authorization'] == '#notpresent'
@@ -112,7 +113,7 @@ Scenario: isTest('request-response-without-payload')
     * def responseHeaders = ({ 'Content-Type': null })
 
 
-Scenario: isTest('certificato-server-scaduto') || isTest('certificato-server-revocato')
+Scenario: isTest('certificato-server-scaduto') || isTest('certificato-server-revocato') || isTest('certificato-server-revocato-ocsp')
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 

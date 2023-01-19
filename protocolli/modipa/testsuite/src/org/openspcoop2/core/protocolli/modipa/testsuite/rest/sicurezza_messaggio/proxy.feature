@@ -699,6 +699,72 @@ Scenario: isTest('connettivita-base-header-agid')
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
+##############################
+#           IDAR01 OCSP
+##############################
+
+Scenario: isTest('connettivita-base-truststore-ca-ocsp')
+
+    * def client_token_match_ocsp = 
+    """
+    ({
+        header: { 
+            kid: 'testclient',
+            x5c: '#present',
+            x5u: '#notpresent',
+            'x5t#S256': '#notpresent'
+        },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01_OCSP',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01_OCSP'
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_match_ocsp })
+
+    * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01TrustStoreCAOCSP/v1'
+    * karate.proceed (url_invocazione_erogazione)
+    
+
+    * def server_token_match_ocsp =
+    """
+    ({
+        header: { kid: 'testclient'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01_OCSP',
+            client_id: 'RestBlockingIDAR01TrustStoreCAOCSP/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR01TrustStoreCAOCSP/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders.Authorization[0], match_to: server_token_match_ocsp  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+Scenario: isTest('certificato-client-revocato-ocsp')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01TrustStoreCAOCSP/v1')
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/certificato-client-revocato-ocsp.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+Scenario: isTest('certificato-server-revocato-ocsp')
+
+    * karate.proceed (govway_base_path + "/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01TrustStoreCACertificatoRevocatoOCSP/v1")
+
+
 
 ##############################
 #           IDAR02

@@ -26,7 +26,7 @@ Background:
     * configure responseHeaders = confHeaders
 
 
-Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trustore') || isTest('connettivita-base-truststore-ca') || 
+Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trustore') || isTest('connettivita-base-truststore-ca') || isTest('connettivita-base-truststore-ca-ocsp') || 
 		isTest('riferimento-x509-SKIKey-IssuerSerial') || isTest('riferimento-x509-ThumbprintKey-SKIKey') || 
 		isTest('riferimento-x509-x509Key-ThumbprintKey') ||  isTest('riferimento-x509-IssuerSerial-x509Key') || 
 		isTest('manomissione-token-risposta') || 
@@ -87,7 +87,7 @@ Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequ
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response-op.xml')
 
-Scenario: isTest('certificato-server-scaduto') || isTest('certificato-server-revocato')
+Scenario: isTest('certificato-server-scaduto') || isTest('certificato-server-revocato') || isTest('certificato-server-revocato-ocsp')
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
 

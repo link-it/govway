@@ -68,9 +68,9 @@ public class Utils {
 	public static final String PROPERTY_OCSP_WAIT_STARTUP_SERVER = "ocsp.waitStartupServer";
 	public static final String PROPERTY_OCSP_WAIT_STOP_SERVER = "ocsp.waitStopServer";
 	
-	private static final int PORT_CASE2 = 64900;
-	private static final int PORT_CASE3 = 64901;
-	private static final int PORT_CASE2_DIFFERENT_NONCE = 64902;
+	private static final int PORT_CASE2 = OpenSSLThread.PORT_CASE2;
+	private static final int PORT_CASE3 = OpenSSLThread.PORT_CASE3;
+	private static final int PORT_CASE2_DIFFERENT_NONCE = OpenSSLThread.PORT_CASE2_DIFFERENT_NONCE;
 	
 	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
 	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = 
@@ -372,76 +372,6 @@ public class Utils {
 		return response;
 		
 	}
-
-	private static OpenSSLThread newOpenSSLThread_case2(String opensslCommand, int waitStartupServer) throws Exception {
-		return newOpenSSLThread(opensslCommand, waitStartupServer, PORT_CASE2, false);
-	}
-	private static OpenSSLThread newOpenSSLThread_case2_differentNonce(String opensslCommand, int waitStartupServer) throws Exception {
-		return newOpenSSLThread(opensslCommand, waitStartupServer, PORT_CASE2_DIFFERENT_NONCE, true);
-	}
-	private static OpenSSLThread newOpenSSLThread_case3(String opensslCommand, int waitStartupServer) throws Exception {
-		return newOpenSSLThread(opensslCommand, waitStartupServer, PORT_CASE3, false);
-	}
-	private static OpenSSLThread newOpenSSLThread(String opensslCommand, int waitStartupServer, int port, boolean forceWrongNonceResponseValue) throws Exception {
-		
-		 String fCert = "ocsp/ocsp_TEST.cert.pem";
-		 String fKey = "ocsp/ocsp_TEST.key.pem";
-		 if(port == PORT_CASE3) {
-			 fCert = "crl/ExampleClient1.crt";
-			 fKey = "crl/ExampleClient1.key";
-		 }
-		
-		 boolean started = false;
-		 int index = 0;
-		 OpenSSLThread sslThread = null;
-		 int tentativi = 30; // quando succede l'errore di indirizzo già utilizzato è perchè impiega molto tempo a rilasciare la porta in ambiente jenkins
-		 while(!started && index<tentativi) {
-		 
-			 sslThread = new OpenSSLThread(opensslCommand, port, fCert, fKey, "ocsp/ca_TEST.cert.pem", "ocsp/index.txt", forceWrongNonceResponseValue);
-			 try {
-				 try {
-					 sslThread.start();
-					 System.out.println("START, sleep ...");
-					
-					 Utilities.sleep(waitStartupServer);
-				 }catch(Throwable t) {
-					 // ignore
-				 }
-				 
-				 started = sslThread.debugMsg(false);
-			 }finally {
-				 if(!started) {
-					 index++;
-					 System.out.println("NOT STARTED (iteration: "+index+")");
-					 // rilascio risorse
-					 sslThread.setStop(true);
-					 sslThread.waitShutdown(200, 10000);
-					 sslThread.close();
-				 }
-			 }
-			 			 
-		 }
-		
-		 System.out.println("STARTED");
-		 
-		 return sslThread;
-	}
-	
-	private static void stopOpenSSLThread(OpenSSLThread sslThread, int waitStopServer) throws Exception {
-		sslThread.setStop(true);
-		sslThread.waitShutdown(200, 10000);
-		sslThread.close();
-		
-		// anche se il processo esce, il rilascio della porta serve impiega più tempo
-		try {
-			System.out.println("STOP, sleep ...");
-			
-			Utilities.sleep(waitStopServer);
-		}catch(Throwable t) {
-			// ignore
-		}
-		System.out.println("STOP");
-	}
 	
 	public static void composedTestSuccess(Logger logCore, TipoServizio tipoServizio, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
@@ -521,13 +451,13 @@ public class Utils {
 		
 		OpenSSLThread sslThread = null;
 		if(action.contains("case3")) {
-			sslThread = Utils.newOpenSSLThread_case3(opensslCommand, waitStartupServer);
+			sslThread = OpenSSLThread.newOpenSSLThread_case3(opensslCommand, waitStartupServer);
 		}
 		else if(action.contains("case2-different-nonce")) {
-			sslThread = Utils.newOpenSSLThread_case2_differentNonce(opensslCommand, waitStartupServer);
+			sslThread = OpenSSLThread.newOpenSSLThread_case2_differentNonce(opensslCommand, waitStartupServer);
 		}
 		else {
-			sslThread = Utils.newOpenSSLThread_case2(opensslCommand, waitStartupServer);
+			sslThread = OpenSSLThread.newOpenSSLThread_case2(opensslCommand, waitStartupServer);
 		}
 		
 				
@@ -543,7 +473,7 @@ public class Utils {
 			}
 		}
 		finally {
-			Utils.stopOpenSSLThread(sslThread, waitStopServer);
+			OpenSSLThread.stopOpenSSLThread(sslThread, waitStopServer);
 		}
 		
 		// Deve continuare a funzionare per via della cache

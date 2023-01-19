@@ -337,6 +337,35 @@ Scenario: isTest('certificato-server-revocato')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01TrustStoreCACertificatoRevocato/v1')
 
+
+######################
+#       IDAS01 OCSP
+######################
+
+Scenario: isTest('connettivita-base-truststore-ca-ocsp')
+    
+    * xmlstring client_request = bodyPath('/')
+    * eval karateCache.add("Client-Request", client_request)
+
+    * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01_OCSP", to: "testsuite" })
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01TrustStoreCAOCSP/v1')
+
+    * call check_server_token ({ from: "SoapBlockingIDAS01TrustStoreCAOCSP/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01_OCSP" })
+
+    * xmlstring server_response = response
+    * eval karateCache.add("Server-Response", server_response)
+
+Scenario: isTest('certificato-client-revocato-ocsp')
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01TrustStoreCAOCSP/v1')
+    * match responseStatus == 500
+    * match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/certificato-client-revocato-ocsp.xml')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+Scenario: isTest('certificato-server-revocato-ocsp')
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01TrustStoreCACertificatoRevocatoOCSP/v1')
     
     
 ######################
