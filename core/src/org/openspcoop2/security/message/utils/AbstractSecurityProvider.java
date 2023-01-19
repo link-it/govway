@@ -21,7 +21,6 @@
 
 package org.openspcoop2.security.message.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -32,9 +31,8 @@ import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
-import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
-import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
+import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 
 /**     
  * AbstractSecurityProvider
@@ -57,34 +55,10 @@ public abstract class AbstractSecurityProvider implements IProvider {
 		this.asTruststore = true;
 	}
 	
-	private boolean ocsp = false;
-	private List<String> ocsp_types = new ArrayList<>();
-	private List<String> ocsp_labels = new ArrayList<>();
-	private static String NO_OCSP = "--no_ocsp--";
-	private static List<String> no_ocsp = new ArrayList<>();
-	{
-		no_ocsp.add(NO_OCSP);	
-	}
+	private OCSPProvider ocspProvider;
+
 	public AbstractSecurityProvider() {
-		SortedMap<String> _ocsp = OCSPManager.getInstance().getOCSPConfigTypesLabels();
-		this.ocsp = _ocsp!=null && !_ocsp.isEmpty();
-		if(this.ocsp) {
-			List<String> _ocsp_types = new ArrayList<>();
-			List<String> _ocsp_labels = new ArrayList<>();
-			if(_ocsp!=null && !_ocsp.isEmpty()) {
-				for (String type : _ocsp.keys()) {
-					_ocsp_types.add(type);
-					_ocsp_labels.add(_ocsp.get(type));
-				}
-			}
-			boolean ocspEnabled = _ocsp_types!=null && !_ocsp_types.isEmpty();
-			if(ocspEnabled) {
-				this.ocsp_types.add("");
-				this.ocsp_types.addAll(_ocsp_types);
-				this.ocsp_labels.add("-");
-				this.ocsp_labels.addAll(_ocsp_labels);
-			}
-		}
+		this.ocspProvider = new OCSPProvider();
 	}
 	
 	
@@ -106,7 +80,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 		}
 		else if(SecurityConstants.TRUSTSTORE_OCSP_POLICY.equals(id) ||
 				SecurityConstants.KEYSTORE_OCSP_POLICY.equals(id)) {
-			return this.ocsp ? this.ocsp_types : no_ocsp;
+			return this.ocspProvider.getValues();
 		}
 		
 		return null;
@@ -125,7 +99,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 		}
 		else if(SecurityConstants.TRUSTSTORE_OCSP_POLICY.equals(id) ||
 				SecurityConstants.KEYSTORE_OCSP_POLICY.equals(id)) {
-			return this.ocsp ? this.ocsp_labels : no_ocsp;
+			return this.ocspProvider.getLabels();
 		}
 		
 		return this.getValues(id);
@@ -181,7 +155,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 		}
 		else if(SecurityConstants.TRUSTSTORE_OCSP_POLICY.equals(item.getName()) ||
 				SecurityConstants.KEYSTORE_OCSP_POLICY.equals(item.getName())) {
-			if(!this.ocsp) {
+			if(!this.ocspProvider.isOcspEnabled()) {
 				item.setType(ItemType.HIDDEN);
 			}
 		}

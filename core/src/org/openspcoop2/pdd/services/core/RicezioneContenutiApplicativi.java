@@ -1953,6 +1953,7 @@ public class RicezioneContenutiApplicativi {
 					datiInvocazione.setIdPD(identificativoPortaDelegata);
 					datiInvocazione.setPd(portaDelegata);		
 					datiInvocazione.setPolicyGestioneToken(policyGestioneToken);
+					datiInvocazione.setRequestInfo(requestInfo);
 					
 					GestoreToken.validazioneConfigurazione(datiInvocazione); // assicura che la configurazione sia corretta
 					

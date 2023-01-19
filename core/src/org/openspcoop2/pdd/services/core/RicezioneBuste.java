@@ -2875,6 +2875,7 @@ public class RicezioneBuste {
 					datiInvocazione.setIdPD(idPD);
 					datiInvocazione.setPd(pd);		
 					datiInvocazione.setPolicyGestioneToken(policyGestioneToken);
+					datiInvocazione.setRequestInfo(requestInfo);
 					
 					GestoreToken.validazioneConfigurazione(datiInvocazione); // assicura che la configurazione sia corretta
 					

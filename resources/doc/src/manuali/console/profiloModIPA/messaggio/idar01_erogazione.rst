@@ -17,7 +17,7 @@ Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_
 - ModI - Richiesta (:numref:`erogazione_richiesta_fig`): la maschera relativa alla richiesta prevede la configurazione del meccanismo di validazione del token ricevuto sul messaggio di richiesta:
 
     + Riferimento X.509: il metodo per la localizzazione del certificato dell'applicativo mittente nel messaggio di richiesta. Il valore fornito deve corrispondere alla scelta operata dai mittenti.  I valori possibili (differenziati per il caso REST e SOAP) sono quelli previsti nella specifica AGID.
-    + TrustStore Certificati: Riferimento al truststore che contiene le CA, i certificati, CRL e policy OCSP da utilizzare per poter verificare i token di sicurezza ricevuti nelle richieste. È possibile mantenere l'impostazione di default che è stata fornita al momento dell'installazione del prodotto, oppure definire un diverso riferimento (opzione "Ridefinito") fornendo Path, Tipo, Password del TrustStore e criteri di validazione tramite CRL o OCSP.
+    + TrustStore Certificati: Riferimento al truststore che contiene le CA, i certificati, CRL e policy OCSP da utilizzare per poter verificare i token di sicurezza ricevuti nelle richieste. È possibile mantenere l'impostazione di default che è stata fornita al momento dell'installazione del prodotto, oppure definire un diverso riferimento (opzione "Ridefinito") fornendo Path, Tipo, Password del TrustStore e criteri di verifica tramite CRL o OCSP.
     + Audience: valore del campo Audience atteso nel token di sicurezza della richiesta.
 
 .. figure:: ../../_figure_console/modipa_erogazione_richiesta.png

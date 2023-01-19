@@ -29,6 +29,7 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.core.token.parser.BasicTokenParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -258,6 +259,12 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 			parser = new BasicTokenParser(tipologiaClaims, TokenUtilities.getValidazioneJwtClaimsMappingProperties(this.properties));
 		}
 		return parser;
+	}
+	public String getValidazioneJWT_ocspPolicy() {
+		return this.defaultProperties.getProperty(SecurityConstants.SIGNATURE_OCSP);
+	}
+	public String getValidazioneJWT_crl() {
+		return this.defaultProperties.getProperty(SecurityConstants.SIGNATURE_CRL);
 	}
 	
 	public String getIntrospection_endpoint() {

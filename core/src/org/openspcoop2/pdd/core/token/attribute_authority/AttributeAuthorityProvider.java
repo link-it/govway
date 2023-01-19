@@ -29,6 +29,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
+import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
@@ -41,6 +42,7 @@ import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -53,6 +55,12 @@ import org.openspcoop2.utils.transport.http.SSLUtilities;
  * @version $Rev$, $Date$
  */
 public class AttributeAuthorityProvider implements IProvider {
+	
+	private OCSPProvider ocspProvider;
+
+	public AttributeAuthorityProvider() {
+		this.ocspProvider = new OCSPProvider();
+	}
 	
 	@Override
 	public void validateId(String name) throws ProviderException, ProviderValidationException {	
@@ -233,6 +241,11 @@ public class AttributeAuthorityProvider implements IProvider {
 				String file = p.getProperty("rs.security.keystore.file");
 				InputValidationUtils.validateTextAreaInput(file, "Risposta - TrustStore - File");
 			}
+			
+			String crl = pDefault.getProperty(SecurityConstants.SIGNATURE_CRL);
+			if(crl!=null && StringUtils.isNotEmpty(crl)) {
+				InputValidationUtils.validateTextAreaInput(crl, "Risposta - TrustStore - CRL File(s)");
+			}
 		}
 	}
 
@@ -266,6 +279,12 @@ public class AttributeAuthorityProvider implements IProvider {
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			return getStoreType(id,true);
 		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_CERTIFICATE.equals(id)) {
+			return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES;
+		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
+			return this.ocspProvider.getValues();
+		}
 		return null;
 	}
 
@@ -293,6 +312,12 @@ public class AttributeAuthorityProvider implements IProvider {
 				Costanti.ID_HTTPS_TRUSTSTORE_TYPE.equals(id) ||
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			return getStoreType(id,false);
+		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_CERTIFICATE.equals(id)) {
+			return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS;
+		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
+			return this.ocspProvider.getLabels();
 		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
@@ -331,6 +356,28 @@ public class AttributeAuthorityProvider implements IProvider {
 			}
 		}
 		return l;
+	}
+	
+	@Override
+	public String getNote(String id, String actualValue) throws ProviderException{
+		if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_CERTIFICATE.equals(id)) {
+			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_ALIAS.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_ALIAS;
+			}
+			else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5C;
+			}
+			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5T256;
+			}
+			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5C_X5T256;
+			}
+			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5U;
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -447,6 +494,11 @@ public class AttributeAuthorityProvider implements IProvider {
 			}
 			
 			return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(item.getName())) {
+			if(!this.ocspProvider.isOcspEnabled()) {
+				item.setType(ItemType.HIDDEN);
+			}
 		}
 		
 		return actualValue;

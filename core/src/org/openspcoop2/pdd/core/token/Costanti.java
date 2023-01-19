@@ -21,6 +21,9 @@
 
 package org.openspcoop2.pdd.core.token;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.Map;
@@ -380,6 +383,40 @@ public class Costanti {
 	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE = "validazioneJwtTruststoreType";
 	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_FILE = "validazioneJwtTruststoreFile";
 	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_PASSWORD = "validazioneJwtTruststorePassword";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE = "validazioneJwtTruststoreTypeSelectCertificate";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_ALIAS = "alias";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_ALIAS = "Alias in TrustStore";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_ALIAS = "Per la validazione viene utilizzato il certificato nel truststore corrispondente all'alias indicato";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C = "x5c";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_X5C = "Certificate 'x5c' in Token";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5C = "Per la validazione viene utilizzato il certificato presente nel token, dopo averlo validato rispetto al truststore";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256 = "x5t#256";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_X5T256 = "SHA-256 Thumbprint 'x5t#256' in Token";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5T256 = "Per la validazione viene utilizzato il certificato nel truststore corrispondente al thumbprint presente nel token";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256 = "x5c_x5t#256";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_X5C_X5T256 = "Certificate 'x5c' o SHA-256 Thumbprint 'x5t#256' in Token";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5C_X5T256 = "Per la validazione viene utilizzato il certificato presente nel token o recuperato dal truststore rispetto al thumbprint";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U = "x5u";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_X5U = "URL Certificate 'x5u' in Token";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5U = "Per la validazione viene recuperato il certificato riferito dalla URL presente nel token e validato rispetto al truststore";
+	public final static List<String> ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES = new ArrayList<>();
+	static {
+		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_ALIAS);
+		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C);
+		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256);
+		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256);
+		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U);
+	}
+	public final static List<String> ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS = new ArrayList<>();
+	static {
+		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_ALIAS);
+		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_X5C);
+		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_X5T256);
+		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_X5C_X5T256);
+		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_X5U);
+	}
+	
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY = "validazioneJwtTruststoreOcspPolicy";
 	
 	public final static String ID_VALIDAZIONE_JWT_KEYSTORE_TYPE = "validazioneJwtKeystoreType";
 	public final static String ID_VALIDAZIONE_JWT_KEYSTORE_FILE = "validazioneJwtKeystoreFile";
@@ -419,5 +456,7 @@ public class Costanti {
 	public final static String ID_AA_JWS_TRUSTSTORE_TYPE = "aaJWSTruststoreType";
 	public final static String ID_AA_JWS_TRUSTSTORE_FILE = "aaJWSTruststoreFile";
 	public final static String ID_AA_JWS_TRUSTSTORE_PASSWORD = "aaJWSTruststorePassword";
+	public final static String ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_CERTIFICATE = "aaJWSTruststoreTypeSelectCertificate";
+	public final static String ID_AA_JWS_TRUSTSTORE_OCSP_POLICY = "aaJWSTruststoreOcspPolicy";
 
 }

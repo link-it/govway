@@ -334,8 +334,75 @@
 				</conditions>
 		      	<property name="rs.security.keystore.password" properties="signatureVerificationPropRefId" />
 			</item>
+
+			<item type="select" name="validazioneJwtTruststoreTypeSelectCertificate" label="Riferimento X.509" default="alias" reloadOnChange="true">
+				<conditions>
+					<condition not="true" and="true">
+						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.alias.mode" properties="signatureVerificationPropRefId" />
+			</item>
 			<item type="text" name="validazioneJwtTruststoreCertificateAlias" label="Alias Certificato" required="true">
-			    <property name="rs.security.keystore.alias" properties="signatureVerificationPropRefId" />
+				<conditions and="false">
+					<condition>
+						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+					</condition>
+					<condition and="false">
+						<defined not="true" name="validazioneJwtTruststoreTypeSelectCertificate"/>
+						<equals name="validazioneJwtTruststoreTypeSelectCertificate" value=""/>
+						<equals name="validazioneJwtTruststoreTypeSelectCertificate" value="alias"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.alias" properties="signatureVerificationPropRefId" />
+			</item>
+
+			<item type="select" name="validazioneJwtTruststoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
+				<conditions and="true">
+					<condition not="true" and="true">
+						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+					</condition>
+					<condition not="true" and="false">
+						<defined not="true" name="validazioneJwtTruststoreTypeSelectCertificate"/>
+						<equals name="validazioneJwtTruststoreTypeSelectCertificate" value=""/>
+						<equals name="validazioneJwtTruststoreTypeSelectCertificate" value="alias"/>
+					</condition>
+				</conditions>
+				<property name="signatureOCSP" />
+			</item>
+			<item type="checkbox" name="validazioneJwtTruststoreEnableRevocation" label="CRL" reloadOnChange="true" defaultSelected="false">
+				<conditions and="true">
+					<condition not="true" and="true">
+						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+					</condition>
+					<condition not="true" and="false">
+						<defined not="true" name="validazioneJwtTruststoreTypeSelectCertificate"/>
+						<equals name="validazioneJwtTruststoreTypeSelectCertificate" value=""/>
+						<equals name="validazioneJwtTruststoreTypeSelectCertificate" value="alias"/>
+					</condition>
+					<condition and="false">
+						<defined not="true" name="validazioneJwtTruststoreOcspPolicy"/>
+						<equals name="validazioneJwtTruststoreOcspPolicy" value=""/>
+					</condition>
+				</conditions>
+				<property name="enableRevocation" />
+			</item>	
+			<item type="textarea" name="validazioneJwtTruststoreCrlFiles" label="CRL File(s)" required="true" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition>
+						<selected name="validazioneJwtTruststoreEnableRevocation"/>
+					</condition>
+				</conditions>
+			      	<property name="signatureCRL" />
+			</item>
+			<item type="textarea" name="validazioneJwtTruststoreCrlFilesOcsp" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition and="true">
+						<defined name="validazioneJwtTruststoreOcspPolicy"/>
+						<equals not="true" name="validazioneJwtTruststoreOcspPolicy" value=""/>
+					</condition>
+				</conditions>
+			      	<property name="signatureCRL" />
 			</item>
 
 		</subsection>

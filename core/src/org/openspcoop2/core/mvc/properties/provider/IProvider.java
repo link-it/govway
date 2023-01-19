@@ -45,6 +45,8 @@ public interface IProvider {
 	
 	public String getDefault(String id) throws ProviderException;
 	
+	public default String getNote(String id, String actualValue) throws ProviderException{ return null; }
+	
 	public default ProviderInfo getProviderInfo(String id) throws ProviderException{
 		return null;
 	}

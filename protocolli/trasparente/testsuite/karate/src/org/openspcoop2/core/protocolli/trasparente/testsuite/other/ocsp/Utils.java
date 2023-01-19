@@ -25,8 +25,10 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -38,8 +40,13 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ocsp.test.OCSPTest;
 import org.openspcoop2.utils.certificate.ocsp.test.OpenSSLThread;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.security.JOSESerialization;
+import org.openspcoop2.utils.security.JWSOptions;
+import org.openspcoop2.utils.security.JsonSignature;
+import org.openspcoop2.utils.security.JwtHeaders;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -110,6 +117,8 @@ public class Utils {
 	public static final String CERTIFICATE_CRL_EXPIRED_JOSE_X5C = "Signature verification failure: Process 'x5c' error: Certificato presente nell'header 'x5c' scaduto: certificate expired on ";
 	
 	public static final String CERTIFICATE_CRL_EXPIRED_JOSE_X5U = "Signature verification failure: Process 'x5u' error: Certificato presente nell'header 'x5u' scaduto: certificate expired on ";
+	
+	public static final String CERTIFICATE_CRL_EXPIRED_TOKEN_X5T = "Process 'x5t#S256' error: Certificato presente nell'header 'x5t#S256' scaduto: ";
 	
 	public static final String API_UNAVAILABLE = "APIUnavailable";
 	public static final String API_UNAVAILABLE_MESSAGE = "The API Implementation is temporary unavailable";
@@ -242,6 +251,14 @@ public class Utils {
 			}
 		}
 		
+		if(TokenPolicyValidazioneTest.api.equals(api)) {
+			request.addHeader(HttpConstants.AUTHORIZATION,HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJwt(operazione));
+		}
+		
+		if(AttributeAuthorityTest.api.equals(api)) {
+			request.addHeader("GovWay-TestSuite-JWS",buildJwt(operazione));
+		}
+		
 		if(HttpRequestMethod.POST.equals(method) && HttpConstants.CONTENT_TYPE_SOAP_1_1.equals(contentType)) {
 			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, operazione);
 		}
@@ -294,13 +311,27 @@ public class Utils {
 					error = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.FORWARD_PROXY_AUTHENTICATION_REQUIRED;
 					msg = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.FORWARD_PROXY_AUTHENTICATION_REQUIRED_MESSAGE;
 				}
-				else {
+				else if(AutenticazioneHttpsTest.api.equals(api)){
 					error = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.AUTHENTICATION_FAILED;
 					msg = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.AUTHENTICATION_FAILED_MESSAGE;
 				}
 			}
 			
-			if(WSSecuritySignatureTest.api.equals(api) || 
+			else if(TokenPolicyValidazioneTest.api.equals(api)) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				code = 401;
+				error = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.INVALID_TOKEN;
+				msg = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.INVALID_TOKEN_MESSAGE;
+			}
+			
+			else if(AttributeAuthorityTest.api.equals(api)) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				code = 403;
+				error = org.openspcoop2.core.protocolli.trasparente.testsuite.token.attribute_authority.RestTest.AUTHORIZATION_CONTENT_DENY;
+				msg = org.openspcoop2.core.protocolli.trasparente.testsuite.token.attribute_authority.RestTest.AUTHORIZATION_CONTENT_DENY_MESSAGE;
+			}
+			
+			else if(WSSecuritySignatureTest.api.equals(api) || 
 					api.startsWith(WSSecuritySAMLTokenTest.api_saml_prefix)) {
 				soap = true;
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_SICUREZZA_MESSAGGIO_RICHIESTA);
@@ -310,11 +341,10 @@ public class Utils {
 				msg = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.BAD_REQUEST_MESSAGE;
 				errorHttpNull = true;
 			}
+			
 			else if(api.startsWith(JoseSignatureTest.api_prefix)) {
-				soap = false;
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_SICUREZZA_MESSAGGIO_RICHIESTA);
 				code = 400;
-				soapPrefixError = "Client";
 				error = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.BAD_REQUEST;
 				msg = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.BAD_REQUEST_MESSAGE;
 				errorHttpNull = true;
@@ -614,5 +644,97 @@ public class Utils {
 			return UriUtils.encode(s, Charset.UTF_8.getValue());
 		}
 		
+	}
+	
+	private static String buildJwt(String operazione) throws Exception {
+		
+		String type = "pkcs12";
+		String alias = null;
+		String password = "123456";
+		String passwordKey = "123456";
+		String file = null;
+		if(operazione.equals("case2") || operazione.equals("case3")) {
+			alias = "testclient";
+			file = "/etc/govway/keys/ocsp/testClient.jks";
+		}
+		else if(operazione.equals("case2-revoked") || operazione.equals("case3-revoked")) {
+			alias = "test";
+			file = "/etc/govway/keys/ocsp/test.jks";
+		}
+		else if(operazione.endsWith("-expired")) {
+			alias = "ExampleClientScaduto";
+			file = "/etc/govway/keys/xca/ExampleClientScaduto.p12";
+		}
+		else if(operazione.endsWith("-revoked")) {
+			alias = "ExampleClientRevocato";
+			file = "/etc/govway/keys/xca/ExampleClientRevocato.p12";
+		}
+		else {
+			alias = "ExampleClient1";
+			file = "/etc/govway/keys/xca/ExampleClient1.p12";
+		}
+		
+		boolean x5c = operazione.contains("case2") || operazione.startsWith("crl-");
+		boolean x5t = operazione.contains("ocsp-crl-") || operazione.startsWith("crl-");
+		String x5u_url = null;
+		if(operazione.contains("case3")) {
+			if(operazione.equals("case3")) {
+				x5u_url = "http://127.0.0.1:8080/ee_TEST_Client-test.esempio.it.cert.pem";
+			}
+			else {
+				x5u_url = "http://127.0.0.1:8080/ee_TEST_test.esempio.it.cert.pem";
+			}
+		}
+		
+		
+		String jsonInput = "{\n"+
+				"\"iss\": \"http://iss/"+alias+"\",\n"+
+				"\"sub\": \"testSub-"+alias+"\",\n"+
+				"\"client_id\": \"testClientId-"+alias+"\",\n"+
+				"\"azp\": \"testClientId-"+alias+"\",\n"+
+				"\"username\": \"testUser-"+alias+"\",\n"+
+				"\"preferred_username\": \"testUser-"+alias+"\",\n"+
+				"\"aud\": \"testAud-"+alias+"\",\n"+
+				"\"iat\": "+(DateManager.getTimeMillis()/1000)+",\n"+
+				"\"exp\": "+((DateManager.getTimeMillis()/1000)+300)+",\n"+
+				"\"jti\": \""+java.util.UUID.randomUUID().toString()+"\"\n"+
+				"}";
+			
+		Properties props = new Properties();
+		props.put("rs.security.keystore.file", file);
+		props.put("rs.security.keystore.type",type);
+		props.put("rs.security.keystore.alias",alias);
+		props.put("rs.security.keystore.password",password);
+		props.put("rs.security.key.password",passwordKey);
+		props.put("rs.security.signature.algorithm","RS256");
+		if(x5c) {
+			props.put("rs.security.signature.include.cert","true");
+		}
+		else {
+			props.put("rs.security.signature.include.cert","false");
+		}
+		props.put("rs.security.signature.include.cert.sha1","false");
+		if(x5t) {
+			props.put("rs.security.signature.include.cert.sha256","true");
+		}
+		else {
+			props.put("rs.security.signature.include.cert.sha256","false");
+		}
+		
+		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+		JsonSignature jsonSignature = null;
+		if(x5u_url!=null) {
+			JwtHeaders jwtHeaders = new JwtHeaders();
+			jwtHeaders.setX509Url(new URI(x5u_url));
+			jsonSignature = new JsonSignature(props, jwtHeaders, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(props, options);
+		}
+		String token = jsonSignature.sign(jsonInput);
+		//System.out.println(token);
+		//System.out.println("DECODED HEADER :"+new String(org.openspcoop2.utils.io.Base64Utilities.decode(token.substring(0, token.indexOf(".")))));
+		
+		return token;	
 	}
 }

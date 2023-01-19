@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -29,9 +28,8 @@ import javax.net.ssl.TrustManagerFactory;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
-import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
-import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
+import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -546,25 +544,11 @@ public class ConnettoreHTTPSUtils {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 		dati.addElement(de);
 
-		SortedMap<String> _ocsp = OCSPManager.getInstance().getOCSPConfigTypesLabels();
-		List<String> _ocsp_types = new ArrayList<>();
-		List<String> _ocsp_labels = new ArrayList<>();
-		if(_ocsp!=null && !_ocsp.isEmpty()) {
-			for (String type : _ocsp.keys()) {
-				_ocsp_types.add(type);
-				_ocsp_labels.add(_ocsp.get(type));
-			}
-		}
-		List<String> ocsp_types = new ArrayList<>();
-		List<String> ocsp_labels = new ArrayList<>();
-		boolean ocspEnabled = _ocsp_types!=null && !_ocsp_types.isEmpty();
-		if(ocspEnabled) {
-			ocsp_types.add("");
-			ocsp_types.addAll(_ocsp_types);
-			ocsp_labels.add("-");
-			ocsp_labels.addAll(_ocsp_labels);
-		}
-		
+		OCSPProvider ocspProvider = new OCSPProvider();
+		boolean ocspEnabled = ocspProvider.isOcspEnabled();
+		List<String> ocsp_types = ocspProvider.getValues();
+		List<String> ocsp_labels = ocspProvider.getLabels();
+				
 		boolean crlWithOCSPEnabledTrustAllHttpsServer = 
 				ocspEnabled &&
 				core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata() &&

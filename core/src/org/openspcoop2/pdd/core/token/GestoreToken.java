@@ -104,10 +104,14 @@ import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
+import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
+import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
 import org.openspcoop2.security.message.jose.JOSEUtils;
+import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -135,6 +139,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
+import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -1000,32 +1005,102 @@ public class GestoreToken {
     				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
     				Properties p = policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
     				JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), p, log); // serve per leggere il keystore dalla cache
-    				if(p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS)) {
-    					String alias = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
-    					if(alias!=null && 
-    							(
-    									alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C)
-    									||
-    									alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5T)
-    									||
-    									alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T)
-    							)
-    						) {
-    						if(p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE)) {
-    							Object oKeystore = p.get(RSSecurityConstants.RSSEC_KEY_STORE);
-    							if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
-    								java.security.KeyStore keystore = (java.security.KeyStore) oKeystore;
-    		    					options.setPermitUseHeaderX5C(alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C) || alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T));
-    		    					options.setPermitUseHeaderX5T(alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5T) || alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T));
-    		    					options.setPermitUseHeaderX5T_256(alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5T) || alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T));
-    		    					jsonCompactVerify = new JsonVerifySignature(keystore, options);
-    							}
-    						}
-    					}
+					
+    				String aliasMode = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS+".mode"); 
+					if(aliasMode!=null && 
+							(
+									aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C)
+									||
+									aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256)
+									||
+									aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256)
+									||
+									aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U)
+							)
+						) {
+						if(p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE)) {
+							Object oKeystore = p.get(RSSecurityConstants.RSSEC_KEY_STORE);
+							if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
+								java.security.KeyStore keystore = (java.security.KeyStore) oKeystore;
+		    					options.setPermitUseHeaderX5C(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C) || aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256));
+		    					// se lo si vuole usare utilizzare la vecchia modalità alias special case
+		    					//options.setPermitUseHeaderX5T(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256) || aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256));
+		    					options.setPermitUseHeaderX5T_256(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256) || aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256));
+		    					options.setPermitUseHeaderX5U(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U));
+		    					jsonCompactVerify = new JsonVerifySignature(keystore, options);
+		    					
+	    						String signatureOCSP = policyGestioneToken.getValidazioneJWT_ocspPolicy();
+	    						String signatureCRL = policyGestioneToken.getValidazioneJWT_crl();
+	    						
+	    						boolean crlByOcsp = false;
+	    						if(keystore!=null && signatureOCSP!=null && !"".equals(signatureOCSP)) {
+	    							LoggerBuffer lb = new LoggerBuffer();
+	    							lb.setLogDebug(log);
+	    							lb.setLogError(log);
+	    							GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(datiInvocazione.getRequestInfo());
+	    							IOCSPValidator ocspValidator = null;
+	    							try {
+	    								org.openspcoop2.utils.certificate.KeyStore trustStore = new org.openspcoop2.utils.certificate.KeyStore(keystore);
+	    								ocspValidator = new GestoreOCSPValidator(datiInvocazione.getRequestInfo(), lb, 
+	    										trustStore,
+	    										signatureCRL, 
+	    										signatureOCSP, 
+	    										ocspResourceReader);
+	    							}catch(Exception e){
+	    								throw new Exception("ocsp initialization (policy:'"+signatureOCSP+"') failed: "+e.getMessage(),e);
+	    							}
+	    							if(ocspValidator!=null) {
+	    								jsonCompactVerify.setOcspValidatorX509(ocspValidator);
+	    								GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
+	    								if(gOcspValidator.getOcspConfig()!=null) {
+	    									crlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+	    								}
+	    							}
+	    						}
+	    						
+	    						if(signatureCRL!=null && !"".equals(signatureCRL) && !crlByOcsp) {
+	    							CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(datiInvocazione.getRequestInfo(), signatureCRL);
+	    							if(crlCertstore==null) {
+	    								throw new Exception("Process CRL '"+signatureCRL+"' failed");
+	    							}
+	    							jsonCompactVerify.setCrlX509(crlCertstore.getCertStore());
+	    						}
+
+							}
+						}
+					}
+					    				
+					if(jsonCompactVerify==null) {
+	    				if(p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS)) {
+	    					String alias = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
+	    					if(alias!=null && 
+	    							(
+	    									alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C)
+	    									||
+	    									alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5T)
+	    									||
+	    									alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T)
+	    							)
+	    						) {
+	    						// backward compatibility
+	    						if(p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE)) {
+	    							Object oKeystore = p.get(RSSecurityConstants.RSSEC_KEY_STORE);
+	    							if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
+	    								java.security.KeyStore keystore = (java.security.KeyStore) oKeystore;
+	    		    					options.setPermitUseHeaderX5C(alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C) || alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T));
+	    		    					options.setPermitUseHeaderX5T(alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5T) || alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T));
+	    		    					options.setPermitUseHeaderX5T_256(alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5T) || alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T));
+	    		    					jsonCompactVerify = new JsonVerifySignature(keystore, options);
+	    							}
+	    						}
+	    					}
+	    				}	
     				}
+					
     				if(jsonCompactVerify==null) {
     					jsonCompactVerify = new JsonVerifySignature(p, options);
     				}
+    				
     				if(jsonCompactVerify.verify(token)) {
     					informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonCompactVerify.getDecodedPayload(),tokenParser);
     					if(jsonCompactVerify.getX509Certificate()!=null && pddContext!=null) {
@@ -4251,7 +4326,75 @@ public class GestoreToken {
 	    				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
 	    				Properties p = policyAttributeAuthority.getProperties().get(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
 	    				JOSEUtils.injectKeystore(requestInfo, p, log); // serve per leggere il keystore dalla cache
-	    				jsonCompactVerify = new JsonVerifySignature(p, options);
+	    				
+	    				String aliasMode = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS+".mode"); 
+						if(aliasMode!=null && 
+								(
+										aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C)
+										||
+										aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256)
+										||
+										aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256)
+										||
+										aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U)
+								)
+							) {
+							if(p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE)) {
+								Object oKeystore = p.get(RSSecurityConstants.RSSEC_KEY_STORE);
+								if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
+									java.security.KeyStore keystore = (java.security.KeyStore) oKeystore;
+			    					options.setPermitUseHeaderX5C(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C) || aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256));
+			    					// se lo si vuole usare utilizzare la vecchia modalità alias special case
+			    					//options.setPermitUseHeaderX5T(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256) || aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256));
+			    					options.setPermitUseHeaderX5T_256(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256) || aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256));
+			    					options.setPermitUseHeaderX5U(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U));
+			    					jsonCompactVerify = new JsonVerifySignature(keystore, options);
+			    					
+		    						String signatureOCSP = policyAttributeAuthority.getResponseJws_ocspPolicy();
+		    						String signatureCRL = policyAttributeAuthority.getResponseJws_crl();
+		    						
+		    						boolean crlByOcsp = false;
+		    						if(keystore!=null && signatureOCSP!=null && !"".equals(signatureOCSP)) {
+		    							LoggerBuffer lb = new LoggerBuffer();
+		    							lb.setLogDebug(log);
+		    							lb.setLogError(log);
+		    							GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(requestInfo);
+		    							IOCSPValidator ocspValidator = null;
+		    							try {
+		    								org.openspcoop2.utils.certificate.KeyStore trustStore = new org.openspcoop2.utils.certificate.KeyStore(keystore);
+		    								ocspValidator = new GestoreOCSPValidator(requestInfo, lb, 
+		    										trustStore,
+		    										signatureCRL, 
+		    										signatureOCSP, 
+		    										ocspResourceReader);
+		    							}catch(Exception e){
+		    								throw new Exception("ocsp initialization (policy:'"+signatureOCSP+"') failed: "+e.getMessage(),e);
+		    							}
+		    							if(ocspValidator!=null) {
+		    								jsonCompactVerify.setOcspValidatorX509(ocspValidator);
+		    								GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
+		    								if(gOcspValidator.getOcspConfig()!=null) {
+		    									crlByOcsp = gOcspValidator.getOcspConfig().isCrl();
+		    								}
+		    							}
+		    						}
+		    						
+		    						if(signatureCRL!=null && !"".equals(signatureCRL) && !crlByOcsp) {
+		    							CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, signatureCRL);
+		    							if(crlCertstore==null) {
+		    								throw new Exception("Process CRL '"+signatureCRL+"' failed");
+		    							}
+		    							jsonCompactVerify.setCrlX509(crlCertstore.getCertStore());
+		    						}
+
+								}
+							}
+						}
+						    				
+						if(jsonCompactVerify==null) {
+							jsonCompactVerify = new JsonVerifySignature(p, options);
+						}
+						
 	    				if(jsonCompactVerify.verify(new String(risposta))) {
 	    					if(tokenParser instanceof BasicRetrieveAttributeAuthorityResponseParser) {
 	    						decodedPayload = jsonCompactVerify.getDecodedPayload(); 

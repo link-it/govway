@@ -29,6 +29,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
+import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
@@ -39,6 +40,7 @@ import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.jose.SecurityProvider;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
@@ -51,6 +53,13 @@ import org.openspcoop2.utils.transport.http.SSLUtilities;
  */
 public class TokenProvider implements IProvider {
 
+	
+	private OCSPProvider ocspProvider;
+
+	public TokenProvider() {
+		this.ocspProvider = new OCSPProvider();
+	}
+	
 	@Override
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
 		
@@ -126,6 +135,11 @@ public class TokenProvider implements IProvider {
 					// altrimenti è stato fatto inject del keystore
 					String file = p.getProperty("rs.security.keystore.file");
 					InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - TrustStore - File");
+					
+					String crl = pDefault.getProperty(SecurityConstants.SIGNATURE_CRL);
+					if(crl!=null && StringUtils.isNotEmpty(crl)) {
+						InputValidationUtils.validateTextAreaInput(crl, "Validazione JWT - TrustStore - CRL File(s)");
+					}
 				}
 			}
 			else if(Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
@@ -746,6 +760,12 @@ public class TokenProvider implements IProvider {
 				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE.equals(id)) {
 			return getStoreType(id,true);
 		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE.equals(id)) {
+			return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES;
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(id)) {
+			return this.ocspProvider.getValues();
+		}
 		return null;
 	}
 
@@ -774,6 +794,12 @@ public class TokenProvider implements IProvider {
 				Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE.equals(id) ||
 				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE.equals(id)) {
 			return getStoreType(id,false);
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE.equals(id)) {
+			return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS;
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(id)) {
+			return this.ocspProvider.getLabels();
 		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
@@ -819,6 +845,28 @@ public class TokenProvider implements IProvider {
 		return l;
 	}
 
+	@Override
+	public String getNote(String id, String actualValue) throws ProviderException{
+		if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE.equals(id)) {
+			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_ALIAS.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_ALIAS;
+			}
+			else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5C;
+			}
+			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5T256;
+			}
+			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5C_X5T256;
+			}
+			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5U;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public String getDefault(String id) throws ProviderException {
 		if(Costanti.ID_INTROSPECTION_HTTP_METHOD.equals(id) ||
@@ -919,6 +967,11 @@ public class TokenProvider implements IProvider {
 			}
 			
 			return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(item.getName())) {
+			if(!this.ocspProvider.isOcspEnabled()) {
+				item.setType(ItemType.HIDDEN);
+			}
 		}
 		
 		return actualValue;

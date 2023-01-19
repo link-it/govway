@@ -696,11 +696,27 @@
 				</conditions>
 				<property name="rs.security.keystore.password" properties="signatureVerifyPropRefId" />
 			</item>
-			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
+
+			<item type="select" name="aaJWSTruststoreTypeSelectCertificate" label="Riferimento X.509" default="alias" reloadOnChange="true">
 				<conditions>
 					<condition not="true" and="false">
 						<equals name="aaJWSTruststoreType" value="jceks"/>
 						<equals name="aaJWSTruststoreType" value="jwk"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.alias.mode" properties="signatureVerifyPropRefId"/>
+			</item>
+
+			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="aaJWSTruststoreType" value="jceks"/>
+						<equals name="aaJWSTruststoreType" value="jwk"/>
+					</condition>
+					<condition and="false">
+						<defined not="true" name="aaJWSTruststoreTypeSelectCertificate"/>
+						<equals name="aaJWSTruststoreTypeSelectCertificate" value=""/>
+						<equals name="aaJWSTruststoreTypeSelectCertificate" value="alias"/>
 					</condition>
 				</conditions>
 				<property name="rs.security.keystore.alias" properties="signatureVerifyPropRefId" />
@@ -728,6 +744,56 @@
 					</condition>
 				</conditions>
 				<property name="rs.security.key.password" properties="signatureVerifyPropRefId" />
+			</item>
+
+			<item type="select" name="aaJWSTruststoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="aaJWSTruststoreType" value="jceks"/>
+						<equals name="aaJWSTruststoreType" value="jwk"/>
+					</condition>
+					<condition not="true" and="false">
+						<defined not="true" name="aaJWSTruststoreTypeSelectCertificate"/>
+						<equals name="aaJWSTruststoreTypeSelectCertificate" value=""/>
+						<equals name="aaJWSTruststoreTypeSelectCertificate" value="alias"/>
+					</condition>
+				</conditions>
+				<property name="signatureOCSP" />
+			</item>
+			<item type="checkbox" name="aaJWSTruststoreEnableRevocation" label="CRL" reloadOnChange="true" defaultSelected="false">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="aaJWSTruststoreType" value="jceks"/>
+						<equals name="aaJWSTruststoreType" value="jwk"/>
+					</condition>
+					<condition not="true" and="false">
+						<defined not="true" name="aaJWSTruststoreTypeSelectCertificate"/>
+						<equals name="aaJWSTruststoreTypeSelectCertificate" value=""/>
+						<equals name="aaJWSTruststoreTypeSelectCertificate" value="alias"/>
+					</condition>
+					<condition and="false">
+						<defined not="true" name="aaJWSTruststoreOcspPolicy"/>
+						<equals name="aaJWSTruststoreOcspPolicy" value=""/>
+					</condition>
+				</conditions>
+				<property name="enableRevocation" />
+			</item>	
+			<item type="textarea" name="aaJWSTruststoreCrlFiles" label="CRL File(s)" required="true" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition>
+						<selected name="aaJWSTruststoreEnableRevocation"/>
+					</condition>
+				</conditions>
+			      	<property name="signatureCRL" />
+			</item>
+			<item type="textarea" name="aaJWSTruststoreCrlFilesOcsp" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition and="true">
+						<defined name="aaJWSTruststoreOcspPolicy"/>
+						<equals not="true" name="aaJWSTruststoreOcspPolicy" value=""/>
+					</condition>
+				</conditions>
+			      	<property name="signatureCRL" />
 			</item>
 
 		</subsection>

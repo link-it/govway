@@ -117,7 +117,13 @@ public class ItemBean extends BaseItemBean<Item>{
 		de.setLabel(this.getItem().getLabel()); 
 		de.setPostBack(this.getItem().getReloadOnChange());
 		de.setRequired(this.getItem().isRequired()); 
-		de.setNote(this.getItem().getNote());
+		
+		if(this.getItem().getNote()!=null && StringUtils.isNotEmpty(this.getItem().getNote())) {
+			de.setNote(this.getItem().getNote());
+		}
+		else if(this.provider!=null){
+			de.setNote(this.provider.getNote(this.name, this.value));
+		}
 
 		if(this.provider!=null){
 			ProviderInfo pInfo = this.provider.getProviderInfo(this.name); 

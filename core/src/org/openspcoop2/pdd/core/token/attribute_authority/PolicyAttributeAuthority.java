@@ -30,6 +30,7 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.core.token.AbstractPolicyToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -263,6 +264,13 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	}
 	public boolean isResponseCustom() {
 		return Costanti.AA_RESPONSE_TYPE_VALUE_CUSTOM.equals(this.getResponseType());
+	}
+	
+	public String getResponseJws_ocspPolicy() {
+		return this.defaultProperties.getProperty(SecurityConstants.SIGNATURE_OCSP);
+	}
+	public String getResponseJws_crl() {
+		return this.defaultProperties.getProperty(SecurityConstants.SIGNATURE_CRL);
 	}
 	
 	public String getResponseAudience() {
