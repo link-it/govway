@@ -10,8 +10,8 @@ TRUNK_VERSION=3.3
 TAG_PDD_VERSION_PRODUCT="3"
 TAG_PDD_VERSION_MAJOR="3"
 TAG_PDD_MAJOR_VERSION="${TAG_PDD_VERSION_PRODUCT}.${TAG_PDD_VERSION_MAJOR}"
-TAG_PDD_MINOR_VERSION=9
-TAG_PDD_PATCHLEVEL=p3
+TAG_PDD_MINOR_VERSION=10
+TAG_PDD_PATCHLEVEL=
 ramo=tags # tags / branches
 GIT_URL=https://github.com/link-it/govway.git
 
@@ -339,12 +339,28 @@ then
 		exit 2
 	fi
 
+	/bin/cp -f validation-process/_build/pdf/*.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf
+	if [ ! -e ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf ]
+	then
+		errorPrintln "Generazione della documentazione fallita: GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf non generato"
+		exit 2
+	fi
+
+	/bin/cp -f vulnerability-management/_build/pdf/*.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-GestioneVulnerabilita-${TAG_FULL_VERSION}.pdf
+	if [ ! -e ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-GestioneVulnerabilita-${TAG_FULL_VERSION}.pdf ]
+	then
+		errorPrintln "Generazione della documentazione fallita: GovWay-GestioneVulnerabilita-${TAG_FULL_VERSION}.pdf non generato"
+		exit 2
+	fi
+
 	popd >> ${LOG_FILE} 2>&1
 	debugPrintln "  Generazione Manuali completata con successo"
 else
 	/bin/cp -f pdf/GovWay-ManualeUtente.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ManualeUtente-${TAG_FULL_VERSION}.pdf	
 	/bin/cp -f pdf/GovWay-ManualeInstallazione.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ManualeInstallazione-${TAG_FULL_VERSION}.pdf	
-	/bin/cp -f pdf/GovWay-ManualeMonitoraggio.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ManualeMonitoraggio-${TAG_FULL_VERSION}.pdf	
+	/bin/cp -f pdf/GovWay-ManualeMonitoraggio.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ManualeMonitoraggio-${TAG_FULL_VERSION}.pdf
+	/bin/cp -f pdf/GovWay-ProcessoValidazione.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf	
+	/bin/cp -f pdf/GovWay-GestioneVulnerabilita.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-GestioneVulnerabilita-${TAG_FULL_VERSION}.pdf
 fi
 popd >> ${LOG_FILE} 2>&1
 

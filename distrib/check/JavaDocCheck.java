@@ -166,6 +166,14 @@ public class JavaDocCheck {
 					jumpCheck = true;
 				else if( f.getAbsolutePath().indexOf("tools/rs/monitor/server/src/org/openspcoop2/core/monitor/rs/server/api")!= -1 && !f.getAbsolutePath().contains("/impl/"))
 					jumpCheck = true;
+				else if( f.getAbsolutePath().indexOf("protocolli/trasparente/testsuite/example/server/RPCLiteralExample/src/org/openspcoop2/example/server/rpc/literal/stub")!= -1)
+					jumpCheck = true;
+				else if( f.getAbsolutePath().indexOf("protocolli/trasparente/testsuite/example/server/RPCLiteralExample/src/org/openspcoop2/example/server/rpc/literal/stub_namespace_ridefinito")!= -1)
+					jumpCheck = true;
+				else if( f.getAbsolutePath().indexOf("protocolli/trasparente/testsuite/example/server/RPCLiteralExample/src/org/openspcoop2/example/server/rpc/literal/skeleton")!= -1)
+					jumpCheck = true;
+				else if( f.getAbsolutePath().indexOf("protocolli/trasparente/testsuite/example/server/RPCLiteralExample/src/org/openspcoop2/example/server/rpc/literal/skeleton_namespace_ridefinito")!= -1)
+					jumpCheck = true;
 
 				String TODO = "METTERE QUA EVENTUALE NUOVO PATH";
 				//if(!printTODO){		
