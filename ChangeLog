@@ -1,3 +1,15 @@
+2023-01-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1459
+	Aggiunta possibilità di attuare una validazione OCSP dei certificati presenti nelle seguenti funzionalità di GovWay:
+	-  Profilo di Interoperabilità ModI: certificato utilizzato all'interno dei token di sicurezza 'ID_AUTH' e 'INTEGRITY';
+	-  Connettore HTTPS: certificato server;
+	-  WSSecurity e JOSE: certificato utilizzato per firmare il messaggio;
+	-  Token OAuth: certificato utilizzato per firmare il token;
+	-  Autenticazione HTTPS: certificato client;
+	-  Frontend HTTPS: certificati X.509 inoltrati a GovWay su header http dai frontend dove viene attuata la terminazione tls (Apache httpd, IIS, etc).
+
 2023-01-10  Andrea Poli <apoli@link.it>
 
 	* [Utils]

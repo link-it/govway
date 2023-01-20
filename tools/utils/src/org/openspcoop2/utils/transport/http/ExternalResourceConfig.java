@@ -41,6 +41,8 @@ public class ExternalResourceConfig {
 		this.returnCode.add(200);
 	}
 	
+	private boolean hostnameVerifier = true;
+	
 	private boolean trustAllCerts = false;
 
 	private KeyStore trustStore;
@@ -48,6 +50,13 @@ public class ExternalResourceConfig {
 	private CertStore crlStore;
 	
 	private KeyStore keyStore;
+	private String keyAlias;
+	private String keyPassword;
+	
+	private String forwardProxy_url;
+	private String forwardProxy_header;
+	private String forwardProxy_queryParameter;
+	private boolean forwardProxy_base64;
 
 	public int getReadTimeout() {
 		return this.readTimeout;
@@ -72,6 +81,15 @@ public class ExternalResourceConfig {
 	public void setReturnCode(List<Integer> returnCode) {
 		this.returnCode = returnCode;
 	}
+	
+	public boolean isHostnameVerifier() {
+		return this.hostnameVerifier;
+	}
+
+	public void setHostnameVerifier(boolean hostnameVerifier) {
+		this.hostnameVerifier = hostnameVerifier;
+	}
+
 	
 	public boolean isTrustAllCerts() {
 		return this.trustAllCerts;
@@ -103,5 +121,53 @@ public class ExternalResourceConfig {
 
 	public void setKeyStore(KeyStore keyStore) {
 		this.keyStore = keyStore;
+	}
+	
+	public String getKeyAlias() {
+		return this.keyAlias;
+	}
+
+	public void setKeyAlias(String keyAlias) {
+		this.keyAlias = keyAlias;
+	}
+
+	public String getKeyPassword() {
+		return this.keyPassword;
+	}
+
+	public void setKeyPassword(String keyPassword) {
+		this.keyPassword = keyPassword;
+	}
+	
+	public String getForwardProxy_url() {
+		return this.forwardProxy_url;
+	}
+
+	public void setForwardProxy_url(String forwardProxy_url) {
+		this.forwardProxy_url = forwardProxy_url;
+	}
+
+	public String getForwardProxy_header() {
+		return this.forwardProxy_header;
+	}
+
+	public void setForwardProxy_header(String forwardProxy_header) {
+		this.forwardProxy_header = forwardProxy_header;
+	}
+
+	public String getForwardProxy_queryParameter() {
+		return this.forwardProxy_queryParameter;
+	}
+
+	public void setForwardProxy_queryParameter(String forwardProxy_queryParameter) {
+		this.forwardProxy_queryParameter = forwardProxy_queryParameter;
+	}
+
+	public boolean isForwardProxy_base64() {
+		return this.forwardProxy_base64;
+	}
+
+	public void setForwardProxy_base64(boolean forwardProxy_base64) {
+		this.forwardProxy_base64 = forwardProxy_base64;
 	}
 }

@@ -47,7 +47,11 @@ public class ExternalResource implements Serializable {
 	}
 	public ExternalResource(String id, String resource, ExternalResourceConfig externalConfig) throws SecurityException {
 		this.id = id;
-		this.resource = ExternalResourceUtils.readResource(resource, externalConfig);
+		try {
+			this.resource = ExternalResourceUtils.readResource(resource, externalConfig);
+		}catch(Exception e) {
+			throw new SecurityException(e.getMessage(),e);
+		}
 	}
 
 	private static String generateId() throws SecurityException {

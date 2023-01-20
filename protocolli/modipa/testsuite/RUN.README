@@ -31,15 +31,26 @@ Prerequisiti:
 		+ NOTA: La porta deve restare 8090 altrimenti è necessario cambiare la configurazione di tutte le porte delegate
 			dentro modipaTestBundle.zip
 
-+ Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444 e 8445 utilizzando le configurazioni presenti nella directory config_https:
-	a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
-	   Esempio in config_https/ConnettoreHTTPS_withClientAuth.xml
-	   La configurazione del connettore assume che il keystore config_https/jks/erogatore.jks sia stato copiato in /etc/govway/keys
-	b) un connettore HTTPS senza autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8445)
-	   Esempio in config_https/ConnettoreHTTPS_noClientAuth.xml
-	   La configurazione del connettore assume che il keystore config_https/jks/erogatore.jks sia stato copiato in /etc/govway/keys
-	c) Configurazione della JVM dell'A.S. in modo che utilizzi il truststore config_https/jks/erogatore.jks
-	   Indicazioni descritte per JBoss in config_https/configurazioneTrustStoreJBOSS.txt
+- Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444, 8445, 8450 e 8451 utilizzando le configurazioni presenti nella directory https:
+  a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
+        Esempio in https/base/ConnettoreHTTPS_withClientAuth.xml
+        La configurazione del connettore assume che il keystore https/base/jks/erogatore.jks sia stato copiato in /etc/govway/keys
+  b) un connettore HTTPS senza autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8445)
+        Esempio in https/base/ConnettoreHTTPS_noClientAuth.xml
+        La configurazione del connettore assume che il keystore https/base/jks/erogatore.jks sia stato copiato in /etc/govway/keys
+  c) i test richiedono che i keystore presenti in https/base/jks/* siano stati copiati in /etc/govway/keys
+  d) Configurazione della JVM dell'A.S. in modo che utilizzi il truststore https/base/jks/erogatore.jks
+       Indicazioni descritte per JBoss in https/base/configurazioneTrustStoreJBOSS.txt
+  e) un connettore HTTPS senza autenticazione client, utilizzato per test OCSP, con certificato server valido (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8450)
+        Esempio in https/ocsp/ConnettoreHTTPS_ocspCertificatoValido.xml
+        La configurazione del connettore assume che il keystore https/ocsp/jks/testClient.p12 sia stato copiato in /etc/govway/keys/ocsp/
+  f) un connettore HTTPS senza autenticazione client, utilizzato per test OCSP, con certificato server revocato (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8451)
+        Esempio in https/ocsp/ConnettoreHTTPS_ocspCertificatoRevocato.xml
+        La configurazione del connettore assume che il keystore https/ocsp/jks/test.p12 sia stato copiato in /etc/govway/keys/ocsp/
+  e) i test richiedono che i keystore presenti in https/ocsp/jks/* siano stati copiati in /etc/govway/keys/ocsp/
+  f) i test richiedono che sia copiato il file https/ocsp/ocsp.properties in /etc/govway/
+  g) i test richiedono che i certificati ee_TEST_test.esempio.it.cert.pem e ee_TEST_Client-test.esempio.it.cert.pem presenti in https/ocsp/jks/ siano recuperabili rispettivamente con le seguenti url 'http://127.0.0.1:8080/ee_TEST_test.esempio.it.cert.pem' e 'http://127.0.0.1:8080/ee_TEST_Client-test.esempio.it.cert.pem'
+  i) i test richiedono che i certificati ExampleClient1.crt, ExampleClientRevocato.crt e ExampleClientScaduto.crt presenti in https/ocsp/crl siano recuperabili rispettivamente con le seguenti url 'http://127.0.0.1:8080/ExampleClient1.crt', 'http://127.0.0.1:8080/ExampleClientRevocato.crt' e 'http://127.0.0.1:8080/ExampleClientScaduto.crt'
 
 + Su tomcat 9 è necessario aggiungere il parametro maxHttpHeaderSize="65536" sul connector con porta 8080 nel file TOMCAT_DIR/conf/server.xml. Ad esempio:
 
@@ -64,8 +75,6 @@ Prerequisiti:
 		cp -r ./src/test/risposte-default/* /etc/govway/test/protocolli/modipa
 	Queste saranno le risposte utilizzate dai connettori della configurazione di govway per indicare al
 	servizio di echo quali risposte restituire.
-
-+ Copiare erogatore.jks e soggetto1.jks dalla cartella <https_examples> in </etc/govway/keys>
 
 + Copiare o creare un link simbolico della cartella <protocolli/modipa/example/keys/xca> sotto </etc/govway/keys/xca>
   Qui sono presenti i keystore e truststore per i test sulla sicurezza messaggio

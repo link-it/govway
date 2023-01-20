@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.AuthorityInformationAccess;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -49,6 +50,7 @@ public class OCSPRequestParams {
 	private KeyStore signerTrustStore;
 	private List<String> responderURIs;
 	private KeyStore httpsTrustStore;
+	private KeyStore httpsKeyStore;
 	private OCSPConfig config;
 	private boolean isSelfSigned;
 	private boolean isCA;
@@ -116,6 +118,12 @@ public class OCSPRequestParams {
 	}
 	public void setHttpsTrustStore(KeyStore httpsTrustStore) {
 		this.httpsTrustStore = httpsTrustStore;
+	}
+	public KeyStore getHttpsKeyStore() {
+		return this.httpsKeyStore;
+	}
+	public void setHttpsKeyStore(KeyStore httpsKeyStore) {
+		this.httpsKeyStore = httpsKeyStore;
 	}
 	
 	public KeyStore getConfigTrustStore() {
@@ -194,21 +202,42 @@ public class OCSPRequestParams {
 							if(aia!=null) {
 								List<String> issuer = aia.getCAIssuers();
 								if(issuer!=null && !issuer.isEmpty()) {
-									String urlIssuer = issuer.get(0); // TODO: per adesso assumo il primo certificato presente
-									Map<String, byte[]> map = new HashMap<>();
-									reader.readExternalResource(urlIssuer, map);
-									if(!map.isEmpty()) {
-										byte [] issCert = map.get(urlIssuer);
-										if(issCert!=null) {
-											Certificate cer = ArchiveLoader.load(issCert);
-											if(cer!=null && cer.getCertificate()!=null) {
-												params.issuerCertificate = cer.getCertificate().getCertificate();
-												if(params.issuerCertificate!=null) {
-													log.debug("OCSP IssuerCertificate: retrieved from external url '"+urlIssuer+"'");
-													break;
+									List<Exception> listExceptions = new ArrayList<>();
+									StringBuilder sbError = new StringBuilder();
+									boolean find = false;
+									for (String urlIssuer : issuer) {
+										Map<String, byte[]> map = new HashMap<>();
+										try {
+											reader.readExternalResource(urlIssuer, map);
+											if(!map.isEmpty()) {
+												byte [] issCert = map.get(urlIssuer);
+												if(issCert!=null) {
+													Certificate cer = ArchiveLoader.load(issCert);
+													if(cer!=null && cer.getCertificate()!=null) {
+														params.issuerCertificate = cer.getCertificate().getCertificate();
+														if(params.issuerCertificate!=null) {
+															log.debug("OCSP IssuerCertificate: retrieved from external url '"+urlIssuer+"'");
+															find = true;
+															break;
+														}
+													}
 												}
 											}
+										}catch(Throwable t) {
+											String msgError = "[AuthorityInformationAccess-CAIssuer: "+urlIssuer+"] retrieve failed: "+t.getMessage();
+											if(sbError.length()>0) {
+												sbError.append("\n");
+											}
+											sbError.append(msgError);
+											log.debug("OCSP "+msgError,t);
+											listExceptions.add(new Exception(msgError,t));
 										}
+									}
+									if(find) {
+										break;
+									}
+									if(!listExceptions.isEmpty()) {
+										throw new UtilsMultiException("OCSP IssuerCertificate retrieve failed: "+sbError.toString(), listExceptions.toArray(new Throwable[1]));
 									}
 								}
 							}
@@ -279,6 +308,9 @@ public class OCSPRequestParams {
 			
 			// https truststore
 			params.httpsTrustStore = reader.getHttpsTrustStore();
+			
+			// https keystore
+			params.httpsKeyStore = reader.getHttpsKeyStore();
 		}
 		
 		return params;

@@ -167,6 +167,9 @@ localityName_default            =
 organizationalUnitName_default  =
 emailAddress_default            =
 
+[ocsp_info]
+caIssuers;URI.0 = https://127.0.0.1:8444/ca_TEST.cert.pem
+caIssuers;URI.1 = https://127.0.0.1:8445/ca_TEST.cert.pem
 
 [ v3_ca ]
 subjectKeyIdentifier = hash
@@ -188,6 +191,7 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer:always
 keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
 extendedKeyUsage = clientAuth
+authorityInfoAccess = @ocsp_info
 
 [ server_cert ]
 basicConstraints = CA:FALSE
@@ -197,7 +201,7 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer:always
 keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth
-
+authorityInfoAccess = @ocsp_info
 
 [ clientserver_cert ]
 basicConstraints = CA:FALSE
@@ -207,6 +211,7 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer:always
 keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth,clientAuth
+authorityInfoAccess = @ocsp_info
 
 [ ocsp_cert ]
 basicConstraints = CA:FALSE

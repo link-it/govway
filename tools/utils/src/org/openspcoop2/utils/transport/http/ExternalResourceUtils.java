@@ -21,10 +21,16 @@ package org.openspcoop2.utils.transport.http;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * ExternalResourceUtils
@@ -35,7 +41,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
  */
 public class ExternalResourceUtils {
 
-	public static byte[] readResource(String resource, ExternalResourceConfig externalConfig) throws SecurityException {
+	public static byte[] readResource(String resource, ExternalResourceConfig externalConfig) throws UtilsException {
 		
 		try {
 			if(!resource.trim().startsWith("http") && !resource.trim().startsWith("file")) {
@@ -52,11 +58,38 @@ public class ExternalResourceUtils {
 			
 			HttpRequest req = new HttpRequest();
 			req.setMethod(HttpRequestMethod.GET);
-			req.setUrl(resource);
-			if(resource.trim().startsWith("https")) {
+			
+			resource = resource.trim();
+			if(externalConfig.getForwardProxy_url()!=null && StringUtils.isNotEmpty(externalConfig.getForwardProxy_url())) {
+				String forwardProxyUrl = externalConfig.getForwardProxy_url();
+				String remoteLocation = externalConfig.isForwardProxy_base64() ? Base64Utilities.encodeAsString(resource.getBytes()) : resource;
+				if(externalConfig.getForwardProxy_header()!=null && StringUtils.isNotEmpty(externalConfig.getForwardProxy_header())) {
+					req.addHeader(externalConfig.getForwardProxy_header(), remoteLocation);
+				}
+				else if(externalConfig.getForwardProxy_queryParameter()!=null && StringUtils.isNotEmpty(externalConfig.getForwardProxy_queryParameter())) {
+					Map<String, List<String>> queryParameters = new HashMap<String, List<String>>();
+					TransportUtils.addParameter(queryParameters,externalConfig.getForwardProxy_queryParameter(), remoteLocation);
+					forwardProxyUrl = TransportUtils.buildUrlWithParameters(queryParameters, forwardProxyUrl, false, null);
+				}
+				else {
+					throw new UtilsException("Forward Proxy configuration error: header and query parameter not found");
+				}
+				req.setUrl(forwardProxyUrl);
+			}
+			else {
+				req.setUrl(resource);
+			}
+			
+			if(req.getUrl().startsWith("https")) {
+				req.setHostnameVerifier(externalConfig.isHostnameVerifier());
 				req.setTrustAllCerts(externalConfig.isTrustAllCerts());
 				if(externalConfig.getTrustStore()!=null) {
 					req.setTrustStore(externalConfig.getTrustStore());
+				}
+				if(externalConfig.getKeyStore()!=null) {
+					req.setKeyStore(externalConfig.getKeyStore());
+					req.setKeyAlias(externalConfig.getKeyAlias());
+					req.setKeyPassword(externalConfig.getKeyPassword());
 				}
 			}
 			req.setConnectTimeout(externalConfig.getConnectTimeout());
@@ -107,7 +140,7 @@ public class ExternalResourceUtils {
 			}
 
 		}catch(Throwable t) {
-			throw new SecurityException("Retrieve external resource '"+resource+"' failed: "+t.getMessage(),t);
+			throw new UtilsException("Retrieve external resource '"+resource+"' failed: "+t.getMessage(),t);
 		}
 
 	}

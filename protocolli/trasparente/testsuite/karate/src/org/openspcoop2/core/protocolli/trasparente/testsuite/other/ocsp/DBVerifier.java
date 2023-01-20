@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -131,5 +132,38 @@ public class DBVerifier {
 		
 	}
 
+	
+	public static void verify(Date date, long esitoExpected, String servizio, int countAtteso) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			DBVerifier._verify(date, esitoExpected, servizio, countAtteso);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				DBVerifier._verify(date, esitoExpected, servizio, countAtteso);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					DBVerifier._verify(date, esitoExpected, servizio, countAtteso);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					DBVerifier._verify(date, esitoExpected, servizio, countAtteso);
+				}
+			}
+		}
+	}
+	
+	private static void _verify(Date date, long esitoExpected, String servizio, int countAtteso) throws Exception  {
+		
+		String query = "select count(*) from transazioni where data_ingresso_richiesta > ? and esito=? and nome_servizio=?";
+		log().info(query);
+		
+		int count = dbUtils().readValue(query, Integer.class, date, esitoExpected, servizio);
+		assertEquals("CountTransazioni per servizio '"+servizio+"': "+count, countAtteso, count);
+
+	}
 	
 }

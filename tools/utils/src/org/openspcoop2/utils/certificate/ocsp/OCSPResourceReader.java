@@ -73,12 +73,29 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 		try {
 			ExternalResourceConfig externalConfig = new ExternalResourceConfig();
 			
+			externalConfig.setHostnameVerifier(this.config.isExternalResources_hostnameVerifier());
 			externalConfig.setTrustAllCerts(this.config.isExternalResources_trustAllCerts());
 			if(this.config.getExternalResources_trustStorePath()!=null) {
 				KeyStore ks = newKeyStore(this.config.getExternalResources_trustStorePath(),
 						this.config.getExternalResources_trustStoreType(),
 						this.config.getExternalResources_trustStorePassword());
 				externalConfig.setTrustStore(ks.getKeystore());
+			}
+			
+			if(this.config.getExternalResources_keyStorePath()!=null) {
+				KeyStore ks = newKeyStore(this.config.getExternalResources_keyStorePath(),
+						this.config.getExternalResources_keyStoreType(),
+						this.config.getExternalResources_keyStorePassword());
+				externalConfig.setKeyStore(ks.getKeystore());
+				externalConfig.setKeyAlias(this.config.getExternalResources_keyAlias());
+				externalConfig.setKeyPassword(this.config.getExternalResources_keyPassword());
+			}
+			
+			if(this.config.getForwardProxy_url()!=null) {
+				externalConfig.setForwardProxy_url(this.config.getForwardProxy_url());
+				externalConfig.setForwardProxy_header(this.config.getForwardProxy_header());
+				externalConfig.setForwardProxy_queryParameter(this.config.getForwardProxy_queryParameter());
+				externalConfig.setForwardProxy_base64(this.config.isForwardProxy_base64());
 			}
 			
 			externalConfig.setConnectTimeout(this.config.getConnectTimeout());
@@ -127,6 +144,19 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 			return newKeyStore(this.config.getExternalResources_trustStorePath(),
 					this.config.getExternalResources_trustStoreType(),
 					this.config.getExternalResources_trustStorePassword());
+		}
+		return null;
+	}
+	
+	@Override
+	public KeyStore getHttpsKeyStore() throws UtilsException {
+		if(this.config==null) {
+			throw new UtilsException("OCSPConfig is null");
+		}
+		if(this.config.getExternalResources_keyStorePath()!=null) {
+			return newKeyStore(this.config.getExternalResources_keyStorePath(),
+					this.config.getExternalResources_keyStoreType(),
+					this.config.getExternalResources_keyStorePassword());
 		}
 		return null;
 	}

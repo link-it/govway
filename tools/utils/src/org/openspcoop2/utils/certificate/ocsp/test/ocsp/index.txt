@@ -1,3 +1,3 @@
-V	330108083049Z		3C	unknown	/C=it/O=Esempio/CN=OCSP TEST
-R	330108083049Z	230111083056Z,cessationOfOperation	3D	unknown	/C=it/O=Esempio/CN=test.esempio.it
-V	330108083049Z		3E	unknown	/C=it/O=Esempio/CN=Client-test.esempio.it
+V	330117095941Z		F0	unknown	/C=it/O=Esempio/CN=OCSP TEST
+R	330117095941Z	230120100104Z,cessationOfOperation	F1	unknown	/C=it/O=Esempio/CN=test.esempio.it
+V	330117095941Z		F2	unknown	/C=it/O=Esempio/CN=Client-test.esempio.it

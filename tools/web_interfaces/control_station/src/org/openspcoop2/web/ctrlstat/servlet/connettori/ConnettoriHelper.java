@@ -4085,7 +4085,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// Se e' stata specificata la url, dev'essere valida
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) && !url.equals("") ){
 					try{
-						org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
+						if( !(url.contains("${") && url.contains("}")) ) {
+							// se sono presenti le { } la url può essere costruita dinamicamente
+							org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
+						}
 					}catch(Exception e){
 						this.pd.setMessage("Url non correttamente formata: "+e.getMessage());
 						return false;
@@ -4176,7 +4179,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}else{
 						try{
-							org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(httpsurl);
+							if( !(httpsurl.contains("${") && httpsurl.contains("}")) ) {
+								// se sono presenti le { } la url può essere costruita dinamicamente
+								org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(httpsurl);
+							}
 						}catch(Exception e){
 							this.pd.setMessage("Url non correttamente formata: "+e.getMessage());
 							return false;

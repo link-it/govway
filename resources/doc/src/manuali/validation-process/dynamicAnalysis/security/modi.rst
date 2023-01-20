@@ -12,5 +12,5 @@ I sorgenti sono disponibili in `protocolli/modipa/testsuite/src <https://github.
 
 Evidenze disponibili in:
 
-- `API REST <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/rest/sicurezza_messaggio/3_BloccanteRestSicurezzaMessaggioTest.html>`_
-- `API SOAP <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/5_BloccanteSoapSicurezzaMessaggioTest.html>`_
+- `API REST <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/rest/sicurezza_messaggio/>`_
+- `API SOAP <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/>`_

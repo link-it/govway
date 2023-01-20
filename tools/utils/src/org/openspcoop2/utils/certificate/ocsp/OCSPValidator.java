@@ -27,8 +27,11 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.ocsp.ResponderID;
@@ -64,8 +67,10 @@ import org.openspcoop2.utils.certificate.ExtendedKeyUsage;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.random.RandomGenerator;
 import org.openspcoop2.utils.random.SecureRandomAlgorithm;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -286,7 +291,7 @@ public class OCSPValidator {
 			if(ocspRequest!=null) {
 				try {
 					log.debug(prefix+"Invoke ocsp ...");
-					OCSPResp ocspResponse = invokeOCSP(ocspRequest, responderURI, params);
+					OCSPResp ocspResponse = invokeOCSP(log, ocspRequest, responderURI, params);
 	
 					log.debug(prefix+"Analyze response ...");
 					responseCode = OCSPResponseCode.toOCSPResponseCode(ocspResponse.getStatus());
@@ -394,7 +399,7 @@ public class OCSPValidator {
 
 	}
 
-	private static OCSPResp invokeOCSP(OCSPRequestSigned ocspRequest, String responderURI, OCSPRequestParams params) throws UtilsException {
+	private static OCSPResp invokeOCSP(LoggerBuffer log, OCSPRequestSigned ocspRequest, String responderURI, OCSPRequestParams params) throws UtilsException {
 
 		try {
 			
@@ -410,11 +415,38 @@ public class OCSPValidator {
 			req.setMethod(HttpRequestMethod.POST);
 			req.setContentType(HttpConstants.CONTENT_TYPE_OCSP_REQUEST);
 			req.setContent(ocspRequest.request.getEncoded());
-			req.setUrl(responderURI);
-			if(responderURI.trim().startsWith("https")) {
+			
+			responderURI = responderURI.trim();
+			if(params.getConfig().getForwardProxy_url()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxy_url())) {
+				String forwardProxyUrl = params.getConfig().getForwardProxy_url();
+				String remoteLocation = params.getConfig().isForwardProxy_base64() ? Base64Utilities.encodeAsString(responderURI.getBytes()) : responderURI;
+				if(params.getConfig().getForwardProxy_header()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxy_header())) {
+					req.addHeader(params.getConfig().getForwardProxy_header(), remoteLocation);
+				}
+				else if(params.getConfig().getForwardProxy_queryParameter()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxy_queryParameter())) {
+					Map<String, List<String>> queryParameters = new HashMap<String, List<String>>();
+					TransportUtils.addParameter(queryParameters,params.getConfig().getForwardProxy_queryParameter(), remoteLocation);
+					forwardProxyUrl = TransportUtils.buildUrlWithParameters(queryParameters, forwardProxyUrl, false, log.getLogDebug());
+				}
+				else {
+					throw new Exception("Forward Proxy configuration error: header and query parameter not found");
+				}
+				req.setUrl(forwardProxyUrl);
+			}
+			else {
+				req.setUrl(responderURI);
+			}
+			
+			if(req.getUrl().startsWith("https")) {
+				req.setHostnameVerifier(params.getConfig().isExternalResources_hostnameVerifier());
 				req.setTrustAllCerts(params.getConfig().isExternalResources_trustAllCerts());
 				if(params.getHttpsTrustStore()!=null) {
 					req.setTrustStore(params.getHttpsTrustStore().getKeystore());
+				}
+				if(params.getHttpsKeyStore()!=null) {
+					req.setKeyStore(params.getHttpsKeyStore().getKeystore());
+					req.setKeyAlias(params.getConfig().getExternalResources_keyAlias());
+					req.setKeyPassword(params.getConfig().getExternalResources_keyPassword());
 				}
 			}
 			req.setConnectTimeout(params.getConfig().getConnectTimeout());

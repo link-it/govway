@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -75,19 +76,27 @@ public class Utils {
 	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
 	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = 
 			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
+	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY = 
+			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: OCSP response error (http code: 503)";
 	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=Client-test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
 	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = 
 			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=Client-test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
+	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY = 
+			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=Client-test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: OCSP response error (http code: 503)";
 	
 	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2+"");
 	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE2+"");
+	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_FORWARD_PROXY = CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY.replaceAll("PORT", PORT_CASE2+"");
 	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED = CERTIFICATE_VALID_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2+"");
 	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE2+"");
+	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_FORWARD_PROXY = CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY.replaceAll("PORT", PORT_CASE2+"");
 	
 	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE3+"");
 	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE3+"");
+	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_FORWARD_PROXY = CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY.replaceAll("PORT", PORT_CASE3+"");
 	public static final String CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED = CERTIFICATE_VALID_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE3+"");
 	public static final String CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE3+"");
+	public static final String CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_FORWARD_PROXY = CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY.replaceAll("PORT", PORT_CASE3+"");
 	
 	public static final String CERTIFICATE_REVOKED_CASE2_DIFFERENT_NONCE_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2_DIFFERENT_NONCE+"");
 	public static final String CERTIFICATE_VALID_CASE2_DIFFERENT_NONCE_CONNECTION_REFUSED = CERTIFICATE_VALID_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2_DIFFERENT_NONCE+"");
@@ -251,7 +260,7 @@ public class Utils {
 			}
 		}
 		
-		if(TokenPolicyValidazioneTest.api.equals(api)) {
+		if(TokenPolicyValidazioneTest.api.equals(api) || ForwardProxyConHttpsExternalResourceTest.api.equals(api)) {
 			request.addHeader(HttpConstants.AUTHORIZATION,HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJwt(operazione));
 		}
 		
@@ -317,7 +326,7 @@ public class Utils {
 				}
 			}
 			
-			else if(TokenPolicyValidazioneTest.api.equals(api)) {
+			else if(TokenPolicyValidazioneTest.api.equals(api) || ForwardProxyConHttpsExternalResourceTest.api.equals(api)) {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
 				code = 401;
 				error = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.INVALID_TOKEN;
@@ -461,6 +470,7 @@ public class Utils {
 		}
 		
 				
+		Date date = DateManager.getDate();
 		try {
 			if(get) {
 				Utils.get(logCore, tipoServizio, api, soggetto, action, 
@@ -475,8 +485,14 @@ public class Utils {
 		finally {
 			OpenSSLThread.stopOpenSSLThread(sslThread, waitStopServer);
 		}
+		if(ForwardProxyConHttpsExternalResourceTest.api.equals(api)) {
+			long esitoExpectedOk = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+			DBVerifier.verify(date, esitoExpectedOk, ForwardProxyConHttpsExternalResourceTest.apiBackend, 1);
+		}
+		
 		
 		// Deve continuare a funzionare per via della cache
+		date = DateManager.getDate();
 		if(msgErrore==null || errorCached) {
 			if(get) {
 				Utils.get(logCore, tipoServizio, api, soggetto, action, 
@@ -499,11 +515,16 @@ public class Utils {
 						connectionRefusedMsg);
 			}
 		}
+		if(ForwardProxyConHttpsExternalResourceTest.api.equals(api)) {
+			long esitoExpectedOk = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+			DBVerifier.verify(date, esitoExpectedOk, ForwardProxyConHttpsExternalResourceTest.apiBackend, 0);
+		}
 		
 		ConfigLoader.resetCache_excludeCachePrimoLivello();
 		
 		// Deve continuare a funzionare per via della cache di secondo livello 'DatiRichieste'
 		// Fa eccezione l'autenticazione https il cui risultato non viene salvato nella cache di secondo livello
+		date = DateManager.getDate();
 		if( !AutenticazioneHttpsTest.api.equals(api) &&
 				(msgErrore==null || errorCached)) {
 			if(get) {
@@ -526,6 +547,10 @@ public class Utils {
 						logCore, api, soggetto, action, 
 						connectionRefusedMsg);
 			}
+		}
+		if(ForwardProxyConHttpsExternalResourceTest.api.equals(api)) {
+			long esitoExpectedOk = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+			DBVerifier.verify(date, esitoExpectedOk, ForwardProxyConHttpsExternalResourceTest.apiBackend, 0);
 		}
 		
 		ConfigLoader.resetCachePrimoLivello();

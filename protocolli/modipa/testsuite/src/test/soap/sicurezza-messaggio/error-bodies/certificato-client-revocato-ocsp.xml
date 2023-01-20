@@ -9,7 +9,7 @@
                 </env:Subcode>
             </env:Code>
             <env:Reason>
-                <env:Text xml:lang="en-US">Certificate revoked in date '2023-01-11_09:30:56.000' (Reason: CESSATION_OF_OPERATION)</env:Text>
+                <env:Text xml:lang="en-US">Certificate revoked in date '2023-01-20_11:01:04.000' (Reason: CESSATION_OF_OPERATION)</env:Text>
             </env:Reason>
             <env:Role>http://govway.org/integration</env:Role>
             <env:Detail>
@@ -17,7 +17,7 @@
                     <type>https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html</type>
                     <title>InteroperabilityInvalidRequest</title>
                     <status>400</status>
-                    <detail>Certificate revoked in date '2023-01-11_09:30:56.000' (Reason: CESSATION_OF_OPERATION)</detail>
+                    <detail>Certificate revoked in date '2023-01-20_11:01:04.000' (Reason: CESSATION_OF_OPERATION)</detail>
                     <govway_id>#uuid</govway_id>
                 </problem>
             </env:Detail>

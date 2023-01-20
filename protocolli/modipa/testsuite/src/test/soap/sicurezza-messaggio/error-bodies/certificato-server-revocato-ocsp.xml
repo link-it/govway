@@ -10,7 +10,7 @@
             </env:Code>
             <env:Reason>
                 <env:Text xml:lang="en-US">modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:
-Certificate revoked in date '2023-01-11_09:30:56.000' (Reason: CESSATION_OF_OPERATION)</env:Text>
+Certificate revoked in date '2023-01-20_11:01:04.000' (Reason: CESSATION_OF_OPERATION)</env:Text>
             </env:Reason>
             <env:Role>http://govway.org/integration</env:Role>
             <env:Detail>
@@ -19,7 +19,7 @@ Certificate revoked in date '2023-01-11_09:30:56.000' (Reason: CESSATION_OF_OPER
                     <title>InteroperabilityInvalidResponse</title>
                     <status>502</status>
                     <detail>modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:
-Certificate revoked in date '2023-01-11_09:30:56.000' (Reason: CESSATION_OF_OPERATION)</detail>
+Certificate revoked in date '2023-01-20_11:01:04.000' (Reason: CESSATION_OF_OPERATION)</detail>
                     <govway_id>#uuid</govway_id>
                 </problem>
             </env:Detail>

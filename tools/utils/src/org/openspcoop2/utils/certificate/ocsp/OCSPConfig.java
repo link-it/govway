@@ -77,10 +77,22 @@ public class OCSPConfig {
 	private int readTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 	private int connectTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
 		
+	private boolean externalResources_hostnameVerifier = true;
 	private boolean externalResources_trustAllCerts = false;
 	private String externalResources_trustStorePath;
 	private String externalResources_trustStorePassword;
 	private String externalResources_trustStoreType;
+	
+	private String externalResources_keyStorePath;
+	private String externalResources_keyStorePassword;
+	private String externalResources_keyStoreType;
+	private String externalResources_keyAlias;
+	private String externalResources_keyPassword;
+	
+	private String forwardProxy_url;
+	private String forwardProxy_header;
+	private String forwardProxy_queryParameter;
+	private boolean forwardProxy_base64;
 	
 	private SecureRandomAlgorithm secureRandomAlgorithm;
 	
@@ -190,6 +202,9 @@ public class OCSPConfig {
 		return this.connectTimeout;
 	}
 
+	public boolean isExternalResources_hostnameVerifier() {
+		return this.externalResources_hostnameVerifier;
+	}
 	public boolean isExternalResources_trustAllCerts() {
 		return this.externalResources_trustAllCerts;
 	}
@@ -201,6 +216,35 @@ public class OCSPConfig {
 	}
 	public String getExternalResources_trustStoreType() {
 		return this.externalResources_trustStoreType;
+	}
+	
+	public String getExternalResources_keyStorePath() {
+		return this.externalResources_keyStorePath;
+	}
+	public String getExternalResources_keyStorePassword() {
+		return this.externalResources_keyStorePassword;
+	}
+	public String getExternalResources_keyStoreType() {
+		return this.externalResources_keyStoreType;
+	}
+	public String getExternalResources_keyAlias() {
+		return this.externalResources_keyAlias;
+	}
+	public String getExternalResources_keyPassword() {
+		return this.externalResources_keyPassword;
+	}
+
+	public String getForwardProxy_url() {
+		return this.forwardProxy_url;
+	}
+	public String getForwardProxy_header() {
+		return this.forwardProxy_header;
+	}
+	public String getForwardProxy_queryParameter() {
+		return this.forwardProxy_queryParameter;
+	}
+	public boolean isForwardProxy_base64() {
+		return this.forwardProxy_base64;
 	}
 	
 	public SecureRandomAlgorithm getSecureRandomAlgorithm() {
@@ -329,6 +373,7 @@ public class OCSPConfig {
 		this.readTimeout = getIntProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_READ_TIMEOUT, false, 15000); // HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT);
 		this.connectTimeout = getIntProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CONNECT_TIMEOUT, false, HttpUtilities.HTTP_CONNECTION_TIMEOUT);
 		
+		this.externalResources_hostnameVerifier = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_HOSTNAME_VERIFIER, false, true);	
 		this.externalResources_trustAllCerts = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_ALL_CERTS, false, false);	
 		this.externalResources_trustStorePath = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_STORE, false);	
 		if(this.externalResources_trustStorePath!=null && StringUtils.isNotEmpty(this.externalResources_trustStorePath)) {
@@ -337,6 +382,30 @@ public class OCSPConfig {
 			if(this.externalResources_trustStoreType==null || StringUtils.isEmpty(this.externalResources_trustStoreType)) {
 				this.externalResources_trustStoreType = "jks";
 			}
+		}
+		
+		this.externalResources_keyStorePath = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE, false);	
+		if(this.externalResources_keyStorePath!=null && StringUtils.isNotEmpty(this.externalResources_keyStorePath)) {
+			this.externalResources_keyStorePassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE_PASSWORD, true);	
+			this.externalResources_keyStoreType = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE_TYPE, false);
+			if(this.externalResources_keyStoreType==null || StringUtils.isEmpty(this.externalResources_keyStoreType)) {
+				this.externalResources_keyStoreType = "jks";
+			}
+			
+			this.externalResources_keyPassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_PASSWORD, true);	
+			this.externalResources_keyAlias = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_ALIAS, false);	
+		}
+		
+		this.forwardProxy_url = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_URL, false);	
+		if(this.forwardProxy_url!=null && StringUtils.isNotEmpty(this.forwardProxy_url)) {
+			this.forwardProxy_header = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_HEADER, false);	
+			this.forwardProxy_queryParameter = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_QUERY_PARAMETER, false);
+			if(this.forwardProxy_header==null && this.forwardProxy_queryParameter==null) {
+				throw new UtilsException("ForwardProxy property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_URL+"' require '"+
+						OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_HEADER+"' o '"+
+						OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_QUERY_PARAMETER+"'");
+			}
+			this.forwardProxy_base64 = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_BASE64, false, true);
 		}
 
 		String tmp = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SECURE_RANDOM_ALGORITHM, false);

@@ -66,10 +66,22 @@ public class OCSPCostanti {
 	public final static String PROPERTY_SUFFIX_READ_TIMEOUT = "readTimeout";
 	public final static String PROPERTY_SUFFIX_CONNECT_TIMEOUT = "connectTimeout";
 	
+	public final static String PROPERTY_SUFFIX_HTTPS_HOSTNAME_VERIFIER = "https.hostnameVerifier";
 	public final static String PROPERTY_SUFFIX_HTTPS_TRUST_ALL_CERTS = "https.trustAllCerts";
 	public final static String PROPERTY_SUFFIX_HTTPS_TRUST_STORE = "https.trustStore";
 	public final static String PROPERTY_SUFFIX_HTTPS_TRUST_STORE_PASSWORD = "https.trustStore.password";
 	public final static String PROPERTY_SUFFIX_HTTPS_TRUST_STORE_TYPE = "https.trustStore.type";
+
+	public final static String PROPERTY_SUFFIX_HTTPS_KEY_STORE = "https.keyStore";
+	public final static String PROPERTY_SUFFIX_HTTPS_KEY_STORE_PASSWORD = "https.keyStore.password";
+	public final static String PROPERTY_SUFFIX_HTTPS_KEY_STORE_TYPE = "https.keyStore.type";
+	public final static String PROPERTY_SUFFIX_HTTPS_KEY_ALIAS = "https.key.alias";
+	public final static String PROPERTY_SUFFIX_HTTPS_KEY_PASSWORD = "https.key.password";
+
+	public final static String PROPERTY_SUFFIX_FORWARD_PROXY_URL = "forwardProxy.url";
+	public final static String PROPERTY_SUFFIX_FORWARD_PROXY_HEADER = "forwardProxy.header";
+	public final static String PROPERTY_SUFFIX_FORWARD_PROXY_QUERY_PARAMETER = "forwardProxy.queryParameter";
+	public final static String PROPERTY_SUFFIX_FORWARD_PROXY_BASE64 = "forwardProxy.base64";
 	
 	public final static String PROPERTY_SUFFIX_SECURE_RANDOM_ALGORITHM = "secureRandomAlgorithm";
 	

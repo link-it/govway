@@ -47,6 +47,8 @@ public interface IOCSPResourceReader {
 	
 	public KeyStore getHttpsTrustStore() throws UtilsException;
 	
+	public KeyStore getHttpsKeyStore() throws UtilsException;
+	
 	public KeyStore getCrlAlternativeTrustStore() throws UtilsException;
 	
 }

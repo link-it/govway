@@ -63,9 +63,9 @@ Modalità per ottenere il certificato Issuer che ha emesso il certificato in fas
 
 - ocsp.<idPolicy>.ca.alternativeTrustStore: [opzionale] consente di indicare un truststore dove viene ricercato il certificato CA che corrisponde all'issuer del certificato in fase di verifica, in caso di modalità 'ALTERNATIVE_CONFIG' indicata nella proprietà 'ocsp.<idPolicy>.ca.source'. Il tipo di truststore e la password devono essere indicate rispettivamente nelle proprietà:
 
-	- 'ocsp.<idPolicy>.ca.alternativeTrustStore.type' [opzionale, default:jks]
+	- ocsp.<idPolicy>.ca.alternativeTrustStore.type [opzionale, default:jks]
 
-	- 'ocsp.<idPolicy>.ca.alternativeTrustStore.password' [obbligatorio].
+	- ocsp.<idPolicy>.ca.alternativeTrustStore.password [obbligatorio].
 
 - ocsp.<idPolicy>.ca.notFound.rejectsCertificate: [opzionale, default:true] nel caso non sia possibile recuperare il certificato CA tramite una delle modalità indicate in 'ocsp.<idPolicy>.ca.source' la validazione fallisce. Disabilitando la proprietà il processo di validazione termina correttamente senza segnalare anomalie (il servizio OCSP non verrà invocato).
 
@@ -83,9 +83,9 @@ Modalità per ottenere il certificato Issuer che ha emesso il certificato di fir
 
 - ocsp.<idPolicy>.signer.trustStore: [opzionale] consente di indicare un truststore dove viene ricercato il certificato CA che corrisponde all'issuer del certificato di firma utilizzato dal OCSP responder per firmare la risposta. Il tipo di truststore e la password devono essere indicate rispettivamente nelle proprietà:
 
-	- 'ocsp.<idPolicy>.signer.type' [opzionale, default:jks]
+	- ocsp.<idPolicy>.signer.type [opzionale, default:jks]
 
-	- 'ocsp.<idPolicy>.signer.password' [obbligatorio].
+	- ocsp.<idPolicy>.signer.password [obbligatorio].
 
 - ocsp.<idPolicy>.signer.alias: [opzionale] insieme alla definizione della proprietà 'ocsp.<idPolicy>.signer.trustStore' consente l'autorizzazione puntuale di un certificato di firma atteso nelle risposte firmate dal servizio OCSP.
 
@@ -115,13 +115,40 @@ Le seguenti opzione vengono utilizzate sia durante l'invocazione del servizio OC
 
 - ocsp.<idPolicy>.readTimeout: [opzionale, default:15000ms] indicazione in millisecondi sul tempo di attesa di una risposta dal servizio OCSP.
 
+- ocsp.<idPolicy>.https.hostnameVerifier: [optional, default:true] consente, nel caso in cui le url da contattare siano in https, di disabilitare la verifica dell'hostname rispetto al CN del certificato restituito dal server.
+
 - ocsp.<idPolicy>.https.trustAllCerts: [opzionale, default:false] consente, nel caso in cui le url da contattare siano in https, di accettare qualsiasi certificato restituito dal server.
 
 - ocsp.<idPolicy>.https.trustStore: [opzionale] consente, nel caso in cui le url da contattare siano in https, di indicare un truststore dove viene ricercato il certificato server. Il tipo di truststore e la password devono essere indicate rispettivamente nelle proprietà 
 
-	- 'ocsp.<idPolicy>.https.trustStore.type' [opzionale, default:jks]
+	- ocsp.<idPolicy>.https.trustStore.type [opzionale, default:jks]
 
-	- 'ocsp.<idPolicy>.https.trustStore.password' [obbligatorio].
+	- ocsp.<idPolicy>.https.trustStore.password [obbligatorio].
+
+- ocsp.<idPolicy>.https.keyStore: [opzionale] consente, nel caso in cui le url da contattare siano in https, di indicare un keystore dove viene ricercato il certificato client da spedire. Il tipo di keystore e la password devono essere indicate rispettivamente nelle proprietà 
+
+	- ocsp.<idPolicy>.https.trustStore.type [opzionale, default:jks]
+
+	- ocsp.<idPolicy>.https.trustStore.password [obbligatorio].
+
+  La password della chiave privata deve essere indicata nella proprietà:
+
+	- ocsp.<idPolicy>.https.key.password [obbligatorio].
+
+  Se nel keystore esistono più chiavi private deve essere indicata la chiave da utilizzare tramite la proprietà:
+
+	- ocsp.<idPolicy>.https.key.alias [opzionale].
+
+- ocsp.<idPolicy>.forwardProxy.url: [opzionale] consente di indicare la url di un proxy applicativo a cui verranno inoltrate tutte le richieste; l'indirizzo remoto del servizio ocsp o della risorsa da recuperare (es. CAIssuer in AuthorityInformationAccess) viene indicata al proxy applicativo tramite un header HTTP o un parametro della url definito tramite le seguenti proprietà:
+
+	- ocsp.<idPolicy>.forwardProxy.header: [opzionale] l'endpoint remoto, a cui il proxy applicativo dovrà inoltrare la richiesta, viene indicato nell'header http configurato nella proprietà;
+
+	- ocsp.<idPolicy>.forwardProxy.queryParameter: [opzionale] l'endpoint remoto, a cui il proxy applicativo dovrà inoltrare la richiesta, viene indicato nel parametro della query configurato nella proprietà;
+
+	- ocsp.<idPolicy>.forwardProxy.base64: [opzionale, default:true] indicazione se l'endpoint remoto inserito nell'header http o nel parametro della query debba essere codificato in base64 o meno.
+
+  .. note::
+     L'abilitazione di un proxy applicativo richiede obbligatoriamente la definizione di una tra le due seguenti proprietà: 'ocsp.<idPolicy>.forwardProxy.header' o 'ocsp.<idPolicy>.forwardProxy.queryParameter'.
 
 Aspetti riguardanti l'attivazione di una validazione del certificato tramite CRL:
 
@@ -160,8 +187,8 @@ Nei casi di attivazione di validazione tramite CRL vengono utilizzate le seguent
 
 - ocsp.<idPolicy>.crl.alternativeTrustStore: [opzionale] consente di indicare un truststore utilizzato per la verifica delle CRL. Il tipo di truststore e la password devono essere indicate rispettivamente nelle proprietà:
 
-	- 'ocsp.<idPolicy>.crl.alternativeTrustStore.type' [opzionale, default:jks]
+	- ocsp.<idPolicy>.crl.alternativeTrustStore.type [opzionale, default:jks]
 
-	- 'ocsp.<idPolicy>.crl.alternativeTrustStore.password' [obbligatorio].
+	- ocsp.<idPolicy>.crl.alternativeTrustStore.password [obbligatorio].
 
 
