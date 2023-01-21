@@ -31,6 +31,8 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.selector.jcajce.JcaX509CertificateHolderSelector;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 
 /**
  * CertificatePrincipal
@@ -54,25 +56,49 @@ public class CertificatePrincipal {
 	public String toString() {
 		return this.principal.toString();
 	}
+	public String toString(String regexp) throws UtilsException {
+		String dn = this.toString();
+		return getRegexpValue(dn, regexp);
+	}
 	
 	public String getName() {
 		return this.principal.getName();
+	}
+	public String getNameByRegExp(String regexp) throws UtilsException {
+		String dn = this.getName();
+		return getRegexpValue(dn, regexp);
 	}
 	
 	public String getName(String format) {
 		return this.principal.getName(format);
 	}
+	public String getName(String format, String regexp) throws UtilsException {
+		String dn = this.getName(format);
+		return getRegexpValue(dn, regexp);
+	}
 	
 	public String getCanonicalName() {
 		return this.principal.getName(X500Principal.CANONICAL);
+	}
+	public String getCanonicalName(String regexp) throws UtilsException {
+		String dn = this.getCanonicalName();
+		return getRegexpValue(dn, regexp);
 	}
 	
 	public String getRFC1779Name() {
 		return this.principal.getName(X500Principal.RFC1779);
 	}
+	public String getRFC1779Name(String regexp) throws UtilsException {
+		String dn = this.getRFC1779Name();
+		return getRegexpValue(dn, regexp);
+	}
 	
 	public String getRFC2253Name() {
 		return this.principal.getName(X500Principal.RFC2253);
+	}
+	public String getRFC2253Name(String regexp) throws UtilsException {
+		String dn = this.getRFC2253Name();
+		return getRegexpValue(dn, regexp);
 	}
 	
 	public String getNameNormalized() throws UtilsException {
@@ -83,6 +109,10 @@ public class CertificatePrincipal {
 	}
 	public Map<String, String> toSimpleMap() throws UtilsException {
 		return CertificateUtils.formatPrincipalToMap(this.toString(), this.type);
+	}
+	public String getNameNormalized(String regexp) throws UtilsException {
+		String dn = this.getNameNormalized();
+		return getRegexpValue(dn, regexp);
 	}
 	
 	
@@ -95,6 +125,21 @@ public class CertificatePrincipal {
 	public static final String CN_EMPTY = "__undefined__";
 	public String getCN() {
 		return getInfoByOID(BCStyle.CN, CN_EMPTY);
+	}
+	public String getCN(String regexp) throws UtilsException {
+		String cn = this.getCN();
+		return getRegexpValue(cn, regexp);
+	}
+	
+	
+	private String getRegexpValue(String value, String regexp) throws UtilsException {
+		try {
+			return RegularExpressionEngine.getStringMatchPattern(value, regexp);
+		}catch(RegExpNotFoundException notFound) {
+			return null;
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 	
 	

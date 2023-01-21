@@ -874,6 +874,100 @@ public class CertificateTest {
 		}
 		
 		
+		// ***** DN REG EXP ********
+		if(forSign || forAuth) {
+			String cn = cp.getCN();
+			String attesoCN = "Esempio di Test";
+			if(!cn.contains(attesoCN)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cn+"'");
+			}
+			String pattern = "(.*) - .*";
+			cn = cp.getCN(pattern);
+			if(!attesoCN.equals(cn)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cn+"' (pattern:"+pattern+" value:"+cn+")");
+			}
+			
+			cn = cp.toString();
+			if(!cn.contains(attesoCN)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cn+"'");
+			}
+			pattern = ".*CN=([A-Za-z0-9\\s]*).*";
+			String cnP = cp.toString(pattern);
+			if(cnP!=null) {
+				cnP = cnP.trim();
+			}
+			if(!attesoCN.equals(cnP)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cnP+"' (pattern:"+pattern+" value:"+cn+")");
+			}
+			
+			cn = cp.getName();
+			if(!cn.contains(attesoCN)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cn+"'");
+			}
+			pattern = ".*CN=([A-Za-z0-9\\s]*).*";
+			cnP = cp.getNameByRegExp(pattern);
+			if(cnP!=null) {
+				cnP = cnP.trim();
+			}
+			if(!attesoCN.equals(cnP)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cnP+"' (pattern:"+pattern+" value:"+cn+")");
+			}
+			
+			cn = cp.getCanonicalName();
+			if(!cn.contains(attesoCN.toLowerCase())) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cn+"'");
+			}
+			pattern = ".*cn=([A-Za-z0-9\\s]*).*";
+			cnP = cp.getCanonicalName(pattern);
+			if(cnP!=null) {
+				cnP = cnP.trim();
+			}
+			if(!attesoCN.toLowerCase().equals(cnP)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cnP+"' (pattern:"+pattern+" value:"+cn+")");
+			}
+			
+			cn = cp.getRFC1779Name();
+			if(!cn.contains(attesoCN)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cn+"'");
+			}
+			pattern = ".*CN=([A-Za-z0-9\\s]*).*";
+			cnP = cp.getRFC1779Name(pattern);
+			if(cnP!=null) {
+				cnP = cnP.trim();
+			}
+			if(!attesoCN.equals(cnP)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cnP+"' (pattern:"+pattern+" value:"+cn+")");
+			}
+			
+			cn = cp.getRFC2253Name();
+			if(!cn.contains(attesoCN)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cn+"'");
+			}
+			pattern = ".*CN=([A-Za-z0-9\\s]*).*";
+			cnP = cp.getRFC2253Name(pattern);
+			if(cnP!=null) {
+				cnP = cnP.trim();
+			}
+			if(!attesoCN.equals(cnP)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cnP+"' (pattern:"+pattern+" value:"+cn+")");
+			}
+			
+			cn = cp.getNameNormalized();
+			if(!cn.contains(attesoCN)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cn+"'");
+			}
+			pattern = ".*cn=([A-Za-z0-9\\s]*).*";
+			cnP = cp.getNameNormalized(pattern);
+			if(cnP!=null) {
+				cnP = cnP.trim();
+			}
+			if(!attesoCN.equals(cnP)) {
+				throw new Exception("Atteso CN '"+attesoCN+"', trovato '"+cnP+"' (pattern:"+pattern+" value:"+cn+")");
+			}
+			
+		}
+		
+		
 		// ***** KEY USAGE ********
 		
 		List<KeyUsage> keyUsage = cerInfo.getKeyUsage();

@@ -2,6 +2,11 @@
 
 	* Rilasciata versione 3.3.10
 
+2023-01-21  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunto supporto per leggere dai certificati le informazioni riguardanti parti del CN o del DN attraverso espressioni regolari.
+
 2023-01-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

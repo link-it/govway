@@ -558,13 +558,28 @@ public class DynamicStringReplace {
 			// Devo convertire i punti dentro le tonde che potrebbero far parte delle chiavi
 			sbFormat = new StringBuilder();
 			start = false;
+			int doppieVirgoletteIndex = -1;
+			boolean startDoppieVirgolette = false;
 			for (int i = 0; i < newName.length(); i++) {
 				char c = newName.charAt(i);
 				if((!start) && (c == '(')) {
 					start = true;
+					if((i+1 < newName.length())) {
+						char cc = newName.charAt(i+1);
+						if((cc == '"')) {
+							startDoppieVirgolette=true;
+							doppieVirgoletteIndex=i+1;
+						}
+					}
 				}
 				if((start) && (c == ')')) {
-					start = false;
+					if(!startDoppieVirgolette) {
+						start = false;
+					}
+				}
+				if((startDoppieVirgolette) && (c == '"') && doppieVirgoletteIndex!=i) {
+					startDoppieVirgolette = false;
+					doppieVirgoletteIndex=i;
 				}
 				if(start && c == '.') {
 					sbFormat.append('_');
@@ -581,6 +596,7 @@ public class DynamicStringReplace {
 			if(nameContainsPoint){
 				fieldName = name.substring(0, newName.indexOf("."));
 			}
+			//System.out.println("fieldName ["+fieldName+"]");
 		}
 		String methodName = new String(fieldName);
 		if(fieldName.endsWith("]") && fieldName.contains("[")){
@@ -624,7 +640,7 @@ public class DynamicStringReplace {
 				if(sP.length()>2) {
 					sP = sP.substring(1, sP.length()-1);
 				}
-				//System.out.println("METODO getMethod["+getMethod+"] ["+sP+"] ");
+				//System.out.println("METODO getMethod["+getMethod+"] PARAMS["+sP+"] ");
 				if(sP.contains(",")) {
 					parametersObject = new ArrayList<String>();
 					parametersClass = new ArrayList<Class<?>>();
@@ -632,7 +648,19 @@ public class DynamicStringReplace {
 					for (int i = 0; i < sP.length(); i++) {
 						String sAt = sP.charAt(i)+"";
 						if(sAt.equals(",")) {
-							parametersObject.add(sb.toString()); // gli spazi possono essere voluti (non fare trim)
+							String paramString = sb.toString();
+							//System.out.println("paramString '"+paramString+"'");
+							if(paramString!=null && paramString.length()>=2 && paramString.startsWith("\"") && paramString.endsWith("\"")) {
+								if(paramString.length()==2) {
+									paramString = ""; // stringa vuota
+								}
+								else {
+									paramString = paramString.substring(1);
+									paramString = paramString.substring(0,paramString.length()-1);
+								}
+								//System.out.println("paramString DOPO '"+paramString+"'");
+							}
+							parametersObject.add(paramString); // gli spazi possono essere voluti (non fare trim)
 							parametersClass.add(String.class);
 							sb = new StringBuilder();
 						}
@@ -646,7 +674,19 @@ public class DynamicStringReplace {
 				else {
 					parametersObject = new ArrayList<String>();
 					parametersClass = new ArrayList<Class<?>>();
-					parametersObject.add(sP);
+					String paramString = sP;
+					//System.out.println("paramString '"+paramString+"'");
+					if(paramString!=null && paramString.length()>=2 && paramString.startsWith("\"") && paramString.endsWith("\"")) {
+						if(paramString.length()==2) {
+							paramString = ""; // stringa vuota
+						}
+						else {
+							paramString = paramString.substring(1);
+							paramString = paramString.substring(0,paramString.length()-1);
+						}
+						//System.out.println("paramString DOPO '"+paramString+"'");
+					}
+					parametersObject.add(paramString); // gli spazi possono essere voluti (non fare trim)
 					parametersClass.add(String.class);
 				}
 				getMethod = getMethod.substring(0, startParams);

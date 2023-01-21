@@ -44,6 +44,8 @@ import org.openspcoop2.pdd.config.PddProperties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
+import org.openspcoop2.protocol.sdk.ChannelSecurityToken;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -52,6 +54,8 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.cache.CacheType;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -196,6 +200,28 @@ public class Test {
 	            "}\n"+
 			"}";
 	
+	private static String PEM = "-----BEGIN CERTIFICATE-----\n"+
+		"MIIDjDCCAnSgAwIBAgIEYWaY3jANBgkqhkiG9w0BAQsFADCBhjEcMBoGCSqGSIb3\n"+
+		"DQEJARYNYXBvbGlAbGluay5pdDELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBUl0YWx5\n"+
+		"MQ0wCwYDVQQHDARQaXNhMRcwFQYDVQQKDA5vcGVuc3Bjb29wLm9yZzENMAsGA1UE\n"+
+		"CwwEdGVzdDESMBAGA1UEAwwJU29nZ2V0dG8xMCAXDTIxMTAxMzA4MjkxOFoYDzIx\n"+
+		"MjEwOTE5MDgyOTE4WjCBhjEcMBoGCSqGSIb3DQEJARYNYXBvbGlAbGluay5pdDEL\n"+
+		"MAkGA1UEBhMCSVQxDjAMBgNVBAgMBUl0YWx5MQ0wCwYDVQQHDARQaXNhMRcwFQYD\n"+
+		"VQQKDA5vcGVuc3Bjb29wLm9yZzENMAsGA1UECwwEdGVzdDESMBAGA1UEAwwJU29n\n"+
+		"Z2V0dG8xMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1+gnDk9+xId2\n"+
+		"ZsK0niTQ7IYD3aqsoBnYQuvKyovhJZ2yWoLQzxyqp+y8La0Qd8+P3WoRNTq6LuXk\n"+
+		"TT+lJYOFH8K//QUBeZncTy6ygrcZjAnaXPk45HehIMSunHXq36sBNC2IK4mk4NMF\n"+
+		"Z0vwoemX0pqFefSp0LtOuKZDLQG5n29SLp4fBCPndizRP6lvgE/sYt14j3t6kGWd\n"+
+		"Ffrz6yylXzIrfn6jxYzAnY/1RvbOYp87cnTv/O4BpZ0s0Hh0iCBBbVrzCYPanydw\n"+
+		"pq/Q4cQ9D5atlBO2l2pvI0vvZ5lGIn7Fym7nN7J67h7XBtprwrT0ihhH3MnoiioG\n"+
+		"nlqIO6j+awIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCY+vg91jMi+hgbWFOHNmHt\n"+
+		"9YWoKbxD6k2LmCup7WjXlpoXJKkpH63rIFjJKe43eL3Pt+9Jenl2IFp7DFl8gln0\n"+
+		"RlgQdzJ6xpqlqcOFnDDwcnWKAcJiS6LGbcMyCF9Y9G0fP/74LgZUlHMMZqRj0FQN\n"+
+		"sX8hv+oyoN+q1gbwY0RaYCukxWm08OODVQvxX6Sf7zVBd1bh8h73MxRTa8l5LL8g\n"+
+		"nQkyHEnYrqWvfdqDWTvZmZuKb5PP4xNCm1sqSr/bgcr3Sr6wPF2LS3mENO3PoUJY\n"+
+		"JIm5Z4+1pMwViwc4EpuJ5Lz2gC7KiqDGnbBLueLtHb/X9jMyqQ1c3nWBZM2R1LgB\n"+
+		"-----END CERTIFICATE-----";
+	
 	public static void main(String [] args) throws Exception{
 		test();
 	}
@@ -221,6 +247,7 @@ public class Test {
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header1", "Valore1");
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header2", "Valore2");
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header3.1", "Valore3.1");
+		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header3.(2)", "Valore3.(2)");
 		
 		connettoreMsg.setPropertiesUrlBased(new HashMap<String, List<String>>());
 		TransportUtils.addParameter(connettoreMsg.getPropertiesUrlBased(),"P1", "Valore1URL");
@@ -267,6 +294,12 @@ public class Test {
 		
 		pddContext.addObject(TEST2, urlProtocolContext);
 		
+		Certificate cer =ArchiveLoader.load(PEM.getBytes());
+		SecurityToken securityToken = new SecurityToken();
+		securityToken.setChannel(new ChannelSecurityToken());
+		securityToken.getChannel().setCertificate(cer.getCertificate());
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.SECURITY_TOKEN, securityToken);
+		
 		DynamicInfo dInfo = new DynamicInfo(connettoreMsg, pddContext);
 		
 		
@@ -287,6 +320,16 @@ public class Test {
 		value = DynamicUtils.convertDynamicPropertyValue("testTransactionId", expr, dynamicMap, pddContext);
 		System.out.println("optional TransactionID: "+value+"\n\n");
 		expected = idTransazione;
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		
+		expr = prefixOptional + "{securityToken:channel.certificate.subject.CN(\".*gg([\\w\\t-_][\\w\\t-_][\\w\\t-_]).*\")}";
+		DynamicUtils.validate("testSecurityToken", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testSecurityToken", expr, dynamicMap, pddContext);
+		System.out.println("testSecurityToken: "+value+"\n\n");
+		expected = "ett";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
@@ -494,6 +537,17 @@ public class Test {
 		value = DynamicUtils.convertDynamicPropertyValue("testContextHeaderParametroConPuntoEArray", expr, dynamicMap, pddContext);
 		System.out.println("testContextHeaderParametroConPuntoEArray: "+value+"\n\n");
 		expected = "Valore3.1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		
+		
+		expr = prefix + "{context:[TEST2.1.a.2.3].headerFirstValue(Header3.(2))}";
+		DynamicUtils.validate("testContextHeaderParametroConPuntoMethodParentesiValue", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testContextHeaderParametroConPuntoMethodParentesiValue", expr, dynamicMap, pddContext);
+		System.out.println("testContextHeaderParametroConPuntoMethodParentesiValue: "+value+"\n\n");
+		expected = "Valore3.(2)";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
