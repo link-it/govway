@@ -2,6 +2,12 @@
 
 	* Rilasciata versione 3.3.10
 
+2023-01-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggunta possibilità di commentare le regole di autorizzazione per contenuto e per token claims.
+	Viene inoltre adesso mantenuto l'ordine di configurazione.
+
 2023-01-21  Andrea Poli <apoli@link.it>
 
 	* [Utils]

@@ -23,11 +23,9 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,10 +73,11 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -705,16 +704,19 @@ public final class PorteDelegateAdd extends Action {
 			} else if(autorizzazioneContenutiStato.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				portaDelegata.setAutorizzazioneContenuto(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
 				portaDelegata.getProprietaAutorizzazioneContenutoList().clear();
-				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);
+				// Fix: non rispettava l'ordine
+				//Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);
+				SortedMap<String> convertTextToProperties = PropertiesUtilities.convertTextToSortedMap(autorizzazioneContenutiProperties, true);
 				
-				Enumeration<Object> keys = convertTextToProperties.keys();
-				while (keys.hasMoreElements()) {
-					String nome = (String) keys.nextElement();
-					String valore = convertTextToProperties.getProperty(nome);
-					Proprieta proprietaAutorizzazioneContenuto = new Proprieta();
-					proprietaAutorizzazioneContenuto.setNome(nome);
-					proprietaAutorizzazioneContenuto.setValore(valore);
-					portaDelegata.addProprietaAutorizzazioneContenuto(proprietaAutorizzazioneContenuto);
+				List<String> keys = convertTextToProperties.keys();
+				if(keys!=null && !keys.isEmpty()) {
+					for (String nome : keys) {
+						String valore = convertTextToProperties.get(nome);
+						Proprieta proprietaAutorizzazioneContenuto = new Proprieta();
+						proprietaAutorizzazioneContenuto.setNome(nome);
+						proprietaAutorizzazioneContenuto.setValore(valore);
+						portaDelegata.addProprietaAutorizzazioneContenuto(proprietaAutorizzazioneContenuto);
+					}
 				}
 			} else {
 				portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);

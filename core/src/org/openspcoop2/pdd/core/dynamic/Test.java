@@ -248,6 +248,7 @@ public class Test {
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header2", "Valore2");
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header3.1", "Valore3.1");
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header3.(2)", "Valore3.(2)");
+		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header3.[\"3\"4\"]", "Valore3.[\"3\"4\"]");
 		
 		connettoreMsg.setPropertiesUrlBased(new HashMap<String, List<String>>());
 		TransportUtils.addParameter(connettoreMsg.getPropertiesUrlBased(),"P1", "Valore1URL");
@@ -328,6 +329,16 @@ public class Test {
 		expr = prefixOptional + "{securityToken:channel.certificate.subject.CN(\".*gg([\\w\\t-_][\\w\\t-_][\\w\\t-_]).*\")}";
 		DynamicUtils.validate("testSecurityToken", expr, addPrefixError);
 		value = DynamicUtils.convertDynamicPropertyValue("testSecurityToken", expr, dynamicMap, pddContext);
+		System.out.println("testSecurityToken: "+value+"\n\n");
+		expected = "ett";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		String pattern = ".*gg([\\w\\t-_\"][\\w\\t-_\"][\\w\\t-_\"]).*";
+		expr = prefixOptional + "{securityToken:channel.certificate.subject.CN(\""+pattern+"\")}";
+		DynamicUtils.validate("testSecurityTokenVirgoletteInMezzo", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testSecurityTokenVirgoletteInMezzo", expr, dynamicMap, pddContext);
 		System.out.println("testSecurityToken: "+value+"\n\n");
 		expected = "ett";
 		if(!expected.equals(value)) {
@@ -553,6 +564,16 @@ public class Test {
 		}
 		
 		
+		expr = prefix + "{context:[TEST2.1.a.2.3].headerFirstValue(Header3.[\"3\"4\"])}";
+		DynamicUtils.validate("testContextHeaderParametroConPuntoMethodParentesiValue2", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testContextHeaderParametroConPuntoMethodParentesiValue2", expr, dynamicMap, pddContext);
+		System.out.println("testContextHeaderParametroConPuntoMethodParentesiValue2: "+value+"\n\n");
+		expected = "Valore3.[\"3\"4\"]";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		
 		
 		expr = prefix + "{header:Header1}";
 		DynamicUtils.validate("testHeader", expr, addPrefixError);
@@ -630,6 +651,68 @@ public class Test {
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
+		
+		
+		
+		expr = prefix + "{header:[Header3.(2)]}";
+		DynamicUtils.validate("testHeaderParametroConPunto2", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPunto2", expr, dynamicMap, pddContext);
+		System.out.println("testHeaderParametroConPunto2: "+value+"\n\n");
+		expected = "Valore3.(2)";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{transportContext:headerFirstValue(Header3.(2))}";
+		DynamicUtils.validate("testHeaderParametroConPuntoMethod2", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPuntoMethod2", expr, dynamicMap, pddContext);
+		System.out.println("testHeaderParametroConPuntoMethod2: "+value+"\n\n");
+		expected = "Valore3.(2)";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{transportContext:headerValues(Header3.(2))[0]}";
+		DynamicUtils.validate("testHeaderParametroConPuntoEArray2", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPuntoEArray2", expr, dynamicMap, pddContext);
+		System.out.println("testHeaderParametroConPuntoEArray2: "+value+"\n\n");
+		expected = "Valore3.(2)";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		
+		
+		
+		expr = prefix + "{header:[Header3.[\"3\"4\"]]}";
+		DynamicUtils.validate("testHeaderParametroConPunto3", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPunto3", expr, dynamicMap, pddContext);
+		System.out.println("testHeaderParametroConPunto3: "+value+"\n\n");
+		expected = "Valore3.[\"3\"4\"]";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{transportContext:headerFirstValue(Header3.[\"3\"4\"])}";
+		DynamicUtils.validate("testHeaderParametroConPuntoMethod3", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPuntoMethod3", expr, dynamicMap, pddContext);
+		System.out.println("testHeaderParametroConPuntoMethod3: "+value+"\n\n");
+		expected = "Valore3.[\"3\"4\"]";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+	
+// TODO: gestire anche questo caso complicato
+//		expr = prefix + "{transportContext:headerValues(\"Header3.[\"3\"4\"]\")[0]}";
+//		DynamicUtils.validate("testHeaderParametroConPuntoEArray3", expr, addPrefixError);
+//		value = DynamicUtils.convertDynamicPropertyValue("testHeaderParametroConPuntoEArray3", expr, dynamicMap, pddContext);
+//		System.out.println("testHeaderParametroConPuntoEArray3: "+value+"\n\n");
+//		expected = "Valore3.[\"3\"4\"]";
+//		if(!expected.equals(value)) {
+//			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+//		}
+		
+		
 		
 		
 		
@@ -1839,6 +1922,8 @@ public class Test {
 				fTmpOp2Properties.delete();
 			}
 		}
+		
+		System.out.println("Testsuite terminata");
 	}
 	
 }

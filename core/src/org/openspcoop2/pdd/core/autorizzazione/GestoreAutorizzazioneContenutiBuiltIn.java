@@ -77,6 +77,11 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 			}
 			risorsa=risorsa.trim();
 			
+			if(risorsa.startsWith("#")) {
+				// commento
+				continue;
+			}
+			
 			if(expectedValue==null) {
 				throw new Exception("Trovata una regola di autorizzazione senza valore atteso");
 			}	

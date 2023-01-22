@@ -28,6 +28,8 @@ import java.util.Properties;
 import java.util.Scanner;
 
 import org.openspcoop2.utils.Costanti;
+import org.openspcoop2.utils.SortedMap;
+import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
 
@@ -328,6 +330,45 @@ public class PropertiesUtilities {
 						value = value.trim();
 					}
 					properties.put(key, value);
+				}
+			}
+		}finally {
+			scanner.close();
+		}
+		return properties;
+	}
+	
+	public static String EMPTY_COMMENT_VALUE = " "; // non uso "" senno su oracle non viene serializzato essendo null
+	public static SortedMap<String> convertTextToSortedMap(String text) throws UtilsException {
+		return convertTextToSortedMap(text, false);
+	}
+	public static SortedMap<String> convertTextToSortedMap(String text, boolean addCommentAsEntry) throws UtilsException {
+		Scanner scanner = new Scanner(text);
+		SortedMap<String> properties = new SortedMap<String>();
+		try {
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				if(line==null || line.trim().equals("")) {
+					continue;
+				}
+				line = line.trim();
+				if(line!=null && line.startsWith("#")) {
+					if(addCommentAsEntry) {
+						properties.add(line, EMPTY_COMMENT_VALUE); 
+					}else {
+						continue;
+					}
+				}
+				if(line.contains("=")) {
+					String key = line.split("=")[0];
+					key = key.trim();
+					int valueIndex = line.indexOf("=");
+					String value = "";
+					if(valueIndex<line.length()) {
+						value = line.substring(valueIndex+1);
+						value = value.trim();
+					}
+					properties.add(key, value);
 				}
 			}
 		}finally {

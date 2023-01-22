@@ -354,13 +354,33 @@ public class DynamicStringReplace {
 				// Devo convertire i punti dentro le quadre che potrebbero far parte delle chiavi
 				StringBuilder sbFormat = new StringBuilder();
 				boolean start = false;
+				int doppieVirgoletteIndex = -1;
+				boolean startDoppieVirgolette = false;
 				for (int i = 0; i < value.length(); i++) {
 					char c = value.charAt(i);
 					if((!start) && (c == '[')) {
 						start = true;
+						if((i+1 < value.length())) {
+							char cc = value.charAt(i+1);
+							if((cc == '"')) {
+								startDoppieVirgolette=true;
+								doppieVirgoletteIndex=i+1;
+							}
+						}
 					}
 					if((start) && (c == ']')) {
-						start = false;
+						if(!startDoppieVirgolette) {
+							start = false;
+						}
+					}
+					if((startDoppieVirgolette) && (c == '"') && doppieVirgoletteIndex!=i) {
+						if((i+1 < value.length())) {
+							char cc = value.charAt(i+1);
+							if((cc == ']')) {
+								startDoppieVirgolette = false;
+								doppieVirgoletteIndex=i;
+							}
+						}
 					}
 					if(start && c == '.') {
 						sbFormat.append('_');
@@ -374,13 +394,33 @@ public class DynamicStringReplace {
 				// Devo convertire i punti dentro le tonde che potrebbero far parte delle chiavi
 				sbFormat = new StringBuilder();
 				start = false;
+				doppieVirgoletteIndex = -1;
+				startDoppieVirgolette = false;
 				for (int i = 0; i < internalNewValue.length(); i++) {
 					char c = internalNewValue.charAt(i);
 					if((!start) && (c == '(')) {
 						start = true;
+						if((i+1 < internalNewValue.length())) {
+							char cc = internalNewValue.charAt(i+1);
+							if((cc == '"')) {
+								startDoppieVirgolette=true;
+								doppieVirgoletteIndex=i+1;
+							}
+						}
 					}
 					if((start) && (c == ')')) {
-						start = false;
+						if(!startDoppieVirgolette) {
+							start = false;
+						}
+					}
+					if((startDoppieVirgolette) && (c == '"') && doppieVirgoletteIndex!=i) {
+						if((i+1 < internalNewValue.length())) {
+							char cc = internalNewValue.charAt(i+1);
+							if((cc == ')')) {
+								startDoppieVirgolette = false;
+								doppieVirgoletteIndex=i;
+							}
+						}
 					}
 					if(start && c == '.') {
 						sbFormat.append('_');
@@ -538,13 +578,33 @@ public class DynamicStringReplace {
 			// Devo convertire i punti dentro le quadre che potrebbero far parte delle chiavi
 			StringBuilder sbFormat = new StringBuilder();
 			boolean start = false;
+			int doppieVirgoletteIndex = -1;
+			boolean startDoppieVirgolette = false;
 			for (int i = 0; i < name.length(); i++) {
 				char c = name.charAt(i);
 				if((!start) && (c == '[')) {
 					start = true;
+					if((i+1 < name.length())) {
+						char cc = name.charAt(i+1);
+						if((cc == '"')) {
+							startDoppieVirgolette=true;
+							doppieVirgoletteIndex=i+1;
+						}
+					}
 				}
 				if((start) && (c == ']')) {
-					start = false;
+					if(!startDoppieVirgolette) {
+						start = false;
+					}
+				}
+				if((startDoppieVirgolette) && (c == '"') && doppieVirgoletteIndex!=i) {
+					if((i+1 < name.length())) {
+						char cc = name.charAt(i+1);
+						if((cc == ']')) {
+							startDoppieVirgolette = false;
+							doppieVirgoletteIndex=i;
+						}
+					}
 				}
 				if(start && c == '.') {
 					sbFormat.append('_');
@@ -558,8 +618,8 @@ public class DynamicStringReplace {
 			// Devo convertire i punti dentro le tonde che potrebbero far parte delle chiavi
 			sbFormat = new StringBuilder();
 			start = false;
-			int doppieVirgoletteIndex = -1;
-			boolean startDoppieVirgolette = false;
+			doppieVirgoletteIndex = -1;
+			startDoppieVirgolette = false;
 			for (int i = 0; i < newName.length(); i++) {
 				char c = newName.charAt(i);
 				if((!start) && (c == '(')) {
@@ -578,8 +638,13 @@ public class DynamicStringReplace {
 					}
 				}
 				if((startDoppieVirgolette) && (c == '"') && doppieVirgoletteIndex!=i) {
-					startDoppieVirgolette = false;
-					doppieVirgoletteIndex=i;
+					if((i+1 < newName.length())) {
+						char cc = newName.charAt(i+1);
+						if((cc == ')')) {
+							startDoppieVirgolette = false;
+							doppieVirgoletteIndex=i;
+						}
+					}
 				}
 				if(start && c == '.') {
 					sbFormat.append('_');
@@ -599,13 +664,14 @@ public class DynamicStringReplace {
 			//System.out.println("fieldName ["+fieldName+"]");
 		}
 		String methodName = new String(fieldName);
+		//System.out.println("fieldName ["+fieldName+"]");
 		if(fieldName.endsWith("]") && fieldName.contains("[")){
 			try{
 				// fix [][]
 				//position = fieldName.substring(fieldName.indexOf("[")+1,fieldName.length()-1);
 				String tmp = new String(fieldName);
 				//System.out.println("DEBUG ["+tmp+"]");
-				while(tmp.endsWith("]") && tmp.contains("[")){
+				while(tmp.endsWith("]") && tmp.contains("[")){	
 					int firstOpen = tmp.indexOf("[")+1;
 					int lastOpen = tmp.indexOf("]", firstOpen);
 					String position = tmp.substring(firstOpen, lastOpen);

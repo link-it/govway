@@ -6994,6 +6994,10 @@ public class ConsoleHelper implements IConsoleHelper {
 							if(line==null || line.trim().equals("")) {
 								continue;
 							}
+							line = line.trim();
+							if(line!=null && line.startsWith("#")) {
+								continue;
+							}
 							if(line.contains("=")==false) {
 								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_TOKEN);
 								return false;
@@ -7942,6 +7946,10 @@ public class ConsoleHelper implements IConsoleHelper {
 							while (scanner.hasNextLine()) {
 								String line = scanner.nextLine();
 								if(line==null || line.trim().equals("")) {
+									continue;
+								}
+								line = line.trim();
+								if(line!=null && line.startsWith("#")) {
 									continue;
 								}
 								if(line.contains("=")==false) {
