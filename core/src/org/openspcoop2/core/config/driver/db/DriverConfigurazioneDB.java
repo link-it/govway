@@ -24442,6 +24442,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQueryObject.addOrderBy("id", true); // per preservare l'ordine di inserimento per l'autorizzazione per contenuti built-in visualizzata
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idPortaApplicativa);

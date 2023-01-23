@@ -431,18 +431,8 @@ public class PorteDelegateControlloAccessi extends Action {
 					} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
 						autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
 						List<Proprieta> proprietaAutorizzazioneContenutoList = portaDelegata.getProprietaAutorizzazioneContenutoList();
-						StringBuilder sb = new StringBuilder();
-						for (Proprieta proprieta : proprietaAutorizzazioneContenutoList) {
-							if(sb.length() >0)
-								sb.append("\n");
-							
-							sb.append(proprieta.getNome());
-							if( !(proprieta.getNome()!=null && proprieta.getNome().startsWith("#")) ) {
-								sb.append("=").append(proprieta.getValore()); 
-							}
-						}						
-						
-						autorizzazioneContenutiProperties = sb.toString();
+						SortedMap<String> map = porteDelegateCore.toSortedMap(proprietaAutorizzazioneContenutoList);
+						autorizzazioneContenutiProperties = PropertiesUtilities.convertSortedMapToText(map, true);
 					} else { // custom
 						autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
 					}
@@ -1025,18 +1015,8 @@ public class PorteDelegateControlloAccessi extends Action {
 			} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
 				autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
 				List<Proprieta> proprietaAutorizzazioneContenutoList = portaDelegata.getProprietaAutorizzazioneContenutoList();
-				StringBuilder sb = new StringBuilder();
-				for (Proprieta proprieta : proprietaAutorizzazioneContenutoList) {
-					if(sb.length() >0)
-						sb.append("\n");
-					
-					sb.append(proprieta.getNome());
-					if( !(proprieta.getNome()!=null && proprieta.getNome().startsWith("#")) ) {
-						sb.append("=").append(proprieta.getValore()); 
-					}
-				}						
-				
-				autorizzazioneContenutiProperties = sb.toString();
+				SortedMap<String> map = porteDelegateCore.toSortedMap(proprietaAutorizzazioneContenutoList);
+				autorizzazioneContenutiProperties = PropertiesUtilities.convertSortedMapToText(map, true);
 			} else { // custom
 				autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
 			}

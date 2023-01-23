@@ -497,6 +497,7 @@ public class AttributeAuthorityProvider implements IProvider {
 		}
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(item.getName())) {
 			if(!this.ocspProvider.isOcspEnabled()) {
+				item.setValue("");
 				item.setType(ItemType.HIDDEN);
 			}
 		}

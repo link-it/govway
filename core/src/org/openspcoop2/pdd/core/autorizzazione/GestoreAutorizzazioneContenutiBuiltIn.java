@@ -67,10 +67,14 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 			throw new Exception("Non sono state definite regole di autorizzazione contenuto");
 		}
 			
+		//System.out.println("\n\n@ ===== AUTH CONTENUTI =====");
+		
 		for (Proprieta proprieta : regole) {
 			
 			String risorsa = proprieta.getNome();
 			String expectedValue = proprieta.getValore();
+			
+			//System.out.println("check '"+risorsa+"'='"+expectedValue+"'");
 			
 			if(risorsa==null) {
 				throw new Exception("Trovata una regola di autorizzazione senza risorsa");

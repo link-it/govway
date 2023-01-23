@@ -23,11 +23,9 @@
 package org.openspcoop2.pdd.core.autorizzazione;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
@@ -73,11 +71,12 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
-import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.CacheResponse;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
@@ -1372,7 +1371,9 @@ public class GestoreAutorizzazione {
 		String errorMessage = null;
     	if(tokenOptions!=null) {
     		
-    		Properties properties = PropertiesUtilities.convertTextToProperties(tokenOptions);
+    		//Properties properties = PropertiesUtilities.convertTextToProperties(tokenOptions);
+    		// Fix per preservare l'ordine di configurazione
+    		SortedMap<String> properties = PropertiesUtilities.convertTextToSortedMap(tokenOptions);
 			if(properties!=null && properties.size()>0) {
 			
 	    		InformazioniToken informazioniTokenNormalizzate = null;
@@ -1393,10 +1394,14 @@ public class GestoreAutorizzazione {
 	    				    			
 	    			/* Analisi claims di autorizzazione */
 	    			
-		    		Enumeration<?> en = properties.keys();
-		    		while (en.hasMoreElements()) {
-						String key = (String) en.nextElement();
-						String expectedValue = properties.getProperty(key);
+	    			//System.out.println("\n\n@ ===== AUTH TOKEN CLAIMS =====");
+					
+					List<String> keys = properties.keys();
+		    		for (String key : keys) {
+
+						String expectedValue = properties.get(key);
+						
+						//System.out.println("check '"+key+"'='"+expectedValue+"'");
 						
 						String attributeAuthorityName = null;
 						String attributeName = null;

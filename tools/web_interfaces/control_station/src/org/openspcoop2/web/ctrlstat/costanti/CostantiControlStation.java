@@ -1858,9 +1858,12 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CUSTOM_NON_INDICATA = "Non è stato selezionato nessun plugin da utilizzare come meccanismo di autorizzazione";
 	public static final String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_NON_INDICATA = "Dati incompleti. Definire almeno un controllo di autorizzazione per il contenuto della richiesta";
 	public static final String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_CUSTOM_NON_INDICATA = "Non è stato selezionato nessun plugin da utilizzare per autorizzare il contenuto della richiesta";
-	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); non è stato riscontrato il carattere separatore '='";
+	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); non è stato riscontrato il carattere separatore '=' nella linea ";
 	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); non è stato riscontrata l'indicazione di una risorsa, tramite espressioni dinamiche, nella linea ";
-
+	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_LUNGHEZZA_MASSIMA_SUPERATA_RISORSA = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); è stata riscontrata una lunghezza superiore ai 255 caratteri per la risorsa indicata nella linea ";
+	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_VALORE_NON_DEFINITO = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); non è stato indicato un valore nella linea ";
+	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_LUNGHEZZA_MASSIMA_SUPERATA_VALORE = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); è stata riscontrata una lunghezza superiore ai 255 caratteri per il valore indicato nella linea ";
+	
 	public static final String MESSAGGIO_ERRRORE_ATTRIBUTE_AUTHORITY_NON_ESISTENTE_XX = "Attribute Authority ''{0}'' indicata nel campo ''{1}'' non esistente";
 	public static final String MESSAGGIO_ERRRORE_ATTRIBUTE_AUTHORITY_VUOTA_XX = "Non sono stati definiti degli attributi per l'Attribute Authority ''{0}'' indicata nel campo ''{1}''";
 	

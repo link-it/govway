@@ -1,3 +1,12 @@
+2023-01-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug
+	Se nelle regole di autorizzazione per contenuto si inseriva commenti (#) potevano presentarsi segnalazioni errate dovuti a 'commenti duplicati' quando la linea inserita era la medesima in due o più righe. 
+	Inoltre l'ordine di inserimento delle regole veniva in alcuni casi perso direttamente in fase di configurazione dalla console di gestione.
+	L'ordine di configurazione delle regole di autorizzazione viene infine adesso preservato anche durante il controllo a runtime sia per l'autorizzazione dei contenuti che per l'autorizzazione per token claims.
+	Nell'intervento è stato rilevato e corretto un problema di creazione di una token policy in caso di servizi OCSP disabilitati (file ocsp.properties non presente o nessuna policy definita al suo interno).
+
 2023-01-24  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.10

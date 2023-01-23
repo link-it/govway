@@ -970,6 +970,7 @@ public class TokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(item.getName())) {
 			if(!this.ocspProvider.isOcspEnabled()) {
+				item.setValue("");
 				item.setType(ItemType.HIDDEN);
 			}
 		}

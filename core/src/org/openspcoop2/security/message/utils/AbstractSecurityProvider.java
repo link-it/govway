@@ -156,6 +156,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 		else if(SecurityConstants.TRUSTSTORE_OCSP_POLICY.equals(item.getName()) ||
 				SecurityConstants.KEYSTORE_OCSP_POLICY.equals(item.getName())) {
 			if(!this.ocspProvider.isOcspEnabled()) {
+				item.setValue("");
 				item.setType(ItemType.HIDDEN);
 			}
 		}

@@ -7953,12 +7953,30 @@ public class ConsoleHelper implements IConsoleHelper {
 									continue;
 								}
 								if(line.contains("=")==false) {
-									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI);
+									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI+line);
 									return false;
 								}
-								String key = line.split("=")[0];
+								String [] tmp = line.split("=");
+								if(tmp==null || tmp.length<1) {
+									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI+line);
+									return false;
+								}
+								String key = tmp[0];
 								if(key==null || !key.contains("$")) {
 									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX+line);
+									return false;
+								}
+								if(key.length()>255) {
+									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_LUNGHEZZA_MASSIMA_SUPERATA_RISORSA+line);
+									return false;
+								}
+								if(tmp.length<2 || tmp[1]==null || tmp[1].equals("")) {
+									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_VALORE_NON_DEFINITO+line);
+									return false;
+								}
+								String value = tmp[1];
+								if(value.length()>255) {
+									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_LUNGHEZZA_MASSIMA_SUPERATA_VALORE+line);
 									return false;
 								}
 							}
@@ -7966,9 +7984,10 @@ public class ConsoleHelper implements IConsoleHelper {
 							scanner.close();
 						}
 						
-						if(this.checkLength(autorizzazioneContenutiProperties, CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CONTROLLI_AUTORIZZAZIONE,-1,4000)==false) {
-							return false;
-						}
+						// Viene gestita come singole proprieta
+//						if(this.checkLength(autorizzazioneContenutiProperties, CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CONTROLLI_AUTORIZZAZIONE,-1,4000)==false) {
+//							return false;
+//						}
 					}
 				}
 				

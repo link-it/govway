@@ -14,6 +14,8 @@ TAG_PDD_MINOR_VERSION=10
 TAG_PDD_PATCHLEVEL=
 ramo=tags # tags / branches
 GIT_URL=https://github.com/link-it/govway.git
+#TMP_DIR=/tmp
+TMP_DIR=/storage/var/data/ambienteRilascio
 
 #####################################
 # Variabili per la forzatura #######
@@ -233,10 +235,10 @@ then
 	sed -i -e "s#<module>git</module>#<!-- <module>git</module> -->#g" ${WORKING_COPY}/mvn/dependencies/pom.xml
 	mv ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar.rename
 	mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar.rename
-	tar -h -c -z -f /tmp/${OPENSPCOOP_SRC_FILE}.tgz --xform="s@^@${OPENSPCOOP_SRC_FILE}/@" --exclude-vcs --exclude lib/svn * 
+	tar -h -c -z -f ${TMP_DIR}/${OPENSPCOOP_SRC_FILE}.tgz --xform="s@^@${OPENSPCOOP_SRC_FILE}/@" --exclude-vcs --exclude lib/svn * 
 	mv ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar.rename ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar
 	mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar.rename ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar
-	mv /tmp/${OPENSPCOOP_SRC_FILE}.tgz ${WORK_DIR}/
+	mv ${TMP_DIR}/${OPENSPCOOP_SRC_FILE}.tgz ${WORK_DIR}/
 	infoPrintln "Generazione distribuzione sorgente completata. Archivio generato: ${WORK_DIR}/${OPENSPCOOP_SRC_FILE}.tgz"
 else
 	warningPrintln "Generazione distribuzione sorgente non eseguita su richiesta utente."

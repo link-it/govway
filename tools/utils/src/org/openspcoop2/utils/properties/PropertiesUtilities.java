@@ -338,7 +338,15 @@ public class PropertiesUtilities {
 		return properties;
 	}
 	
-	public static String EMPTY_COMMENT_VALUE = " "; // non uso "" senno su oracle non viene serializzato essendo null
+	private static String EMPTY_COMMENT_VALUE = " "; // non uso "" senno su oracle non viene serializzato essendo null
+	private static String KEY_COMMENT_UNIQUE = "#C_ID#_";
+	private static String getKeyComment(int index) {
+		return KEY_COMMENT_UNIQUE.replace("ID", index+"");
+	}
+	private static String removeKeyComment(String keyComment, int index) {
+		String prefix = KEY_COMMENT_UNIQUE.replace("ID", index+"");
+		return keyComment.replace(prefix,"");
+	}
 	public static SortedMap<String> convertTextToSortedMap(String text) throws UtilsException {
 		return convertTextToSortedMap(text, false);
 	}
@@ -346,18 +354,21 @@ public class PropertiesUtilities {
 		Scanner scanner = new Scanner(text);
 		SortedMap<String> properties = new SortedMap<String>();
 		try {
+			int index = 0;
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				if(line==null || line.trim().equals("")) {
 					continue;
 				}
 				line = line.trim();
-				if(line!=null && line.startsWith("#")) {
+				if(line.startsWith("#")) {
 					if(addCommentAsEntry) {
-						properties.add(line, EMPTY_COMMENT_VALUE); 
-					}else {
-						continue;
+						String key = getKeyComment(index)+line;
+						//System.out.println("ADD COMMENT '"+key+"'");
+						properties.add(key, EMPTY_COMMENT_VALUE);
+						index++;
 					}
+					continue;
 				}
 				if(line.contains("=")) {
 					String key = line.split("=")[0];
@@ -375,5 +386,48 @@ public class PropertiesUtilities {
 			scanner.close();
 		}
 		return properties;
+	}
+	
+	public static String convertSortedMapToText(SortedMap<String> map) throws UtilsException {
+		return convertSortedMapToText(map, false);
+	}
+	public static String convertSortedMapToText(SortedMap<String> map, boolean commentAsEntry) throws UtilsException {
+		StringBuilder sb = new StringBuilder();
+		if(map!=null && !map.isEmpty()) {
+			int index = 0;
+			for (String key : map.keys()) {
+				
+				if(key==null) {
+					continue;
+				}
+								
+				if(key.startsWith("#") && commentAsEntry) {
+					
+					if(sb.length() >0)
+						sb.append("\n");
+					
+					//System.out.println("READ COMMENT '"+key+"'");
+					String keyComment = getKeyComment(index);
+					if(key.startsWith(keyComment)) {
+						String line = removeKeyComment(key, index);
+						//System.out.println("READ ADD COMMENT '"+line+"'");
+						sb.append(line);
+						index++;
+					}
+					else {
+						//System.out.println("READ ADD ORIGINAL '"+key+"'");
+						sb.append(key);
+					}
+					continue;
+				}
+				
+				if(sb.length() >0)
+					sb.append("\n");
+				
+				String value = map.get(key);
+				sb.append(key).append("=").append(value);
+			}	
+		}
+		return sb.toString();
 	}
 }

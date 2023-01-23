@@ -150,6 +150,7 @@ import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
@@ -8317,5 +8318,15 @@ public class ControlStationCore {
 			pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_SUCCESSO,
 					Costanti.MESSAGE_TYPE_INFO);
 		}
+	}
+	
+	public SortedMap<String> toSortedMap(List<Proprieta> proprieta) throws UtilsException{
+		SortedMap<String> map = new SortedMap<String> ();
+		if(proprieta!=null && !proprieta.isEmpty()) {
+			for (Proprieta p : proprieta) {
+				map.add(p.getNome(), p.getValore());
+			}
+		}
+		return map;
 	}
 }
