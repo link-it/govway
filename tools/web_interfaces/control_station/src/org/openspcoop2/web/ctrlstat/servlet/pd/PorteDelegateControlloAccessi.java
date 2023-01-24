@@ -431,8 +431,8 @@ public class PorteDelegateControlloAccessi extends Action {
 					} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
 						autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
 						List<Proprieta> proprietaAutorizzazioneContenutoList = portaDelegata.getProprietaAutorizzazioneContenutoList();
-						SortedMap<String> map = porteDelegateCore.toSortedMap(proprietaAutorizzazioneContenutoList);
-						autorizzazioneContenutiProperties = PropertiesUtilities.convertSortedMapToText(map, true);
+						SortedMap<List<String>> map = porteDelegateCore.toSortedListMap(proprietaAutorizzazioneContenutoList);
+						autorizzazioneContenutiProperties = PropertiesUtilities.convertSortedListMapToText(map, true);
 					} else { // custom
 						autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
 					}
@@ -826,18 +826,8 @@ public class PorteDelegateControlloAccessi extends Action {
 				portaDelegata.getProprietaAutorizzazioneContenutoList().clear();
 				// Fix: non rispettava l'ordine
 				//Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);				
-				SortedMap<String> convertTextToProperties = PropertiesUtilities.convertTextToSortedMap(autorizzazioneContenutiProperties, true);
-				
-				List<String> keys = convertTextToProperties.keys();
-				if(keys!=null && !keys.isEmpty()) {
-					for (String nome : keys) {
-						String valore = convertTextToProperties.get(nome);
-						Proprieta proprietaAutorizzazioneContenuto = new Proprieta();
-						proprietaAutorizzazioneContenuto.setNome(nome);
-						proprietaAutorizzazioneContenuto.setValore(valore);
-						portaDelegata.addProprietaAutorizzazioneContenuto(proprietaAutorizzazioneContenuto);
-					}
-				}
+				SortedMap<List<String>> convertTextToProperties = PropertiesUtilities.convertTextToSortedListMap(autorizzazioneContenutiProperties, true);
+				porteDelegateCore.addFromSortedListMap(portaDelegata.getProprietaAutorizzazioneContenutoList(), convertTextToProperties);
 			} else {
 				portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
 				if(!autorizzazioneContenutiStato.equals(oldAutorizzazioneContenutoStato))
@@ -1015,8 +1005,8 @@ public class PorteDelegateControlloAccessi extends Action {
 			} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
 				autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
 				List<Proprieta> proprietaAutorizzazioneContenutoList = portaDelegata.getProprietaAutorizzazioneContenutoList();
-				SortedMap<String> map = porteDelegateCore.toSortedMap(proprietaAutorizzazioneContenutoList);
-				autorizzazioneContenutiProperties = PropertiesUtilities.convertSortedMapToText(map, true);
+				SortedMap<List<String>> map = porteDelegateCore.toSortedListMap(proprietaAutorizzazioneContenutoList);
+				autorizzazioneContenutiProperties = PropertiesUtilities.convertSortedListMapToText(map, true);
 			} else { // custom
 				autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
 			}

@@ -681,18 +681,8 @@ public final class PorteApplicativeAdd extends Action {
 				pa.getProprietaAutorizzazioneContenutoList().clear();
 				// Fix: non rispettava l'ordine
 				//Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);
-				SortedMap<String> convertTextToProperties = PropertiesUtilities.convertTextToSortedMap(autorizzazioneContenutiProperties, true);
-				
-				List<String> keys = convertTextToProperties.keys();
-				if(keys!=null && !keys.isEmpty()) {
-					for (String nome : keys) {
-						String valore = convertTextToProperties.get(nome);
-						Proprieta proprietaAutorizzazioneContenuto = new Proprieta();
-						proprietaAutorizzazioneContenuto.setNome(nome);
-						proprietaAutorizzazioneContenuto.setValore(valore);
-						pa.addProprietaAutorizzazioneContenuto(proprietaAutorizzazioneContenuto);
-					}
-				}
+				SortedMap<List<String>> convertTextToProperties = PropertiesUtilities.convertTextToSortedListMap(autorizzazioneContenutiProperties, true);
+				porteApplicativeCore.addFromSortedListMap(pa.getProprietaAutorizzazioneContenutoList(), convertTextToProperties);
 			} else {
 				pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			}

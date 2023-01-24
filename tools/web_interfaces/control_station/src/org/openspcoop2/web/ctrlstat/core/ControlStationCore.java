@@ -78,6 +78,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.config.utils.ConfigUtils;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -8320,13 +8321,10 @@ public class ControlStationCore {
 		}
 	}
 	
-	public SortedMap<String> toSortedMap(List<Proprieta> proprieta) throws UtilsException{
-		SortedMap<String> map = new SortedMap<String> ();
-		if(proprieta!=null && !proprieta.isEmpty()) {
-			for (Proprieta p : proprieta) {
-				map.add(p.getNome(), p.getValore());
-			}
-		}
-		return map;
+	public SortedMap<List<String>> toSortedListMap(List<Proprieta> proprieta) throws UtilsException{
+		return ConfigUtils.toSortedListMap(proprieta);
+	}
+	public void addFromSortedListMap(List<Proprieta> proprieta, SortedMap<List<String>> map){
+		ConfigUtils.addFromSortedListMap(proprieta, map);
 	}
 }

@@ -24,6 +24,8 @@ package org.openspcoop2.utils.properties;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -350,9 +352,27 @@ public class PropertiesUtilities {
 	public static SortedMap<String> convertTextToSortedMap(String text) throws UtilsException {
 		return convertTextToSortedMap(text, false);
 	}
+	@SuppressWarnings("unchecked")
 	public static SortedMap<String> convertTextToSortedMap(String text, boolean addCommentAsEntry) throws UtilsException {
+		return (SortedMap<String>) _convertTextToSortedMap(text, addCommentAsEntry, false);
+	}
+	public static SortedMap<List<String>> convertTextToSortedListMap(String text) throws UtilsException {
+		return convertTextToSortedListMap(text, false);
+	}
+	@SuppressWarnings("unchecked")
+	public static SortedMap<List<String>> convertTextToSortedListMap(String text, boolean addCommentAsEntry) throws UtilsException {
+		return (SortedMap<List<String>>) _convertTextToSortedMap(text, addCommentAsEntry, true);
+	}
+	private static SortedMap<?> _convertTextToSortedMap(String text, boolean addCommentAsEntry, boolean listEnabled) throws UtilsException {
 		Scanner scanner = new Scanner(text);
-		SortedMap<String> properties = new SortedMap<String>();
+		SortedMap<String> propertiesString = null;
+		SortedMap<List<String>> propertiesList = null;
+		if(listEnabled) {
+			propertiesList = new SortedMap<List<String>>();
+		}
+		else {
+			propertiesString = new SortedMap<String>();
+		}
 		try {
 			int index = 0;
 			while (scanner.hasNextLine()) {
@@ -365,7 +385,14 @@ public class PropertiesUtilities {
 					if(addCommentAsEntry) {
 						String key = getKeyComment(index)+line;
 						//System.out.println("ADD COMMENT '"+key+"'");
-						properties.add(key, EMPTY_COMMENT_VALUE);
+						if(listEnabled) {
+							List<String> l = new ArrayList<>();
+							l.add(EMPTY_COMMENT_VALUE);
+							propertiesList.add(key, l);
+						}
+						else {
+							propertiesString.add(key, EMPTY_COMMENT_VALUE);
+						}
 						index++;
 					}
 					continue;
@@ -379,19 +406,38 @@ public class PropertiesUtilities {
 						value = line.substring(valueIndex+1);
 						value = value.trim();
 					}
-					properties.add(key, value);
+					if(listEnabled) {
+						List<String> l = propertiesList.get(key);
+						if(l==null) {
+							l = new ArrayList<>();
+							propertiesList.add(key, l);
+						}
+						l.add(value);
+					}
+					else {
+						propertiesString.add(key, value);
+					}
 				}
 			}
 		}finally {
 			scanner.close();
 		}
-		return properties;
+		return listEnabled ? propertiesList : propertiesString;
 	}
 	
 	public static String convertSortedMapToText(SortedMap<String> map) throws UtilsException {
 		return convertSortedMapToText(map, false);
 	}
 	public static String convertSortedMapToText(SortedMap<String> map, boolean commentAsEntry) throws UtilsException {
+		return _convertSortedMapToText(map, commentAsEntry, false);
+	}
+	public static String convertSorteListdMapToText(SortedMap<List<String>> map) throws UtilsException {
+		return convertSortedListMapToText(map, false);
+	}
+	public static String convertSortedListMapToText(SortedMap<List<String>> map, boolean commentAsEntry) throws UtilsException {
+		return _convertSortedMapToText(map, commentAsEntry, true);
+	}
+	private static String _convertSortedMapToText(SortedMap<?> map, boolean commentAsEntry, boolean listEnabled) throws UtilsException {
 		StringBuilder sb = new StringBuilder();
 		if(map!=null && !map.isEmpty()) {
 			int index = 0;
@@ -420,12 +466,23 @@ public class PropertiesUtilities {
 					}
 					continue;
 				}
-				
-				if(sb.length() >0)
-					sb.append("\n");
-				
-				String value = map.get(key);
-				sb.append(key).append("=").append(value);
+								
+				if(listEnabled) {
+					@SuppressWarnings("unchecked")
+					List<String> values = (List<String>) map.get(key);
+					if(values!=null && !values.isEmpty()) {
+						for (String value : values) {
+							if(sb.length() >0)
+								sb.append("\n");
+							sb.append(key).append("=").append(value);
+						}
+					}
+				}else {
+					if(sb.length() >0)
+						sb.append("\n");
+					String value = (String) map.get(key);
+					sb.append(key).append("=").append(value);
+				}
 			}	
 		}
 		return sb.toString();

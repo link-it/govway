@@ -1373,7 +1373,7 @@ public class GestoreAutorizzazione {
     		
     		//Properties properties = PropertiesUtilities.convertTextToProperties(tokenOptions);
     		// Fix per preservare l'ordine di configurazione
-    		SortedMap<String> properties = PropertiesUtilities.convertTextToSortedMap(tokenOptions);
+    		SortedMap<List<String>> properties = PropertiesUtilities.convertTextToSortedListMap(tokenOptions);
 			if(properties!=null && properties.size()>0) {
 			
 	    		InformazioniToken informazioniTokenNormalizzate = null;
@@ -1398,340 +1398,345 @@ public class GestoreAutorizzazione {
 					
 					List<String> keys = properties.keys();
 		    		for (String key : keys) {
-
-						String expectedValue = properties.get(key);
-						
-						//System.out.println("check '"+key+"'='"+expectedValue+"'");
-						
-						String attributeAuthorityName = null;
-						String attributeName = null;
-						boolean findAttribute = false;
-						Object valueAttributeObject = null; 
-						
-						// verifica presenza claim nel token
-						log.debug("Verifico presenza '"+key+"' nel token ...");
-						if(informazioniTokenNormalizzate.getClaims().containsKey(key)==false) {
-							
-							if(key.startsWith(ATTRIBUTE_AUTHORITY_PREFIX) && key.length()>ATTRIBUTE_AUTHORITY_PREFIX.length()) {
-								String tmp = key.substring(ATTRIBUTE_AUTHORITY_PREFIX.length());
-								//System.out.println("DEBUG ["+tmp+"]");
-								if(tmp!=null && tmp.contains(".")) {
-									int indexOf = tmp.indexOf(".");
-									if(indexOf>0 && indexOf<tmp.length()) {
-										attributeAuthorityName = tmp.substring(0, indexOf);
-										tmp = tmp.substring(indexOf);
-										//System.out.println("DEBUG attributeAuthorityName["+attributeAuthorityName+"] tmp["+tmp+"]");
-										if(tmp.startsWith(("."+ATTRIBUTE_PREFIX)) && tmp.length()>("."+ATTRIBUTE_PREFIX).length()) {
-											indexOf = tmp.indexOf(".",1); // ho appurato che iniza con '.'
+		    			
+		    			List<String> expectedValues = properties.get(key);
+		    			if(expectedValues!=null && !expectedValues.isEmpty()) {
+		    				
+		    				for (String expectedValue : expectedValues) {
+								
+								//System.out.println("check '"+key+"'='"+expectedValue+"'");
+								
+								String attributeAuthorityName = null;
+								String attributeName = null;
+								boolean findAttribute = false;
+								Object valueAttributeObject = null; 
+								
+								// verifica presenza claim nel token
+								log.debug("Verifico presenza '"+key+"' nel token ...");
+								if(informazioniTokenNormalizzate.getClaims().containsKey(key)==false) {
+									
+									if(key.startsWith(ATTRIBUTE_AUTHORITY_PREFIX) && key.length()>ATTRIBUTE_AUTHORITY_PREFIX.length()) {
+										String tmp = key.substring(ATTRIBUTE_AUTHORITY_PREFIX.length());
+										//System.out.println("DEBUG ["+tmp+"]");
+										if(tmp!=null && tmp.contains(".")) {
+											int indexOf = tmp.indexOf(".");
 											if(indexOf>0 && indexOf<tmp.length()) {
-												attributeName = tmp.substring(indexOf);
-												if(attributeName.startsWith(".") && attributeName.length()>1) {
-													attributeName = attributeName.substring(1);
+												attributeAuthorityName = tmp.substring(0, indexOf);
+												tmp = tmp.substring(indexOf);
+												//System.out.println("DEBUG attributeAuthorityName["+attributeAuthorityName+"] tmp["+tmp+"]");
+												if(tmp.startsWith(("."+ATTRIBUTE_PREFIX)) && tmp.length()>("."+ATTRIBUTE_PREFIX).length()) {
+													indexOf = tmp.indexOf(".",1); // ho appurato che iniza con '.'
+													if(indexOf>0 && indexOf<tmp.length()) {
+														attributeName = tmp.substring(indexOf);
+														if(attributeName.startsWith(".") && attributeName.length()>1) {
+															attributeName = attributeName.substring(1);
+														}
+														//System.out.println("DEBUG attributeName["+attributeName+"]");
+													}
 												}
-												//System.out.println("DEBUG attributeName["+attributeName+"]");
 											}
 										}
 									}
-								}
-							}
-							else if(key.startsWith(ATTRIBUTE_PREFIX) && key.length()>ATTRIBUTE_PREFIX.length()) {
-								attributeName = key.substring(ATTRIBUTE_PREFIX.length());
-							}
-							
-							if(attributeAuthorityName!=null && attributeName!=null) {
-								if(informazioniTokenNormalizzate.getAa()!=null && 
-										informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()!=null &&
-										informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue()!=null &&
-										informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue() &&
-										informazioniTokenNormalizzate.getAa().getAttributes()!=null && 
-										informazioniTokenNormalizzate.getAa().getAttributes().containsKey(attributeAuthorityName)) {
-									Object o = informazioniTokenNormalizzate.getAa().getAttributes().get(attributeAuthorityName);
-									if(o instanceof Map) {
-										@SuppressWarnings("unchecked")
-										Map<String, Object> map = (Map<String, Object>) o;
-										if(map.containsKey(attributeName)) {
-											findAttribute = true;
-											valueAttributeObject = map.get(attributeName);
+									else if(key.startsWith(ATTRIBUTE_PREFIX) && key.length()>ATTRIBUTE_PREFIX.length()) {
+										attributeName = key.substring(ATTRIBUTE_PREFIX.length());
+									}
+									
+									if(attributeAuthorityName!=null && attributeName!=null) {
+										if(informazioniTokenNormalizzate.getAa()!=null && 
+												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()!=null &&
+												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue()!=null &&
+												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue() &&
+												informazioniTokenNormalizzate.getAa().getAttributes()!=null && 
+												informazioniTokenNormalizzate.getAa().getAttributes().containsKey(attributeAuthorityName)) {
+											Object o = informazioniTokenNormalizzate.getAa().getAttributes().get(attributeAuthorityName);
+											if(o instanceof Map) {
+												@SuppressWarnings("unchecked")
+												Map<String, Object> map = (Map<String, Object>) o;
+												if(map.containsKey(attributeName)) {
+													findAttribute = true;
+													valueAttributeObject = map.get(attributeName);
+												}
+											}
 										}
 									}
-								}
-							}
-							else if(attributeName!=null) {
-								if(informazioniTokenNormalizzate.getAa()!=null && 
-										(
-												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()==null || 
-												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue()==null || 
-												!informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue()
-										) &&
-										informazioniTokenNormalizzate.getAa().getAttributes()!=null && 
-										informazioniTokenNormalizzate.getAa().getAttributes().containsKey(attributeName)) {
-									findAttribute = true;
-									valueAttributeObject = informazioniTokenNormalizzate.getAa().getAttributes().get(attributeName);
-								}
-							}
-							
-							if(!findAttribute) {
-								if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
-									continue;
-								}
-								autorizzato = false;
-								if(attributeName!=null) {
-									errorMessage = "Token without attribute '"+key+"'";
-								}
-								else {
-									errorMessage = "Token without claim '"+key+"'";
-								}
-								break;
-							}
-						}
-						
-						List<String> lClaimValues =null;
-						if(findAttribute && valueAttributeObject!=null) {
-							lClaimValues = TokenUtilities.getClaimValues(valueAttributeObject);
-						}
-						else {
-							Object valueClaimObject = informazioniTokenNormalizzate.getClaims().get(key);
-							lClaimValues = TokenUtilities.getClaimValues(valueClaimObject);
-						}
-						String nomeClaimAttribute = (attributeName!=null) ? attributeName : key;
-						if(lClaimValues==null || lClaimValues.isEmpty()) {
-							if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
-								continue;
-							}
-							autorizzato = false;
-							if(attributeName!=null) {
-								errorMessage = "Token with attribute '"+nomeClaimAttribute+"' without value";
-							}
-							else {
-								errorMessage = "Token with claim '"+nomeClaimAttribute+"' without value";
-							}
-							break;
-						}
-						
-						// verifica valore atteso per il claim
-						String object = (attributeName!=null) ? "Attribute" : "Claim";
-						log.debug("Verifico valore '"+expectedValue+"' per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' nel token ...");
-						if(expectedValue==null) {
-							throw new Exception(object+" '"+nomeClaimAttribute+"' without expected value");
-						}
-						expectedValue = expectedValue.trim();
-						
-						if(CostantiAutorizzazione.AUTHZ_ANY_VALUE.equalsIgnoreCase(expectedValue)) {
-							
-							/** ANY VALUE */
-							
-							log.debug("Verifico valore "+object.toLowerCase()+" '"+nomeClaimAttribute+"' che non sia null e non sia vuoto ...");
-							
-							// basta che abbia un valore not null
-							boolean ok = false;
-							for (String v : lClaimValues) {
-								if(v!=null && !"".equals(v)) {
-									ok = true;
-									break;
-								}
-							}
-							if(!ok) {
-								autorizzato = false;
-								errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected empty value";
-								break;
-							}
-						}
-						else if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) { 
-							
-							/** NOT PRESENT */
-							
-							log.debug("Verifico valore "+object.toLowerCase()+" '"+nomeClaimAttribute+"' sia null o sia vuoto ...");
-							
-							// basta che abbia un valore
-							boolean ok = false;
-							for (String v : lClaimValues) {
-								if(v!=null && !"".equals(v)) {
-									ok = true;
-									break;
-								}
-							}
-							if(ok) {
-								autorizzato = false;
-								errorMessage = "Token unexpected "+object.toLowerCase()+" '"+nomeClaimAttribute+"'";
-								break;
-							}
-							
-						}
-						else if(
-								(
-										expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())
-										||
-										expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.toLowerCase())
-										||
-										expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase())
-										||
-										expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.toLowerCase())
-								) 
-								&&
-								expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.toLowerCase())) {
-							
-							/** REGULAR EXPRESSION MATCH/FIND */
-							
-							boolean match = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())
-									||
-									expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase());
-							boolean not = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase())
-									||
-									expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.toLowerCase());
-							String regexpPattern = null;
-							if(match) {
-								int length = -1;
-								if(expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())) {
-									length = CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length();
-								}
-								else {
-									length = CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.length();
-								}
-								if(expectedValue.length()<= (length+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
-									throw new Exception(object+" '"+nomeClaimAttribute+"' without expected regexp match");
-								}
-								regexpPattern = expectedValue.substring(length, (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
-							}
-							else {
-								int length = -1;
-								if(expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.toLowerCase())) {
-									length = CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length();
-								}
-								else {
-									length = CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.length();
-								}
-								if(expectedValue.length()<= (length+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
-									throw new Exception(object+" '"+nomeClaimAttribute+"' without expected regexp find");
-								}
-								regexpPattern = expectedValue.substring(length, (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
-							}
-							regexpPattern = regexpPattern.trim();
-							log.debug("Verifico valore del "+object.toLowerCase()+" '"+nomeClaimAttribute+"' tramite espressione regolare (match:"+match+") '"+regexpPattern+"' ...");
-							
-							// basta che un valore abbia match
-							boolean ok = false;
-							for (String v : lClaimValues) {
-								if( match ? RegularExpressionEngine.isMatch(v, regexpPattern) : RegularExpressionEngine.isFind(v, regexpPattern)) {
-									ok = true;
-									break;
-								}
-							}
-							if(not) {
-								if(ok) {
-									autorizzato = false;
-									String tipo = match ? "match" : "find";
-									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value (regExpr not "+tipo+" failed)";
-									break;
-								}
-							}
-							else {
-								if(!ok) {
-									autorizzato = false;
-									String tipo = match ? "match" : "find";
-									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value (regExpr "+tipo+" failed)";
-									break;
-								}
-							}
-							
-						}
-						else {
-						
-							/** VALUE (con PLACEHOLDERS) */
-							
-							boolean not = false;
-							if(
-									expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_NOT_PREFIX.toLowerCase())
-									&&
-									expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.toLowerCase())) {
-								not = true;
-								if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_NOT_PREFIX.length()+CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.length()) ) {
-									throw new Exception(object+" '"+nomeClaimAttribute+"' without value in not condition");
-								}
-								expectedValue = expectedValue.substring(CostantiAutorizzazione.AUTHZ_NOT_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.length()));
-							}
-							
-							boolean ignoreCase = false;
-							if(
-									expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.toLowerCase())
-									&&
-									expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.toLowerCase())) {
-								ignoreCase = true;
-								if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.length()+CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.length()) ) {
-									throw new Exception(object+" '"+nomeClaimAttribute+"' without value in ignore case condition");
-								}
-								expectedValue = expectedValue.substring(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.length()));
-							}
-							
-							try {
-								expectedValue = DynamicUtils.convertDynamicPropertyValue(key, expectedValue, dynamicMap, pddContext);
-							}catch(Exception e) {
-								String msg = "Conversione valore per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage();
-								//throw new Exception(msg,e);
-								log.error(msg, e);
-								autorizzato = false;
-								errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' not verifiable; unprocessable dynamic value '"+expectedValue+"': "+e.getMessage();
-								break;
-							}
-							
-							boolean ok = false;
-							if(expectedValue.contains(",")) {
-								String [] values = expectedValue.split(",");
-								ok = false;
-								for (int i = 0; i < values.length; i++) {
-									String v = values[i].trim();
-									if(ignoreCase) {
-										boolean find = false;
-										for (String claim : lClaimValues) {
-											if(claim.equalsIgnoreCase(v)) {
-												find = true;
-												break;
-											}	
+									else if(attributeName!=null) {
+										if(informazioniTokenNormalizzate.getAa()!=null && 
+												(
+														informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()==null || 
+														informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue()==null || 
+														!informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue()
+												) &&
+												informazioniTokenNormalizzate.getAa().getAttributes()!=null && 
+												informazioniTokenNormalizzate.getAa().getAttributes().containsKey(attributeName)) {
+											findAttribute = true;
+											valueAttributeObject = informazioniTokenNormalizzate.getAa().getAttributes().get(attributeName);
 										}
-										if(find) {
+									}
+									
+									if(!findAttribute) {
+										if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
+											continue;
+										}
+										autorizzato = false;
+										if(attributeName!=null) {
+											errorMessage = "Token without attribute '"+key+"'";
+										}
+										else {
+											errorMessage = "Token without claim '"+key+"'";
+										}
+										break;
+									}
+								}
+								
+								List<String> lClaimValues =null;
+								if(findAttribute && valueAttributeObject!=null) {
+									lClaimValues = TokenUtilities.getClaimValues(valueAttributeObject);
+								}
+								else {
+									Object valueClaimObject = informazioniTokenNormalizzate.getClaims().get(key);
+									lClaimValues = TokenUtilities.getClaimValues(valueClaimObject);
+								}
+								String nomeClaimAttribute = (attributeName!=null) ? attributeName : key;
+								if(lClaimValues==null || lClaimValues.isEmpty()) {
+									if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
+										continue;
+									}
+									autorizzato = false;
+									if(attributeName!=null) {
+										errorMessage = "Token with attribute '"+nomeClaimAttribute+"' without value";
+									}
+									else {
+										errorMessage = "Token with claim '"+nomeClaimAttribute+"' without value";
+									}
+									break;
+								}
+								
+								// verifica valore atteso per il claim
+								String object = (attributeName!=null) ? "Attribute" : "Claim";
+								log.debug("Verifico valore '"+expectedValue+"' per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' nel token ...");
+								if(expectedValue==null) {
+									throw new Exception(object+" '"+nomeClaimAttribute+"' without expected value");
+								}
+								expectedValue = expectedValue.trim();
+								
+								if(CostantiAutorizzazione.AUTHZ_ANY_VALUE.equalsIgnoreCase(expectedValue)) {
+									
+									/** ANY VALUE */
+									
+									log.debug("Verifico valore "+object.toLowerCase()+" '"+nomeClaimAttribute+"' che non sia null e non sia vuoto ...");
+									
+									// basta che abbia un valore not null
+									boolean ok = false;
+									for (String v : lClaimValues) {
+										if(v!=null && !"".equals(v)) {
 											ok = true;
+											break;
+										}
+									}
+									if(!ok) {
+										autorizzato = false;
+										errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected empty value";
+										break;
+									}
+								}
+								else if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) { 
+									
+									/** NOT PRESENT */
+									
+									log.debug("Verifico valore "+object.toLowerCase()+" '"+nomeClaimAttribute+"' sia null o sia vuoto ...");
+									
+									// basta che abbia un valore
+									boolean ok = false;
+									for (String v : lClaimValues) {
+										if(v!=null && !"".equals(v)) {
+											ok = true;
+											break;
+										}
+									}
+									if(ok) {
+										autorizzato = false;
+										errorMessage = "Token unexpected "+object.toLowerCase()+" '"+nomeClaimAttribute+"'";
+										break;
+									}
+									
+								}
+								else if(
+										(
+												expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())
+												||
+												expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.toLowerCase())
+												||
+												expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase())
+												||
+												expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.toLowerCase())
+										) 
+										&&
+										expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.toLowerCase())) {
+									
+									/** REGULAR EXPRESSION MATCH/FIND */
+									
+									boolean match = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())
+											||
+											expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase());
+									boolean not = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase())
+											||
+											expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.toLowerCase());
+									String regexpPattern = null;
+									if(match) {
+										int length = -1;
+										if(expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())) {
+											length = CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length();
+										}
+										else {
+											length = CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.length();
+										}
+										if(expectedValue.length()<= (length+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
+											throw new Exception(object+" '"+nomeClaimAttribute+"' without expected regexp match");
+										}
+										regexpPattern = expectedValue.substring(length, (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
+									}
+									else {
+										int length = -1;
+										if(expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.toLowerCase())) {
+											length = CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length();
+										}
+										else {
+											length = CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.length();
+										}
+										if(expectedValue.length()<= (length+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
+											throw new Exception(object+" '"+nomeClaimAttribute+"' without expected regexp find");
+										}
+										regexpPattern = expectedValue.substring(length, (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
+									}
+									regexpPattern = regexpPattern.trim();
+									log.debug("Verifico valore del "+object.toLowerCase()+" '"+nomeClaimAttribute+"' tramite espressione regolare (match:"+match+") '"+regexpPattern+"' ...");
+									
+									// basta che un valore abbia match
+									boolean ok = false;
+									for (String v : lClaimValues) {
+										if( match ? RegularExpressionEngine.isMatch(v, regexpPattern) : RegularExpressionEngine.isFind(v, regexpPattern)) {
+											ok = true;
+											break;
+										}
+									}
+									if(not) {
+										if(ok) {
+											autorizzato = false;
+											String tipo = match ? "match" : "find";
+											errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value (regExpr not "+tipo+" failed)";
 											break;
 										}
 									}
 									else {
-										if(lClaimValues.contains(v)) {
-											ok = true;
+										if(!ok) {
+											autorizzato = false;
+											String tipo = match ? "match" : "find";
+											errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value (regExpr "+tipo+" failed)";
+											break;
+										}
+									}
+									
+								}
+								else {
+								
+									/** VALUE (con PLACEHOLDERS) */
+									
+									boolean not = false;
+									if(
+											expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_NOT_PREFIX.toLowerCase())
+											&&
+											expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.toLowerCase())) {
+										not = true;
+										if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_NOT_PREFIX.length()+CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.length()) ) {
+											throw new Exception(object+" '"+nomeClaimAttribute+"' without value in not condition");
+										}
+										expectedValue = expectedValue.substring(CostantiAutorizzazione.AUTHZ_NOT_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.length()));
+									}
+									
+									boolean ignoreCase = false;
+									if(
+											expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.toLowerCase())
+											&&
+											expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.toLowerCase())) {
+										ignoreCase = true;
+										if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.length()+CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.length()) ) {
+											throw new Exception(object+" '"+nomeClaimAttribute+"' without value in ignore case condition");
+										}
+										expectedValue = expectedValue.substring(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.length()));
+									}
+									
+									try {
+										expectedValue = DynamicUtils.convertDynamicPropertyValue(key, expectedValue, dynamicMap, pddContext);
+									}catch(Exception e) {
+										String msg = "Conversione valore per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage();
+										//throw new Exception(msg,e);
+										log.error(msg, e);
+										autorizzato = false;
+										errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' not verifiable; unprocessable dynamic value '"+expectedValue+"': "+e.getMessage();
+										break;
+									}
+									
+									boolean ok = false;
+									if(expectedValue.contains(",")) {
+										String [] values = expectedValue.split(",");
+										ok = false;
+										for (int i = 0; i < values.length; i++) {
+											String v = values[i].trim();
+											if(ignoreCase) {
+												boolean find = false;
+												for (String claim : lClaimValues) {
+													if(claim.equalsIgnoreCase(v)) {
+														find = true;
+														break;
+													}	
+												}
+												if(find) {
+													ok = true;
+													break;
+												}
+											}
+											else {
+												if(lClaimValues.contains(v)) {
+													ok = true;
+													break;
+												}
+											}
+										}
+									}
+									else {
+										if(ignoreCase) {
+											boolean find = false;
+											for (String claim : lClaimValues) {
+												if(claim.equalsIgnoreCase(expectedValue)) {
+													find = true;
+													break;
+												}	
+											}
+											ok = find;
+										}
+										else {
+											ok = lClaimValues.contains(expectedValue);
+										}
+									}
+									
+									if(not) {
+										if(ok) {
+											autorizzato = false;
+											errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unauthorized value";
+											break;
+										}
+									}
+									else {
+										if(!ok) {
+											autorizzato = false;
+											errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value";
 											break;
 										}
 									}
 								}
 							}
-							else {
-								if(ignoreCase) {
-									boolean find = false;
-									for (String claim : lClaimValues) {
-										if(claim.equalsIgnoreCase(expectedValue)) {
-											find = true;
-											break;
-										}	
-									}
-									ok = find;
-								}
-								else {
-									ok = lClaimValues.contains(expectedValue);
-								}
-							}
-							
-							if(not) {
-								if(ok) {
-									autorizzato = false;
-									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unauthorized value";
-									break;
-								}
-							}
-							else {
-								if(!ok) {
-									autorizzato = false;
-									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value";
-									break;
-								}
-							}
-						}
-					}
+		    			}
+		    		}
 	    		}
 			}
     		

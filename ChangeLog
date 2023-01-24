@@ -1,3 +1,9 @@
+2023-01-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug
+	Nelle regole di autorizzazione per contenuto e per token claims non venivano gestite correttamente più entry con la stessa chiave.
+
 2023-01-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

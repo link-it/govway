@@ -21,7 +21,6 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.app
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 
@@ -1065,10 +1064,11 @@ public class SoapAutenticazioneTest extends ConfigLoader {
 		Utilities._test(TipoServizio.EROGAZIONE, ConfigLoader.logCore, API, "authzContenuti",
 				Utilities.idApplicativoToken2SoggettoInternoFruitore, Utilities.clientIdApplicativoToken2SoggettoInternoFruitore, null,
 				null, Utilities.idApplicativoTrasporto1SoggettoInternoFruitore, Utilities.basicUsernameApplicativoTrasporto1SoggettoInternoFruitore,  
-				Utils.isJenkins() ?
-						"Resource '${tokenClient:nome}' with unexpected value 'ApplicativoToken2SoggettoInternoFruitore'"
-						:
-						"(Resource '${tokenClientApplicationConfig:authzContenutiTest}' not verifiable; unprocessable dynamic value 'true': Proprieta' '${tokenClientApplicationConfig:authzContenutiTest}' contiene un valore non corretto: Placeholder [{tokenClientApplicationConfig:authzContenutiTest}] resolution failed: object [java.util.HashMap] 'authzContenutiTest' not exists in map)");
+				//org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.isJenkins() ?
+						"Resource '${tokenClient:nome}' with unexpected value '"+Utilities.idApplicativoToken2SoggettoInternoFruitore.getNome()+"'"
+				//		:
+				//		"(Resource '${tokenClientApplicationConfig:authzContenutiTest}' not verifiable; unprocessable dynamic value 'true': Proprieta' '${tokenClientApplicationConfig:authzContenutiTest}' contiene un valore non corretto: Placeholder [{tokenClientApplicationConfig:authzContenutiTest}] resolution failed: object [java.util.HashMap] 'authzContenutiTest' not exists in map)"
+				);
 	}
 
 	@Test
@@ -1076,7 +1076,9 @@ public class SoapAutenticazioneTest extends ConfigLoader {
 		Utilities._test(TipoServizio.FRUIZIONE, ConfigLoader.logCore, API, "authzContenuti",
 				Utilities.idApplicativoToken2SoggettoInternoFruitore, Utilities.clientIdApplicativoToken2SoggettoInternoFruitore, null,
 				Utilities.soggettoInternoTestFruitore, Utilities.idApplicativoTrasporto1SoggettoInternoFruitore, Utilities.basicUsernameApplicativoTrasporto1SoggettoInternoFruitore,  
-				"(Resource '${tokenClientApplicationConfig:authzContenutiTest}' not verifiable; unprocessable dynamic value 'true': Proprieta' '${tokenClientApplicationConfig:authzContenutiTest}' contiene un valore non corretto: Placeholder [{tokenClientApplicationConfig:authzContenutiTest}] resolution failed: object [java.util.HashMap] 'authzContenutiTest' not exists in map)");
+				//"(Resource '${tokenClientApplicationConfig:authzContenutiTest}' not verifiable; unprocessable dynamic value 'true': Proprieta' '${tokenClientApplicationConfig:authzContenutiTest}' contiene un valore non corretto: Placeholder [{tokenClientApplicationConfig:authzContenutiTest}] resolution failed: object [java.util.HashMap] 'authzContenutiTest' not exists in map)"
+				"Resource '${tokenClient:nome}' with unexpected value '"+Utilities.idApplicativoToken2SoggettoInternoFruitore.getNome()+"'"
+				);
 	}
 	
 	@Test
