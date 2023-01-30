@@ -22,11 +22,14 @@ package org.openspcoop2.testsuite.zap;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.zaproxy.clientapi.core.ApiResponse;
 import org.zaproxy.clientapi.core.ApiResponseElement;
+import org.zaproxy.clientapi.core.ApiResponseList;
 import org.zaproxy.clientapi.core.ClientApi;
 
 /**
@@ -87,6 +90,7 @@ public class GovWayConsole {
 		String [] split = scanTypes.split("\\|");
 		
 		boolean spider = false;
+		boolean ajaxspider = false;
 		boolean active = false;
 		if(split!=null && split.length>0) {
 			for (String s : split) {
@@ -99,6 +103,9 @@ public class GovWayConsole {
 				}
 				else if(scan_active.equalsIgnoreCase(s)) {
 					active=true;
+				}
+				if(scan_ajaxspider.equalsIgnoreCase(s)) {
+					ajaxspider=true;
 				}
 			}
 		}
@@ -170,6 +177,9 @@ public class GovWayConsole {
 	        System.out.println("Spider scan: " + url);
 	        
 	        api.spider.setOptionParseRobotsTxt(false);
+	        //api.spider.setOptionPostForm(true);
+	        //api.spider.setOptionProcessForm(true);
+	        //api.spider.setOptionParseSitemapXml(true);
 	        //api.spider.enableAllDomainsAlwaysInScope();
 	        //api.spider.setOptionAcceptCookies(true);
 	        //api.spider.setOptionMaxDepth(100);
@@ -228,7 +238,53 @@ public class GovWayConsole {
                 }
             }
 	        
-	        System.out.println("Spider complete");
+            List<ApiResponse> spiderResults = ((ApiResponseList) api.spider.results(scanid)).getItems();
+			List<String> urls = new ArrayList<>();
+            for (ApiResponse apiResponse : spiderResults) {
+				//System.out.println("Spider result: "+apiResponse.getName()+" classe:"+apiResponse.getClass().getName());
+				if(apiResponse !=null && (apiResponse instanceof org.zaproxy.clientapi.core.ApiResponseElement)) {
+					re = (org.zaproxy.clientapi.core.ApiResponseElement) apiResponse;
+					String urlSpider = re.getValue();
+					if("url".equals(re.getName())) {
+						urls.add(urlSpider);
+					}
+				}
+			}
+            if(ajaxspider && !urls.isEmpty()) {
+            	int indexUrl = 0;
+            	api.ajaxSpider.setOptionClickDefaultElems(true);
+            	api.ajaxSpider.setOptionClickElemsOnce(true);
+            	for (String urlSpider : urls) {
+			        indexUrl++;
+            		System.out.println("("+indexUrl+"/"+urls.size()+") Analizy url '"+urlSpider+"' con AjaxSpider ...");
+					api.ajaxSpider.scanAsUser(contextName, username, urlSpider, "True");
+			        // Poll the status until it completes
+		            long startTime = System.currentTimeMillis();
+		            long timeout = TimeUnit.SECONDS.toMillis(5); // 5 seconds in milli seconds
+			        String status = null;
+			        while (true) {
+			            Thread.sleep(1000);
+			            status = (((ApiResponseElement) api.ajaxSpider.status()).getValue());
+			            System.out.println("("+indexUrl+"/"+urls.size()+") Analizy url '"+urlSpider+"' con AjaxSpider status : " + status);
+			            if ( "stopped".equals(status)) {
+			            	System.out.println("("+indexUrl+"/"+urls.size()+") Analizy url '"+urlSpider+"' con AjaxSpider complete (STOP)");
+		                    break;
+		                }
+			            System.out.println("("+indexUrl+"/"+urls.size()+") TIMEOUT ("+(System.currentTimeMillis() - startTime)+") < "+timeout+"_timeout ??? ");
+			            if ( (System.currentTimeMillis() - startTime) > timeout) {
+			            	ApiResponse aaa = api.ajaxSpider.stop();
+			            	System.out.println(aaa.getName()+"="+aaa.getClass().getName());
+			            	re = (org.zaproxy.clientapi.core.ApiResponseElement) aaa;
+			            	System.out.println(re.getName()+"="+re.getValue());
+			            	System.out.println("("+indexUrl+"/"+urls.size()+") Analizy url '"+urlSpider+"' con AjaxSpider complete (TIMEOUT)");
+			            	Utilities.sleep(5000);
+			            	break;
+		                }
+			        }
+				}
+    	        System.out.println("AjaxSpider complete");
+			}
+	        
 
 	        System.out.println("Spider generate report ...");
 	        
@@ -321,10 +377,12 @@ public class GovWayConsole {
 	public static final String FILE_REPORT_SCAN_TYPE = "SCAN_TYPE";
 	public static final String scan_spider = "spider";
 	public static final String scan_active = "active";
+	public static final String scan_ajaxspider = "ajaxspider";
 	public static List<String> getAllScanTypes(){
 		List<String> l = new ArrayList<>();
 		l.add(scan_spider);
 		l.add(scan_active);
+		l.add(scan_ajaxspider);
 		return l;
 	}
 }
