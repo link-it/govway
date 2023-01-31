@@ -87,8 +87,6 @@ public class StringBufferCheck {
 				if( f.getAbsolutePath().contains("distrib/check/StringBufferCheck.java") )
 					jumpCheck = true;
 				
-				else if( f.getAbsolutePath().contains("tools/web_generic_project/src/org/openspcoop2/generic_project/web/core/Utils.java") )
-					jumpCheck = true;
 				else if( f.getAbsolutePath().indexOf("tools/utils/src/org/openspcoop2/utils/transport/http/WrappedHttpServletRequest.java")!= -1 )
 					jumpCheck = true;
 				else if( f.getAbsolutePath().indexOf("tools/utils/src/org/openspcoop2/utils/beans/BaseBean.java")!= -1 )

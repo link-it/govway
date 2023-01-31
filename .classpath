@@ -59,7 +59,6 @@
 	<classpathentry kind="src" path="tools/batch/runtime-repository/src"/>
 	<classpathentry excluding="*/*.xml" kind="src" path="tools/connection_pool/src"/>
 	<classpathentry kind="src" path="tools/generic_project/src"/>
-	<classpathentry kind="src" path="tools/web_generic_project/src"/>
 	<classpathentry kind="src" path="tools/utils/src"/>
 	<classpathentry kind="src" path="example/pdd/client/PA_Invoker/src"/>
 	<classpathentry kind="src" path="example/pdd/client/PD_Invoker/src"/>

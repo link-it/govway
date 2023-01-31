@@ -58,9 +58,9 @@ MVN_VERSION="$OPENSPCOOP_VERSION.$VERSIONE_DISTRIB$SNAPSHOT_SUFFIX"
 
 echo "Installazione JAR Openspcoop2 nel repository Link.it in corso..."
 
-cp pom.xml ../web_generic_project/
+cp pom.xml ../generic_project/
 
-pushd ../web_generic_project
+pushd ../generic_project/
 
 echo "Generazione dei JAR in corso..."
 
@@ -68,7 +68,6 @@ echo "Generazione dei JAR in corso..."
 
 UTILS_JAR="openspcoop2_utils"
 GENERIC_PROJECT_JAR="openspcoop2_generic-project"
-WEB_GENERIC_PROJECT_JAR="openspcoop2_web-generic-project"
 
 OPENSPCOOP_BUILD_VERSION="$(ls dist/${UTILS_JAR}_*.jar | cut -d '_' -f 3 | cut -d '.' -f 1)"
 
@@ -153,83 +152,13 @@ echo "Deploy del JAR $GENERIC_PROJECT_JAR completato."
 
 
 
-echo "Deploy del JAR $WEB_GENERIC_PROJECT_JAR in corso..."
 
-echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
-        xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">
-        <artifactId>$WEB_GENERIC_PROJECT_JAR</artifactId>
-        <groupId>org.openspcoop2</groupId>
-        <version>$MVN_VERSION</version>
-        <modelVersion>4.0.0</modelVersion>
-        <name>Openspcoop2 Web Generic Project</name>
-        <dependencies>
-                <dependency>
-                        <groupId>org.openspcoop2</groupId>
-                        <artifactId>$GENERIC_PROJECT_JAR</artifactId>
-                        <version>$MVN_VERSION</version>
-                </dependency>
-                <dependency>
-                        <groupId>org.openspcoop2</groupId>
-                        <artifactId>$UTILS_JAR</artifactId>
-                        <version>$MVN_VERSION</version>
-                </dependency>
-        </dependencies>
-</project>" > "dist/${WEB_GENERIC_PROJECT_JAR}_${MVN_VERSION}.pom"
-
-mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=dist/$WEB_GENERIC_PROJECT_JAR"_"$MVN_VERSION.pom -Dfile=dist/$WEB_GENERIC_PROJECT_JAR"_"$OPENSPCOOP_BUILD_VERSION.jar -Durl=$URL_REPOSITORY
-
-rm -f "dist/${WEB_GENERIC_PROJECT_JAR}_${MVN_VERSION}.pom"
-
-echo "Deploy del JAR $WEB_GENERIC_PROJECT_JAR completato."
-
-
-echo "Installazione JAR Openspcoop2 Utils, GenericProject, WebGenericProject nel repository Link.it completata."
+echo "Installazione JAR Openspcoop2 Utils, GenericProject nel repository Link.it completata."
 
 
 popd
-echo "Position: [${PWD}]"
 
-
-echo "Installazione JAR Openspcoop2 WebGenericProjectImpl nel repository Link.it in corso..."
-
-cp pom.xml ../web_generic_project/impl
-
-pushd ../web_generic_project/impl
-
-echo "Generazione dei JAR in corso..."
-
-WEB_GENERIC_PROJECT_IMPL_JSF1_JAR="openspcoop2_web-generic-project-impl-jsf1"
-
-echo "Deploy del JAR $WEB_GENERIC_PROJECT_IMPL_JSF1_JAR in corso..."
-
-echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
-        xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">
-        <artifactId>$WEB_GENERIC_PROJECT_IMPL_JSF1_JAR</artifactId>
-        <groupId>org.openspcoop2</groupId>
-        <version>$MVN_VERSION</version>
-        <modelVersion>4.0.0</modelVersion>
-        <name>Openspcoop2 Web Generic Project</name>
-        <dependencies>
-                <dependency>
-                        <groupId>org.openspcoop2</groupId>
-                        <artifactId>$WEB_GENERIC_PROJECT_JAR</artifactId>
-                        <version>$MVN_VERSION</version>
-                </dependency>
-        </dependencies>
-</project>" > "jsf1/dist/${WEB_GENERIC_PROJECT_IMPL_JSF1_JAR}_${MVN_VERSION}.pom"
-
-mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=jsf1/dist/$WEB_GENERIC_PROJECT_IMPL_JSF1_JAR"_"$MVN_VERSION.pom -Dfile=jsf1/dist/$WEB_GENERIC_PROJECT_IMPL_JSF1_JAR"_"$OPENSPCOOP_BUILD_VERSION.jar -Durl=$URL_REPOSITORY
-
-echo "Deploy del JAR $WEB_GENERIC_PROJECT_IMPL_JSF1_JAR completato."
-
-rm -f "jsf1/dist/${WEB_GENERIC_PROJECT_IMPL_JSF1_JAR}_${MVN_VERSION}.pom"
-
-popd 
-
-echo "Installazione JAR Openspcoop2 WebGenericProjectImpl nel repository Link.it completata."
-
-rm -f ../web_generic_project/impl/pom.xml
-rm -f ../web_generic_project/pom.xml
+rm -f ../generic_project/pom.xml
 
 
 
