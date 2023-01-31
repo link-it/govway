@@ -20,8 +20,6 @@
 		<aopalliance.version>1.0</aopalliance.version>
 		<cglib-nodep.version>2.2.3</cglib-nodep.version>
 		<el-impl.version>2.2</el-impl.version>
-		<facelets-taglib.gov4j.version>gov4j-1</facelets-taglib.gov4j.version>
-		<faces.version>2.4.0</faces.version>
 		<servlet.jsp.jstl.version>1.2.1</servlet.jsp.jstl.version>
 		<jsf.version>1.2_15-06</jsf.version>
 		<jsf.facelets.version>1.1.15</jsf.facelets.version>
@@ -32,30 +30,6 @@
 	</properties>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>org.springframework.security.taglibs.facelets</groupId>
-			<artifactId>facelets-taglib-jsf12-spring-4</artifactId>
-			<version>${facelets-taglib.gov4j.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security.taglibs.facelets</groupId>
-			<artifactId>facelets-taglib-jsf20-spring-4</artifactId>
-			<version>${facelets-taglib.gov4j.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 
 		<dependency>
 			<groupId>aopalliance</groupId>
@@ -85,18 +59,6 @@
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>el-impl</artifactId>
 			<version>${el-impl.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.faces</artifactId>
-			<version>${faces.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
