@@ -1032,6 +1032,7 @@ public class DynamicHelperCostanti {
 	public final static List<String> LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI = new ArrayList<>();
 	static {
 		LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
+		deleteField(LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI, LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH_SOAP); // elimino xpath su soap
 	}
 	
 	public final static List<String> LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO = new ArrayList<>();
@@ -1040,6 +1041,11 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
 	}
 	
+	public final static List<String> LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_OBJECT_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_OBJECT_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI);
+		deleteField(LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_OBJECT_VALORI, LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH_SOAP); // elimino xpath su soap
+	}
 	
 	
 	
@@ -1115,6 +1121,14 @@ public class DynamicHelperCostanti {
 	}
 	
 	
+	
+	// ******* PLUGIN
+	
+	public final static String PLUGIN_CLASSNAME = "ClassName";
+	
+	public final static String PLUGIN_CLASSNAME_INFO_SINGOLA = "Il plugin deve implementare l'interfaccia: ";
+	public final static String PLUGIN_CLASSNAME_INFO_MULTIPLA_AND = "Il plugin deve implementare tutte le seguenti interfacce: ";
+	public final static String PLUGIN_CLASSNAME_INFO_MULTIPLA_OR = "Il plugin deve implementare una delle seguenti interfacce: ";
 	
 	
 	

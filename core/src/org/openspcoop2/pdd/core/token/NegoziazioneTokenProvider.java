@@ -38,10 +38,13 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
+import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**     
@@ -95,7 +98,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		String url = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_URL);
 		InputValidationUtils.validateTextAreaInput(url, "Token Endpoint - URL");
 		try{
-			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
+			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url, true);
 		}catch(Exception e){
 			throw new ProviderValidationException("La URL fornita non è valida: "+e.getMessage());
 		}	
@@ -373,6 +376,15 @@ public class NegoziazioneTokenProvider implements IProvider {
 			TokenUtilities.checkClaims("parametro", convertTextToProperties, "Parametri", deny, false);
 		}
 		
+		String headers = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_HEADERS);
+		if(headers!=null && !"".equals(headers)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(headers);
+			List<String> deny = new ArrayList<String>();
+			deny.add(HttpConstants.AUTHORIZATION);
+			deny.add(HttpConstants.CONTENT_TYPE);
+			TokenUtilities.checkClaims("header http", convertTextToProperties, "Header HTTP", deny, false);
+		}
+		
 		String mode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE);
 		if(mode==null) {
 			throw new ProviderValidationException("Nessuna modalità di forward indicata");
@@ -415,6 +427,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET);
+			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM);
 			return methodsList;
 		}
 		else if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
@@ -452,6 +465,14 @@ public class NegoziazioneTokenProvider implements IProvider {
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			return getStoreType(id,true);
 		}
+		else if(Costanti.ID_RETRIEVE_HTTP_METHOD.equals(id)) {
+			List<String> methodsList = new ArrayList<>();
+			HttpRequestMethod [] methods = HttpRequestMethod.values();
+			for (int i = 0; i < methods.length; i++) {
+				methodsList.add(methods[i].name());
+			}
+			return methodsList;
+		}
 		return null;
 	}
 
@@ -463,6 +484,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509_LABEL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL);
+			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM_LABEL);
 			return methodsList;
 		}
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
@@ -548,6 +570,9 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
 			return org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.RS256.name();
 		}
+		else if(Costanti.ID_RETRIEVE_HTTP_METHOD.equals(id)) {
+			return HttpRequestMethod.GET.name();
+		}
 		return null;
 	}
 
@@ -561,7 +586,9 @@ public class NegoziazioneTokenProvider implements IProvider {
 				Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id) ||
 				Costanti.ID_RETRIEVE_SCOPE.equals(id) ||
 				Costanti.ID_RETRIEVE_AUDIENCE.equals(id) ||
-				Costanti.ID_RETRIEVE_FORM_PARAMETERS.equals(id)
+				Costanti.ID_RETRIEVE_FORM_PARAMETERS.equals(id) ||
+				Costanti.ID_RETRIEVE_HTTP_CONTENT_TYPE.equals(id) ||
+				Costanti.ID_RETRIEVE_HTTP_HEADERS.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
@@ -621,6 +648,31 @@ public class NegoziazioneTokenProvider implements IProvider {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_CLAIMS);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_HTTP_TEMPLATE_PAYLOAD.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_HTTP_FREEMARKER_PAYLOAD.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_OBJECT_VALORI);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_HTTP_VELOCITY_PAYLOAD.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_OBJECT_VALORI);
+			return pInfo;
+		}
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA);
+			pInfo.setListBody(new ArrayList<>());
+			pInfo.getListBody().add(INegoziazioneTokenParser.class.getName());
 			return pInfo;
 		}
 		

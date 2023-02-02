@@ -61,6 +61,10 @@ public class TokenUtilities {
 		return mapProperties.get(Costanti.USERINFO_TOKEN_PARSER_COLLECTION_ID);
 	}
 	
+	public static Properties getRetrieveResponseClaimsMappingProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+		return mapProperties.get(Costanti.RETRIEVE_TOKEN_PARSER_COLLECTION_ID);
+	}
+	
 	public static List<String> getClaims(Properties p, String name) {
 		String v = p.getProperty(name);
 		List<String> l = new ArrayList<String>();
@@ -478,10 +482,10 @@ public class TokenUtilities {
 					String value = claims.getProperty(claim);
 					
 					if(denyClaims.contains(claim) || denyClaims.contains(claim.toLowerCase())) {
-						throw new ProviderValidationException("Il "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non può essere configurato");
+						throw new ProviderValidationException(oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non può essere configurato");
 					}
 					if(value==null || StringUtils.isEmpty(value)) {
-						throw new ProviderValidationException("Il "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non è valorizzato");
+						throw new ProviderValidationException(oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non è valorizzato");
 					}
 					if(checkSpazi) {
 						if(value.contains(" ")) {

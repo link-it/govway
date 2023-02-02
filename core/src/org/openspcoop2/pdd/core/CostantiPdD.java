@@ -264,6 +264,13 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_CLIENT_ID = "form.clientId";
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_RESOURCE = "form.resource";
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS = "form.parameters";
+    // HTTP
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HTTP_METHOD = "http.method";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HTTP_CONTENT_TYPE = "http.contentType";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HTTP_HEADERS = "http.headers";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE = "http.payload.templateType";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HTTP_PAYLOAD = "http.payload";
+    
     // Applicativo Richiedente
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_APPLICATIVE_REQUESTER = "applicativeRequester";
     

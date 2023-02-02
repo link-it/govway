@@ -22,6 +22,7 @@ package org.openspcoop2.utils.certificate.ocsp;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -45,9 +46,9 @@ import org.slf4j.Logger;
 public class OCSPManager {
 
 	private static OCSPManager staticInstance;
-	public static synchronized void init(File f, boolean throwNotExists, Logger log) throws UtilsException {
+	public static synchronized void init(File f, boolean throwNotExists, boolean loadDefault, Logger log) throws UtilsException {
 		if(staticInstance==null) {
-			staticInstance = new OCSPManager(f, throwNotExists, log);
+			staticInstance = new OCSPManager(f, throwNotExists, loadDefault, log);
 		}
 	}
 	public static OCSPManager getInstance() {
@@ -61,10 +62,29 @@ public class OCSPManager {
 	
 	private SortedMap<String> hsmOCSPConfigSortedMapTypeLabel = new SortedMap<>();
 	
-	private OCSPManager(File f, boolean throwNotExists, Logger log) throws UtilsException {
+	private OCSPManager(File f, boolean throwNotExists, boolean loadDefault, Logger log) throws UtilsException {
 		if(!f.exists()) {
 			if(throwNotExists) {
 				throw new UtilsException("File '"+f.getAbsolutePath()+"' not exists");
+			}
+			else {
+				if(loadDefault) {
+					try {
+						try(InputStream isDefault = OCSPManager.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/default.properties")){
+							if(isDefault!=null) {
+								Properties p = new Properties();
+								try {
+									p.load(isDefault);
+								}catch(Throwable t) {
+									throw new UtilsException("File '"+f.getAbsolutePath()+"'; initialize error: "+t.getMessage(),t);
+								}
+								init(p, log);
+							}
+						}
+					}catch(Throwable t) {
+						throw new UtilsException("Default configuration; initialize error: "+t.getMessage(),t);
+					}
+				}
 			}
 		}
 		else {

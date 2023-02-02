@@ -687,7 +687,7 @@
 			    <property name="policy.introspection.requestTokenPosition.formParameter" />
 			</item>
 		
-			<item type="text" name="introspectionContentType" label="Content Type" required="true">
+			<item type="textarea" name="introspectionContentType" label="Content-Type" required="true" max="1">
 				<conditions and="true">
 					<condition and="false">
 						<equals name="introspectionHttpMethod" value="POST"/>
@@ -1067,7 +1067,7 @@
 			    <property name="policy.userInfo.requestTokenPosition.formParameter" />
 			</item>
 		
-			<item type="text" name="userInfoContentType" label="Content Type" required="true">
+			<item type="textarea" name="userInfoContentType" label="Content-Type" required="true" max="1">
 				<conditions and="true">
 					<condition and="false">
 						<equals name="userInfoHttpMethod" value="POST"/>

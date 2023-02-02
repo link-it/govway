@@ -17443,7 +17443,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				try{
-					org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(baseUrl);
+					org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(baseUrl, true);
 				}catch(Exception e){
 					this.pd.setMessage(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL + " non correttamente formata: "+e.getMessage());
 					return false;

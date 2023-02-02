@@ -59,6 +59,21 @@ public class Costanti {
 	public final static MapKey<String> MSG_CONTEXT_TOKEN_FORWARD = Map.newMapKey("TOKEN_FORWARD"); // per salvarlo con il messaggio
 	
 	
+	// Token Retrieve id
+	
+	public final static String RETRIEVE_TOKEN_PARSER_COLLECTION_ID = "retrieveTokenParserPropRefId";
+	
+	public final static String RETRIEVE_TOKEN_PARSER_TOKEN_TYPE = "token.parser.token_type";
+	public final static String RETRIEVE_TOKEN_PARSER_ACCESS_TOKEN = "token.parser.access_token";
+	public final static String RETRIEVE_TOKEN_PARSER_REFRESH_TOKEN = "token.parser.refresh_token";
+	public final static String RETRIEVE_TOKEN_PARSER_SCOPE = "token.parser.scope";
+	public final static String RETRIEVE_TOKEN_PARSER_EXPIRES_IN = "token.parser.expires_in";
+	public final static String RETRIEVE_TOKEN_PARSER_EXPIRES_ON = "token.parser.expires_on";
+	public final static String RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_IN = "token.parser.refresh_expires_in";
+	public final static String RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_ON = "token.parser.refresh_expires_on";
+	
+	
+	
 	// Token Parser id
 	
 	public final static String VALIDAZIONE_JWT_TOKEN_PARSER_COLLECTION_ID = "validazioneJwtTokenParserPropRefId";
@@ -236,6 +251,7 @@ public class Costanti {
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCRYP_PROP_REF_ID = SecurityConstants.ENCRYPTION_PROPERTY_REF_ID;
 	
 	public final static String POLICY_RETRIEVE_TOKEN_PARSER_TYPE = "policy.retrieveToken.claimsParser";
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM = "policy.retrieveToken.claimsParser.custom";
 	public final static String POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME = "policy.retrieveToken.claimsParser.className";
 	public final static String POLICY_RETRIEVE_TOKEN_MODE = "policy.retrieveToken.mode";
 	public final static String POLICY_RETRIEVE_TOKEN_MODE_PDND = "policy.retrieveToken.jwt.pdnd";
@@ -256,6 +272,14 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID_MODE = "policy.retrieveToken.formClientId.mode";
 	public final static String POLICY_RETRIEVE_TOKEN_FORM_RESOURCE = "policy.retrieveToken.formResource";
 	public final static String POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS = "policy.retrieveToken.formParameters";
+	public final static String POLICY_RETRIEVE_TOKEN_HTTP_METHOD = "policy.retrieveToken.httpMethod";
+	public final static String POLICY_RETRIEVE_TOKEN_HTTP_CONTENT_TYPE = "policy.retrieveToken.httpContentType";
+	public final static String POLICY_RETRIEVE_TOKEN_HTTP_HEADERS = "policy.retrieveToken.httpHeaders";
+	public final static String POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE = "policy.retrieveToken.httpPayloadTemplateType";
+	public final static String POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE_TEMPLATE = "template";
+	public final static String POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE_FREEMARKER_TEMPLATE = "freemarker-template";
+	public final static String POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE_VELOCITY_TEMPLATE = "velocity-template";
+	public final static String POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD = "policy.retrieveToken.httpPayload";
 	public final static String POLICY_RETRIEVE_TOKEN_SAVE_ERROR_IN_CACHE = "policy.retrieveToken.saveErrorInCache";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID_MODE= "policy.retrieveToken.jwt.clientId.mode";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID= "policy.retrieveToken.jwt.clientId";
@@ -351,6 +375,13 @@ public class Costanti {
 	public final static String ID_RETRIEVE_FORM_CLIENT_ID_APPLICATIVO_MODI_CUSTOM = "formClientIdApplicativoModiChoiceInput";
 	public final static String ID_RETRIEVE_FORM_RESOURCE = "formResource";
 	public final static String ID_RETRIEVE_FORM_PARAMETERS = "formParameters";
+	public final static String ID_RETRIEVE_HTTP_METHOD = "httpMethod";
+	public final static String ID_RETRIEVE_HTTP_CONTENT_TYPE = "httpContentType";
+	public final static String ID_RETRIEVE_HTTP_HEADERS = "httpHeaders";
+	public final static String ID_RETRIEVE_HTTP_PAYLOAD_TEMPLATE_TYPE = "httpPayloadTemplateType";
+	public final static String ID_RETRIEVE_HTTP_TEMPLATE_PAYLOAD = "httpTemplatePayload";
+	public final static String ID_RETRIEVE_HTTP_FREEMARKER_PAYLOAD = "httpFreemarkerPayload";
+	public final static String ID_RETRIEVE_HTTP_VELOCITY_PAYLOAD = "httpVelocityPayload";
 	
 	
 	// ELEMENTI SELECT
@@ -360,10 +391,12 @@ public class Costanti {
 	public final static String ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD = "usernamePassword";
 	public final static String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509 = "rfc7523_x509";
 	public final static String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET = "rfc7523_clientSecret";
+	public final static String ID_RETRIEVE_TOKEN_METHOD_CUSTOM = "custom";
 	public final static String ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL = "Client Credentials";
 	public final static String ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL = "Resource Owner Password Credentials";
 	public final static String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509_LABEL = "Signed JWT";
 	public final static String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL = "Signed JWT with Client Secret";
+	public final static String ID_RETRIEVE_TOKEN_METHOD_CUSTOM_LABEL = "Personalizzato";
 	public final static String ID_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS= "jwtExpTtl";
 	public final static String ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM = "jwtSymmetricSignatureAlgorithm";
 	public final static String ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM = "jwtAsymmetricSignatureAlgorithm";
@@ -442,11 +475,17 @@ public class Costanti {
 	public final static String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWEContentKeystorePassword";
 	public final static String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD_PRIVATE_KEY = "tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyPassword";
 	
+	public final static String ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN = "validazioneJwtParserCustom";
+	public final static String ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN = "introspectionParserCustom";
+	public final static String ID_USER_INFO_CUSTOM_PARSER_PLUGIN = "userInfoParserCustom";
+	
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE = "jwtKeystoreType";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE = "jwtKeystoreFile";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD = "jwtKeystorePassword";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY = "jwtAliasChiavePrivata";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "jwtPasswordChiavePrivata";
+	
+	public final static String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN = "customTokenParserCustomPlugin";
 	
 	public final static String ID_AA_JWS_KEYSTORE_TYPE = "aaJWSKeystoreType";
 	public final static String ID_AA_JWS_KEYSTORE_FILE = "aaJWSKeystoreFile";

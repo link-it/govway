@@ -1,3 +1,15 @@
+2023-02-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1540
+	In una token policy di negoziazione è adesso possibile personalizzare la chiamata attuata verso l'authorization server nei seguenti parametri:
+	- metodo http
+	- eventuale content-type e payload
+	- aggiungere header http
+	- personalizzare il parsing della risposta
+	Inoltre anche nelle modalità di negoziazione standard già esistenti è stata aggiunta la possibilità di aggiungere header http nella richiesta.
+	Nell'intervento è stato anche risolto il bug presente nel controllo dei certificati di una token policy di negoziazione quando la modalità scelta era 'Definito nell'applicativo ModI'.
+
 2023-01-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

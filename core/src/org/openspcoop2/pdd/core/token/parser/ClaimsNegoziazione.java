@@ -39,9 +39,16 @@ public class ClaimsNegoziazione {
 	public final static String OAUTH2_RFC_6749_EXPIRES_IN = "expires_in";
 	public final static String OAUTH2_RFC_6749_SCOPE = "scope";
 	
-	public final static List<String> REFRESH_EXPIRE_CUSTOM_CLAIMS = new ArrayList<String>();
+	public final static String AZURE_EXPIRES_ON = "expires_on"; // azure (https://learn.microsoft.com/en-us/azure/container-apps/managed-identity?tabs=portal%2Chttp#connect-to-azure-services-in-app-code)
+	
+	public final static List<String> REFRESH_EXPIRE_IN_CUSTOM_CLAIMS = new ArrayList<String>();
 	static {
-		REFRESH_EXPIRE_CUSTOM_CLAIMS.add("refresh_expires_in"); //keyclock
+		REFRESH_EXPIRE_IN_CUSTOM_CLAIMS.add("refresh_expires_in"); //keyclock
+	}
+	
+	public final static List<String> REFRESH_EXPIRE_ON_CUSTOM_CLAIMS = new ArrayList<String>();
+	static {
+		REFRESH_EXPIRE_ON_CUSTOM_CLAIMS.add("refresh_expires_on");
 	}
 	
 	public final static String OAUTH2_RFC_6749_REQUEST_GRANT_TYPE = "grant_type";

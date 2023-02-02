@@ -768,6 +768,10 @@ public class OpenSPCoop2Properties {
 			this.isHSMConfigRequired();
 			this.isHSMConfig_uniqueProviderInstance();
 			
+			this.getOCSPConfig();
+			this.isOCSPConfigRequired();
+			this.isOCSPConfigLoadDefault();
+			
 			this.getHttpUserAgent();
 			this.getHttpServer();
 			this.getHttpXPdDDetails();
@@ -2039,6 +2043,7 @@ public class OpenSPCoop2Properties {
 			this.isGestioneRetrieveToken_refreshToken_grantType_usernamePassword();
 			this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509();
 			this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret();
+			this.isGestioneRetrieveToken_refreshToken_grantType_custom();
 			this.isGestioneRetrieveToken_saveAsTokenInfo();
 			this.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature();
 			this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest();
@@ -9499,6 +9504,29 @@ public class OpenSPCoop2Properties {
 			}
 		}
 		return this.isOCSPConfigRequired;
+	}
+	
+	private Boolean isOCSPConfigLoadDefault= null;
+	public boolean isOCSPConfigLoadDefault(){
+		if(this.isOCSPConfigLoadDefault==null){
+			String pName = "org.openspcoop2.pdd.ocsp.loadDefault";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isOCSPConfigLoadDefault = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					this.isOCSPConfigLoadDefault = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.isOCSPConfigLoadDefault = true;
+			}
+		}
+		return this.isOCSPConfigLoadDefault;
 	}
 	
 	
@@ -22479,6 +22507,31 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret;
+	}
+	
+	private Boolean isGestioneRetrieveToken_refreshToken_grantType_custom = null;
+	public boolean isGestioneRetrieveToken_refreshToken_grantType_custom(){
+
+		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.custom";
+		if(this.isGestioneRetrieveToken_refreshToken_grantType_custom==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveToken_refreshToken_grantType_custom = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					this.isGestioneRetrieveToken_refreshToken_grantType_custom = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.isGestioneRetrieveToken_refreshToken_grantType_custom = false;
+			}
+		}
+
+		return this.isGestioneRetrieveToken_refreshToken_grantType_custom;
 	}
 	
 	private Boolean isGestioneRetrieveToken_saveAsTokenInfo = null;

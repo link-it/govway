@@ -56,6 +56,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "clientid_clientsecret", null,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret\"",
@@ -70,6 +71,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "clientid_clientsecret", null,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret\"",
@@ -92,16 +94,20 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-scope", "testNegoziazioneScope2");
 		headers.put("test-audience", "testNegoziazioneAudience");
 		headers.put("test-p2", "testNegoziazioneP2");
+		headers.put("test_client_credentials", "vTest2");
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret2\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret2\"",
 				"\"accessToken\":\"",
 				"\"expiresIn\":",
-				"\"policy\":\"TestNegoziazioneClientCredentials2\"");
+				"\"policy\":\"TestNegoziazioneClientCredentials2\"",
+				"\"test_client_credentials_2\":\"vTest2\"",
+			    "\"test_client_credentials_1\":\"vTest1\"");
 		String idRichiestaOriginale = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
@@ -135,10 +141,19 @@ public class NegoziazioneTest extends ConfigLoader {
 				true,
 				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
 		
-		// provo a modificare una informazione dinamica, ripristinando la configurazione corretta
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
 		headers.put("test-p2", "testNegoziazioneP2");
+		headers.put("test_client_credentials", "vTest2-ERRATO");
+		
+		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		
+		// provo a modificare una informazione dinamica, ripristinando la configurazione corretta
+		headers.put("test_client_credentials", "vTest2");
 		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret2\"",
@@ -146,6 +161,8 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"accessToken\":\"",
 				"\"expiresIn\":",
 				"\"policy\":\"TestNegoziazioneClientCredentials2\"",
+				"\"test_client_credentials_2\":\"vTest2\"",
+			    "\"test_client_credentials_1\":\"vTest1\"",
 				"\"transactionId\":\""+idRichiestaOriginale+"\""
 				);
 	}
@@ -160,6 +177,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "clientid_clientsecret3", headers,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientToken\":\"TOKEN-XXX\"",
@@ -174,6 +192,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "clientid_clientsecret3", headers,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientToken\":\"TOKEN-XXX\"",
@@ -196,6 +215,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "user_password", headers,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"usernamePassword\"",
 				"\"username\":\"ResourceOwnerPasswordUsername\"",
@@ -229,6 +249,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "user_password", headers,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"usernamePassword\"",
 				"\"username\":\"ResourceOwnerPasswordUsername\"",
@@ -254,6 +275,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -275,6 +297,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		response = _test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -321,6 +344,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -333,6 +357,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -359,6 +384,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -381,6 +407,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		response = _test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -481,6 +508,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -502,6 +530,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		response = _test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -548,6 +577,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -560,6 +590,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -587,6 +618,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -608,6 +640,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		response = _test(logCore, api_negoziazione, "signedJWT", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -654,6 +687,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -665,6 +699,7 @@ public class NegoziazioneTest extends ConfigLoader {
 
 		_test(logCore, api_negoziazione, "signedJWT", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -692,6 +727,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT2", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -714,6 +750,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		response = _test(logCore, api_negoziazione, "signedJWT2", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -761,6 +798,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT2", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -773,6 +811,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT2", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -801,6 +840,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT3", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -822,6 +862,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		response = _test(logCore, api_negoziazione, "signedJWT3", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -869,6 +910,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT3", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -881,6 +923,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT3", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -923,6 +966,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT-PDND", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -960,6 +1004,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		response = _test(logCore, api_negoziazione, "signedJWT-PDND", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -991,6 +1036,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT-PDND", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -1003,6 +1049,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT-PDND", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -1051,6 +1098,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT-PDNDv41", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -1089,6 +1137,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		response = _test(logCore, api_negoziazione, "signedJWT-PDNDv41", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -1120,6 +1169,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT-PDNDv41", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -1132,6 +1182,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		_test(logCore, api_negoziazione, "signedJWT-PDNDv41", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -1198,7 +1249,7 @@ public class NegoziazioneTest extends ConfigLoader {
 			long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
 			verifyOk(response, 503, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
 			
-			DBVerifier.verify(idTransazione, esitoExpected, diagnostico);
+			DBVerifier.verify(idTransazione, esitoExpected, diagnostico, tokenInfoCheck);
 			
 		}
 		

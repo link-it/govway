@@ -184,7 +184,12 @@ public class ItemBean extends BaseItemBean<Item>{
 		case TEXTAREA:
 			de.setValue(this.value);
 			de.setType(DataElementType.TEXT_AREA);
-			de.setRows(3);
+			if(this.getItem().getMax()!=null && this.getItem().getMax().intValue()>0) {
+				de.setRows(this.getItem().getMax().intValue());
+			}
+			else {
+				de.setRows(3);
+			}
 			break;
 		default:
 			break;

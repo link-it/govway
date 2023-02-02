@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.token;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +33,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
@@ -40,6 +42,7 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIKeystoreUtils;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
  * AttributeAuthorityDynamicParameter
@@ -77,6 +80,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private String formResource;
 	private String parameters;
 	
+	private HttpRequestMethod httpMethod;
+	private String httpContentType;
+	private String httpHeaders;
+	private String httpPayloadTemplateType;
+	private String httpPayload;
+	
 	private IDServizioApplicativo idApplicativoRichiedente;
 	private ServizioApplicativo applicativoRichiedente;
 	
@@ -104,6 +113,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private static boolean formResource_cacheKey;
 	private static boolean parameters_cacheKey; 
 	
+	private static boolean httpMethod_cacheKey; 
+	private static boolean httpContentType_cacheKey; 
+	private static boolean httpHeaders_cacheKey; 
+	private static boolean httpPayloadTemplateType_cacheKey; 
+	private static boolean httpPayload_cacheKey; 
+	
 	private static boolean applicativoRichiedente_cacheKey; 
 	
 	private static Boolean init_cacheKey = null;
@@ -127,8 +142,14 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			audience_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_AUDIENCE);
 			formClientId_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_CLIENT_ID);
 			formResource_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_RESOURCE);
-			parameters_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS); 
+			parameters_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS);
 			
+			httpMethod_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_METHOD); 
+			httpContentType_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_CONTENT_TYPE); 
+			httpHeaders_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_HEADERS); 
+			httpPayloadTemplateType_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE); 
+			httpPayload_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_PAYLOAD); 
+
 			applicativoRichiedente_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_APPLICATIVE_REQUESTER); 
 			
 			init_cacheKey = true;
@@ -383,6 +404,55 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		if(this.parameters!=null && !"".equals(this.parameters)) {
 			this.parameters = DynamicUtils.convertDynamicPropertyValue("parameters.gwt", this.parameters, dynamicMap, pddContext);	
 		}
+		
+		String sHttpMethod = policyNegoziazioneToken.getHttpMethod();
+		if(sHttpMethod!=null && !"".equals(sHttpMethod)) {
+			// per adesso viene preso da una select list
+			//this.httpMethod = DynamicUtils.convertDynamicPropertyValue("httpMethod.gwt", sHttpMethod, dynamicMap, pddContext);
+			this.httpMethod = HttpRequestMethod.valueOf(sHttpMethod);
+		}
+		
+		this.httpContentType = policyNegoziazioneToken.getHttpContentType();
+		if(this.httpContentType!=null && !"".equals(this.httpContentType)) {
+			this.httpContentType = DynamicUtils.convertDynamicPropertyValue("httpContentType.gwt", this.httpContentType, dynamicMap, pddContext);	
+		}
+		
+		this.httpHeaders = policyNegoziazioneToken.getHttpHeaders();
+		if(this.httpHeaders!=null && !"".equals(this.httpHeaders)) {
+			this.httpHeaders = DynamicUtils.convertDynamicPropertyValue("httpHeaders.gwt", this.httpHeaders, dynamicMap, pddContext);	
+		}
+		
+		this.httpPayloadTemplateType = policyNegoziazioneToken.getDynamicPayloadType();
+		if(this.httpPayloadTemplateType!=null && !"".equals(this.httpPayloadTemplateType)) {
+			// Non è un valore dinamico, ma serve come info da far apparire nella chiave per tipizzare il payload
+			//this.httpPayloadTemplateType = DynamicUtils.convertDynamicPropertyValue("httpPayloadTemplateType.gwt", this.httpPayloadTemplateType, dynamicMap, pddContext);	
+			String httpPayload = policyNegoziazioneToken.getDynamicPayload();
+			if(httpPayload!=null && !"".equals(httpPayload)) {
+				if(policyNegoziazioneToken.isDynamicPayloadTemplate()) {
+					this.httpPayload = DynamicUtils.convertDynamicPropertyValue("httpPayload.gwt", httpPayload, dynamicMap, pddContext);
+				}
+				else if(policyNegoziazioneToken.isDynamicPayloadFreemarkerTemplate()) {
+					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+						
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					Template template = configurazionePdDManager.getTemplatePolicyNegoziazioneRequest(policyNegoziazioneToken.getName(), httpPayload.getBytes(), requestInfo);
+					DynamicUtils.convertFreeMarkerTemplate(template, dynamicMap, bout);
+					bout.flush();
+					bout.close();
+					this.httpPayload = bout.toString();
+				}
+				else if(policyNegoziazioneToken.isDynamicPayloadVelocityTemplate()) {
+					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+						
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					Template template = configurazionePdDManager.getTemplatePolicyNegoziazioneRequest(policyNegoziazioneToken.getName(), httpPayload.getBytes(), requestInfo);
+					DynamicUtils.convertVelocityTemplate(template, dynamicMap, bout);
+					bout.flush();
+					bout.close();
+					this.httpPayload = bout.toString();
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -523,6 +593,37 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			sb.append("parameters:").append(this.parameters);
 		}
 		
+		if(this.httpMethod!=null && (!cacheKey || httpMethod_cacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("httpMethod:").append(this.httpMethod.name());
+		}
+		if(StringUtils.isNotEmpty(this.httpContentType) && (!cacheKey || httpContentType_cacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("httpContentType:").append(this.httpContentType);
+		}
+		if(StringUtils.isNotEmpty(this.httpHeaders) && (!cacheKey || httpHeaders_cacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("httpHeaders:").append(this.httpHeaders);
+		}
+		if(StringUtils.isNotEmpty(this.httpPayloadTemplateType) && (!cacheKey || httpPayloadTemplateType_cacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("httpPayloadTemplateType:").append(this.httpPayloadTemplateType);
+		}
+		if(StringUtils.isNotEmpty(this.httpPayload) && (!cacheKey || httpPayload_cacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("httpPayload:").append(this.httpPayload);
+		}
+		
 		if(this.idApplicativoRichiedente!=null && (!cacheKey || applicativoRichiedente_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
@@ -607,6 +708,22 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 
 	public String getParameters() {
 		return this.parameters;
+	}
+	
+	public HttpRequestMethod getHttpMethod() {
+		return this.httpMethod;
+	}
+	public String getHttpContentType() {
+		return this.httpContentType;
+	}
+	public String getHttpHeaders() {
+		return this.httpHeaders;
+	}
+	public String getHttpPayloadTemplateType() {
+		return this.httpPayloadTemplateType;
+	}
+	public String getHttpPayload() {
+		return this.httpPayload;
 	}
 	
 	public IDServizioApplicativo getIdApplicativoRichiedente() {

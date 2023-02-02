@@ -33,6 +33,7 @@ import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaimsNegoziazione;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**     
  * PolicyGestioneToken
@@ -52,12 +53,20 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	public INegoziazioneTokenParser getNegoziazioneTokenParser() throws Exception {
 		INegoziazioneTokenParser parser = null;
 		TipologiaClaimsNegoziazione tipologiaClaims = TipologiaClaimsNegoziazione.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE));
+		
+		if(this.isCustomGrant()) {
+			String customParser = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM);
+			if(customParser!=null && StringUtils.isNotEmpty(customParser)) {
+				tipologiaClaims = TipologiaClaimsNegoziazione.valueOf(customParser);
+			}
+		}
+		
 		if(TipologiaClaimsNegoziazione.CUSTOM.equals(tipologiaClaims)) {
 			String className = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME);
 			parser = (INegoziazioneTokenParser) ClassLoaderUtilities.newInstance(className);
 		}
 		else{
-			parser = new BasicNegoziazioneTokenParser(tipologiaClaims);
+			parser = new BasicNegoziazioneTokenParser(tipologiaClaims, TokenUtilities.getRetrieveResponseClaimsMappingProperties(this.properties));
 		}
 		return parser;
 	}
@@ -109,6 +118,10 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD.equals(mode);
 	}
+	public boolean isCustomGrant() throws ProviderException, ProviderValidationException{
+		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
+		return Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM.equals(mode);
+	}
 	public String getLabelGrant() throws ProviderException, ProviderValidationException {
 		if(this.isClientCredentialsGrant()) {
 			return Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL;
@@ -121,6 +134,9 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		}
 		else if(this.isRfc7523_clientSecret_Grant()) {
 			return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL;
+		}
+		else if(this.isCustomGrant()) {
+			return Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM_LABEL;
 		}
 		return "Non definita";
 	} 
@@ -173,6 +189,39 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	}
 	public String getFormParameters() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS);
+	}
+	
+	public String getHttpMethod() throws ProviderException, ProviderValidationException {
+		if(this.isCustomGrant()) {
+			String httpMethod = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_METHOD);
+			if(httpMethod!=null && StringUtils.isNotEmpty(httpMethod)) {
+				return httpMethod;
+			}
+			return HttpRequestMethod.GET.name();
+		}
+		return HttpRequestMethod.POST.name();
+	}
+	public String getHttpContentType() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_CONTENT_TYPE);
+	}
+	public String getHttpHeaders() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_HEADERS);
+	}
+	
+	public String getDynamicPayloadType() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE);
+	}
+	public boolean isDynamicPayloadTemplate() {
+		return Costanti.POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE_TEMPLATE.equals(this.getDynamicPayloadType());
+	}
+	public boolean isDynamicPayloadFreemarkerTemplate() {
+		return Costanti.POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE_FREEMARKER_TEMPLATE.equals(this.getDynamicPayloadType());
+	}
+	public boolean isDynamicPayloadVelocityTemplate() {
+		return Costanti.POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE_VELOCITY_TEMPLATE.equals(this.getDynamicPayloadType());
+	}
+	public String getDynamicPayload() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD);
 	}
 	
 	public boolean isSaveErrorInCache() throws ProviderException, ProviderValidationException{

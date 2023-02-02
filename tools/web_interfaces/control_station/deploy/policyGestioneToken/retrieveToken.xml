@@ -7,14 +7,15 @@
 		<collection name="endpointConfig"/>
 		<collection name="sslConfig"/>
 		<collection name="sslClientConfig"/>
+		<collection name="retrieveTokenParserPropRefId"/>
 	</properties>
 	
 	<section label="Token Endpoint">
-		
+
 		<item type="hidden" name="tokenParserType" value="OAUTH2_RFC_6749">
 			<property name="policy.retrieveToken.claimsParser" />
 		</item>
-
+		
 		<item type="hidden" name="saveErrorInCache" value="false">
 			<property name="policy.retrieveToken.saveErrorInCache"/>
 		</item>
@@ -492,11 +493,21 @@
 		<subsection label="Dati Richiesta">
 
 			<item type="text" name="scope" label="Scope" required="false" note="Elencare più scope separandoli con la virgola">
-			    <property name="policy.retrieveToken.scope" />
+				<conditions>
+					<condition not="true">
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.scope" />
 			</item>
 
 			<item type="text" name="audience" label="Audience" required="false">
-			    <property name="policy.retrieveToken.audience" />
+				<conditions>
+					<condition not="true">
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.audience" />
 			</item>
 
 			<item type="select" name="formClientIdApplicativoModiChoice" label="Client ID" default="applicativoModi" reloadOnChange="true">
@@ -552,9 +563,215 @@
 
 			<item type="textarea" name="formParameters" label="Parametri" required="false"
 				note="Indicare per riga gli ulteriori parametri (nome=valore)">
+				<conditions>
+					<condition not="true">
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+				</conditions>
 				<property name="policy.retrieveToken.formParameters" />
 			</item>
+
+			<item type="select" name="httpMethod" label="Metodo HTTP" reloadOnChange="true">
+				<conditions>
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpMethod" />
+			</item>
+
+			<item type="textarea" name="httpContentType" label="Content-Type" required="true" max="1">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition and="false">
+						<equals name="httpMethod" value="POST"/>
+						<equals name="httpMethod" value="PUT"/>
+						<equals name="httpMethod" value="PATCH"/>
+						<equals name="httpMethod" value="LINK"/>
+						<equals name="httpMethod" value="UNLINK"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpContentType" />
+			</item>
+
+			<item type="textarea" name="httpHeaders" label="Header HTTP" required="false"
+				note="Indicare per riga gli eventuali header (nome=valore)">
+				<property name="policy.retrieveToken.httpHeaders" />
+			</item>
+
+			<item type="select" name="httpPayloadTemplateType" label="Tipo Template Payload" default="template" reloadOnChange="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition and="false">
+						<equals name="httpMethod" value="POST"/>
+						<equals name="httpMethod" value="PUT"/>
+						<equals name="httpMethod" value="PATCH"/>
+						<equals name="httpMethod" value="LINK"/>
+						<equals name="httpMethod" value="UNLINK"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="template" label="Template"/>
+					<value value="freemarker-template" label="Freemarker Template"/>
+					<value value="velocity-template" label="Velocity Template"/>
+				</values>
+				<property name="policy.retrieveToken.httpPayloadTemplateType" />
+			</item>
+			<item type="textarea" name="httpTemplatePayload" label="Payload HTTP" required="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition and="false">
+						<equals name="httpMethod" value="POST"/>
+						<equals name="httpMethod" value="PUT"/>
+						<equals name="httpMethod" value="PATCH"/>
+						<equals name="httpMethod" value="LINK"/>
+						<equals name="httpMethod" value="UNLINK"/>
+					</condition>
+					<condition>
+						<equals name="httpPayloadTemplateType" value="template"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpPayload" />
+			</item>
+			<item type="textarea" name="httpFreemarkerPayload" label="Payload HTTP" required="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition and="false">
+						<equals name="httpMethod" value="POST"/>
+						<equals name="httpMethod" value="PUT"/>
+						<equals name="httpMethod" value="PATCH"/>
+						<equals name="httpMethod" value="LINK"/>
+						<equals name="httpMethod" value="UNLINK"/>
+					</condition>
+					<condition>
+						<equals name="httpPayloadTemplateType" value="freemarker-template"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpPayload" />
+			</item>
+			<item type="textarea" name="httpVelocityPayload" label="Payload HTTP" required="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition and="false">
+						<equals name="httpMethod" value="POST"/>
+						<equals name="httpMethod" value="PUT"/>
+						<equals name="httpMethod" value="PATCH"/>
+						<equals name="httpMethod" value="LINK"/>
+						<equals name="httpMethod" value="UNLINK"/>
+					</condition>
+					<condition>
+						<equals name="httpPayloadTemplateType" value="velocity-template"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpPayload" />
+			</item>
 			
+		</subsection>
+
+		<subsection label="Formato Risposta">
+			<conditions and="true">
+				<condition>
+					<equals name="retrieveTokenMethod" value="custom"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="customTokenParserType" label="Tipo" default="OAUTH2_RFC_6749" reloadOnChange="true">
+				<values>
+					<value value="OAUTH2_RFC_6749" label="RFC 6749 - OAuth2"/> 
+					<value value="MAPPING" label="Personalizzato"/>
+					<value value="CUSTOM" label="Plugin"/>
+				</values>
+				<property name="policy.retrieveToken.claimsParser.custom" />
+			</item>
+
+			<item type="text" name="customTokenParserCustomPlugin" label="ClassName" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="CUSTOM"/>
+					</condition>
+				</conditions>
+			   	<property name="policy.retrieveToken.claimsParser.className" />
+			</item>
+
+			<item type="text" name="customTokenParserTokenType" label="Token Type" required="true" default="token_type">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.token_type" properties="retrieveTokenParserPropRefId" />
+			</item>
+			<item type="text" name="customTokenParserAccessToken" label="Access Token" required="true" default="access_token">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.access_token" properties="retrieveTokenParserPropRefId" />
+			</item>
+
+			<item type="text" name="customTokenParserRefreshToken" label="Refresh Token" required="true" default="refresh_token">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.refresh_token" properties="retrieveTokenParserPropRefId" />
+			</item>
+
+			<item type="text" name="customTokenParserScope" label="Scope" required="true" default="scope">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.scope" properties="retrieveTokenParserPropRefId" />
+			</item>
+
+			<item type="text" name="customTokenParserExpiresIn" label="Expires in" required="true" default="expires_in" note="The lifetime in seconds of the access token">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.expires_in" properties="retrieveTokenParserPropRefId" />
+			</item>
+			<item type="text" name="customTokenParserExpiresOn" label="Expires on" required="true" default="expires_on" note="The expiration time; number of seconds from '1970-01-01T00:00:00Z UTC'">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.expires_on" properties="retrieveTokenParserPropRefId" />
+			</item>
+
+			<item type="text" name="customTokenParserRefreshExpiresIn" label="Refresh expires in" required="true" default="refresh_expires_in" note="The lifetime in seconds of the refresh token">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.refresh_expires_in" properties="retrieveTokenParserPropRefId" />
+			</item>
+			<item type="text" name="customTokenParserRefreshExpiresOn" label="Refresh expires on" required="true" default="refresh_expires_on" note="The expiration time; number of seconds from '1970-01-01T00:00:00Z UTC'">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.refresh_expires_on" properties="retrieveTokenParserPropRefId" />
+			</item>
+
 		</subsection>
 
 	</section>

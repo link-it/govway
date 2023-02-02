@@ -1746,7 +1746,7 @@ public class ValidazioneSemantica {
 				}
 				else{
 					try{
-						RegExpUtilities.validateUrl(urlConn);
+						RegExpUtilities.validateUrl(urlConn, true);
 					}catch(Exception e){
 						if(identificativoElementoInternoSoggetto==null){
 							this.errori.add("Il connettore "+nomeConn+", definito nella radice del soggetto["+idSoggetto+"], è di tipo http, ma non ha una url valida: "+e.getMessage());
@@ -1859,7 +1859,7 @@ public class ValidazioneSemantica {
 				}
 				else{
 					try{
-						RegExpUtilities.validateUrl(urlConn);
+						RegExpUtilities.validateUrl(urlConn, true);
 					}catch(Exception e){
 						if(identificativoElementoInternoSoggetto==null){
 							this.errori.add("Il connettore "+nomeConn+", definito nella radice del soggetto["+idSoggetto+"], è di tipo http, ma non ha una url valida: "+e.getMessage());

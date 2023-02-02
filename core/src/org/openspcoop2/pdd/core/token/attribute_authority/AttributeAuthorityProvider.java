@@ -123,7 +123,7 @@ public class AttributeAuthorityProvider implements IProvider {
 		String url = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_URL);
 		InputValidationUtils.validateTextAreaInput(url, "Endpoint - URL");
 		try{
-			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
+			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url, true);
 		}catch(Exception e){
 			throw new ProviderValidationException("La URL fornita non è valida: "+e.getMessage());
 		}	

@@ -752,7 +752,9 @@ public class ErogazioniVerificaCertificati  extends Action {
 									throw new DriverConfigurazioneException(t.getMessage(),t);
 								}
 								if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
-									signedJwt = true;
+									if(!org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
+										signedJwt = true;
+									}
 								}
 								
 								if(https || signedJwt) {

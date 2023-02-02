@@ -2721,7 +2721,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				String ocspConfig = propertiesReader.getOCSPConfig();
 				if(StringUtils.isNotEmpty(ocspConfig)) {
 					File f = new File(ocspConfig);
-					OCSPManager.init(f, propertiesReader.isOCSPConfigRequired(), log);
+					OCSPManager.init(f, propertiesReader.isOCSPConfigRequired(), propertiesReader.isOCSPConfigLoadDefault(), log);
 					OCSPManager ocspManager = OCSPManager.getInstance();
 					String msgInit = "Gestore OCSP inizializzato; policy registrate: "+ocspManager.getOCSPConfigTypes();
 					log.info(msgInit);

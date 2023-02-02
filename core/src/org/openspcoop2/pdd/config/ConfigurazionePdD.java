@@ -5028,6 +5028,12 @@ public class ConfigurazionePdD  {
 		return "configurazioneGW_getTemplate_"+source.name()+"_"+identificativo;
 	}
 	
+	public Template getTemplatePolicyNegoziazioneRequest(Connection connectionPdD, String policyName, byte[] template,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, "getTemplatePolicyNegoziazioneRequest", TemplateSource.POLICY_NEGOZIAZIONE_REQUEST, policyName, template,
+				requestInfo);
+	}
+	
 	public Template getTemplateAttributeAuthorityRequest(Connection connectionPdD, String attributeAuthorityName, byte[] template,
 			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return _getTemplate(connectionPdD, "getTemplateAttributeAuthorityRequest", TemplateSource.ATTRIBUTE_AUTHORITY_REQUEST, attributeAuthorityName, template,

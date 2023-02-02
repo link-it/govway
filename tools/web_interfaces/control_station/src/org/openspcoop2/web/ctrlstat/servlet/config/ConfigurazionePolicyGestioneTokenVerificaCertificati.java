@@ -246,7 +246,9 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						if(policy.isRfc7523_x509_Grant()) {
 							KeystoreParams keystoreParams = TokenUtilities.getSignedJwtKeystoreParams(policy);
 							if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
-								signedJwt = true;
+								if(!org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
+									signedJwt = true;		
+								}
 							}
 						}
 						verificaCertificatiPossibile = https || signedJwt;

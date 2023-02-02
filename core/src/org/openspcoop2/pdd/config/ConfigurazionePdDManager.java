@@ -2073,6 +2073,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getSingleExtendedInfoConfigurazioneFromCache(id, this.getConnection());
 	}
 	
+	public Template getTemplatePolicyNegoziazioneRequest(String policyName, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplatePolicyNegoziazioneRequest(this.getConnection(), policyName, template, requestInfo);
+	}
+	
 	public Template getTemplateAttributeAuthorityRequest(String attributeAuthorityName, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getTemplateAttributeAuthorityRequest(this.getConnection(), attributeAuthorityName, template, requestInfo);
 	}

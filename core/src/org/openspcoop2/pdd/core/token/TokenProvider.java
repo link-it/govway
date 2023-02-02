@@ -33,7 +33,10 @@ import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.jose.JOSECostanti;
@@ -290,9 +293,9 @@ public class TokenProvider implements IProvider {
 					if(contentType==null || "".equals(contentType)) {
 						throw new ProviderValidationException("Non è stato indicato il ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di Introspection");
 					}
-					if(contentType.contains(" ")) {
-						throw new ProviderValidationException("Non indicare spazi nel ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di Introspection");
-					}
+//					if(contentType.contains(" ")) {
+//						throw new ProviderValidationException("Non indicare spazi nel ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di Introspection");
+//					}
 				}
 			}
 			
@@ -443,9 +446,9 @@ public class TokenProvider implements IProvider {
 					if(contentType==null || "".equals(contentType)) {
 						throw new ProviderValidationException("Non è stato indicato il ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di UserInfo");
 					}
-					if(contentType.contains(" ")) {
-						throw new ProviderValidationException("Non indicare spazi nel ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di UserInfo");
-					}
+//					if(contentType.contains(" ")) {
+//						throw new ProviderValidationException("Non indicare spazi nel ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di UserInfo");
+//					}
 				}
 			}
 			
@@ -978,5 +981,19 @@ public class TokenProvider implements IProvider {
 		return actualValue;
 	}
 	
-	
+
+	@Override
+	public ProviderInfo getProviderInfo(String id) throws ProviderException{
+		if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN.equals(id) ||
+				Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN.equals(id) ||
+				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA);
+			pInfo.setListBody(new ArrayList<>());
+			pInfo.getListBody().add(ITokenParser.class.getName());
+			return pInfo;
+		}
+		
+		return null;
+	}
 }

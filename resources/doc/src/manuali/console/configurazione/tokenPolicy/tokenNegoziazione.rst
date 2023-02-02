@@ -33,7 +33,8 @@ sezione *Token Endpoint* si specifica il tipo di negoziazione e i vari parametri
    -  *Client Credentials*: modalità di negoziazione 'Client Credentials Grant' descritta nel RFC 6749 (https://tools.ietf.org/html/rfc6749#page-40);
    -  *Resource Owner Password Credentials*: modalità di negoziazione 'Resource Owner Password Credentials Grant' descritta nel RFC 6749 (https://tools.ietf.org/html/rfc6749#page-37);
    -  *Signed JWT*: modalità di negoziazione 'Client Credentials Grant' descritta nella sezione 2.2 del RFC 7523 (https://datatracker.ietf.org/doc/html/rfc7523#section-2.2) che prevede lo scambio di un'asserzione JWT firmata tramite certificato x.509 con l'authorization server;
-   -  *Signed JWT with Client Secret*: modalità di negoziazione identica alla precedente dove però l'asserzione JWT viene firmata tramite una chiave simmetrica.
+   -  *Signed JWT with Client Secret*: modalità di negoziazione identica alla precedente dove però l'asserzione JWT viene firmata tramite una chiave simmetrica;
+   -  *Personalizzato*: consente di definire in ogni sua parte la richiesta http inoltrata all'endpoint di negoziazione token.
 
 -  *URL*: endpoint del servizio di negoziazione token.
 
@@ -51,15 +52,17 @@ sezione *Token Endpoint* si specifica il tipo di negoziazione e i vari parametri
 
 Nel caso sia attivato il flag relativo ad un Proxy o una configurazione Https saranno presentate delle sezioni omonime dove poter inserire i dati di configurazione richiesti.
 
-I parametri di configurazioni relativi al tipo di negoziazione del token configurato vengono descritti nelle sezioni ':ref:`tokenNegoziazionePolicy_notJwt`' e ':ref:`tokenNegoziazionePolicy_jwt`'.
+I parametri di configurazione relativi al tipo di negoziazione del token configurato vengono descritti nelle sezioni ':ref:`tokenNegoziazionePolicy_notJwt`', ':ref:`tokenNegoziazionePolicy_jwt`' e ':ref:`tokenNegoziazionePolicy_custom`'.
 
-Nella sezione 'Dati Richiesta' potranno invece essere definiti ulteriori criteri che riguardano la richiesta di un token:
+Nella sezione 'Dati Richiesta' potranno invece essere definiti ulteriori criteri che riguardano la richiesta di un token. I dati presenti possono essere definiti tramite costanti o possono contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
 
 -  *Scope*: elenco di scope utente richiesti;
 
 -  *Audience*: audience per il quale si vorrebbe ottenere il token;
 
--  *Parametri*: consentene di indicare per riga ulteriori parametri (nome=valore) da inserire nella richiesta.
+-  *Parametri*: consente di indicare per riga ulteriori parametri (nome=valore) da inserire nella richiesta.
+
+-  *Header HTTP*: consente di indicare per riga eventuali header HTTP (nome=valore) da inserire nella richiesta.
 
 Infine nella sezione 'Token Forward' si può configurare la modalità di inoltro del token verso l'endpoint del connettore a cui verrà associata la policy che stiamo definendo:
 
@@ -80,3 +83,4 @@ Nelle sezioni successive vengono forniti i dettagli relativi alle modalità di n
         tokenNegoziazione_notJwt
 	tokenNegoziazione_jwt
 	tokenNegoziazione_jwt_pdnd
+	tokenNegoziazione_custom

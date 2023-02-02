@@ -5699,6 +5699,9 @@ public class ConfigurazionePdDReader {
 				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
 					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
 				}
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza la modalità '"+Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL+"'; la validazione dei certificati verrà effettuata su ogni singolo applicativo");
+				}
 				
 				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
 						keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
@@ -8285,6 +8288,10 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	protected Template getTemplatePolicyNegoziazioneRequest(Connection connectionPdD, String policyName, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplatePolicyNegoziazioneRequest(connectionPdD, policyName, template, requestInfo);
+	}
+	
 	protected Template getTemplateAttributeAuthorityRequest(Connection connectionPdD, String attributeAuthorityName, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getTemplateAttributeAuthorityRequest(connectionPdD, attributeAuthorityName, template, requestInfo);
 	}

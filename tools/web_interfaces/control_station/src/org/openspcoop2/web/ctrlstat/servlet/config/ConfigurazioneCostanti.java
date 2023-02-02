@@ -43,6 +43,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -1898,7 +1899,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_APPLICABILITA = "Applicabilit&agrave;";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME = "ClassName";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME = DynamicHelperCostanti.PLUGIN_CLASSNAME;
 	
 	public final static String LABEL_CONFIGURAZIONE_PLUGINS_CLASSI_PLUGIN = "Plugin";
 	

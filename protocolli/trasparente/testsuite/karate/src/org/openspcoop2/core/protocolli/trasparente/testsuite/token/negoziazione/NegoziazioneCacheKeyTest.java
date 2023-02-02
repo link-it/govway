@@ -235,6 +235,7 @@ public class NegoziazioneCacheKeyTest extends ConfigLoader {
 		
 		HttpResponse response = NegoziazioneTest._test(logCore, NegoziazioneTest.api_negoziazione, "signedJWT-PDND", headers_0,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
@@ -272,6 +273,7 @@ public class NegoziazioneCacheKeyTest extends ConfigLoader {
 		
 		response = NegoziazioneTest._test(logCore, NegoziazioneTest.api_negoziazione, "signedJWT-PDND", headers_1,
 				false,
+				null,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",

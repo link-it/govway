@@ -21,11 +21,14 @@
 package org.openspcoop2.pdd.core.token.parser;
 
 import java.util.Date;
+import java.util.Properties;
 
+import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.InformazioniJWTClientAssertion;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken_DatiRichiesta;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -487,6 +490,178 @@ public class TestBasicNegoziazioneTokenParser {
 			}
 
 			System.out.println("Test ClientAssertionJWT ok");
+		}
+		
+		// Test 6
+		{
+			System.out.println("Test MappingNegoziazioneTokenParser ...");
+			
+			Properties pMapping = new Properties();
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_TOKEN_TYPE, "TESTtoken_type");
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_ACCESS_TOKEN, "TESTaccess_token,Altro");
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_TOKEN, "TESTrefresh_token");
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_SCOPE, "TESTscope,AltroDiverso");
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_IN, "TESTexpires_in");
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_ON, "TESTexpires_on");
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_IN, "TESTrefresh_expires_in");
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_ON, "TESTrefresh_expires_on");
+			
+			long dateAccess = DateManager.getTimeMillis();
+			dateAccess = dateAccess + ((1000l)*(120l)); // aggiungo 120 secondi
+			dateAccess = dateAccess / 1000;
+			
+			Utilities.sleep(1234);
+			
+			long refreshDateAccess = DateManager.getTimeMillis();
+			refreshDateAccess = refreshDateAccess + ((1000l)*(120l)); // aggiungo 120 secondi
+			refreshDateAccess = refreshDateAccess / 1000;
+						
+			String accessToken = "33aa1676-1f9e-34e2-8515-0cfca111a188";
+			String refreshToken = "33ref1676-1f9e-34e2-8515-0cfca111a188";
+			String tokenType = "Bearer";
+			String rawResponse = "{\"TESTaccess_token\":\""+accessToken+"\",\"TESTrefresh_token\":\""+refreshToken+"\",\"TESTscope\":\"s1 s2\",\"TESTtoken_type\":\""+tokenType+"\",\"TESTexpires_in\":3700,\"TESTrefresh_expires_in\":4000,\"TESTexpires_on\":"+dateAccess+",\"TESTrefresh_expires_on\":"+refreshDateAccess+"}";
+			BasicNegoziazioneTokenParser tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.MAPPING, pMapping);
+			InformazioniNegoziazioneToken info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+			
+			if(info.getClaims()==null || info.getClaims().isEmpty()) {
+				throw new Exception("Parse non riuscito?");
+			}
+			if(info.getClaims().size()!=8) {
+				throw new Exception("Claims attesi 8, trovati '"+info.getClaims().size()+"'");	
+			}
+			if(!info.getClaims().containsKey("TESTaccess_token")){
+				throw new Exception("Atteso TESTaccess_token non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("TESTrefresh_token")){
+				throw new Exception("Atteso TESTrefresh_token non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("TESTscope")){
+				throw new Exception("Atteso TESTscope non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("TESTtoken_type")){
+				throw new Exception("Atteso TESTtoken_type non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("TESTexpires_in")){
+				throw new Exception("Atteso TESTexpires_in non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("TESTexpires_on")){
+				throw new Exception("Atteso TESTexpires_on non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("TESTrefresh_expires_in")){
+				throw new Exception("Atteso TESTrefresh_expires_in non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("TESTrefresh_expires_on")){
+				throw new Exception("Atteso TESTrefresh_expires_on non presente tra i claims");
+			}
+			
+			if(!accessToken.equals(info.getAccessToken())){
+				throw new Exception("Atteso access_token '"+accessToken+"' trovato '"+info.getAccessToken()+"'");
+			}
+			if(!refreshToken.equals(info.getRefreshToken())){
+				throw new Exception("Atteso refresh_token '"+refreshToken+"' trovato '"+info.getRefreshToken()+"'");
+			}
+			
+			if(info.getScopes()==null) {
+				throw new Exception("Scope attesi non trovato");
+			}
+			if(info.getScopes().size()!=2) {
+				throw new Exception("Scope attesi 2, trovati '"+info.getScopes().size()+"'");
+			}
+			boolean find = false;
+			for (String s : info.getScopes()) {
+				if("s1".equals(s)) {
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new Exception("Scope atteso 's1' non trovato");
+			}
+			find = false;
+			for (String s : info.getScopes()) {
+				if("s2".equals(s)) {
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new Exception("Scope atteso 's2' non trovato");
+			}
+			
+			if(!tokenType.equals(info.getTokenType())){
+				throw new Exception("Atteso token_type '"+tokenType+"' trovato '"+info.getTokenType()+"'");
+			}
+			
+			Date d = info.getExpiresIn();
+			if(d==null) {
+				throw new Exception("Data di scadenza non trovata");
+			}
+			Date now = DateManager.getDate();
+			if(!now.before(d)){
+				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*60*60*1));
+			if(!now.before(d)){
+				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*60*60*2));
+			if(now.before(d)){
+				throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			
+			d = info.getRefreshExpiresIn();
+			if(d==null) {
+				throw new Exception("Data di scadenza non trovata");
+			}
+			now = DateManager.getDate();
+			if(!now.before(d)){
+				throw new Exception("(1) RefreshToken scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*60*60*1));
+			if(!now.before(d)){
+				throw new Exception("(2) RefreshToken scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*60*60*2));
+			if(now.before(d)){
+				throw new Exception("(3) Atteso refresh token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			
+			System.out.println("Test MappingNegoziazioneTokenParser, access token regolare ok");
+			
+			System.out.println("Test MappingNegoziazioneTokenParser, date on ...");
+			
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_IN, "ALTRO_DIVERSO_TESTexpires_in");
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_IN, "ALTRO_DIVERSO_TESTrefresh_expires_in");
+			rawResponse = "{\"TESTaccess_token\":\""+accessToken+"\",\"TESTrefresh_token\":\""+refreshToken+"\",\"TESTscope\":\"s1 s2\",\"TESTtoken_type\":\""+tokenType+"\",\"TESTexpires_in\":3700,\"TESTrefresh_expires_in\":4000,\"TESTexpires_on\":"+dateAccess+",\"TESTrefresh_expires_on\":"+refreshDateAccess+"}";
+			tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.MAPPING, pMapping);
+			info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+			
+			if(info.getClaims()==null || info.getClaims().isEmpty()) {
+				throw new Exception("Parse non riuscito?");
+			}
+			if(info.getClaims().size()!=8) {
+				throw new Exception("Claims attesi 8, trovati '"+info.getClaims().size()+"'");	
+			}
+			
+			long dataAccessAttesa = dateAccess * 1000;
+			d = info.getExpiresIn();
+			if(d==null) {
+				throw new Exception("Data di scadenza non trovata");
+			}
+			if(d.getTime() != dataAccessAttesa){
+				throw new Exception("Token con scadenza attesa differente, rilevata="+d.getTime()+" attesa="+dataAccessAttesa);
+			}
+			
+			long refreshDateAccessAttesa = refreshDateAccess * 1000;
+			d = info.getRefreshExpiresIn();
+			if(d==null) {
+				throw new Exception("Data di scadenza non trovata");
+			}
+			if(d.getTime() != refreshDateAccessAttesa){
+				throw new Exception("Token con scadenza refresh attesa differente, rilevata="+d.getTime()+" attesa="+refreshDateAccessAttesa);
+			}
+			
+			System.out.println("Test MappingNegoziazioneTokenParser, date on ok");
 		}
 	}
 

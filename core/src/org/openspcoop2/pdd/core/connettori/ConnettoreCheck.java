@@ -65,6 +65,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.ocsp.OCSPValidatorImpl;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -779,7 +780,10 @@ public class ConnettoreCheck {
 		
 
 		// Creazione URL
-		String location = properties.get(CostantiConnettori.CONNETTORE_LOCATION);			
+		String location = properties.get(CostantiConnettori.CONNETTORE_LOCATION);	
+		if(locationDefinedByVariable(location)) {
+			return;
+		}
 		URL url = new URL( location );
 		
 		
@@ -941,7 +945,72 @@ public class ConnettoreCheck {
 	}
 	
 	
-	
+	public static boolean locationDefinedByVariable(String location) throws Exception {
+		if(StringUtils.isNotEmpty(location) && RegExpUtilities.isUrlDefinedByVariable(location)) {
+			boolean check = true;
+			if(location.contains("://")) {
+				if(!location.startsWith("://") && !location.endsWith("://")) {
+					int indexOf = location.indexOf("://");
+					if(indexOf>0) {
+						String protocol = location.substring(0, indexOf);
+						if(protocol!=null && RegExpUtilities.isDefinedByVariable(protocol)) {
+							check = false;
+							/*System.out.println("\n\n=================");
+							System.out.println("PROTOCOL '"+protocol+"'");
+							System.out.println("NON CONTROLLO, PROTOCOL CONTIENE VARIABILI");*/
+						}
+						else {
+							String other = location.substring((indexOf+"://".length()), location.length());
+							if(other.contains("/")) {
+								int indexOfHostname = other.indexOf("/");
+								if(indexOfHostname>0) {
+									String hostname = other.substring(0, indexOfHostname);
+									check = hostname==null || !RegExpUtilities.isDefinedByVariable(hostname);
+									/*if(!check) {
+										System.out.println("\n\n=================");
+										System.out.println("PROTOCOL '"+protocol+"'");
+										System.out.println("OTHER '"+other+"'");
+										System.out.println("HOSTNAME '"+hostname+"'");
+										System.out.println("NON CONTROLLO, HOSTNAME CONTIENE VARIABILI");
+									}*/
+								}
+								else {
+									// la faccio controllare, è fatta male
+								}
+							}
+							else {
+								// non vi è un contesto
+								check = !RegExpUtilities.isDefinedByVariable(location);
+								/*if(!check) {
+									System.out.println("\n\n=================");
+									System.out.println("PROTOCOL '"+protocol+"'");
+									System.out.println("OTHER '"+other+"'");
+									System.out.println("NON CONTROLLO, OTHER CONTIENE VARIABILI");
+								}*/
+							}
+						}
+					}
+					else {
+						// la faccio controllare, è fatta male
+					}
+				}
+				else {
+					// la faccio controllare, è fatta male
+				}
+			}
+			else {
+				//System.out.println("\n\n=================");
+				//System.out.println("COMPLETAMENTE VARIABILI");
+				check = false; // url completamente definita da variabili, non vi è nemmeno il protocol
+			}
+			if(!check) {
+				//System.out.println("NON CONTROLLO '"+location+"'!!!");
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	
 	

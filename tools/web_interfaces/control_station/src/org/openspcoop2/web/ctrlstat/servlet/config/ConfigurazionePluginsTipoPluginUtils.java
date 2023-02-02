@@ -32,6 +32,7 @@ import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.PluginProprietaCompatibilita;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
@@ -313,12 +314,12 @@ public class ConfigurazionePluginsTipoPluginUtils {
 	public static void addInfoClassePlugin(DataElement de, TipoPlugin tipoPlugin, String ruolo, String shTipo, String mhTipo, String mhRuolo,
 			boolean integrationManagerEnabled) {
 		
-		String titolo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_LABEL;
+		String titolo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME;
 		DataElementInfo info = new DataElementInfo(titolo);
 		
-		String info_singola = "Il plugin deve implementare l'interfaccia: ";
-		String info_multipla_and = "Il plugin deve implementare tutte le seguenti interfacce: ";
-		String info_multipla_or = "Il plugin deve implementare una delle seguenti interfacce: ";
+		String info_singola = DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA;
+		String info_multipla_and = DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_MULTIPLA_AND;
+		String info_multipla_or = DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_MULTIPLA_OR;
 		
 		List<String> listBody = new ArrayList<String>();
 		
