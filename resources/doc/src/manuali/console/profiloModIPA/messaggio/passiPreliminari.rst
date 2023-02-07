@@ -25,12 +25,15 @@ La configurazione sopra indicata rappresenta la configurazione di default che ve
 	Nei pattern di sicurezza per API REST, dove il riferimento al certificato utilizzato viaggia tramite il claim 'x5u', è possibile che GovWay debba effettuare il download del certificato tramite url https che espongono certificati server non validabili tramite le CA note. In tale contesto è possibile configurare un trustStore personalizzato agendo sulle proprietà presenti nel file “/etc/govway/modipa_local.properties” in maniera simile al trustStore dei certificati. Tali proprietà possiedono il prefisso 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.'.
 
 
-**KeyStore per la firma della Risposte**
+**KeyStore per la firma**
 
-Nella figura :numref:`FruizioneModIPA` della sezione :ref:`modipa_sicurezzaMessaggio` è stato descritto come GovWay utilizzerà la chiave privata associata all'applicativo interno che ha scaturito la richiesta per firmare il token di sicurezza aggiunto al messaggio in uscita dal dominio di gestione.
-Per quanto concerne invece le risposte che GovWay processa in una erogazione, la chiave privata utilizzata per firmare il token di sicurezza aggiunto alla risposta viene preso da una configurazione di default descritta di seguito. È sempre possibile ridefinire per ogni singola API tale configurazione.
- 
-Per poter firmare i token di sicurezza delle risposte, deve essere configurato opportunamente GovWay per quanto riguarda le seguenti proprietà presenti nel file “/etc/govway/modipa_local.properties” tutte con prefisso 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.':
+Nella figura :numref:`FruizioneModIPA` della sezione :ref:`modipa_sicurezzaMessaggio` è stato descritto come GovWay utilizzerà la chiave privata associata all'applicativo interno che ha scaturito la richiesta per firmare il token di sicurezza aggiunto al messaggio in uscita dal dominio di gestione. È possibile attuare uno scenario differente in cui la chiave privata viene definita nella fruizione come descritto nella sezione :ref:`modipa_sicurezza_avanzate_fruizione_keystore`; in questo caso i dati di accesso al keystore contenente la chiave vengono presi da una configurazione di default descritta di seguito. 
+
+Anche per quanto concerne le risposte che GovWay processa in una erogazione, la chiave privata utilizzata per firmare il token di sicurezza aggiunto alla risposta viene preso dalla configurazione di default descritta di seguito.
+
+È sempre possibile ridefinire per ogni singola API il keystore utilizzato in un richiesta di una fruizione o in una risposta di una erogazione.
+
+Per poter firmare i token di sicurezza, deve essere configurato opportunamente GovWay per quanto riguarda le seguenti proprietà presenti nel file “/etc/govway/modipa_local.properties” tutte con prefisso 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.':
 
 - *keyStore.path* (obbligatorio):  indica il path su file system di un keyStore contenente la chiave privata.
 - *keyStore.tipo* (obbligatorio): indica il tipo di trustStore (JKS)

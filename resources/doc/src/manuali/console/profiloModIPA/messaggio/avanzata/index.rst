@@ -16,6 +16,8 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 
 - :ref:`modipa_sicurezza_avanzate_sbustamento`: è possibile configurare GovWay al fine di non eliminare il token di sicurezza dai messaggi dopo averli validati.
 
+- :ref:`modipa_sicurezza_avanzate_fruizione_keystore`: è possibile attivare un differente scenario di fruizione rispetto a quello di default che prevede l'associazione del keystore di firma all'applicativo mittente.
+
 
 .. toctree::
         :maxdepth: 2
@@ -25,4 +27,5 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 	claims
 	header_soap
 	sbustamento
+	fruizione_keystore
 

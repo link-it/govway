@@ -689,6 +689,8 @@ public final class CostantiDB {
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE = "modipaKeystoreCertMode";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE = "modipaKeystoreFruizioneMode";
+    
     public static final String MODIPA_KEYSTORE_MODE = "modipaKeystoreMode";
     public static final String MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE = "archive";
     public static final String MODIPA_KEYSTORE_MODE_VALUE_PATH = "path";
@@ -795,6 +797,9 @@ public final class CostantiDB {
     
     public static final String MODIPA_PROFILO_DEFAULT = "default";
     public static final String MODIPA_PROFILO_RIDEFINISCI = "ridefinisci";
+    
+    public static final String MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO = "applicativo";
+    public static final String MODIPA_KEYSTORE_FRUIZIONE = "fruizione";
     
     
     /**

@@ -86,7 +86,6 @@ Scenario: isTest('connettivita-base')
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
-
 Scenario: isTest('connettivita-base-default-trustore')
 
     * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_match })
@@ -694,6 +693,252 @@ Scenario: isTest('connettivita-base-header-agid')
     ({
         'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
         'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+Scenario: isTest('keystore-default-fruizione')
+
+    * def client_token_keystore_fruizione_match = 
+    """
+    ({
+        header: { 
+            kid: 'ExampleServer',
+            x5c: '#present',
+            x5u: '#notpresent',
+            'x5t#S256': '#notpresent'
+        },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'RestBlockingIDAR01KeystoreDefaultFruizione/v1',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'RestBlockingIDAR01KeystoreDefaultFruizione/v1'
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_keystore_fruizione_match })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01/v1')
+    
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'RestBlockingIDAR01KeystoreDefaultFruizione/v1',
+            client_id: 'RestBlockingIDAR01/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR01/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders.Authorization[0], match_to: server_token_match  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+Scenario: isTest('keystore-ridefinito-fruizione') || isTest('keystore-ridefinito-fruizione-applicativo-no-keystore')
+
+    * def client_token_keystore_ridefinito_fruizione_match = 
+    """
+    ({
+        header: { 
+            kid: 'ExampleClient5',
+            x5c: '#present',
+            x5u: '#notpresent',
+            'x5t#S256': '#notpresent'
+        },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'RestBlockingIDAR01KeystoreRidefinitoFruizione/v1',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'RestBlockingIDAR01KeystoreRidefinitoFruizione/v1'
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_keystore_ridefinito_fruizione_match })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01/v1')
+    
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'RestBlockingIDAR01KeystoreRidefinitoFruizione/v1',
+            client_id: 'RestBlockingIDAR01/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR01/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders.Authorization[0], match_to: server_token_match  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+Scenario: isTest('keystore-ridefinito-fruizione-archivio')
+
+    * def client_token_keystore_ridefinito_fruizione_archivio_match = 
+    """
+    ({
+        header: { 
+            kid: 'ExampleClient4',
+            x5c: '#present',
+            x5u: '#notpresent',
+            'x5t#S256': '#notpresent'
+        },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'RestBlockingIDAR01KeystoreRidefinitoFruizioneArchivio/v1',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'RestBlockingIDAR01KeystoreRidefinitoFruizioneArchivio/v1'
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_keystore_ridefinito_fruizione_archivio_match })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01/v1')
+    
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'RestBlockingIDAR01KeystoreRidefinitoFruizioneArchivio/v1',
+            client_id: 'RestBlockingIDAR01/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR01/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders.Authorization[0], match_to: server_token_match  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+Scenario: isTest('keystore-ridefinito-fruizione-x5u')
+
+    * def client_token_keystore_ridefinito_fruizione_match = 
+    """
+    ({
+        header: { 
+            kid: 'ExampleClient1',
+            x5c: '#notpresent',
+            x5u: 'http://localhost:8080/ExampleClient1.crt',
+            'x5t#S256': '#notpresent'
+        },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'RestBlockingIDAR01KeystoreRidefinitoFruizioneX5U/v1',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'RestBlockingIDAR01KeystoreRidefinitoFruizioneX5U/v1'
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_keystore_ridefinito_fruizione_match })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01X5T/v1')
+    
+
+    * def server_token_match =
+    """
+    ({
+        header: { 
+		kid: 'ExampleServer',
+	        x5c: '#notpresent',
+        	x5u: '#notpresent',
+		'x5t#S256': '#present'
+	},
+        payload: {
+            aud: 'RestBlockingIDAR01KeystoreRidefinitoFruizioneX5U/v1',
+            client_id: 'RestBlockingIDAR01X5T/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR01X5T/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders.Authorization[0], match_to: server_token_match  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+Scenario: isTest('keystore-definito-applicativo')
+
+    * def client_token_keystore_ridefinito_applicativo_match = 
+    """
+    ({
+        header: { 
+            kid: 'ExampleClient1',
+            x5c: '#present',
+            x5u: '#notpresent',
+            'x5t#S256': '#notpresent'
+        },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01'
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_keystore_ridefinito_applicativo_match })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01/v1')
+    
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR01/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR01/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders.Authorization[0], match_to: server_token_match  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -4241,7 +4486,7 @@ Scenario: isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authoriza
 
 
 
-Scenario: isTest('pkcs11') || isTest('pkcs11-certificate')
+Scenario: isTest('pkcs11') || isTest('pkcs11-certificate') || isTest('pkcs11-keystore-fruizione')
 
     # Cambia questo
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/PKCS11TestREST/v1'

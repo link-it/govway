@@ -1,6 +1,6 @@
 .. _modipa_sicurezza_avanzate_header_contemporaneita_fruizione:
 
-Configurazione contemporaneità degli header in una Fruizione
+Configurazione coesistenza degli header in una Fruizione
 ------------------------------------------------------------------------------------------------
 
 La configurazione differisce a seconda se il token di sicurezza deve essere generato (Richiesta) o validato (Risposta). Di seguito vengono descritte le opzioni di configurazione possibili per le due fasi.

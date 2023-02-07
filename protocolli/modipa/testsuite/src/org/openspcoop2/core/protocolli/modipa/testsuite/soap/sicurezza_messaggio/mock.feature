@@ -31,7 +31,11 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 		isTest('riferimento-x509-x509Key-ThumbprintKey') ||  isTest('riferimento-x509-IssuerSerial-x509Key') || 
 		isTest('manomissione-token-risposta') || 
 		isTest('low-ttl-erogazione') ||	isTest('low-iat-ttl-erogazione') || 
-		isTest('connettivita-base-idas02') || isTest('check-authz-idas02') 
+		isTest('connettivita-base-idas02') || isTest('check-authz-idas02') ||
+		isTest('keystore-default-fruizione') ||
+		isTest('keystore-ridefinito-fruizione') || isTest('keystore-ridefinito-fruizione-applicativo-no-keystore') || 
+		isTest('keystore-ridefinito-fruizione-archivio') ||
+		isTest('keystore-definito-applicativo')
     
     * match bodyPath('/Envelope/Header') == ''
     * def responseStatus = 200
@@ -175,7 +179,7 @@ Scenario: isTest('manomissione-token-risposta-idas0302')
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
 
 Scenario: isTest('manomissione-payload-risposta-idas0302') ||
-	isTest('pkcs11') || isTest('pkcs11-certificate') || isTest('pkcs11-trustStore')
+	isTest('pkcs11') || isTest('pkcs11-certificate') || isTest('pkcs11-trustStore') || isTest('pkcs11-keystore-fruizione')
     
     * match bodyPath('/Envelope/Header') == ''
     * def responseStatus = 200

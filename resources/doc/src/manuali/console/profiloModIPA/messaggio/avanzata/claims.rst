@@ -39,14 +39,23 @@ Di seguito vengono forniti i valori di default inseriti da GovWay nel payload jw
 - 'sub': identificativo del mittente a cui è riferito il token; viene utilizzato il primo valore che ha un match in ordine con i seguenti criteri:
 
 	- claim 'sub' indicato nel campo 'Claims' tra i criteri di configurazione 'ModI' della richiesta, in una fruizione, o della risposta, in una erogazione;
-	- identificativo dell'applicativo mittente in una fruizione o l'identificativo e la versione dell'API implementata in una erogazione
+	- in una fruzione l'identificativo varia a seconda della modalità di keystore:
+	
+		- nel caso di keystore di firma associato all'applicativo mittente viene utilizzato l'identificativo dell'applicativo;
+		- nel caso di keystore definito nella fruizione viene utilizzato l'identificativo e la versione dell'API fruita;
+
+	- in una erogazione viene utilizzato l'identificativo e la versione dell'API implementata.
 
 - 'client_id': identificativo dell'applicazione client che ha ottenuto il token; viene utilizzato il primo valore che ha un match in ordine con i seguenti criteri:
 
-	- fruizione: 
+	- fruizione che richiede un keystore associato all'applicativo mittente:
 
 		- valore configurato nel campo 'Identificativo Client' dell'applicativo mittente identificato;
 		- identificativo dell'applicativo mittente
+
+	- fruizione che richiede un keystore associato alla fruizione:
+
+		- identificativo e versione dell'API fruita
 
 	- erogazione: 
 

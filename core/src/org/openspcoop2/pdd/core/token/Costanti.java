@@ -335,6 +335,9 @@ public class Costanti {
 	    	
     public static final String KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE = "applicativoModi";
     public static final String KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL = "Definito nell'applicativo ModI";
+    
+//    public static final String KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE = "fruizioneModi";
+//    public static final String KEYSTORE_TYPE_FRUIZIONE_MODI_LABEL = "Definito nella fruizione ModI";
 	
 	
 	// CLAIMS PDND

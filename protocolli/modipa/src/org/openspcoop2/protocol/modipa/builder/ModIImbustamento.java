@@ -299,8 +299,12 @@ public class ModIImbustamento {
 						signAttachments = ModIPropertiesUtils.isAttachmentsSignature(aspc, nomePortType, azione, isRichiesta, msg);
 					}
 					
+					boolean keystoreDefinitoInFruizione = false;
 					if(MessageRole.REQUEST.equals(messageRole)) {
-						if(sa==null) {
+						
+						keystoreDefinitoInFruizione = ModIKeystoreConfig.isKeystoreDefinitoInFruizione(idSoggettoMittente, asps);
+						
+						if((!keystoreDefinitoInFruizione) && sa==null) {
 							ProtocolException pe = new ProtocolException("Il profilo di sicurezza richiesto '"+securityMessageProfile+"' richiede l'identificazione di un applicativo");
 							pe.setInteroperabilityError(true);
 							throw pe;
@@ -311,11 +315,17 @@ public class ModIImbustamento {
 					ModISecurityConfig securityConfig = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
 							rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
 							busta, bustaRichiesta, 
-							multipleHeaderAuthorizationConfig);
+							multipleHeaderAuthorizationConfig,
+							keystoreDefinitoInFruizione);
 					
 					if(MessageRole.REQUEST.equals(messageRole)) {
 					
-						keystoreConfig = new ModIKeystoreConfig(sa, securityMessageProfile);
+						if(keystoreDefinitoInFruizione) {
+							keystoreConfig = new ModIKeystoreConfig(fruizione, idSoggettoMittente, asps, securityMessageProfile);
+						}
+						else {
+							keystoreConfig = new ModIKeystoreConfig(sa, securityMessageProfile);
+						}
 						
 					}
 					else {
@@ -401,7 +411,8 @@ public class ModIImbustamento {
 								ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
 										rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
 										busta, bustaRichiesta, 
-										false);
+										false,
+										keystoreDefinitoInFruizione);
 								tokenIntegrity = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfigIntegrity, busta, 
 										securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
 										now, jtiIntegrity, ModIHeaderType.BOTH_INTEGRITY, integritaCustom,

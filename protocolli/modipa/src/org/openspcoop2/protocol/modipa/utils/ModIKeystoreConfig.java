@@ -45,6 +45,17 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  */
 public class ModIKeystoreConfig extends ModIKeystoreUtils {
 
+	public static boolean isKeystoreDefinitoInFruizione(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException, UtilsException {
+		boolean fruizione = true;
+		List<ProtocolProperty> listProtocolProperties = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, asps);
+		String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, 
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE);
+		if(mode!=null && ModICostanti.MODIPA_KEYSTORE_FRUIZIONE.equals(mode)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public ModIKeystoreConfig(ServizioApplicativo sa, String securityMessageProfile) throws ProtocolException, UtilsException {
 		super(sa, securityMessageProfile);
 	}

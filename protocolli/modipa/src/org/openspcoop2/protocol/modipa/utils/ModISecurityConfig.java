@@ -111,7 +111,8 @@ public class ModISecurityConfig {
 	public ModISecurityConfig(OpenSPCoop2Message msg, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, 
 			boolean rest, boolean fruizione,  boolean request, boolean corniceSicurezza,
 			Busta busta, Busta bustaRichiesta,
-			Boolean multipleHeaderAuthorizationConfig) throws ProtocolException {
+			Boolean multipleHeaderAuthorizationConfig,
+			boolean keystoreDefinitoInFruizione) throws ProtocolException {
 		
 		// METODO USATO IN IMBUSTAMENTO
 		
@@ -158,7 +159,7 @@ public class ModISecurityConfig {
 			
 			/* Opzioni REST */
 						
-			this.initSharedRest(modiProperties, this._listProtocolProperties,sa,fruizione,request);
+			this.initSharedRest(modiProperties, this._listProtocolProperties,sa,fruizione,request,keystoreDefinitoInFruizione);
 			
 			// HTTP Header da firmare
 			
@@ -288,7 +289,14 @@ public class ModISecurityConfig {
 				}
 			}
 			if(this.clientId==null) {
-				if(sa!=null) {
+				if(keystoreDefinitoInFruizione) {
+					try {
+						this.clientId = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(idServizio).replace(" ", "/");
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+				else if(sa!=null) {
 					this.clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE);
 					if(this.clientId==null) {
 						try {
@@ -319,7 +327,12 @@ public class ModISecurityConfig {
 						this.issuer = valore;
 					}
 					else {
-						this.issuer = NamingUtils.getLabelSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+						if(keystoreDefinitoInFruizione) {
+							this.issuer = NamingUtils.getLabelSoggetto(soggettoFruitore);
+						}
+						else if(sa!=null) {
+							this.issuer = NamingUtils.getLabelSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+						}
 					}
 				}
 			}catch(Exception e) {
@@ -345,7 +358,12 @@ public class ModISecurityConfig {
 						this.subject = valore;
 					}
 					else {
-						this.subject = sa.getNome();
+						if(keystoreDefinitoInFruizione) {
+							this.subject = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(idServizio).replace(" ", "/");
+						}
+						else if(sa!=null) {
+							this.subject = sa.getNome();
+						}
 					}
 				}
 			}catch(Exception e) {
@@ -605,6 +623,15 @@ public class ModISecurityConfig {
 		
 		this.fruizione = fruizione;
 		
+		boolean keystoreDefinitoInFruizione = false;
+		if(this.fruizione) {
+			try {
+				keystoreDefinitoInFruizione = ModIKeystoreConfig.isKeystoreDefinitoInFruizione(soggettoFruitore, aspsParam);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+		}
+		
 		this.multipleHeaderAuthorizationConfig = multipleHeaderAuthorizationConfig;
 		
 		this._listProtocolProperties = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, aspsParam);
@@ -614,7 +641,7 @@ public class ModISecurityConfig {
 		}
 		
 		if(rest) {
-			this.initSharedRest(modiProperties, this._listProtocolProperties,null, fruizione,request);
+			this.initSharedRest(modiProperties, this._listProtocolProperties,null, fruizione,request,false);
 		}
 		else {
 			this.initSharedSoap(this._listProtocolProperties,fruizione,request);
@@ -745,7 +772,12 @@ public class ModISecurityConfig {
 				this.checkAudience = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE, false);
 				if(this.checkAudience) {
 					if(this.audience==null) {
-						throw new ProtocolException("Configurazione errata; Audience non definito sull'applicativo e verifica abilitata sulla fruizione");
+						if(keystoreDefinitoInFruizione) {
+							throw new ProtocolException("Configurazione errata; Audience della risposta non definito nonostante sia richiesta una verifica");
+						}
+						else {
+							throw new ProtocolException("Configurazione errata; Audience non definito sull'applicativo e verifica abilitata sulla fruizione");
+						}
 					}
 				}
 			}
@@ -761,7 +793,7 @@ public class ModISecurityConfig {
 		
 	}
 	
-	private void initSharedRest(ModIProperties modiProperties, List<ProtocolProperty> listProtocolProperties, ServizioApplicativo sa, boolean fruizione, boolean request) throws ProtocolException {
+	private void initSharedRest(ModIProperties modiProperties, List<ProtocolProperty> listProtocolProperties, ServizioApplicativo sa, boolean fruizione, boolean request, boolean keystoreDefinitoInFruizione) throws ProtocolException {
 		
 		if(fruizione) {
 			if(request) {
@@ -843,12 +875,23 @@ public class ModISecurityConfig {
 		if(vX509.contains(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_VALUE_X5U)) {
 			this.x5u = true;
 			if(fruizione && request) {
-				try {
-					this.x5url = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_SA_RICHIESTA_X509_VALUE_X5URL);
-				}catch(Exception e) {
-					ProtocolException pe = new ProtocolException("Applicativo '"+sa.getNome()+"' non utilizzabile con la configurazione di sicurezza (x5u) associata alla fruizione richiesta, poichè non contiene la definizione di una URL che riferisce un certificato (o certificate chain) X.509 corrispondente alla chiave firmataria del security token");
-					pe.setInteroperabilityError(true);
-					throw pe;
+				if(keystoreDefinitoInFruizione) {
+					try {
+						this.x5url = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_X509_VALUE_X5URL);
+					}catch(Exception e) {
+						ProtocolException pe = new ProtocolException("Nella configurazione di sicurezza (x5u) associata alla fruizione non è stata definita una URL che riferisce un certificato (o certificate chain) X.509 corrispondente alla chiave firmataria del security token");
+						pe.setInteroperabilityError(true);
+						throw pe;
+					}
+				}
+				else {
+					try {
+						this.x5url = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_SA_RICHIESTA_X509_VALUE_X5URL);
+					}catch(Exception e) {
+						ProtocolException pe = new ProtocolException("Applicativo '"+sa.getNome()+"' non utilizzabile con la configurazione di sicurezza (x5u) associata alla fruizione richiesta, poichè non contiene la definizione di una URL che riferisce un certificato (o certificate chain) X.509 corrispondente alla chiave firmataria del security token");
+						pe.setInteroperabilityError(true);
+						throw pe;
+					}
 				}
 			}
 			else if(!fruizione && !request) {
