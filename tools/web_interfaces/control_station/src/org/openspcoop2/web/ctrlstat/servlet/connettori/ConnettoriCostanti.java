@@ -146,8 +146,8 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PROMUOVI = "confSSLCredFileCertProm";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_MULTI_AGGIORNA = "confSSLCredFileCertUpdate";
 	
-	public final static String PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO = "connettore_token_policy_stat";
-	public final static String PARAMETRO_CONNETTORE_TOKEN_POLICY = "connettore_token_policy";
+	public final static String PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO;
+	public final static String PARAMETRO_CONNETTORE_TOKEN_POLICY = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY;
 	
 	public final static String PARAMETRO_CONNETTORE_PROXY_ENABLED = "connettore_proxy_enabled";
 	public final static String PARAMETRO_CONNETTORE_PROXY_HOSTNAME = "connettore_proxy_host";

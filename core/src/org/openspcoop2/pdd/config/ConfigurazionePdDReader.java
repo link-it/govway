@@ -5702,6 +5702,9 @@ public class ConfigurazionePdDReader {
 				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
 					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza la modalità '"+Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL+"'; la validazione dei certificati verrà effettuata su ogni singolo applicativo");
 				}
+				if(Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza la modalità '"+Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_LABEL+"'; la validazione dei certificati verrà effettuata sulla fruizione");
+				}
 				
 				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
 						keystoreParams.getPassword(), keystoreParams.getKeyAlias(),

@@ -43,6 +43,7 @@ public class Costanti {
 	public final static String ATTRIBUTE_AUTHORITY = CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY;
 	
 	public static final String CHOICE_APPLICATIVO_MODI_VALUE = "applicativoModi";
+	public static final String CHOICE_FRUIZIONE_MODI_VALUE = "fruizioneModi";
 	
 	
 	// Context
@@ -303,6 +304,7 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CLIENT_ID = "client_id";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM = "custom";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_APPLICATIVO_MODI = CHOICE_APPLICATIVO_MODI_VALUE ;
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_FRUIZIONE_MODI = CHOICE_FRUIZIONE_MODI_VALUE ;
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_VALUE = "policy.retrieveToken.jwt.signature.include.key.id.value";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_CERT = "policy.retrieveToken.jwt.signature.include.cert";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_URL = "policy.retrieveToken.jwt.signature.include.x509url";
@@ -336,8 +338,8 @@ public class Costanti {
     public static final String KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE = "applicativoModi";
     public static final String KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL = "Definito nell'applicativo ModI";
     
-//    public static final String KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE = "fruizioneModi";
-//    public static final String KEYSTORE_TYPE_FRUIZIONE_MODI_LABEL = "Definito nella fruizione ModI";
+    public static final String KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE = "fruizioneModi";
+    public static final String KEYSTORE_TYPE_FRUIZIONE_MODI_LABEL = "Definito nella fruizione ModI";
 	
 	
 	// CLAIMS PDND

@@ -3991,6 +3991,20 @@ public class GestoreToken {
 					throw new Exception("JWT Signature key password undefined");
 				}
 			}
+			else if(policyNegoziazioneToken.isJwtSignKeystoreFruizioneModI()) {
+				ks = dynamicParameters.getKeystoreFruizioneModI();
+				if(ks==null) {
+					throw new Exception("JWT Signature keystore undefined");
+				}
+				keyAlias = dynamicParameters.getKeyAliasFruizioneModI();
+				if(keyAlias==null) {
+					throw new Exception("JWT Signature key alias undefined");
+				}
+				keyPassword = dynamicParameters.getKeyPasswordFruizioneModI();
+				if(keyPassword==null) {
+					throw new Exception("JWT Signature key password undefined");
+				}
+			}
 			else {
 				String keystoreType = policyNegoziazioneToken.getJwtSignKeystoreType();
 				if(keystoreType==null) {
@@ -4042,6 +4056,10 @@ public class GestoreToken {
 		}
 		else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdApplicativoModI()) {
 			String clientId = dynamicParameters.getKidApplicativoModI();
+			jwtHeaders.setKid(clientId);
+		}
+		else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdFruizioneModI()) {
+			String clientId = dynamicParameters.getKidFruizioneModI();
 			jwtHeaders.setKid(clientId);
 		}
 		if(policyNegoziazioneToken.isJwtSignIncludeX509Cert()) {

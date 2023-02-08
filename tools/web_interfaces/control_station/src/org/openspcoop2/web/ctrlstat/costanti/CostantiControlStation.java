@@ -1324,7 +1324,7 @@ public class CostantiControlStation {
 	public final static String VALUE_PARAMETRO_DUMP_SEZIONE_RISPOSTA = "risposta";
 	
 	public final static String LABEL_LIST_VALORE_NON_PRESENTE = "--";
-	public static final String DEFAULT_VALUE_NON_SELEZIONATO = "-";
+	public static final String DEFAULT_VALUE_NON_SELEZIONATO = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO;
 	public static final String DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA = ""; // lasciare vuota, se si usa il trattino rimane aperto l'area di ricerca con filtro Qualsiasi
 		
 	public final static String VALUE_PARAMETRO_PROPERTIES_MODE_DEFAULT = "default";

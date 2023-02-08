@@ -46,8 +46,6 @@ Then status 503
 
 * match result[0].MESSAGGIO contains 'La modalità di generazione del Key Id (kid), indicata nella token policy \'MODI-NegoziazioneTokenPDND\', non è utilizzabile con l\'applicativo identificato \'ApplicativoBlockingIDA01ExampleClient2 (Soggetto: DemoSoggettoFruitore)\': nella configurazione dell\'applicativo non è stato definito un \'Key Id (kid) del Certificato\' nella sezione \'Authorization OAuth\''
 
-#* match result contains deep other_checks_risposta2
-
 Examples:
 | tipo-test |  username | password |
 | TestKoNoKID | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 |
@@ -68,8 +66,6 @@ Then status 503
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND\' non è utilizzabile: Il profilo di sicurezza richiesto \'Token Policy Negoziazione - Signed JWT\' non è applicabile poichè l\'applicativo mittente ApplicativoBlockingIDA01ExampleClientToken1 (DemoSoggettoFruitore) non possiede una configurazione dei parametri di sicurezza messaggio (Keystore)'
-
-#* match result contains deep other_checks_risposta2
 
 Examples:
 | tipo-test |  username | password |
@@ -114,8 +110,6 @@ Then status 503
 
 * match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND\' richiede l\'autenticazione e l\'identificazione di un applicativo fruitore:'
 
-#* match result contains deep other_checks_risposta2
-
 
 
 
@@ -135,11 +129,145 @@ Then status 503
 
 * match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND\' è utilizzabile solamente con il profilo di interoperabilità \'ModI\''
 
-#* match result contains deep other_checks_risposta2
-
 Examples:
 | tipo-test |  username | password |
 | TestKoAltroProfilo | MODI-DemoNegoziazioneToken | MODI-DemoNegoziazioneToken |
 
 
 
+
+
+
+@negoziazioneFruizioneOk
+Scenario Outline: Test negoziazione ok tramite una fruizione che utilizza l'impostazione '<tipo-test>'
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenFruizione<tipo-test>/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione<tipo-test>'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test |
+| KeystoreDefault |
+| KeystoreRidefinito |
+| KeystoreDefaultSicurezzaMessaggio |
+| KeystoreRidefinitoSicurezzaMessaggio |
+
+
+
+@negoziazioneFruizioneKoKidNonDefinito
+Scenario Outline: Test negoziazione ko poiche' viene usato una fruizione che utilizza l'impostazione '<tipo-test>', su cui non è stato definito il kid
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenFruizione<tipo-test>_noKID/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione<tipo-test>'
+When method post
+Then status 503
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici(tid) 
+
+* match result[0].MESSAGGIO contains 'La modalità di generazione del Key Id (kid), indicata nella token policy \'MODI-NegoziazioneTokenPDND-datiInFruizione\', non è utilizzabile con la fruizione \'DemoSoggettoFruitore -> DemoNegoziazioneTokenFruizione<tipo-test>_noKID (Soggetto: DemoSoggettoErogatore)\': nella configurazione \'ModI\' non è stato definito un \'Key Id (kid) del Certificato\''
+
+Examples:
+| tipo-test |
+| KeystoreDefault |
+| KeystoreRidefinito |
+| KeystoreDefaultSicurezzaMessaggio |
+| KeystoreRidefinitoSicurezzaMessaggio |
+
+
+
+@negoziazioneFruizioneKoClientIdNonDefinito
+Scenario Outline: Test negoziazione ko poiche' viene usato una fruizione che utilizza l'impostazione '<tipo-test>', su cui non è stato definito il client id
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenFruizione<tipo-test>_noClientId/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione<tipo-test>'
+When method post
+Then status 503
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici(tid) 
+
+* match result[0].MESSAGGIO contains 'La modalità di generazione dell\'Issuer, indicata nella token policy \'MODI-NegoziazioneTokenPDND-datiInFruizione\', non è utilizzabile con la fruizione \'DemoSoggettoFruitore -> DemoNegoziazioneTokenFruizione<tipo-test>_noClientId (Soggetto: DemoSoggettoErogatore)\': nella configurazione \'ModI\' non è stato definito un \'Identificativo Token ClientId\''
+
+Examples:
+| tipo-test |
+| KeystoreDefault |
+| KeystoreRidefinito |
+| KeystoreDefaultSicurezzaMessaggio |
+| KeystoreRidefinitoSicurezzaMessaggio |
+
+
+
+
+@negoziazioneFruizioneKoKeystoreNonDefinitoFruizione
+Scenario: Test negoziazione ko poiche' viene usato una fruizione che non prevede di ridefinire il keystore sulla fruizione
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenFruizioneSicurezzaMessaggio_noKeystoreFruizione/v1"
+And path 'test'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione<tipo-test>'
+When method post
+Then status 503
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici(tid) 
+
+* match result[0].MESSAGGIO contains 'La modalità di generazione del Key Id (kid), indicata nella token policy \'MODI-NegoziazioneTokenPDND-datiInFruizione\', non è utilizzabile con la fruizione \'DemoSoggettoFruitore -> DemoNegoziazioneTokenFruizioneSicurezzaMessaggio_noKeystoreFruizione (Soggetto: DemoSoggettoErogatore)\': nella configurazione \'ModI\' non è stato definito un \'Key Id (kid) del Certificato\''
+
+
+
+
+@negoziazioneFruizioneOkparametriStatici
+Scenario Outline: Test negoziazione ok tramite una fruizione che utilizza l'impostazione '<tipo-test>', dove i parametri oltre al keystore sono statici sulla token policy
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenFruizione<tipo-test>_policy2/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione<tipo-test>'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test |
+| KeystoreDefault |
+| KeystoreRidefinito |
+| KeystoreDefaultSicurezzaMessaggio |
+| KeystoreRidefinitoSicurezzaMessaggio |
+
+
+
+
+@negoziazioneFruizioneKoAltroProfilo
+Scenario: Test negoziazione ko poiche' viene usato una policy che riferisce il keystore di una fruizione su un altro profilo di interoperabiltà
+
+Given url govway_base_path + "/out/ENTE/ENTE/MODI-DemoNegoziazioneTokenFruizione/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione<tipo-test>'
+When method post
+Then status 503
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici(tid) 
+
+* match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND-datiInFruizione\' è utilizzabile solamente con il profilo di interoperabilità \'ModI\''

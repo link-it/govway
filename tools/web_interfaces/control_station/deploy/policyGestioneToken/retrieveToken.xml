@@ -224,8 +224,9 @@
 					<condition>
 						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
 					</condition>
-					<condition not="true">
+					<condition not="true" and="false">
 						<equals name="jwtKeystoreType" value="applicativoModi"/>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
 					</condition>
 				</conditions>
 				<values>
@@ -254,6 +255,24 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
 			</item>
+			<item type="select" name="jwtAsymmetricSignatureKidConFruizioneModi" label="Key Id (kid)" reloadOnChange="true" default="fruizioneModi">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="false" label="-"/>
+					<value value="fruizioneModi" label="Definito nella fruizione ModI"/>
+					<value value="true" label="Alias Chiave Privata"/>
+					<value value="client_id" label="Client ID"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
+			</item>
 			<item type="text" name="jwtSignatureKidValue" label="" required="true">
 				<conditions and="false">
 					<condition and="true">
@@ -267,6 +286,10 @@
 					<condition and="true">
 						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
 						<equals name="jwtAsymmetricSignatureKidConApplicativoModi" value="custom"/>
+					</condition>
+					<condition and="true">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+						<equals name="jwtAsymmetricSignatureKidConFruizioneModi" value="custom"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.signature.include.key.id.value" />
@@ -368,6 +391,21 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.clientId.mode"/>
 			</item>
+			<item type="select" name="jwtClientIdFruizioneModiChoice" label="Client ID" default="fruizioneModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="fruizioneModi" label="Definito nella fruizione ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.clientId.mode"/>
+			</item>
 			<item type="text" name="jwtClientIdApplicativoModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
@@ -377,10 +415,20 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.clientId" />
 			</item>
-			<item type="text" name="jwtClientId" label="Client ID" required="true">
+			<item type="text" name="jwtClientIdFruizioneModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
+						<defined name="jwtClientIdFruizioneModiChoice"/>
+						<equals name="jwtClientIdFruizioneModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.clientId" />
+			</item>
+			<item type="text" name="jwtClientId" label="Client ID" required="true">
+			      	<conditions and="true">
+					<condition>
 						<defined name="jwtClientIdApplicativoModiChoice" not="true"/>
+						<defined name="jwtClientIdFruizioneModiChoice" not="true"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.clientId" />
@@ -401,6 +449,21 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.issuer.mode"/>
 			</item>
+			<item type="select" name="jwtIssuerFruizioneModiChoice" label="Issuer" default="fruizioneModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="fruizioneModi" label="ClientID della fruizione ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.issuer.mode"/>
+			</item>
 			<item type="text" name="jwtIssuerApplicativoModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
@@ -410,10 +473,20 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.issuer" />
 			</item>
-			<item type="text" name="jwtIssuer" label="Issuer" required="false">
+			<item type="text" name="jwtIssuerFruizioneModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
+						<defined name="jwtIssuerFruizioneModiChoice"/>
+						<equals name="jwtIssuerFruizioneModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.issuer" />
+			</item>
+			<item type="text" name="jwtIssuer" label="Issuer" required="false">
+			      	<conditions and="true">
+					<condition>
 						<defined name="jwtIssuerApplicativoModiChoice" not="true"/>
+						<defined name="jwtIssuerFruizioneModiChoice" not="true"/>
 					</condition>
 				</conditions>
 			    	<property name="policy.retrieveToken.jwt.issuer" />
@@ -434,6 +507,21 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.subject.mode"/>
 			</item>
+			<item type="select" name="jwtSubjectFruizioneModiChoice" label="Subject" default="fruizioneModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="fruizioneModi" label="ClientID della fruizione ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.subject.mode"/>
+			</item>
 			<item type="text" name="jwtSubjectApplicativoModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
@@ -443,10 +531,20 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.subject" />
 			</item>
-			<item type="text" name="jwtSubject" label="Subject" required="false">
+			<item type="text" name="jwtSubjectFruizioneModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
+						<defined name="jwtSubjectFruizioneModiChoice"/>
+						<equals name="jwtSubjectFruizioneModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.subject" />
+			</item>
+			<item type="text" name="jwtSubject" label="Subject" required="false">
+			      	<conditions and="true">
+					<condition>
 						<defined name="jwtSubjectApplicativoModiChoice" not="true"/>
+						<defined name="jwtSubjectFruizioneModiChoice" not="true"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.subject" />
@@ -528,6 +626,24 @@
 				</values>
 			      	<property name="policy.retrieveToken.formClientId.mode"/>
 			</item>
+			<item type="select" name="formClientIdFruizioneModiChoice" label="Client ID" default="fruizioneModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="fruizioneModi" label="ClientID della fruizione ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.formClientId.mode"/>
+			</item>
 			<item type="text" name="formClientIdApplicativoModiChoiceInput" label="" required="true">
 			      	<conditions and="true">
 					<condition and="false">
@@ -540,13 +656,26 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.formClientId" />
 			</item>
-			<item type="text" name="formClientId" label="Client ID" required="false">
+			<item type="text" name="formClientIdFruizioneModiChoiceInput" label="" required="true">
 			      	<conditions and="true">
 					<condition and="false">
 						<selected name="jwtPDND"/>
 					</condition>
 					<condition>
+						<defined name="formClientIdFruizioneModiChoice"/>
+						<equals name="formClientIdFruizioneModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.formClientId" />
+			</item>
+			<item type="text" name="formClientId" label="Client ID" required="false">
+			      	<conditions and="true">
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>
+					<condition and="true">
 						<defined name="formClientIdApplicativoModiChoice" not="true"/>
+						<defined name="formClientIdFruizioneModiChoice" not="true"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.formClientId" />

@@ -197,6 +197,11 @@ public class Costanti {
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = "erogazione";
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = "fruizione";
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = "completa";
+	
+	public final static String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO = "connettore_token_policy_stat";
+	public final static String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY = "connettore_token_policy";
+	
+	public static final String CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO = "-";
 }
 
 

@@ -681,6 +681,10 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_DIGEST_ENCODING = "modipaSecurityMessageRestRequestDigestEncoding";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_DIGEST_ENCODING = "modipaSecurityMessageRestResponseDigestEncoding";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_X509_VALUE_X5URL = "modipaSecurityMessageRestRequestX509Url";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_SA_RICHIESTA_X509_VALUE_X5URL = "modipaSecurityMessageRestRequestX509Url";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_X509_VALUE_X5URL = "modipaSecurityMessageRestResponseX509Url";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_ALG = "modipaSecurityMessageSoapRequestAlg";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RISPOSTA_ALG = "modipaSecurityMessageSoapResponseAlg";
     
@@ -690,6 +694,10 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE = "modipaKeystoreCertMode";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE = "modipaKeystoreFruizioneMode";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO = "modipaSecurityOauthId";
+    public static final String MODIPA_PROFILO_SICUREZZA_OAUTH_KID = "modipaSecurityOauthKid";
+    public static final String MODIPA_PROFILO_SICUREZZA_OAUTH_KEYSTORE = "modipaSecurityOauthKeystore";
     
     public static final String MODIPA_KEYSTORE_MODE = "modipaKeystoreMode";
     public static final String MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE = "archive";

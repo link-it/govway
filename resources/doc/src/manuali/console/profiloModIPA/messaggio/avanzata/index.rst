@@ -18,6 +18,8 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 
 - :ref:`modipa_sicurezza_avanzate_fruizione_keystore`: è possibile attivare un differente scenario di fruizione rispetto a quello di default che prevede l'associazione del keystore di firma all'applicativo mittente.
 
+- :ref:`modipa_sicurezza_avanzate_fruizione_pdnd`:  è possibile configurare i parametri (Keystore, KID e clientId), richiesti da una negoziazione PDND, all'interno di fruizione.
+
 
 .. toctree::
         :maxdepth: 2
@@ -28,4 +30,5 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 	header_soap
 	sbustamento
 	fruizione_keystore
+	fruizione_pdnd
 

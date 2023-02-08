@@ -274,6 +274,9 @@ public class CostantiPdD {
     // Applicativo Richiedente
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_APPLICATIVE_REQUESTER = "applicativeRequester";
     
+    // Fruizione
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_OUTBOUND_INTERFACE = "outboundInterface";
+    
     /** Attesa attiva di default effettuata per ottenere un lock, in millisecondi */
     public final static long GET_LOCK_ATTESA_ATTIVA = 90 * 1000; // 2 minuti
     /** Intervallo maggiore per frequenza di check per ottenere un lock, in millisecondi */

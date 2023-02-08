@@ -1,9 +1,11 @@
-2023-02-07  Andrea Poli <apoli@link.it>
+2023-02-06  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
 	Aggiunta funzionalità OP-1542
 	Viene adesso supportato anche un nuovo scenario ModI di fruizione in cui il keystore utilizzato per la firma viene associato direttamente sulla fruizione.
 	Lo scenario è configurabile in alternativa alla modalità già presente in cui il keystore viene associato all'applicativo mittente.
+	È stata inoltre aggiunta la possibilità di definire una token policy di negoziazione in cui i dati relativi al keystore, il KID e il clientId sono prelevabili da una fruizione.
+	All'interno della fruizione è adesso possibile definire i parametri richiesti dalla token policy di negoziazione se nel connettore viene associata una policy con tale caratteristica.	
 	È infine stata rivista la label 'Contemporaneità Token Authorization e Agid-JWT-Signature' in 'Coesistenza Token Authorization e Agid-JWT-Signature'.
 
 2023-02-02  Andrea Poli <apoli@link.it>

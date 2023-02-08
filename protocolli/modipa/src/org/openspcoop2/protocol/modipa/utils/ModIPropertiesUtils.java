@@ -462,35 +462,11 @@ public class ModIPropertiesUtils {
 	}
 
 	public static List<ProtocolProperty> getProtocolProperties(boolean fruizione, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException {
-		List<ProtocolProperty> listProtocolProperties = null;
-		Fruitore fruitore = null;
-		if(fruizione) {
-			fruitore = getFruitore(soggettoFruitore, asps);
-			listProtocolProperties = fruitore.getProtocolPropertyList();
-		}
-		else {
-			listProtocolProperties = asps.getProtocolPropertyList();
-		}
-		return listProtocolProperties;
+		return ProtocolPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, asps);
 	}
 	
 	public static Fruitore getFruitore(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException {
-		if(soggettoFruitore==null) {
-			throw new ProtocolException("Fruitore non fornito");
-		}
-		Fruitore fruitore = null;
-		boolean find = false;
-		for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
-			if(fruitoreCheck.getTipo().equals(soggettoFruitore.getTipo()) && fruitoreCheck.getNome().equals(soggettoFruitore.getNome())) {
-				fruitore = fruitoreCheck;
-				find = true;
-				break;
-			}
-		}
-		if(!find) {
-			throw new ProtocolException("Fruitore '"+soggettoFruitore+"' non registrato come fruitore dell'accordo parte specifica");
-		}
-		return fruitore;
+		return ProtocolPropertiesUtils.getFruitore(soggettoFruitore, asps);
 	}
 	
 	public static String convertProfiloSicurezzaToSDKValue(String securityMessageProfile, boolean rest) {

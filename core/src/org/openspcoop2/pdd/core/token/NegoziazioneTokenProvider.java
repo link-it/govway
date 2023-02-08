@@ -529,6 +529,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id)) {
 			l.add(value ? Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE: Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL);
+			l.add(value ? Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE: Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_LABEL);
 		}
 		
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
@@ -696,7 +697,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
 				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 					item.setValue(typeValue);
 					item.setType(ItemType.HIDDEN);
 					return item.getValue();
@@ -719,7 +720,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
 				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 					item.setValue("-");
 					item.setType(ItemType.HIDDEN);
 					return item.getValue();
@@ -738,7 +739,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
 				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 					item.setValue("-");
 					item.setType(ItemType.HIDDEN);
 					return item.getValue();
@@ -753,7 +754,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
 				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 					item.setValue("-");
 					item.setType(ItemType.HIDDEN);
 					return item.getValue();
