@@ -44,6 +44,13 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
   private Boolean certificateChain = null;
   
   @Schema(description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "modalita", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreDefault.class, name = "default"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreRidefinito.class, name = "ridefinito")  })
+  private OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore keystore = null;
+  
+  @Schema(description = "")
   private Boolean includiSignatureToken = null;
   
   @Schema(description = "")
@@ -157,6 +164,25 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
 
   public FruizioneModISoapRichiestaSicurezzaMessaggio certificateChain(Boolean certificateChain) {
     this.certificateChain = certificateChain;
+    return this;
+  }
+
+ /**
+   * Get keystore
+   * @return keystore
+  **/
+  @JsonProperty("keystore")
+  @Valid
+  public OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore getKeystore() {
+    return this.keystore;
+  }
+
+  public void setKeystore(OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore keystore) {
+    this.keystore = keystore;
+  }
+
+  public FruizioneModISoapRichiestaSicurezzaMessaggio keystore(OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore keystore) {
+    this.keystore = keystore;
     return this;
   }
 
@@ -285,6 +311,7 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
     sb.append("    headerSoapFirmare: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.headerSoapFirmare)).append("\n");
     sb.append("    riferimentoX509: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.riferimentoX509)).append("\n");
     sb.append("    certificateChain: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.certificateChain)).append("\n");
+    sb.append("    keystore: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.keystore)).append("\n");
     sb.append("    includiSignatureToken: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.includiSignatureToken)).append("\n");
     sb.append("    timeToLive: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    wsaTo: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.wsaTo)).append("\n");

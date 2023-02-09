@@ -42,6 +42,13 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   private Boolean certificateChain = null;
   
   @Schema(description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "modalita", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreDefault.class, name = "default"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreRidefinito.class, name = "ridefinito")  })
+  private OneOfFruizioneModIRestRichiestaSicurezzaMessaggioKeystore keystore = null;
+  
+  @Schema(description = "")
   private Integer timeToLive = 300;
   
   @Schema(description = "")
@@ -148,6 +155,25 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
 
   public FruizioneModIRestRichiestaSicurezzaMessaggio certificateChain(Boolean certificateChain) {
     this.certificateChain = certificateChain;
+    return this;
+  }
+
+ /**
+   * Get keystore
+   * @return keystore
+  **/
+  @JsonProperty("keystore")
+  @Valid
+  public OneOfFruizioneModIRestRichiestaSicurezzaMessaggioKeystore getKeystore() {
+    return this.keystore;
+  }
+
+  public void setKeystore(OneOfFruizioneModIRestRichiestaSicurezzaMessaggioKeystore keystore) {
+    this.keystore = keystore;
+  }
+
+  public FruizioneModIRestRichiestaSicurezzaMessaggio keystore(OneOfFruizioneModIRestRichiestaSicurezzaMessaggioKeystore keystore) {
+    this.keystore = keystore;
     return this;
   }
 
@@ -299,6 +325,7 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
     sb.append("    headerHttpFirmare: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.headerHttpFirmare)).append("\n");
     sb.append("    riferimentoX509: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.riferimentoX509)).append("\n");
     sb.append("    certificateChain: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.certificateChain)).append("\n");
+    sb.append("    keystore: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.keystore)).append("\n");
     sb.append("    timeToLive: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    audience: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.audience)).append("\n");
     sb.append("    informazioniUtenteCodiceEnte: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteCodiceEnte)).append("\n");

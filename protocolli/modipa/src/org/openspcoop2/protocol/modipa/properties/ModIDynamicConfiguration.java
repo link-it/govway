@@ -4229,30 +4229,47 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			boolean pdnd = false;
 			if(ConsoleOperationType.ADD.equals(consoleOperationType)) {
 				
-				String tokenPolicyStato = null;
+				String tokenPolicyViaAPI = null;
 				try {
-					tokenPolicyStato = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+					tokenPolicyViaAPI = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_VIA_API);
 				}catch(Exception e) {
 					throw new ProtocolException(e.getMessage(),e);
 				}
-				if(isEnabled(tokenPolicyStato)) {
+				if(tokenPolicyViaAPI!=null && StringUtils.isNotEmpty(tokenPolicyViaAPI) && !Costanti.CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicyViaAPI)) {
+					tokenSignedJWT = isTokenPolicySignedJWT(configIntegrationReader, tokenPolicyViaAPI);
+					if(tokenSignedJWT) {
+						pdnd = isTokenPolicyPdnd(configIntegrationReader, tokenPolicyViaAPI);
+					}
+				}
+				else {
 				
-					String tokenPolicy = null;
+					String tokenPolicyStato = null;
 					try {
-						tokenPolicy = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY);
+						tokenPolicyStato = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 					}catch(Exception e) {
 						throw new ProtocolException(e.getMessage(),e);
 					}
-					if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy) && !Costanti.CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
-						tokenSignedJWT = isTokenPolicySignedJWT(configIntegrationReader, tokenPolicy);
-						if(tokenSignedJWT) {
-							pdnd = isTokenPolicyPdnd(configIntegrationReader, tokenPolicy);
+					if(isEnabled(tokenPolicyStato)) {
+					
+						String tokenPolicy = null;
+						try {
+							tokenPolicy = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY);
+						}catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
 						}
+						if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy) && !Costanti.CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+							tokenSignedJWT = isTokenPolicySignedJWT(configIntegrationReader, tokenPolicy);
+							if(tokenSignedJWT) {
+								pdnd = isTokenPolicyPdnd(configIntegrationReader, tokenPolicy);
+							}
+						}
+						
 					}
 					
 				}
 			}
 			else {
+				
 				if(idServizio!=null && idFruitore!=null) {
 					try {
 						AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio, false);
@@ -4317,6 +4334,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						throw new ProtocolException(e.getMessage(),e);
 					}
 				}
+					
 			}
 			
 			if(tokenSignedJWT) {

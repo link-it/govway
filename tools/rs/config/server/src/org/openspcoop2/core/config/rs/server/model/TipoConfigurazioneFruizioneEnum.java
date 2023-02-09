@@ -19,9 +19,37 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
-* OneOfFruizioneModi
-*/
-public interface OneOfFruizioneModi {
-    public TipoConfigurazioneFruizioneEnum getProtocollo();
+ * Gets or Sets TipoConfigurazioneFruizioneEnum
+ */
+public enum TipoConfigurazioneFruizioneEnum {
+OAUTH("oauth"),
+  SOAP("soap"),
+  REST("rest");
+
+  private String value;
+
+  TipoConfigurazioneFruizioneEnum(String value) {
+    this.value = value;
+  }
+
+  @Override
+  @JsonValue
+  public String toString() {
+    return String.valueOf(this.value);
+  }
+
+  @JsonCreator
+  public static TipoConfigurazioneFruizioneEnum fromValue(String text) {
+    for (TipoConfigurazioneFruizioneEnum b : TipoConfigurazioneFruizioneEnum.values()) {
+      if (String.valueOf(b.value).equals(text)) {
+        return b;
+      }
+    }
+    return null;
+  }
+  
 }

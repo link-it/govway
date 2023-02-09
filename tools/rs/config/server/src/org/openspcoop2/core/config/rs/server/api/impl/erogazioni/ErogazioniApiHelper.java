@@ -90,6 +90,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.StatoDescrizione;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.configurazione.ErogazioniConfEnv;
 import org.openspcoop2.core.config.rs.server.api.impl.fruizioni.configurazione.FruizioniConfEnv;
 import org.openspcoop2.core.config.rs.server.model.*;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -115,9 +116,11 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
+import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.GruppoSintetico;
@@ -5555,5 +5558,29 @@ public class ErogazioniApiHelper {
 	
 	public static boolean isConnettoreApplicativoServer(ServizioApplicativo sa) {
 		return sa.getTipo() != null && sa.getTipo().equals(CostantiConfigurazione.SERVER);
+	}
+	
+	public static void addInfoTokenPolicyForModI(Connettore regConnettore, ErogazioniEnv env, 
+			boolean checkEsistenzaTokenPolicy) throws Exception {
+		if(regConnettore.getPropertyList()!=null && regConnettore.getPropertyList().size()>0) {
+			for (Property p : regConnettore.getPropertyList()) {
+				if(CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(p.getNome())){
+					if(p.getValore()!=null && StringUtils.isNotEmpty(p.getValore())) {
+						
+						if(checkEsistenzaTokenPolicy) {
+							try {
+								env.configCore.getGenericProperties(p.getValore(), CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, false);
+							}catch(DriverConfigurazioneNotFound notFound) {
+								throw FaultCode.RICHIESTA_NON_VALIDA
+									.toException("Token policy di negoziazione '"+p.getValore()+"' non esistente");
+							}
+							
+						}
+						
+						env.requestWrapper.overrideParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_VIA_API, p.getValore());
+					}
+				}
+			}
+		}
 	}
 }

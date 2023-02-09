@@ -25,49 +25,48 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FruizioneModIRestRichiesta  {
-  
-  @Schema(required = true, description = "")
-  private FruizioneModIRestRichiestaSicurezzaMessaggio sicurezzaMessaggio = null;
+public class BaseFruizioneModIOAuth  {
   
   @Schema(description = "")
-  private BaseFruizioneModIOAuth oauth = null;
+  private String identificativo = null;
+  
+  @Schema(description = "")
+  private String kid = null;
  /**
-   * Get sicurezzaMessaggio
-   * @return sicurezzaMessaggio
+   * Get identificativo
+   * @return identificativo
   **/
-  @JsonProperty("sicurezza_messaggio")
-  @NotNull
+  @JsonProperty("identificativo")
   @Valid
-  public FruizioneModIRestRichiestaSicurezzaMessaggio getSicurezzaMessaggio() {
-    return this.sicurezzaMessaggio;
+ @Size(max=2800)  public String getIdentificativo() {
+    return this.identificativo;
   }
 
-  public void setSicurezzaMessaggio(FruizioneModIRestRichiestaSicurezzaMessaggio sicurezzaMessaggio) {
-    this.sicurezzaMessaggio = sicurezzaMessaggio;
+  public void setIdentificativo(String identificativo) {
+    this.identificativo = identificativo;
   }
 
-  public FruizioneModIRestRichiesta sicurezzaMessaggio(FruizioneModIRestRichiestaSicurezzaMessaggio sicurezzaMessaggio) {
-    this.sicurezzaMessaggio = sicurezzaMessaggio;
+  public BaseFruizioneModIOAuth identificativo(String identificativo) {
+    this.identificativo = identificativo;
     return this;
   }
 
  /**
-   * Get oauth
-   * @return oauth
+   * Get kid
+   * @return kid
   **/
-  @JsonProperty("oauth")
+  @JsonProperty("kid")
   @Valid
-  public BaseFruizioneModIOAuth getOauth() {
-    return this.oauth;
+ @Size(max=4000)  public String getKid() {
+    return this.kid;
   }
 
-  public void setOauth(BaseFruizioneModIOAuth oauth) {
-    this.oauth = oauth;
+  public void setKid(String kid) {
+    this.kid = kid;
   }
 
-  public FruizioneModIRestRichiesta oauth(BaseFruizioneModIOAuth oauth) {
-    this.oauth = oauth;
+  public BaseFruizioneModIOAuth kid(String kid) {
+    this.kid = kid;
     return this;
   }
 
@@ -75,10 +74,10 @@ public class FruizioneModIRestRichiesta  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class FruizioneModIRestRichiesta {\n");
+    sb.append("class BaseFruizioneModIOAuth {\n");
     
-    sb.append("    sicurezzaMessaggio: ").append(FruizioneModIRestRichiesta.toIndentedString(this.sicurezzaMessaggio)).append("\n");
-    sb.append("    oauth: ").append(FruizioneModIRestRichiesta.toIndentedString(this.oauth)).append("\n");
+    sb.append("    identificativo: ").append(BaseFruizioneModIOAuth.toIndentedString(this.identificativo)).append("\n");
+    sb.append("    kid: ").append(BaseFruizioneModIOAuth.toIndentedString(this.kid)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -221,6 +221,10 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					}
 				}
 				
+				if(env.isProfiloModi()) {
+					ErogazioniApiHelper.addInfoTokenPolicyForModI(regConnettore, env, true);
+				}
+				
 				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env, required);
 	
 				if(protocolProperties != null) {
@@ -824,6 +828,11 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			
 			Fruitore f = ErogazioniApiHelper.getFruitore(asps, env.idSoggetto.getNome());
+			
+			if(env.isProfiloModi()) {
+				ErogazioniApiHelper.addInfoTokenPolicyForModI(f.getConnettore(), env, false);
+			}
+			
 			FruizioneModI ret = ModiErogazioniApiHelper.getFruizioneModI(asps, env, profilo, ErogazioniApiHelper.getProtocolPropertiesMap(idFruizione, f, env));
 
 			context.getLogger().info("Invocazione completata con successo");

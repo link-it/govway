@@ -1,3 +1,11 @@
+2023-02-09  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1542
+	Le API di configurazione consentono:	
+	- attuare il nuovo scenario ModI di fruizione in cui il keystore utilizzato per la firma viene associato direttamente sulla fruizione;
+	- configurare nella fruizione i parametri richiesti da una token policy di negoziazione con tipo di keystore 'Definito nella fruizione'.
+
 2023-02-06  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

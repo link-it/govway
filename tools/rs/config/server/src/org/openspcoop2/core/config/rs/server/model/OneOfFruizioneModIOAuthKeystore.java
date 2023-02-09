@@ -20,8 +20,8 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 /**
-* OneOfFruizioneModi
+* OneOfFruizioneModIOAuthKeystore
 */
-public interface OneOfFruizioneModi {
-    public TipoConfigurazioneFruizioneEnum getProtocollo();
+public interface OneOfFruizioneModIOAuthKeystore {
+    public StatoDefaultRidefinitoEnum getModalita();
 }

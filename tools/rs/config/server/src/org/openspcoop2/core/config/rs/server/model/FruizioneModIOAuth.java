@@ -25,16 +25,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FruizioneModISoap  implements OneOfFruizioneModi, OneOfFruizioneModIModi {
+public class FruizioneModIOAuth extends BaseFruizioneModIOAuth implements OneOfFruizioneModi, OneOfFruizioneModIModi {
   
   @Schema(required = true, description = "")
   private TipoConfigurazioneFruizioneEnum protocollo = null;
   
-  @Schema(required = true, description = "")
-  private FruizioneModISoapRichiesta richiesta = null;
-  
-  @Schema(required = true, description = "")
-  private FruizioneModISoapRisposta risposta = null;
+  @Schema(description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "modalita", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreDefault.class, name = "default"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreRidefinito.class, name = "ridefinito")  })
+  private OneOfFruizioneModIOAuthKeystore keystore = null;
  /**
    * Get protocollo
    * @return protocollo
@@ -51,48 +52,27 @@ public class FruizioneModISoap  implements OneOfFruizioneModi, OneOfFruizioneMod
     this.protocollo = protocollo;
   }
 
-  public FruizioneModISoap protocollo(TipoConfigurazioneFruizioneEnum protocollo) {
+  public FruizioneModIOAuth protocollo(TipoConfigurazioneFruizioneEnum protocollo) {
     this.protocollo = protocollo;
     return this;
   }
 
  /**
-   * Get richiesta
-   * @return richiesta
+   * Get keystore
+   * @return keystore
   **/
-  @JsonProperty("richiesta")
-  @NotNull
+  @JsonProperty("keystore")
   @Valid
-  public FruizioneModISoapRichiesta getRichiesta() {
-    return this.richiesta;
+  public OneOfFruizioneModIOAuthKeystore getKeystore() {
+    return this.keystore;
   }
 
-  public void setRichiesta(FruizioneModISoapRichiesta richiesta) {
-    this.richiesta = richiesta;
+  public void setKeystore(OneOfFruizioneModIOAuthKeystore keystore) {
+    this.keystore = keystore;
   }
 
-  public FruizioneModISoap richiesta(FruizioneModISoapRichiesta richiesta) {
-    this.richiesta = richiesta;
-    return this;
-  }
-
- /**
-   * Get risposta
-   * @return risposta
-  **/
-  @JsonProperty("risposta")
-  @NotNull
-  @Valid
-  public FruizioneModISoapRisposta getRisposta() {
-    return this.risposta;
-  }
-
-  public void setRisposta(FruizioneModISoapRisposta risposta) {
-    this.risposta = risposta;
-  }
-
-  public FruizioneModISoap risposta(FruizioneModISoapRisposta risposta) {
-    this.risposta = risposta;
+  public FruizioneModIOAuth keystore(OneOfFruizioneModIOAuthKeystore keystore) {
+    this.keystore = keystore;
     return this;
   }
 
@@ -100,11 +80,10 @@ public class FruizioneModISoap  implements OneOfFruizioneModi, OneOfFruizioneMod
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class FruizioneModISoap {\n");
-    
-    sb.append("    protocollo: ").append(FruizioneModISoap.toIndentedString(this.protocollo)).append("\n");
-    sb.append("    richiesta: ").append(FruizioneModISoap.toIndentedString(this.richiesta)).append("\n");
-    sb.append("    risposta: ").append(FruizioneModISoap.toIndentedString(this.risposta)).append("\n");
+    sb.append("class FruizioneModIOAuth {\n");
+    sb.append("    ").append(FruizioneModIOAuth.toIndentedString(super.toString())).append("\n");
+    sb.append("    protocollo: ").append(FruizioneModIOAuth.toIndentedString(this.protocollo)).append("\n");
+    sb.append("    keystore: ").append(FruizioneModIOAuth.toIndentedString(this.keystore)).append("\n");
     sb.append("}");
     return sb.toString();
   }

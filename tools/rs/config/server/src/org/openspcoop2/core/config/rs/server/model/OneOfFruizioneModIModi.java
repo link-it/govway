@@ -23,5 +23,5 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfFruizioneModIModi
 */
 public interface OneOfFruizioneModIModi {
-    public TipoApiEnum getProtocollo();
+    public TipoConfigurazioneFruizioneEnum getProtocollo();
 }
