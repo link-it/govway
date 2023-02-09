@@ -3970,6 +3970,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									if(visualizzazioneTabs) {									
 										if(!connettoreMultiploEnabled && !connettoreMultiploEnabledDefault) {	
 											de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getLabelConnettore(sa,is,true));
+											String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
+											de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 										} 
 										else if(connettoreMultiploEnabledDefault) {
 											//de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault));
@@ -3998,6 +4000,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									if(visualizzazioneTabs) {
 										if(!connettoreMultiploEnabled) {	
 											de.setValue(this.getLabelConnettore(sa,is,true));
+											String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
+											de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 										} else {
 											de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociata));
 											de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paAssociata));

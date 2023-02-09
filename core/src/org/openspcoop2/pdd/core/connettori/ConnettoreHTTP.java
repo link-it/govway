@@ -631,7 +631,12 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 
 			
 			// Spedizione byte
-			if(httpBody.isDoOutput()){
+			boolean httpBody_isDoOutput = httpBody.isDoOutput();
+			if(!httpBody.isDoOutput() && request.isForceSendContent()) {
+				this.httpConn.setDoOutput(true);
+				httpBody_isDoOutput = true;
+			}
+			if(httpBody_isDoOutput){
 				boolean consumeRequestMessage = true;
 				if(this.followRedirects){
 					consumeRequestMessage = false;

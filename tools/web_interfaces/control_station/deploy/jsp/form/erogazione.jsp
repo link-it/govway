@@ -318,12 +318,14 @@
 				            				String tooltipTextValNoEdit = "";
 											
 				            				if(de.getToolTip()!=null && !de.getToolTip().equals("")){
-				            					tooltipTextValNoEdit = " title=\"" + de.getToolTip() + "\"";
+												tooltipTextValNoEdit = " title=\"" + de.getToolTip() + "\"";	
 											}
-				            				else if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
-												tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
+				            				
+											if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
+												if(tooltipTextValNoEdit==null || "".equals(tooltipTextValNoEdit)){
+													tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
+												}
 												textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
-												
 											}		
 											
 				            				%>

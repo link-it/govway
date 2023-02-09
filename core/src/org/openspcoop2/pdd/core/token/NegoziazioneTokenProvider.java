@@ -581,7 +581,12 @@ public class NegoziazioneTokenProvider implements IProvider {
 	public ProviderInfo getProviderInfo(String id) throws ProviderException{
 		if(Costanti.ID_RETRIEVE_ENDPOINT_URL.equals(id) ||
 				Costanti.ID_RETRIEVE_AUTENTICAZIONE_USERNAME.equals(id) ||
+				Costanti.ID_RETRIEVE_AUTENTICAZIONE_PASSWORD.equals(id) ||
 				Costanti.ID_RETRIEVE_CLIENT_ID.equals(id) ||
+				Costanti.ID_RETRIEVE_CLIENT_ID_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_CLIENT_SECRET.equals(id) ||
+				Costanti.ID_RETRIEVE_CLIENT_SECRET_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_BEARER_TOKEN.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_X5U.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_KID_VALUE.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id) ||

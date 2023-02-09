@@ -41,6 +41,7 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 	
 	private String endpoint;
 	private String basicUsername;
+	private String basicPassword;
 	private String bearerToken;
 	
 	private String requestDynamicPayloadTemplate;
@@ -69,6 +70,11 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 			this.basicUsername = policyAttributeAuthority.getBasicAuthentication_username();
 			if(this.basicUsername!=null && !"".equals(this.basicUsername)) {
 				this.basicUsername = DynamicUtils.convertDynamicPropertyValue("username.gwt", this.basicUsername, dynamicMap, pddContext);	
+			}
+			
+			this.basicPassword = policyAttributeAuthority.getBasicAuthentication_password();
+			if(this.basicPassword!=null && !"".equals(this.basicPassword)) {
+				this.basicPassword = DynamicUtils.convertDynamicPropertyValue("password.gwt", this.basicPassword, dynamicMap, pddContext);	
 			}
 		}
 		
@@ -140,6 +146,12 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 			}
 			sb.append("user:").append(this.basicUsername);
 		}
+		if(StringUtils.isNotEmpty(this.basicPassword) && (!cacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("password:").append(this.basicPassword);
+		}
 		if(StringUtils.isNotEmpty(this.bearerToken)) {
 			if(sb.length()>0) {
 				sb.append(separator);
@@ -197,6 +209,9 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 
 	public String getBasicUsername() {
 		return this.basicUsername;
+	}
+	public String getBasicPassword() {
+		return this.basicPassword;
 	}
 	
 	public String getBearerToken() {

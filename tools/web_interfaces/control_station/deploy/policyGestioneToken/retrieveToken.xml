@@ -71,6 +71,7 @@
 				<condition and="false">
 					<equals name="retrieveTokenMethod" value="usernamePassword"/>
 					<equals name="retrieveTokenMethod" value="clientCredentials"/>
+					<equals name="retrieveTokenMethod" value="custom"/>
 				</condition>
 			</conditions>
 			<item type="checkbox" name="autenticazioneEndpointBasic" label="Basic" defaultSelected="false" reloadOnChange="true">
@@ -96,6 +97,16 @@
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom" not="true"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.endpoint.basic.username" />
+			</item>
+			<item type="text" name="autenticazioneEndpointBasicUsernameCustom" label="Username" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.username" />
@@ -104,6 +115,16 @@
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom" not="true"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.endpoint.basic.password" />
+			</item>
+			<item type="text" name="autenticazioneEndpointBasicPasswordCustom" label="Password" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.password" />
@@ -114,6 +135,16 @@
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom" not="true"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.endpoint.basic.asAuthorizationHeader" />
+			</item>
+			<item type="hidden" name="autenticazioneEndpointBasicAuthorizationHeaderCustom" value="true">
+				<conditions>
+					<condition and="true">
+						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom" />
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.asAuthorizationHeader" />
@@ -709,17 +740,45 @@
 				<property name="policy.retrieveToken.httpMethod" />
 			</item>
 
+			<item type="checkbox" name="httpMethodPayloadDefinedDefaultTrue" label="Payload" defaultSelected="true" reloadOnChange="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+                                        <condition and="false">
+						<equals name="httpMethod" value="POST"/>
+						<equals name="httpMethod" value="PUT"/>
+						<equals name="httpMethod" value="PATCH"/>
+						<equals name="httpMethod" value="LINK"/>
+						<equals name="httpMethod" value="UNLINK"/>
+                                        </condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpMethod.payloadDefined" />
+			</item>
+			<item type="checkbox" name="httpMethodPayloadDefinedDefaultFalse" label="Payload" defaultSelected="false" reloadOnChange="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+                                        <condition not="true" and="false">
+						<equals name="httpMethod" value="POST"/>
+						<equals name="httpMethod" value="PUT"/>
+						<equals name="httpMethod" value="PATCH"/>
+						<equals name="httpMethod" value="LINK"/>
+						<equals name="httpMethod" value="UNLINK"/>
+                                        </condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpMethod.payloadDefined" />
+			</item>
+
 			<item type="textarea" name="httpContentType" label="Content-Type" required="true" max="1">
 				<conditions and="true">
 					<condition>
 						<equals name="retrieveTokenMethod" value="custom"/>
 					</condition>
 					<condition and="false">
-						<equals name="httpMethod" value="POST"/>
-						<equals name="httpMethod" value="PUT"/>
-						<equals name="httpMethod" value="PATCH"/>
-						<equals name="httpMethod" value="LINK"/>
-						<equals name="httpMethod" value="UNLINK"/>
+						<selected name="httpMethodPayloadDefinedDefaultTrue"/>
+						<selected name="httpMethodPayloadDefinedDefaultFalse"/>
 					</condition>
 				</conditions>
 				<property name="policy.retrieveToken.httpContentType" />
@@ -736,11 +795,8 @@
 						<equals name="retrieveTokenMethod" value="custom"/>
 					</condition>
 					<condition and="false">
-						<equals name="httpMethod" value="POST"/>
-						<equals name="httpMethod" value="PUT"/>
-						<equals name="httpMethod" value="PATCH"/>
-						<equals name="httpMethod" value="LINK"/>
-						<equals name="httpMethod" value="UNLINK"/>
+						<selected name="httpMethodPayloadDefinedDefaultTrue"/>
+						<selected name="httpMethodPayloadDefinedDefaultFalse"/>
 					</condition>
 				</conditions>
 				<values>
@@ -756,11 +812,8 @@
 						<equals name="retrieveTokenMethod" value="custom"/>
 					</condition>
 					<condition and="false">
-						<equals name="httpMethod" value="POST"/>
-						<equals name="httpMethod" value="PUT"/>
-						<equals name="httpMethod" value="PATCH"/>
-						<equals name="httpMethod" value="LINK"/>
-						<equals name="httpMethod" value="UNLINK"/>
+						<selected name="httpMethodPayloadDefinedDefaultTrue"/>
+						<selected name="httpMethodPayloadDefinedDefaultFalse"/>
 					</condition>
 					<condition>
 						<equals name="httpPayloadTemplateType" value="template"/>
@@ -774,11 +827,8 @@
 						<equals name="retrieveTokenMethod" value="custom"/>
 					</condition>
 					<condition and="false">
-						<equals name="httpMethod" value="POST"/>
-						<equals name="httpMethod" value="PUT"/>
-						<equals name="httpMethod" value="PATCH"/>
-						<equals name="httpMethod" value="LINK"/>
-						<equals name="httpMethod" value="UNLINK"/>
+						<selected name="httpMethodPayloadDefinedDefaultTrue"/>
+						<selected name="httpMethodPayloadDefinedDefaultFalse"/>
 					</condition>
 					<condition>
 						<equals name="httpPayloadTemplateType" value="freemarker-template"/>
@@ -792,11 +842,8 @@
 						<equals name="retrieveTokenMethod" value="custom"/>
 					</condition>
 					<condition and="false">
-						<equals name="httpMethod" value="POST"/>
-						<equals name="httpMethod" value="PUT"/>
-						<equals name="httpMethod" value="PATCH"/>
-						<equals name="httpMethod" value="LINK"/>
-						<equals name="httpMethod" value="UNLINK"/>
+						<selected name="httpMethodPayloadDefinedDefaultTrue"/>
+						<selected name="httpMethodPayloadDefinedDefaultFalse"/>
 					</condition>
 					<condition>
 						<equals name="httpPayloadTemplateType" value="velocity-template"/>

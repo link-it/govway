@@ -37,6 +37,7 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 public class NegoziazioneCustomTest extends ConfigLoader {
 
 	public final static String api_negoziazione = "TestNegoziazioneTokenCustom";
+	public final static String api_negoziazione_payload_invertito = "TestNegoziazioneTokenCustomPayloadInvertito";
 	
 	
 	@Test
@@ -602,5 +603,171 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 				"\"TESTscope\":\"scope scopeAzure\"",
 				"\"TESTrefresh_expires_in\":\""+now+"\"",
 				"\"TESTrefresh_token\":\"2YotnFZFEjr1zCsicMWpAA\"");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Test
+	public void post_no_payload() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+	
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test_post_param", "vPostValue");
+		headers.put("test_post_header", "vTestPost");
+		headers.put("post_bearer_token", "ApplicativoVerificaNegoziazioneTokenCustomBearer");
+		
+		String endpoint = "http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerCustomCredentialsDummyPayloadInvertito/v1/get?post_param=vPostValue";
+		
+		HttpResponse response = NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "get", headers, // l'azione invocata rimane 'get'
+				false,
+				null,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"custom\"",
+				"\"endpoint\":\""+endpoint+"\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneCustomPOSTwithoutPayload\"",
+				"\"post_header\":\"vTestPost\"");
+		String idRichiestaOriginale = response.getHeaderFirstValue("GovWay-Transaction-ID");
+
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test_post_param", "vPostValue-ERRATO");
+		
+		NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "get", headers, // l'azione invocata rimane 'get'
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test_post_param", "vPostValue");
+		headers.put("test_post_header", "vTestPost-ERRATO");
+		
+		NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "get", headers, // l'azione invocata rimane 'get'
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test_post_header", "vTestPost");
+		headers.put("post_bearer_token", "ApplicativoVerificaNegoziazioneTokenCustomBearer-ERRATO");
+		
+		NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "get", headers, // l'azione invocata rimane 'get'
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationDeny");
+		
+		// provo a modificare una informazione dinamica, ripristinando la configurazione corretta
+		headers.put("post_bearer_token", "ApplicativoVerificaNegoziazioneTokenCustomBearer");
+		NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "get", headers, // l'azione invocata rimane 'get'
+				false,
+				null,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"custom\"",
+				"\"endpoint\":\""+endpoint+"\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneCustomPOSTwithoutPayload\"",
+				"\"post_header\":\"vTestPost\"",
+				"\"transactionId\":\""+idRichiestaOriginale+"\""
+				);
+		
+	}
+	
+	
+	
+	@Test
+	public void delete_freemarker() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+	
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test_delete_param", "vDeleteValueFreemarker");
+		headers.put("test_delete_header", "vTestDeleteFreemarker");
+		headers.put("test_elem", "vCustom2Freemarker");
+		headers.put("delete_username", "ApplicativoVerificaNegoziazioneTokenCustomBasic");
+		headers.put("delete_password", "123456");
+		
+		String endpoint = "http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerCustomCredentialsDummyPayloadInvertito/v1/post_freemarker?delete_param=vDeleteValueFreemarker&delete_freemarker=true";
+		
+		HttpResponse response = NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "post_freemarker", headers, // l'azione invocata rimane 'post_freemarker'
+				false,
+				null,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"custom\"",
+				"\"endpoint\":\""+endpoint+"\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneCustomDELETEFreemarker\"",
+				"\"delete_header\":\"vTestDeleteFreemarker\"");
+		String idRichiestaOriginale = response.getHeaderFirstValue("GovWay-Transaction-ID");
+
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test_delete_param", "vPostValueFreemarker-ERRATO");
+		
+		NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "post_freemarker", headers, // l'azione invocata rimane 'post_freemarker'
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test_delete_param", "vDeleteValueFreemarker");
+		headers.put("test_delete_header", "vTestDeleteFreemarker-ERRATO");
+		
+		NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "post_freemarker", headers, // l'azione invocata rimane 'post_freemarker'
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test_delete_header", "vTestDeleteFreemarker");
+		headers.put("test_elem", "vCustom2Freemarker-ERRATO");
+		
+		NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "post_freemarker", headers, // l'azione invocata rimane 'post_freemarker'
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test_elem", "vCustom2Freemarker");
+		headers.put("delete_username", "ApplicativoVerificaNegoziazioneTokenCustomBasic-ERRATO");
+		
+		NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "post_freemarker", headers, // l'azione invocata rimane 'post_freemarker'
+				true,
+				"Connessione terminata con errore (codice trasporto: 401)%AuthenticationFailed");
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("delete_username", "ApplicativoVerificaNegoziazioneTokenCustomBasic");
+		headers.put("delete_password", "123456-ERRATO");
+		
+		// NOTA: la password non viene utilizzata come chiave di cache e quindi continua ad utilizzare la precedente invocazione completata con successo
+		NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "post_freemarker", headers, // l'azione invocata rimane 'post_freemarker'
+				false,
+				null,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"custom\"",
+				"\"endpoint\":\""+endpoint+"\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneCustomDELETEFreemarker\"",
+				"\"delete_header\":\"vTestDeleteFreemarker\"",
+				"\"transactionId\":\""+idRichiestaOriginale+"\""
+				);
+		
+		// provo a modificare una informazione dinamica, ripristinando la configurazione corretta
+		headers.put("delete_password", "123456");
+		NegoziazioneTest._test(logCore, api_negoziazione_payload_invertito, "post_freemarker", headers, // l'azione invocata rimane 'post_freemarker'
+				false,
+				null,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"custom\"",
+				"\"endpoint\":\""+endpoint+"\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneCustomDELETEFreemarker\"",
+				"\"delete_header\":\"vTestDeleteFreemarker\"",
+				"\"transactionId\":\""+idRichiestaOriginale+"\""
+				);
+		
 	}
 }

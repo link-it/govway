@@ -1,5 +1,15 @@
 2023-02-09  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1540
+	In una token policy di negoziazione la personalizzare della chiamata http attuata verso l'authorization server consente adesso:
+	- di definire credenziali http-basic, http-bearer e l'invio di un certificato tls client;
+	- di utilizzare qualsiasi metodo http senza necessariamente dover inviare un payload (es. richieste HTTP POST senza payload);
+	- di inviare payload su metodi http che normalmente non lo prevedono (es. HTTP DELETE).
+	Nell'intervento è stato migliorato il tooltip visualizzato nel connettore di una erogazione.
+
+2023-02-09  Andrea Poli <apoli@link.it>
+
 	* [ApiRsConfigurazione, ProtocolloModIPA]
 	Aggiunta funzionalità OP-1542
 	Le API di configurazione consentono:	

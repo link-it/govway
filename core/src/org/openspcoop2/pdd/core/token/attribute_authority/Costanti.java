@@ -109,6 +109,7 @@ public class Costanti {
 	
 	public final static String ID_AA_ENDPOINT_URL = "endpointURL";
 	public final static String ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_USERNAME = "autenticazioneEndpointBasicUsername";
+	public final static String ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_PASSWORD = "autenticazioneEndpointBasicPassword";
 	public final static String ID_AA_AUTENTICAZIONE_ENDPOINT_BEARER_TOKEN = "autenticazioneEndpointBearerToken";
 	public final static String ID_AA_RICHIESTA_JWS_PAYLOAD_TEMPLATE = "aaRichiestaJwsPayloadTemplate";
 	public final static String ID_AA_RICHIESTA_JWS_PAYLOAD_TEMPLATE_FREEMARKER = "aaRichiestaJwsPayloadTemplateFreemarker";

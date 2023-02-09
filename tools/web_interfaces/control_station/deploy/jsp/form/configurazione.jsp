@@ -722,12 +722,15 @@ function inizializzaSelectFiltro(){
 									            				
 									            				String tooltipTextValNoEdit = "";
 																
-																if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
-																	tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
-																	textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
-																}
-																else if(de.getToolTip()!=null && !de.getToolTip().equals("")){
+									            				if(de.getToolTip()!=null && !de.getToolTip().equals("")){
 																	tooltipTextValNoEdit = " title=\"" + de.getToolTip() + "\"";	
+																}
+									            				
+																if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
+																	if(tooltipTextValNoEdit==null || "".equals(tooltipTextValNoEdit)){
+																		tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
+																	}
+																	textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
 																}
 									            				
 									            				%>

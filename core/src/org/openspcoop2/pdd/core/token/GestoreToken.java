@@ -3481,7 +3481,7 @@ public class GestoreToken {
 		String password = null;
 		if(basic) {
 			username = dynamicParameters.getBasicUsername();
-			password = policyNegoziazioneToken.getBasicAuthentication_password();
+			password = dynamicParameters.getBasicPassword();
 			if(datiRichiesta!=null) {
 				datiRichiesta.setClientId(username);
 			}
@@ -3615,11 +3615,12 @@ public class GestoreToken {
 		}
 		
 		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-			String usernamePasswordGrant = dynamicParameters.getUsernamePasswordGrant();
-			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, usernamePasswordGrant);
-			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
+			String usernamePasswordGrant_username = dynamicParameters.getUsernamePasswordGrant_username();
+			String usernamePasswordGrant_password = dynamicParameters.getUsernamePasswordGrant_password();
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, usernamePasswordGrant_username);
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, usernamePasswordGrant_password);
 			if(datiRichiesta!=null) {
-				datiRichiesta.setUsername(usernamePasswordGrant);
+				datiRichiesta.setUsername(usernamePasswordGrant_username);
 			}
 		}
 		
@@ -3728,6 +3729,7 @@ public class GestoreToken {
 			String contentString = dynamicParameters.getHttpPayload();
 			if(contentString!=null && StringUtils.isNotEmpty(contentString)) {
 				content = contentString.getBytes();
+				connettoreMsg.forceSendContent();
 			}
 		}
 		else {
@@ -4960,7 +4962,7 @@ public class GestoreToken {
 		String password = null;
 		if(basic) {
 			username = dynamicParameters.getBasicUsername();
-			password = policyAttributeAuthority.getBasicAuthentication_password();
+			password = dynamicParameters.getBasicPassword();
 		}
 		
 		boolean bearer = policyAttributeAuthority.isBearerAuthentication();

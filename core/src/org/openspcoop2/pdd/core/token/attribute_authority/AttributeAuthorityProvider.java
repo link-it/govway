@@ -398,7 +398,8 @@ public class AttributeAuthorityProvider implements IProvider {
 	public ProviderInfo getProviderInfo(String id) throws ProviderException{
 		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_ENDPOINT_URL.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_USERNAME.equals(id) ||
-				//org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_AUTENTICAZIONE_ENDPOINT_BEARER_TOKEN.equals(id) ||
+				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_PASSWORD.equals(id) ||
+				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_AUTENTICAZIONE_ENDPOINT_BEARER_TOKEN.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_ISSUER.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_SUBJECT.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_AUDIENCE.equals(id) ||

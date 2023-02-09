@@ -65,9 +65,11 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	
 	private String endpoint;
 	private String basicUsername;
+	private String basicPassword;
 	private String bearerToken;
 	
-	private String usernamePasswordGrant;
+	private String usernamePasswordGrant_username;
+	private String usernamePasswordGrant_password;
 	
 	private String signedJwtIssuer;
 	private String signedJwtClientId;
@@ -194,6 +196,11 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			if(this.basicUsername!=null && !"".equals(this.basicUsername)) {
 				this.basicUsername = DynamicUtils.convertDynamicPropertyValue("username.gwt", this.basicUsername, dynamicMap, pddContext);	
 			}
+			
+			this.basicPassword = policyNegoziazioneToken.getBasicAuthentication_password();
+			if(this.basicPassword!=null && !"".equals(this.basicPassword)) {
+				this.basicPassword = DynamicUtils.convertDynamicPropertyValue("password.gwt", this.basicPassword, dynamicMap, pddContext);	
+			}
 		}
 		
 		boolean bearer = policyNegoziazioneToken.isBearerAuthentication();
@@ -205,9 +212,14 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		}
 		
 		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-			this.usernamePasswordGrant = policyNegoziazioneToken.getUsernamePasswordGrant_username();
-			if(this.usernamePasswordGrant!=null && !"".equals(this.usernamePasswordGrant)) {
-				this.usernamePasswordGrant = DynamicUtils.convertDynamicPropertyValue("usernamePasswordGrant.gwt", this.usernamePasswordGrant, dynamicMap, pddContext);	
+			this.usernamePasswordGrant_username = policyNegoziazioneToken.getUsernamePasswordGrant_username();
+			if(this.usernamePasswordGrant_username!=null && !"".equals(this.usernamePasswordGrant_username)) {
+				this.usernamePasswordGrant_username = DynamicUtils.convertDynamicPropertyValue("usernamePasswordGrant_username.gwt", this.usernamePasswordGrant_username, dynamicMap, pddContext);	
+			}
+			
+			this.usernamePasswordGrant_password = policyNegoziazioneToken.getUsernamePasswordGrant_password();
+			if(this.usernamePasswordGrant_password!=null && !"".equals(this.usernamePasswordGrant_password)) {
+				this.usernamePasswordGrant_password = DynamicUtils.convertDynamicPropertyValue("usernamePasswordGrant_password.gwt", this.usernamePasswordGrant_password, dynamicMap, pddContext);	
 			}
 		}
 		
@@ -635,6 +647,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			}
 			sb.append("user:").append(this.basicUsername);
 		}
+		if(StringUtils.isNotEmpty(this.basicPassword) && (!cacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("password:").append(this.basicPassword);
+		}
 		if(StringUtils.isNotEmpty(this.bearerToken)) {
 			if(sb.length()>0) {
 				sb.append(separator);
@@ -642,11 +660,17 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			sb.append("token:").append(this.bearerToken);
 		}
 		
-		if(StringUtils.isNotEmpty(this.usernamePasswordGrant)) {
+		if(StringUtils.isNotEmpty(this.usernamePasswordGrant_username)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
-			sb.append("usernamePasswordGrant:").append(this.usernamePasswordGrant);
+			sb.append("usernamePasswordGrant_username:").append(this.usernamePasswordGrant_username);
+		}
+		if(StringUtils.isNotEmpty(this.usernamePasswordGrant_password) && (!cacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("usernamePasswordGrant_password:").append(this.usernamePasswordGrant_password);
 		}
 		
 		if(StringUtils.isNotEmpty(this.signedJwtIssuer) && (!cacheKey || signedJwtIssuer_cacheKey)) {
@@ -797,13 +821,19 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	public String getBasicUsername() {
 		return this.basicUsername;
 	}
+	public String getBasicPassword() {
+		return this.basicPassword;
+	}
 	
 	public String getBearerToken() {
 		return this.bearerToken;
 	}
 	
-	public String getUsernamePasswordGrant() {
-		return this.usernamePasswordGrant;
+	public String getUsernamePasswordGrant_username() {
+		return this.usernamePasswordGrant_username;
+	}
+	public String getUsernamePasswordGrant_password() {
+		return this.usernamePasswordGrant_password;
 	}
 	
 	public String getSignedJwtIssuer() {

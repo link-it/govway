@@ -360,7 +360,12 @@ public class Costanti {
 	
 	public final static String ID_RETRIEVE_ENDPOINT_URL = "endpointURL";
 	public final static String ID_RETRIEVE_AUTENTICAZIONE_USERNAME = "autenticazioneUsername";
+	public final static String ID_RETRIEVE_AUTENTICAZIONE_PASSWORD = "autenticazionePassword";
 	public final static String ID_RETRIEVE_CLIENT_ID = "autenticazioneEndpointBasicUsername";
+	public final static String ID_RETRIEVE_CLIENT_ID_CUSTOM = "autenticazioneEndpointBasicUsernameCustom";
+	public final static String ID_RETRIEVE_CLIENT_SECRET = "autenticazioneEndpointBasicPassword";
+	public final static String ID_RETRIEVE_CLIENT_SECRET_CUSTOM = "autenticazioneEndpointBasicPasswordCustom";
+	public final static String ID_RETRIEVE_BEARER_TOKEN = "autenticazioneEndpointBearerToken";
 	public final static String ID_RETRIEVE_JWT_KID_VALUE = "jwtSignatureKidValue";
 	public final static String ID_RETRIEVE_JWT_X5U = "jwtSignatureIncludeCertModeX5U";
 	public final static String ID_RETRIEVE_JWT_CLIENT_ID_APPLICATIVO_MODI_CUSTOM = "jwtClientIdApplicativoModiChoiceInput";
@@ -381,6 +386,7 @@ public class Costanti {
 	public final static String ID_RETRIEVE_FORM_RESOURCE = "formResource";
 	public final static String ID_RETRIEVE_FORM_PARAMETERS = "formParameters";
 	public final static String ID_RETRIEVE_HTTP_METHOD = "httpMethod";
+	public final static String ID_RETRIEVE_HTTP_METHOD_PAYLOAD_DEFINED = "httpMethodPayloadDefined";
 	public final static String ID_RETRIEVE_HTTP_CONTENT_TYPE = "httpContentType";
 	public final static String ID_RETRIEVE_HTTP_HEADERS = "httpHeaders";
 	public final static String ID_RETRIEVE_HTTP_PAYLOAD_TEMPLATE_TYPE = "httpPayloadTemplateType";
@@ -489,7 +495,7 @@ public class Costanti {
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD = "jwtKeystorePassword";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY = "jwtAliasChiavePrivata";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "jwtPasswordChiavePrivata";
-	
+		
 	public final static String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN = "customTokenParserCustomPlugin";
 	
 	public final static String ID_AA_JWS_KEYSTORE_TYPE = "aaJWSKeystoreType";
