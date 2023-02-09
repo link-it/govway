@@ -4278,7 +4278,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 								if(fruitore!=null) {
 									IDSoggetto check = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
 									if(idFruitore.equals(check)) {
-										if(fruitore.getConnettore()!=null && !TipiConnettore.DISABILITATO.equals(fruitore.getConnettore().getTipo())) {
+										if(fruitore.getConnettore()!=null && !TipiConnettore.DISABILITATO.getNome().equals(fruitore.getConnettore().getTipo())) {
 											if(fruitore.getConnettore().sizePropertyList()>0) {
 												for (Property p : fruitore.getConnettore().getPropertyList()) {
 													if(CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(p.getNome())){
@@ -4302,7 +4302,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 										if(fruitore.getConfigurazioneAzioneList()!=null && fruitore.getConfigurazioneAzioneList().size()>0) {
 											for (ConfigurazioneServizioAzione csa : fruitore.getConfigurazioneAzioneList()) {
 												if(csa!=null) {
-													if(csa.getConnettore()!=null && !TipiConnettore.DISABILITATO.equals(csa.getConnettore().getTipo())) {
+													if(csa.getConnettore()!=null && !TipiConnettore.DISABILITATO.getNome().equals(csa.getConnettore().getTipo())) {
 														if(csa.getConnettore().sizePropertyList()>0) {
 															for (Property p : csa.getConnettore().getPropertyList()) {
 																if(CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(p.getNome())){
