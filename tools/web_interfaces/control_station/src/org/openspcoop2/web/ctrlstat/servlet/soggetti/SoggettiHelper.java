@@ -1254,6 +1254,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			String filterCredenziale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CREDENZIALE);
 			this.addFilterCredenziale(filterTipoCredenziali, filterCredenziale);
+			
+			String filterCredenzialeIssuer = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CREDENZIALE_ISSUER);
+			this.addFilterCredenzialeIssuer(filterTipoCredenziali, filterCredenzialeIssuer);
 						
 			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
 			addFilterRuolo(filterRuolo, false);

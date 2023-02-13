@@ -8222,6 +8222,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			// filtro plugin
 			this.addFilterConnettorePlugin(ricerca, idLista, filterTipoConnettore);
+		
+			// filtro debug
+			if(!this.isModalitaStandard()) {
+				this.addFilterConnettoreDebug(ricerca, idLista, filterTipoConnettore);
+			}
 			
 			// filtro token policy
 			this.addFilterConnettoreTokenPolicy(ricerca, idLista, filterTipoConnettore);
@@ -8231,7 +8236,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			// filtro keystore
 			this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
-			
+						
 			// imposto apertura sezione
 			this.impostaAperturaSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE);
 
@@ -8851,6 +8856,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		String filtroConnettoreTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
 		String filtroConnettoreEndpoint = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_ENDPOINT);
 		String filtroConnettoreKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_KEYSTORE);
+		String filtroConnettoreDebug = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_DEBUG);
 		if((filtroConnettoreTipo!=null && "".equals(filtroConnettoreTipo))) {
 			filtroConnettoreTipo=null;
 		}
@@ -8866,7 +8872,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		if((filtroConnettoreKeystore!=null && "".equals(filtroConnettoreKeystore))) {
 			filtroConnettoreKeystore=null;
 		}
-		boolean joinConnettore =  filtroConnettoreTipo!=null	|| filtroConnettoreTokenPolicy!=null || filtroConnettoreEndpoint!=null || filtroConnettoreKeystore!=null;
+		if((filtroConnettoreDebug!=null && "".equals(filtroConnettoreDebug))) {
+			filtroConnettoreDebug=null;
+		}
+		boolean joinConnettore =  filtroConnettoreTipo!=null	|| filtroConnettoreTokenPolicy!=null || filtroConnettoreEndpoint!=null || filtroConnettoreKeystore!=null || filtroConnettoreDebug!=null;
 		TipiConnettore tipoConnettore = null;
 		String endpointType = null;
 		boolean tipoConnettoreIntegrationManager = false; 
@@ -8890,6 +8899,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		this.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
 		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
 		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		this.log.debug("filtroConnettoreDebug : " + filtroConnettoreDebug);
 		this.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
 		
 		List<PortaApplicativaServizioApplicativo> listaFiltrata = new ArrayList<PortaApplicativaServizioApplicativo>();
@@ -9089,6 +9099,26 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 									find=true;
 								}
 							}
+							if(!find) {
+								mapSA_filtrati.add(paSA.getNome());
+								continue;
+							}
+						}
+						
+						if(filtroConnettoreDebug!=null) {
+							String valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_DEBUG);
+							boolean find = false;
+							if("true".equals(valoreProperty)) {
+								if(Filtri.FILTRO_CONNETTORE_DEBUG_VALORE_ABILITATO.equals(filtroConnettoreDebug)) {
+									find=true;
+								}
+							}
+							else {
+								if(Filtri.FILTRO_CONNETTORE_DEBUG_VALORE_DISABILITATO.equals(filtroConnettoreDebug)) {
+									find=true;
+								}
+							}
+							
 							if(!find) {
 								mapSA_filtrati.add(paSA.getNome());
 								continue;

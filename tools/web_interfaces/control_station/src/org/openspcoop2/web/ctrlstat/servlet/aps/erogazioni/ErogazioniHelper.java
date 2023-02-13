@@ -670,7 +670,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				addFilterSoggettoErogatoreStringaLiberaContains(ricerca, idLista);
 			}
 			
-			
+						
 			// **** filtro connettore ****
 			
 			this.addFilterSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE, ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE, false);
@@ -681,6 +681,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			// filtro plugin
 			this.addFilterConnettorePlugin(ricerca, idLista, filterTipoConnettore);
 			
+			// filtro debug
+			if(!this.isModalitaStandard()) {
+				this.addFilterConnettoreDebug(ricerca, idLista, filterTipoConnettore);
+			}
+			
 			// filtro token policy
 			this.addFilterConnettoreTokenPolicy(ricerca, idLista, filterTipoConnettore);
 			
@@ -689,7 +694,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			// filtro keystore
 			this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
-			
+						
 			// imposto apertura sezione
 			this.impostaAperturaSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE);
 						
@@ -725,6 +730,60 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			// **** fine filtro modi ****
 
+			
+			// **** filtro configurazione ****
+			
+			this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_DATI_CONFIGURAZIONE, CostantiControlStation.LABEL_SUBTITLE_DATI_CONFIGURAZIONE, false);
+			
+			// filtro stato
+			this.addFilterStatoImplementazioneAPI(ricerca, idLista);
+			
+			// filtro autenticazione token
+			this.addFilterTipoAutenticazioneToken(ricerca, idLista);
+			
+			// filtro autenticazione trasporto
+			boolean modiErogazione = profiloModipaSelezionato && !gestioneFruitori;
+			Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+			String filterTipoAutenticazioneTrasporto = this.addFilterTipoAutenticazioneTrasporto(ricerca, idLista, true, modiErogazione, confPers);
+			
+			// filtro plugin autenticazione trasporto
+			this.addFilterTipoAutenticazioneTrasportoPlugin(ricerca, idLista, filterTipoAutenticazioneTrasporto, gestioneFruitori);
+			
+			// filtro stato rate limiting
+			this.addFilterConfigurazioneRateLimiting(ricerca, idLista);
+			
+			// filtro stato validazione
+			this.addFilterConfigurazioneValidazione(ricerca, idLista);
+			
+			// filtro stato caching risposta
+			this.addFilterConfigurazioneCacheRisposta(ricerca, idLista);
+			
+			// filtro stato message security
+			this.addFilterConfigurazioneMessageSecurity(ricerca, idLista);
+			
+			// filtro stato mtom
+			this.addFilterConfigurazioneMTOM(ricerca, idLista, filterTipoAccordo);
+			
+			// filtro trasformazione
+			this.addFilterConfigurazioneTrasformazione(ricerca, idLista);
+			
+			// filtro correlazione applicativa
+			this.addFilterConfigurazioneCorrelazioneApplicativa(ricerca, idLista);
+			
+			// filtro registrazione messaggi
+			this.addFilterConfigurazioneTipoDump(ricerca, idLista, false);
+			
+			// filtro cors
+			String filterCORS = this.addFilterConfigurazioneCORS(ricerca, idLista);
+			
+			// filtro cors origin
+			this.addFilterConfigurazioneCORSOrigin(ricerca, idLista, filterCORS);
+			
+			// imposto apertura sezione
+			this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_DATI_CONFIGURAZIONE);
+			
+			// **** fine filtro configurazione ****
+			
 			
 			// **** filtro proprieta ****
 			

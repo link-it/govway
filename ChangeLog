@@ -1,3 +1,12 @@
+2023-02-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1544
+	È adesso possibile effettuare ricerche nelle erogazioni e fruizioni rispetto al tipo di configurazione: 
+	stato dell'API, autenticazione token, autenticazione trasporto, rate limiting, validazione, response caching, trasformazioni, correlazione applicativa,
+	sicurezza messaggio, gestione mtom, registrazione dei messaggi e gestione CORS.
+	Inoltre per i soggetti e gli applicativi è stata aggiunta la possibilità di effettuare ricerche rispetto all'Issuer del certificato associato.
+
 2023-02-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

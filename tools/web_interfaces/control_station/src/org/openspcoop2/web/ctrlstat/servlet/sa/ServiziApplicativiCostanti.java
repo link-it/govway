@@ -122,6 +122,7 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_CREDENZIALI_ACCESSO_PORTA ="Modalit&agrave; di Accesso"; // alla Porta";
 	public final static String LABEL_CREDENZIALE_ACCESSO ="Modalit&agrave; di Accesso";
 	public final static String LABEL_CREDENZIALE_ACCESSO_HTTPS ="X.509 Subject";
+	public final static String LABEL_CREDENZIALE_ACCESSO_HTTPS_ISSUER ="X.509 Issuer";
 	public final static String LABEL_CREDENZIALE_ACCESSO_USERNAME ="Basic Username";
 	public final static String LABEL_CREDENZIALE_ACCESSO_PRINCIPAL ="Principal";
 	public final static String LABEL_CREDENZIALE_ACCESSO_TOKEN_POLICY ="Token Policy";

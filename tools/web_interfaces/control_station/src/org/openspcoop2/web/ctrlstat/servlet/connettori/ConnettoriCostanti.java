@@ -581,6 +581,7 @@ public class ConnettoriCostanti {
 	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT_FILE = "File";
 	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT_JMS = "Parametri Jms";
 	public final static String LABEL_FILTRO_CONNETTORE_KEYSTORE = "Keystore";
+	public final static String LABEL_FILTRO_CONNETTORE_DEBUG = "Debug";
 	public final static String LABEL_FILTRO_CONNETTORE_MULTIPLO_NOME = "Nome";
 	public final static String LABEL_FILTRO_CONNETTORE_MULTIPLO_FILTRO = "Filtro";
 	
