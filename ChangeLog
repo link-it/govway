@@ -1,3 +1,10 @@
+2023-02-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1546
+	La validazione di un token che presentava date (exp,iat,nbf) serializzate in un formato numerico esponenziale falliva generando un errore simile al seguente: 
+	'Token non valido: For input string: "1.67"'
+
 2023-02-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

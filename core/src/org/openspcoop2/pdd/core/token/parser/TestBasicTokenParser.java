@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.token.parser;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Properties;
 
@@ -46,6 +47,7 @@ public class TestBasicTokenParser {
 			tipoTest = TipologiaClaims.valueOf(args[0]);
 		}
 		
+		DecimalFormat decimalFormat9 = new DecimalFormat("0.#########E0");
 		
 		// Test 1
 		if(tipoTest==null || TipologiaClaims.GOOGLE.equals(tipoTest))
@@ -204,93 +206,110 @@ public class TestBasicTokenParser {
 			
 			System.out.println("Test BasicTokenParser, access token google dopo introspection ok");
 			
-			System.out.println("Test BasicTokenParser, access token google dopo introspection (check date) ...");
+			for (int i = 0; i < 2; i++) {
+				String tipoTestDateSuffix = (i==0) ? " [formato: number]" : " [formato: exponential E9]";
 			
-			long data = (DateManager.getDate().getTime() + (1000*30)) / 1000; // scade tra 30 secondi
-			rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": \""+audience+"\", \"sub\": \""+subject+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"exp\": \""+data+"\",  \"expires_in\": \"3113\",  \"email\": \""+mail+"\",  \"email_verified\": \"true\",  \"access_type\": \"offline\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.GOOGLE);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
+				System.out.println("Test BasicTokenParser, access token google dopo introspection (check date"+tipoTestDateSuffix+") ...");
+				
+				long dataL = (DateManager.getDate().getTime() + (1000*30)) / 1000; // scade tra 30 secondi
+				String dataS = (i==0) ? (dataL+"") : (decimalFormat9.format(dataL));
+				rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": \""+audience+"\", \"sub\": \""+subject+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"exp\": \""+dataS+"\",  \"expires_in\": \"3113\",  \"email\": \""+mail+"\",  \"email_verified\": \"true\",  \"access_type\": \"offline\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.GOOGLE);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*20));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60));
+				if(now.before(d)){
+					throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token google dopo introspection (check date"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token google dopo introspection (check date con expires con max long value"+tipoTestDateSuffix+") ...");
+				
+				dataL = Long.MAX_VALUE/1000;
+				dataS = (i==0) ? (dataL+"") : (decimalFormat9.format(dataL));
+				rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": \""+audience+"\", \"sub\": \""+subject+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"exp\": \""+dataS+"\",  \"expires_in\": \"3113\",  \"email\": \""+mail+"\",  \"email_verified\": \"true\",  \"access_type\": \"offline\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.GOOGLE);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				long atteso = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				if(d.getTime() != atteso) {
+					throw new Exception("(4) Attesa data associata la long max value '"+atteso+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token google dopo introspection (check date con expires con max long value"+tipoTestDateSuffix+") ok");
+	
+				System.out.println("Test BasicTokenParser, access token google dopo introspection (check date con expires con overflow long value"+tipoTestDateSuffix+") ...");
+				
+				dataL = Long.MAX_VALUE/1000;
+				dataS = (i==0) ? (dataL+"") : (decimalFormat9.format(dataL));
+				rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": \""+audience+"\", \"sub\": \""+subject+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"exp\": \"111111111"+dataS+"\",  \"expires_in\": \"3113\",  \"email\": \""+mail+"\",  \"email_verified\": \"true\",  \"access_type\": \"offline\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.GOOGLE);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != Long.MAX_VALUE) {
+					throw new Exception("(4) Attesa data associata la long max value '"+Long.MAX_VALUE+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token google dopo introspection (check date con expires con overflow long value"+tipoTestDateSuffix+") ok");
 			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*20));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60));
-			if(now.before(d)){
-				throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token google dopo introspection (check date) ok");
-			
-			System.out.println("Test BasicTokenParser, access token google dopo introspection (check date con expires con max long value) ...");
-			
-			data = Long.MAX_VALUE/1000;
-			rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": \""+audience+"\", \"sub\": \""+subject+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"exp\": \""+data+"\",  \"expires_in\": \"3113\",  \"email\": \""+mail+"\",  \"email_verified\": \"true\",  \"access_type\": \"offline\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.GOOGLE);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token google dopo introspection (check date con expires con max long value) ok");
-
-			System.out.println("Test BasicTokenParser, access token google dopo introspection (check date con expires con overflow long value) ...");
-			
-			data = Long.MAX_VALUE/1000;
-			rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": \""+audience+"\", \"sub\": \""+subject+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"exp\": \"111111111"+data+"\",  \"expires_in\": \"3113\",  \"email\": \""+mail+"\",  \"email_verified\": \"true\",  \"access_type\": \"offline\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.GOOGLE);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token google dopo introspection (check date con expires con overflow long value) ok");
 						
 			System.out.println("Test BasicTokenParser, access token google dopo introspection (non valido) ...");
 			
-			data = Long.MAX_VALUE/1000;
+			long data = Long.MAX_VALUE/1000;
 			rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": \""+audience+"\", \"sub\": \""+subject+"\","+
 					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
 					"  \"exp\": \""+data+"\",  \"expires_in\": \"3113\",  \"email\": \""+mail+"\",  \"email_verified\": \"true\",  \"access_type\": \"offline\"}";
@@ -574,7 +593,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data non trovata");
 			}
 			if(!d.equals(iat)) {
-				throw new Exception("Claim iat differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim iat differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			
 			d = info.getNbf();
@@ -582,7 +601,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data nbf non trovata");
 			}
 			if(!d.equals(nbf)) {
-				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim nbf differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			if(now.before(d)){
 				throw new Exception("Token non utilizzabile, non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
@@ -593,7 +612,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data di scadenza non trovata");
 			}
 			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			if(!now.before(d)){
 				throw new Exception("Token scaduto non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
@@ -627,155 +646,205 @@ public class TestBasicTokenParser {
 			
 			System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' ok");
 			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date) ...");
+			for (int i = 0; i < 2; i++) {
+				String tipoTestDateSuffix = (i==0) ? " [formato: number]" : " [formato: exponential E9]";
 			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date(iat.getTime() + (1000*60));
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date"+tipoTestDateSuffix+") ...");
+				
+				now = DateManager.getDate();
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date(iat.getTime() + (1000*60));
+				Long iatL = (iat.getTime()/1000);
+				String iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				Long nbfL = (nbf.getTime()/1000);
+				String nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				Long expL = (exp.getTime()/1000);
+				String expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*20));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60));
+				if(now.before(d)){
+					throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				d = info.getNbf();
+				if(d==null) {
+					throw new Exception("Data nbf non trovata");
+				}
+				now = DateManager.getDate();
+				if(now.before(d)){
+					throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() - (1000*20));
+				if(now.before(d)){
+					throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() - (1000*60));
+				if(!now.before(d)){
+					throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con expires con max long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date((Long.MAX_VALUE/1000)*1000);
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				long atteso = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				exp = new Date(atteso);
+				if(!d.equals(exp)) {
+					throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != atteso) {
+					throw new Exception("(4) Attesa data associata la long max value '"+atteso+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con expires con max long value"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con expires con overflow long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date((Long.MAX_VALUE/1000)*1000);
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \"111111111"+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				// con overflow assume il max Long
+				exp = new Date(Long.MAX_VALUE);
+				if(!d.equals(exp)) {
+					throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != Long.MAX_VALUE) {
+					throw new Exception("(4) Attesa data associata la long max value '"+Long.MAX_VALUE+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con expires con overflow long value"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con nbf con max long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date((Long.MAX_VALUE/1000)*1000);
+				exp = new Date(iat.getTime() + (1000*60));
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
+				
+				d = info.getNbf();
+				if(d==null) {
+					throw new Exception("Data nbf non trovata");
+				}
+				long attesoMax = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				nbf = new Date(attesoMax);
+				if(!d.equals(nbf)) {
+					throw new Exception("Claim nbf differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != attesoMax) {
+					throw new Exception("(4) Attesa data associata la long max value '"+attesoMax+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con nbf con max long value"+tipoTestDateSuffix+") ok");
 			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*20));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60));
-			if(now.before(d)){
-				throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			d = info.getNbf();
-			if(d==null) {
-				throw new Exception("Data nbf non trovata");
-			}
-			now = DateManager.getDate();
-			if(now.before(d)){
-				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() - (1000*20));
-			if(now.before(d)){
-				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() - (1000*60));
-			if(!now.before(d)){
-				throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con expires con max long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date((Long.MAX_VALUE/1000)*1000);
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con expires con max long value) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con expires con overflow long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date((Long.MAX_VALUE/1000)*1000);
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con expires con overflow long value) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con nbf con max long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date((Long.MAX_VALUE/1000)*1000);
-			exp = new Date(iat.getTime() + (1000*60));
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.INTROSPECTION, rawResponse, tokenParser);
-			
-			d = info.getNbf();
-			if(d==null) {
-				throw new Exception("Data nbf non trovata");
-			}
-			if(!d.equals(nbf)) {
-				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (check date con nbf con max long value) ok");
 			
 			
 			System.out.println("Test BasicTokenParser, access token dopo introspection 'INTROSPECTION_RESPONSE_RFC_7662' (non valido) ...");
@@ -980,7 +1049,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data non trovata");
 			}
 			if(!d.equals(iat)) {
-				throw new Exception("Claim iat differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim iat differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			
 			d = info.getNbf();
@@ -988,7 +1057,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data nbf non trovata");
 			}
 			if(!d.equals(nbf)) {
-				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim nbf differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			if(now.before(d)){
 				throw new Exception("Token non utilizzabile, non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
@@ -999,7 +1068,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data di scadenza non trovata");
 			}
 			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			if(!now.before(d)){
 				throw new Exception("Token scaduto non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
@@ -1033,155 +1102,205 @@ public class TestBasicTokenParser {
 			
 			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' ok");
 			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date) ...");
+			for (int i = 0; i < 2; i++) {
+				String tipoTestDateSuffix = (i==0) ? " [formato: number]" : " [formato: exponential E9]";
 			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date(iat.getTime() + (1000*60));
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_RFC_7519);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date"+tipoTestDateSuffix+") ...");
+				
+				now = DateManager.getDate();
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date(iat.getTime() + (1000*60));
+				Long iatL = (iat.getTime()/1000);
+				String iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				Long nbfL = (nbf.getTime()/1000);
+				String nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				Long expL = (exp.getTime()/1000);
+				String expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_RFC_7519);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*20));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60));
+				if(now.before(d)){
+					throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				d = info.getNbf();
+				if(d==null) {
+					throw new Exception("Data nbf non trovata");
+				}
+				now = DateManager.getDate();
+				if(now.before(d)){
+					throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() - (1000*20));
+				if(now.before(d)){
+					throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() - (1000*60));
+				if(!now.before(d)){
+					throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con expires con max long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date((Long.MAX_VALUE/1000)*1000);
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_RFC_7519);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				long atteso = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				exp = new Date(atteso);
+				if(!d.equals(exp)) {
+					throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != atteso) {
+					throw new Exception("(4) Attesa data associata la long max value '"+atteso+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con expires con max long value"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con expires con overflow long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date((Long.MAX_VALUE/1000)*1000);
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \"111111111"+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_RFC_7519);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				// con overflow assume il max Long
+				exp = new Date(Long.MAX_VALUE);
+				if(!d.equals(exp)) {
+					throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != Long.MAX_VALUE) {
+					throw new Exception("(4) Attesa data associata la long max value '"+Long.MAX_VALUE+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con expires con overflow long value"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con nbf con max long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date((Long.MAX_VALUE/1000)*1000);
+				exp = new Date(iat.getTime() + (1000*60));
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_RFC_7519);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getNbf();
+				if(d==null) {
+					throw new Exception("Data nbf non trovata");
+				}
+				long attesoMax = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				nbf = new Date(attesoMax);
+				if(!d.equals(nbf)) {
+					throw new Exception("Claim nbf differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != attesoMax) {
+					throw new Exception("(4) Attesa data associata la long max value '"+attesoMax+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con nbf con max long value"+tipoTestDateSuffix+") ok");
 			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*20));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60));
-			if(now.before(d)){
-				throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			d = info.getNbf();
-			if(d==null) {
-				throw new Exception("Data nbf non trovata");
-			}
-			now = DateManager.getDate();
-			if(now.before(d)){
-				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() - (1000*20));
-			if(now.before(d)){
-				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() - (1000*60));
-			if(!now.before(d)){
-				throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con expires con max long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date((Long.MAX_VALUE/1000)*1000);
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_RFC_7519);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con expires con max long value) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con expires con overflow long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date((Long.MAX_VALUE/1000)*1000);
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_RFC_7519);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con expires con overflow long value) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con nbf con max long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date((Long.MAX_VALUE/1000)*1000);
-			exp = new Date(iat.getTime() + (1000*60));
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_RFC_7519);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getNbf();
-			if(d==null) {
-				throw new Exception("Data nbf non trovata");
-			}
-			if(!d.equals(nbf)) {
-				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (check date con nbf con max long value) ok");
 			
 			
 			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_RFC_7519' (non valido) ...");
@@ -1361,7 +1480,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data non trovata");
 			}
 			if(!d.equals(iat)) {
-				throw new Exception("Claim iat differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim iat differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			
 			d = info.getNbf();
@@ -1369,7 +1488,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data nbf non trovata");
 			}
 			if(!d.equals(nbf)) {
-				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim nbf differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			if(now.before(d)){
 				throw new Exception("Token non utilizzabile, non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
@@ -1380,7 +1499,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data di scadenza non trovata");
 			}
 			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			if(!now.before(d)){
 				throw new Exception("Token scaduto non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
@@ -1414,156 +1533,205 @@ public class TestBasicTokenParser {
 			
 			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' ok");
 			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date) ...");
+			for (int i = 0; i < 2; i++) {
+				String tipoTestDateSuffix = (i==0) ? " [formato: number]" : " [formato: exponential E9]";
 			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date(iat.getTime() + (1000*60));
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date"+tipoTestDateSuffix+") ...");
+				
+				now = DateManager.getDate();
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date(iat.getTime() + (1000*60));
+				Long iatL = (iat.getTime()/1000);
+				String iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				Long nbfL = (nbf.getTime()/1000);
+				String nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				Long expL = (exp.getTime()/1000);
+				String expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*20));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60));
+				if(now.before(d)){
+					throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				d = info.getNbf();
+				if(d==null) {
+					throw new Exception("Data nbf non trovata");
+				}
+				now = DateManager.getDate();
+				if(now.before(d)){
+					throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() - (1000*20));
+				if(now.before(d)){
+					throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() - (1000*60));
+				if(!now.before(d)){
+					throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con max long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date((Long.MAX_VALUE/1000)*1000);
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				long atteso = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				exp = new Date(atteso);
+				if(!d.equals(exp)) {
+					throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != atteso) {
+					throw new Exception("(4) Attesa data associata la long max value '"+atteso+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con max long value"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con overflow long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date((Long.MAX_VALUE/1000)*1000);
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \"111111111"+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				// con overflow assume il max Long
+				exp = new Date(Long.MAX_VALUE);
+				if(!d.equals(exp)) {
+					throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != Long.MAX_VALUE) {
+					throw new Exception("(4) Attesa data associata la long max value '"+Long.MAX_VALUE+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con overflow long value"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con nbf con max long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date((Long.MAX_VALUE/1000)*1000);
+				exp = new Date(iat.getTime() + (1000*60));
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getNbf();
+				if(d==null) {
+					throw new Exception("Data nbf non trovata");
+				}
+				long attesoMax = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				nbf = new Date(attesoMax);
+				if(!d.equals(nbf)) {
+					throw new Exception("Claim nbf differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != attesoMax) {
+					throw new Exception("(4) Attesa data associata la long max value '"+attesoMax+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con nbf con max long value"+tipoTestDateSuffix+") ok");
 			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*20));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60));
-			if(now.before(d)){
-				throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			d = info.getNbf();
-			if(d==null) {
-				throw new Exception("Data nbf non trovata");
-			}
-			now = DateManager.getDate();
-			if(now.before(d)){
-				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() - (1000*20));
-			if(now.before(d)){
-				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() - (1000*60));
-			if(!now.before(d)){
-				throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con max long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date((Long.MAX_VALUE/1000)*1000);
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con max long value) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con overflow long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date((Long.MAX_VALUE/1000)*1000);
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con overflow long value) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con nbf con max long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date((Long.MAX_VALUE/1000)*1000);
-			exp = new Date(iat.getTime() + (1000*60));
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getNbf();
-			if(d==null) {
-				throw new Exception("Data nbf non trovata");
-			}
-			if(!d.equals(nbf)) {
-				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con nbf con max long value) ok");
-			
 			
 			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (non valido) ...");
 			
@@ -1745,7 +1913,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data non trovata");
 			}
 			if(!d.equals(iat)) {
-				throw new Exception("Claim iat differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim iat differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			
 			d = info.getNbf();
@@ -1758,7 +1926,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data nbf non trovata");
 			}
 			if(!d.equals(nbf)) {
-				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim nbf differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			if(now.before(d)){
 				throw new Exception("Token non utilizzabile, non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
@@ -1770,7 +1938,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data di scadenza non trovata");
 			}
 			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			if(!now.before(d)){
 				throw new Exception("Token scaduto non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
@@ -1810,127 +1978,163 @@ public class TestBasicTokenParser {
 			
 			System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' ok");
 			
-			System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date) ...");
+			for (int i = 0; i < 2; i++) {
+				String tipoTestDateSuffix = (i==0) ? " [formato: number]" : " [formato: exponential E9]";
 			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date(iat.getTime() + (1000*60));
-			rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"preferred_username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.OIDC_ID_TOKEN);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.USER_INFO, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
+				System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date"+tipoTestDateSuffix+") ...");
+				
+				now = DateManager.getDate();
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date(iat.getTime() + (1000*60));
+				Long iatL = (iat.getTime()/1000);
+				String iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				Long nbfL = (nbf.getTime()/1000);
+				String nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				Long expL = (exp.getTime()/1000);
+				String expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"preferred_username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.OIDC_ID_TOKEN);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.USER_INFO, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*20));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60));
+				if(now.before(d)){
+					throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				d = info.getNbf();
+				if(d!=null) {
+					throw new Exception("Data nbf non attesa");
+				}
+				// non supportato
+				/*
+				if(d==null) {
+					throw new Exception("Data nbf non trovata");
+				}
+				now = DateManager.getDate();
+				if(now.before(d)){
+					throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() - (1000*20));
+				if(now.before(d)){
+					throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() - (1000*60));
+				if(!now.before(d)){
+					throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				*/
+				
+				System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date con expires con max long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date((Long.MAX_VALUE/1000)*1000);
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"preferred_username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.OIDC_ID_TOKEN);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.USER_INFO, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				long atteso = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				exp = new Date(atteso);
+				if(!d.equals(exp)) {
+					throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != atteso) {
+					throw new Exception("(4) Attesa data associata la long max value '"+atteso+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date con expires con max long value"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date con expires con overflow long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date((Long.MAX_VALUE/1000)*1000);
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"preferred_username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \"111111111"+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.OIDC_ID_TOKEN);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.USER_INFO, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				// con overflow assume il max Long
+				exp = new Date(Long.MAX_VALUE);
+				if(!d.equals(exp)) {
+					throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != Long.MAX_VALUE) {
+					throw new Exception("(4) Attesa data associata la long max value '"+Long.MAX_VALUE+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date con expires con overflow long value"+tipoTestDateSuffix+") ok");	
 			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*20));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60));
-			if(now.before(d)){
-				throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			d = info.getNbf();
-			if(d!=null) {
-				throw new Exception("Data nbf non attesa");
-			}
-			// non supportato
-			/*
-			if(d==null) {
-				throw new Exception("Data nbf non trovata");
-			}
-			now = DateManager.getDate();
-			if(now.before(d)){
-				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() - (1000*20));
-			if(now.before(d)){
-				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() - (1000*60));
-			if(!now.before(d)){
-				throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			*/
-			
-			System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date con expires con max long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date((Long.MAX_VALUE/1000)*1000);
-			rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"preferred_username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.OIDC_ID_TOKEN);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.USER_INFO, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date con expires con max long value) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date con expires con overflow long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date((Long.MAX_VALUE/1000)*1000);
-			rawResponse = "{\"azp\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"preferred_username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.OIDC_ID_TOKEN);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.USER_INFO, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (check date con expires con overflow long value) ok");		
 			
 			System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN' (non valido) ...");
 			
@@ -2130,7 +2334,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data non trovata");
 			}
 			if(!d.equals(iat)) {
-				throw new Exception("Claim iat differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim iat differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			
 			d = info.getNbf();
@@ -2138,7 +2342,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data nbf non trovata");
 			}
 			if(!d.equals(nbf)) {
-				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim nbf differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			if(now.before(d)){
 				throw new Exception("Token non utilizzabile, non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
@@ -2149,7 +2353,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Data di scadenza non trovata");
 			}
 			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
 			if(!now.before(d)){
 				throw new Exception("Token scaduto non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
@@ -2206,15 +2410,6 @@ public class TestBasicTokenParser {
 			
 			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' ok");
 			
-			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date(iat.getTime() + (1000*60));
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"AltroDiverso\": [ \"altroS "+s1+"\", \""+s2+"\", \""+s3+"\"],"+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
 			Properties pMappingNomiStandard = new Properties();
 			pMappingNomiStandard.put(Costanti.TOKEN_PARSER_ISSUER, "iss");
 			pMappingNomiStandard.put(Costanti.TOKEN_PARSER_SUBJECT, "sub,Altro");
@@ -2232,146 +2427,206 @@ public class TestBasicTokenParser {
 			pMappingNomiStandard.put(Costanti.TOKEN_PARSER_USER_MIDDLE_NAME, "middle_name");
 			pMappingNomiStandard.put(Costanti.TOKEN_PARSER_USER_FAMILY_NAME, "last_name,family_name");
 			pMappingNomiStandard.put(Costanti.TOKEN_PARSER_USER_EMAIL, "email");
-			tokenParser = new BasicTokenParser(TipologiaClaims.MAPPING,pMappingNomiStandard);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
 			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*20));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60));
-			if(now.before(d)){
-				throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
+			for (int i = 0; i < 2; i++) {
+				String tipoTestDateSuffix = (i==0) ? " [formato: number]" : " [formato: exponential E9]";
 			
-			d = info.getNbf();
-			if(d==null) {
-				throw new Exception("Data nbf non trovata");
+				System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date"+tipoTestDateSuffix+") ...");
+				
+				now = DateManager.getDate();
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date(iat.getTime() + (1000*60));
+				Long iatL = (iat.getTime()/1000);
+				String iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				Long nbfL = (nbf.getTime()/1000);
+				String nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				Long expL = (exp.getTime()/1000);
+				String expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"AltroDiverso\": [ \"altroS "+s1+"\", \""+s2+"\", \""+s3+"\"],"+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.MAPPING,pMappingNomiStandard);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*20));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60));
+				if(now.before(d)){
+					throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				d = info.getNbf();
+				if(d==null) {
+					throw new Exception("Data nbf non trovata");
+				}
+				now = DateManager.getDate();
+				if(now.before(d)){
+					throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() - (1000*20));
+				if(now.before(d)){
+					throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() - (1000*60));
+				if(!now.before(d)){
+					throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con expires con max long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date((Long.MAX_VALUE/1000)*1000);
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.MAPPING,pMappingNomiStandard);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				long atteso = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				exp = new Date(atteso);
+				if(!d.equals(exp)) {
+					throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != atteso) {
+					throw new Exception("(4) Attesa data associata la long max value '"+atteso+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con expires con max long value"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con expires con overflow long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date(iat.getTime() - (1000*60));
+				exp = new Date((Long.MAX_VALUE/1000)*1000);
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \"111111111"+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.MAPPING,pMappingNomiStandard);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getExp();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				// con overflow assume il max Long
+				exp = new Date(Long.MAX_VALUE);
+				if(!d.equals(exp)) {
+					throw new Exception("Claim exp differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != Long.MAX_VALUE) {
+					throw new Exception("(4) Attesa data associata la long max value '"+Long.MAX_VALUE+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con expires con overflow long value"+tipoTestDateSuffix+") ok");
+				
+				System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con nbf con max long value"+tipoTestDateSuffix+") ...");
+				
+				iat = new Date( (now.getTime()/1000)*1000);
+				nbf = new Date((Long.MAX_VALUE/1000)*1000);
+				exp = new Date(iat.getTime() + (1000*60));
+				iatL = (iat.getTime()/1000);
+				iatS = (i==0) ? (iatL+"") : (decimalFormat9.format(iatL));
+				nbfL = (nbf.getTime()/1000);
+				nbfS = (i==0) ? (nbfL+"") : (decimalFormat9.format(nbfL));
+				expL = (exp.getTime()/1000);
+				expS = (i==0) ? (expL+"") : (decimalFormat9.format(expL));
+				rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+						" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+						"  \"iat\": \""+iatS+"\", \"nbf\": \""+nbfS+"\", \"exp\": \""+expS+"\",  "
+						+ "\"jti\": \""+jti+"\"}";
+				tokenParser = new BasicTokenParser(TipologiaClaims.MAPPING,pMappingNomiStandard);
+				info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				
+				d = info.getNbf();
+				if(d==null) {
+					throw new Exception("Data nbf non trovata");
+				}
+				long attesoMax = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				nbf = new Date(attesoMax);
+				if(!d.equals(nbf)) {
+					throw new Exception("Claim nbf differente da quello atteso; atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1001);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != attesoMax) {
+					throw new Exception("(4) Attesa data associata la long max value '"+attesoMax+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				
+				System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con nbf con max long value"+tipoTestDateSuffix+") ok");
 			}
-			now = DateManager.getDate();
-			if(now.before(d)){
-				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() - (1000*20));
-			if(now.before(d)){
-				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() - (1000*60));
-			if(!now.before(d)){
-				throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con expires con max long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date((Long.MAX_VALUE/1000)*1000);
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.MAPPING,pMappingNomiStandard);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con expires con max long value) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con expires con overflow long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date(iat.getTime() - (1000*60));
-			exp = new Date((Long.MAX_VALUE/1000)*1000);
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.MAPPING,pMappingNomiStandard);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getExp();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(!d.equals(exp)) {
-				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con expires con overflow long value) ok");
-			
-			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con nbf con max long value) ...");
-			
-			iat = new Date( (now.getTime()/1000)*1000);
-			nbf = new Date((Long.MAX_VALUE/1000)*1000);
-			exp = new Date(iat.getTime() + (1000*60));
-			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
-					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
-					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
-					+ "\"jti\": \""+jti+"\"}";
-			tokenParser = new BasicTokenParser(TipologiaClaims.MAPPING,pMappingNomiStandard);
-			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
-			
-			d = info.getNbf();
-			if(d==null) {
-				throw new Exception("Data nbf non trovata");
-			}
-			if(!d.equals(nbf)) {
-				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1001);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			
-			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (check date con nbf con max long value) ok");
 			
 			
 			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING' (non valido) ...");

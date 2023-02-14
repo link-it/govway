@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.token.parser;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Properties;
 
@@ -52,6 +53,8 @@ public class TestBasicNegoziazioneTokenParser {
 		Logger log = LoggerWrapperFactory.getLogger(TestBasicNegoziazioneTokenParser.class);
 		String idTransazione = "66aa1676-1f9e-34e2-7777-0cfca111a9999";
 		InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta = null;
+		
+		DecimalFormat decimalFormat9 = new DecimalFormat("0.#########E0");
 		
 		// Test 1
 		{
@@ -218,148 +221,165 @@ public class TestBasicNegoziazioneTokenParser {
 		}
 
 		
-		// Test 3
-		{
-			System.out.println("Test BasicNegoziazioneTokenParser, access token con expires_in con max long value e un solo scope ...");
-			String accessToken = "33aa1676-1f9e-34e2-8515-0cfca111a188";
-			String tokenType = "Bearer";
-			String rawResponse = "{\"access_token\":\""+accessToken+"\",\"scope\":\"s1\",\"token_type\":\""+tokenType+"\",\"expires_in\":9223372036854775}";
-			BasicNegoziazioneTokenParser tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.OAUTH2_RFC_6749);
-			InformazioniNegoziazioneToken info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
-			
-			if(info.getClaims()==null || info.getClaims().isEmpty()) {
-				throw new Exception("Parse non riuscito?");
-			}
-			if(info.getClaims().size()!=4) {
-				throw new Exception("Claims attesi 4, trovati '"+info.getClaims().size()+"'");	
-			}
-			if(!info.getClaims().containsKey("access_token")){
-				throw new Exception("Atteso access_token non presente tra i claims");
-			}
-			if(info.getClaims().containsKey("refresh_token")){
-				throw new Exception("refresh_token non atteso tra i claims");
-			}
-			if(!info.getClaims().containsKey("scope")){
-				throw new Exception("Atteso scope non presente tra i claims");
-			}
-			if(!info.getClaims().containsKey("token_type")){
-				throw new Exception("Atteso token_type non presente tra i claims");
-			}
-			if(!info.getClaims().containsKey("expires_in")){
-				throw new Exception("Atteso expires_in non presente tra i claims");
-			}
-			
-			if(!accessToken.equals(info.getAccessToken())){
-				throw new Exception("Atteso access_token '"+accessToken+"' trovato '"+info.getAccessToken()+"'");
-			}
-			if(info.getRefreshToken()!=null) {
-				throw new Exception("refresh_token non atteso");
-			}
-			
-			if(info.getScopes()==null) {
-				throw new Exception("Scope attesi non trovato");
-			}
-			if(info.getScopes().size()!=1) {
-				throw new Exception("Scope attesi 1, trovati '"+info.getScopes().size()+"'");
-			}
-			boolean find = false;
-			for (String s : info.getScopes()) {
-				if("s1".equals(s)) {
-					find = true;
-					break;
-				}
-			}
-			if(!find) {
-				throw new Exception("Scope atteso 's1' non trovato");
-			}
-			
-			if(!tokenType.equals(info.getTokenType())){
-				throw new Exception("Atteso token_type '"+tokenType+"' trovato '"+info.getTokenType()+"'");
-			}
-			
-			Date d = info.getExpiresIn();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			Date now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			System.out.println("Test BasicNegoziazioneTokenParser, access token con expires_in con max long value e un solo scope ok");
-		}
-
+		for (int i = 0; i < 2; i++) {
+			String tipoTestDateSuffix = (i==0) ? " [formato: number]" : " [formato: exponential E9]";
 		
-		// Test 4
-		{
-			System.out.println("Test BasicNegoziazioneTokenParser, access token con expires_in con un valore maggiore del max long ...");
-			String accessToken = "33aa1676-1f9e-34e2-8515-0cfca111a188";
-			String tokenType = "Bearer";
-			String rawResponse = "{\"access_token\":\""+accessToken+"\",\"token_type\":\""+tokenType+"\",\"expires_in\":11119223372036854775}";
-			BasicNegoziazioneTokenParser tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.OAUTH2_RFC_6749);
-			InformazioniNegoziazioneToken info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+		
+			// Test 3
+			{
+				System.out.println("Test BasicNegoziazioneTokenParser, access token con expires_in con max long value"+tipoTestDateSuffix+" e un solo scope ...");
+				String accessToken = "33aa1676-1f9e-34e2-8515-0cfca111a188";
+				String tokenType = "Bearer";
+				Long dataL = Long.MAX_VALUE/1000;
+				String dataS = (i==0) ? (dataL+"") : (decimalFormat9.format(dataL));
+				String rawResponse = "{\"access_token\":\""+accessToken+"\",\"scope\":\"s1\",\"token_type\":\""+tokenType+"\",\"expires_in\":"+dataS+"}";
+				BasicNegoziazioneTokenParser tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.OAUTH2_RFC_6749);
+				InformazioniNegoziazioneToken info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+				
+				if(info.getClaims()==null || info.getClaims().isEmpty()) {
+					throw new Exception("Parse non riuscito?");
+				}
+				if(info.getClaims().size()!=4) {
+					throw new Exception("Claims attesi 4, trovati '"+info.getClaims().size()+"'");	
+				}
+				if(!info.getClaims().containsKey("access_token")){
+					throw new Exception("Atteso access_token non presente tra i claims");
+				}
+				if(info.getClaims().containsKey("refresh_token")){
+					throw new Exception("refresh_token non atteso tra i claims");
+				}
+				if(!info.getClaims().containsKey("scope")){
+					throw new Exception("Atteso scope non presente tra i claims");
+				}
+				if(!info.getClaims().containsKey("token_type")){
+					throw new Exception("Atteso token_type non presente tra i claims");
+				}
+				if(!info.getClaims().containsKey("expires_in")){
+					throw new Exception("Atteso expires_in non presente tra i claims");
+				}
+				
+				if(!accessToken.equals(info.getAccessToken())){
+					throw new Exception("Atteso access_token '"+accessToken+"' trovato '"+info.getAccessToken()+"'");
+				}
+				if(info.getRefreshToken()!=null) {
+					throw new Exception("refresh_token non atteso");
+				}
+				
+				if(info.getScopes()==null) {
+					throw new Exception("Scope attesi non trovato");
+				}
+				if(info.getScopes().size()!=1) {
+					throw new Exception("Scope attesi 1, trovati '"+info.getScopes().size()+"'");
+				}
+				boolean find = false;
+				for (String s : info.getScopes()) {
+					if("s1".equals(s)) {
+						find = true;
+						break;
+					}
+				}
+				if(!find) {
+					throw new Exception("Scope atteso 's1' non trovato");
+				}
+				
+				if(!tokenType.equals(info.getTokenType())){
+					throw new Exception("Atteso token_type '"+tokenType+"' trovato '"+info.getTokenType()+"'");
+				}
+				
+				Date d = info.getExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				Date now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				long atteso = Long.MAX_VALUE;
+				if(d.getTime() != atteso) {
+					throw new Exception("(4) Attesa data associata la long max value '"+atteso+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				System.out.println("Test BasicNegoziazioneTokenParser, access token con expires_in con max long value"+tipoTestDateSuffix+" e un solo scope ok");
+			}
+	
 			
-			if(info.getClaims()==null || info.getClaims().isEmpty()) {
-				throw new Exception("Parse non riuscito?");
-			}
-			if(info.getClaims().size()!=3) {
-				throw new Exception("Claims attesi 3, trovati '"+info.getClaims().size()+"'");	
-			}
-			if(!info.getClaims().containsKey("access_token")){
-				throw new Exception("Atteso access_token non presente tra i claims");
-			}
-			if(info.getClaims().containsKey("refresh_token")){
-				throw new Exception("refresh_token non atteso tra i claims");
-			}
-			if(info.getClaims().containsKey("scope")){
-				throw new Exception("scope non atteso tra i claims");
-			}
-			if(!info.getClaims().containsKey("token_type")){
-				throw new Exception("Atteso token_type non presente tra i claims");
-			}
-			if(!info.getClaims().containsKey("expires_in")){
-				throw new Exception("Atteso expires_in non presente tra i claims");
+			// Test 4
+			{
+				System.out.println("Test BasicNegoziazioneTokenParser, access token con expires_in con un valore maggiore del max long"+tipoTestDateSuffix+" ...");
+				String accessToken = "33aa1676-1f9e-34e2-8515-0cfca111a188";
+				String tokenType = "Bearer";
+				Long dataL = Long.MAX_VALUE/1000;
+				String dataS = (i==0) ? (dataL+"") : (decimalFormat9.format(dataL));
+				String rawResponse = "{\"access_token\":\""+accessToken+"\",\"token_type\":\""+tokenType+"\",\"expires_in\":1111"+dataS+"}";
+				BasicNegoziazioneTokenParser tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.OAUTH2_RFC_6749);
+				InformazioniNegoziazioneToken info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+				
+				if(info.getClaims()==null || info.getClaims().isEmpty()) {
+					throw new Exception("Parse non riuscito?");
+				}
+				if(info.getClaims().size()!=3) {
+					throw new Exception("Claims attesi 3, trovati '"+info.getClaims().size()+"'");	
+				}
+				if(!info.getClaims().containsKey("access_token")){
+					throw new Exception("Atteso access_token non presente tra i claims");
+				}
+				if(info.getClaims().containsKey("refresh_token")){
+					throw new Exception("refresh_token non atteso tra i claims");
+				}
+				if(info.getClaims().containsKey("scope")){
+					throw new Exception("scope non atteso tra i claims");
+				}
+				if(!info.getClaims().containsKey("token_type")){
+					throw new Exception("Atteso token_type non presente tra i claims");
+				}
+				if(!info.getClaims().containsKey("expires_in")){
+					throw new Exception("Atteso expires_in non presente tra i claims");
+				}
+				
+				if(!accessToken.equals(info.getAccessToken())){
+					throw new Exception("Atteso access_token '"+accessToken+"' trovato '"+info.getAccessToken()+"'");
+				}
+				if(info.getRefreshToken()!=null) {
+					throw new Exception("refresh_token non atteso");
+				}
+				
+				if(info.getScopes()!=null) {
+					throw new Exception("Scope non attesi");
+				}
+				
+				if(!tokenType.equals(info.getTokenType())){
+					throw new Exception("Atteso token_type '"+tokenType+"' trovato '"+info.getTokenType()+"'");
+				}
+				
+				Date d = info.getExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				Date now = DateManager.getDate();
+				if(!now.before(d)){
+					throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(now.getTime() + (1000*60*60*1));
+				if(!now.before(d)){
+					throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				now = new Date(Long.MAX_VALUE-1);
+				if(!now.before(d)){
+					throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				if(d.getTime() != Long.MAX_VALUE) {
+					throw new Exception("(4) Attesa data associata la long max value '"+Long.MAX_VALUE+"', trovata con long value '"+d.getTime()+"' data: "+DateUtils.getOldSimpleDateFormatMs().format(d));
+				}
+				System.out.println("Test BasicNegoziazioneTokenParser, access token con expires_in con un valore maggiore del max long"+tipoTestDateSuffix+" ok");
 			}
 			
-			if(!accessToken.equals(info.getAccessToken())){
-				throw new Exception("Atteso access_token '"+accessToken+"' trovato '"+info.getAccessToken()+"'");
-			}
-			if(info.getRefreshToken()!=null) {
-				throw new Exception("refresh_token non atteso");
-			}
-			
-			if(info.getScopes()!=null) {
-				throw new Exception("Scope non attesi");
-			}
-			
-			if(!tokenType.equals(info.getTokenType())){
-				throw new Exception("Atteso token_type '"+tokenType+"' trovato '"+info.getTokenType()+"'");
-			}
-			
-			Date d = info.getExpiresIn();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			Date now = DateManager.getDate();
-			if(!now.before(d)){
-				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(now.getTime() + (1000*60*60*1));
-			if(!now.before(d)){
-				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			now = new Date(Long.MAX_VALUE-1);
-			if(!now.before(d)){
-				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
-			}
-			System.out.println("Test BasicNegoziazioneTokenParser, access token con expires_in con un valore maggiore del max long ok");
 		}
 		
 		
@@ -519,7 +539,8 @@ public class TestBasicNegoziazioneTokenParser {
 			String accessToken = "33aa1676-1f9e-34e2-8515-0cfca111a188";
 			String refreshToken = "33ref1676-1f9e-34e2-8515-0cfca111a188";
 			String tokenType = "Bearer";
-			String rawResponse = "{\"TESTaccess_token\":\""+accessToken+"\",\"TESTrefresh_token\":\""+refreshToken+"\",\"TESTscope\":\"s1 s2\",\"TESTtoken_type\":\""+tokenType+"\",\"TESTexpires_in\":3700,\"TESTrefresh_expires_in\":4000,\"TESTexpires_on\":"+dateAccess+",\"TESTrefresh_expires_on\":"+refreshDateAccess+"}";
+			String rawResponse = "{\"TESTaccess_token\":\""+accessToken+"\",\"TESTrefresh_token\":\""+refreshToken+"\",\"TESTscope\":\"s1 s2\",\"TESTtoken_type\":\""+tokenType+
+					"\",\"TESTexpires_in\":3700,\"TESTrefresh_expires_in\":4000,\"TESTexpires_on\":"+dateAccess+",\"TESTrefresh_expires_on\":"+refreshDateAccess+"}";
 			BasicNegoziazioneTokenParser tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.MAPPING, pMapping);
 			InformazioniNegoziazioneToken info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
 			
@@ -628,40 +649,196 @@ public class TestBasicNegoziazioneTokenParser {
 			
 			System.out.println("Test MappingNegoziazioneTokenParser, access token regolare ok");
 			
-			System.out.println("Test MappingNegoziazioneTokenParser, date on ...");
+			for (int i = 0; i < 2; i++) {
+				
+				String tipoTestDateSuffix = (i==0) ? " [formato: number]" : " [formato: exponential E9]";
+				
+				System.out.println("Test MappingNegoziazioneTokenParser, date on"+tipoTestDateSuffix+" ...");
+				
+				pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_IN, "ALTRO_DIVERSO_TESTexpires_in");
+				pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_IN, "ALTRO_DIVERSO_TESTrefresh_expires_in");
+				rawResponse = "{\"TESTaccess_token\":\""+accessToken+"\",\"TESTrefresh_token\":\""+refreshToken+"\",\"TESTscope\":\"s1 s2\",\"TESTtoken_type\":\""+tokenType+"\",\"TESTexpires_in\":3700,\"TESTrefresh_expires_in\":4000,\"TESTexpires_on\":"+dateAccess+",\"TESTrefresh_expires_on\":"+refreshDateAccess+"}";
+				tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.MAPPING, pMapping);
+				info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+				
+				if(info.getClaims()==null || info.getClaims().isEmpty()) {
+					throw new Exception("Parse non riuscito?");
+				}
+				if(info.getClaims().size()!=8) {
+					throw new Exception("Claims attesi 8, trovati '"+info.getClaims().size()+"'");	
+				}
+				
+				long dataAccessAttesa = dateAccess * 1000;
+				d = info.getExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				if(d.getTime() != dataAccessAttesa){
+					throw new Exception("Token con scadenza attesa differente, rilevata="+d.getTime()+" attesa="+dataAccessAttesa);
+				}
+				
+				long refreshDateAccessAttesa = refreshDateAccess * 1000;
+				d = info.getRefreshExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				if(d.getTime() != refreshDateAccessAttesa){
+					throw new Exception("Token con scadenza refresh attesa differente, rilevata="+d.getTime()+" attesa="+refreshDateAccessAttesa);
+				}
+				
+				System.out.println("Test MappingNegoziazioneTokenParser, date on"+tipoTestDateSuffix+" ok");
+				
+				System.out.println("Test MappingNegoziazioneTokenParser, date on con max long value"+tipoTestDateSuffix+" ...");
+				
+				Long dataL = Long.MAX_VALUE/1000;
+				String dataS = (i==0) ? (dataL+"") : (decimalFormat9.format(dataL));
+				rawResponse = "{\"TESTaccess_token\":\""+accessToken+"\",\"TESTrefresh_token\":\""+refreshToken+"\",\"TESTscope\":\"s1 s2\",\"TESTtoken_type\":\""+tokenType+
+						"\",\"TESTexpires_in\":3700,\"TESTrefresh_expires_in\":4000,\"TESTexpires_on\":"+dataS+",\"TESTrefresh_expires_on\":"+refreshDateAccess+"}";
+				tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.MAPPING, pMapping);
+				info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+				
+				if(info.getClaims()==null || info.getClaims().isEmpty()) {
+					throw new Exception("Parse non riuscito?");
+				}
+				if(info.getClaims().size()!=8) {
+					throw new Exception("Claims attesi 8, trovati '"+info.getClaims().size()+"'");	
+				}
+				
+				dataAccessAttesa = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				d = info.getExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				if(d.getTime() != dataAccessAttesa){
+					throw new Exception("Token con scadenza attesa differente, rilevata="+d.getTime()+" attesa="+dataAccessAttesa);
+				}
+				
+				refreshDateAccessAttesa = refreshDateAccess * 1000;
+				d = info.getRefreshExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				if(d.getTime() != refreshDateAccessAttesa){
+					throw new Exception("Token con scadenza refresh attesa differente, rilevata="+d.getTime()+" attesa="+refreshDateAccessAttesa);
+				}
+				
+				System.out.println("Test MappingNegoziazioneTokenParser, date on con max long value"+tipoTestDateSuffix+" ok");
+				
+				System.out.println("Test MappingNegoziazioneTokenParser, date on con overflow long value"+tipoTestDateSuffix+" ...");
+				
+				dataL = Long.MAX_VALUE/1000;
+				dataS = (i==0) ? (dataL+"") : (decimalFormat9.format(dataL));
+				rawResponse = "{\"TESTaccess_token\":\""+accessToken+"\",\"TESTrefresh_token\":\""+refreshToken+"\",\"TESTscope\":\"s1 s2\",\"TESTtoken_type\":\""+tokenType+
+						"\",\"TESTexpires_in\":3700,\"TESTrefresh_expires_in\":4000,\"TESTexpires_on\":11111"+dataS+",\"TESTrefresh_expires_on\":"+refreshDateAccess+"}";
+				tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.MAPPING, pMapping);
+				info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+				
+				if(info.getClaims()==null || info.getClaims().isEmpty()) {
+					throw new Exception("Parse non riuscito?");
+				}
+				if(info.getClaims().size()!=8) {
+					throw new Exception("Claims attesi 8, trovati '"+info.getClaims().size()+"'");	
+				}
+				
+				dataAccessAttesa = Long.MAX_VALUE; // overflow
+				d = info.getExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				if(d.getTime() != dataAccessAttesa){
+					throw new Exception("Token con scadenza attesa differente, rilevata="+d.getTime()+" attesa="+dataAccessAttesa);
+				}
+				
+				refreshDateAccessAttesa = refreshDateAccess * 1000;
+				d = info.getRefreshExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				if(d.getTime() != refreshDateAccessAttesa){
+					throw new Exception("Token con scadenza refresh attesa differente, rilevata="+d.getTime()+" attesa="+refreshDateAccessAttesa);
+				}
+				
+				System.out.println("Test MappingNegoziazioneTokenParser, date on con overflow long value"+tipoTestDateSuffix+" ok");
+				
+				System.out.println("Test MappingNegoziazioneTokenParser, date on con max long value in refresh_expires_on"+tipoTestDateSuffix+" ...");
+				
+				dataL = Long.MAX_VALUE/1000;
+				dataS = (i==0) ? (dataL+"") : (decimalFormat9.format(dataL));
+				rawResponse = "{\"TESTaccess_token\":\""+accessToken+"\",\"TESTrefresh_token\":\""+refreshToken+"\",\"TESTscope\":\"s1 s2\",\"TESTtoken_type\":\""+tokenType+
+						"\",\"TESTexpires_in\":3700,\"TESTrefresh_expires_in\":4000,\"TESTexpires_on\":"+dateAccess+",\"TESTrefresh_expires_on\":"+dataS+"}";
+				tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.MAPPING, pMapping);
+				info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+				
+				if(info.getClaims()==null || info.getClaims().isEmpty()) {
+					throw new Exception("Parse non riuscito?");
+				}
+				if(info.getClaims().size()!=8) {
+					throw new Exception("Claims attesi 8, trovati '"+info.getClaims().size()+"'");	
+				}
+				
+				dataAccessAttesa = dateAccess * 1000;
+				d = info.getExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				if(d.getTime() != dataAccessAttesa){
+					throw new Exception("Token con scadenza attesa differente, rilevata="+d.getTime()+" attesa="+dataAccessAttesa);
+				}
+				
+				refreshDateAccessAttesa = (i==0) ?
+						((Long.MAX_VALUE / 1000) * 1000) // nel json ci sono i secondi, quindi si perdono i ms
+						:
+						Long.MAX_VALUE; // con la serializzazione con esponente non si perde nulla
+				d = info.getRefreshExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				if(d.getTime() != refreshDateAccessAttesa){
+					throw new Exception("Token con scadenza refresh attesa differente, rilevata="+d.getTime()+" attesa="+refreshDateAccessAttesa);
+				}
+				
+				System.out.println("Test MappingNegoziazioneTokenParser, date on con max long value in refresh_expires_on"+tipoTestDateSuffix+" ok");
+				
+				System.out.println("Test MappingNegoziazioneTokenParser, date on con overflow long value in refresh_expires_on"+tipoTestDateSuffix+" ...");
+				
+				dataL = Long.MAX_VALUE/1000;
+				dataS = (i==0) ? (dataL+"") : (decimalFormat9.format(dataL));
+				rawResponse = "{\"TESTaccess_token\":\""+accessToken+"\",\"TESTrefresh_token\":\""+refreshToken+"\",\"TESTscope\":\"s1 s2\",\"TESTtoken_type\":\""+tokenType+
+						"\",\"TESTexpires_in\":3700,\"TESTrefresh_expires_in\":4000,\"TESTexpires_on\":"+dateAccess+",\"TESTrefresh_expires_on\":11111111"+dataS+"}";
+				tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.MAPPING, pMapping);
+				info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+				
+				if(info.getClaims()==null || info.getClaims().isEmpty()) {
+					throw new Exception("Parse non riuscito?");
+				}
+				if(info.getClaims().size()!=8) {
+					throw new Exception("Claims attesi 8, trovati '"+info.getClaims().size()+"'");	
+				}
+				
+				dataAccessAttesa = dateAccess * 1000;
+				d = info.getExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				if(d.getTime() != dataAccessAttesa){
+					throw new Exception("Token con scadenza attesa differente, rilevata="+d.getTime()+" attesa="+dataAccessAttesa);
+				}
+				
+				refreshDateAccessAttesa = Long.MAX_VALUE; 
+				d = info.getRefreshExpiresIn();
+				if(d==null) {
+					throw new Exception("Data di scadenza non trovata");
+				}
+				if(d.getTime() != refreshDateAccessAttesa){
+					throw new Exception("Token con scadenza refresh attesa differente, rilevata="+d.getTime()+" attesa="+refreshDateAccessAttesa);
+				}
+				
+				System.out.println("Test MappingNegoziazioneTokenParser, date on con overflow long value in refresh_expires_on"+tipoTestDateSuffix+" ok");
+			}
 			
-			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_IN, "ALTRO_DIVERSO_TESTexpires_in");
-			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_IN, "ALTRO_DIVERSO_TESTrefresh_expires_in");
-			rawResponse = "{\"TESTaccess_token\":\""+accessToken+"\",\"TESTrefresh_token\":\""+refreshToken+"\",\"TESTscope\":\"s1 s2\",\"TESTtoken_type\":\""+tokenType+"\",\"TESTexpires_in\":3700,\"TESTrefresh_expires_in\":4000,\"TESTexpires_on\":"+dateAccess+",\"TESTrefresh_expires_on\":"+refreshDateAccess+"}";
-			tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.MAPPING, pMapping);
-			info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
-			
-			if(info.getClaims()==null || info.getClaims().isEmpty()) {
-				throw new Exception("Parse non riuscito?");
-			}
-			if(info.getClaims().size()!=8) {
-				throw new Exception("Claims attesi 8, trovati '"+info.getClaims().size()+"'");	
-			}
-			
-			long dataAccessAttesa = dateAccess * 1000;
-			d = info.getExpiresIn();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(d.getTime() != dataAccessAttesa){
-				throw new Exception("Token con scadenza attesa differente, rilevata="+d.getTime()+" attesa="+dataAccessAttesa);
-			}
-			
-			long refreshDateAccessAttesa = refreshDateAccess * 1000;
-			d = info.getRefreshExpiresIn();
-			if(d==null) {
-				throw new Exception("Data di scadenza non trovata");
-			}
-			if(d.getTime() != refreshDateAccessAttesa){
-				throw new Exception("Token con scadenza refresh attesa differente, rilevata="+d.getTime()+" attesa="+refreshDateAccessAttesa);
-			}
-			
-			System.out.println("Test MappingNegoziazioneTokenParser, date on ok");
 		}
 	}
 
