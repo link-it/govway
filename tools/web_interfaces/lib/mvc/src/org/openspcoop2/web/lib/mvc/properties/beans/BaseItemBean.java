@@ -24,6 +24,7 @@ import java.util.Map;
 import org.openspcoop2.core.mvc.properties.Conditions;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -53,15 +54,15 @@ public abstract class BaseItemBean<T> {
 		this.provider = provider;
 	}
 
-	public abstract DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue) throws ProviderException;
+	public abstract DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue, ExternalResources externalResources) throws ProviderException;
 	
-	public abstract void setValueFromRequest(String parameterValue)  throws ProviderException;
+	public abstract void setValueFromRequest(String parameterValue, ExternalResources externalResources)  throws ProviderException;
 	
 	public abstract Property getSaveProperty();
 	
 	public abstract String getPropertyValue();
 	
-	public abstract void init(String value) throws ProviderException;
+	public abstract void init(String value, ExternalResources externalResources) throws ProviderException;
 	
 	public abstract Conditions getConditions();
 	
@@ -69,7 +70,7 @@ public abstract class BaseItemBean<T> {
 	
 	public abstract String getLabel();
 	
-	public abstract void validate() throws UserInputValidationException;
+	public abstract void validate(ExternalResources externalResources) throws UserInputValidationException;
 
 	public IProvider getProvider() {
 		return this.provider;
@@ -110,5 +111,5 @@ public abstract class BaseItemBean<T> {
 	public boolean isOldVisible() {
 		return this.oldVisible != null && this.oldVisible.booleanValue();
 	}
-	
+
 }

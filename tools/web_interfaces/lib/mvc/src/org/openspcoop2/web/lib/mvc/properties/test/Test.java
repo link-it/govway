@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.mvc.properties.Config;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.XSDValidator;
 import org.openspcoop2.core.mvc.properties.utils.serializer.JaxbDeserializer;
@@ -69,7 +70,9 @@ public class Test {
 			
 			Map<String, Properties> mappaDB = DBPropertiesUtils.toMultiMap(mapDB, ReadPropertiesUtilities.getListaNomiProperties(configDaFile));
 			
-			ConfigBean configurazioneAdd = ReadPropertiesUtilities.leggiConfigurazione(configDaFile, mappaDB);
+			ExternalResources externalResources = null;
+			
+			ConfigBean configurazioneAdd = ReadPropertiesUtilities.leggiConfigurazione(configDaFile, mappaDB, externalResources);
 			
 			System.out.println("ConfigurazioneAdd Resolve Conditions");
 			
@@ -79,7 +82,7 @@ public class Test {
 			
 			Map<String, String> mapNameValue = new HashMap<String, String>();
 			for (BaseItemBean<?> item : configurazioneAdd.getListaItem()) {
-				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue);
+				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources);
 				System.out.println("Item ["+de.getName()+"] Type ["	+de.getType() +"] Label ["+de.getLabel()+"] Value ["+de.getValue()+"]");
 			}
 						
@@ -89,8 +92,8 @@ public class Test {
 			
 			System.out.println("Simulazione POSTBACK");
 			
-			configurazioneAdd.setValueFromRequest("usernameAction", Costanti.CHECK_BOX_ENABLED_ABILITATO);
-			configurazioneAdd.setValueFromRequest("keystoreType", "pkcs12");
+			configurazioneAdd.setValueFromRequest("usernameAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources);
+			configurazioneAdd.setValueFromRequest("keystoreType", "pkcs12", externalResources);
 			
 			System.out.println("ConfigurazioneAdd Resolve Conditions POSTBACK");
 			
@@ -100,7 +103,7 @@ public class Test {
 			
 			mapNameValue = new HashMap<String, String>();
 			for (BaseItemBean<?> item : configurazioneAdd.getListaItem()) {
-				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue);
+				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources);
 				if(de.getType().equals(DataElementType.CHECKBOX.toString()) || de.getType().equals(DataElementType.SELECT.toString()) )
 					System.out.println("Item ["+de.getName()+"] Type ["	+de.getType() +"] Label ["+de.getLabel()+"] SelectedValue ["+de.getSelected()+"]");
 				else 
@@ -112,16 +115,16 @@ public class Test {
 			
 			System.out.println("Simulazione EDIT FINALE ADD ---> Clicco SALVA....");
 			
-			configurazioneAdd.setValueFromRequest("usernameAction", Costanti.CHECK_BOX_ENABLED_ABILITATO);
-			configurazioneAdd.setValueFromRequest("keystoreType", "pkcs12");
-			configurazioneAdd.setValueFromRequest("keystore", "/tmp/keystoreAdd.jks");
-			configurazioneAdd.setValueFromRequest("encryptAction", Costanti.CHECK_BOX_ENABLED_ABILITATO);
-			configurazioneAdd.setValueFromRequest("encryptSignatureAction", Costanti.CHECK_BOX_ENABLED_ABILITATO);
+			configurazioneAdd.setValueFromRequest("usernameAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources);
+			configurazioneAdd.setValueFromRequest("keystoreType", "pkcs12", externalResources);
+			configurazioneAdd.setValueFromRequest("keystore", "/tmp/keystoreAdd.jks", externalResources);
+			configurazioneAdd.setValueFromRequest("encryptAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources);
+			configurazioneAdd.setValueFromRequest("encryptSignatureAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources);
 			
 			
 			System.out.println("Simulazione EDIT FINALE ADD ---> Validazione Input utente");
 			
-			configurazioneAdd.validazioneInputUtente("nome", "descrizione", configDaFile);
+			configurazioneAdd.validazioneInputUtente("nome", "descrizione", configDaFile, externalResources);
 			
 			System.out.println("----------------------");
 			
@@ -171,15 +174,15 @@ public class Test {
 			
 			System.out.println("Ricarico configurazione da DB ");
 			
-			ConfigBean configurazioneChange = ReadPropertiesUtilities.leggiConfigurazione(configDaFile, mappaDB);
+			ConfigBean configurazioneChange = ReadPropertiesUtilities.leggiConfigurazione(configDaFile, mappaDB, externalResources);
 			
 			System.out.println("----------------------");
 			
 			System.out.println("configurazioneChange Resolve Conditions");
 			
-			configurazioneChange.setValueFromRequest("keystoreType", "jks");
-			configurazioneChange.setValueFromRequest("keystore", "/tmp/keystore.jks");
-			configurazioneChange.setValueFromRequest("timeToLive", "120");
+			configurazioneChange.setValueFromRequest("keystoreType", "jks", externalResources);
+			configurazioneChange.setValueFromRequest("keystore", "/tmp/keystore.jks", externalResources);
+			configurazioneChange.setValueFromRequest("timeToLive", "120", externalResources);
 			
 			configurazioneChange.updateConfigurazione(configDaFile);
 			
@@ -187,7 +190,7 @@ public class Test {
 			
 			mapNameValue = new HashMap<String, String>();
 			for (BaseItemBean<?> item : configurazioneChange.getListaItem()) {
-				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue);
+				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources);
 				if(de.getType().equals(DataElementType.CHECKBOX.toString()) || de.getType().equals(DataElementType.SELECT.toString()) )
 					System.out.println("Item ["+de.getName()+"] Type ["	+de.getType() +"] Label ["+de.getLabel()+"] SelectedValue ["+de.getSelected()+"]");
 				else 
@@ -196,7 +199,7 @@ public class Test {
 						
 			System.out.println("Simulazione EDIT FINALE CHANGE ---> Validazione Input utente");
 			
-			configurazioneChange.validazioneInputUtente("nome", "descrizione", configDaFile);
+			configurazioneChange.validazioneInputUtente("nome", "descrizione", configDaFile, externalResources);
 			
 			System.out.println("----------------------");
 			

@@ -27,14 +27,17 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
@@ -385,6 +388,27 @@ public class NegoziazioneTokenProvider implements IProvider {
 			TokenUtilities.checkClaims("header http", convertTextToProperties, "Header HTTP", deny, false);
 		}
 		
+		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM.equals(retMode)) {
+			String parser = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM);
+			if(parser!=null && Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM.equals(parser)) {
+				String pluginType = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE);
+				if(pluginType!=null && StringUtils.isNotEmpty(pluginType) && CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginType)) {
+					String className = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME);
+					if(CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+						throw new ProviderValidationException("Deve essere selezionato un plugin per il 'Formato Risposta'");	
+					}
+					else {
+						if(className==null || "".equals(className)) {
+							throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims della risposta");
+						}
+						if(className.contains(" ")) {
+							throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims della risposta");
+						}
+					}
+				}
+			}
+		}
+		
 		String mode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE);
 		if(mode==null) {
 			throw new ProviderValidationException("Nessuna modalità di forward indicata");
@@ -416,11 +440,14 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		
 	}
-	
-	
+
 
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
+		return this.getValues(id, null);
+	}
+	@Override
+	public List<String> getValues(String id, ExternalResources externalResources) throws ProviderException{
 		if(Costanti.ID_RETRIEVE_TOKEN_METHOD.equals(id)) {
 			List<String> methodsList = new ArrayList<>();
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL);
@@ -473,11 +500,18 @@ public class NegoziazioneTokenProvider implements IProvider {
 			}
 			return methodsList;
 		}
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE);
+		}
 		return null;
 	}
 
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
+		return this.getLabels(id, null);
+	}
+	@Override
+	public List<String> getLabels(String id, ExternalResources externalResources) throws ProviderException{
 		if(Costanti.ID_RETRIEVE_TOKEN_METHOD.equals(id)) {
 			List<String> methodsList = new ArrayList<>();
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL);
@@ -509,6 +543,9 @@ public class NegoziazioneTokenProvider implements IProvider {
 				Costanti.ID_HTTPS_TRUSTSTORE_TYPE.equals(id) ||
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			return getStoreType(id,false);
+		}
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE);
 		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
@@ -556,6 +593,10 @@ public class NegoziazioneTokenProvider implements IProvider {
 
 	@Override
 	public String getDefault(String id) throws ProviderException {
+		return getDefault(id, null);
+	}
+	@Override
+	public String getDefault(String id, ExternalResources externalResources) throws ProviderException {
 		if(Costanti.ID_RETRIEVE_TOKEN_METHOD.equals(id)) {
 			return Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL;
 		}
@@ -674,7 +715,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_OBJECT_VALORI);
 			return pInfo;
 		}
-		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN.equals(id)) {
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(id)) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA);
 			pInfo.setListBody(new ArrayList<>());
@@ -687,6 +728,10 @@ public class NegoziazioneTokenProvider implements IProvider {
 	
 	@Override
 	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		return dynamicUpdate(items, mapNameValue, item, actualValue, null);
+	}
+	@Override
+	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
 	
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName()) ||
@@ -772,6 +817,14 @@ public class NegoziazioneTokenProvider implements IProvider {
 				item.setType(ItemType.TEXT);
 			}
 			
+		}		
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())) {
+			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE, item, actualValue);
+		}
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())) {
+			return TokenUtilities.dynamicUpdateTokenPluginClassName(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE, 
+					items, mapNameValue, item, 
+					Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE, actualValue);			
 		}
 		
 		return actualValue;

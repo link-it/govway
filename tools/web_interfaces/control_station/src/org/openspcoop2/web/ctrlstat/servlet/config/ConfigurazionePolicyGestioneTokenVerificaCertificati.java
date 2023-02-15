@@ -52,8 +52,8 @@ import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthori
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.web.ctrlstat.core.CertificateChecker;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -66,7 +66,6 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
-import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 
 /**
  * ConfigurazionePolicyGestioneTokenVerificaCertificati
@@ -590,8 +589,9 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 					Config configurazione = configManager.getConfigurazione(propertiesSourceConfiguration, genericProperties.getTipo()); 
 					
 					Map<String, Properties> mappaDB = confCore.readGestorePolicyTokenPropertiesConfiguration(genericProperties.getId()); 
+
+					ConfigBean configurazioneBean = confCore.leggiConfigurazione(configurazione, mappaDB);
 					
-					ConfigBean configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, mappaDB);
 					// non viene supportata la modalità completa. Visualizzo allora solamente il nome
 //					confHelper.aggiornaConfigurazioneProperties(configurazioneBean);
 //					

@@ -41,9 +41,18 @@ public interface IProvider {
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException;
 	
 	public List<String> getValues(String id) throws ProviderException;
+	public default List<String> getValues(String id, ExternalResources externalResources) throws ProviderException{
+		return this.getValues(id); 
+	}
 	public List<String> getLabels(String id) throws ProviderException;
+	public default List<String> getLabels(String id, ExternalResources externalResources) throws ProviderException{
+		return this.getLabels(id); 
+	}
 	
 	public String getDefault(String id) throws ProviderException;
+	public default String getDefault(String id, ExternalResources externalResources) throws ProviderException{
+		return this.getDefault(id); 
+	}
 	
 	public default String getNote(String id, String actualValue) throws ProviderException{ return null; }
 	
@@ -52,6 +61,9 @@ public interface IProvider {
 	}
 	public default String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		return actualValue;
+	}
+	public default String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
+		return dynamicUpdate(items, mapNameValue, item, actualValue);
 	}
 	
 }

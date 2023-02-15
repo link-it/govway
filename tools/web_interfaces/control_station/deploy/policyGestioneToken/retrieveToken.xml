@@ -869,7 +869,14 @@
 				</values>
 				<property name="policy.retrieveToken.claimsParser.custom" />
 			</item>
-
+			<item type="select" name="customTokenParserCustomPluginChoice" label="" reloadOnChange="true" >
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="CUSTOM"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.claimsParser.pluginType" />
+			</item>
 			<item type="text" name="customTokenParserCustomPlugin" label="ClassName" required="true">
 				<conditions>
 					<condition and="true">
@@ -878,6 +885,7 @@
 				</conditions>
 			   	<property name="policy.retrieveToken.claimsParser.className" />
 			</item>
+
 
 			<item type="text" name="customTokenParserTokenType" label="Token Type" required="true" default="token_type">
 				<conditions>

@@ -173,6 +173,14 @@
 			<property name="policy.validazioneJWT.claimsParser" />
 		</item>
 
+		<item type="select" name="validazioneJwtParserCustomPluginChoice" label="" reloadOnChange="true" >
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="CUSTOM"/>
+				</condition>
+			</conditions>
+			<property name="policy.validazioneJWT.claimsParser.pluginType" />
+		</item>
 		<item type="text" name="validazioneJwtParserCustom" label="ClassName" required="true">
 			<conditions>
 				<condition and="true">
@@ -724,6 +732,14 @@
 				<property name="policy.introspection.claimsParser" />
 			</item>
 
+			<item type="select" name="introspectionParserCustomPluginChoice" label="" reloadOnChange="true" >
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="CUSTOM"/>
+					</condition>
+				</conditions>
+				<property name="policy.introspection.claimsParser.pluginType" />
+			</item>
 			<item type="text" name="introspectionParserCustom" label="ClassName" required="true">
 				<conditions>
 					<condition and="true">
@@ -1103,6 +1119,14 @@
 				<property name="policy.userInfo.claimsParser" />
 			</item>
 
+			<item type="select" name="userInfoParserCustomPluginChoice" label="" reloadOnChange="true" >
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="CUSTOM"/>
+					</condition>
+				</conditions>
+				<property name="policy.userInfo.claimsParser.pluginType" />
+			</item>
 			<item type="text" name="userInfoParserCustom" label="ClassName" required="true">
 				<conditions>
 					<condition and="true">

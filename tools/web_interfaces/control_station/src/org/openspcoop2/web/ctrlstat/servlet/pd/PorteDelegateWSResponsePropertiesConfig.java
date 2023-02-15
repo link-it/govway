@@ -51,7 +51,6 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
-import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 
 /**     
  * PorteDelegateWSResponsePropertiesConfig
@@ -113,7 +112,7 @@ public class PorteDelegateWSResponsePropertiesConfig  extends Action {
 			
 			Map<String, Properties> mappaDB = porteDelegateCore.readMessageSecurityResponsePropertiesConfiguration(pde.getId()); 
 			
-			ConfigBean configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, mappaDB);
+			ConfigBean configurazioneBean = porteDelegateCore.leggiConfigurazione(configurazione, mappaDB);
 			
 			if(!first) { // la prima volta non sovrascrivo la configurazione con i valori letti dai parametri
 				porteDelegateHelper.aggiornaConfigurazioneProperties(configurazioneBean);
@@ -224,7 +223,7 @@ public class PorteDelegateWSResponsePropertiesConfig  extends Action {
 			
 			mappaDB = porteDelegateCore.readMessageSecurityResponsePropertiesConfiguration(pde.getId()); 
 			
-			configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, mappaDB);
+			configurazioneBean = porteDelegateCore.leggiConfigurazione(configurazione, mappaDB);
 			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);

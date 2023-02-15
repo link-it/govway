@@ -9172,6 +9172,87 @@ public class DBOggettiInUsoUtils  {
 				risultato.close();
 				stmt.close();
 			}
+			else if("TOKEN_VALIDAZIONE".equals(tipoPlugin)
+				||
+				"TOKEN_NEGOZIAZIONE".equals(tipoPlugin)
+				||
+				"ATTRIBUTE_AUTHORITY".equals(tipoPlugin) ) {
+				
+				boolean tokenValidazione = "TOKEN_VALIDAZIONE".equals(tipoPlugin);
+				boolean tokenNegoziazione = "TOKEN_NEGOZIAZIONE".equals(tipoPlugin);
+				boolean attributeAuthority = "ATTRIBUTE_AUTHORITY".equals(tipoPlugin);
+				
+				ErrorsHandlerCostant constants = null;
+				String tipologia = null;
+				if(tokenValidazione) {
+					constants = ErrorsHandlerCostant.TOKEN_PA;
+					tipologia = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION;
+				}
+				else if(tokenNegoziazione) {
+					constants = ErrorsHandlerCostant.TOKEN_NEGOZIAZIONE_PA;
+					tipologia = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE;
+				}
+				else {
+					constants = ErrorsHandlerCostant.ATTRIBUTE_AUTHORITY_PA;
+					tipologia = CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY;
+				}
+								
+				List<String> gp_list = whereIsInUso.get(constants);
+				if (gp_list == null) {
+					gp_list = new ArrayList<String>();
+					whereIsInUso.put(constants, gp_list);
+				}	
+				
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES, "gps");
+				sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTY, "gp");
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addSelectAliasField("gps", "nome", "nomeGP");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition("gps.id=gp.id_props");
+				sqlQueryObject.addWhereCondition("gps.tipologia=?");
+				if(tokenValidazione) {
+					sqlQueryObject.addWhereCondition(false, "gp.nome=?", "gp.nome=?", "gp.nome=?");
+					sqlQueryObject.addWhereLikeCondition("gp.valore", tipo, false, false, false);
+				}
+				else if(tokenNegoziazione) {
+					sqlQueryObject.addWhereCondition("gp.nome=?");
+					sqlQueryObject.addWhereLikeCondition("gp.valore", tipo, false, false, false);
+				}
+				else if(attributeAuthority) {
+					sqlQueryObject.addWhereCondition("gp.nome=?");
+					sqlQueryObject.addWhereLikeCondition("gp.valore", tipo, false, false, false);
+				}
+				
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				int index = 1;
+				JDBCParameterUtilities utils = new JDBCParameterUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2());
+				utils.setParameter(stmt, index++, tipologia, String.class);
+				if(tokenValidazione) {
+					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
+					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
+					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
+				}
+				else if(tokenNegoziazione) {
+					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE, String.class);
+				}
+				else if(attributeAuthority) {
+					utils.setParameter(stmt, index++, CostantiConfigurazione.AA_RESPONSE_PARSER_PLUGIN_TYPE, String.class);
+				}
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					
+					String nome = risultato.getString("nomeGP");
+					
+					String labelMessaggio = formatGenericProperties(tipologia, nome);
+					gp_list.add(labelMessaggio);
+	
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+			}
 			
 			return isInUso;
 
@@ -9405,6 +9486,22 @@ public class DBOggettiInUsoUtils  {
 				}
 				break;
 				
+			case TOKEN_PA:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato nelle Token Policy di Validazione: " + formatList(messages,separator) + separator;
+				}
+				break;	
+			case TOKEN_NEGOZIAZIONE_PA:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato nelle Token Policy di Negoziazione: " + formatList(messages,separator) + separator;
+				}
+				break;	
+			case ATTRIBUTE_AUTHORITY_PA:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato negli Attribute Authority: " + formatList(messages,separator) + separator;
+				}
+				break;	
+				
 			default:
 				msg += "utilizzato in oggetto non codificato ("+key+")"+separator;
 				break;
@@ -9431,6 +9528,25 @@ public class DBOggettiInUsoUtils  {
 //		String tipologiaWS = tipologia.substring(0, tipologia.indexOf(CostantiDB.HANDLER_REQUEST_SUFFIX));
 		String template = "Fase [{0}]";
 		return MessageFormat.format(template, tipologia);
+		
+	}
+	
+	public static String formatGenericProperties(String tipologia, String nome) {
+		
+		/*
+		String template = null;
+		if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION.equals(tipologia)) {
+			template = "Token Policy Validazione [{0}]";
+		}
+		else if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(tipologia)) {
+			template = "Token Policy Negoziazione [{0}]";
+		}
+		else {
+			template = "Attribute Authority [{0}]";
+		}
+		return MessageFormat.format(template, nome);
+		*/
+		return nome;
 		
 	}
 }

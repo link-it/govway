@@ -166,6 +166,12 @@ public class PluginLoader implements IPluginLoader {
 			return "search library";
 		case STATISTICA:
 			return "stats library";
+		case TOKEN_VALIDAZIONE:
+			return "token validation policy";
+		case TOKEN_NEGOZIAZIONE:
+			return "token retrieve policy";
+		case ATTRIBUTE_AUTHORITY:
+			return "attribute authority";
 		}
 		throw new Exception("?? Type '"+tipoPlugin+"' unsupported ??");
 	}

@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.core.token.attribute_authority;
 
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+
 /**     
  * Costanti
  *
@@ -91,12 +93,13 @@ public class Costanti {
 	public final static String AA_REQUEST_JWT_SIGN_KEY_ALIAS = "policy.attributeAuthority.request.jws.key.alias";
 	public final static String AA_REQUEST_JWT_SIGN_KEY_PASSWORD = "policy.attributeAuthority.request.jws.key.password";
 	
-	public final static String AA_RESPONSE_TYPE = "policy.attributeAuthority.response.type";
-	public final static String AA_RESPONSE_TYPE_VALUE_JSON = "json";
-	public final static String AA_RESPONSE_TYPE_VALUE_JWS = "jws";
-	public final static String AA_RESPONSE_TYPE_VALUE_CUSTOM = "custom";
+	public final static String AA_RESPONSE_TYPE = CostantiConfigurazione.AA_RESPONSE_TYPE; //"policy.attributeAuthority.response.type";
+	public final static String AA_RESPONSE_TYPE_VALUE_JSON = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JSON; //"json";
+	public final static String AA_RESPONSE_TYPE_VALUE_JWS = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JWS; //"jws";
+	public final static String AA_RESPONSE_TYPE_VALUE_CUSTOM = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_CUSTOM; //"custom";
 	
-	public final static String AA_RESPONSE_PARSER = "policy.attributeAuthority.claimsParser.className";
+	public final static String AA_RESPONSE_PARSER_CLASS_NAME = CostantiConfigurazione.AA_RESPONSE_PARSER_CLASS_NAME; //"policy.attributeAuthority.claimsParser.className";
+	public final static String AA_RESPONSE_PARSER_PLUGIN_TYPE = CostantiConfigurazione.AA_RESPONSE_PARSER_PLUGIN_TYPE;//"policy.attributeAuthority.claimsParser.pluginType";
 	public final static String AA_RESPONSE_ATTRIBUTES = "policy.attributeAuthority.response.jwt.attributes";
 	
 	public final static String AA_RESPONSE_AUDIENCE = "policy.attributeAuthority.response.jwt.audience";
@@ -125,4 +128,7 @@ public class Costanti {
 	
 	public final static String ID_AA_SIGNATURE_ALGORITHM = "aaSignatureAlgorithm";
 	public final static String ID_AA_TOKEN_JWT_EXPIRED_TTL_SECONDS= "aaRichiestaPayloadExpTtl";
+	
+	public final static String ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CLASSNAME = "aaResponseParserCustom";
+	public final static String ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE = "aaResponseParserCustomPluginChoice";
 }

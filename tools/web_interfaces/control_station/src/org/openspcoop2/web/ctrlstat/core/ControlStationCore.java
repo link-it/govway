@@ -94,6 +94,8 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.mvc.properties.Config;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -206,6 +208,8 @@ import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
+import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.openspcoop2.web.lib.queue.costanti.Operazione;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -8326,5 +8330,20 @@ public class ControlStationCore {
 	}
 	public void addFromSortedListMap(List<Proprieta> proprieta, SortedMap<List<String>> map){
 		ConfigUtils.addFromSortedListMap(proprieta, map);
+	}
+	
+	public ConfigBean leggiConfigurazione(Config config, Map<String, Properties> propertiesMap) throws Exception{
+		ExternalResources externalResources = new ExternalResources();
+		externalResources.setLog(ControlStationCore.getLog());
+		externalResources.setTipoDB(this.tipoDB);
+		Connection con = ControlStationCore.dbM.getConnection();
+		ConfigBean configurazioneBean = null;
+		try {
+			externalResources.setConnection(con);
+			configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(config, propertiesMap, externalResources);
+		}finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+		return configurazioneBean;
 	}
 }

@@ -29,6 +29,7 @@ import org.openspcoop2.core.mvc.properties.Conditions;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.Section;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 
 /**
@@ -46,7 +47,7 @@ public class SectionBean extends BaseItemBean<Section>{
 	}
 
 	@Override
-	public DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue) {
+	public DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue, ExternalResources externalResources) {
 		DataElement de = new DataElement();
 		de.setName(this.getName());
 		de.setLabel(this.getItem().getLabel()); 
@@ -63,7 +64,7 @@ public class SectionBean extends BaseItemBean<Section>{
 	}
 
 	@Override
-	public void setValueFromRequest(String parameterValue) {}
+	public void setValueFromRequest(String parameterValue, ExternalResources externalResources) {}
 
 	@Override
 	public Property getSaveProperty() {	return null; }
@@ -72,7 +73,7 @@ public class SectionBean extends BaseItemBean<Section>{
 	public String getPropertyValue() { return null;	}
 	
 	@Override
-	public void init(String value) {}
+	public void init(String value, ExternalResources externalResources) {}
 	
 	@Override
 	public Conditions getConditions() {
@@ -90,6 +91,6 @@ public class SectionBean extends BaseItemBean<Section>{
 	}
 	
 	@Override
-	public void validate() throws UserInputValidationException {
+	public void validate(ExternalResources externalResources) throws UserInputValidationException {
 	}
 }

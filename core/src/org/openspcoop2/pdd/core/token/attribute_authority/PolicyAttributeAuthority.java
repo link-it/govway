@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.token.AbstractPolicyToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -54,8 +56,24 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 		IRetrieveAttributeAuthorityResponseParser parser = null;
 		TipologiaResponseAttributeAuthority tipologiaResponse = TipologiaResponseAttributeAuthority.valueOf(this.defaultProperties.getProperty(Costanti.AA_RESPONSE_TYPE));
 		if(TipologiaResponseAttributeAuthority.custom.equals(tipologiaResponse)) {
-			String className = this.defaultProperties.getProperty(Costanti.AA_RESPONSE_PARSER);
-			parser = (IRetrieveAttributeAuthorityResponseParser) ClassLoaderUtilities.newInstance(className);
+			String className = this.defaultProperties.getProperty(Costanti.AA_RESPONSE_PARSER_CLASS_NAME);
+			if(className!=null && StringUtils.isNotEmpty(className) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+				parser = (IRetrieveAttributeAuthorityResponseParser) ClassLoaderUtilities.newInstance(className);
+			}
+			else {
+				String tipo = this.defaultProperties.getProperty(Costanti.AA_RESPONSE_PARSER_PLUGIN_TYPE);
+				if(tipo!=null && StringUtils.isNotEmpty(tipo) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(tipo)) {
+			    	try{
+						PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+						parser = (IRetrieveAttributeAuthorityResponseParser) pluginLoader.newAttributeAuthority(tipo);
+					}catch(Exception e){
+						throw e; // descrizione errore già corretta
+					}
+				}
+				else {
+					throw new Exception("Deve essere selezionato un plugin per la risposta");
+				}
+			}
 		}
 		else {
 			String claims = this.defaultProperties.getProperty(Costanti.AA_RESPONSE_ATTRIBUTES);

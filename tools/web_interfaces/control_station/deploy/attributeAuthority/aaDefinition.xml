@@ -665,6 +665,14 @@
 			</conditions>
 		   	<property name="policy.attributeAuthority.response.jwt.attributes" />
 		</item>
+		<item type="select" name="aaResponseParserCustomPluginChoice" label="Plugin" reloadOnChange="true" >
+			<conditions>
+				<condition>
+					<equals name="aaResponse" value="custom"/>
+				</condition>
+			</conditions>
+			<property name="policy.attributeAuthority.claimsParser.pluginType" />
+		</item>
 		<item type="text" name="aaResponseParserCustom" label="ClassName" required="true">
 			<conditions>
 				<condition>

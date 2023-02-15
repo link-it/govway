@@ -41,8 +41,8 @@ import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -53,7 +53,6 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
-import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 
 /**     
  * ConfigurazionePolicyGestioneTokenChange
@@ -125,7 +124,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			
 			Map<String, Properties> mappaDB = confCore.readGestorePolicyTokenPropertiesConfiguration(genericProperties.getId()); 
 			
-			ConfigBean configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, mappaDB);
+			ConfigBean configurazioneBean = confCore.leggiConfigurazione(configurazione, mappaDB);
 			
 			if(nome != null) { // la prima volta non sovrascrivo la configurazione con i valori letti dai parametri
 				confHelper.aggiornaConfigurazioneProperties(configurazioneBean);

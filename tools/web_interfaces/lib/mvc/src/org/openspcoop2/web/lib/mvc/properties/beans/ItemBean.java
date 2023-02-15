@@ -31,6 +31,7 @@ import org.openspcoop2.core.mvc.properties.ItemValue;
 import org.openspcoop2.core.mvc.properties.ItemValues;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
@@ -57,7 +58,7 @@ public class ItemBean extends BaseItemBean<Item>{
 	}
 
 	@Override
-	public void init(String value) throws ProviderException {
+	public void init(String value, ExternalResources externalResources) throws ProviderException {
 //		Property saveProperty = this.getSaveProperty();
 
 		// caso value == null e non devo forzare con il valore letto dal db cerco un default
@@ -79,7 +80,7 @@ public class ItemBean extends BaseItemBean<Item>{
 					this.value = this.getItem().getDefault();
 				}
 				else if(this.provider!=null) {
-					this.value = this.provider.getDefault(this.name);
+					this.value = this.provider.getDefault(this.name, externalResources);
 				}
 				else {
 					this.value = null;
@@ -104,10 +105,10 @@ public class ItemBean extends BaseItemBean<Item>{
 	}
 
 	@Override
-	public DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue) throws ProviderException {
+	public DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue, ExternalResources externalResources) throws ProviderException {
 
 		if(this.provider!=null){
-			this.value = this.provider.dynamicUpdate(config.getListaItemSDK(), mapNameValue, this.getItem(), this.value);
+			this.value = this.provider.dynamicUpdate(config.getListaItemSDK(), mapNameValue, this.getItem(), this.value, externalResources);
 		}
 		
 		mapNameValue.put(this.name, this.value);
@@ -165,11 +166,11 @@ public class ItemBean extends BaseItemBean<Item>{
 				}
 			}
 			else if(this.provider!=null){
-				List<String> tmp = this.provider.getValues(this.name);
+				List<String> tmp = this.provider.getValues(this.name, externalResources);
 				if(tmp!=null && tmp.size()>0) {
 					valuesList.addAll(tmp);
 				}
-				tmp = this.provider.getLabels(this.name);
+				tmp = this.provider.getLabels(this.name, externalResources);
 				if(tmp!=null && tmp.size()>0) {
 					labelsList.addAll(tmp);
 				}
@@ -199,7 +200,7 @@ public class ItemBean extends BaseItemBean<Item>{
 	}
 
 	@Override
-	public void setValueFromRequest(String parameterValue) throws ProviderException {
+	public void setValueFromRequest(String parameterValue, ExternalResources externalResources) throws ProviderException {
 		if(parameterValue == null && !this.isOldVisible()) {
 			switch(this.getItem().getType()) {
 			case CHECKBOX:
@@ -217,7 +218,7 @@ public class ItemBean extends BaseItemBean<Item>{
 					this.value = this.getItem().getDefault();
 				}
 				else if(this.provider!=null) {
-					this.value = this.provider.getDefault(this.name);
+					this.value = this.provider.getDefault(this.name, externalResources);
 				}
 				else {
 					this.value = null;
@@ -316,7 +317,7 @@ public class ItemBean extends BaseItemBean<Item>{
 	}
 	
 	@Override
-	public void validate() throws UserInputValidationException {
+	public void validate(ExternalResources externalResources) throws UserInputValidationException {
 		String itemValue = this.getPropertyValue(); // valore della property
 		Property saveProperty = this.getSaveProperty();
 
@@ -387,7 +388,7 @@ public class ItemBean extends BaseItemBean<Item>{
 					}
 					else {
 						try {
-							List<String> tmp = this.provider.getValues(this.name);
+							List<String> tmp = this.provider.getValues(this.name, externalResources);
 							if(tmp.contains(itemValue)) {
 								found = true;
 							}

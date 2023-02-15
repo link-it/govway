@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
@@ -63,7 +65,23 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		
 		if(TipologiaClaimsNegoziazione.CUSTOM.equals(tipologiaClaims)) {
 			String className = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME);
-			parser = (INegoziazioneTokenParser) ClassLoaderUtilities.newInstance(className);
+			if(className!=null && StringUtils.isNotEmpty(className) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+				parser = (INegoziazioneTokenParser) ClassLoaderUtilities.newInstance(className);
+			}
+			else {
+				String tipo = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE);
+				if(tipo!=null && StringUtils.isNotEmpty(tipo) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(tipo)) {
+			    	try{
+						PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+						parser = (INegoziazioneTokenParser) pluginLoader.newTokenNegoziazione(tipo);
+					}catch(Exception e){
+						throw e; // descrizione errore già corretta
+					}
+				}
+				else {
+					throw new Exception("Deve essere selezionato un plugin per il 'Formato Risposta'");
+				}
+			}
 		}
 		else{
 			parser = new BasicNegoziazioneTokenParser(tipologiaClaims, TokenUtilities.getRetrieveResponseClaimsMappingProperties(this.properties));

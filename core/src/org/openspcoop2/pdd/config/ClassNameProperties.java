@@ -51,6 +51,9 @@ import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePD;
 import org.openspcoop2.pdd.core.node.INodeReceiver;
 import org.openspcoop2.pdd.core.node.INodeSender;
 import org.openspcoop2.pdd.core.threshold.IThreshold;
+import org.openspcoop2.pdd.core.token.attribute_authority.IRetrieveAttributeAuthorityResponseParser;
+import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
+import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.driver.IFiltroDuplicati;
@@ -483,6 +486,30 @@ public class ClassNameProperties {
 				for (String tipo : tmp) {
 					String className = this.getRateLimiting(tipo);
 					if ( this.validate(loaderOpenSPCoop, className, tipo, IRateLimiting.class) == false ) return false;
+				}
+			}
+			
+			tmp = getTokenValidazione();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getTokenValidazione(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, ITokenParser.class) == false ) return false;
+				}
+			}
+			
+			tmp = getTokenNegoziazione();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getTokenNegoziazione(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, INegoziazioneTokenParser.class) == false ) return false;
+				}
+			}
+			
+			tmp = getAttributeAuthority();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getAttributeAuthority(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IRetrieveAttributeAuthorityResponseParser.class) == false ) return false;
 				}
 			}
 			
@@ -1262,6 +1289,48 @@ public class ClassNameProperties {
 	}
 	public String[] getRateLimiting() throws Exception{
 		return this.getTipiGestiti("org.openspcoop2.pdd.controlloTraffico.rateLimiting.");
+	}
+	
+	
+	
+	/**
+	 * Ritorna una classe 'ITokenParser' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getTokenValidazione(String nome){
+		return this.getValue("org.openspcoop2.pdd.token.validazione.", nome);
+	}
+	public String[] getTokenValidazione() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.token.validazione.");
+	}
+	
+	
+	
+	/**
+	 * Ritorna una classe 'INegoziazioneTokenParser' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getTokenNegoziazione(String nome){
+		return this.getValue("org.openspcoop2.pdd.token.negoziazione.", nome);
+	}
+	public String[] getTokenNegoziazione() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.token.negoziazione.");
+	}
+	
+	
+	
+	/**
+	 * Ritorna una classe 'IRetrieveAttributeAuthorityResponseParser' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getAttributeAuthority(String nome){
+		return this.getValue("org.openspcoop2.pdd.attributeAuthority.", nome);
+	}
+	public String[] getAttributeAuthority() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.attributeAuthority.");
 	}
 	
 	

@@ -53,6 +53,9 @@ import org.openspcoop2.pdd.core.handlers.PreInRequestHandler;
 import org.openspcoop2.pdd.core.handlers.PreInResponseHandler;
 import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePA;
 import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePD;
+import org.openspcoop2.pdd.core.token.attribute_authority.IRetrieveAttributeAuthorityResponseParser;
+import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
+import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.utils.NameValue;
 
 /**
@@ -300,4 +303,23 @@ public class PddPluginLoader extends PluginLoader implements IPluginLoader {
 		Class<?> c = getPddDynamicClass(className, TipoPlugin.RATE_LIMITING, tipo);
 		return (IRateLimiting) newInstance(c, TipoPlugin.RATE_LIMITING, tipo);
 	}
+	
+	public ITokenParser newTokenValidazione(String tipo) throws Exception {
+		String className = this.className.getTokenValidazione(tipo);
+		Class<?> c = getPddDynamicClass(className, TipoPlugin.TOKEN_VALIDAZIONE, tipo);
+		return (ITokenParser) newInstance(c, TipoPlugin.TOKEN_VALIDAZIONE, tipo);
+	}
+	
+	public INegoziazioneTokenParser newTokenNegoziazione(String tipo) throws Exception {
+		String className = this.className.getTokenNegoziazione(tipo);
+		Class<?> c = getPddDynamicClass(className, TipoPlugin.TOKEN_NEGOZIAZIONE, tipo);
+		return (INegoziazioneTokenParser) newInstance(c, TipoPlugin.TOKEN_NEGOZIAZIONE, tipo);
+	}
+	
+	public IRetrieveAttributeAuthorityResponseParser newAttributeAuthority(String tipo) throws Exception {
+		String className = this.className.getAttributeAuthority(tipo);
+		Class<?> c = getPddDynamicClass(className, TipoPlugin.ATTRIBUTE_AUTHORITY, tipo);
+		return (IRetrieveAttributeAuthorityResponseParser) newInstance(c, TipoPlugin.ATTRIBUTE_AUTHORITY, tipo);
+	}
+	
 }

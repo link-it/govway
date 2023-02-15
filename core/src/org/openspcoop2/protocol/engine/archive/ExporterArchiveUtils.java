@@ -29,24 +29,27 @@ import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneHandler;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
-import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
@@ -833,11 +836,60 @@ public class ExporterArchiveUtils {
 				// gia gestito
 			}
 			else{
-				archive.getToken_validation_policies().add(new ArchiveTokenPolicy(this.archiveEngine.getGenericProperties_validation(nomePolicy), this.idCorrelazione));
+				GenericProperties policy = this.archiveEngine.getGenericProperties_validation(nomePolicy);
+				
+				archive.getToken_validation_policies().add(new ArchiveTokenPolicy(policy, this.idCorrelazione));
+				
+				// aggiungo plugin
+				if(policy!=null && policy.sizePropertyList()>0) {
+					for (int i = 0; i < policy.sizePropertyList(); i++) {
+						Property p = policy.getProperty(i);
+						if(CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE.equals(p.getNome()) && 
+								CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM.equals(p.getValore())) {
+							for (int j = 0; j < policy.sizePropertyList(); j++) {
+								Property pJ = policy.getProperty(j);
+								if(CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE.equals(pJ.getNome())) {
+									try {
+										ArchiveCascadeConfiguration cascadeConfigPlugin = new ArchiveCascadeConfiguration();
+										cascadeConfigPlugin.setCascadePluginConfigurazione(true);
+										readPlugin_classe(archive, TipoPlugin.TOKEN_VALIDAZIONE.getValue(), pJ.getValore(), cascadeConfigPlugin, provenienza);
+									}catch(DriverConfigurazioneNotFound notFound) {}		
+								}
+							}
+						}
+						else if(CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE.equals(p.getNome()) && 
+								CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE_CUSTOM.equals(p.getValore())) {
+							for (int j = 0; j < policy.sizePropertyList(); j++) {
+								Property pJ = policy.getProperty(j);
+								if(CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE.equals(pJ.getNome())) {
+									try {
+										ArchiveCascadeConfiguration cascadeConfigPlugin = new ArchiveCascadeConfiguration();
+										cascadeConfigPlugin.setCascadePluginConfigurazione(true);
+										readPlugin_classe(archive, TipoPlugin.TOKEN_VALIDAZIONE.getValue(), pJ.getValore(), cascadeConfigPlugin, provenienza);
+									}catch(DriverConfigurazioneNotFound notFound) {}		
+								}
+							}
+						}
+						else if(CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_TYPE.equals(p.getNome()) && 
+								CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_TYPE_CUSTOM.equals(p.getValore())) {
+							for (int j = 0; j < policy.sizePropertyList(); j++) {
+								Property pJ = policy.getProperty(j);
+								if(CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE.equals(pJ.getNome())) {
+									try {
+										ArchiveCascadeConfiguration cascadeConfigPlugin = new ArchiveCascadeConfiguration();
+										cascadeConfigPlugin.setCascadePluginConfigurazione(true);
+										readPlugin_classe(archive, TipoPlugin.TOKEN_VALIDAZIONE.getValue(), pJ.getValore(), cascadeConfigPlugin, provenienza);
+									}catch(DriverConfigurazioneNotFound notFound) {}		
+								}
+							}
+						}
+					}
+				}	
+
 			}
 			
 		}
-		
+				
 	}
 	
 	private void readTokenPolicy_retrieve(Archive archive, String nomePolicy, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
@@ -849,7 +901,29 @@ public class ExporterArchiveUtils {
 				// gia gestito
 			}
 			else{
-				archive.getToken_retrieve_policies().add(new ArchiveTokenPolicy(this.archiveEngine.getGenericProperties_retrieve(nomePolicy), this.idCorrelazione));
+				GenericProperties policy = this.archiveEngine.getGenericProperties_retrieve(nomePolicy);
+				
+				archive.getToken_retrieve_policies().add(new ArchiveTokenPolicy(policy, this.idCorrelazione));
+				
+				// aggiungo plugin
+				if(policy!=null && policy.sizePropertyList()>0) {
+					for (int i = 0; i < policy.sizePropertyList(); i++) {
+						Property p = policy.getProperty(i);
+						if(CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM.equals(p.getNome()) && 
+								CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM.equals(p.getValore())) {
+							for (int j = 0; j < policy.sizePropertyList(); j++) {
+								Property pJ = policy.getProperty(j);
+								if(CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE.equals(pJ.getNome())) {
+									try {
+										ArchiveCascadeConfiguration cascadeConfigPlugin = new ArchiveCascadeConfiguration();
+										cascadeConfigPlugin.setCascadePluginConfigurazione(true);
+										readPlugin_classe(archive, TipoPlugin.TOKEN_NEGOZIAZIONE.getValue(), pJ.getValore(), cascadeConfigPlugin, provenienza);
+									}catch(DriverConfigurazioneNotFound notFound) {}		
+								}
+							}
+						}
+					}
+				}
 			}
 			
 		}
@@ -889,7 +963,30 @@ public class ExporterArchiveUtils {
 				// gia gestito
 			}
 			else{
-				archive.getAttributeAuthorities().add(new ArchiveAttributeAuthority(this.archiveEngine.getGenericProperties_attributeAuthority(nomePolicy), this.idCorrelazione));
+				GenericProperties policy = this.archiveEngine.getGenericProperties_attributeAuthority(nomePolicy);
+				
+				archive.getAttributeAuthorities().add(new ArchiveAttributeAuthority(policy, this.idCorrelazione));
+				
+				// aggiungo plugin
+				if(policy!=null && policy.sizePropertyList()>0) {
+					for (int i = 0; i < policy.sizePropertyList(); i++) {
+						Property p = policy.getProperty(i);
+						if(CostantiConfigurazione.AA_RESPONSE_TYPE.equals(p.getNome()) && 
+								CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_CUSTOM.equals(p.getValore())) {
+							for (int j = 0; j < policy.sizePropertyList(); j++) {
+								Property pJ = policy.getProperty(j);
+								if(CostantiConfigurazione.AA_RESPONSE_PARSER_PLUGIN_TYPE.equals(pJ.getNome())) {
+									try {
+										// aggiungo anche il plugin configurato.
+										ArchiveCascadeConfiguration cascadeConfigPlugin = new ArchiveCascadeConfiguration();
+										cascadeConfigPlugin.setCascadePluginConfigurazione(true);
+										readPlugin_classe(archive, TipoPlugin.ATTRIBUTE_AUTHORITY.getValue(), pJ.getValore(), cascadeConfigPlugin, provenienza);
+									}catch(DriverConfigurazioneNotFound notFound) {}		
+								}
+							}
+						}
+					}
+				}
 			}
 			
 		}
@@ -2378,20 +2475,114 @@ public class ExporterArchiveUtils {
 								}catch(DriverConfigurazioneNotFound notFound) {}
 							}
 						}
-						// TODO:
-//						if(pd!=null && StringUtils.isNotEmpty(pd.getIntegrazione())) {
-//							if(StringUtils.isNotEmpty(pd.getAutorizzazioneContenuto()) && !CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(pd.getAutorizzazioneContenuto())) {
-//								try {
-//									readPlugin_classe(archive, TipoPlugin.INTEGRAZIONE.getValue(), pd.getAutorizzazione(), cascadeConfig);
-//								}catch(DriverConfigurazioneNotFound notFound) {}
-//							}
-//						}
-//						if(pd!=null && StringUtils.isNotEmpty(pd.getIntegrazione())) {
-//						if(StringUtils.isNotEmpty(pd.getAutorizzazioneContenuto()) && !CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(pd.getAutorizzazioneContenuto())) {
-//							try {
-//								readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), pd.getAutorizzazione(), cascadeConfig);
-//							}catch(DriverConfigurazioneNotFound notFound) {}
-//						}
+						if(pd!=null && pd.getIntegrazione()!=null && StringUtils.isNotEmpty(pd.getIntegrazione())) {
+							String[]tipi = pd.getIntegrazione().trim().split(",");
+							if(tipi!=null && tipi.length>0) {
+								for (String t : tipi) {
+									if(this.archiveEngine.existsPluginClasse(TipoPlugin.INTEGRAZIONE.getValue(), t)){
+										try {
+											readPlugin_classe(archive, TipoPlugin.INTEGRAZIONE.getValue(), t, cascadeConfig, provenienza);
+										}catch(DriverConfigurazioneNotFound notFound) {}
+									}
+								}
+							}
+						}
+						if(pd!=null && pd.getConfigurazioneHandler()!=null) {
+							if(pd.getConfigurazioneHandler().getRequest()!=null) {
+								if(pd.getConfigurazioneHandler().getRequest().sizePreInList()>0) {
+									for (ConfigurazioneHandler ch : pd.getConfigurazioneHandler().getRequest().getPreInList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pd.getConfigurazioneHandler().getRequest().sizeInList()>0) {
+									for (ConfigurazioneHandler ch : pd.getConfigurazioneHandler().getRequest().getInList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pd.getConfigurazioneHandler().getRequest().sizeInProtocolInfoList()>0) {
+									for (ConfigurazioneHandler ch : pd.getConfigurazioneHandler().getRequest().getInProtocolInfoList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pd.getConfigurazioneHandler().getRequest().sizeOutList()>0) {
+									for (ConfigurazioneHandler ch : pd.getConfigurazioneHandler().getRequest().getOutList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pd.getConfigurazioneHandler().getRequest().sizePostOutList()>0) {
+									for (ConfigurazioneHandler ch : pd.getConfigurazioneHandler().getRequest().getPostOutList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+							}
+							if(pd.getConfigurazioneHandler().getResponse()!=null) {
+								if(pd.getConfigurazioneHandler().getResponse().sizePreInList()>0) {
+									for (ConfigurazioneHandler ch : pd.getConfigurazioneHandler().getResponse().getPreInList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pd.getConfigurazioneHandler().getResponse().sizeInList()>0) {
+									for (ConfigurazioneHandler ch : pd.getConfigurazioneHandler().getResponse().getInList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+//								if(pd.getConfigurazioneHandler().getResponse().sizeInProtocolInfoList()>0) {
+//									for (ConfigurazioneHandler ch : pd.getConfigurazioneHandler().getResponse().getInProtocolInfoList()) {
+//										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+//											try {
+//												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+//											}catch(DriverConfigurazioneNotFound notFound) {}
+//										}
+//									}
+//								}
+								if(pd.getConfigurazioneHandler().getResponse().sizeOutList()>0) {
+									for (ConfigurazioneHandler ch : pd.getConfigurazioneHandler().getResponse().getOutList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pd.getConfigurazioneHandler().getResponse().sizePostOutList()>0) {
+									for (ConfigurazioneHandler ch : pd.getConfigurazioneHandler().getResponse().getPostOutList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+							}
+						}
 					
 					}
 				}
@@ -2685,20 +2876,114 @@ public class ExporterArchiveUtils {
 								}catch(DriverConfigurazioneNotFound notFound) {}
 							}
 						}
-						// TODO:
-//						if(pd!=null && StringUtils.isNotEmpty(pd.getIntegrazione())) {
-//							if(StringUtils.isNotEmpty(pd.getAutorizzazioneContenuto()) && !CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(pd.getAutorizzazioneContenuto())) {
-//								try {
-//									readPlugin_classe(archive, TipoPlugin.INTEGRAZIONE.getValue(), pd.getAutorizzazione(), cascadeConfig);
-//								}catch(DriverConfigurazioneNotFound notFound) {}
-//							}
-//						}
-//						if(pd!=null && StringUtils.isNotEmpty(pd.getIntegrazione())) {
-//						if(StringUtils.isNotEmpty(pd.getAutorizzazioneContenuto()) && !CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(pd.getAutorizzazioneContenuto())) {
-//							try {
-//								readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), pd.getAutorizzazione(), cascadeConfig);
-//							}catch(DriverConfigurazioneNotFound notFound) {}
-//						}
+						if(pa!=null && pa.getIntegrazione()!=null && StringUtils.isNotEmpty(pa.getIntegrazione())) {
+							String[]tipi = pa.getIntegrazione().trim().split(",");
+							if(tipi!=null && tipi.length>0) {
+								for (String t : tipi) {
+									if(this.archiveEngine.existsPluginClasse(TipoPlugin.INTEGRAZIONE.getValue(), t)){
+										try {
+											readPlugin_classe(archive, TipoPlugin.INTEGRAZIONE.getValue(), t, cascadeConfig, provenienza);
+										}catch(DriverConfigurazioneNotFound notFound) {}
+									}
+								}
+							}
+						}
+						if(pa!=null && pa.getConfigurazioneHandler()!=null) {
+							if(pa.getConfigurazioneHandler().getRequest()!=null) {
+								if(pa.getConfigurazioneHandler().getRequest().sizePreInList()>0) {
+									for (ConfigurazioneHandler ch : pa.getConfigurazioneHandler().getRequest().getPreInList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pa.getConfigurazioneHandler().getRequest().sizeInList()>0) {
+									for (ConfigurazioneHandler ch : pa.getConfigurazioneHandler().getRequest().getInList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pa.getConfigurazioneHandler().getRequest().sizeInProtocolInfoList()>0) {
+									for (ConfigurazioneHandler ch : pa.getConfigurazioneHandler().getRequest().getInProtocolInfoList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pa.getConfigurazioneHandler().getRequest().sizeOutList()>0) {
+									for (ConfigurazioneHandler ch : pa.getConfigurazioneHandler().getRequest().getOutList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pa.getConfigurazioneHandler().getRequest().sizePostOutList()>0) {
+									for (ConfigurazioneHandler ch : pa.getConfigurazioneHandler().getRequest().getPostOutList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+							}
+							if(pa.getConfigurazioneHandler().getResponse()!=null) {
+								if(pa.getConfigurazioneHandler().getResponse().sizePreInList()>0) {
+									for (ConfigurazioneHandler ch : pa.getConfigurazioneHandler().getResponse().getPreInList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pa.getConfigurazioneHandler().getResponse().sizeInList()>0) {
+									for (ConfigurazioneHandler ch : pa.getConfigurazioneHandler().getResponse().getInList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+//								if(pa.getConfigurazioneHandler().getResponse().sizeInProtocolInfoList()>0) {
+//									for (ConfigurazioneHandler ch : pa.getConfigurazioneHandler().getResponse().getInProtocolInfoList()) {
+//										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+//											try {
+//												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+//											}catch(DriverConfigurazioneNotFound notFound) {}
+//										}
+//									}
+//								}
+								if(pa.getConfigurazioneHandler().getResponse().sizeOutList()>0) {
+									for (ConfigurazioneHandler ch : pa.getConfigurazioneHandler().getResponse().getOutList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+								if(pa.getConfigurazioneHandler().getResponse().sizePostOutList()>0) {
+									for (ConfigurazioneHandler ch : pa.getConfigurazioneHandler().getResponse().getPostOutList()) {
+										if(this.archiveEngine.existsPluginClasse(TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo())){
+											try {
+												readPlugin_classe(archive, TipoPlugin.MESSAGE_HANDLER.getValue(), ch.getTipo(), cascadeConfig, provenienza);
+											}catch(DriverConfigurazioneNotFound notFound) {}
+										}
+									}
+								}
+							}
+						}
 					
 					}
 

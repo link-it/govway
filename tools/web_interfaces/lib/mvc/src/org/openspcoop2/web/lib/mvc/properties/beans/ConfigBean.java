@@ -31,6 +31,7 @@ import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Property;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
@@ -200,8 +201,8 @@ public class ConfigBean {
 		return map;
 	}
 
-	public void setValueFromRequest(String name, String parameterValue) throws ProviderException {
-		this.getItem(name).setValueFromRequest(parameterValue);
+	public void setValueFromRequest(String name, String parameterValue, ExternalResources externalResources) throws ProviderException {
+		this.getItem(name).setValueFromRequest(parameterValue, externalResources);
 //		System.out.println("Item ["+name+"] Valore dalla request ["+parameterValue+"], Nuovo Valore ["+this.getItem(name).getValue()+"]");
 	}
 
@@ -228,12 +229,12 @@ public class ConfigBean {
 //		System.out.println("Update Sezioni da nascondere completato	.");
 	}
 
-	public void validazioneInputUtente(String nome, String descrizione, Config config) throws UserInputValidationException, ClassNotFoundException, InstantiationException, IllegalAccessException, 
+	public void validazioneInputUtente(String nome, String descrizione, Config config, ExternalResources externalResources) throws UserInputValidationException, ClassNotFoundException, InstantiationException, IllegalAccessException, 
 		IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ProviderException, ProviderValidationException {
 		List<BaseItemBean<?>> listaItem = this.getListaItem();
 
 		for (BaseItemBean<?> item : listaItem) {
-			item.validate();
+			item.validate(externalResources);
 		}
 		
 		IProvider provider = null;

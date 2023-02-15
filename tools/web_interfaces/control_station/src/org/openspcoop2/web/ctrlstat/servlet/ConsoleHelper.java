@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -145,6 +146,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.mvc.properties.Config;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
@@ -253,6 +255,7 @@ import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
+import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
@@ -323,7 +326,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
-import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -3240,7 +3242,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							else {
 								mappaDB = this.porteApplicativeCore.readMessageSecurityRequestPropertiesConfiguration(idPorta); 
 							}
-							ConfigBean configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, mappaDB);
+							ConfigBean configurazioneBean = this.porteApplicativeCore.leggiConfigurazione(configurazione, mappaDB);
 							valida = this.checkPropertiesConfigurationData(TipoOperazione.OTHER, configurazioneBean, null, null, configurazione);
 						}catch(Exception e) {
 							this.log.error(e.getMessage(),e);
@@ -3338,7 +3340,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							else {
 								mappaDB = this.porteApplicativeCore.readMessageSecurityResponsePropertiesConfiguration(idPorta); 
 							}
-							ConfigBean configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, mappaDB);
+							ConfigBean configurazioneBean = this.porteApplicativeCore.leggiConfigurazione(configurazione, mappaDB);
 							valida = this.checkPropertiesConfigurationData(TipoOperazione.OTHER, configurazioneBean, null, null, configurazione);
 						}catch(Exception e) {
 							this.log.error(e.getMessage(),e);
@@ -12881,7 +12883,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void addFilterConfigurazioneMTOM(ISearch ricerca, int idLista, String filterTipoAccordo) throws Exception{
 		try {
 			
-			if(filterTipoAccordo==null || "".equals(filterTipoAccordo) || 
+			if(filterTipoAccordo==null || 
 					CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI.equals(filterTipoAccordo) ||
 					CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP.toLowerCase().equals(filterTipoAccordo)) {
 				
@@ -15053,10 +15055,21 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void aggiornaConfigurazioneProperties(ConfigBean configurazione) throws Exception {
 		ConfigBean oldConfigurazione = ServletUtils.readConfigurazioneBeanFromSession(this.request, this.session, configurazione.getId());
 		
-		for (String key : configurazione.getListakeys()) {
-			Boolean oldItemVisible = oldConfigurazione != null ? oldConfigurazione.getItem(key).getVisible() : null;
-			configurazione.getItem(key).setOldVisible(oldItemVisible); 
-			configurazione.getItem(key).setValueFromRequest(this.getParameter(key)); 
+		ExternalResources externalResources = new ExternalResources();
+		externalResources.setLog(ControlStationCore.getLog());
+		externalResources.setTipoDB(this.confCore.getTipoDatabase());
+		Connection con = DBManager.getInstance().getConnection();
+		try {
+			externalResources.setConnection(con);
+		
+			for (String key : configurazione.getListakeys()) {
+				Boolean oldItemVisible = oldConfigurazione != null ? oldConfigurazione.getItem(key).getVisible() : null;
+				configurazione.getItem(key).setOldVisible(oldItemVisible); 
+				configurazione.getItem(key).setValueFromRequest(this.getParameter(key), externalResources); 
+			}
+			
+		}finally {
+			DBManager.getInstance().releaseConnection(con);
 		}
 	}
 	public Vector<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String configName, ConfigBean configurazioneBean) throws Exception {
@@ -15073,10 +15086,19 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.addElement(de);
 		}
 		if(configurazioneBean != null) {
-			Map<String, String> mapNameValue = new HashMap<String, String>();
-			for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
-				if(item.isVisible())
-					dati.addElement(item.toDataElement(configurazioneBean, mapNameValue));
+			ExternalResources externalResources = new ExternalResources();
+			externalResources.setLog(ControlStationCore.getLog());
+			externalResources.setTipoDB(this.confCore.getTipoDatabase());
+			Connection con = DBManager.getInstance().getConnection();
+			try {
+				externalResources.setConnection(con);
+				Map<String, String> mapNameValue = new HashMap<String, String>();
+				for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
+					if(item.isVisible())
+						dati.addElement(item.toDataElement(configurazioneBean, mapNameValue, externalResources));
+				}
+			}finally {
+				DBManager.getInstance().releaseConnection(con);
 			}
 		}
 		
@@ -15086,7 +15108,16 @@ public class ConsoleHelper implements IConsoleHelper {
 	public boolean checkPropertiesConfigurationData(TipoOperazione tipoOperazione,ConfigBean configurazioneBean, String nome, String descrizione, Config config) throws Exception{
 		// Controlli sui campi immessi
 		try {
-			configurazioneBean.validazioneInputUtente(nome, descrizione, config);
+			ExternalResources externalResources = new ExternalResources();
+			externalResources.setLog(ControlStationCore.getLog());
+			externalResources.setTipoDB(this.confCore.getTipoDatabase());
+			Connection con = DBManager.getInstance().getConnection();
+			try {
+				externalResources.setConnection(con);
+				configurazioneBean.validazioneInputUtente(nome, descrizione, config, externalResources);
+			}finally {
+				DBManager.getInstance().releaseConnection(con);
+			}
 			return true;
 		}catch(UserInputValidationException e) {
 			this.pd.setMessage(e.getMessage());  
@@ -21045,6 +21076,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			case RICERCA:
 			case STATISTICA:
 			case TRANSAZIONE:
+			case TOKEN_VALIDAZIONE:
+			case TOKEN_NEGOZIAZIONE:
+			case ATTRIBUTE_AUTHORITY:
 				break;
 			}
 			

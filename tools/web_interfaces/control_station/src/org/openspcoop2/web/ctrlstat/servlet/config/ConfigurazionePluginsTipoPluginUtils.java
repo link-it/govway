@@ -76,6 +76,12 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		valori.add(TipoPlugin.MESSAGE_HANDLER.toString());
 		valori.add(TipoPlugin.SERVICE_HANDLER.toString());
 		
+		valori.add(TipoPlugin.TOKEN_VALIDAZIONE.toString());
+		
+		valori.add(TipoPlugin.TOKEN_NEGOZIAZIONE.toString());
+		
+		valori.add(TipoPlugin.ATTRIBUTE_AUTHORITY.toString());
+		
 		if(addRicerche) {
 			valori.add(TipoPlugin.RICERCA.toString());
 		}
@@ -85,7 +91,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		if(addTransazioni) {
 			valori.add(TipoPlugin.TRANSAZIONE.toString());
 		}
-		
+				
 		return valori;
 	}
 	
@@ -131,6 +137,12 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_STATISTICA;
 		case TRANSAZIONE:
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TRANSAZIONE;
+		case TOKEN_VALIDAZIONE:
+			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_VALIDAZIONE;
+		case TOKEN_NEGOZIAZIONE:
+			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_NEGOZIAZIONE;
+		case ATTRIBUTE_AUTHORITY:
+			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_ATTRIBUTE_AUTHORITY;
 		}
 		return null;
 	}
@@ -241,6 +253,9 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case RICERCA:
 			case STATISTICA:
 			case TRANSAZIONE:
+			case TOKEN_VALIDAZIONE:
+			case TOKEN_NEGOZIAZIONE:
+			case ATTRIBUTE_AUTHORITY:
 				return null;
 			}
 		}
@@ -305,6 +320,9 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case RICERCA:
 			case STATISTICA:
 			case TRANSAZIONE:
+			case TOKEN_VALIDAZIONE:
+			case TOKEN_NEGOZIAZIONE:
+			case ATTRIBUTE_AUTHORITY:
 				break;
 			}
 			
@@ -454,7 +472,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			}
 			boolean isRisposta = PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RISPOSTA.equals(mhRuolo);
 			List<String> values = isRisposta ? PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA : PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA;
-			if(mhTipo==null || StringUtils.isEmpty(mhTipo) || !values.contains(shTipo)) {
+			if(mhTipo==null || StringUtils.isEmpty(mhTipo) || !values.contains(mhTipo)) {
 				mhTipo = values.get(0);
 			}
 			
@@ -503,6 +521,18 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		case RICERCA:
 		case STATISTICA:
 		case TRANSAZIONE:
+			break;
+		case TOKEN_VALIDAZIONE:
+			info.setHeaderBody(info_singola);
+			listBody.add(org.openspcoop2.pdd.core.token.parser.ITokenParser.class.getName());
+			break;
+		case TOKEN_NEGOZIAZIONE:
+			info.setHeaderBody(info_singola);
+			listBody.add(org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser.class.getName());
+			break;
+		case ATTRIBUTE_AUTHORITY:
+			info.setHeaderBody(info_singola);
+			listBody.add(org.openspcoop2.pdd.core.token.attribute_authority.IRetrieveAttributeAuthorityResponseParser.class.getName());
 			break;
 		}
 		
@@ -593,6 +623,9 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case RICERCA:
 			case STATISTICA:
 			case TRANSAZIONE:
+			case TOKEN_VALIDAZIONE:
+			case TOKEN_NEGOZIAZIONE:
+			case ATTRIBUTE_AUTHORITY:
 				break;
 			}
 			
@@ -641,6 +674,9 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case RICERCA:
 			case STATISTICA:
 			case TRANSAZIONE:
+			case TOKEN_VALIDAZIONE:
+			case TOKEN_NEGOZIAZIONE:
+			case ATTRIBUTE_AUTHORITY:
 				return null;
 			}
 		}
@@ -700,6 +736,9 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		case RICERCA:
 		case STATISTICA:
 		case TRANSAZIONE:
+		case TOKEN_VALIDAZIONE:
+		case TOKEN_NEGOZIAZIONE:
+		case ATTRIBUTE_AUTHORITY:
 			break;
 		}
 		

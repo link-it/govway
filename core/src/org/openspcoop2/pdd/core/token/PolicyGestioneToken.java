@@ -24,8 +24,11 @@ package org.openspcoop2.pdd.core.token;
 import java.io.Serializable;
 import java.text.MessageFormat;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.token.parser.BasicTokenParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
@@ -253,7 +256,23 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		TipologiaClaims tipologiaClaims = TipologiaClaims.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE));
 		if(TipologiaClaims.CUSTOM.equals(tipologiaClaims)) {
 			String className = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME);
-			parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
+			if(className!=null && StringUtils.isNotEmpty(className) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+				parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
+			}
+			else {
+				String tipo = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE);
+				if(tipo!=null && StringUtils.isNotEmpty(tipo) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(tipo)) {
+			    	try{
+						PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+						parser = (ITokenParser) pluginLoader.newTokenValidazione(tipo);
+					}catch(Exception e){
+						throw e; // descrizione errore già corretta
+					}
+				}
+				else {
+					throw new Exception("Deve essere selezionato un plugin per il parser del token JWT");
+				}
+			}
 		}
 		else{
 			parser = new BasicTokenParser(tipologiaClaims, TokenUtilities.getValidazioneJwtClaimsMappingProperties(this.properties));
@@ -296,7 +315,23 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		TipologiaClaims tipologiaClaims = TipologiaClaims.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE));
 		if(TipologiaClaims.CUSTOM.equals(tipologiaClaims)) {
 			String className = this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME);
-			parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
+			if(className!=null && StringUtils.isNotEmpty(className) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+				parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
+			}
+			else {
+				String tipo = this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE);
+				if(tipo!=null && StringUtils.isNotEmpty(tipo) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(tipo)) {
+			    	try{
+						PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+						parser = (ITokenParser) pluginLoader.newTokenValidazione(tipo);
+					}catch(Exception e){
+						throw e; // descrizione errore già corretta
+					}
+				}
+				else {
+					throw new Exception("Deve essere selezionato un plugin per il parser dei claims della risposta del servizio 'Introspection'");
+				}
+			}
 		}
 		else{
 			parser = new BasicTokenParser(tipologiaClaims, TokenUtilities.getIntrospectionClaimsMappingProperties(this.properties));
@@ -351,7 +386,23 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		TipologiaClaims tipologiaClaims = TipologiaClaims.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_TYPE));
 		if(TipologiaClaims.CUSTOM.equals(tipologiaClaims)) {
 			String className = this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME);
-			parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
+			if(className!=null && StringUtils.isNotEmpty(className) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+				parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
+			}
+			else {
+				String tipo = this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE);
+				if(tipo!=null && StringUtils.isNotEmpty(tipo) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(tipo)) {
+			    	try{
+						PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+						parser = (ITokenParser) pluginLoader.newTokenValidazione(tipo);
+					}catch(Exception e){
+						throw e; // descrizione errore già corretta
+					}
+				}
+				else {
+					throw new Exception("Deve essere selezionato un plugin per il parser dei claims della risposta del servizio 'UserInfo'");
+				}
+			}
 		}
 		else{
 			parser = new BasicTokenParser(tipologiaClaims, TokenUtilities.getUserInfoClaimsMappingProperties(this.properties));

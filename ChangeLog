@@ -1,3 +1,9 @@
+2023-02-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1548
+	Aggiunta la gestione di plugins dinamici per Token e AttributeAuthority
+
 2023-02-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

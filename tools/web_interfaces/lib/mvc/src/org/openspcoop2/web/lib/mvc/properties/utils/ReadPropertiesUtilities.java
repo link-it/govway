@@ -30,6 +30,7 @@ import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.Section;
 import org.openspcoop2.core.mvc.properties.Subsection;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.utils.Costanti;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
@@ -63,7 +64,7 @@ public class ReadPropertiesUtilities {
 		return lista;
 	}
 
-	public static ConfigBean leggiConfigurazione(Config config, Map<String, Properties> propertiesMap) throws Exception{
+	public static ConfigBean leggiConfigurazione(Config config, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws Exception{
 		
 		IProvider provider = null;
 		if(StringUtils.isNotEmpty(config.getProvider())) {
@@ -78,7 +79,7 @@ public class ReadPropertiesUtilities {
 		
 		configurazione.setId(config.getId());
 				
-		ValidationEngine.validateConfig(config);
+		ValidationEngine.validateConfig(config, externalResources);
 		
 		configurazione.getListaNomiProperties().addAll(getListaNomiProperties(config));
 		
@@ -86,20 +87,20 @@ public class ReadPropertiesUtilities {
 		
 		for (int i= 0; i < sectionList.size() ; i++) {
 			Section section = sectionList.get(i);
-			addSectionBean(configurazione, section,"s"+i,propertiesMap);
+			addSectionBean(configurazione, section,"s"+i,propertiesMap, externalResources);
 		}
 		
 		return configurazione;
 	}
 
-	public static void addSectionBean(ConfigBean configurazione, Section section, String sectionIdx, Map<String, Properties> propertiesMap) throws Exception {
+	public static void addSectionBean(ConfigBean configurazione, Section section, String sectionIdx, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws Exception {
 		SectionBean sectionBean = new SectionBean(section,sectionIdx, configurazione.getProvider());
 		configurazione.addItem(sectionBean);
 		
 		// aggiungo gli item
 		if(section.getItemList() != null) {
 			for (Item item : section.getItemList()) {
-				addItemBean(configurazione,item,propertiesMap);
+				addItemBean(configurazione,item,propertiesMap, externalResources);
 			}
 		}
 		
@@ -107,25 +108,25 @@ public class ReadPropertiesUtilities {
 		if(section.getSubsectionList() != null) {
 			for (int i= 0; i < section.getSubsectionList().size() ; i++) {
 				Subsection subSection  = section.getSubsectionList().get(i);
-				addSubsectionBean(configurazione, subSection, sectionIdx+ "_ss"+i ,  propertiesMap);
+				addSubsectionBean(configurazione, subSection, sectionIdx+ "_ss"+i ,  propertiesMap, externalResources);
 			}
 		}
 	}
 	
-	public static void addSubsectionBean(ConfigBean configurazione, Subsection subSection, String subsectionIdx, Map<String, Properties> propertiesMap) throws Exception {
+	public static void addSubsectionBean(ConfigBean configurazione, Subsection subSection, String subsectionIdx, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws Exception {
 		SubsectionBean subsectionBean = new SubsectionBean(subSection,subsectionIdx, configurazione.getProvider());
 		configurazione.addItem(subsectionBean);
 		
 		// aggiungo gli item
 		if(subSection.getItemList() != null) {
 			for (Item item : subSection.getItemList()) {
-				addItemBean(configurazione,item,propertiesMap);
+				addItemBean(configurazione,item,propertiesMap, externalResources);
 			}
 		}
 	}
 	
 	
-	public static void addItemBean(ConfigBean configurazione, Item item, Map<String, Properties> propertiesMap) throws Exception{
+	public static void addItemBean(ConfigBean configurazione, Item item, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws Exception{
 		ItemBean itemBean = new ItemBean(item, item.getName(), configurazione.getProvider()); 
 		String name = item.getProperty() != null ? item.getProperty().getName() : item.getName();
 		
@@ -165,7 +166,7 @@ public class ReadPropertiesUtilities {
 		} 
 		
 //		System.out.println("READ -> Item: Name ["+item.getName()+"] Value ["+propertyValue+"], INIT in corso...");  
-		itemBean.init(propertyValue); 
+		itemBean.init(propertyValue, externalResources); 
 //		System.out.println("READ -> INIT -> Item: Name ["+item.getName()+"] Value ["+itemBean.getValue()+"]");  
 		
 //		System.out.println("----------------------------------------\n");

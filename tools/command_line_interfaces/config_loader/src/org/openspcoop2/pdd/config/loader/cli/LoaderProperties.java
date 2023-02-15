@@ -55,6 +55,7 @@ public class LoaderProperties {
 	
 	private boolean policy_enable = false;
 	private boolean plugin_enable = false;
+	private int plugin_seconds = 60;
 	private boolean plugin_checkReferences = false;
 	private boolean configurazioneGenerale_enable = false;
 	
@@ -98,6 +99,7 @@ public class LoaderProperties {
 		this.policy_enable = this.getBooleanProperty(props, "policy.enable", true);
 		this.plugin_enable = this.getBooleanProperty(props, "plugin.enable", true);
 		this.plugin_checkReferences = this.getBooleanProperty(props, "plugin.checkReferences", true);
+		this.plugin_seconds = this.getIntProperty(props, "plugin.seconds", true);
 		this.configurazioneGenerale_enable = this.getBooleanProperty(props, "configurazioneGenerale.enable", true);
 		
 		this.nomePddOperativa = this.getProperty(props, "nomePddOperativa", false);
@@ -178,6 +180,9 @@ public class LoaderProperties {
 	}
 	public boolean isPlugin_checkReferences() {
 		return this.plugin_checkReferences;
+	}
+	public int getPlugin_seconds() {
+		return this.plugin_seconds;
 	}
 	public boolean isConfigurazioneGenerale_enable() {
 		return this.configurazioneGenerale_enable;

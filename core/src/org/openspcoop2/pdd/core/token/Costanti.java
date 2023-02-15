@@ -152,8 +152,10 @@ public class Costanti {
 	public final static String POLICY_VALIDAZIONE_SAVE_ERROR_IN_CACHE = "policy.validazioneJWT.saveErrorInCache";
 	public final static String POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID = SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID;
 	public final static String POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID = SecurityConstants.DECRYPTION_PROPERTY_REF_ID;
-	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE = "policy.validazioneJWT.claimsParser";
-	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME = "policy.validazioneJWT.claimsParser.className";
+	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE; //"policy.validazioneJWT.claimsParser";
+	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM; //"CUSTOM";
+	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME; //"policy.validazioneJWT.claimsParser.className";
+	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE; //"policy.validazioneJWT.claimsParser.pluginType";
 	
 	public final static String POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C = "##useX5C##";
 	public final static String POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5T = "##useX5T##";
@@ -174,8 +176,10 @@ public class Costanti {
 	public final static String POLICY_INTROSPECTION_REQUEST_TOKEN_POSITION_URL_PROPERTY_NAME = "policy.introspection.requestTokenPosition.queryParameter";
 	public final static String POLICY_INTROSPECTION_REQUEST_TOKEN_POSITION_FORM_PROPERTY_NAME = "policy.introspection.requestTokenPosition.formParameter";
 	public final static String POLICY_INTROSPECTION_CONTENT_TYPE = "policy.introspection.contentType";	
-	public final static String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE = "policy.introspection.claimsParser";
-	public final static String POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME = "policy.introspection.claimsParser.className";
+	public final static String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE; //"policy.introspection.claimsParser";
+	public final static String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE_CUSTOM; //"CUSTOM";
+	public final static String POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME; //"policy.introspection.claimsParser.className";
+	public final static String POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE; //"policy.introspection.claimsParser.pluginType";
 	public final static String POLICY_INTROSPECTION_AUTH_BASIC_STATO = "policy.introspection.endpoint.basic.stato";
 	public final static String POLICY_INTROSPECTION_AUTH_BASIC_USERNAME = "policy.introspection.endpoint.basic.username";
 	public final static String POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD = "policy.introspection.endpoint.basic.password";
@@ -193,8 +197,10 @@ public class Costanti {
 	public final static String POLICY_USER_INFO_REQUEST_TOKEN_POSITION_URL_PROPERTY_NAME = "policy.userInfo.requestTokenPosition.queryParameter";
 	public final static String POLICY_USER_INFO_REQUEST_TOKEN_POSITION_FORM_PROPERTY_NAME = "policy.userInfo.requestTokenPosition.formParameter";
 	public final static String POLICY_USER_INFO_CONTENT_TYPE = "policy.userInfo.contentType";	
-	public final static String POLICY_USER_INFO_CLAIMS_PARSER_TYPE = "policy.userInfo.claimsParser";
-	public final static String POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME = "policy.userInfo.claimsParser.className";
+	public final static String POLICY_USER_INFO_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_TYPE; //"policy.userInfo.claimsParser";
+	public final static String POLICY_USER_INFO_CLAIMS_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_TYPE_CUSTOM; //"CUSTOM";
+	public final static String POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME; //"policy.userInfo.claimsParser.className";
+	public final static String POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE; //"policy.userInfo.claimsParser.pluginType";
 	public final static String POLICY_USER_INFO_AUTH_BASIC_STATO = "policy.userInfo.endpoint.basic.stato";
 	public final static String POLICY_USER_INFO_AUTH_BASIC_USERNAME = "policy.userInfo.endpoint.basic.username";
 	public final static String POLICY_USER_INFO_AUTH_BASIC_PASSWORD = "policy.userInfo.endpoint.basic.password";
@@ -252,8 +258,10 @@ public class Costanti {
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCRYP_PROP_REF_ID = SecurityConstants.ENCRYPTION_PROPERTY_REF_ID;
 	
 	public final static String POLICY_RETRIEVE_TOKEN_PARSER_TYPE = "policy.retrieveToken.claimsParser";
-	public final static String POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM = "policy.retrieveToken.claimsParser.custom";
-	public final static String POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME = "policy.retrieveToken.claimsParser.className";
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM; //"policy.retrieveToken.claimsParser.custom";
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM; //"CUSTOM";
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME; //"policy.retrieveToken.claimsParser.className";
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE; //"policy.retrieveToken.claimsParser.pluginType";
 	public final static String POLICY_RETRIEVE_TOKEN_MODE = "policy.retrieveToken.mode";
 	public final static String POLICY_RETRIEVE_TOKEN_MODE_PDND = "policy.retrieveToken.jwt.pdnd";
 	public final static String POLICY_RETRIEVE_TOKEN_URL = "policy.retrieveToken.endpoint.url";
@@ -486,9 +494,13 @@ public class Costanti {
 	public final static String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWEContentKeystorePassword";
 	public final static String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD_PRIVATE_KEY = "tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyPassword";
 	
-	public final static String ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN = "validazioneJwtParserCustom";
-	public final static String ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN = "introspectionParserCustom";
-	public final static String ID_USER_INFO_CUSTOM_PARSER_PLUGIN = "userInfoParserCustom";
+	public final static String ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME = "validazioneJwtParserCustom";
+	public final static String ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CLASSNAME = "introspectionParserCustom";
+	public final static String ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CLASSNAME = "userInfoParserCustom";
+	
+	public final static String ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE = "validazioneJwtParserCustomPluginChoice";
+	public final static String ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CHOICE = "introspectionParserCustomPluginChoice";
+	public final static String ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE = "userInfoParserCustomPluginChoice";
 	
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE = "jwtKeystoreType";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE = "jwtKeystoreFile";
@@ -496,7 +508,8 @@ public class Costanti {
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY = "jwtAliasChiavePrivata";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "jwtPasswordChiavePrivata";
 		
-	public final static String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN = "customTokenParserCustomPlugin";
+	public final static String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CLASSNAME = "customTokenParserCustomPlugin";
+	public final static String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE = "customTokenParserCustomPluginChoice";
 	
 	public final static String ID_AA_JWS_KEYSTORE_TYPE = "aaJWSKeystoreType";
 	public final static String ID_AA_JWS_KEYSTORE_FILE = "aaJWSKeystoreFile";

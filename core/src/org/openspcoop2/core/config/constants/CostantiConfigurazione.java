@@ -383,4 +383,33 @@ public class CostantiConfigurazione {
 	
 	public static final String PARAM_POLICY_ID = "aPluginPolicyId";
 	public static final String POLICY_ID_NON_DEFINITA = "-";
+	
+	
+	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE = "policy.validazioneJWT.claimsParser";
+	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
+	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME = "policy.validazioneJWT.claimsParser.className";
+	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE = "policy.validazioneJWT.claimsParser.pluginType";
+	
+	public final static String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE = "policy.introspection.claimsParser";
+	public final static String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
+	public final static String POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME = "policy.introspection.claimsParser.className";
+	public final static String POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE = "policy.introspection.claimsParser.pluginType";
+	
+	public final static String POLICY_USER_INFO_CLAIMS_PARSER_TYPE = "policy.userInfo.claimsParser";
+	public final static String POLICY_USER_INFO_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
+	public final static String POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME = "policy.userInfo.claimsParser.className";
+	public final static String POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE = "policy.userInfo.claimsParser.pluginType";
+	
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM = "policy.retrieveToken.claimsParser.custom";
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM = "CUSTOM";
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME = "policy.retrieveToken.claimsParser.className";
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE = "policy.retrieveToken.claimsParser.pluginType";
+	
+	public final static String AA_RESPONSE_TYPE = "policy.attributeAuthority.response.type";
+	public final static String AA_RESPONSE_TYPE_VALUE_JSON = "json";
+	public final static String AA_RESPONSE_TYPE_VALUE_JWS = "jws";
+	public final static String AA_RESPONSE_TYPE_VALUE_CUSTOM = "custom";
+	
+	public final static String AA_RESPONSE_PARSER_CLASS_NAME = "policy.attributeAuthority.claimsParser.className";
+	public final static String AA_RESPONSE_PARSER_PLUGIN_TYPE = "policy.attributeAuthority.claimsParser.pluginType";
 }
