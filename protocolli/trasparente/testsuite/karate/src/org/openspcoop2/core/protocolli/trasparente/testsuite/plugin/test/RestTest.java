@@ -69,6 +69,8 @@ public class RestTest extends ConfigLoader {
 		File f = new File("/tmp/govway.plugins.testsuite.id");
 		f.delete();
 		FileSystemUtilities.writeFile(f, id.getBytes());
+		f.setReadable(true, false);
+		f.setWritable(true, false);
 		
 		String role = tipoServizio == TipoServizio.EROGAZIONE ? "pa" : "pd";
 		List<File> filesVerifica = new ArrayList<>();
@@ -153,15 +155,23 @@ public class RestTest extends ConfigLoader {
 			
 			String jsonIntrospection = buildJSON(tipoServizio == TipoServizio.EROGAZIONE, "introspection");
 			FileSystemUtilities.writeFile(fIntrospection, jsonIntrospection.getBytes());
+			fIntrospection.setReadable(true, false);
+			fIntrospection.setWritable(true, false);
 			
 			String jsonUserinfo = buildJSON(tipoServizio == TipoServizio.EROGAZIONE, "userinfo");
 			FileSystemUtilities.writeFile(fUserInfo, jsonUserinfo.getBytes());
+			fUserInfo.setReadable(true, false);
+			fUserInfo.setWritable(true, false);
 			
 			String jsonNegoziazione = buildJSON_negoziazione(tipoServizio == TipoServizio.EROGAZIONE, "tokenNegoziazioneCustom");
 			FileSystemUtilities.writeFile(fTokenNegoziazione, jsonNegoziazione.getBytes());
+			fTokenNegoziazione.setReadable(true, false);
+			fTokenNegoziazione.setWritable(true, false);
 			
 			String jsonAA = buildJSON(tipoServizio == TipoServizio.EROGAZIONE, "attributeAuthorityCustom");
 			FileSystemUtilities.writeFile(fAttributeAuthority, jsonAA.getBytes());
+			fAttributeAuthority.setReadable(true, false);
+			fAttributeAuthority.setWritable(true, false);
 			
 			org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetAllCache(logCore);
 	

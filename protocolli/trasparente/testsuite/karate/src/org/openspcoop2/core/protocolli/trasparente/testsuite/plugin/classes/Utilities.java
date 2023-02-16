@@ -48,6 +48,8 @@ public class Utilities {
 	public static void writeIdentificativoTest(String id, String tipo) throws Exception {
 		File f = new File("/tmp/"+id+"."+tipo+".result");
 		FileSystemUtilities.writeFile(f, "OK".getBytes());
+		f.setReadable(true, false);
+		f.setWritable(true, false);
 	}
 	
 	public static String readNomeApplicativo(List<Proprieta> list) throws Exception {
