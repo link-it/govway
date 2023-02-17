@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="sonarqube_LocalEnv" basedir=".">
+
+	<!-- openspcoop2 -->
+	<property name="openspcoop2" location="../../" />
+	<property name="openspcoop2.dist" value="${openspcoop2}/dist" />
+	<property name="openspcoop2.lib" value="${openspcoop2}/lib" />
+	<property name="required_lib" value="${openspcoop2.lib}"/>
+
+	<!-- Define the SonarQube global properties (the most usual way is to pass these properties via the command line) -->
+	<property name="sonar.host.url" value="http://localhost:9000" />
+
+	<!-- Define the SonarQube project properties -->
+	<property name="sonar.projectKey" value="org.sonarqube:sonarqube-scanner-ant" />
+	<property name="sonar.projectVersion" value="master" />
+	<property name="sonar.java.libraries" value="${required_lib}" />
+	<property name="sonar.java.source" value="11" />
+	<property name="sonar.java.target" value="11" />
+	<property name="sonar.sourceEncoding" value="UTF-8" />
+	<!-- <property name="sonar.scm.exclusions.disabled" value="true" /> -->
+
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="sonar.verbose" value="false" />
+	<property name="sonar.log.level" value="INFO" />
+	
+</project>
+
+

@@ -99,8 +99,12 @@ public class JarUtilities {
 			throw new UtilsException(e.getMessage(),e);
 		}finally{
 			try{
-				is.close();
-			}catch(Exception eclose){}
+				if(is!=null) {
+					is.close();
+				}
+			}catch(Exception eclose){
+				// close
+			}
 		}
 	}
 	

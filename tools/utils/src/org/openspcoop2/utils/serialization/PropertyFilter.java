@@ -48,7 +48,7 @@ public class PropertyFilter implements net.sf.json.util.PropertyFilter{
 		if(value!=null){
 			for(int i=0; i<this.core.getFilter().sizeFiltersByValue(); i++){
 				Class<?> classFilter = this.core.getFilter().getFilterByValue(i);
-				if(value.getClass().getName().equals(classFilter.getName())){
+				if(value.getClass().isAssignableFrom(classFilter)){
 					this.core.applicaFiltro(source, name, value, classFilter);	
 					return true; 
 				}

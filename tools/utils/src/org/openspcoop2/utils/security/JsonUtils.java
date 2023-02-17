@@ -336,7 +336,9 @@ public class JsonUtils {
 						}catch(Exception e) {}
 						try {
 							if(fTmp!=null) {
-								fTmp.delete();
+								if(!fTmp.delete()) {
+									// ignore
+								}
 							}
 						}catch(Exception e) {
 							// delete
@@ -432,7 +434,9 @@ public class JsonUtils {
 							}catch(Exception e) {}
 							try {
 								if(fTmp!=null) {
-									fTmp.delete();
+									if(!fTmp.delete()) {
+										// ignore
+									}
 								}
 							}catch(Exception e) {
 								// delete

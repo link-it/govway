@@ -177,7 +177,9 @@ public class JsonDecrypt {
 		}finally {
 			try {
 				if(fTmp!=null) {
-					fTmp.delete();
+					if(!fTmp.delete()) {
+						// ignore
+					}
 				}
 			}catch(Throwable t) {}
 		}

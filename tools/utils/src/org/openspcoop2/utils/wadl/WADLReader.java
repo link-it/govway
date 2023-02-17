@@ -97,8 +97,11 @@ public class WADLReader {
 		}catch(Exception e){
 			throw new IOException(e.getMessage(),e); 
 		}finally{
-			if(fTpm!=null)
-				fTpm.delete();
+			if(fTpm!=null) {
+				if(!fTpm.delete()) {
+					// ignore
+				}
+			}
 		}
 	}
 	

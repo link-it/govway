@@ -39,7 +39,7 @@ public class TestDumpByteArrayOutputStream {
 	public void testFastImpl() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"'.testFastImpl ...");
-		org.openspcoop2.utils.io.TestDumpByteArrayOutputStream.testFastImpl();
+		org.openspcoop2.utils.io.test.DumpByteArrayOutputStreamTest.testFastImpl();
 		TestLogger.info("Run test '"+ID_TEST+"'.testFastImpl ok");
 		
 	}
@@ -48,7 +48,7 @@ public class TestDumpByteArrayOutputStream {
 	public void testDefaultImpl() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"'.testDefaultImpl ...");
-		org.openspcoop2.utils.io.TestDumpByteArrayOutputStream.testDefaultImpl();
+		org.openspcoop2.utils.io.test.DumpByteArrayOutputStreamTest.testDefaultImpl();
 		TestLogger.info("Run test '"+ID_TEST+"'.testDefaultImpl ok");
 		
 	}

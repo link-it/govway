@@ -41,7 +41,7 @@ import org.springframework.util.FastByteArrayOutputStream;
  * @author $Author$
  * @version $Rev$, $Date$
 */
-class DumpByteArrayOutputStream_FastImpl extends FastByteArrayOutputStream implements IDumpByteArrayOutputStream {
+public class DumpByteArrayOutputStream_FastImpl extends FastByteArrayOutputStream implements IDumpByteArrayOutputStream {
 
 	private int soglia = -1; // -1 senza soglia
 	private int attuale = 0;
@@ -199,7 +199,9 @@ class DumpByteArrayOutputStream_FastImpl extends FastByteArrayOutputStream imple
 					this.fout.close();
 					this.fout = null;
 				}
-				this.f.delete();
+				if(!this.f.delete()) {
+					// ignore
+				}
 				this.f = null;
 			}catch(Throwable e) {
 				throw new RuntimeException(e.getMessage(),e);

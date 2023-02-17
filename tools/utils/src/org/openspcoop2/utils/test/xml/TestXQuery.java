@@ -39,7 +39,7 @@ public class TestXQuery {
 	public void testXQuery() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.xml.XQueryClientTest.test();
+		org.openspcoop2.utils.xml.test.XQueryClientTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

@@ -101,8 +101,12 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 		finally{
 			try{
-				fin.close();
-			}catch(Exception eClose){}
+				if(fin!=null) {
+					fin.close();
+				}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	public static void initXQueryConfiguration(InputStream isConfig) throws XQueryException{

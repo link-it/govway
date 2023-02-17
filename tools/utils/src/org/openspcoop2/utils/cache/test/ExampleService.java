@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 public class ExampleService extends HttpServlet {
 
 	private static int uuid = 1;
+	private static Logger log = LoggerWrapperFactory.getLogger(ExampleService.class);
 	
 	/**
 	 * 
@@ -53,7 +54,15 @@ public class ExampleService extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
-		doGet(req,res);
+		try {
+			doGet(req,res);
+		}catch(Exception e) {
+			try {
+				res.sendError(500, e.getMessage());
+			}catch(Exception eSendError) {
+				log.error(eSendError.getMessage(),eSendError);
+			}
+		}
 	}
 
 	@Override
@@ -61,7 +70,12 @@ public class ExampleService extends HttpServlet {
 	throws ServletException, IOException {
 		
 		if(ExampleServletInitListener.isInitialized()==false){
-			throw new ServletException("Applicazione non inizializzata");
+			try {
+				res.sendError(500, "Applicazione non inizializzata");
+				return;
+			}catch(Exception eSendError) {
+				log.error(eSendError.getMessage(),eSendError);
+			}
 		}
 		
 		Logger log = LoggerWrapperFactory.getLogger(ExampleService.class);
@@ -101,16 +115,18 @@ public class ExampleService extends HttpServlet {
 				ExampleServletInitListener.configManager.getObjectCache(con, DEBUG, key, method, "EXCEPTION");
 			}catch(ExampleExceptionNotFound notFound){
 				log.info(prefix+"Eccezione attesa: "+notFound.getClass().getName());
-			}	
+			}catch(Throwable e){
+				log.error(prefix+"Errore: "+e.getMessage(),e);
+			}
 			
 			// Simulazione metodo eccezione not cachable
 			method = "isTest";
 			key = "GENERIC_EXCEPTION";
 			try{
 				ExampleServletInitListener.configManager.getObjectCache(con, DEBUG, key, method, "GENERIC_EXCEPTION");
-			}catch(Exception e){
+			}catch(Throwable e){
 				log.info(prefix+"altra eccezione: "+e.getClass().getName());
-			}	
+			}
 			
 			// Simulazione metodo che ritorna null
 			method = "isTest";
@@ -118,7 +134,9 @@ public class ExampleService extends HttpServlet {
 				ExampleServletInitListener.configManager.getObjectCache(con, DEBUG, null, method, "NULL");
 			}catch(ExampleExceptionNotFound notFound){
 				log.info(prefix+"Eccezione attesa: "+notFound.getClass().getName());
-			}	
+			}catch(Throwable e){
+				log.error(prefix+"Errore: "+e.getMessage(),e);
+			}
 			
 			log.info(prefix+"Terminata attivita");	
 			

@@ -196,8 +196,6 @@ public class JDBCUtilities {
 	
 	public static void addInformazioniDatabaseFromMetaData(Connection c, StringBuilder bf) throws SQLException{
 		
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 		try{
 			DatabaseMetaData dbMetaDati = c.getMetaData();
 			if(dbMetaDati!=null){
@@ -303,14 +301,6 @@ public class JDBCUtilities {
 			}
 
 		}finally{
-			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception eClose){}
-			try{
-				if(pstmt!=null)
-					pstmt.close();
-			}catch(Exception eClose){}
 		}
 
 	}

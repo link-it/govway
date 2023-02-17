@@ -264,7 +264,7 @@ public abstract class AbstractXMLDiff {
 		}
 		
 		
-		if(diff.identical()==false){
+		if(diff!=null && diff.identical()==false){
 			StringBuilder bfDifferences = new StringBuilder();
 			List<?> allDifferences = diff.getAllDifferences();
 			bfDifferences.append("allDifferences: "+ allDifferences.size());
@@ -280,7 +280,7 @@ public abstract class AbstractXMLDiff {
 			}	       
 	        this.difference = bfDifferences.toString();
 		}
-		return diff.identical();
+		return diff!=null ? diff.identical() : false;
 		
 	}
 	

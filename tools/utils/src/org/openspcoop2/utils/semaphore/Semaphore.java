@@ -141,7 +141,7 @@ public class Semaphore {
 			} catch(Exception er) {
 				//System.out.println("ERROR UNSET:"+er.getMessage());
 				this.log.error("Lock ["+tipo+"] failed (ripristino transazione): "+er.getMessage());
-				throw new UtilsException("Lock ["+tipo+"] failed (ripristino transazione): "+er.getMessage());
+				//throw new UtilsException("Lock ["+tipo+"] failed (ripristino transazione): "+er.getMessage());
 			}
 		}
 

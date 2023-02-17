@@ -122,13 +122,17 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 		}catch(Exception e){
 			throw new SQLException(e.getMessage(),e);
 		}
+		java.sql.Connection connectionTest = null;
 		try{
 			// Prelevo livello di transaction isolation
-			java.sql.Connection connectionTest = this.datasource.getConnection();
+			connectionTest = this.datasource.getConnection();
 			this.transactionIsolationLevelDefault = connectionTest.getTransactionIsolation();
-			connectionTest.close();	 
 		}catch(Exception e){
 			throw new SQLException("Test getConnection failed: "+e.getMessage(),e);
+		}finally {
+			if(connectionTest!=null) {
+				connectionTest.close();
+			}
 		}
 	}
 	

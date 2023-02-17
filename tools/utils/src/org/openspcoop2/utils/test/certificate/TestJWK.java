@@ -39,7 +39,7 @@ public class TestJWK {
 	public void testJWK() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.certificate.TestJWK.test();
+		org.openspcoop2.utils.certificate.test.JWKTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

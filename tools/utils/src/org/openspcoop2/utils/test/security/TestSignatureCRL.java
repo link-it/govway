@@ -39,22 +39,22 @@ public class TestSignatureCRL {
 	@DataProvider(name="signatureCrlProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_CRL, false},
+				{org.openspcoop2.utils.security.test.SignatureTest.TipoTest.JSON_SIGNATURE_PROPERTIES_CRL, false},
 				
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_CRL_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.test.SignatureTest.TipoTest.JSON_SIGNATURE_PROPERTIES_CRL_HEADER_CUSTOM, false},
 				
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY, false},
+				{org.openspcoop2.utils.security.test.SignatureTest.TipoTest.JSON_SIGNATURE_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY, false},
 				
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_CRL_KEYSTORE, false},
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_CRL_KEYSTORE_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.test.SignatureTest.TipoTest.JSON_SIGNATURE_CRL_KEYSTORE, false},
+				{org.openspcoop2.utils.security.test.SignatureTest.TipoTest.JSON_SIGNATURE_CRL_KEYSTORE_HEADER_CUSTOM, false},
 		};
 	}
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="signatureCrlProvider")
-	public void testSignatureCrl(org.openspcoop2.utils.security.TestSignature.TipoTest tipo, boolean useP11asTrustStore) throws Exception{
+	public void testSignatureCrl(org.openspcoop2.utils.security.test.SignatureTest.TipoTest tipo, boolean useP11asTrustStore) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ...");
-		org.openspcoop2.utils.security.TestSignature.main(new String [] { tipo.name(), (useP11asTrustStore+"") } );
+		org.openspcoop2.utils.security.test.SignatureTest.main(new String [] { tipo.name(), (useP11asTrustStore+"") } );
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ok");
 		
 	}

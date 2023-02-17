@@ -28,7 +28,6 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CRLCertstore;
 import org.openspcoop2.utils.certificate.KeyStore;
-import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.ExternalResourceConfig;
 import org.openspcoop2.utils.transport.http.ExternalResourceUtils;
 
@@ -177,22 +176,24 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 	private static KeyStore newKeyStore(String path, String type, String password) throws UtilsException {
 		File f = new File(path);
 		if(!f.exists()) {
-			File fClass = null;
+			//File fClass = null;
 			try(InputStream is = OCSPResourceReader.class.getResourceAsStream(path)){
 				if(is!=null) {
 					byte[] content = Utilities.getAsByteArray(is);
-					fClass = File.createTempFile("test", ".crl");
-					FileSystemUtilities.writeFile(fClass, content);
-					return new KeyStore(fClass.getAbsolutePath(), type,	password);
+					//fClass = File.createTempFile("test", ".crl");
+					//org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(fClass, content);
+					return new KeyStore(content, type,	password);
 				}
 			}
 			catch(Throwable t) {
 				throw new UtilsException(t.getMessage(),t);
 			}
 			finally {
-				if(fClass!=null) {
-					fClass.delete();
-				}
+//				if(fClass!=null) {
+//					if(!fClass.delete()) {
+//						// ignore
+//					}
+//				}
 			}
 		}
 		return new KeyStore(path, type,	password);

@@ -18,6 +18,7 @@
 		<jar.group.name>staticAnalysis</jar.group.name>
 		
 		<spotbugs.version>4.7.3</spotbugs.version>
+		<sonarqube.version>2.7.1.1951</sonarqube.version>
 
 	</properties>
 
@@ -27,6 +28,19 @@
 			<groupId>com.github.spotbugs</groupId>
 			<artifactId>spotbugs-ant</artifactId>
 			<version>${spotbugs.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.sonarsource.scanner.ant</groupId>
+			<artifactId>sonarqube-ant-task</artifactId>
+			<version>${sonarqube.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

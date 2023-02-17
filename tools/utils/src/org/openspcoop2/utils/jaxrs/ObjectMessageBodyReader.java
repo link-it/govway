@@ -48,7 +48,10 @@ public class ObjectMessageBodyReader implements javax.ws.rs.ext.MessageBodyReade
 			Annotation[] paramArrayOfAnnotation, MediaType paramMediaType) {
 		// paramMediaType is application/zip, application/xml ...
 		// realizzare un if se si desidera gestire solo un tipo in particolare
-		if(paramClass.getName().equals("java.lang.Object")) {
+		String compare = "java.lang.Object";
+		String parametro = paramClass.getName();
+		parametro = parametro + "";
+		if(parametro.equals(compare)) {
 			return true;
 		}
 		else {

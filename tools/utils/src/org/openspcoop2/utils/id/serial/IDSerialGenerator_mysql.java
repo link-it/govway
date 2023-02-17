@@ -79,8 +79,10 @@ public class IDSerialGenerator_mysql {
 				condition = " AND "+columnInfoAssociata+"='"+param.getInformazioneAssociataAlProgressivo()+"'";
 			}
 			
-			stmtUpdate.executeUpdate("UPDATE " + table  + " SET "+columnPrg+
-					" = LAST_INSERT_ID("+columnPrg+"+1)"+condition );
+			String query = "UPDATE " + table  + " SET "+columnPrg+
+					" = LAST_INSERT_ID("+columnPrg+"+1)"+condition;
+			
+			stmtUpdate.executeUpdate(query );
 							
 			/*			
 			if (stmtUpdate instanceof com.mysql.jdbc.Statement){

@@ -176,10 +176,16 @@ public class DOM3LS_XMLUtils {
 			DOM3LS_XMLUtils._serialize(documentImplementation,n,fout,prettyPrint);
 		}finally{
 			try{
-				fout.flush();
-			}catch(Exception eClose){}
+				if(fout!=null) {
+					fout.flush();
+				}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
-				fout.close();
+				if(fout!=null) {
+					fout.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}

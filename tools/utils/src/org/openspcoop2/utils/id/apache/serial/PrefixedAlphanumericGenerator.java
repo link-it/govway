@@ -60,7 +60,7 @@ public class PrefixedAlphanumericGenerator extends AlphanumericGenerator {
         if (prefix == null) {
             throw new NullPointerException("prefix must not be null");
         }
-    	return size - ((prefix == null) ? 0 : prefix.length());
+    	return size - prefix.length();
     }
     public PrefixedAlphanumericGenerator(String prefix, boolean wrap) {
         super(wrap, _getSize(prefix, DEFAULT_ALPHANUMERIC_IDENTIFIER_SIZE));
@@ -83,7 +83,7 @@ public class PrefixedAlphanumericGenerator extends AlphanumericGenerator {
         if (prefix == null) {
             throw new NullPointerException("prefix must not be null");
         }
-    	return (prefix == null) ? initialValue : initialValue.substring(prefix.length());
+    	return initialValue.substring(prefix.length());
     }
     public PrefixedAlphanumericGenerator(String prefix, boolean wrap, String initialValue) {
         super(wrap, _getInitialValue(prefix, initialValue));
@@ -120,7 +120,7 @@ public class PrefixedAlphanumericGenerator extends AlphanumericGenerator {
     }
 
     @Override
-	public String nextStringIdentifier() throws MaxReachedException {
+	public synchronized String nextStringIdentifier() throws MaxReachedException {
         StringBuilder sb = new StringBuilder(this.prefix);
         sb.append(super.nextStringIdentifier());
         return sb.toString();

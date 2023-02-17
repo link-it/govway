@@ -855,7 +855,7 @@ public abstract class AbstractUtils {
 					if(attuale.isArray()) {
 						//throw new UtilsException("Cannot execute reorder in array object (path '"+path+"')");
 						ArrayNode array = (ArrayNode) nodeForRename;
-						if(array.size()>0) {
+						if(array!=null && array.size()>0) {
 							for (int i = 0; i < array.size(); i++) {
 								JsonNode arrayChildNode = array.get(i);
 								if(arrayChildNode.isObject()) {
@@ -900,7 +900,7 @@ public abstract class AbstractUtils {
 					
 				}
 				else if(SPECIAL_KEY_CONVERT_TO_ARRAY.equals(newName)) {
-					if(!nodeForRename.isArray()) {
+					if(nodeForRename!=null && !nodeForRename.isArray()) {
 						//System.out.println("CONVERT TO ARRAY ["+path+"] ["+name+"]");
 						((ObjectNode)parentNode).remove(name);
 						ArrayNode arrayNode = ((ObjectNode)parentNode).arrayNode();
@@ -922,7 +922,7 @@ public abstract class AbstractUtils {
 			}
 		}
 		else {			
-			if(nodeForRename.isObject() && nodeForRename instanceof ObjectNode) {
+			if(nodeForRename!=null && nodeForRename.isObject() && nodeForRename instanceof ObjectNode) {
 				_StructureNode s = new _StructureNode();
 				s.parentNode = parentNode;
 				s.nodeForRename = nodeForRename;
@@ -948,7 +948,7 @@ public abstract class AbstractUtils {
 					}
 				}
 			}
-			else if(nodeForRename.isArray() && nodeForRename instanceof ArrayNode) {
+			else if(nodeForRename!=null && nodeForRename.isArray() && nodeForRename instanceof ArrayNode) {
 				ArrayNode array = (ArrayNode) nodeForRename;
 				if(array.size()>0) {
 					for (int i = 0; i < array.size(); i++) {

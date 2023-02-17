@@ -60,6 +60,9 @@ public class UniversallyUniqueIdentifierProducer extends AbstractBaseThread {
 	public IUniqueIdentifier newUniqueIdentifier() throws UniqueIdentifierException {
 		try {
 			return this.idsQueue.take();
+		} catch ( InterruptedException e ) {
+			Thread.currentThread().interrupt();
+			throw new UniqueIdentifierException( e );
 		} catch ( Throwable e ) {
 			throw new UniqueIdentifierException( e );
 		} /*finally {
@@ -83,11 +86,16 @@ public class UniversallyUniqueIdentifierProducer extends AbstractBaseThread {
 					//	System.out.println("ATTENDO");
 					//}
 				}catch(InterruptedException ie) {
+					Thread.currentThread().interrupt();
 					//System.out.println("IE!");
 				}
 			}
 			//System.out.println("AGGIUNTO IN CODA");
-		} catch( Throwable t ) {
+		} 
+		catch( Throwable t ) {
+			if(t!=null && t instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			this.log.error("UniversallyUniqueIdentifierProducer - generation failed: "+t.getMessage(),t);
 			Utilities.sleep(5000); // per non continuare nel loop di errori (non dovrebbe comunque mai entrare in questo catch)
 		}

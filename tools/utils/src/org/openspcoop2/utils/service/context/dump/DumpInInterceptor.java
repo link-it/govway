@@ -83,7 +83,7 @@ public class DumpInInterceptor extends org.apache.cxf.ext.logging.LoggingInInter
 			Set<String> sensitiveProtocolHeaders = new HashSet<String>();
 			final LogEvent event = new DefaultLogEventMapper().map(message, sensitiveProtocolHeaders);
 			if (shouldLogContent(event)) {
-				addContent(message, event);
+				internal_addContent(message, event);
 			} else {
 				event.setPayload(AbstractLoggingInterceptor.CONTENT_SUPPRESSED);
 			}
@@ -114,15 +114,15 @@ public class DumpInInterceptor extends org.apache.cxf.ext.logging.LoggingInInter
 
 	}
 
-	private void addContent(Message message, final LogEvent event) {
+	private void internal_addContent(Message message, final LogEvent event) {
 		try {
 			CachedOutputStream cos = message.getContent(CachedOutputStream.class);
 			if (cos != null) {
-				handleOutputStream(event, message, cos);
+				internal_handleOutputStream(event, message, cos);
 			} else {
 				CachedWriter writer = message.getContent(CachedWriter.class);
 				if (writer != null) {
-					handleWriter(event, writer);
+					internal_handleWriter(event, writer);
 				}
 			}
 		} catch (IOException e) {
@@ -130,7 +130,7 @@ public class DumpInInterceptor extends org.apache.cxf.ext.logging.LoggingInInter
 		}
 	}
 
-	private void handleOutputStream(final LogEvent event, Message message, CachedOutputStream cos) throws IOException {
+	private void internal_handleOutputStream(final LogEvent event, Message message, CachedOutputStream cos) throws IOException {
 		String encoding = (String) message.get(Message.ENCODING);
 		if (StringUtils.isEmpty(encoding)) {
 			encoding = StandardCharsets.UTF_8.name();
@@ -144,7 +144,7 @@ public class DumpInInterceptor extends org.apache.cxf.ext.logging.LoggingInInter
 		event.setFullContentFile(cos.getTempFile());
 	}
 
-	private void handleWriter(final LogEvent event, CachedWriter writer) throws IOException {
+	private void internal_handleWriter(final LogEvent event, CachedWriter writer) throws IOException {
 		boolean isTruncated = writer.size() > this.limit && this.limit != -1;
 		StringBuilder payload = new StringBuilder();
 		writer.writeCacheTo(payload, this.limit);

@@ -277,7 +277,7 @@ public class JsonEncrypt {
 			}
 		}
 		if(this.jwtHeaders!=null) {
-			this.jwtHeaders.fillJwsHeaders(headers, false, keyAlgo.getJwaName());
+			this.jwtHeaders.fillJwsHeaders(headers, false, keyAlgo!=null ? keyAlgo.getJwaName() : null);
 		}
 	}
 

@@ -39,7 +39,7 @@ public class TestJsonPath {
 	public void testJsonPath() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.json.JsonPathTest.main(new String[] {});
+		org.openspcoop2.utils.json.test.JsonPathTest.main(new String[] {});
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

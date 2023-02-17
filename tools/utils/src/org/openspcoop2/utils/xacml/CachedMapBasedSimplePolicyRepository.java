@@ -84,7 +84,7 @@ OrderedMapBasedSimplePolicyRepository {
 		this.cacheMap = new HashMap<EvaluatableID, String>();
 		this.log = log;
 		try {
-			this.md = MessageDigest.getInstance("MD5");
+			this.md = MessageDigest.getInstance("SHA-256");
 		} catch (NoSuchAlgorithmException e) {
 			throw new PolicyException(e);
 		}

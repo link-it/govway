@@ -39,22 +39,22 @@ public class TestEncryptCRL {
 	@DataProvider(name="EncryptCrlProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_CRL, false},
+				{org.openspcoop2.utils.security.test.EncryptTest.TipoTest.JSON_ENCRYPT_PROPERTIES_CRL, false},
 				
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.test.EncryptTest.TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM, false},
 				
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY, false},
+				{org.openspcoop2.utils.security.test.EncryptTest.TipoTest.JSON_ENCRYPT_PROPERTIES_CRL_HEADER_CUSTOM_KID_ONLY, false},
 				
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_CRL_KEYSTORE, false},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.test.EncryptTest.TipoTest.JSON_ENCRYPT_CRL_KEYSTORE, false},
+				{org.openspcoop2.utils.security.test.EncryptTest.TipoTest.JSON_ENCRYPT_CRL_KEYSTORE_HEADER_CUSTOM, false},
 		};
 	}
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="EncryptCrlProvider")
-	public void testEncryptCrl(org.openspcoop2.utils.security.TestEncrypt.TipoTest tipo, boolean useP11asTrustStore) throws Exception{
+	public void testEncryptCrl(org.openspcoop2.utils.security.test.EncryptTest.TipoTest tipo, boolean useP11asTrustStore) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ...");
-		org.openspcoop2.utils.security.TestEncrypt.main(new String [] { tipo.name(), (useP11asTrustStore+"") } );
+		org.openspcoop2.utils.security.test.EncryptTest.main(new String [] { tipo.name(), (useP11asTrustStore+"") } );
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ok");
 		
 	}

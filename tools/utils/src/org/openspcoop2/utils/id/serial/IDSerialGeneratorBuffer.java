@@ -38,10 +38,10 @@ public class IDSerialGeneratorBuffer {
 	private static Map<String, List<String>> buffer = new HashMap<String, List<String>>();
 	
 	private static String getPrefix(Class<?> cIdSerialGenerator){
-		if(IDSerialGenerator_alphanumeric.class.getName().equals(cIdSerialGenerator.getName())){
+		if(cIdSerialGenerator.isAssignableFrom(IDSerialGenerator_alphanumeric.class)){
 			return "A_";
 		}
-		else if(IDSerialGenerator_numeric.class.getName().equals(cIdSerialGenerator.getName())){
+		else if(cIdSerialGenerator.isAssignableFrom(IDSerialGenerator_numeric.class)){
 			return "N_";
 		}
 		else{

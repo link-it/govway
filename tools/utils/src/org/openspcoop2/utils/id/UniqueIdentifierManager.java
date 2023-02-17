@@ -41,7 +41,7 @@ public class UniqueIdentifierManager {
 	private static Object [] args_threadLocal = null;
     private static final ThreadLocal<IUniqueIdentifierGenerator> uniqueIdentifierGenerator_threadLocal =
             new ThreadLocal<IUniqueIdentifierGenerator>() {
-                @Override
+				@Override
 				protected IUniqueIdentifierGenerator initialValue() {
                 	try{
                 		IUniqueIdentifierGenerator uniqueIdentifierGenerator = (IUniqueIdentifierGenerator) Loader.getInstance().newInstance(className_threadLocal);
@@ -51,6 +51,7 @@ public class UniqueIdentifierManager {
         				throw new RuntimeException("Riscontrato errore durante il caricamento del manager specificato [class:"+className_threadLocal+"]: "+e.getMessage(),e);
         			}
                 }
+                
         };
 	
 	private static IUniqueIdentifierGenerator uniqueIdentifierGenerator_staticInstance;
@@ -174,6 +175,12 @@ public class UniqueIdentifierManager {
 			}
 		}catch(Exception e){
 			throw new UniqueIdentifierException("UniqueIdentifierManager.convertFromString() non riuscita",e);		
+		}
+	}
+	
+	public static void removeThreadLocal() throws UniqueIdentifierException{
+		if(useThreadLocal) {
+			UniqueIdentifierManager.uniqueIdentifierGenerator_threadLocal.remove();
 		}
 	}
 }

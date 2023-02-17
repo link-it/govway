@@ -48,7 +48,7 @@ public class TestSwaggerReader {
 	public void testSwaggerReader(String tipoInterfaccia) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+") ...");
-		org.openspcoop2.utils.openapi.TestSwagger2.main(new String[] {tipoInterfaccia});
+		org.openspcoop2.utils.openapi.test.TestSwagger2.main(new String[] {tipoInterfaccia});
 		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+") ok");
 		
 	}

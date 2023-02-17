@@ -21,13 +21,13 @@ package org.openspcoop2.utils.id.serial;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -39,6 +39,7 @@ import org.openspcoop2.utils.id.apache.serial.MaxReachedException;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 /**
  * IDSerialGenerator_alphanumeric
@@ -49,10 +50,10 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  */
 public class IDSerialGenerator_alphanumeric {
 	
-	private static java.util.Random _rnd = null;
+	private static SecureRandom _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	private static java.util.Random getRandom() {

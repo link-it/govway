@@ -376,7 +376,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						
 						// Explicit validation of the API spec
 						
-						if(validateSchema && this.openApi4jConfig.isValidateAPISpec()) {
+						if(validateSchema && this.openApi4jConfig!=null && this.openApi4jConfig.isValidateAPISpec()) {
 							try {
 								ValidationResults results = OpenApi3Validator.instance().validate(this.openApi4j);
 								if(!results.isValid()) {
@@ -1470,7 +1470,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			else if("double".equalsIgnoreCase(type) || "decimal".equalsIgnoreCase(type)){
 				try{
 					double v = Double.parseDouble(value);
-					numberValue = new BigDecimal(v);
+					numberValue = BigDecimal.valueOf(v);
 				}catch(Throwable e){
 					throw new ValidatorException(e.getMessage(),e);
 				}
@@ -1478,7 +1478,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			else if("float".equalsIgnoreCase(type)){
 				try{
 					float v = Float.parseFloat(value);
-					numberValue = new BigDecimal(v);
+					numberValue = BigDecimal.valueOf(v);
 				}catch(Throwable e){
 					throw new ValidatorException(e.getMessage(),e);
 				}
@@ -1515,7 +1515,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							throw new ValidatorException("Expected a unsigned value");
 						}
 					}
-					numberValue = new BigDecimal(i);
+					numberValue = BigDecimal.valueOf(i);
 				}catch(Throwable e){
 					throw new ValidatorException(e.getMessage(),e);
 				}
@@ -1539,7 +1539,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					// Any numbers.
 					try{
 						double d = Double.parseDouble(value);
-						numberValue = new BigDecimal(d);
+						numberValue = BigDecimal.valueOf(d);
 					}catch(Exception e){
 						long l = Long.parseLong(value);
 						numberValue = new BigDecimal(l);

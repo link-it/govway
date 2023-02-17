@@ -149,6 +149,9 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 				 }
 								
 			}catch(Throwable e){
+				if(e!=null && e instanceof InterruptedException) {
+					Thread.currentThread().interrupt();	
+				}
 				this.log.error("["+this.idStreamingHandler+"] end error",e);
 				ioException = new IOException(e.getMessage());
 			}
@@ -185,6 +188,10 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 				this.exceptionThreadExecution = this.streamingHandler.getException();
 								
 			}catch(Throwable e){
+				
+				if(e !=null && e instanceof InterruptedException) {
+					Thread.currentThread().interrupt();
+				}
 				
 				// Errori generati da this.submitThreadExecution.get()
 				// Cosi' facendo recupero eventuali errori lanciati nella exception del metodo call()

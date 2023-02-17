@@ -41,7 +41,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
  * @author $Author$
  * @version $Rev$, $Date$
 */
-class DumpByteArrayOutputStream_DefaultImpl extends ByteArrayOutputStream implements IDumpByteArrayOutputStream {
+public class DumpByteArrayOutputStream_DefaultImpl extends ByteArrayOutputStream implements IDumpByteArrayOutputStream {
 
 	private int soglia = -1; // -1 senza soglia
 	private int attuale = 0;
@@ -220,7 +220,9 @@ class DumpByteArrayOutputStream_DefaultImpl extends ByteArrayOutputStream implem
 					this.fout.close();
 					this.fout = null;
 				}
-				this.f.delete();
+				if(!this.f.delete()) {
+					// ignore
+				}
 				this.f = null;
 			}catch(Throwable e) {
 				throw new RuntimeException(e.getMessage(),e);
@@ -266,11 +268,11 @@ class DumpByteArrayOutputStream_DefaultImpl extends ByteArrayOutputStream implem
 
 	
 	@Override
-	public byte[] toByteArray() {
+	public synchronized byte[] toByteArray() {
 		return _serializeToByteArray();
 	}
 	@Override
-	public byte[] serializeToByteArray() {
+	public synchronized byte[] serializeToByteArray() {
 		return _serializeToByteArray();
 	}
 	private synchronized byte[] _serializeToByteArray() {
@@ -293,11 +295,11 @@ class DumpByteArrayOutputStream_DefaultImpl extends ByteArrayOutputStream implem
 
 	
 	@Override
-	public String toString() {
+	public synchronized String toString() {
 		return this._serializeToString();
 	}
 	@Override
-	public String serializeToString() {
+	public synchronized String serializeToString() {
 		return this._serializeToString();
 	}
 	private synchronized String _serializeToString() {
@@ -319,11 +321,11 @@ class DumpByteArrayOutputStream_DefaultImpl extends ByteArrayOutputStream implem
 	}
 
 	@Override
-	public String toString(String charsetName) throws UnsupportedEncodingException {
+	public synchronized String toString(String charsetName) throws UnsupportedEncodingException {
 		return this._serializeToString(charsetName);
 	}
 	@Override
-	public String serializeToString(String charsetName) throws UnsupportedEncodingException {
+	public synchronized String serializeToString(String charsetName) throws UnsupportedEncodingException {
 		return this._serializeToString(charsetName);
 	}
 	private synchronized String _serializeToString(String charsetName) throws UnsupportedEncodingException {
@@ -345,11 +347,11 @@ class DumpByteArrayOutputStream_DefaultImpl extends ByteArrayOutputStream implem
 	}
 
 	@Override
-	public String toString(Charset charset) {
+	public synchronized String toString(Charset charset) {
 		return this._serializeToString(charset);
 	}
 	@Override
-	public String serializeToString(Charset charset) {
+	public synchronized String serializeToString(Charset charset) {
 		return this._serializeToString(charset);
 	}
 	private synchronized String _serializeToString(Charset charset) {

@@ -77,6 +77,9 @@ public class Reader {
 		Certificate c = ArchiveLoader.load(type, content, 0, password);
 		
 		boolean printOnlySubjectNormalizzato = false;
+		if(args.length>100) {
+			printOnlySubjectNormalizzato = Boolean.valueOf(args[99]);
+		}
 		
 		if(printOnlySubjectNormalizzato) {
 			

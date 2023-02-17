@@ -50,8 +50,8 @@ import org.openspcoop2.utils.random.RandomUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.JOSESerialization;
-import org.openspcoop2.utils.security.TestSignature;
 import org.openspcoop2.utils.security.XmlSignature;
+import org.openspcoop2.utils.security.test.SignatureTest;
 import org.openspcoop2.utils.service.beans.TransazioneBase;
 import org.slf4j.Logger;
 
@@ -92,7 +92,7 @@ public class Client {
 		
 		TransazioneBase transazione = newTransazione(extended, log, init);
 		
-		InputStream isKeystore = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/security/keystore_example.jks");
+		InputStream isKeystore = SignatureTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/keystore_example.jks");
 		File fKeystore = File.createTempFile("keystore", "jks");
 		FileSystemUtilities.writeFile(fKeystore, Utilities.getAsByteArray(isKeystore));
 		

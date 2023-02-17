@@ -115,7 +115,11 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 							this.asyncReadTask.get();
 						}
 						//System.out.println("["+this.source+"] READ OK");
-					}catch(Exception timeout) {
+					}catch(InterruptedException timeout) {
+						Thread.currentThread().interrupt();
+						throw new IOException(getPrefixSource()+"Timeout, no bytes available for read: "+timeout.getMessage(),timeout);
+					}
+					catch(Exception timeout) {
 						throw new IOException(getPrefixSource()+"Timeout, no bytes available for read: "+timeout.getMessage(),timeout);
 					}
 				}
@@ -125,6 +129,9 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 			throw io;
 		}
 		catch(Throwable t) {
+			if(t !=null && t instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			throw new IOException(t.getMessage(),t);
 		}
 	}
@@ -185,15 +192,16 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 			//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] BYTES AVAILABLE ...");
 			
 			if(this.bytesReceived==null){
-				if(this.stop){			
-					if(this.bout==null){
+				if(this.stop){
+					// garantita dal codice sopra essere not null quando si entra nell'if this.bytesReceived==null && this.stop
+					/*if(this.bout==null){
 						//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] BYTES AVAILABLE RETURN -1");
 						if(this.asyncWriteTask!=null) {
 							//System.out.println("["+this.source+"] READ for WRITE COMPLETE 4");
 							this.asyncWriteTask.complete(true);
 						}
 						return -1;
-					}
+					}*/
 					if(this.bout.size()<=0){
 						this.bout.close();
 						this.bout = null;
@@ -333,7 +341,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 		byte[]b = new byte[1];
 		int len = this.read(b);
 		if ( len == 1 )
-			return b[0];
+			return b[0] & 0xFF;
 		if ( len == -1 )
 			return -1;
 		throw new IOException( "Cannot read single byte" );
@@ -414,7 +422,11 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 							this.asyncWriteTask.get();
 						}
 						//System.out.println("["+this.source+"] WRITE OK");
-					}catch(Exception timeout) {
+					}catch(InterruptedException timeout) {
+						Thread.currentThread().interrupt();
+						throw new IOException(getPrefixSource()+"Timeout, no bytes available for read: "+timeout.getMessage(),timeout);
+					}
+					catch(Exception timeout) {
 						throw new IOException(getPrefixSource()+"Timeout, no bytes available for read: "+timeout.getMessage(),timeout);
 					}
 				}
@@ -424,6 +436,9 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 			throw io;
 		}
 		catch(Throwable t) {
+			if(t !=null && t instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			throw new IOException(t.getMessage(),t);
 		}
 	}

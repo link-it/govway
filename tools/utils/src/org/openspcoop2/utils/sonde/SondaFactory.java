@@ -67,10 +67,20 @@ public class SondaFactory {
 		String sql = sqlQueryObject.createSQLUpdate();
 
 		PreparedStatement ps = connection.prepareStatement(sql);
-		ps.setLong(1, warn);
-		ps.setLong(2, err);
-		ps.setString(3, nome);
-		ps.executeUpdate();
+		try {
+			ps.setLong(1, warn);
+			ps.setLong(2, err);
+			ps.setString(3, nome);
+			ps.executeUpdate();
+		}finally {
+			try {
+				if(ps!=null) {
+					ps.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+		}
 	}
 
 	/**

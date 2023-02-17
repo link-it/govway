@@ -149,7 +149,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.utils.jdbc.TestKeyGenerator" fork="true">
+		<java classname="org.openspcoop2.utils.jdbc.test.KeyGeneratorTest" fork="true">
 		        <arg value="${tipoDatabase}" />
 			<arg value="${url}" /> <!-- opzionale -->
 			<arg value="${username}" /> <!-- opzionale -->
@@ -169,7 +169,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.utils.jdbc.TestJDBCAdapter" fork="true">
+		<java classname="org.openspcoop2.utils.jdbc.test.JDBCAdapterTest" fork="true">
 		        <arg value="${tipoDatabase}" />
 			<arg value="${url}" /> <!-- opzionale -->
 			<arg value="${username}" /> <!-- opzionale -->
@@ -189,7 +189,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.utils.sql.ClientTest" fork="true">
+		<java classname="org.openspcoop2.utils.sql.test.ClientTest" fork="true">
 		        <arg value="${tipoDatabase}" />
 			<arg value="${url}" /> <!-- opzionale -->
 			<arg value="${username}" /> <!-- opzionale -->
@@ -209,7 +209,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.utils.sonde.ClientTest" fork="true">
+		<java classname="org.openspcoop2.utils.sonde.test.ClientTest" fork="true">
 		        <arg value="${tipoDatabase}" />
 			<arg value="${url}" /> <!-- opzionale -->
 			<arg value="${username}" /> <!-- opzionale -->
@@ -231,7 +231,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.utils.id.serial.ClientTest" fork="true">
+		<java classname="org.openspcoop2.utils.id.serial.test.ClientTest" fork="true">
 		        <arg value="${tipoDatabase}" />
 			<arg value="${url}" /> <!-- opzionale -->
 			<arg value="${username}" /> <!-- opzionale -->
@@ -256,7 +256,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.utils.semaphore.ClientTest" fork="true">
+		<java classname="org.openspcoop2.utils.semaphore.test.ClientTest" fork="true">
 		        <arg value="${tipoDatabase}" />
 			<arg value="${url}" /> <!-- opzionale -->
 			<arg value="${username}" /> <!-- opzionale -->

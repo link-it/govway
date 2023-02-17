@@ -23,7 +23,6 @@
 package org.openspcoop2.utils;
 
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -72,6 +71,7 @@ public class Utilities {
 			Thread.sleep(ms);
 		}catch(Throwable t) {
 			// ignore
+			Thread.currentThread().interrupt();
 		}
 	}
 	
@@ -86,6 +86,7 @@ public class Utilities {
 		    throw e;
 		} catch (InterruptedException e) {
 			//System.err.println("Interrupted");
+			Thread.currentThread().interrupt();
 			throw new UtilsException(e.getMessage(),e);
 		} catch (ExecutionException e) {
 			//System.err.println("ExecutionException");
@@ -141,7 +142,8 @@ public class Utilities {
 		if(o1==null || o2==null) {
 			return false;
 		}
-		return o1.getClass().getName().equals(o2.getClass().getName());
+		//return o1.getClass().getName().equals(o2.getClass().getName()); sonar java:S1872
+		return o1.getClass().equals(o2.getClass());
 	}
 	
 
@@ -163,8 +165,12 @@ public class Utilities {
 				content = Utilities.getAsString(openStream,charsetName,throwExceptionInputStreamEmpty);
 			}finally{
 				try{
-					openStream.close();
-				}catch(Exception e){}
+					if(openStream!=null) {
+						openStream.close();
+					}
+				}catch(Throwable e){
+					// ignore
+				}
 			}
 			return content;
 		}
@@ -180,7 +186,16 @@ public class Utilities {
 	}
 	public static String getAsString(InputStream is,String charsetName,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		try{
-			return Utilities.getAsInputStreamReader(is,charsetName,throwExceptionInputStreamEmpty).toString();			
+			StringBuilder sb = Utilities.getAsInputStreamReader(is,charsetName,throwExceptionInputStreamEmpty);
+			if(sb==null){
+				if(throwExceptionInputStreamEmpty){
+					throw new UtilsException("getAsInputStreamReader is null");
+				}
+				else{
+					return null;
+				}
+			}
+			return sb.toString();			
 		}
 		catch (UtilsException e) {
 			throw e;
@@ -194,7 +209,7 @@ public class Utilities {
 	}
 	public static StringBuilder getAsInputStreamReader(InputStream isParam,String charsetName,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		InputStreamReader isr = null;
-		BufferedReader bufferedReader = null;
+//		java.io.BufferedReader bufferedReader = null;
 		try{
 			if(isParam==null){
 				if(throwExceptionInputStreamEmpty){
@@ -207,13 +222,16 @@ public class Utilities {
 			
 			InputStream is = normalizeStream(isParam, throwExceptionInputStreamEmpty);
 			if(is==null) {
+				// nel caso serva l'eccezione, viene lanciata nel normalizeStream.
+				// NOTA: al metodo normalizeStream viene passato per forza un oggetto non null, altrimenti si entra nel controllo precedente
+				
 				// rifaccio il controllo nonostante l'eccezione venga lanciata nel normalizeStream
-				if(throwExceptionInputStreamEmpty){
-					throw new UtilsException("InputStream is empty (class:"+isParam.getClass().getName()+")");
-				}
-				else{
-					return null;
-				}
+				//if(throwExceptionInputStreamEmpty){
+				//	throw new UtilsException("InputStream is empty (class:"+isParam.getClass().getName()+")");
+				//}
+				//else{
+				return null;
+				//}
 			}
 			
 			isr = new InputStreamReader(is, charsetName);
@@ -251,9 +269,9 @@ public class Utilities {
 		
 		} finally{
 			try{
-				if(bufferedReader!=null){
-					bufferedReader.close();
-				}
+//				if(bufferedReader!=null){
+//					bufferedReader.close();
+//				}
 				if(isr!=null){
 					isr.close();
 				}
@@ -277,8 +295,12 @@ public class Utilities {
 				content = Utilities.getAsByteArray(openStream,throwExceptionInputStreamEmpty);
 			}finally{
 				try{
-					openStream.close();
-				}catch(Exception e){}
+					if(openStream!=null) {
+						openStream.close();
+					}
+				}catch(Throwable e){
+					// ignore
+				}
 			}
 			return content;
 		}
@@ -337,13 +359,16 @@ public class Utilities {
 			
 			InputStream is = normalizeStream(isParam, throwExceptionInputStreamEmpty);
 			if(is==null) {
+				// nel caso serva l'eccezione, viene lanciata nel normalizeStream.
+				// NOTA: al metodo normalizeStream viene passato per forza un oggetto non null, altrimenti si entra nel controllo precedente
+				
 				// rifaccio il controllo nonostante l'eccezione venga lanciata nel normalizeStream
-				if(throwExceptionInputStreamEmpty){
-					throw new UtilsException("InputStream is empty (class:"+isParam.getClass().getName()+")");
-				}
-				else{
-					return;
-				}
+				//if(throwExceptionInputStreamEmpty){
+				//	throw new UtilsException("InputStream is empty (class:"+isParam.getClass().getName()+")");
+				//}
+				//else{
+				return;
+				//}
 			}			
 			
 //			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
@@ -364,7 +389,7 @@ public class Utilities {
 			}
 			else if(existsInnerException(e, java.io.IOException.class)){
 				Throwable tInternal = getInnerException(e, java.io.IOException.class);
-				if(isEmpytMessageException(tInternal)==false){
+				if(tInternal!=null && (isEmpytMessageException(tInternal)==false)){
 					throw new UtilsException(tInternal.getMessage(),e);
 				}
 			}
@@ -730,7 +755,7 @@ public class Utilities {
 		Double len = null;
 		String res = "";
 		//il valore e' in byte
-		len = Long.valueOf(value).doubleValue();
+		len = Long.valueOf((value+"")).doubleValue();
 		long d = Math.round(len/Utilities.KB); 
 		if(d<=1){
 			//byte

@@ -39,7 +39,7 @@ public class TestCSV {
 	public void testCSV() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.csv.Test.test();
+		org.openspcoop2.utils.csv.test.CSVTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

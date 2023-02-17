@@ -142,7 +142,9 @@ public class PropertiesUtilities {
 				log.error("["+subject+"] file di properties non utilizzabile: "+e.getMessage(),e);
 			}finally{
 				try{
-					is.close();
+					if(is!=null) {
+						is.close();
+					}
 				}catch(Exception eClose){
 					// close
 				}
@@ -181,7 +183,9 @@ public class PropertiesUtilities {
 				log.error("["+subject+"] file di properties non utilizzabile: "+e.getMessage(),e);
 			}finally{
 				try{
-					is.close();
+					if(is!=null) {
+						is.close();
+					}
 				}catch(Exception eClose){
 					// close
 				}
@@ -276,7 +280,9 @@ public class PropertiesUtilities {
 				log.error("["+subject+"] file di properties non utilizzabile: "+e.getMessage(),e);
 			}finally{
 				try{
-					is.close();
+					if(is!=null) {
+						is.close();
+					}
 				}catch(Exception eClose){
 					// close
 				}
@@ -295,8 +301,12 @@ public class PropertiesUtilities {
 				log.error("["+subject+"] file di properties non utilizzabile: "+e.getMessage(),e);
 			}finally{
 				try{
-					is.close();
-				}catch(Exception eClose){}
+					if(is!=null) {
+						is.close();
+					}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 				
 			if(propertiesReader!=null){
@@ -322,7 +332,7 @@ public class PropertiesUtilities {
 				if(line!=null && line.startsWith("#")) {
 					continue;
 				}
-				if(line.contains("=")) {
+				if(line!=null && line.contains("=")) {
 					String key = line.split("=")[0];
 					key = key.trim();
 					int valueIndex = line.indexOf("=");

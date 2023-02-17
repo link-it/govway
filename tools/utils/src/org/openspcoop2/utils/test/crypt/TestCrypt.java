@@ -39,7 +39,7 @@ public class TestCrypt {
 	public void testCodecCrypt() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.crypt.TestCodecCrypt.test();
+		org.openspcoop2.utils.crypt.test.CodecCryptTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}
@@ -48,7 +48,7 @@ public class TestCrypt {
 	public void testJasyptCrypt() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.crypt.TestJasyptCrypt.test();
+		org.openspcoop2.utils.crypt.test.JasyptCryptTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}
@@ -57,7 +57,7 @@ public class TestCrypt {
 	public void testOthersCrypt() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.crypt.TestOthersCrypt.test();
+		org.openspcoop2.utils.crypt.test.OthersCryptTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}
@@ -66,7 +66,7 @@ public class TestCrypt {
 	public void testOldMd5Crypt() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.crypt.TestOldMD5.test();
+		org.openspcoop2.utils.crypt.test.OldMD5Test.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

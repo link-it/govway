@@ -133,7 +133,9 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
 			}
 		}
 		if(!found) {
-			throw new UsernameNotFoundException("Username '"+username+"' not found");
+			//throw new UsernameNotFoundException("Username '"+username+"' not found");
+			// Fix security: Make sure allowing user enumeration is safe here.
+			throw new BadCredentialsException("Bad credentials");
 		}
 
 		// Check password

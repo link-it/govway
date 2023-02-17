@@ -51,66 +51,83 @@ public class Utilities {
 					if(nomeMetodo.length()>3 && 
 							nomeMetodo.startsWith("get") && 
 							methods[i].getParameterTypes()!=null && methods[i].getParameterTypes().length==0 &&
-							methods[i].getReturnType()!=null && !("void".equals(methods[i].getReturnType().getName()))){
-						Class<?> tipoReturn = methods[i].getReturnType();
-						//System.out.println("ANALIZZO TIPO RETURN ["+tipoReturn.getName()+"]...");
-												
-						if(tipoReturn.isAssignableFrom(Date.class)){
-																	
-							//System.out.println("DATA creo oggetto time ["+methods[i].getName()+"]? check tipo per evitare object generici che sono assegnabili a Date");
-							Object oDate = methods[i].invoke(o);
-							if(oDate!=null){
-								if(oDate instanceof Date){
-									Date tmp = (Date) oDate;
-									String nomeMetodoSet = "s"+nomeMetodo.subSequence(1, nomeMetodo.length());
-									//System.out.println("DATA ("+o.getClass().getName()+") set con metodo ["+nomeMetodoSet+"]");
-									java.lang.reflect.Method methodSet =  o.getClass().getMethod(nomeMetodoSet,Date.class);
-									methodSet.invoke(o,new Date(tmp.getTime()));
-									//System.out.println("DATA set effettuato");
+							methods[i].getReturnType()!=null 
+							//&& !("void".equals(methods[i].getReturnType().getName()))
+							){
+						
+						String voidS = "void";
+						String returnType = methods[i].getReturnType().getName()+"";
+						boolean isVoid = returnType.equals(voidS);
+						
+						if(!isVoid) {
+							Class<?> tipoReturn = methods[i].getReturnType();
+							//System.out.println("ANALIZZO TIPO RETURN ["+tipoReturn.getName()+"]...");
+													
+							if(tipoReturn.isAssignableFrom(Date.class)){
+																		
+								//System.out.println("DATA creo oggetto time ["+methods[i].getName()+"]? check tipo per evitare object generici che sono assegnabili a Date");
+								Object oDate = methods[i].invoke(o);
+								if(oDate!=null){
+									if(oDate instanceof Date){
+										Date tmp = (Date) oDate;
+										String nomeMetodoSet = "s"+nomeMetodo.subSequence(1, nomeMetodo.length());
+										//System.out.println("DATA ("+o.getClass().getName()+") set con metodo ["+nomeMetodoSet+"]");
+										java.lang.reflect.Method methodSet =  o.getClass().getMethod(nomeMetodoSet,Date.class);
+										methodSet.invoke(o,new Date(tmp.getTime()));
+										//System.out.println("DATA set effettuato");
+									}
 								}
 							}
-						}
-						else if(o.getClass().getPackage()!=null && tipoReturn.getName().startsWith(o.getClass().getPackage().getName())){
-							if(tipoReturn.isEnum()==false){
-								//System.out.println("Normalize per ["+o.getClass().getPackage().getName()+"]...");
-								Utilities.normalizeDateObjects(methods[i].invoke(o));
-								//System.out.println("Normalize per ["+o.getClass().getPackage().getName()+"] fatto");
-							}/*else{
-								System.out.println("ENUM!");
-							}*/
+							else if(o.getClass().getPackage()!=null && tipoReturn.getName().startsWith(o.getClass().getPackage().getName())){
+								if(tipoReturn.isEnum()==false){
+									//System.out.println("Normalize per ["+o.getClass().getPackage().getName()+"]...");
+									Utilities.normalizeDateObjects(methods[i].invoke(o));
+									//System.out.println("Normalize per ["+o.getClass().getPackage().getName()+"] fatto");
+								}/*else{
+									System.out.println("ENUM!");
+								}*/
+							}
 						}
 					}
 					else if(nomeMetodo.length()>3 && 
 							nomeMetodo.startsWith("size") &&  nomeMetodo.endsWith("List") &&  
 							methods[i].getParameterTypes()!=null && methods[i].getParameterTypes().length==0 &&
-							methods[i].getReturnType()!=null && "int".equals(methods[i].getReturnType().getName())){
-						Object oLista = methods[i].invoke(o);
-						//System.out.println("LISTA["+oLista.getClass().getName()+"]");
-						int sizeLista = (Integer) oLista;
-						for(int j=0; j<sizeLista; j++){
-							String nomeMetodoGet = "get"+nomeMetodo.subSequence("size".length(), (nomeMetodo.length()-"List".length()));
-							//System.out.println("NOME METODO["+nomeMetodoGet+"]");
-							java.lang.reflect.Method methodGet =  null;
-							try{
-								methodGet = o.getClass().getMethod(nomeMetodoGet,int.class);
-							}catch(Exception e){
-								//System.out.println("NON ESISTE  IL METODO: "+e.getMessage());
-							}
-							if(methodGet!=null){
-								//System.out.println("ANALIZZO TIPO RETURN METODO GET ["+methodGet.getReturnType().getName()+"]...");
-								Class<?> tipoReturn = methodGet.getReturnType();
-								if(tipoReturn.getName().startsWith(o.getClass().getPackage().getName())){
-									//System.out.println("RINORMALIZZO IN RICORSIONE..... ");
-									try{
-										Utilities.normalizeDateObjects(methodGet.invoke(o,j));
-									}catch(Exception e){
-										//System.out.println("RINORMALIZZAZIONE NON RIUSCITA: "+e.getMessage());
-									}	
-									//System.out.println("RINORMALIZZO IN RICORSIONE FINE -------------------- ");
+							methods[i].getReturnType()!=null 
+							//&& "int".equals(methods[i].getReturnType().getName())
+							){
+						String intS = "int";
+						String returnType = methods[i].getReturnType().getName()+"";
+						boolean isInt = returnType.equals(intS);
+						
+						if(isInt) {
+							Object oLista = methods[i].invoke(o);
+							//System.out.println("LISTA["+oLista.getClass().getName()+"]");
+							int sizeLista = (Integer) oLista;
+							for(int j=0; j<sizeLista; j++){
+								String nomeMetodoGet = "get"+nomeMetodo.subSequence("size".length(), (nomeMetodo.length()-"List".length()));
+								//System.out.println("NOME METODO["+nomeMetodoGet+"]");
+								java.lang.reflect.Method methodGet =  null;
+								try{
+									methodGet = o.getClass().getMethod(nomeMetodoGet,int.class);
+								}catch(Exception e){
+									//System.out.println("NON ESISTE  IL METODO: "+e.getMessage());
 								}
-							}/*else{
-								System.out.println("NON ESISTE  IL METODO");
-							}*/
+								if(methodGet!=null){
+									//System.out.println("ANALIZZO TIPO RETURN METODO GET ["+methodGet.getReturnType().getName()+"]...");
+									Class<?> tipoReturn = methodGet.getReturnType();
+									if(tipoReturn.getName().startsWith(o.getClass().getPackage().getName())){
+										//System.out.println("RINORMALIZZO IN RICORSIONE..... ");
+										try{
+											Utilities.normalizeDateObjects(methodGet.invoke(o,j));
+										}catch(Exception e){
+											//System.out.println("RINORMALIZZAZIONE NON RIUSCITA: "+e.getMessage());
+										}	
+										//System.out.println("RINORMALIZZO IN RICORSIONE FINE -------------------- ");
+									}
+								}/*else{
+									System.out.println("NON ESISTE  IL METODO");
+								}*/
+							}
 						}
 					}
 				}
@@ -137,58 +154,67 @@ public class Utilities {
 					if(nomeMetodo.length()>3 && 
 							nomeMetodo.startsWith("get") && 
 							methods[i].getParameterTypes()!=null && methods[i].getParameterTypes().length==0 &&
-							methods[i].getReturnType()!=null && !("void".equals(methods[i].getReturnType().getName()))){
-						Class<?> tipoReturn = methods[i].getReturnType();
-						//System.out.println("AAAAAA ["+nomeMetodo+"] ["+tipoReturn+"] primitive["+tipoReturn.isPrimitive()+"] enum["+tipoReturn.isEnum()+"] ["+isMorpherPackage(tipoReturn)+"]");
+							methods[i].getReturnType()!=null 
+							//&& !("void".equals(methods[i].getReturnType().getName()))
+							){
 						
-						if(isMorpherPackage(tipoReturn,morpherPackage)){
-							if(tipoReturn.isEnum()){
-								if(classRegistered.contains(tipoReturn.getName())==false){
-									classRegistered.add(tipoReturn.getName());
-									//System.out.println("REGISTRATO ENUM ["+tipoReturn.getName()+"]");
-									morpherRegistry.registerMorpher( new EnumMorpher( tipoReturn ) ); 
-								}
-							}
-							else{
-								if(classRegistered.contains(tipoReturn.getName())==false){
-									classRegistered.add(tipoReturn.getName());
-									//System.out.println("REGISTRATO BEAN ["+tipoReturn.getName()+"]");
-									morpherRegistry.registerMorpher( new BeanMorpher( tipoReturn, morpherRegistry ) );
-								}
-								//System.out.println("RICORSIONE ["+tipoReturn.getName()+"]");
-								registerMorpher(tipoReturn, morpherRegistry, classRegistered,morpherPackage);
-							}
-						}
+						String voidS = "void";
+						String returnType = methods[i].getReturnType().getName()+"";
+						boolean isVoid = returnType.equals(voidS);
 						
-						else if(tipoReturn.isAssignableFrom(java.util.List.class)){
+						if(!isVoid) {
+						
+							Class<?> tipoReturn = methods[i].getReturnType();
+							//System.out.println("AAAAAA ["+nomeMetodo+"] ["+tipoReturn+"] primitive["+tipoReturn.isPrimitive()+"] enum["+tipoReturn.isEnum()+"] ["+isMorpherPackage(tipoReturn)+"]");
 							
-							// ParameterizedType stringListType = (ParameterizedType) stringListField.getGenericType();
-						    
-							Class<?> classGenericType = null;
-							try{
-								String genericType = methods[i].getGenericReturnType().toString().substring("java.util.List<".length(), methods[i].getGenericReturnType().toString().length()-1);
-								//System.out.println("IS LIST ["+tipoReturn.getName()+"] ["+genericType+"]");
-								classGenericType = Class.forName(genericType);
-							}catch(Exception e){
-								throw new UtilsException(e.getMessage(),e);
-							}
-							if(classGenericType!=null){
-								
-								if(isMorpherPackage(classGenericType,morpherPackage)){
-								
-									if(classRegistered.contains(classGenericType.getName())==false){
-										classRegistered.add(classGenericType.getName());
-										//System.out.println("REGISTRATO BEAN ["+classGenericType.getName()+"]");
-										morpherRegistry.registerMorpher( new BeanMorpher( classGenericType, morpherRegistry) );
+							if(isMorpherPackage(tipoReturn,morpherPackage)){
+								if(tipoReturn.isEnum()){
+									if(classRegistered.contains(tipoReturn.getName())==false){
+										classRegistered.add(tipoReturn.getName());
+										//System.out.println("REGISTRATO ENUM ["+tipoReturn.getName()+"]");
+										morpherRegistry.registerMorpher( new EnumMorpher( tipoReturn ) ); 
 									}
+								}
+								else{
+									if(classRegistered.contains(tipoReturn.getName())==false){
+										classRegistered.add(tipoReturn.getName());
+										//System.out.println("REGISTRATO BEAN ["+tipoReturn.getName()+"]");
+										morpherRegistry.registerMorpher( new BeanMorpher( tipoReturn, morpherRegistry ) );
+									}
+									//System.out.println("RICORSIONE ["+tipoReturn.getName()+"]");
+									registerMorpher(tipoReturn, morpherRegistry, classRegistered,morpherPackage);
+								}
+							}
+							
+							else if(tipoReturn.isAssignableFrom(java.util.List.class)){
+								
+								// ParameterizedType stringListType = (ParameterizedType) stringListField.getGenericType();
+							    
+								Class<?> classGenericType = null;
+								try{
+									String genericType = methods[i].getGenericReturnType().toString().substring("java.util.List<".length(), methods[i].getGenericReturnType().toString().length()-1);
+									//System.out.println("IS LIST ["+tipoReturn.getName()+"] ["+genericType+"]");
+									classGenericType = Class.forName(genericType);
+								}catch(Exception e){
+									throw new UtilsException(e.getMessage(),e);
+								}
+								if(classGenericType!=null){
 									
-									//System.out.println("RICORSIONE-LIST ["+classGenericType.getName()+"]");
-									registerMorpher(classGenericType, morpherRegistry, classRegistered,morpherPackage);
+									if(isMorpherPackage(classGenericType,morpherPackage)){
 									
+										if(classRegistered.contains(classGenericType.getName())==false){
+											classRegistered.add(classGenericType.getName());
+											//System.out.println("REGISTRATO BEAN ["+classGenericType.getName()+"]");
+											morpherRegistry.registerMorpher( new BeanMorpher( classGenericType, morpherRegistry) );
+										}
+										
+										//System.out.println("RICORSIONE-LIST ["+classGenericType.getName()+"]");
+										registerMorpher(classGenericType, morpherRegistry, classRegistered,morpherPackage);
+										
+									}
 								}
 							}
 						}
-						
 					}
 					
 				}
@@ -213,134 +239,142 @@ public class Utilities {
 					if(nomeMetodo.length()>3 && 
 							nomeMetodo.startsWith("get") && 
 							methods[i].getParameterTypes()!=null && methods[i].getParameterTypes().length==0 &&
-							methods[i].getReturnType()!=null && !("void".equals(methods[i].getReturnType().getName()))){
-						Class<?> tipoReturn = methods[i].getReturnType();
-						//System.out.println("AAAAAA ["+nomeMetodo+"] ["+tipoReturn+"] primitive["+tipoReturn.isPrimitive()+"] enum["+tipoReturn.isEnum()+"] ["+isMorpherPackage(tipoReturn)+"]");
+							methods[i].getReturnType()!=null 
+							//&&  !("void".equals(methods[i].getReturnType().getName()))
+							){
 						
-						if(isMorpherPackage(tipoReturn,morpherPackage)){
-							Object oInternal = methods[i].invoke(o);
-							if(oInternal!=null){
-								if(oInternal instanceof net.sf.ezmorph.bean.MorphDynaBean){
-									Object oDeserialized = null;
-									try{
-										net.sf.ezmorph.bean.MorphDynaBean mdb = (net.sf.ezmorph.bean.MorphDynaBean)oInternal;
-										normalizeByteArray(tipoReturn, mdb);
-										oDeserialized = morpherRegistry.morph( tipoReturn, mdb );
-									}catch(Exception e){
-										if(throwExceptionMorpherFailed){
-											throw e;
-										}
-									}
-									
-									if(oDeserialized!=null){
-										// cerco metodo Set
-										java.lang.reflect.Method setMethodRef = null;
-										for(int k=0; k<methods.length;k++){
-											String setMethod = "set"+nomeMetodo.substring("get".length(), nomeMetodo.length());
-											if(methods[k].getName().equals(setMethod) &&
-													methods[k].getParameterTypes()!=null && methods[k].getParameterTypes().length==1){
-												setMethodRef = methods[k];
-												break;
+						String voidS = "void";
+						String returnType = methods[i].getReturnType().getName()+"";
+						boolean isVoid = returnType.equals(voidS);
+						
+						if(!isVoid) {
+							Class<?> tipoReturn = methods[i].getReturnType();
+							//System.out.println("AAAAAA ["+nomeMetodo+"] ["+tipoReturn+"] primitive["+tipoReturn.isPrimitive()+"] enum["+tipoReturn.isEnum()+"] ["+isMorpherPackage(tipoReturn)+"]");
+							
+							if(isMorpherPackage(tipoReturn,morpherPackage)){
+								Object oInternal = methods[i].invoke(o);
+								if(oInternal!=null){
+									if(oInternal instanceof net.sf.ezmorph.bean.MorphDynaBean){
+										Object oDeserialized = null;
+										try{
+											net.sf.ezmorph.bean.MorphDynaBean mdb = (net.sf.ezmorph.bean.MorphDynaBean)oInternal;
+											normalizeByteArray(tipoReturn, mdb);
+											oDeserialized = morpherRegistry.morph( tipoReturn, mdb );
+										}catch(Exception e){
+											if(throwExceptionMorpherFailed){
+												throw e;
 											}
 										}
-										if(setMethodRef!=null) {
-											setMethodRef.invoke(o, oDeserialized);
-										}
 										
-										//System.out.println("RICORSIONE MorphDynaBean ["+oDeserialized.getClass().getName()+"]");
-										morpher(oDeserialized, morpherRegistry,morpherPackage,throwExceptionMorpherFailed);
-									}
-								}
-								else{
-									//System.out.println("RICORSIONE ["+oInternal.getClass().getName()+"]");
-									morpher(oInternal, morpherRegistry,morpherPackage,throwExceptionMorpherFailed);
-								}
-							}
-						}
-						
-						else if(tipoReturn.isAssignableFrom(java.util.List.class)){
-							
-							// ParameterizedType stringListType = (ParameterizedType) stringListField.getGenericType();
-						    
-							Class<?> classGenericType = null;
-							try{
-								//System.out.println("AAAAA ["+nomeMetodo+"] ["+tipoReturn+"] ["+methods[i].getGenericReturnType().toString()+"]");
-								String m = methods[i].getGenericReturnType().toString();
-								if(m.startsWith("java.util.List<")){
-									String genericType = m.substring("java.util.List<".length(), methods[i].getGenericReturnType().toString().length()-1);
-									//System.out.println("IS LIST ["+tipoReturn.getName()+"] ["+genericType+"]");
-									classGenericType = Class.forName(genericType);
-								}
-							}catch(Exception e){
-								throw new UtilsException(e.getMessage(),e);
-							}
-							if(classGenericType!=null){
-								
-								if(isMorpherPackage(classGenericType,morpherPackage)){
-								
-									Object oInternal = methods[i].invoke(o);
-									if(oInternal!=null && (oInternal instanceof java.util.List)){
-										java.util.List<?> l = (java.util.List<?>) oInternal;
-										if(l.size()>0){
-											
+										if(oDeserialized!=null){
 											// cerco metodo Set
-											java.lang.reflect.Method setMethodList = null;
+											java.lang.reflect.Method setMethodRef = null;
 											for(int k=0; k<methods.length;k++){
 												String setMethod = "set"+nomeMetodo.substring("get".length(), nomeMetodo.length());
 												if(methods[k].getName().equals(setMethod) &&
 														methods[k].getParameterTypes()!=null && methods[k].getParameterTypes().length==1){
-													setMethodList = methods[k];
+													setMethodRef = methods[k];
 													break;
 												}
 											}
+											if(setMethodRef!=null) {
+												setMethodRef.invoke(o, oDeserialized);
+											}
 											
-											if(setMethodList!=null){
-												List<Object> newList = new ArrayList<Object>();
+											//System.out.println("RICORSIONE MorphDynaBean ["+oDeserialized.getClass().getName()+"]");
+											morpher(oDeserialized, morpherRegistry,morpherPackage,throwExceptionMorpherFailed);
+										}
+									}
+									else{
+										//System.out.println("RICORSIONE ["+oInternal.getClass().getName()+"]");
+										morpher(oInternal, morpherRegistry,morpherPackage,throwExceptionMorpherFailed);
+									}
+								}
+							}
+							
+							else if(tipoReturn.isAssignableFrom(java.util.List.class)){
+								
+								// ParameterizedType stringListType = (ParameterizedType) stringListField.getGenericType();
+							    
+								Class<?> classGenericType = null;
+								try{
+									//System.out.println("AAAAA ["+nomeMetodo+"] ["+tipoReturn+"] ["+methods[i].getGenericReturnType().toString()+"]");
+									String m = methods[i].getGenericReturnType().toString();
+									if(m.startsWith("java.util.List<")){
+										String genericType = m.substring("java.util.List<".length(), methods[i].getGenericReturnType().toString().length()-1);
+										//System.out.println("IS LIST ["+tipoReturn.getName()+"] ["+genericType+"]");
+										classGenericType = Class.forName(genericType);
+									}
+								}catch(Exception e){
+									throw new UtilsException(e.getMessage(),e);
+								}
+								if(classGenericType!=null){
+									
+									if(isMorpherPackage(classGenericType,morpherPackage)){
+									
+										Object oInternal = methods[i].invoke(o);
+										if(oInternal!=null && (oInternal instanceof java.util.List)){
+											java.util.List<?> l = (java.util.List<?>) oInternal;
+											if(l.size()>0){
 												
-												for (Object oInternalList : l) {
-													if(oInternalList!=null){
-				
-														if(oInternalList instanceof net.sf.ezmorph.bean.MorphDynaBean){
-															Object oDeserialized = null;
-															try{
-																net.sf.ezmorph.bean.MorphDynaBean mdb = (net.sf.ezmorph.bean.MorphDynaBean)oInternalList;
-																normalizeByteArray(classGenericType, mdb);
-																oDeserialized = morpherRegistry.morph( classGenericType, mdb );
-															}catch(Exception e){
-																if(throwExceptionMorpherFailed){
-																	throw e;
-																}
-															}
-															
-															if(oDeserialized!=null){
-																
-																newList.add(oDeserialized);
-																
-																//System.out.println("RICORSIONE-LIST MorphDynaBean ["+oDeserialized.getClass().getName()+"]");
-																morpher(oDeserialized, morpherRegistry,morpherPackage,throwExceptionMorpherFailed);
-															}
-														}
-														else{
-															//System.out.println("RICORSIONE-LIST ["+oInternalList.getClass().getName()+"]");
-															morpher(oInternalList, morpherRegistry,morpherPackage,throwExceptionMorpherFailed);
-															
-															newList.add(oInternalList);
-															
-														}
-				
+												// cerco metodo Set
+												java.lang.reflect.Method setMethodList = null;
+												for(int k=0; k<methods.length;k++){
+													String setMethod = "set"+nomeMetodo.substring("get".length(), nomeMetodo.length());
+													if(methods[k].getName().equals(setMethod) &&
+															methods[k].getParameterTypes()!=null && methods[k].getParameterTypes().length==1){
+														setMethodList = methods[k];
+														break;
 													}
 												}
 												
-												setMethodList.invoke(o, newList);
+												if(setMethodList!=null){
+													List<Object> newList = new ArrayList<Object>();
+													
+													for (Object oInternalList : l) {
+														if(oInternalList!=null){
+					
+															if(oInternalList instanceof net.sf.ezmorph.bean.MorphDynaBean){
+																Object oDeserialized = null;
+																try{
+																	net.sf.ezmorph.bean.MorphDynaBean mdb = (net.sf.ezmorph.bean.MorphDynaBean)oInternalList;
+																	normalizeByteArray(classGenericType, mdb);
+																	oDeserialized = morpherRegistry.morph( classGenericType, mdb );
+																}catch(Exception e){
+																	if(throwExceptionMorpherFailed){
+																		throw e;
+																	}
+																}
+																
+																if(oDeserialized!=null){
+																	
+																	newList.add(oDeserialized);
+																	
+																	//System.out.println("RICORSIONE-LIST MorphDynaBean ["+oDeserialized.getClass().getName()+"]");
+																	morpher(oDeserialized, morpherRegistry,morpherPackage,throwExceptionMorpherFailed);
+																}
+															}
+															else{
+																//System.out.println("RICORSIONE-LIST ["+oInternalList.getClass().getName()+"]");
+																morpher(oInternalList, morpherRegistry,morpherPackage,throwExceptionMorpherFailed);
+																
+																newList.add(oInternalList);
+																
+															}
+					
+														}
+													}
+													
+													setMethodList.invoke(o, newList);
+												}
+												
 											}
-											
 										}
 									}
 								}
 							}
 						}
 					}
-					
 				}
 				
 			}
@@ -372,20 +406,28 @@ public class Utilities {
 			if(nomeMetodoMDB.length()>3 && 
 					nomeMetodoMDB.startsWith("get") && 
 					methodsMDB[j].getParameterTypes()!=null && methodsMDB[j].getParameterTypes().length==0 &&
-							methodsMDB[j].getReturnType()!=null && !("void".equals(methodsMDB[j].getReturnType().getName()))){
-				Class<?> tipoReturnMDB = methodsMDB[j].getReturnType();
-				String variableName = (nomeMetodoMDB.charAt(3)+"").toLowerCase() + nomeMetodoMDB.substring(4);
-				if(tipoReturnMDB.isAssignableFrom(byte[].class)){
-					try{
-						Object oF = mdb.get(variableName);
-						if(oF!=null){
-							if(oF.getClass().isAssignableFrom(java.util.ArrayList.class)){
-								java.util.List<?> lf = (java.util.List<?>) oF;
-								mdb.set(variableName, lf.toArray());
+							methodsMDB[j].getReturnType()!=null 
+							//&& !("void".equals(methodsMDB[j].getReturnType().getName()))
+							){
+				String voidS = "void";
+				String returnType = methodsMDB[j].getReturnType().getName()+"";
+				boolean isVoid = returnType.equals(voidS);
+				
+				if(!isVoid) {
+					Class<?> tipoReturnMDB = methodsMDB[j].getReturnType();
+					String variableName = (nomeMetodoMDB.charAt(3)+"").toLowerCase() + nomeMetodoMDB.substring(4);
+					if(tipoReturnMDB.isAssignableFrom(byte[].class)){
+						try{
+							Object oF = mdb.get(variableName);
+							if(oF!=null){
+								if(oF.getClass().isAssignableFrom(java.util.ArrayList.class)){
+									java.util.List<?> lf = (java.util.List<?>) oF;
+									mdb.set(variableName, lf.toArray());
+								}
 							}
+						}catch(Exception e){
+							//System.out.println("not exists: "+e.getMessage());
 						}
-					}catch(Exception e){
-						//System.out.println("not exists: "+e.getMessage());
 					}
 				}
 			}

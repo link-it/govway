@@ -1,0 +1,215 @@
+<project name="sonarqube" basedir="." default="sonar" xmlns:sonar="antlib:org.sonar.ant">
+
+	<import file="local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	
+	<!-- 
+	     https://docs.sonarqube.org/latest/
+	     https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner-for-ant/
+	     https://docs.sonarqube.org/latest/analyzing-source-code/analysis-parameters/
+	     https://docs.sonarqube.org/latest/project-administration/narrowing-the-focus/
+ 	-->
+
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${openspcoop2.lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- estensione di sonarqube -->
+	<taskdef uri="antlib:org.sonar.ant" resource="org/sonar/ant/antlib.xml">
+		<classpath path="${openspcoop2.lib}/staticAnalysis/sonarqube-ant-task-2.7.1.1951.jar" />
+	</taskdef>
+
+	<!-- local -->
+	<property name="sonar.build" location="build"/>
+	<property name="sonar.falsePositivesDir" location="falsePositives"/>
+
+
+	<!-- Find -->
+	<target name="sonar">
+
+                <if>
+                        <equals arg1="${sonar.token}" arg2="$${sonar.token}"/>
+                        <then>
+                                <fail message="Parametro 'sonar.token' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${sonar.token}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'sonar.token' non definito"/>
+                        </then>
+                </if>
+
+		<if>
+                        <equals arg1="${sonar.govway.project}" arg2="$${sonar.govway.project}"/>
+                        <then>
+				<var name="govway.group" value="all"/>
+			</then>
+			<else>
+				<var name="govway.group" value="${sonar.govway.project}"/>
+			</else>
+                </if>
+
+		<delete dir="${sonar.build}" />
+		<mkdir dir="${sonar.build}" />
+
+		<var name="sonar.sources.analyze" value=""/>
+
+		<var name="govway.binary" value=""/> <!-- oggetti che non contengono codice java -->
+		<var name="govway.tests" value=""/> <!-- classi di test -->
+		<var name="govway.falsePositive" value=""/> <!-- falsi positivi -->
+
+		<!-- Utils -->
+		<var name="projectAnalyze" value="utils-commons"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="utils"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/utils/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/utils/src"/>
+					</else>
+				</if>
+
+				<!-- Oggetti che non contengono codice java -->
+				<var name="govway.binary" value="${govway.binary},**/*.properties"/>
+				<var name="govway.binary" value="${govway.binary},**/*.jceks"/>
+				<var name="govway.binary" value="${govway.binary},**/*.der"/>
+
+				<!-- Classi di test -->
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/utils/**/test/*.java"/>
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/utils/test/**/*.java"/>
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/utils/Test*.java"/>
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/utils/instrument/*"/>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/utils/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${utils.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/utils/enum.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${utils.enum.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/utils/security_hotspots.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${utils.sec.falsePositives}"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${utils.tmp.falsePositives}"/>
+				
+				<antcall target="-prepare">
+					<param name="analyzeType" value="${projectAnalyze}"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/utils/"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/utils/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_utils*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- GenericProject -->
+		<var name="projectAnalyze" value="generic-project"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/generic_project/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/generic_project/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="utils-generic-project"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/generic_project/"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/generic_project/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_generic-project*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
+		<!-- Esclusioni -->
+		<var name="govway.exclusion" value=""/>
+		<if>
+			<not>
+				<equals arg1="${govway.binary}" arg2=""/>
+			</not>
+                        <then>
+				<var name="govway.exclusion" value="${govway.binary}"/>
+			</then>
+                </if>
+		<if>
+			<not>
+				<equals arg1="${govway.tests}" arg2=""/>
+			</not>
+                        <then>
+				<property name="sonar.tests" value="${sonar.sources.analyze}" />
+				<property name="sonar.test.inclusions" value="${govway.tests}" />
+				<!-- <property name="sonar.test.exclusions" value="${govway.exclusion}" /> -->
+			</then>
+                </if>
+		<if>
+			<not>
+				<equals arg1="${govway.falsePositive}" arg2=""/>
+			</not>
+                        <then>
+				<property name="sonar.issue.ignore.multicriteria" value="${govway.falsePositive}"/>
+			</then>
+                </if>
+
+
+		<!-- Execute SonarQube Scanner for Ant Analysis -->
+		<echo message="Avvio analisi sonarqube sui sorgenti: ${sonar.sources.analyze}"/>
+		<echo message="Esclusioni: ${govway.exclusion}"/>
+		<echo message="Test: ${govway.tests}"/>
+		<echo message="Falsi Positivi: ${sonar.issue.ignore.multicriteria}"/>
+		<property name="sonar.projectName" value="govway" />
+		<property name="sonar.projectKey" value="govway" />
+		<property name="sonar.projectBaseDir" value="${openspcoop2}" />
+		<property name="sonar.sources" value="${sonar.sources.analyze}" />
+		<property name="sonar.exclusions" value="${govway.exclusion}" />
+		<property name="sonar.coverage.exclusions" value="${sonar.sources.analyze}" /> <!-- i test vengono realizzati su jenkins tramite test funzionali -->
+		<property name="sonar.java.binaries" value="${sonar.build}" />
+		<property name="sonar.login" value="${sonar.token}" />
+		<sonar:sonar />
+
+	</target>
+	<target name="-prepare">
+		<echo message="Analizzo sorgenti: ${analyzeSrc}"/>
+		<echo message="Archivi jar: ${analyzeJarDir}/${analyzeJar}"/>
+
+		<unzip dest="${sonar.build}/">
+			<fileset dir="${analyzeJarDir}">
+				<include name="${analyzeJar}"/>
+			</fileset>
+		</unzip>
+
+	</target>
+
+
+</project>

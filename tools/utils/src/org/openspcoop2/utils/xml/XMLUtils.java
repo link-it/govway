@@ -78,7 +78,11 @@ public class XMLUtils extends AbstractXMLUtils {
 			// force xerces impl
 //			System.setProperty("javax.xml.parsers.SAXParserFactory", org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName());
 //			return javax.xml.parsers.SAXParserFactory.newInstance();
-			return javax.xml.parsers.SAXParserFactory.newInstance(org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName(), this.getClass().getClassLoader());
+			javax.xml.parsers.SAXParserFactory saxParserFactory = javax.xml.parsers.SAXParserFactory.newInstance(org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName(), this.getClass().getClassLoader());
+			if(DISABLE_DTDs) {
+				saxParserFactory.setFeature(getFeatures_disallow_doctype_decl(), true);
+			}
+			return saxParserFactory;
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}

@@ -281,7 +281,9 @@ public class WADLUtilities {
 			} catch (WADLException e) {
 				throw e;
 			}finally{
-				tmp.delete();
+				if(!tmp.delete()) {
+					// ignore
+				}
 			}
 		}catch(Exception e){
 			throw new WADLException("Lettura del wadl non riuscita (byte[]): "+e.getMessage(),e);

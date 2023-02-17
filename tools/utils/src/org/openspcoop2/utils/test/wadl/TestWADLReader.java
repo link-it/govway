@@ -39,7 +39,7 @@ public class TestWADLReader {
 	public void testWadlReader() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.wadl.Test.test();
+		org.openspcoop2.utils.wadl.test.WadlTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

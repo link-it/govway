@@ -20,7 +20,7 @@
 
 package org.openspcoop2.utils;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  *  RandomString
@@ -46,7 +46,8 @@ public class RandomString {
 		symbols = tmp.toString().toCharArray();
 	}   
 
-	private final Random random = new Random();
+	//private final Random random = new Random();
+	private final SecureRandom random = new SecureRandom(); 
 
 	private final char[] buf;
 

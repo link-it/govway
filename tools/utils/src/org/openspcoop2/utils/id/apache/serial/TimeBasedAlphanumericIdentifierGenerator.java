@@ -137,7 +137,7 @@ public class TimeBasedAlphanumericIdentifierGenerator extends AbstractStringIden
 
     @Override
 	public long maxLength() {
-        return MAX_LONG_ALPHANUMERIC_VALUE_LENGTH + this.postfixSize;
+        return ((long)MAX_LONG_ALPHANUMERIC_VALUE_LENGTH) + ((long)this.postfixSize);
     }
 
     @Override

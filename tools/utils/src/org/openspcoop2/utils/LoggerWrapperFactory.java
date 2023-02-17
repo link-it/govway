@@ -324,7 +324,9 @@ public class LoggerWrapperFactory {
 			}catch(Exception e){}
 			try{
 				if(fTmp!=null){
-					fTmp.delete();
+					if(!fTmp.delete()) {
+						// ignore
+					}
 				}
 			}catch(Exception e){
 				// close
