@@ -133,7 +133,9 @@ public class FunctionField {
 				cField = field[i].getFieldType();
 			}
 			else{
-				if(cField.getName().equals(field[i].getFieldType().getName())==false){
+				String cFieldName = cField.getName() + "";
+				String fieldName = field[i].getFieldType().getName() + "";
+				if(cFieldName.equals(fieldName)==false){
 					throw new ExpressionException("Fields aren't same type [0]="+cField.getClass().getName()+" ["+i+"]="+field[i].getFieldType().getName());
 				}
 			}
@@ -224,7 +226,9 @@ public class FunctionField {
 				cField = field[i].getFieldType();
 			}
 			else{
-				if(cField.getName().equals(field[i].getFieldType().getName())==false){
+				String cFieldName = cField.getName() + "";
+				String fieldName = field[i].getFieldType().getName() + "";
+				if(cFieldName.equals(fieldName)==false){
 					throw new ExpressionException("Fields aren't same type [0]="+cField.getClass().getName()+" ["+i+"]="+field[i].getFieldType().getName());
 				}
 			}
@@ -351,12 +355,14 @@ public class FunctionField {
 			if(o.getFunctionValueType()==null){
 				return false;
 			}
-			if(this.functionValueType.getName().equals(o.getFunctionValueType().getName())==false){
+			String functionValueTypeName = this.functionValueType.getName() + "";
+			String oFunctionValueTypeName = o.getFunctionValueType().getName() + "";
+			if(functionValueTypeName.equals(oFunctionValueTypeName)==false){
 				return false;
 			}
 		}
 		
-		if(o.getFields().size()!=o.getFields().size()){
+		if(this.getFields().size()!=o.getFields().size()){
 			return false;
 		}
 		for (IField field : this.fields) {

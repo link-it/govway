@@ -140,6 +140,13 @@
 					</else>
 				</if>
 
+				<!-- Classi di test -->
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/generic_project/expression/impl/test/**/*.java"/>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/generic-project/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${generic-project.falsePositives}"/>
+
 				<antcall target="-prepare">
 					<param name="analyzeType" value="utils-generic-project"/>
 					<param name="analyzeBaseDir" value="${openspcoop2}/tools/generic_project/"/>
@@ -180,6 +187,9 @@
                         <then>
 				<property name="sonar.issue.ignore.multicriteria" value="${govway.falsePositive}"/>
 			</then>
+			<else>
+				<property name="sonar.issue.ignore.multicriteria" value=""/>
+			</else>
                 </if>
 
 
@@ -193,7 +203,7 @@
 		<property name="sonar.projectBaseDir" value="${openspcoop2}" />
 		<property name="sonar.sources" value="${sonar.sources.analyze}" />
 		<property name="sonar.exclusions" value="${govway.exclusion}" />
-		<property name="sonar.coverage.exclusions" value="${sonar.sources.analyze}" /> <!-- i test vengono realizzati su jenkins tramite test funzionali -->
+		<!-- <property name="sonar.coverage.exclusions" value="${sonar.sources.analyze}" /> --> <!-- i test vengono realizzati su jenkins tramite test funzionali -->
 		<property name="sonar.java.binaries" value="${sonar.build}" />
 		<property name="sonar.login" value="${sonar.token}" />
 		<sonar:sonar />

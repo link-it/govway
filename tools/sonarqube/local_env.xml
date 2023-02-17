@@ -14,7 +14,7 @@
 	<!-- Define the SonarQube project properties -->
 	<property name="sonar.projectKey" value="org.sonarqube:sonarqube-scanner-ant" />
 	<property name="sonar.projectVersion" value="master" />
-	<property name="sonar.java.libraries" value="${required_lib}" />
+	<property name="sonar.java.libraries" value="${required_lib},${openspcoop2}/dist" />
 	<property name="sonar.java.source" value="11" />
 	<property name="sonar.java.target" value="11" />
 	<property name="sonar.sourceEncoding" value="UTF-8" />

@@ -75,28 +75,30 @@ public abstract class AbstractJDBCFetch implements IJDBCFetch {
 			
 			// NOTA: il set va fatto comunque per annullare il valore precedente.
 		
-			if(tipoParametroMetodo.getName().equals(char.class.getName())){
+			String tipoParametroMetodoName = tipoParametroMetodo.getName()+"";
+			
+			if(tipoParametroMetodoName.equals(char.class.getName())){
 				m.invoke(o, this.charDefault);
 			}
-			else if(tipoParametroMetodo.getName().equals(boolean.class.getName())){
+			else if(tipoParametroMetodoName.equals(boolean.class.getName())){
 				m.invoke(o, this.booleanDefault);
 			}
-			else if(tipoParametroMetodo.getName().equals(byte.class.getName())){
+			else if(tipoParametroMetodoName.equals(byte.class.getName())){
 				m.invoke(o, this.byteDefault);		
 			}
-			else if(tipoParametroMetodo.getName().equals(short.class.getName())){
+			else if(tipoParametroMetodoName.equals(short.class.getName())){
 				m.invoke(o, this.shortDefault);		
 			}
-			else if(tipoParametroMetodo.getName().equals(int.class.getName())){
+			else if(tipoParametroMetodoName.equals(int.class.getName())){
 				m.invoke(o, this.intDefault);		
 			}
-			else if(tipoParametroMetodo.getName().equals(long.class.getName())){
+			else if(tipoParametroMetodoName.equals(long.class.getName())){
 				m.invoke(o, this.longDefault);		
 			}
-			else if(tipoParametroMetodo.getName().equals(double.class.getName())){
+			else if(tipoParametroMetodoName.equals(double.class.getName())){
 				m.invoke(o, this.doubleDefault);	
 			}
-			else if(tipoParametroMetodo.getName().equals(float.class.getName())){
+			else if(tipoParametroMetodoName.equals(float.class.getName())){
 				m.invoke(o, this.floatDefault);	
 			}
 			else{

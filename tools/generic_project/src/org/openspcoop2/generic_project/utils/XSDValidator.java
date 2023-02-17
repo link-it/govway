@@ -68,85 +68,87 @@ public class XSDValidator {
 		InputStream isSchema = null;
 		List<InputStream> listInputStreams = new ArrayList<InputStream>();
 		XSDResourceResolver xsdResourceResolver = null;
+		try {
 		
-		// check schema
-		try{
-			File f = new File(xsdPath);
-			if(f.exists()){
-				isSchema = new FileInputStream(f);
-			}else{
-				isSchema = cXmlRoot.getResourceAsStream(xsdPath);
-				if(isSchema==null){
-					isSchema = cXmlRoot.getResourceAsStream("/"+xsdPath);
-				}
-			}
-			if(isSchema==null){
-				throw new Exception("Creating InputStream from xsdPath["+xsdPath+"] failure");
-			}
-		}catch (Exception e) {
+			// check schema
 			try{
-				if(isSchema!=null){
-					isSchema.close();
+				File f = new File(xsdPath);
+				if(f.exists()){
+					isSchema = new FileInputStream(f);
+				}else{
+					isSchema = cXmlRoot.getResourceAsStream(xsdPath);
+					if(isSchema==null){
+						isSchema = cXmlRoot.getResourceAsStream("/"+xsdPath);
+					}
 				}
-			}catch(Exception eClose){
-				// close
-			}
-			throw new ServiceException("Init xsd schema failure: "+e.getMessage(),e);
-		}
-		
-		// check schema imported
-		if(xsdImported!=null && xsdImported.length>0){
-		
-			xsdResourceResolver = new XSDResourceResolver();
-		
-			for (int i = 0; i < xsdImported.length; i++) {
-				InputStream is = null;
+				if(isSchema==null){
+					throw new Exception("Creating InputStream from xsdPath["+xsdPath+"] failure");
+				}
+			}catch (Exception e) {
 				try{
-					File f = new File(xsdImported[i]);
-					if(f.exists()){
-						is = new FileInputStream(f);
-					}else{
-						is = cXmlRoot.getResourceAsStream(xsdImported[i]);
-						if(is==null){
-							is = cXmlRoot.getResourceAsStream("/"+xsdImported[i]);
-						}
+					if(isSchema!=null){
+						isSchema.close();
 					}
-					if(is==null){
-						throw new Exception("Creating InputStream from xsdPath["+i+"]["+xsdImported[i]+"] failure");
-					}
-					xsdResourceResolver.addResource(f.getName(), is);
-					listInputStreams.add(is);
-				}catch (Exception e) {
+				}catch(Exception eClose){
+					// close
+				}
+				throw new ServiceException("Init xsd schema failure: "+e.getMessage(),e);
+			}
+			
+			// check schema imported
+			if(xsdImported!=null && xsdImported.length>0){
+			
+				xsdResourceResolver = new XSDResourceResolver();
+			
+				for (int i = 0; i < xsdImported.length; i++) {
 					try{
-						if(isSchema!=null){
-							isSchema.close();
-						}
-					}catch(Exception eClose){
-						// close
-					}
-					for (InputStream inputStream : listInputStreams) {
-						try{
-							if(inputStream!=null){
-								inputStream.close();
+						File f = new File(xsdImported[i]);
+						InputStream is = null;
+						if(f.exists()){
+							is = new FileInputStream(f);
+						}else{
+							is = cXmlRoot.getResourceAsStream(xsdImported[i]);
+							if(is==null){
+								is = cXmlRoot.getResourceAsStream("/"+xsdImported[i]);
 							}
-						}catch(Exception eClose){}
+						}
+						if(is==null){
+							throw new Exception("Creating InputStream from xsdPath["+i+"]["+xsdImported[i]+"] failure");
+						}
+						xsdResourceResolver.addResource(f.getName(), is);
+						listInputStreams.add(is);
+					}catch (Exception e) {
+						try{
+							if(isSchema!=null){
+								isSchema.close();
+							}
+						}catch(Exception eClose){
+							// close
+						}
+						for (InputStream inputStream : listInputStreams) {
+							try{
+								if(inputStream!=null){
+									inputStream.close();
+								}
+							}catch(Exception eClose){}
+						}
+						throw new ServiceException("Init xsd schema failure: "+e.getMessage(),e);
 					}
-					throw new ServiceException("Init xsd schema failure: "+e.getMessage(),e);
 				}
 			}
-		}
-		
-		// init schema Validator
-		try{
-			if(xsdResourceResolver!=null){
-				Constructor<?> constructor = xsdValidatorImpl.getConstructor(Logger.class,String.class,LSResourceResolver.class,InputStream.class);
-				this.xsdValidator = (AbstractValidatoreXSD) constructor.newInstance(log,"org.apache.xerces.jaxp.validation.XMLSchemaFactory",xsdResourceResolver,isSchema);
-			}else{
-				Constructor<?> constructor = xsdValidatorImpl.getConstructor(Logger.class,String.class,InputStream.class);
-				this.xsdValidator = (AbstractValidatoreXSD) constructor.newInstance(log,"org.apache.xerces.jaxp.validation.XMLSchemaFactory",isSchema);
+			
+			// init schema Validator
+			try{
+				if(xsdResourceResolver!=null){
+					Constructor<?> constructor = xsdValidatorImpl.getConstructor(Logger.class,String.class,LSResourceResolver.class,InputStream.class);
+					this.xsdValidator = (AbstractValidatoreXSD) constructor.newInstance(log,"org.apache.xerces.jaxp.validation.XMLSchemaFactory",xsdResourceResolver,isSchema);
+				}else{
+					Constructor<?> constructor = xsdValidatorImpl.getConstructor(Logger.class,String.class,InputStream.class);
+					this.xsdValidator = (AbstractValidatoreXSD) constructor.newInstance(log,"org.apache.xerces.jaxp.validation.XMLSchemaFactory",isSchema);
+				}
+			}catch (Exception e) {
+				throw new ServiceException("Init xsd schema failure: "+e.getMessage(),e);
 			}
-		}catch (Exception e) {
-			throw new ServiceException("Init xsd schema failure: "+e.getMessage(),e);
 		}finally{
 			try{
 				if(isSchema!=null){

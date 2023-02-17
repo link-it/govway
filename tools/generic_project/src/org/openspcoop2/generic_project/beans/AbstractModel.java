@@ -45,6 +45,11 @@ public abstract class AbstractModel<T> implements IModel<T> {
 
 
 	@Override
+	public int hashCode(){
+		return this.getClass().getName().hashCode();
+	}
+	
+	@Override
 	public boolean equals(Object o){
 		if(o==null){
 			return false;
@@ -62,11 +67,15 @@ public abstract class AbstractModel<T> implements IModel<T> {
 				return false;
 			}
 			else{
-				return this.getModeledClass().getName().equals(oIModel.getModeledClass().getName());
+				String modeledClassName = this.getModeledClass().getName() + "";
+				String oIModelClassName = oIModel.getModeledClass().getName() + "";
+				return modeledClassName.equals(oIModelClassName);
 			}
 		}
 		else{
-			return this.getModeledClass().getName().equals(oIModel.getModeledClass().getName())  
+			String modeledClassName = this.getModeledClass().getName() + "";
+			String oIModelClassName = oIModel.getModeledClass().getName() + "";
+			return modeledClassName.equals(oIModelClassName)  
 						&& this.getBaseField().equals(oIModel.getBaseField()); 
 		}
 		

@@ -638,10 +638,11 @@ public class ExpressionSQL extends ExpressionImpl {
 				String column = null;
 				
 				boolean timestamp = false;
-				if(ff.getFieldType().getName().equals(Timestamp.class.getName()) ||
-						ff.getFieldType().getName().equals(java.util.Date.class.getName()) ||
-						ff.getFieldType().getName().equals(java.sql.Date.class.getName()) ||
-						ff.getFieldType().getName().equals(java.util.Calendar.class.getName())){
+				String ffFieldTypeName = ff.getFieldType().getName() + "";
+				if(ffFieldTypeName.equals(Timestamp.class.getName()) ||
+						ffFieldTypeName.equals(java.util.Date.class.getName()) ||
+						ffFieldTypeName.equals(java.sql.Date.class.getName()) ||
+						ffFieldTypeName.equals(java.util.Calendar.class.getName())){
 					timestamp = true;
 				}
 				
@@ -927,11 +928,13 @@ public class ExpressionSQL extends ExpressionImpl {
 				ComplexField c = (ComplexField) field;
 				inUse = c.getFather().equals(model.getBaseField());
 			}else{
-				inUse = model.getModeledClass().getName().equals(field.getClassType().getName());
+				String modeClassName = model.getModeledClass().getName() + "";
+				inUse = modeClassName.equals(field.getClassType().getName());
 			}
 		}
 		else{
-			inUse = model.getModeledClass().getName().equals(field.getClassType().getName());
+			String modeClassName = model.getModeledClass().getName() + "";
+			inUse = modeClassName.equals(field.getClassType().getName());
 		}
 		if(inUse){
 			return true;

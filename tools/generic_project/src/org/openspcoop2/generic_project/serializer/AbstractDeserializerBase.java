@@ -80,7 +80,9 @@ public abstract class AbstractDeserializerBase {
 			throw new DeserializerException(e);
 		}finally{
 			try{
-				bin.close();
+				if(bin!=null) {
+					bin.close();
+				}
 			}catch(Exception e){}
 		}
 	}

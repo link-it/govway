@@ -179,9 +179,9 @@ public class JDBCServiceManagerBase {
 		}else{
 			this.connection = DriverManager.getConnection(this.connectionUrl);
 		}
-		if(this.connection == null){
+		/*if(this.connection == null){
 			throw new Exception("Connection is null");
-		}
+		}*/
 		this.connectionDate = DateManager.getDate();
 	}
 	private boolean isConnectionExpired() {

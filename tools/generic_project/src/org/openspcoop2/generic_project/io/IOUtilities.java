@@ -62,21 +62,13 @@ public class IOUtilities {
 	public static void copy(InputStream in, OutputStream out) 
 	throws IOException {
 
-		// do not allow other threads to read from the
-		// input or write to the output while copying is
-		// taking place
-
-		synchronized (in) {
-			synchronized (out) {
-
-				byte[] buffer = new byte[256];
-				while (true) {
-					int bytesRead = in.read(buffer);
-					if (bytesRead == -1) break;
-					out.write(buffer, 0, bytesRead);
-				}
-			}
+		byte[] buffer = new byte[256];
+		while (true) {
+			int bytesRead = in.read(buffer);
+			if (bytesRead == -1) break;
+			out.write(buffer, 0, bytesRead);
 		}
+
 	} 
 
 	public static void copyDirectory(String srcPath, String dstPath)
@@ -106,16 +98,34 @@ public class IOUtilities {
 				return;
 			}
 			else {
-				InputStream in = new FileInputStream(srcPath);
-				OutputStream out = new FileOutputStream(dstPath); 
-				// Transfer bytes from in to out
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					out.write(buf, 0, len);
+				InputStream in = null;
+				OutputStream out = null;
+				try {
+					in = new FileInputStream(srcPath);
+					out = new FileOutputStream(dstPath); 
+					// Transfer bytes from in to out
+					byte[] buf = new byte[1024];
+					int len;
+					while ((len = in.read(buf)) > 0) {
+						out.write(buf, 0, len);
+					}
+					out.flush();
+				}finally {
+					try {
+						if(in!=null) {
+							in.close();
+						}
+					}catch(Throwable t) {
+						// ignore
+					}
+					try {
+						if(out!=null) {
+							out.close();
+						}
+					}catch(Throwable t) {
+						// ignore
+					}
 				}
-				in.close();
-				out.close();
 			}
 		}
 		//System.out.println("Directory copied.");
@@ -123,49 +133,103 @@ public class IOUtilities {
 	
 	
 	public static String readFile(File f) throws Exception{
-		FileInputStream fis =new FileInputStream(f);
-		ByteArrayOutputStream byteInputBuffer = new ByteArrayOutputStream();
-		byte [] readB = new byte[8192];
-		int readByte = 0;
-		while((readByte = fis.read(readB))!= -1){
-			byteInputBuffer.write(readB,0,readByte);
+		FileInputStream fis = null;
+		ByteArrayOutputStream byteInputBuffer = null;
+		try {
+			fis = new FileInputStream(f);
+			byteInputBuffer = new ByteArrayOutputStream();
+			byte [] readB = new byte[8192];
+			int readByte = 0;
+			while((readByte = fis.read(readB))!= -1){
+				byteInputBuffer.write(readB,0,readByte);
+			}
+			byteInputBuffer.flush();
+		}finally {
+			try {
+				if(fis!=null) {
+					fis.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+			try {
+				if(byteInputBuffer!=null) {
+					byteInputBuffer.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
 		}
-		fis.close();
-		byteInputBuffer.flush();
-		byteInputBuffer.close();
 		
 		return  byteInputBuffer.toString();
 	}
 	public static byte[] readBytesFromFile(File f) throws Exception{
-		FileInputStream fis =new FileInputStream(f);
-		ByteArrayOutputStream byteInputBuffer = new ByteArrayOutputStream();
-		byte [] readB = new byte[8192];
-		int readByte = 0;
-		while((readByte = fis.read(readB))!= -1){
-			byteInputBuffer.write(readB,0,readByte);
+		FileInputStream fis = null;
+		ByteArrayOutputStream byteInputBuffer = null;
+		try {
+			fis =new FileInputStream(f);
+			byteInputBuffer = new ByteArrayOutputStream();
+			byte [] readB = new byte[8192];
+			int readByte = 0;
+			while((readByte = fis.read(readB))!= -1){
+				byteInputBuffer.write(readB,0,readByte);
+			}
+			byteInputBuffer.flush();
+		}finally {
+			try {
+				if(fis!=null) {
+					fis.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+			try {
+				if(byteInputBuffer!=null) {
+					byteInputBuffer.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
 		}
-		fis.close();
-		byteInputBuffer.flush();
-		byteInputBuffer.close();
 		
 		return  byteInputBuffer.toByteArray();
 	}
 	
 	
 	public static void writeFile(File f,byte[] contenuto)throws Exception{
-		FileOutputStream fos =new FileOutputStream(f);
-		fos.write(contenuto);
-		fos.flush();
-		fos.close();
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(f);
+			fos.write(contenuto);
+			fos.flush();
+		}finally {
+			try {
+				if(fos!=null) {
+					fos.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+		}
 	}
 	public static void writeFile(File f,byte[] ... args)throws Exception{
 		if(args!=null){
-			FileOutputStream fos =new FileOutputStream(f);
-			for(int i=0; i<args.length; i++){
-				fos.write(args[i]);
+			FileOutputStream fos = null;
+			try {
+				fos = new FileOutputStream(f);
+				for(int i=0; i<args.length; i++){
+					fos.write(args[i]);
+				}
+				fos.flush();
+			}finally {
+				try {
+					if(fos!=null) {
+						fos.close();
+					}
+				}catch(Throwable t) {
+					// ignore
+				}
 			}
-			fos.flush();
-			fos.close();
 		}
 	}
 	
