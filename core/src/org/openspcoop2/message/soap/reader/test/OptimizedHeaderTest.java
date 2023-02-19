@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.message.soap.reader;
+package org.openspcoop2.message.soap.reader.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,6 +41,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -60,7 +61,7 @@ import org.w3c.dom.NodeList;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestOptimizedHeader {
+public class OptimizedHeaderTest {
 
 	private static File fTmp = null;
 	
@@ -645,7 +646,7 @@ public class TestOptimizedHeader {
 		return new FileInputStream(fTmp);
 		//}
 		//else {
-		//	return TestReader.class.getResourceAsStream("/org/openspcoop2/message/soap/reader/"+fileName);
+		//	return TestReader.class.getResourceAsStream("/org/openspcoop2/message/soap/reader/test/"+fileName);
 		//}
 		
 	}
@@ -675,7 +676,7 @@ public class TestOptimizedHeader {
 		
 		long tolleranza_bytes = 1024*2;  // 2 kb
 		
-		byte [] resource = Utilities.getAsByteArray(TestReader.class.getResourceAsStream("/org/openspcoop2/message/soap/reader/"+fileName));
+		byte [] resource = Utilities.getAsByteArray(ReaderTest.class.getResourceAsStream("/org/openspcoop2/message/soap/reader/test/"+fileName));
 		
 		OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		if(kbBody>0) {

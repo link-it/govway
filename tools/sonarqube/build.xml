@@ -69,7 +69,7 @@
 		<var name="govway.tests" value=""/> <!-- classi di test -->
 		<var name="govway.falsePositive" value=""/> <!-- falsi positivi -->
 
-		<!-- Utils -->
+		<!-- Utils Commons -->
 		<var name="projectAnalyze" value="utils-commons"/>
 		<if>
 			<or>
@@ -121,13 +121,14 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
-		<!-- GenericProject -->
-		<var name="projectAnalyze" value="generic-project"/>
+		<!-- Utils GenericProject -->
+		<var name="projectAnalyze" value="utils-generic-project"/>
 		<if>
 			<or>
 	                        <equals arg1="${govway.group}" arg2="all"/>
 				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
 				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="generic-project"/>
 			</or>
                         <then>
 				<if>
@@ -159,6 +160,51 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
+
+		<!-- Runtime Message -->
+		<var name="projectAnalyze" value="runtime-message"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="message"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="core/src/org/openspcoop2/message"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},core/src/org/openspcoop2/message"/>
+					</else>
+				</if>
+
+				<!-- Oggetti che non contengono codice java -->
+				<var name="govway.binary" value="${govway.binary},**/org/openspcoop2/message/soap/reader/test/*.xml,**/org/openspcoop2/message/soap/reader/test/*.bin"/>
+
+				<!-- Classi di test -->
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/message/**/test/*.java"/>
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/message/utils/ServletTestService.java"/>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/runtime/message/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.message.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="runtime-message"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>
+					<param name="analyzeSrc" value="${openspcoop2}/core/src/org/openspcoop2/message"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_message*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
 
 		<!-- Esclusioni -->
 		<var name="govway.exclusion" value=""/>

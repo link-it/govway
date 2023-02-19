@@ -227,7 +227,9 @@ public class MTOMUtilities {
 					
 					String charsetParam =  ContentTypeUtilities.readCharsetFromContentType(message.getContentType());
 					if(charsetParam!=null && !"".equals(charsetParam)) {
-						cType.setParameter(HttpConstants.CONTENT_TYPE_PARAMETER_CHARSET, charsetParam);
+						if(cType!=null) {
+							cType.setParameter(HttpConstants.CONTENT_TYPE_PARAMETER_CHARSET, charsetParam);
+						}
 					}
 					
 					if(cType!=null) {

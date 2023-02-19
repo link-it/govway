@@ -216,14 +216,14 @@ public class ServiceBindingConfiguration implements Serializable {
 			}
 		}
 		else{
-			if(this.soap.isEnabled()==false){
+			if(this.rest.isEnabled()==false){
 				throw new MessageException("Typology ["+serviceBinding+"] not supported");
 			}
 			if(MessageRole.REQUEST.equals(messageType)){
-				configurationFlow = this.soap.getRequest();
+				configurationFlow = this.rest.getRequest();
 			}
 			else{
-				configurationFlow = this.soap.getResponse();
+				configurationFlow = this.rest.getResponse();
 			}
 		}
 
@@ -321,84 +321,90 @@ public class ServiceBindingConfiguration implements Serializable {
 			throw new MessageException(e.getMessage(),e);
 		}
 		
-		MessageType messageType = null;
-		try{
-			messageType = this.contextUrlCollection.getMessageType(protocol,function,functionParameters);
-			if(messageType!=null){
-				
-				// check sulla restrizione dei content-type
-				List<String> ct = this.contextUrlCollection.getContentTypesRestriction(protocol,function,functionParameters);
-				if(ct!=null && ct.size()>0){
-					if(mediaType!=null && ct.contains(mediaType)){
-						return messageType;
+		MessageType messageType = readMessageTypeEngine(serviceBinding, messageRole, 
+				protocol, function, functionParameters,
+				status,
+				mediaType);
+		
+		// check compatibilità rispetto alla tipologia
+			
+		if(messageType!=null && ServiceBinding.SOAP.equals(serviceBinding)){
+			if(withAttachments){
+				if(MessageType.SOAP_11.equals(messageType)){
+					if(this.soap.getBinding().isBinding_soap11_withAttachments()==false){
+						throw new MessageException("SOAPWithAttachments disabled in Soap11 Binding");
 					}
 				}
 				else{
-					return messageType;	
+					if(this.soap.getBinding().isBinding_soap12_withAttachments()==false){
+						throw new MessageException("SOAPWithAttachments disabled in Soap12 Binding");
+					}
 				}
-				
 			}
-			
-			AbstractMediaTypeCollection mediaTypeCollecton;
-	
-			if(ServiceBinding.SOAP.equals(serviceBinding)){
-				if(this.soap.isEnabled()==false){
-					throw new MessageException("Typology ["+serviceBinding+"] not supported");
-				}
-				if(MessageRole.REQUEST.equals(messageRole)){
-					mediaTypeCollecton = this.soap.getRequest();
+			if(mtom){
+				if(MessageType.SOAP_11.equals(messageType)){
+					if(this.soap.getBinding().isBinding_soap11_mtom()==false){
+						throw new MessageException("MTOM disabled in Soap11 Binding");
+					}
 				}
 				else{
-					mediaTypeCollecton = this.soap.getResponse();
-				}
-			}
-			else{
-				if(this.rest.isEnabled()==false){
-					throw new MessageException("Typology ["+serviceBinding+"] not supported");
-				}
-				if(MessageRole.REQUEST.equals(messageRole)){
-					mediaTypeCollecton = this.rest.getRequest();
-				}
-				else{
-					mediaTypeCollecton = this.rest.getResponse();
-				}
-			}
-					
-			messageType = mediaTypeCollecton.getMessageProcessor(mediaType,status); // può essere null
-			return messageType;
-		}
-		finally{
-			
-			// check compatibilità rispetto alla tipologia
-			
-			if(messageType!=null && ServiceBinding.SOAP.equals(serviceBinding)){
-				if(withAttachments){
-					if(MessageType.SOAP_11.equals(messageType)){
-						if(this.soap.getBinding().isBinding_soap11_withAttachments()==false){
-							throw new MessageException("SOAPWithAttachments disabled in Soap11 Binding");
-						}
-					}
-					else{
-						if(this.soap.getBinding().isBinding_soap12_withAttachments()==false){
-							throw new MessageException("SOAPWithAttachments disabled in Soap12 Binding");
-						}
-					}
-				}
-				if(mtom){
-					if(MessageType.SOAP_11.equals(messageType)){
-						if(this.soap.getBinding().isBinding_soap11_mtom()==false){
-							throw new MessageException("MTOM disabled in Soap11 Binding");
-						}
-					}
-					else{
-						if(this.soap.getBinding().isBinding_soap12_mtom()==false){
-							throw new MessageException("MTOM disabled in Soap12 Binding");
-						}
+					if(this.soap.getBinding().isBinding_soap12_mtom()==false){
+						throw new MessageException("MTOM disabled in Soap12 Binding");
 					}
 				}
 			}
 		}
+		
+		return messageType;
 
 	}
 
+	private MessageType readMessageTypeEngine(ServiceBinding serviceBinding, MessageRole messageRole, 
+			String protocol, String function, String functionParameters,
+			Integer status,
+			String mediaType) throws MessageException {
+		MessageType messageType = this.contextUrlCollection.getMessageType(protocol,function,functionParameters);
+		if(messageType!=null){
+			
+			// check sulla restrizione dei content-type
+			List<String> ct = this.contextUrlCollection.getContentTypesRestriction(protocol,function,functionParameters);
+			if(ct!=null && ct.size()>0){
+				if(mediaType!=null && ct.contains(mediaType)){
+					return messageType;
+				}
+			}
+			else{
+				return messageType;	
+			}
+			
+		}
+		
+		AbstractMediaTypeCollection mediaTypeCollecton;
+
+		if(ServiceBinding.SOAP.equals(serviceBinding)){
+			if(this.soap.isEnabled()==false){
+				throw new MessageException("Typology ["+serviceBinding+"] not supported");
+			}
+			if(MessageRole.REQUEST.equals(messageRole)){
+				mediaTypeCollecton = this.soap.getRequest();
+			}
+			else{
+				mediaTypeCollecton = this.soap.getResponse();
+			}
+		}
+		else{
+			if(this.rest.isEnabled()==false){
+				throw new MessageException("Typology ["+serviceBinding+"] not supported");
+			}
+			if(MessageRole.REQUEST.equals(messageRole)){
+				mediaTypeCollecton = this.rest.getRequest();
+			}
+			else{
+				mediaTypeCollecton = this.rest.getResponse();
+			}
+		}
+				
+		messageType = mediaTypeCollecton.getMessageProcessor(mediaType,status); // può essere null
+		return messageType;
+	}
 }

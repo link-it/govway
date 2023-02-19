@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.message.soap.reader;
+package org.openspcoop2.message.soap.reader.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -30,6 +30,7 @@ import javax.xml.soap.SOAPHeader;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -40,7 +41,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestReader {
+public class ReaderTest {
 
 	private static final String HEADER_5K = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
 		"    <!-- TEST -->\n"+
@@ -1002,7 +1003,7 @@ public class TestReader {
 		
 		OpenSPCoop2MessageSoapStreamReader streamReader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
 				contentType, 
-				TestReader.class.getResourceAsStream("/org/openspcoop2/message/soap/reader/"+fileName), 
+				ReaderTest.class.getResourceAsStream("/org/openspcoop2/message/soap/reader/test/"+fileName), 
 				bufferThresholdKb);
 		InputStream is = null;
 		try {
@@ -1030,7 +1031,7 @@ public class TestReader {
 		boolean parsingCompleto = streamReader.isParsingComplete();
 		System.out.println("ParsingCompleto: "+parsingCompleto);
 		String sLetto = Utilities.getAsString(is, Charset.UTF_8.getValue());
-		String sAtteso = Utilities.getAsString(TestReader.class.getResourceAsStream("/org/openspcoop2/message/soap/reader/"+fileName), Charset.UTF_8.getValue());
+		String sAtteso = Utilities.getAsString(ReaderTest.class.getResourceAsStream("/org/openspcoop2/message/soap/reader/test/"+fileName), Charset.UTF_8.getValue());
 		if(!sLetto.equals(sAtteso)) {
 			throw new Exception("Messaggio ottenuto dal reader differente da quello atteso");
 		}

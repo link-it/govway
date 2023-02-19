@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.message.xml;
+package org.openspcoop2.message.xml.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -44,7 +44,7 @@ import org.xml.sax.XMLReader;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestXXE {
+public class XXETest {
 
 
 	
@@ -235,7 +235,7 @@ public class TestXXE {
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.xml.test.TestXXE.xsdSchema)){
 				@SuppressWarnings("unused")
-				org.openspcoop2.utils.xml.ValidatoreXSD validatoreXSD = new org.openspcoop2.utils.xml.ValidatoreXSD(LoggerWrapperFactory.getLogger(TestXXE.class),
+				org.openspcoop2.utils.xml.ValidatoreXSD validatoreXSD = new org.openspcoop2.utils.xml.ValidatoreXSD(LoggerWrapperFactory.getLogger(XXETest.class),
 						"org.apache.xerces.jaxp.validation.XMLSchemaFactory",
 						bin);
 			}
@@ -255,7 +255,7 @@ public class TestXXE {
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.xml.test.TestXXE.xsdSchema)){
 				@SuppressWarnings("unused")
-				org.openspcoop2.utils.xml.ValidatoreXSD validatoreXSD = new org.openspcoop2.utils.xml.ValidatoreXSD(LoggerWrapperFactory.getLogger(TestXXE.class),
+				org.openspcoop2.utils.xml.ValidatoreXSD validatoreXSD = new org.openspcoop2.utils.xml.ValidatoreXSD(LoggerWrapperFactory.getLogger(XXETest.class),
 						bin);
 			}
 			throw new Exception("ValidatoreXSD usage ok ?");
@@ -274,7 +274,7 @@ public class TestXXE {
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.xml.test.TestXXE.xsdSchema)){
 				@SuppressWarnings("unused")
-				org.openspcoop2.utils.xml.ValidatoreXSD validatoreXSD = new org.openspcoop2.utils.xml.ValidatoreXSD(LoggerWrapperFactory.getLogger(TestXXE.class),
+				org.openspcoop2.utils.xml.ValidatoreXSD validatoreXSD = new org.openspcoop2.utils.xml.ValidatoreXSD(LoggerWrapperFactory.getLogger(XXETest.class),
 						"org.apache.xerces.jaxp.validation.XMLSchemaFactory",
 						bin,bin,bin,bin);
 			}
@@ -294,7 +294,7 @@ public class TestXXE {
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.xml.test.TestXXE.xsdSchema)){
 				@SuppressWarnings("unused")
-				org.openspcoop2.utils.xml.ValidatoreXSD validatoreXSD = new org.openspcoop2.utils.xml.ValidatoreXSD(LoggerWrapperFactory.getLogger(TestXXE.class),
+				org.openspcoop2.utils.xml.ValidatoreXSD validatoreXSD = new org.openspcoop2.utils.xml.ValidatoreXSD(LoggerWrapperFactory.getLogger(XXETest.class),
 						bin,bin,bin,bin);
 			}
 			throw new Exception("ValidatoreXSD usage ok ?");

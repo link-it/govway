@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.message.rest;
+package org.openspcoop2.message.rest.test;
 
 import java.io.ByteArrayInputStream;
 
@@ -34,7 +34,7 @@ import org.openspcoop2.message.constants.MessageType;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestXXE {
+public class XXETest {
 
 
 	

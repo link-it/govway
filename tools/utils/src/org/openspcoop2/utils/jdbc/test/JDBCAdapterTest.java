@@ -244,7 +244,7 @@ public class JDBCAdapterTest {
 	    	JDBCAdapterTest.info(JDBCAdapterTest.log,JDBCAdapterTest.systemOut,"\n\n*** Test bytes[] ***");
 	    	
 	    	// step0. Recuper il documento
-	    	pdfIs = JDBCAdapterTest.class.getResourceAsStream("/org/openspcoop2/utils/jdbc/test.pdf");
+	    	pdfIs = JDBCAdapterTest.class.getResourceAsStream("/org/openspcoop2/utils/jdbc/test/test.pdf");
 	    	if(pdfIs==null){
 	    		throw new Exception("test.pdf resource not found");
 	    	}
@@ -370,13 +370,13 @@ public class JDBCAdapterTest {
 	    	JDBCAdapterTest.info(JDBCAdapterTest.log,JDBCAdapterTest.systemOut,"\n\n*** Test InputStream (lenght:"+withLength+" buffer:"+bufferEnabled+") ***");
 	    	
 	    	// step0. Recuper il documento
-	    	pdfIs = JDBCAdapterTest.class.getResourceAsStream("/org/openspcoop2/utils/jdbc/test.pdf");
+	    	pdfIs = JDBCAdapterTest.class.getResourceAsStream("/org/openspcoop2/utils/jdbc/test/test.pdf");
 	    	if(pdfIs==null){
 	    		throw new Exception("test.pdf resource not found");
 	    	}
 	    	byte[]data = Utilities.getAsByteArray(pdfIs);
 	    	pdfIs.close();
-    		pdfIs = JDBCAdapterTest.class.getResourceAsStream("/org/openspcoop2/utils/jdbc/test.pdf");
+    		pdfIs = JDBCAdapterTest.class.getResourceAsStream("/org/openspcoop2/utils/jdbc/test/test.pdf");
     		
 	    	int lenght = -1;
 	    	if(withLength){

@@ -39,7 +39,7 @@ public class TestSoapReader {
 	public void testReader() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"'.testReader ...");
-		org.openspcoop2.message.soap.reader.TestReader.test();
+		org.openspcoop2.message.soap.reader.test.ReaderTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"'.testReader ok");
 		
 	}
@@ -48,7 +48,7 @@ public class TestSoapReader {
 	public void testOptimizedHeader() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"'.testOptimizedHeader ...");
-		org.openspcoop2.message.soap.reader.TestOptimizedHeader.test();
+		org.openspcoop2.message.soap.reader.test.OptimizedHeaderTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"'.testOptimizedHeader ok");
 		
 	}

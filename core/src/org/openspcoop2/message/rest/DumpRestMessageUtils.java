@@ -420,9 +420,10 @@ public class DumpRestMessageUtils {
 	
 	public static String dumpBodyPart(OpenSPCoop2RestMessage<?> msg,BodyPart bodyPart) throws MessageException{
 		Object o = _dumpBodyPart(msg, bodyPart, false);
-		if(o == null){
+		// Metodo sopra non torna mai null, segnalato da sonarqube
+		/*if(o == null){
 			throw new MessageException("Dump error (return null reference)");
-		}
+		}*/
 		if(o instanceof String){
 			return (String) o;
 		}
@@ -447,9 +448,10 @@ public class DumpRestMessageUtils {
 	}
 	public static byte[] dumpBodyPartAsByteArray(OpenSPCoop2RestMessage<?> msg,BodyPart bodyPart) throws MessageException{
 		Object o = _dumpBodyPart(msg, bodyPart, false);
-		if(o == null){
+		// Metodo sopra non torna mai null, segnalato da sonarqube
+		/*if(o == null){
 			throw new MessageException("Dump error (return null reference)");
-		}
+		}*/
 		if(o instanceof String){
 			return ((String) o).getBytes();
 		}
@@ -473,6 +475,10 @@ public class DumpRestMessageUtils {
 		}
 	}
 	
+	private static boolean convert = false;
+	public static void setConvert(boolean convert) {
+		DumpRestMessageUtils.convert = convert;
+	}
 	private static Object _dumpBodyPart(OpenSPCoop2RestMessage<?> msg,BodyPart bodyPart, boolean forceReturnAsByteArrayOutputStream) throws MessageException{
 		try{		
 			java.io.ByteArrayOutputStream bout = null;
@@ -534,7 +540,6 @@ public class DumpRestMessageUtils {
 				bout.close();		
 			}
 			// Per non perdere quanto letto
-			boolean convert = false;
 			// in rest con le api utilizzate non sembra necessario ricostruirlo come si fa in soap.
 			// anche il caso del tunnel soap non esiste.
 			if(convert && MailcapActivationReader.existsDataContentHandler(bodyPart.getContentType())){

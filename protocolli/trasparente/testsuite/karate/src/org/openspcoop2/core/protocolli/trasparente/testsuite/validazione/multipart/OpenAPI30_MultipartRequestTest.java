@@ -85,7 +85,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		
 		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
 		String contenuto_cat = "{\"altro\":\"descrizione generica\", \"pet\":"+cat+"}";
-		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
 		
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
@@ -122,7 +122,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		
 		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
 		String contenuto_cat = "{\"altro\":\"descrizione generica\", \"pet\":"+cat+"}";
-		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
 		
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
@@ -162,7 +162,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		
 		String dog2 = "{\"pet_type\": \"Dog\",  \"bark\": true }";
 		String contenuto_errato1 = "{\"altroErrore\":\"descrizione generica\", \"pet\":"+dog2+"}";
-		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
 		
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
@@ -201,7 +201,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		
 		String catErrato = "{\"pet_type\": \"CatErrato\",  \"age\": 3}";
 		String contenuto_errato = "{\"altro\":\"descrizione generica\", \"pet\":"+catErrato+"}";
-		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
 		
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
@@ -239,7 +239,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		
 		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
 		String contenuto_cat = "{\"altro\":\"descrizione generica\", \"pet\":"+cat+"}";
-		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
 		
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
@@ -278,7 +278,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		
 		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
 		String contenuto_cat = "{\"altro\":\"descrizione generica\", \"pet\":"+cat+"}";
-		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
 		
 		String subtypeWrong = HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE.equals(subtypeParam) ? HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE : HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE;
@@ -319,7 +319,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		
 		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
 		String contenuto_dog1 = "{\"altro\":\"descrizione generica\", \"pet\":"+dog1+"}";
-		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
 		
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE,
@@ -360,7 +360,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		
 		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
 		String contenuto_dog1 = "{\"altro\":\""+id+"\", \"pet\":"+dog1+"}";
-		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
 		
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE,
@@ -403,7 +403,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		
 		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
 		String contenuto_dog1 = "{\"altro\":\""+id+"\", \"pet\":"+dog1+"}";
-		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
 		
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE,

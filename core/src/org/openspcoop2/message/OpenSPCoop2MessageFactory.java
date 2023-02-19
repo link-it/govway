@@ -274,7 +274,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	
     private OpenSPCoop2Message _internalCreateMessage(MessageType messageType, MessageRole role, SOAPMessage msg) throws MessageException{
     	
-    	if(!MessageType.SOAP_11.equals(messageType) && !MessageType.SOAP_11.equals(messageType)){
+    	if(!MessageType.SOAP_11.equals(messageType) && !MessageType.SOAP_12.equals(messageType)){
 			throw new MessageException("Message Type ["+messageType+"] unsupported");
 		}
     	

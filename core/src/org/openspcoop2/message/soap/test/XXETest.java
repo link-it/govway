@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.message.soap;
+package org.openspcoop2.message.soap.test;
 
 import java.io.ByteArrayInputStream;
 
@@ -37,7 +37,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestXXE {
+public class XXETest {
 
 	
 	private static byte [] soap11 = ("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE x [ <!ENTITY\n"+

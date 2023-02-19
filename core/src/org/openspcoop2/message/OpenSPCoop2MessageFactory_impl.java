@@ -124,7 +124,7 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 		OpenSPCoop2Message msg = null;
 		if(MessageType.SOAP_11.equals(messageType)){
 			msg = new OpenSPCoop2Message_saaj_11_impl(this, soapMsg);
-		} else if(MessageType.SOAP_11.equals(messageType)){
+		} else if(MessageType.SOAP_12.equals(messageType)){
 			msg = new OpenSPCoop2Message_saaj_12_impl(this, soapMsg);
 		}
 		else{

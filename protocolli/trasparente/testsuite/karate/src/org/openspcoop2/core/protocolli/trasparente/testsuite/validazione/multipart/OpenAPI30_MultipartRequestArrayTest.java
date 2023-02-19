@@ -61,7 +61,7 @@ public class OpenAPI30_MultipartRequestArrayTest extends ConfigLoader {
 	}
 	private void request_ok_array_binary(TipoServizio tipo, String subtype) throws Exception {
 		
-		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		List<byte[]> l = new ArrayList<byte[]>();
 		l.add(pdf);
 		l.add(pdf);
