@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.PluginSorgenteArchivio;
 import java.io.Serializable;
@@ -64,22 +63,9 @@ import java.io.Serializable;
 
 @XmlRootElement(name = "registro-plugin-archivio")
 
-public class RegistroPluginArchivio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class RegistroPluginArchivio extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public RegistroPluginArchivio() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+    super();
   }
 
   public String getNomePlugin() {
@@ -156,9 +142,6 @@ public class RegistroPluginArchivio extends org.openspcoop2.utils.beans.BaseBean
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
 
 

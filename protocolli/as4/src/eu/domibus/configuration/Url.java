@@ -50,6 +50,7 @@ import java.io.Serializable;
 
 public class Url extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Url() {
+    super();
   }
 
   public java.lang.String getPattern() {

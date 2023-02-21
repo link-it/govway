@@ -58,6 +58,7 @@ import java.util.List;
 
 public class Agreements extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Agreements() {
+    super();
   }
 
   public void addAgreement(Agreement agreement) {

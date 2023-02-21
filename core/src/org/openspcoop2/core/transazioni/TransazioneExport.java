@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.transazioni.constants.DeleteState;
 import org.openspcoop2.core.transazioni.constants.ExportState;
@@ -77,22 +76,9 @@ import java.io.Serializable;
 
 @XmlRootElement(name = "transazione-export")
 
-public class TransazioneExport extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class TransazioneExport extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public TransazioneExport() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+    super();
   }
 
   public java.util.Date getIntervalloInizio() {
@@ -208,9 +194,6 @@ public class TransazioneExport extends org.openspcoop2.utils.beans.BaseBean impl
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
   private static org.openspcoop2.core.transazioni.model.TransazioneExportModel modelStaticInstance = null;
   private static synchronized void initModelStaticInstance(){

@@ -269,7 +269,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 				lstObjects_plugin_pluginServizioCompatibilita.add(new JDBCObject(plugin_pluginServizioCompatibilita.getServizio(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.SERVIZIO.getFieldType()));
 				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita.addWhereCondition("id=?");
 				ids_plugin_pluginServizioCompatibilita_da_non_eliminare.add(plugin_pluginServizioCompatibilita.getId());
-				lstObjects_plugin_pluginServizioCompatibilita.add(new JDBCObject(Long.valueOf(plugin_pluginServizioCompatibilita.getId()),Long.class));
+				lstObjects_plugin_pluginServizioCompatibilita.add(new JDBCObject(plugin_pluginServizioCompatibilita.getId(),Long.class));
 
 				if(isUpdate_plugin_pluginServizioCompatibilita) {
 					// Update plugin_pluginServizioCompatibilita
@@ -313,7 +313,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 						lstObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.add(new JDBCObject(plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.getAzione(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA.AZIONE.getFieldType()));
 						sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.addWhereCondition("id=?");
 						ids_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_da_non_eliminare.add(plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.getId());
-						lstObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.add(new JDBCObject(Long.valueOf(plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.getId()),Long.class));
+						lstObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.add(new JDBCObject(plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.getId(),Long.class));
 
 						if(isUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita) {
 							// Update plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita
@@ -417,7 +417,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 				lstObjects_plugin_pluginProprietaCompatibilita.add(new JDBCObject(plugin_pluginProprietaCompatibilita.getValore(), Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE.getFieldType()));
 				sqlQueryObjectUpdate_plugin_pluginProprietaCompatibilita.addWhereCondition("id=?");
 				ids_plugin_pluginProprietaCompatibilita_da_non_eliminare.add(plugin_pluginProprietaCompatibilita.getId());
-				lstObjects_plugin_pluginProprietaCompatibilita.add(new JDBCObject(Long.valueOf(plugin_pluginProprietaCompatibilita.getId()),Long.class));
+				lstObjects_plugin_pluginProprietaCompatibilita.add(new JDBCObject(plugin_pluginProprietaCompatibilita.getId(),Long.class));
 
 				if(isUpdate_plugin_pluginProprietaCompatibilita) {
 					// Update plugin_pluginProprietaCompatibilita
@@ -580,7 +580,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_getToDelete.addFromTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA));
 		sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_getToDelete.addWhereCondition("id_plugin=?");
 		java.util.List<Object> plugin_pluginServizioCompatibilita_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA, this.getPluginFetch(),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for plugin_pluginServizioCompatibilita
 		for (Object plugin_pluginServizioCompatibilita_object : plugin_pluginServizioCompatibilita_toDelete_list) {
@@ -595,7 +595,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 			sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_getToDelete.addFromTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA));
 			sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_getToDelete.addWhereCondition("id_plugin_servizio_comp=?");
 			java.util.List<Object> plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA, this.getPluginFetch(),
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(plugin_pluginServizioCompatibilita.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(plugin_pluginServizioCompatibilita.getId(),Long.class));
 
 			// for plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita
 			for (Object plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_object : plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_toDelete_list) {
@@ -610,7 +610,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 				// Delete plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita
 				if(plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita != null){
 					jdbcUtilities.execute(sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.createSQLDelete(), jdbcProperties.isShowSql(), 
-					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.getId()),Long.class));
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.getId(),Long.class));
 				}
 			} // fine for plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita
 
@@ -622,7 +622,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 
 			// Delete plugin_pluginServizioCompatibilita
 			jdbcUtilities.execute(sqlQueryObjectDelete_plugin_pluginServizioCompatibilita.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(plugin_pluginServizioCompatibilita.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(plugin_pluginServizioCompatibilita.getId(),Long.class));
 		} // fine for plugin_pluginServizioCompatibilita
 
 		//Recupero oggetto _plugin_pluginProprietaCompatibilita
@@ -631,7 +631,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		sqlQueryObjectDelete_plugin_pluginProprietaCompatibilita_getToDelete.addFromTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA));
 		sqlQueryObjectDelete_plugin_pluginProprietaCompatibilita_getToDelete.addWhereCondition("id_plugin=?");
 		java.util.List<Object> plugin_pluginProprietaCompatibilita_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_plugin_pluginProprietaCompatibilita_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA, this.getPluginFetch(),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for plugin_pluginProprietaCompatibilita
 		for (Object plugin_pluginProprietaCompatibilita_object : plugin_pluginProprietaCompatibilita_toDelete_list) {
@@ -646,7 +646,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 			// Delete plugin_pluginProprietaCompatibilita
 			if(plugin_pluginProprietaCompatibilita != null){
 				jdbcUtilities.execute(sqlQueryObjectDelete_plugin_pluginProprietaCompatibilita.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(plugin_pluginProprietaCompatibilita.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(plugin_pluginProprietaCompatibilita.getId(),Long.class));
 			}
 		} // fine for plugin_pluginProprietaCompatibilita
 

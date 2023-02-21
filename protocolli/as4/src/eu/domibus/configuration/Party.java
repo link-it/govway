@@ -64,6 +64,7 @@ import java.util.List;
 
 public class Party extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Party() {
+    super();
   }
 
   public void addIdentifier(Identifier identifier) {

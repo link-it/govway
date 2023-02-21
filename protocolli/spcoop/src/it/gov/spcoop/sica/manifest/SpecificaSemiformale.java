@@ -58,6 +58,7 @@ import java.util.List;
 
 public class SpecificaSemiformale extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SpecificaSemiformale() {
+    super();
   }
 
   public void addDocumentoSemiformale(DocumentoSemiformale documentoSemiformale) {

@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class IntegrationErrorCode extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IntegrationErrorCode() {
+    super();
   }
 
   public int getHttp() {

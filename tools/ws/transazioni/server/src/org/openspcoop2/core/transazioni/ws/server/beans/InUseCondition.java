@@ -39,7 +39,9 @@ import javax.xml.bind.annotation.XmlElement;
     "cause"
 })
 
-public class InUseCondition extends org.openspcoop2.utils.beans.BaseBean {
+public class InUseCondition extends org.openspcoop2.utils.beans.BaseBean implements java.io.Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
 	@XmlElement(name="name",required=true,nillable=false)

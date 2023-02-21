@@ -273,7 +273,7 @@
 						<replace file="${build_testunits}/config.xml" token="Start Configurazione valida solo per xml -->" value="Start Configurazione valida solo per xml"/>
 						<replace file="${build_testunits}/config.xml" token="&lt;!-- End Configurazione valida solo per xml" value="End Configurazione valida solo per xml"/>
 												
-						<java classname="org.openspcoop2.core.registry.driver.utils.TestXMLDataConverter" fork="true">
+						<java classname="org.openspcoop2.core.registry.driver.utils.XMLDataConverterMainProcessor" fork="true">
 							<arg value="${config_file}/registroServizi.xml" />
 							<arg value="${tipoRegistroServizi}" />
 							<arg value="${proprietaRegistroServizi}" />
@@ -335,7 +335,7 @@
 						<replace file="${build_testunits}/config.xml" token="Start Configurazione valida solo per xml -->" value="Start Configurazione valida solo per xml"/>
 						<replace file="${build_testunits}/config.xml" token="&lt;!-- End Configurazione valida solo per xml" value="End Configurazione valida solo per xml"/>	
 
-						<java classname="org.openspcoop2.core.config.driver.utils.TestXMLDataConverter" fork="true">
+						<java classname="org.openspcoop2.core.config.driver.utils.XMLDataConverterMainProcessor" fork="true">
 							<arg value="${build_testunits}/config.xml" />
 							<arg value="${tipoConfigurazione}" />
 							<arg value="${proprietaConfigurazione}" />

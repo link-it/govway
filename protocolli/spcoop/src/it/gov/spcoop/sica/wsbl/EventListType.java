@@ -58,6 +58,7 @@ import java.util.List;
 
 public class EventListType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public EventListType() {
+    super();
   }
 
   public void addEvent(EventType event) {

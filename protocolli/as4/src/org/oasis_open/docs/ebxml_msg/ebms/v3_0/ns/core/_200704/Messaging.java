@@ -62,6 +62,7 @@ import java.util.List;
 
 public class Messaging extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Messaging() {
+    super();
   }
 
   public void addSignalMessage(SignalMessage signalMessage) {

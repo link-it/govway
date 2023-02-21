@@ -62,6 +62,7 @@ import java.io.Serializable;
 
 public class MessaggioDiErroreApplicativo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public MessaggioDiErroreApplicativo() {
+    super();
   }
 
   public java.util.Date getOraRegistrazione() {

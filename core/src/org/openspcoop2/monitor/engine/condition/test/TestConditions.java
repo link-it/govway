@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.monitor.engine.condition;
+package org.openspcoop2.monitor.engine.condition.test;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -55,6 +55,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.core.plugins.utils.FilterUtils;
+import org.openspcoop2.monitor.engine.condition.FilterImpl;
 import org.openspcoop2.monitor.sdk.condition.FilterFactory;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;

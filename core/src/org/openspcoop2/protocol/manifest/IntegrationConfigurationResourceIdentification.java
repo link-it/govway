@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class IntegrationConfigurationResourceIdentification extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IntegrationConfigurationResourceIdentification() {
+    super();
   }
 
   public IntegrationConfigurationResourceIdentificationModes getIdentificationModes() {

@@ -204,6 +204,49 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
+		<!-- Runtime Core -->
+		<var name="projectAnalyze" value="runtime-core"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="core"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="core/src/org/openspcoop2/core"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},core/src/org/openspcoop2/core"/>
+					</else>
+				</if>
+
+				<!-- Classi di test -->
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/core/registry/driver/test/*.java"/>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/runtime/core/enum.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.core.enum.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/runtime/core/security_hotspots.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.core.sec.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/runtime/core/security_hotspots.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.core.tmp.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="runtime-core"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>
+					<param name="analyzeSrc" value="${openspcoop2}/core/src/org/openspcoop2/core"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_core*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
 
 
 		<!-- Esclusioni -->

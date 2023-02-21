@@ -55,6 +55,7 @@ import java.io.Serializable;
 
 public class CodiceEccezione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public CodiceEccezione() {
+    super();
   }
 
   public String getBase() {

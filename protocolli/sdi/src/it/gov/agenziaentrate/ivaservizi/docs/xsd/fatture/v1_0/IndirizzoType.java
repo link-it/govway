@@ -66,6 +66,7 @@ import java.io.Serializable;
 
 public class IndirizzoType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IndirizzoType() {
+    super();
   }
 
   public java.lang.String getIndirizzo() {

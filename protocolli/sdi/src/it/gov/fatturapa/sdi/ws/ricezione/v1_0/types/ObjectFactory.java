@@ -55,10 +55,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FileSdIBaseType }
+     * Create an instance of {@link FileSdIType }
      */
-    public FileSdIBaseType createFileSdIBaseType() {
-        return new FileSdIBaseType();
+    public FileSdIType createFileSdIType() {
+        return new FileSdIType();
     }
 
     /**
@@ -69,10 +69,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RispostaRiceviFattureType }
+     * Create an instance of {@link FileSdIBaseType }
      */
-    public RispostaRiceviFattureType createRispostaRiceviFattureType() {
-        return new RispostaRiceviFattureType();
+    public FileSdIBaseType createFileSdIBaseType() {
+        return new FileSdIBaseType();
     }
 
     /**
@@ -83,10 +83,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FileSdIType }
+     * Create an instance of {@link RispostaRiceviFattureType }
      */
-    public FileSdIType createFileSdIType() {
-        return new FileSdIType();
+    public RispostaRiceviFattureType createRispostaRiceviFattureType() {
+        return new RispostaRiceviFattureType();
     }
 
     private final static QName _NotificaEsito = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "notificaEsito");

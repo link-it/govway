@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiGeneraliType() {
+    super();
   }
 
   public DatiGeneraliDocumentoType getDatiGeneraliDocumento() {

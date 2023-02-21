@@ -94,7 +94,7 @@ public class CopyCharStream {
 //			else {
 //				transferTo(reader,writer);
 //			}
-			// Nel caso di char e' sempre piu' efficente il transferTo
+			// Nel caso di char e' sempre piu' efficiente il transferTo
 			transferTo(reader,writer);
 			break;
 		}

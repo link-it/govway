@@ -45,13 +45,13 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 
-public class TestXMLDataConverter {
+public class XMLDataConverterMainProcessor {
 
 
 	public static void main(String[] argoments) throws Exception {
 
 		if (argoments.length  < 9) {
-			String errorMsg = "ERROR, Usage:  java TestXMLDataConverter sorgenteXML tipoRegistroCRUD proprietaRegistroCRUD reset tipoConversione gestioneSoggetti mantieniFruitori deleteMappingErogazioneFruizione statoAccordiImportati protocolloDefault [[logger] [nomePddOperativa logger]]";
+			String errorMsg = "ERROR, Usage:  java XMLDataConverterMainProcessor sorgenteXML tipoRegistroCRUD proprietaRegistroCRUD reset tipoConversione gestioneSoggetti mantieniFruitori deleteMappingErogazioneFruizione statoAccordiImportati protocolloDefault [[logger] [nomePddOperativa logger]]";
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}
@@ -82,7 +82,7 @@ public class TestXMLDataConverter {
 			if(args_logger!=null){
 				LoggerWrapperFactory.setLogConfiguration(args_logger);
 			}else{
-				URL url = TestXMLDataConverter.class.getResource("/xml2backend.log4j2.properties");
+				URL url = XMLDataConverterMainProcessor.class.getResource("/xml2backend.log4j2.properties");
 				if(url!=null){
 					LoggerWrapperFactory.setLogConfiguration(url);
 				}
@@ -130,7 +130,9 @@ public class TestXMLDataConverter {
 		// Properties
 		java.util.Properties reader = new java.util.Properties();
 		try{
-			reader.load(new FileInputStream(args_proprietaRegistroCRUD));
+			try(FileInputStream fin = new FileInputStream(args_proprietaRegistroCRUD)){
+				reader.load(fin);
+			}
 		}catch(java.io.IOException e) {
 			String errorMsg = "Errore durante il caricamento del file di properties ["+args_proprietaRegistroCRUD+"] : "+e.getMessage();
 			log.error(errorMsg,e);
@@ -252,7 +254,7 @@ public class TestXMLDataConverter {
 				}
 			}
 			
-			TestXMLDataConverter.letturaSorgenti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, superUser, acCRUD, 
+			XMLDataConverterMainProcessor.letturaSorgenti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, superUser, acCRUD, 
 					statoAccordoObject, protocolloDefault, args_tipoConversione, args_nomePddOperativa, gestioneSoggetti, reset, mantieniFruitori,deleteMappingErogazioneFruizione);
 			
 		}catch(Exception e){
@@ -277,8 +279,8 @@ public class TestXMLDataConverter {
 			// Se si desidera la reset, controllo se e' gia stata effettuata
 			semaphoreResetEffettuata.acquireThrowRuntime("reset");
 			try {
-				if(TestXMLDataConverter.resetEffettuata==false){
-					TestXMLDataConverter.resetEffettuata=true;
+				if(XMLDataConverterMainProcessor.resetEffettuata==false){
+					XMLDataConverterMainProcessor.resetEffettuata=true;
 					return true;
 				}
 				else{
@@ -303,7 +305,7 @@ public class TestXMLDataConverter {
 			}
 			if(fSorgente.getName().endsWith(".xml")){
 				// Per non convertire i wsdl e i xml
-				TestXMLDataConverter.converti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, superUser, acCRUD, 
+				XMLDataConverterMainProcessor.converti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, superUser, acCRUD, 
 						statoAccordoObject, protocolloDefault,tipoConversione,nomePddOperativa,gestioneSoggetti,reset,mantieniFruitori,deleteMappingErogazioneFruizione);
 			}
 			else{
@@ -322,7 +324,7 @@ public class TestXMLDataConverter {
 			}
 			for(int i=0; i<f.length; i++){
 			
-				TestXMLDataConverter.letturaSorgenti(f[i], connectionDB, connectionSQL, tipoDatabase, log, superUser, acCRUD, 
+				XMLDataConverterMainProcessor.letturaSorgenti(f[i], connectionDB, connectionSQL, tipoDatabase, log, superUser, acCRUD, 
 						statoAccordoObject, protocolloDefault,tipoConversione,nomePddOperativa,gestioneSoggetti,reset,mantieniFruitori,deleteMappingErogazioneFruizione);
 				
 			}
@@ -355,9 +357,9 @@ public class TestXMLDataConverter {
 				PdDConfig pddConfig = new PdDConfig();
 				String pddOperativa = nomePddOperativa;
 				pddConfig.setPddOperativaCtrlstatSinglePdd(pddOperativa);
-				dataConverter.convertXML(TestXMLDataConverter.reset(reset),pddConfig,mantieniFruitori,gestioneSoggetti,statoAccordoObject);
+				dataConverter.convertXML(XMLDataConverterMainProcessor.reset(reset),pddConfig,mantieniFruitori,gestioneSoggetti,statoAccordoObject);
 			}else{
-				dataConverter.convertXML(TestXMLDataConverter.reset(reset),mantieniFruitori,gestioneSoggetti,statoAccordoObject);
+				dataConverter.convertXML(XMLDataConverterMainProcessor.reset(reset),mantieniFruitori,gestioneSoggetti,statoAccordoObject);
 			}
 			log.info("Conversione terminata.");
 		}

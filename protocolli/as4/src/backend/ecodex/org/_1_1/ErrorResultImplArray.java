@@ -58,6 +58,7 @@ import java.util.List;
 
 public class ErrorResultImplArray extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ErrorResultImplArray() {
+    super();
   }
 
   public void addItem(ErrorResultImpl item) {

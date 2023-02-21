@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class GuardType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public GuardType() {
+    super();
   }
 
   public java.lang.String getDescription() {

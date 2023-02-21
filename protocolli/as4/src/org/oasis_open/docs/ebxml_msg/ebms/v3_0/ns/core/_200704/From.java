@@ -60,6 +60,7 @@ import java.util.List;
 
 public class From extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public From() {
+    super();
   }
 
   public void addPartyId(PartyId partyId) {

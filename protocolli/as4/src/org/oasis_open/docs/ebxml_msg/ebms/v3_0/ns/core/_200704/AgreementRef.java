@@ -55,6 +55,7 @@ import java.io.Serializable;
 
 public class AgreementRef extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public AgreementRef() {
+    super();
   }
 
   public String getBase() {

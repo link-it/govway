@@ -58,6 +58,7 @@ import java.util.List;
 
 public class OperationListType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public OperationListType() {
+    super();
   }
 
   public void addCollaborazione(OperationType collaborazione) {

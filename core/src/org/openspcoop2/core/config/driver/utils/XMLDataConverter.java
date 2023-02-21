@@ -790,7 +790,7 @@ public class XMLDataConverter {
 			b = xml.getBytes();
 			return new ByteArrayInputStream(b);
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw e;
 		}
 	}
@@ -813,15 +813,11 @@ public class XMLDataConverter {
 			throw new DriverConfigurazioneException("Riscontrato errore durante la validazione XSD del Configurazione XML di OpenSPCoop: "+e.getMessage());
 		}
 		
+		InputStream iStream = null;			
 		try{
-			InputStream iStream = null;			
 			try{  
 				iStream = new ByteArrayInputStream(sorgente);
 			}catch(Exception e) {
-				try{  
-					if(iStream!=null)
-						iStream.close();
-				} catch(java.io.IOException ef) {}
 				throw new DriverConfigurazioneException("Riscontrato errore durante la creazione dell'inputStreamReader della Configurazione : \n\n"+e.getMessage());
 			}
 			
@@ -841,18 +837,17 @@ public class XMLDataConverter {
 				}
 				throw new DriverConfigurazioneException("Riscontrato errore durante l'unmarshall del file di configurazione: "+e.getMessage());
 			}
-
+			
+		} catch(Exception e) {
+			throw new DriverConfigurazioneException("Riscontrato errore durante l'istanziazione del registro: "+e.getMessage(),e);
+		}finally {
 			try{  
 				// Chiusura dello Stream
 				if(iStream!=null)
 					iStream.close();
-				// Chiusura dell'eventuale connessione HTTP
 			} catch(Exception e) {
-				throw new DriverConfigurazioneException("Riscontrato errore durante la chiusura dell'Input Stream: "+e.getMessage());
+				// Ignore
 			}
-			
-		} catch(Exception e) {
-			throw new DriverConfigurazioneException("Riscontrato errore durante l'istanziazione del registro: "+e.getMessage(),e);
 		}
 	}
 	
@@ -888,7 +883,7 @@ public class XMLDataConverter {
 				this.gestoreCRUD.reset(this.gestioneConfigurazione);
 				this.log.info("Configurazione, reset effettuato.");
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				throw new DriverConfigurazioneException("Reset del Configurazione non riuscita: "+e.getMessage(),e);
 			}
 		}
@@ -927,7 +922,7 @@ public class XMLDataConverter {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverConfigurazioneException("Errore durante la conversione XML dei soggetti: "+e.getMessage(),e);
 		}
 		
@@ -941,7 +936,7 @@ public class XMLDataConverter {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverConfigurazioneException("Errore durante la conversione XML dei servizi applicativi: "+e.getMessage(),e);
 		}
 		
@@ -1038,9 +1033,13 @@ public class XMLDataConverter {
 						}finally {
 							try {
 								if(driver.isAtomica()) {
-									con.commit();
+									if(con!=null) {
+										con.commit();
+									}
 								}
-							}catch(Throwable t) {}
+							}catch(Throwable t) {
+								// ignore
+							}
 							driver.releaseConnection(con);
 						}
 					}
@@ -1094,7 +1093,7 @@ public class XMLDataConverter {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverConfigurazioneException("Errore durante la conversione XML delle porte delegate: "+e.getMessage(),e);
 		}
 		
@@ -1255,7 +1254,7 @@ public class XMLDataConverter {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverConfigurazioneException("Errore durante la conversione XML delle porte applicative: "+e.getMessage(),e);
 		}
 		
@@ -1282,7 +1281,7 @@ public class XMLDataConverter {
 				}
 				
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				throw new DriverConfigurazioneException("Errore durante la conversione XML della routing table: "+e.getMessage(),e);
 			}
 		
@@ -1307,7 +1306,7 @@ public class XMLDataConverter {
 				}
 			
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				throw new DriverConfigurazioneException("Errore durante la conversione XML dei dati di accesso al registro: "+e.getMessage(),e);
 			}
 			
@@ -1335,7 +1334,7 @@ public class XMLDataConverter {
 				}
 				
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				throw new DriverConfigurazioneException("Errore durante la conversione XML dei dati di gestione dell'errore del connettore per il componente di cooperazione: "+
 						e.getMessage(),e);
 			}
@@ -1363,7 +1362,7 @@ public class XMLDataConverter {
 				}
 
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				throw new DriverConfigurazioneException("Errore durante la conversione XML dei dati di gestione dell'errore del connettore per il componente di integrazione: "
 						+e.getMessage(),e);
 			}
@@ -1388,7 +1387,7 @@ public class XMLDataConverter {
 				}
 				
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				throw new DriverConfigurazioneException("Errore durante la conversione XML della Configurazione: "+e.getMessage(),e);
 			}
 		}
@@ -1440,8 +1439,14 @@ public class XMLDataConverter {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1481,7 +1486,9 @@ public class XMLDataConverter {
 						}finally {
 							try {
 								if(driver.isAtomica()) {
-									con.commit();
+									if(con!=null) {
+										con.commit();
+									}
 								}
 							}catch(Throwable t) {}
 							driver.releaseConnection(con);
@@ -1497,7 +1504,7 @@ public class XMLDataConverter {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverConfigurazioneException("Errore durante l'eliminazione delle porte delegate: "+e.getMessage(),e);
 		}
 		
@@ -1543,7 +1550,7 @@ public class XMLDataConverter {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverConfigurazioneException("Errore durante l'eliminazione delle porte applicative: "+e.getMessage(),e);
 		}
 		
@@ -1566,7 +1573,7 @@ public class XMLDataConverter {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverConfigurazioneException("Errore durante l'eliminazione dei servizi applicativi: "+e.getMessage(),e);
 		}
 		
@@ -1584,7 +1591,7 @@ public class XMLDataConverter {
 					this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminato.");
 				}
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				throw new DriverConfigurazioneException("Errore durante l'eliminazione dei soggetti: "+e.getMessage(),e);
 			}
 		}

@@ -65,6 +65,7 @@ import java.util.List;
 
 public class Section extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Section() {
+    super();
   }
 
   public Conditions getConditions() {

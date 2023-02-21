@@ -62,6 +62,7 @@ import java.util.List;
 
 public class DatiDDTType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiDDTType() {
+    super();
   }
 
   public java.lang.String getNumeroDDT() {

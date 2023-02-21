@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class ReplaceMatchType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ReplaceMatchType() {
+    super();
   }
 
   public ReplaceMatchFieldType getNome() {

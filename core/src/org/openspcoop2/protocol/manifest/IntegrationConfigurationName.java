@@ -60,6 +60,7 @@ import java.util.List;
 
 public class IntegrationConfigurationName extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IntegrationConfigurationName() {
+    super();
   }
 
   public void addParam(IntegrationConfigurationElementName param) {

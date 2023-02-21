@@ -61,6 +61,7 @@ import java.util.List;
 
 public class Tags extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Tags() {
+    super();
   }
 
   public void addTag(java.lang.String tag) {

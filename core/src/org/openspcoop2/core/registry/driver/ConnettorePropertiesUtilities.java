@@ -114,8 +114,14 @@ public class ConnettorePropertiesUtilities {
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}

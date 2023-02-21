@@ -50,7 +50,6 @@ public final class CostantiDB {
     public static final String CONNETTORI_CUSTOM = "connettori_custom";
     public static final String SOGGETTI = "soggetti";
     public static final String SOGGETTI_PDD = "soggetti_pdd";
-    public static final String TIPI = "tipi";
     
     /*REGSERV*/
     public static final String PROTOCOL_PROPERTIES = "protocol_properties";

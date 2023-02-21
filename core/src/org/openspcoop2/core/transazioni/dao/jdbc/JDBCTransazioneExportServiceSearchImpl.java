@@ -107,8 +107,8 @@ public class JDBCTransazioneExportServiceSearchImpl implements IJDBCServiceSearc
 
         List<TransazioneExport> list = new ArrayList<TransazioneExport>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+        // TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
 		// 2. Usare metodo getTransazioneExportFetch() sul risultato della select per ottenere un oggetto TransazioneExport
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 

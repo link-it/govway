@@ -93,7 +93,7 @@ public class IDServizioApplicativoDB extends IDServizioApplicativo implements Se
 			idSA.setIdSoggettoProprietario(this.getIdSoggettoProprietario().clone());
 		}
 		if(this.id!=null){
-			idSA.setId(Long.valueOf(this.id));
+			idSA.setId(Long.valueOf(this.id.longValue()+""));
 		}
 		return idSA;
 	}

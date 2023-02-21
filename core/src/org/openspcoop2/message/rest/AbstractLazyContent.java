@@ -41,7 +41,7 @@ public abstract class AbstractLazyContent<T> {
 	
 	protected T content;
 	protected DumpByteArrayOutputStream contentBuffer;
-	protected byte[] contentByteArray; // inefficente, viene memorizzato due volte, se e' attivo anche il contentBuffer, usare anzi quel costruttore
+	protected byte[] contentByteArray; // inefficiente, viene memorizzato due volte, se e' attivo anche il contentBuffer, usare anzi quel costruttore
 	protected String contentType;
 	
 	protected AbstractLazyContent() {}

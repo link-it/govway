@@ -60,6 +60,7 @@ import java.util.List;
 
 public class PropertySet extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public PropertySet() {
+    super();
   }
 
   public void addPropertyRef(PropertyRef propertyRef) {

@@ -139,7 +139,7 @@ public class ConverterStandardWSDL2SplitWSDL {
 			
 		}catch(Exception e){
 			if(this.debug)
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			throw new WSDLException("ConverterStandardWSDL2SplitWSDL(String pathWsdlImplementativoErogatore,WSDL pathWsdlImplementativoFruitore)",
 					"Costruzione non riuscita: "+e.getMessage(),e);
 		}
@@ -200,7 +200,7 @@ public class ConverterStandardWSDL2SplitWSDL {
 						
 		}catch(Exception e){
 			if(this.debug)
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			throw new WSDLException("ConverterStandardWSDL2SplitWSDL(Byte)",
 					"Costruzione non riuscita: "+e.getMessage(),e);
 		}
@@ -275,9 +275,9 @@ public class ConverterStandardWSDL2SplitWSDL {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			if(this.debug)
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			throw new WSDLException("split(String)",
 					"Split non riuscito: "+e.getMessage(),e);
 		}
@@ -327,7 +327,7 @@ public class ConverterStandardWSDL2SplitWSDL {
 			
 		}catch(Exception e){
 			if(this.debug)
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			throw new WSDLException("split(String,portTypes...)",
 					"Split non riuscito: "+e.getMessage(),e);
 		}
@@ -353,38 +353,48 @@ public class ConverterStandardWSDL2SplitWSDL {
 	public void split(byte[] wsdlErogatore,byte[] wsdlFruitore, TipoSchemaXSDAccordoServizio tipoSchema, boolean permettiSchemaLocationNonDefiniti)throws WSDLException{
 		try{
 			File wsdlErogatoreTmpFile = File.createTempFile("WSDLErogatoreFromByte-", "-split", this.outputDir);
-			if (!wsdlErogatoreTmpFile.exists())
-				wsdlErogatoreTmpFile.createNewFile();
-			FileOutputStream fout = new FileOutputStream(wsdlErogatoreTmpFile);
-			fout.write(wsdlErogatore);
-			fout.flush();
-			fout.close();
+			if (!wsdlErogatoreTmpFile.exists()) {
+				if(!wsdlErogatoreTmpFile.createNewFile()) {
+					// ignore
+				}
+			}
+			try(FileOutputStream fout = new FileOutputStream(wsdlErogatoreTmpFile)){
+				fout.write(wsdlErogatore);
+				fout.flush();
+			}
 			String pathFileErogatore = wsdlErogatoreTmpFile.getAbsolutePath();
 			
 			String pathFileFruitore = null;
 			File wsdlFruitoreTmpFile = null;
 			if(wsdlFruitore!=null){
 				wsdlFruitoreTmpFile = File.createTempFile("WSDLFruitoreFromByte-", "-split", this.outputDir);
-				if (!wsdlFruitoreTmpFile.exists())
-					wsdlFruitoreTmpFile.createNewFile();
-				fout = new FileOutputStream(wsdlFruitoreTmpFile);
-				fout.write(wsdlFruitore);
-				fout.flush();
-				fout.close();
+				if (!wsdlFruitoreTmpFile.exists()) {
+					if(!wsdlFruitoreTmpFile.createNewFile()) {
+						// ignore
+					}
+				}
+				try(FileOutputStream fout = new FileOutputStream(wsdlFruitoreTmpFile)){
+					fout.write(wsdlFruitore);
+					fout.flush();
+				}
 				pathFileFruitore = wsdlFruitoreTmpFile.getAbsolutePath();
 			}
 			
 			this.split(pathFileErogatore,pathFileFruitore,tipoSchema,permettiSchemaLocationNonDefiniti);
 			
 			// delete file tmp
-			wsdlErogatoreTmpFile.delete();
+			if(!wsdlErogatoreTmpFile.delete()) {
+				// ignore
+			}
 			if(wsdlFruitore!=null){
-				wsdlFruitoreTmpFile.delete();
+				if(!wsdlFruitoreTmpFile.delete()) {
+					// ignore
+				}
 			}
 			
 		}catch(Exception e){
 			if(this.debug)
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			throw new WSDLException("split(Byte)",
 					"Split non riuscito: "+e.getMessage(),e);
 		}
@@ -414,22 +424,27 @@ public class ConverterStandardWSDL2SplitWSDL {
 			TipoSchemaXSDAccordoServizio tipoSchema)throws WSDLException{
 		try{
 			File wsdlErogatoreTmpFile = File.createTempFile("WSDLErogatoreFromByte-", "-split", this.outputDir);
-			if (!wsdlErogatoreTmpFile.exists())
-				wsdlErogatoreTmpFile.createNewFile();
-			FileOutputStream fout = new FileOutputStream(wsdlErogatoreTmpFile);
-			fout.write(wsdl);
-			fout.flush();
-			fout.close();
+			if (!wsdlErogatoreTmpFile.exists()) {
+				if(!wsdlErogatoreTmpFile.createNewFile()) {
+					// ignore
+				}
+			}
+			try(FileOutputStream fout = new FileOutputStream(wsdlErogatoreTmpFile)){
+				fout.write(wsdl);
+				fout.flush();
+			}
 			String pathFileErogatore = wsdlErogatoreTmpFile.getAbsolutePath();
 			
 			this.split(pathFileErogatore,porttypesErogatore,operationPorttypesErogatore,porttypesFruitore,operationPorttypesFruitore,tipoSchema);
 			
 			// delete file tmp
-			wsdlErogatoreTmpFile.delete();
+			if(!wsdlErogatoreTmpFile.delete()) {
+				// ignore
+			}
 			
 		}catch(Exception e){
 			if(this.debug)
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			throw new WSDLException("split(Byte,PortType...)",
 					"Split non riuscito: "+e.getMessage(),e);
 		}

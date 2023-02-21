@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
@@ -62,22 +61,9 @@ import java.util.List;
 
 @XmlRootElement(name = "canali-configurazione")
 
-public class CanaliConfigurazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class CanaliConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public CanaliConfigurazione() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+    super();
   }
 
   public void addCanale(CanaleConfigurazione canale) {
@@ -149,9 +135,6 @@ public class CanaliConfigurazione extends org.openspcoop2.utils.beans.BaseBean i
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
 
 

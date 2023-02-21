@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
@@ -66,22 +65,9 @@ import java.util.List;
 
 @XmlRootElement(name = "response-caching-configurazione-hash-generator")
 
-public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public ResponseCachingConfigurazioneHashGenerator() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+    super();
   }
 
   public void addHeader(java.lang.String header) {
@@ -213,9 +199,6 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
 
 

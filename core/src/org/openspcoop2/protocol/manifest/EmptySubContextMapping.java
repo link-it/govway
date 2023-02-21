@@ -53,6 +53,7 @@ import java.io.Serializable;
 
 public class EmptySubContextMapping extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public EmptySubContextMapping() {
+    super();
   }
 
   public void set_value_function(String value) {

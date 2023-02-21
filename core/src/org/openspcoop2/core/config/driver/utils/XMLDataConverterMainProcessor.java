@@ -43,7 +43,7 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 
-public class TestXMLDataConverter {
+public class XMLDataConverterMainProcessor {
 
 
 	public static void main(String[] argoments) throws Exception {
@@ -51,7 +51,7 @@ public class TestXMLDataConverter {
 		
 		                               
 		if (argoments.length  < 9) {
-			String errorMsg = "ERROR, Usage:  java TestXMLDataConverter sorgenteXML tipoConfigurazioneCRUD proprietaConfigurazioneCRUD reset isGestioneConfigurazione tipoConversione gestioneSoggetti gestioneMappingErogazioneFruizione protocolloDefault [Logger]";
+			String errorMsg = "ERROR, Usage:  java XMLDataConverterMainProcessor sorgenteXML tipoConfigurazioneCRUD proprietaConfigurazioneCRUD reset isGestioneConfigurazione tipoConversione gestioneSoggetti gestioneMappingErogazioneFruizione protocolloDefault [Logger]";
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}
@@ -76,7 +76,7 @@ public class TestXMLDataConverter {
 			if(args_logger!=null){
 				LoggerWrapperFactory.setLogConfiguration(args_logger);
 			}else{
-				URL url = TestXMLDataConverter.class.getResource("/xml2backend.log4j2.properties");
+				URL url = XMLDataConverterMainProcessor.class.getResource("/xml2backend.log4j2.properties");
 				if(url!=null){
 					LoggerWrapperFactory.setLogConfiguration(url);
 				}
@@ -99,7 +99,9 @@ public class TestXMLDataConverter {
 		
 		java.util.Properties reader = new java.util.Properties();
 		try{
-			reader.load(new FileInputStream(args_proprietaConfigurazioneCRUD));
+			try(FileInputStream fin = new FileInputStream(args_proprietaConfigurazioneCRUD)){
+				reader.load(fin);
+			}
 		}catch(java.io.IOException e) {
 			String errorMsg = "Errore durante il caricamento del file di properties ["+args_proprietaConfigurazioneCRUD+"] : "+e.getMessage();
 			log.error(errorMsg,e);
@@ -191,7 +193,7 @@ public class TestXMLDataConverter {
 		}
 
 		try{
-			ExtendedInfoManager.initialize(new Loader(TestXMLDataConverter.class.getClassLoader()), null, null, null);
+			ExtendedInfoManager.initialize(new Loader(XMLDataConverterMainProcessor.class.getClassLoader()), null, null, null);
 		}catch(Exception e){
 			log.error("Inizializzazione [ExtendedInfoManager] fallita",e);
 			return;
@@ -210,7 +212,7 @@ public class TestXMLDataConverter {
 				}
 			}
 			
-			TestXMLDataConverter.letturaSorgenti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, acCRUD, 
+			XMLDataConverterMainProcessor.letturaSorgenti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, acCRUD, 
 					condivisioneDBRegservPddValue, superUser,protocolloDefault, args_tipoConversione, isGestioneConfigurazione, reset, gestioneSoggetti, gestioneMappingErogazioneFruizione);
 			
 		}catch(Exception e){
@@ -235,8 +237,8 @@ public class TestXMLDataConverter {
 			// Se si desidera la reset, controllo se e' gia stata effettuata
 			semaphoreResetEffettuata.acquireThrowRuntime("reset");
 			try {
-				if(TestXMLDataConverter.resetEffettuata==false){
-					TestXMLDataConverter.resetEffettuata=true;
+				if(XMLDataConverterMainProcessor.resetEffettuata==false){
+					XMLDataConverterMainProcessor.resetEffettuata=true;
 					return true;
 				}
 				else{
@@ -260,7 +262,7 @@ public class TestXMLDataConverter {
 			}
 			if(fSorgente.getName().endsWith(".xml")){
 				// Per non convertire i wsdl e i xml
-				TestXMLDataConverter.converti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, acCRUD, 
+				XMLDataConverterMainProcessor.converti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, acCRUD, 
 						condivisioneDBRegservPddValue, superUser,protocolloDefault, tipoConversione, isGestioneConfigurazione, reset, gestioneSoggetti,gestioneMappingErogazioneFruizione);
 			}
 			else{
@@ -279,7 +281,7 @@ public class TestXMLDataConverter {
 			}
 			for(int i=0; i<f.length; i++){
 			
-				TestXMLDataConverter.letturaSorgenti(f[i], connectionDB, connectionSQL, tipoDatabase, log, acCRUD, 
+				XMLDataConverterMainProcessor.letturaSorgenti(f[i], connectionDB, connectionSQL, tipoDatabase, log, acCRUD, 
 						condivisioneDBRegservPddValue, superUser,protocolloDefault, tipoConversione, isGestioneConfigurazione, reset, gestioneSoggetti,gestioneMappingErogazioneFruizione);
 				
 			}
@@ -306,7 +308,7 @@ public class TestXMLDataConverter {
 		
 		if("insertUpdate".equals(tipoConversione)){
 			log.info("Inizio conversione...");
-			dataConverter.convertXML(TestXMLDataConverter.reset(reset),gestioneSoggetti,gestioneMappingErogazioneFruizione);
+			dataConverter.convertXML(XMLDataConverterMainProcessor.reset(reset),gestioneSoggetti,gestioneMappingErogazioneFruizione);
 			log.info("Conversione terminata.");
 		}
 		else if("delete".equals(tipoConversione)){

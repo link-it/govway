@@ -1274,6 +1274,9 @@ public class StandardWSDL {
 			risultato = new DefinitionWrapper(logico,this.xmlUtils);
 		} else {
 			File importFile = null;
+			if(importLogico==null) {
+				throw new StandardWSDLException("WSDL logico non fornito");
+			}
 			if(this.pathImplementativo!=null){
 				importFile = new File(new File(this.pathImplementativo), importLogico.getLocationURI());
 			}else{

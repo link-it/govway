@@ -49,6 +49,8 @@ import org.openspcoop2.utils.xml.JaxbUtils;
 @XmlTransient
 public abstract class BaseBean {
 
+	public BaseBean(){
+	}
 	
 	
 	/* ********** GENERIC UTILS ********* */

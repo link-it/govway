@@ -453,35 +453,44 @@ public class SQLScriptBuilder {
 		ByteArrayOutputStream boutDDL = new ByteArrayOutputStream();
 		ByteArrayOutputStream boutDML = new ByteArrayOutputStream();
 		
-		BufferedReader br = new BufferedReader(new FileReader(sqlFile));
-	    String line;
-	    while ((line = br.readLine()) != null) {
-	       // process the line.
-	    	
-	    	if(dmlOpen){
-	    		boutDML.write(line.getBytes());
-	    		boutDML.write("\n".getBytes());
-	    		if(line.contains(";")){
-	    			dmlOpen = false; // finish
-	    		}
-	    	}
-	    	else{
-		    	if(isDML(line)){
-		    		dmlOpen = true; // start
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(sqlFile));
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		       // process the line.
+		    	
+		    	if(dmlOpen){
 		    		boutDML.write(line.getBytes());
 		    		boutDML.write("\n".getBytes());
 		    		if(line.contains(";")){
-		    			dmlOpen = false; // finish (in una unica riga)
+		    			dmlOpen = false; // finish
 		    		}
 		    	}
 		    	else{
-		    		boutDDL.write(line.getBytes());
-		    		boutDDL.write("\n".getBytes());
+			    	if(isDML(line)){
+			    		dmlOpen = true; // start
+			    		boutDML.write(line.getBytes());
+			    		boutDML.write("\n".getBytes());
+			    		if(line.contains(";")){
+			    			dmlOpen = false; // finish (in una unica riga)
+			    		}
+			    	}
+			    	else{
+			    		boutDDL.write(line.getBytes());
+			    		boutDDL.write("\n".getBytes());
+			    	}
 		    	}
-	    	}
-	    	
-	    }
-	    br.close();
+		    	
+		    }
+		}finally {
+			try {
+				if(br!=null)
+					br.close();
+			}catch(Throwable t) {
+				// ignore
+			}
+		}
 	    
 	    //System.out.println("DDL["+boutDDL.size()+"] DML["+boutDML.size()+"]");
 	    

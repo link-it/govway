@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class InterfaceConfiguration extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public InterfaceConfiguration() {
+    super();
   }
 
   public void set_value_type(String value) {

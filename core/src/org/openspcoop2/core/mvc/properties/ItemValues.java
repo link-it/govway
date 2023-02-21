@@ -58,6 +58,7 @@ import java.util.List;
 
 public class ItemValues extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ItemValues() {
+    super();
   }
 
   public void addValue(ItemValue value) {

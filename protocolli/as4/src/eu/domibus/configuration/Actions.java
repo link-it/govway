@@ -58,6 +58,7 @@ import java.util.List;
 
 public class Actions extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Actions() {
+    super();
   }
 
   public void addAction(Action action) {

@@ -69,6 +69,7 @@ import java.io.Serializable;
 
 public class TransitionType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public TransitionType() {
+    super();
   }
 
   public void set_value_activationMode(String value) {

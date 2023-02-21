@@ -71,6 +71,7 @@ import java.io.Serializable;
 
 public class AccordoServizio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public AccordoServizio() {
+    super();
   }
 
   public java.lang.String getDescrizione() {

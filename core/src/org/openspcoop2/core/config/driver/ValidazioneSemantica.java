@@ -829,6 +829,10 @@ public class ValidazioneSemantica {
 				else{
 					// Prelevo servizio applicativo per conformita con l'utilizzo nella porta delegata
 					sa = this.getServizioApplicativo(pdSa.getNome(), sogg);
+					if(sa==null) {
+						this.errori.add("La porta delegata "+idPortaDelegata+" ha associato un riferimento ad un servizio applicativo ["+pdSa.getNome()+"] che non risulta registrato nel soggetto "+sogg.getTipo()+"/"+sogg.getNome());
+						continue;
+					}
 				}
 			}
 			
@@ -905,10 +909,12 @@ public class ValidazioneSemantica {
 			if(tipiIntegrazione==null || tipiIntegrazione.length<=0){
 				this.errori.add("La porta delegata "+idPortaDelegata+" possiede un valore nel campo 'integrazione' non valido: "+integrazione);
 			}
-			for(int p=0;p<tipiIntegrazione.length;p++){
-				String tipoI = tipiIntegrazione[p].trim();
-				if(this.tipoIntegrazionePD.contains(tipoI)==false){
-					this.errori.add("La porta delegata "+idPortaDelegata+" possiede un tipo di integrazione ["+tipoI+"] non valido: valori utilizzabili sono: "+this.getTipoIntegrazionePD());
+			else {
+				for(int p=0;p<tipiIntegrazione.length;p++){
+					String tipoI = tipiIntegrazione[p].trim();
+					if(this.tipoIntegrazionePD.contains(tipoI)==false){
+						this.errori.add("La porta delegata "+idPortaDelegata+" possiede un tipo di integrazione ["+tipoI+"] non valido: valori utilizzabili sono: "+this.getTipoIntegrazionePD());
+					}
 				}
 			}
 		}
@@ -1324,10 +1330,12 @@ public class ValidazioneSemantica {
 			if(tipiIntegrazione==null || tipiIntegrazione.length<=0){
 				this.errori.add("La porta applicativa "+idPortaApplicativa+" possiede un valore nel campo 'integrazione' non valido: "+integrazione);
 			}
-			for(int p=0;p<tipiIntegrazione.length;p++){
-				String tipoI = tipiIntegrazione[p].trim();
-				if(this.tipoIntegrazionePA.contains(tipoI)==false){
-					this.errori.add("La porta applicativa "+idPortaApplicativa+" possiede un tipo di integrazione ["+tipoI+"] non valido: valori utilizzabili sono: "+this.getTipoIntegrazionePA());
+			else {
+				for(int p=0;p<tipiIntegrazione.length;p++){
+					String tipoI = tipiIntegrazione[p].trim();
+					if(this.tipoIntegrazionePA.contains(tipoI)==false){
+						this.errori.add("La porta applicativa "+idPortaApplicativa+" possiede un tipo di integrazione ["+tipoI+"] non valido: valori utilizzabili sono: "+this.getTipoIntegrazionePA());
+					}
 				}
 			}
 		}

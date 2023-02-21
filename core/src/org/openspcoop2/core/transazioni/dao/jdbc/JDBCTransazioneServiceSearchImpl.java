@@ -134,17 +134,22 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 		
 	}
 	
+	private static boolean efficiente = true;    
+    public static boolean isEfficiente() {
+		return efficiente;
+	}
+	public static void setEfficiente(boolean efficiente) {
+		JDBCTransazioneServiceSearchImpl.efficiente = efficiente;
+	}
 	@Override
 	public List<Transazione> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
 
 		List<Transazione> list = new ArrayList<Transazione>();
         
-        boolean efficente = true;
-        
         boolean soloColonneIndicizzateFullIndexSearch = TransazioniIndexUtils.isEnabledSoloColonneIndicizzateFullIndexSearch(expression); 
         boolean soloColonneIndicizzateFullIndexStats = TransazioniIndexUtils.isEnabledSoloColonneIndicizzateFullIndexStats(expression); 
 
-		if(efficente || soloColonneIndicizzateFullIndexSearch || soloColonneIndicizzateFullIndexStats) {
+		if(efficiente || soloColonneIndicizzateFullIndexSearch || soloColonneIndicizzateFullIndexStats) {
         
     		List<IField> fields = new ArrayList<IField>();
     		if(soloColonneIndicizzateFullIndexSearch){
@@ -263,7 +268,7 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
     	        // BUG FIX: Siccome tra le colonne lette ci sono dei CLOB, in oracle non e' consentito utilizzare il DISTINCT.
     	        // Per questo motivo se c'e' da usare il distinct viene utilizzato il vecchio metodo
     	        if(distinct) {
-    	        	//System.out.println("NON EFFICENTE");
+    	        	//System.out.println("NON EFFICIENTE");
     	        	
     				List<Object> ids = this._findAllObjectIds(jdbcProperties, log, connection, sqlQueryObject, expression);
     				
@@ -274,7 +279,7 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
     	        }
     	        else {
     	        
-    	        	//System.out.println("EFFICENTE");
+    	        	//System.out.println("EFFICIENTE");
     	        	
 		    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
 		

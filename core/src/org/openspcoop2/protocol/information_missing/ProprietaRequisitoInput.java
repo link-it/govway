@@ -70,6 +70,7 @@ import java.io.Serializable;
 
 public class ProprietaRequisitoInput extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ProprietaRequisitoInput() {
+    super();
   }
 
   public ConditionsType getConditions() {

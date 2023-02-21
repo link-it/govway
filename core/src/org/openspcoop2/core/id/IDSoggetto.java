@@ -161,7 +161,8 @@ public class IDSoggetto implements java.io.Serializable, Cloneable {
 		if(soggetto == null)
 			return false;
 		if(verifyClass) {
-			if(soggetto.getClass().getName().equals(this.getClass().getName()) == false) {
+			String objectClassName = soggetto.getClass().getName() + "";
+			if(objectClassName.equals(this.getClass().getName()) == false) {
 				return false;
 			}
 		}

@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class RiferimentoAccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RiferimentoAccordoServizioParteSpecifica() {
+    super();
   }
 
   public java.lang.String getUri() {

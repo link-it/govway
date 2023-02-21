@@ -58,6 +58,7 @@ import java.util.List;
 
 public class SpecificaLivelliServizio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SpecificaLivelliServizio() {
+    super();
   }
 
   public void addDocumentoLivelloServizio(DocumentoLivelloServizio documentoLivelloServizio) {

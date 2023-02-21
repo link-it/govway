@@ -52,6 +52,7 @@ import java.io.Serializable;
 
 public class Security extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Security() {
+    super();
   }
 
   public java.lang.String getName() {

@@ -63,6 +63,7 @@ import java.io.Serializable;
 
 public class DatiApplicativiFruizione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiApplicativiFruizione() {
+    super();
   }
 
   public java.lang.String getBasicUsername() {

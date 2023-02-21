@@ -58,6 +58,7 @@ import java.util.List;
 
 public class SoapHeaderBypassMustUnderstand extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SoapHeaderBypassMustUnderstand() {
+    super();
   }
 
   public void addHeader(SoapHeaderBypassMustUnderstandHeader header) {

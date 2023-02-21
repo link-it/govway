@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class Identifier extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Identifier() {
+    super();
   }
 
   public java.lang.String getPartyId() {

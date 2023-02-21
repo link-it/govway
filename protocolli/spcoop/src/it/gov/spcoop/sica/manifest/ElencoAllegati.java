@@ -58,6 +58,7 @@ import java.util.List;
 
 public class ElencoAllegati extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ElencoAllegati() {
+    super();
   }
 
   public void addGenericoDocumento(java.lang.String genericoDocumento) {

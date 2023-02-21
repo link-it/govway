@@ -58,6 +58,7 @@ import java.util.List;
 
 public class Fruitori extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Fruitori() {
+    super();
   }
 
   public void addFruitore(Soggetto fruitore) {

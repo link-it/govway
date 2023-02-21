@@ -61,6 +61,7 @@ import java.util.List;
 
 public class DatiPagamentoType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiPagamentoType() {
+    super();
   }
 
   public void set_value_condizioniPagamento(String value) {

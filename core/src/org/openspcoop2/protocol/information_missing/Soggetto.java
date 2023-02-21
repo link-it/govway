@@ -71,6 +71,7 @@ import java.io.Serializable;
 
 public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Soggetto() {
+    super();
   }
 
   public ConditionsType getConditions() {

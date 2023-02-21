@@ -60,6 +60,7 @@ import java.util.List;
 
 public class As4 extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public As4() {
+    super();
   }
 
   public void addReceptionAwareness(ReceptionAwareness receptionAwareness) {

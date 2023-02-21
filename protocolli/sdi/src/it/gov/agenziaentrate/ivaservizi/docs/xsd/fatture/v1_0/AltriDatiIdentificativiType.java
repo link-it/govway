@@ -66,6 +66,7 @@ import java.io.Serializable;
 
 public class AltriDatiIdentificativiType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public AltriDatiIdentificativiType() {
+    super();
   }
 
   public java.lang.String getDenominazione() {

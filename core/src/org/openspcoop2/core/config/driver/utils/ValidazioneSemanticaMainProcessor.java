@@ -43,7 +43,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestValidazioneSemantica {
+public class ValidazioneSemanticaMainProcessor {
 
 		/**
 	 * @param args
@@ -52,7 +52,7 @@ public class TestValidazioneSemantica {
 		// TODO Auto-generated method stub
 		
 		if (args.length  < 4) {
-			String errorMsg = "ERROR, Usage:  java TestValidazioneSemantica commonProperties tipoConfigurazione proprietaConfigurazione validazioneConfigurazione";
+			String errorMsg = "ERROR, Usage:  java ValidazioneSemanticaMainProcessor commonProperties tipoConfigurazione proprietaConfigurazione validazioneConfigurazione";
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}
@@ -66,7 +66,7 @@ public class TestValidazioneSemantica {
 			if(args.length==5){
 				LoggerWrapperFactory.setLogConfiguration(args[4]);
 			}else{
-				URL url = TestValidazioneSemantica.class.getResource("/validator.log4j2.properties");
+				URL url = ValidazioneSemanticaMainProcessor.class.getResource("/validator.log4j2.properties");
 				if(url!=null){
 					LoggerWrapperFactory.setLogConfiguration(url);
 				}
@@ -90,7 +90,9 @@ public class TestValidazioneSemantica {
 		
 		java.util.Properties commonProperties = new java.util.Properties();
 		try{
-			commonProperties.load(new FileInputStream(args[0]));
+			try(FileInputStream fin = new FileInputStream(args[0])){
+				commonProperties.load(fin);
+			}
 		}catch(java.io.IOException e) {
 			String errorMsg = "Errore durante il caricamento del file di properties ["+args[0]+"] : "+e.getMessage();
 			log.error(errorMsg,e);
@@ -99,7 +101,9 @@ public class TestValidazioneSemantica {
 		
 		java.util.Properties reader = new java.util.Properties();
 		try{
-			reader.load(new FileInputStream(args[2]));
+			try(FileInputStream fin = new FileInputStream(args[2])){
+				reader.load(fin);
+			}
 		}catch(java.io.IOException e) {
 			String errorMsg = "Errore durante il caricamento del file di properties ["+args[2]+"] : "+e.getMessage();
 			log.error(errorMsg,e);

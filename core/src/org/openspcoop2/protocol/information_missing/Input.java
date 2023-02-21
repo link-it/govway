@@ -62,6 +62,7 @@ import java.util.List;
 
 public class Input extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Input() {
+    super();
   }
 
   public ConditionsType getConditions() {

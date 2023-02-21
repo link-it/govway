@@ -247,6 +247,7 @@ public enum PolicyGroupByActiveThreadsType {
 	
 	
 	public boolean isSupportedResource(TipoRisorsaPolicyAttiva resource) {
-		return this.getSupportedResources().contains(resource);
+		List<TipoRisorsaPolicyAttiva> l = this.getSupportedResources();
+		return l!=null && l.contains(resource);
 	}
 }

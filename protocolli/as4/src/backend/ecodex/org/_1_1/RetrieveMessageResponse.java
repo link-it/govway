@@ -60,6 +60,7 @@ import java.util.List;
 
 public class RetrieveMessageResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RetrieveMessageResponse() {
+    super();
   }
 
   public LargePayloadType getBodyload() {

@@ -59,6 +59,7 @@ import java.io.Serializable;
 
 public class IdentificatoreAccordo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IdentificatoreAccordo() {
+    super();
   }
 
   public Soggetto getSoggetto() {

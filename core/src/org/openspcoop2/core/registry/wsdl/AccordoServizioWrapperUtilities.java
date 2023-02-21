@@ -828,13 +828,13 @@ public class AccordoServizioWrapperUtilities {
 								//System.out.println("SOAP NAMESPACE: "+argumentsOperation.getSoapNamespace());
 										
 								boolean match = true;
-								if(argumentsOperation.getSoapNamespace()==null) {
+								if(argumentsOperation!=null && argumentsOperation.getSoapNamespace()==null) {
 									if(rootElementNamespace!=null) {
 										match=false;
 									}
 								}
 								else {
-									if(!argumentsOperation.getSoapNamespace().equals(rootElementNamespace)) {
+									if(argumentsOperation!=null && (!argumentsOperation.getSoapNamespace().equals(rootElementNamespace))) {
 										if(rootElementNamespace==null || StringUtils.isEmpty(rootElementNamespace)) {
 											if(!rpcAcceptRootElementUnqualified) {
 												match=false;

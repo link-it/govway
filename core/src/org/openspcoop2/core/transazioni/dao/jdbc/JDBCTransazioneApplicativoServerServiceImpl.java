@@ -161,12 +161,17 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		
 	}
 
+	private static boolean efficiente = true;
+	public static boolean isEfficiente() {
+		return efficiente;
+	}
+	public static void setEfficiente(boolean efficiente) {
+		JDBCTransazioneApplicativoServerServiceImpl.efficiente = efficiente;
+	}
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdTransazioneApplicativoServer oldId, TransazioneApplicativoServer transazioneApplicativoServer, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		boolean efficente = true;
-		
-		if(efficente) {
+		if(efficiente) {
 		
 			long tableId = -1;
 			if(oldId!=null && oldId.getId()!=null && oldId.getId().longValue()>0) {

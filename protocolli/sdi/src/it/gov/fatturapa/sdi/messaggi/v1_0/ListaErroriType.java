@@ -58,6 +58,7 @@ import java.util.List;
 
 public class ListaErroriType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ListaErroriType() {
+    super();
   }
 
   public void addErrore(ErroreType errore) {

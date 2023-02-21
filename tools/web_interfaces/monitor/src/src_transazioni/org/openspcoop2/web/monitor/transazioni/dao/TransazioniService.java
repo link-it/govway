@@ -2195,7 +2195,7 @@ public class TransazioniService implements ITransazioniService {
 				expr.equals(Transazione.model().ID_MESSAGGIO_RISPOSTA, idEgov);
 			}
 			
-			// INEFFICENTE: non vengono usati a modo gli indici. Si assume che i duplicati siano comunque sempre nel solito flusso
+			// INEFFICIENTE: non vengono usati a modo gli indici. Si assume che i duplicati siano comunque sempre nel solito flusso
 //			IExpression orExpr = this.transazioniSearchDAO.newExpression();
 //			orExpr.equals(Transazione.model().ID_MESSAGGIO_RICHIESTA, idEgov);
 //			orExpr.or().equals(Transazione.model().ID_MESSAGGIO_RISPOSTA,
@@ -2289,7 +2289,7 @@ public class TransazioniService implements ITransazioniService {
 				expr.equals(Transazione.model().ID_MESSAGGIO_RISPOSTA, idEgov);
 			}
 			
-			// INEFFICENTE: non vengono usati a modo gli indici. Si assume che i duplicati siano comunque sempre nel solito flusso
+			// INEFFICIENTE: non vengono usati a modo gli indici. Si assume che i duplicati siano comunque sempre nel solito flusso
 //			IExpression idEgovExpr = this.transazioniSearchDAO.newExpression();
 //			idEgovExpr.or()
 //			.equals(Transazione.model().ID_MESSAGGIO_RICHIESTA, idEgov)
@@ -2347,7 +2347,7 @@ public class TransazioniService implements ITransazioniService {
 				expr.equals(Transazione.model().ID_MESSAGGIO_RISPOSTA, idEgov);
 			}
 			
-			// INEFFICENTE: non vengono usati a modo gli indici. Si assume che i duplicati siano comunque sempre nel solito flusso
+			// INEFFICIENTE: non vengono usati a modo gli indici. Si assume che i duplicati siano comunque sempre nel solito flusso
 //			IExpression idEgovExpr = this.transazioniSearchDAO.newExpression();
 //			idEgovExpr.or()
 //			.equals(Transazione.model().ID_MESSAGGIO_RICHIESTA, idEgov)
@@ -2983,7 +2983,7 @@ public class TransazioniService implements ITransazioniService {
 					filter.equals(Transazione.model().ID_ASINCRONO, value);
 					break;
 				}
-				// Inefficente altrimenti fare la OR
+				// Inefficiente altrimenti fare la OR
 //				IExpression idegov = this.transazioniSearchDAO.newExpression();
 //				idegov.or();
 //				idegov.equals(Transazione.model().ID_MESSAGGIO_RICHIESTA,	value);
@@ -3048,7 +3048,7 @@ public class TransazioniService implements ITransazioniService {
 				default:
 					throw new Exception("Tipo di ricerca non fornito");
 				}
-				// Inefficente altrimenti fare la OR
+				// Inefficiente altrimenti fare la OR
 //				IExpression idCorrelazioneApplicativa = this.transazioniSearchDAO.newExpression();
 //				idCorrelazioneApplicativa.or();
 //				idCorrelazioneApplicativa.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA,	value);

@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class EgovDecllElement extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public EgovDecllElement() {
+    super();
   }
 
   public java.lang.String getEGovVersion() {

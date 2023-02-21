@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class DatiBolloType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiBolloType() {
+    super();
   }
 
   public java.lang.String getNumeroBollo() {

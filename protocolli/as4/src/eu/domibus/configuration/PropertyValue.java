@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class PropertyValue extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public PropertyValue() {
+    super();
   }
 
   public PropertyValueUrl getUrl() {

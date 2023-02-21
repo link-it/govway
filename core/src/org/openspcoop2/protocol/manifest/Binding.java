@@ -61,6 +61,7 @@ import java.io.Serializable;
 
 public class Binding extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Binding() {
+    super();
   }
 
   public SoapConfiguration getSoap() {

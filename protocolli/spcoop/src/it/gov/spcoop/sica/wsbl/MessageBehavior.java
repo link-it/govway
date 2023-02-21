@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class MessageBehavior extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public MessageBehavior() {
+    super();
   }
 
   public java.lang.String getName() {

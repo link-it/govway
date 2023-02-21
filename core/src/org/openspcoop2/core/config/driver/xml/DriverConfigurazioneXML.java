@@ -185,8 +185,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				iStream = httpConn.getInputStream();
 			}catch(Exception e) {
 				try{  
-					if(iStream!=null)
-						iStream.close();
+//					if(iStream!=null)
+//						iStream.close();
 					if(httpConn !=null)
 						httpConn.disconnect();
 				} catch(Exception ef) {}

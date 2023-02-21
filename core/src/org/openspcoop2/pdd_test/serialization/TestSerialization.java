@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2023 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -18,17 +18,30 @@
  *
  */
 
-package org.openspcoop2.core.registry.driver.utils;
+package org.openspcoop2.pdd_test.serialization;
+
+import org.openspcoop2.pdd_test.Costanti;
+import org.openspcoop2.utils.test.TestLogger;
+import org.testng.annotations.Test;
 
 /**
- * TestEnumerations
+ * TestDynamicReplace
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum TestEnumerations {
+public class TestSerialization {
 
-	VALORE1,VALORE2,VALORE3;
+	private static final String ID_TEST = "Serialization";
+	
+	@Test(groups={Costanti.GRUPPO_PDD,Costanti.GRUPPO_PDD+"."+ID_TEST})
+	public void testDynamicReplace() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+"' ...");
+		org.openspcoop2.core.registry.driver.test.SerializationClientTest.test();
+		TestLogger.info("Run test '"+ID_TEST+"' ok");
+		
+	}
 	
 }

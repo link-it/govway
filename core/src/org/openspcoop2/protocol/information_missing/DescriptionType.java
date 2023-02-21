@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class DescriptionType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DescriptionType() {
+    super();
   }
 
   public void set_value_tipo(String value) {

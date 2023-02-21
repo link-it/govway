@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class ContattiTrasmittenteType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ContattiTrasmittenteType() {
+    super();
   }
 
   public java.lang.String getTelefono() {

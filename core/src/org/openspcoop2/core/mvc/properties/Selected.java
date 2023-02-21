@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class Selected extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Selected() {
+    super();
   }
 
   public java.lang.String getName() {

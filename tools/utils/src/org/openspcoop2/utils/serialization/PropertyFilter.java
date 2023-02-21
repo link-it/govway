@@ -44,26 +44,28 @@ public class PropertyFilter implements net.sf.json.util.PropertyFilter{
 	@Override
 	public boolean apply( Object source, String name, Object value ) {  
 		
-		// Filtri per valore
-		if(value!=null){
-			for(int i=0; i<this.core.getFilter().sizeFiltersByValue(); i++){
-				Class<?> classFilter = this.core.getFilter().getFilterByValue(i);
-				if(value.getClass().isAssignableFrom(classFilter)){
-					this.core.applicaFiltro(source, name, value, classFilter);	
-					return true; 
+		if(this.core.getFilter()!=null) {
+			// Filtri per valore
+			if(value!=null){
+				for(int i=0; i<this.core.getFilter().sizeFiltersByValue(); i++){
+					Class<?> classFilter = this.core.getFilter().getFilterByValue(i);
+					if(value.getClass().isAssignableFrom(classFilter)){
+						this.core.applicaFiltro(source, name, value, classFilter);	
+						return true; 
+					}
 				}
 			}
-		}
-		
-		
-		// Filtri per nome field
-		String nomeField = source.getClass().getName()+"."+name;
-		for(int i=0; i<this.core.getFilter().sizeFiltersByName(); i++){
-			String filterName = this.core.getFilter().getFilterByName(i);
-			if(nomeField.equals(filterName)){			
-				if(value!=null){
-					this.core.applicaFiltro(source, name, value, value.getClass());
-					return true; 
+			
+			
+			// Filtri per nome field
+			String nomeField = source.getClass().getName()+"."+name;
+			for(int i=0; i<this.core.getFilter().sizeFiltersByName(); i++){
+				String filterName = this.core.getFilter().getFilterByName(i);
+				if(nomeField.equals(filterName)){			
+					if(value!=null){
+						this.core.applicaFiltro(source, name, value, value.getClass());
+						return true; 
+					}
 				}
 			}
 		}

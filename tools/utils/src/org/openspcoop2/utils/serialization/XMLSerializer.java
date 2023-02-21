@@ -52,13 +52,15 @@ public class XMLSerializer implements ISerializer {
 	
 	public XMLSerializer(SerializationConfig config){
 		XMLSerializer filtroInternoOggettiFiltratiDiversiByteArray = null;
-		if(config.getFilter().sizeFiltersByValue()>0 || config.getFilter().sizeFiltersByName()>0) {
-			
-			SerializationConfig conf = new SerializationConfig();
-			conf.setFilter(new Filter());
-			conf.setExcludes(config.getExcludes());
-			conf.setIdBuilder(config.getIdBuilder());
-			filtroInternoOggettiFiltratiDiversiByteArray = new XMLSerializer(conf);
+		if(config.getFilter()!=null) {
+			if(config.getFilter().sizeFiltersByValue()>0 || config.getFilter().sizeFiltersByName()>0) {
+				
+				SerializationConfig conf = new SerializationConfig();
+				conf.setFilter(new Filter());
+				conf.setExcludes(config.getExcludes());
+				conf.setIdBuilder(config.getIdBuilder());
+				filtroInternoOggettiFiltratiDiversiByteArray = new XMLSerializer(conf);
+			}
 		}
 		
 		JsonConfig jsonConfig = new JsonConfig();

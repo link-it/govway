@@ -62,6 +62,7 @@ import java.util.List;
 
 public class SoapMediaTypeCollection extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SoapMediaTypeCollection() {
+    super();
   }
 
   public void addMediaType(SoapMediaTypeMapping mediaType) {

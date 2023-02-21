@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class FaultDetail extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public FaultDetail() {
+    super();
   }
 
   public java.lang.String getCode() {

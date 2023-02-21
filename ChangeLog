@@ -2393,7 +2393,7 @@
 	Aggiunta funzionalità OP-1150
 	Il generatore delle statistiche effettuava una prima select con group by per calcolare i dati statistici relativi alle transazioni, comprese il numero di richieste e la dimensione.
 	Poi per ogni gruppo ritornato dalla group by calcolava le latenze effettuando una nuova query escludendo le transazioni in cui tutte le date ingresso/uscita della richiesta/risposta non erano disponibili.
-	Questo algoritmo generava 1+N query che rendevano la generazione delle statistiche inefficente in presenza di grandi mole di dati.
+	Questo algoritmo generava 1+N query che rendevano la generazione delle statistiche inefficiente in presenza di grandi mole di dati.
 	È stato rivisto l'algoritmo al fine di calcolare anche le latenze tramite una unica query.
 
 2021-03-01  Andrea Poli <apoli@link.it>
@@ -2436,7 +2436,7 @@
 	* [GovWayCore, BatchStatistiche, GovWayMonitor]
 	Aggiunta funzionalità di ricerca per identificativo del cluster e canale.
 	Sono inoltre stati migliorati i criteri di generazione dei report statistici che utilizzano adesso una identificazione dell'intervallo temporale inclusivo al giorno di interesse del report (es. >=2021-02-10 00:00:00.000).
-	Precedentemente al fix la data utilizzata era quelle precedente al giorno di interesse (es. >2021-02-10 23:59:59.999) e questa soluzione risultava meno efficente in presenza di partizionamento giornaliero delle transazioni.
+	Precedentemente al fix la data utilizzata era quelle precedente al giorno di interesse (es. >2021-02-10 23:59:59.999) e questa soluzione risultava meno efficiente in presenza di partizionamento giornaliero delle transazioni.
 	Gli indici 'full' generabili utilizzando l'installer in modalità avanzata vengono adesso generati anche per i tipi di database hsql e sqlserver.
 	Infine è stato migliorato l'algoritmo di generazione delle statistiche in modo che l'aggiornamento dell'intervallo corrente non produca informazioni parziali temporaneamente scorrette 
 	fino al completamento dell'aggiornamento come poteva avvenire precedentemente al fix.
@@ -3150,7 +3150,7 @@
 	* [GovWayCore]
 	Aggiunta funzionalità #58
 	(https://github.com/link-it/govway/issues/58)
-	Le patch SQL che modificano il tipo di una colonna da VARCHAR a CLOB, tramite il comando ALTER, sono state riviste al fine di utilizzare una versione più efficente per i tipi di database che lo consentono.
+	Le patch SQL che modificano il tipo di una colonna da VARCHAR a CLOB, tramite il comando ALTER, sono state riviste al fine di utilizzare una versione più efficiente per i tipi di database che lo consentono.
 
 2020-08-07  Andrea Poli <apoli@link.it>
 

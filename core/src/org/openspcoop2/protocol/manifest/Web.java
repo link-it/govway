@@ -60,6 +60,7 @@ import java.util.List;
 
 public class Web extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Web() {
+    super();
   }
 
   public void addContext(Context context) {

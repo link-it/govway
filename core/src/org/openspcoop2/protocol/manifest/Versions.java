@@ -58,6 +58,7 @@ import java.util.List;
 
 public class Versions extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Versions() {
+    super();
   }
 
   public void addVersion(Version version) {

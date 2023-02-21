@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class Registry extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Registry() {
+    super();
   }
 
   public Organization getOrganization() {

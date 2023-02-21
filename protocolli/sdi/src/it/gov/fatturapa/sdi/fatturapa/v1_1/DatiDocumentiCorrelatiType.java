@@ -70,6 +70,7 @@ import java.util.List;
 
 public class DatiDocumentiCorrelatiType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiDocumentiCorrelatiType() {
+    super();
   }
 
   public void addRiferimentoNumeroLinea(java.math.BigInteger riferimentoNumeroLinea) {

@@ -61,6 +61,7 @@ import java.io.Serializable;
 
 public class ScontoMaggiorazioneType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ScontoMaggiorazioneType() {
+    super();
   }
 
   public void set_value_tipo(String value) {

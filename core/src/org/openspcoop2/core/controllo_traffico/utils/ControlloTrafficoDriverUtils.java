@@ -1267,7 +1267,7 @@ public class ControlloTrafficoDriverUtils {
 			
 			/*
 			try{
-				// inefficente
+				// inefficiente
 				List<Object> list = serviceManager.getAttivazionePolicyServiceSearch().select(pagExpr, AttivazionePolicy.model().ID_ACTIVE_POLICY);
 				if(list!=null && list.size()>0){
 					int found = -1;

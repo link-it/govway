@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class OrganizationType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public OrganizationType() {
+    super();
   }
 
   public java.lang.String getName() {

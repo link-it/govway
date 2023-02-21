@@ -1440,28 +1440,6 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public boolean isAzioneInUso(String nomeAzione) throws DriverRegistroServiziException {
-		Connection con = null;
-		String nomeMetodo = "isAzioneInUso";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverRegistroServiziDB().isAzioneInUso(nomeAzione);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-
 
 	public List<AccordoServizioParteComune> accordiServizio_serviziComponentiConSoggettoErogatore(IDSoggetto idSoggetto) throws DriverRegistroServiziException {
 		Connection con = null;

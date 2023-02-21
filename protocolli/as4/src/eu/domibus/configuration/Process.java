@@ -67,6 +67,7 @@ import java.io.Serializable;
 
 public class Process extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Process() {
+    super();
   }
 
   public InitiatorParties getInitiatorParties() {

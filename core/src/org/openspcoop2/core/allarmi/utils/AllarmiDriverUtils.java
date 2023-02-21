@@ -501,7 +501,7 @@ public class AllarmiDriverUtils {
 			
 			/*
 			try{
-				// inefficente
+				// inefficiente
 				List<Object> list = jdbcServiceManager.getAllarmeServiceSearch().select(pagExpr, Allarme.model().NOME);
 				if(list!=null && list.size()>0){
 					int found = -1;

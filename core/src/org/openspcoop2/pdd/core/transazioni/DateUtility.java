@@ -57,7 +57,7 @@ public class DateUtility {
 		// Le date presenti in un identificativo di protocollo, possono contenere
 		// informazioni fino al millisecondo.
 		// Per il filtro duplicati si vuole invece mantenere le informazioni fino al minuto
-		// al fine di raggruppare gli identificativi in un insieme minimo che renda efficente l'indice di ricerca
+		// al fine di raggruppare gli identificativi in un insieme minimo che renda efficiente l'indice di ricerca
 		String data = dateFormat.format(dataIdBusta);
 		
 		try{

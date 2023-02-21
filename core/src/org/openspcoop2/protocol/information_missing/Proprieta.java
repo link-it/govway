@@ -63,6 +63,7 @@ import java.io.Serializable;
 
 public class Proprieta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Proprieta() {
+    super();
   }
 
   public Description getHeader() {

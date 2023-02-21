@@ -56,6 +56,7 @@ import java.io.Serializable;
 
 public class RetrieveMessageRequest extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RetrieveMessageRequest() {
+    super();
   }
 
   public java.lang.String getMessageID() {

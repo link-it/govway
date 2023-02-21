@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.protocol.engine.driver.repository;
+package org.openspcoop2.protocol.engine.driver.repository.test;
 
 import java.io.File;
 import java.sql.Connection;
@@ -29,6 +29,8 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import org.apache.logging.log4j.Level;
+import org.openspcoop2.protocol.engine.driver.repository.GestoreRepositoryFactory;
+import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.DateManager;

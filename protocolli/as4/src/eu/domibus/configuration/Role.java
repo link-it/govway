@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class Role extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Role() {
+    super();
   }
 
   public java.lang.String getName() {

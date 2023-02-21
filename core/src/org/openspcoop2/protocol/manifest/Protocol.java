@@ -64,6 +64,7 @@ import java.io.Serializable;
 
 public class Protocol extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Protocol() {
+    super();
   }
 
   public java.lang.String getFactory() {

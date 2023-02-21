@@ -376,7 +376,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessione al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			} catch (Exception e) {
 				// ignore
@@ -462,8 +464,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -596,7 +604,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDSoggetto type = 1");
 			// creo soggetto
-			DriverConfigurazioneDB_LIB.CRUDSoggetto(1, soggetto, con);
+			DriverConfigurazioneDB_soggettiLIB.CRUDSoggetto(1, soggetto, con);
 
 		} catch (DriverConfigurazioneException qe) {
 			error = true;
@@ -657,7 +665,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDSoggetto type = 2");
 			// UPDATE soggetto
-			DriverConfigurazioneDB_LIB.CRUDSoggetto(2, soggetto, con);
+			DriverConfigurazioneDB_soggettiLIB.CRUDSoggetto(2, soggetto, con);
 
 		} catch (DriverConfigurazioneException qe) {
 			error = true;
@@ -719,7 +727,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDSoggetto type = 3");
 			// DELETE soggetto
-			DriverConfigurazioneDB_LIB.CRUDSoggetto(3, soggetto, con);
+			DriverConfigurazioneDB_soggettiLIB.CRUDSoggetto(3, soggetto, con);
 
 		} catch (DriverConfigurazioneException qe) {
 			error = true;
@@ -779,7 +787,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDConnettore type = 1");
 			// creo connettore
-			DriverConfigurazioneDB_LIB.CRUDConnettore(1, connettore, con);
+			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(1, connettore, con);
 
 		} catch (DriverConfigurazioneException qe) {
 			error = true;
@@ -839,7 +847,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDConnettore type = 2");
 			// update connettore
-			DriverConfigurazioneDB_LIB.CRUDConnettore(2, connettore, con);
+			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(2, connettore, con);
 
 		} catch (DriverConfigurazioneException qe) {
 			error = true;
@@ -899,7 +907,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDConnettore type = 3");
 			// delete connettore
-			DriverConfigurazioneDB_LIB.CRUDConnettore(3, connettore, con);
+			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(3, connettore, con);
 
 		} catch (DriverConfigurazioneException qe) {
 			error = true;
@@ -991,8 +999,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1071,8 +1085,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1159,8 +1179,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1280,7 +1306,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 
 				String azione = rs.getString("nome_azione");
-				if(azione!=null && !"".equals(azione)){
+				if(azione!=null && (!"".equals(azione)) && idServizioObject!=null){
 					idServizioObject.setAzione(azione);
 				}
 				idFruizione.setIdServizio(idServizioObject);
@@ -1309,8 +1335,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1420,7 +1452,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDPortaDelegata type = 1");
 
-			DriverConfigurazioneDB_LIB.CRUDPortaDelegata(1, aPD, con);
+			DriverConfigurazioneDB_porteDelegateLIB.CRUDPortaDelegata(1, aPD, con);
 
 			this.log.debug("Creazione PortaDelegata [" + aPD.getId() + "] completato.");
 
@@ -1481,7 +1513,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			this.log.debug("CRUDPortaDelegata type = 2");
 
 			//long id = DriverConfigurazioneDB_LIB.CRUDPortaDelegata(2, aPD, con);
-			DriverConfigurazioneDB_LIB.CRUDPortaDelegata(2, aPD, con);
+			DriverConfigurazioneDB_porteDelegateLIB.CRUDPortaDelegata(2, aPD, con);
 
 			this.log.debug("Aggiornamento PortaDelegata [" + aPD.getId() + "] completato.");
 
@@ -1541,7 +1573,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDPortaDelegata type = 3");
 
-			long id = DriverConfigurazioneDB_LIB.CRUDPortaDelegata(3, aPD, con);
+			long id = DriverConfigurazioneDB_porteDelegateLIB.CRUDPortaDelegata(3, aPD, con);
 
 			this.log.debug("Cancellazione PortaDelegata [" + id + "] completato.");
 		} catch (Exception qe) {
@@ -1706,8 +1738,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1859,8 +1897,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1984,7 +2028,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 				
 				String azione = rs.getString("azione");
-				if(azione!=null && !"".equals(azione)){
+				if(azione!=null && !"".equals(azione) && idServizio!=null){
 					idServizio.setAzione(azione);
 				}
 				idErogazione.setIdServizio(idServizio);
@@ -2013,8 +2057,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -2419,8 +2469,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -2476,7 +2532,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDPortaApplicativa type = 1");
 
-			DriverConfigurazioneDB_LIB.CRUDPortaApplicativa(1, aPA, con);
+			DriverConfigurazioneDB_porteApplicativeLIB.CRUDPortaApplicativa(1, aPA, con);
 
 			this.log.debug("Creazione PortaApplicativa [" + aPA.getId() + "] completato.");
 
@@ -2536,7 +2592,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDPortaApplicativa type = 2");
 
-			long id = DriverConfigurazioneDB_LIB.CRUDPortaApplicativa(2, aPA, con);
+			long id = DriverConfigurazioneDB_porteApplicativeLIB.CRUDPortaApplicativa(2, aPA, con);
 
 			this.log.debug("Aggiornamento PortaApplicativa [" + id + "] completato.");
 
@@ -2596,7 +2652,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDPortaApplicativa type = 3");
 
-			long id = DriverConfigurazioneDB_LIB.CRUDPortaApplicativa(3, aPA, con);
+			long id = DriverConfigurazioneDB_porteApplicativeLIB.CRUDPortaApplicativa(3, aPA, con);
 
 			this.log.debug("Cancellazione PortaApplicativa [" + id + "] completato.");
 
@@ -2883,12 +2939,38 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs2!=null) rs2.close();
-				if(stm2!=null) stm2.close();
-				if(rs1!=null) rs1.close();
-				if(stm1!=null) stm1.close();
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs2!=null) 
+					rs2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm2!=null) 
+					stm2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs1!=null) 
+					rs1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm1!=null) 
+					stm1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -3032,8 +3114,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -3175,8 +3263,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -3662,8 +3756,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -3982,8 +4082,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -4077,8 +4183,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -4320,8 +4432,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -4412,8 +4530,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -4590,8 +4714,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -4734,8 +4864,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -4851,8 +4987,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -5074,8 +5216,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -5172,8 +5320,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -5351,8 +5505,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -5517,8 +5677,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -5707,8 +5873,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -5816,8 +5988,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -5933,8 +6111,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -6107,8 +6291,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -6190,11 +6380,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereIsNullCondition("status_max");
 			}
 			
-			if(fault) {
-				sqlQueryObject.addWhereCondition("fault = ?");
-			} else {
-				sqlQueryObject.addWhereCondition("fault = ?");
-			}
+			//if(fault) {
+			//	sqlQueryObject.addWhereCondition("fault = ?");
+			//} else {
+			sqlQueryObject.addWhereCondition("fault = ?");
+			//}
 			
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
@@ -6225,8 +6415,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -6402,8 +6598,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -6506,8 +6708,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -6618,8 +6826,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -6790,8 +7004,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -6894,8 +7114,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -7006,8 +7232,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -7816,7 +8048,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 						rispAsinc.setCredenziali(credenzialiRispA);
 					}
 					
-					Connettore connettore = DriverConfigurazioneDB_LIB.getConnettore(idConnettore, con);
+					Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
 					rispAsinc.setConnettore(connettore);
 					rispAsinc.setGetMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(getMsgRisp));
 
@@ -7837,7 +8069,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					Long idGestioneErroreRispostaAsincrona = rs.getLong("id_gestione_errore_risp");
 					GestioneErrore gestioneErroreRispostaAsincrona = null;
 					if(idGestioneErroreRispostaAsincrona>0){
-						gestioneErroreRispostaAsincrona = DriverConfigurazioneDB_LIB.getGestioneErrore(idGestioneErroreRispostaAsincrona, con);
+						gestioneErroreRispostaAsincrona = DriverConfigurazioneDB_gestioneErroreLIB.getGestioneErrore(idGestioneErroreRispostaAsincrona, con);
 						rispAsinc.setGestioneErrore(gestioneErroreRispostaAsincrona);
 					}
 				}
@@ -7849,7 +8081,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				InvocazioneServizio invServizio = null;				
 				if (idConnettore > 0 || (getMsgInv != null && !getMsgInv.equals("")) ) {
 					invServizio = new InvocazioneServizio();
-					Connettore connserv = DriverConfigurazioneDB_LIB.getConnettore(idConnettore, con);
+					Connettore connserv = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
 					invServizio.setConnettore(connserv);
 					invServizio.setGetMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(getMsgInv));
 
@@ -7881,7 +8113,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					Long idGestioneErroreInvocazioneServizio = rs.getLong("id_gestione_errore_inv");
 					GestioneErrore gestioneErroreInvocazioneServizio = null;
 					if(idGestioneErroreInvocazioneServizio>0){
-						gestioneErroreInvocazioneServizio = DriverConfigurazioneDB_LIB.getGestioneErrore(idGestioneErroreInvocazioneServizio, con);
+						gestioneErroreInvocazioneServizio = DriverConfigurazioneDB_gestioneErroreLIB.getGestioneErrore(idGestioneErroreInvocazioneServizio, con);
 						invServizio.setGestioneErrore(gestioneErroreInvocazioneServizio);
 					}
 				}
@@ -8039,8 +8271,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -8116,7 +8354,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDServizioApplicativo type = 1");
 			// creo soggetto
-			DriverConfigurazioneDB_LIB.CRUDServizioApplicativo(1, aSA, con);
+			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(1, aSA, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -8179,7 +8417,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDServizioApplicativo type = 2");
 			// creo soggetto
-			DriverConfigurazioneDB_LIB.CRUDServizioApplicativo(2, aSA, con);
+			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(2, aSA, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -8242,7 +8480,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDServizioApplicativo type = 3");
 			// creo soggetto
-			DriverConfigurazioneDB_LIB.CRUDServizioApplicativo(3, aSA, con);
+			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(3, aSA, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -8454,13 +8692,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rsSearch!=null) rsSearch.close();
-				if(stmSearch!=null) stmSearch.close();
+				if(rsSearch!=null) 
+					rsSearch.close();
 			}catch (Exception e) {
 				//ignore
-			}try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+			}
+			try{
+				if(stmSearch!=null) 
+					stmSearch.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -8503,7 +8754,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDRoutingTable type = 1");
 			// creo soggetto
-			DriverConfigurazioneDB_LIB.CRUDRoutingTable(1, routingTable, con);
+			DriverConfigurazioneDB_routingTableLIB.CRUDRoutingTable(1, routingTable, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -8555,7 +8806,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDRoutingTable type = 2");
 			// creo soggetto
-			DriverConfigurazioneDB_LIB.CRUDRoutingTable(2, routingTable, con);
+			DriverConfigurazioneDB_routingTableLIB.CRUDRoutingTable(2, routingTable, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -8607,7 +8858,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			this.log.debug("CRUDRoutingTable type = 3");
 			// creo soggetto
-			DriverConfigurazioneDB_LIB.CRUDRoutingTable(3, routingTable, con);
+			DriverConfigurazioneDB_routingTableLIB.CRUDRoutingTable(3, routingTable, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -8766,8 +9017,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -8934,8 +9191,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -8971,7 +9234,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoRegistro type = 1");
-			DriverConfigurazioneDB_LIB.CRUDAccessoRegistro(1, registro, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(1, registro, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -9018,7 +9281,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoRegistro type = 2");
-			DriverConfigurazioneDB_LIB.CRUDAccessoRegistro(2, registro, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(2, registro, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -9065,7 +9328,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoRegistro type = 3");
-			DriverConfigurazioneDB_LIB.CRUDAccessoRegistro(3, registro, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(3, registro, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -9170,8 +9433,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -9207,7 +9476,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoConfigurazione type = 1");
-			DriverConfigurazioneDB_LIB.CRUDAccessoConfigurazione(1, accessoConfigurazione, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoConfigurazione(1, accessoConfigurazione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -9254,7 +9523,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoConfigurazione type = 2");
-			DriverConfigurazioneDB_LIB.CRUDAccessoConfigurazione(2, accessoConfigurazione, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoConfigurazione(2, accessoConfigurazione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -9301,7 +9570,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoConfigurazione type = 3");
-			DriverConfigurazioneDB_LIB.CRUDAccessoConfigurazione(3, accessoConfigurazione, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoConfigurazione(3, accessoConfigurazione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -9407,8 +9676,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -9500,8 +9775,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -9592,8 +9873,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -9689,8 +9976,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -9782,8 +10075,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -9874,8 +10173,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -9913,7 +10218,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoDatiAutorizzazione type = 1");
-			DriverConfigurazioneDB_LIB.CRUDAccessoDatiAutorizzazione(1, accessoDatiAutorizzazione, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoDatiAutorizzazione(1, accessoDatiAutorizzazione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -9960,7 +10265,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoDatiAutorizzazione type = 2");
-			DriverConfigurazioneDB_LIB.CRUDAccessoDatiAutorizzazione(2, accessoDatiAutorizzazione, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoDatiAutorizzazione(2, accessoDatiAutorizzazione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -10007,7 +10312,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoDatiAutorizzazione type = 3");
-			DriverConfigurazioneDB_LIB.CRUDAccessoDatiAutorizzazione(3, accessoDatiAutorizzazione, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoDatiAutorizzazione(3, accessoDatiAutorizzazione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -10110,7 +10415,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				Long idGestioneErrore = rs.getLong(nomeColonna);
 				if(idGestioneErrore>0){
-					gestioneErrore = DriverConfigurazioneDB_LIB.getGestioneErrore(idGestioneErrore, con);
+					gestioneErrore = DriverConfigurazioneDB_gestioneErroreLIB.getGestioneErrore(idGestioneErrore, con);
 				}
 
 			} 
@@ -10132,8 +10437,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -10274,22 +10585,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rsFiltri!=null) rsFiltri.close();
+				if(rsFiltri!=null) 
+					rsFiltri.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stmFiltri!=null) stmFiltri.close();
+				if(stmFiltri!=null) 
+					stmFiltri.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -10377,7 +10692,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("createServiziAttiviPdD type = 1");
-			DriverConfigurazioneDB_LIB.CRUDServiziPdD(1, servizi, con);
+			DriverConfigurazioneDB_configLIB.CRUDServiziPdD(1, servizi, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -10431,7 +10746,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("createServiziAttiviPdD type = 2");
-			DriverConfigurazioneDB_LIB.CRUDServiziPdD(2, servizi, con);
+			DriverConfigurazioneDB_configLIB.CRUDServiziPdD(2, servizi, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -10486,7 +10801,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("createServiziAttiviPdD type = 3");
-			DriverConfigurazioneDB_LIB.CRUDServiziPdD(3, servizi, con);
+			DriverConfigurazioneDB_configLIB.CRUDServiziPdD(3, servizi, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -10626,8 +10941,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -10728,12 +11049,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -10928,12 +11251,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[getGenericProperties]  Exception: " + se.getMessage(),se);
 		} finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -10991,7 +11316,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("createSystemPropertiesPdD type = 1");
-			DriverConfigurazioneDB_LIB.CRUDSystemPropertiesPdD(1, systemProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(1, systemProperties, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -11045,7 +11370,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("updateSystemPropertiesPdD type = 2");
-			DriverConfigurazioneDB_LIB.CRUDSystemPropertiesPdD(2, systemProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(2, systemProperties, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -11100,7 +11425,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("deleteSystemPropertiesPdD type = 3");
-			DriverConfigurazioneDB_LIB.CRUDSystemPropertiesPdD(3, systemProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(3, systemProperties, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -11161,7 +11486,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDGenericPropertiesPdD type = 1");
-			DriverConfigurazioneDB_LIB.CRUDGenericProperties(1, genericProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(1, genericProperties, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -11215,7 +11540,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("updateGenericProperties type = 2");
-			DriverConfigurazioneDB_LIB.CRUDGenericProperties(2, genericProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(2, genericProperties, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -11270,7 +11595,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("deleteGenericProperties type = 3");
-			DriverConfigurazioneDB_LIB.CRUDGenericProperties(3, genericProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(3, genericProperties, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -11361,12 +11686,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[getRegistroPlugins]  Exception: " + se.getMessage(),se);
 		} finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -11531,12 +11858,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[getRegistroPlugin]  Exception: " + se.getMessage(),se);
 		} finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -11663,12 +11992,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[getRegistroPlugin]  Exception: " + se.getMessage(),se);
 		} finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -11734,12 +12065,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[existsRegistroPlugin]  Exception: " + se.getMessage(),se);
 		} finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -11796,12 +12129,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[getMaxPosizioneRegistroPlugin]  Exception: " + se.getMessage(),se);
 		} finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -11864,12 +12199,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[getNumeroArchiviJarRegistroPlugin]  Exception: " + se.getMessage(),se);
 		} finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -11905,7 +12242,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDRegistroPlugin type = 1");
-			DriverConfigurazioneDB_LIB.CRUDRegistroPlugin(1, plugin, con);
+			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPlugin(1, plugin, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -11953,7 +12290,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDRegistroPlugin type = 2");
-			DriverConfigurazioneDB_LIB.CRUDRegistroPlugin(2, plugin, con);
+			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPlugin(2, plugin, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -12001,7 +12338,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDRegistroPlugin type = 3");
-			DriverConfigurazioneDB_LIB.CRUDRegistroPlugin(3, plugin, con);
+			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPlugin(3, plugin, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -12049,7 +12386,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("updateDatiRegistroPlugin");
-			DriverConfigurazioneDB_LIB.updateDatiRegistroPlugin(nomePlugin, plugin, con);
+			DriverConfigurazioneDB_pluginsLIB.updateDatiRegistroPlugin(nomePlugin, plugin, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -12156,12 +12493,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 		finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -12244,12 +12583,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[existsRegistroPluginArchivio]  Exception: " + se.getMessage(),se);
 		} finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -12342,12 +12683,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[existsRegistroPluginArchivio]  Exception: " + se.getMessage(),se);
 		} finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -12383,7 +12726,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDRegistroPlugin type = 1");
-			DriverConfigurazioneDB_LIB.CRUDRegistroPluginArchivio(1, nomePlugin, plugin, con);
+			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPluginArchivio(1, nomePlugin, plugin, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -12431,7 +12774,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDRegistroPlugin type = 2");
-			DriverConfigurazioneDB_LIB.CRUDRegistroPluginArchivio(2, nomePlugin, plugin, con);
+			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPluginArchivio(2, nomePlugin, plugin, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -12479,7 +12822,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDRegistroPlugin type = 3");
-			DriverConfigurazioneDB_LIB.CRUDRegistroPluginArchivio(3, nomePlugin, plugin, con);
+			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPluginArchivio(3, nomePlugin, plugin, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -12566,12 +12909,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 		finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -12642,12 +12987,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 		finally {
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -12714,7 +13061,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDUrlInvocazioneRegola type = 1");
-			DriverConfigurazioneDB_LIB.CRUDUrlInvocazioneRegola(1, regola, con);
+			DriverConfigurazioneDB_configLIB.CRUDUrlInvocazioneRegola(1, regola, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -12762,7 +13109,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDUrlInvocazioneRegola type = 2");
-			DriverConfigurazioneDB_LIB.CRUDUrlInvocazioneRegola(2, regola, con);
+			DriverConfigurazioneDB_configLIB.CRUDUrlInvocazioneRegola(2, regola, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -12810,7 +13157,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDUrlInvocazioneRegola type = 3");
-			DriverConfigurazioneDB_LIB.CRUDUrlInvocazioneRegola(3, regola, con);
+			DriverConfigurazioneDB_configLIB.CRUDUrlInvocazioneRegola(3, regola, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -13252,17 +13599,17 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stm1.close();
 
 				// dump_config
-				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
 				if(dumpConfig!=null) {
 					// backward compatibility, lo uso sia per erogazione che per fruizione
 					dump.setConfigurazionePortaApplicativa(dumpConfig);
 					dump.setConfigurazionePortaDelegata(dumpConfig);
 				}
 				else {
-					DumpConfigurazione dumpConfigPA = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
+					DumpConfigurazione dumpConfigPA = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
 					dump.setConfigurazionePortaApplicativa(dumpConfigPA);
 					
-					DumpConfigurazione dumpConfigPD = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD);
+					DumpConfigurazione dumpConfigPD = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD);
 					dump.setConfigurazionePortaDelegata(dumpConfigPD);
 				}
 				
@@ -13326,13 +13673,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				config.setGestioneCanali(new CanaliConfigurazione());
 				config.getGestioneCanali().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(canali_stato));
 				if(StatoFunzionalita.ABILITATO.equals(config.getGestioneCanali().getStato())) {
-					DriverConfigurazioneDB_LIB.readCanaliConfigurazione(con, config.getGestioneCanali(), true);
+					DriverConfigurazioneDB_canaliLIB.readCanaliConfigurazione(con, config.getGestioneCanali(), true);
 				}
 				
 				// Handlers
-				ConfigurazioneMessageHandlers requestHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, null, null, true);
-				ConfigurazioneMessageHandlers responseHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, null, null, false);
-				ConfigurazioneServiceHandlers serviceHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneServiceHandlers(con, null, null, false);
+				ConfigurazioneMessageHandlers requestHandlers = DriverConfigurazioneDB_handlerLIB.readConfigurazioneMessageHandlers(con, null, null, true);
+				ConfigurazioneMessageHandlers responseHandlers = DriverConfigurazioneDB_handlerLIB.readConfigurazioneMessageHandlers(con, null, null, false);
+				ConfigurazioneServiceHandlers serviceHandlers = DriverConfigurazioneDB_handlerLIB.readConfigurazioneServiceHandlers(con, null, null, false);
 				if(requestHandlers!=null || responseHandlers!=null || serviceHandlers!=null) {
 					config.setConfigurazioneHandler(new ConfigurazioneGeneraleHandler());
 					config.getConfigurazioneHandler().setRequest(requestHandlers);
@@ -13360,12 +13707,38 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-				if(rs1!=null) rs1.close();
-				if(stm1!=null) stm1.close();
-				if(rs2!=null) rs2.close();
-				if(stm2!=null) stm2.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs1!=null) 
+					rs1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm1!=null) 
+					stm1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs2!=null) 
+					rs2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm2!=null) 
+					stm2.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -13711,18 +14084,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConfigurazioneExtended] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("getConfigurazioneExtended");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConfigurazioneExtended] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
 		} else
 			con = this.globalConnection;
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
+		
 		try {
+			
+			this.log.debug("operazione this.atomica = " + this.atomica);
+			
 			this.log.debug("getConfigurazioneExtended("+idExtendedConfiguration+")");
 			
 			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
@@ -13745,12 +14120,21 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 		catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConfigurazioneExtended] Errore: " + qe.getMessage(),qe);
-		} finally {
-
+		} 
+		finally {
+			
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if (this.atomica) {
+					if(con!=null) {
+						con.close();
+					}
 				}
 			} catch (Exception e) {
 				// ignore exception
@@ -13781,7 +14165,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDConfigurazioneGenerale type = 1");
-			DriverConfigurazioneDB_LIB.CRUDConfigurazioneGenerale(1, configurazione, con);
+			DriverConfigurazioneDB_configLIB.CRUDConfigurazioneGenerale(1, configurazione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -13830,7 +14214,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDConfigurazioneGenerale type = 2");
-			DriverConfigurazioneDB_LIB.CRUDConfigurazioneGenerale(2, configurazione, con);
+			DriverConfigurazioneDB_configLIB.CRUDConfigurazioneGenerale(2, configurazione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -13879,7 +14263,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDConfigurazioneGenerale type = 3");
-			DriverConfigurazioneDB_LIB.CRUDConfigurazioneGenerale(CostantiDB.DELETE, configurazione, con);
+			DriverConfigurazioneDB_configLIB.CRUDConfigurazioneGenerale(CostantiDB.DELETE, configurazione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -13937,7 +14321,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoRegistro type = 1");
-			DriverConfigurazioneDB_LIB.CRUDAccessoRegistro(1, registro, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(1, registro, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -13991,7 +14375,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoRegistro type = 2");
-			DriverConfigurazioneDB_LIB.CRUDAccessoRegistro(2, registro, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(2, registro, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -14045,7 +14429,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDAccessoRegistro type = 3");
-			DriverConfigurazioneDB_LIB.CRUDAccessoRegistro(3, registro, con);
+			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(3, registro, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -14102,7 +14486,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		PreparedStatement pstmt = null;
 		try {
 			this.log.debug("CRUDGestioneErrore type = 1");
-			DriverConfigurazioneDB_LIB.CRUDGestioneErroreComponenteCooperazione(CostantiDB.CREATE, gestione, con);
+			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteCooperazione(CostantiDB.CREATE, gestione, con);
 
 			// Aggiorno configurazione
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -14171,7 +14555,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDGestioneErrore type = 2");
-			DriverConfigurazioneDB_LIB.CRUDGestioneErroreComponenteCooperazione(CostantiDB.UPDATE, gestione, con);
+			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteCooperazione(CostantiDB.UPDATE, gestione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -14225,7 +14609,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDGestioneErrore type = 3");
-			DriverConfigurazioneDB_LIB.CRUDGestioneErroreComponenteCooperazione(CostantiDB.DELETE, gestione, con);
+			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteCooperazione(CostantiDB.DELETE, gestione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -14280,7 +14664,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		PreparedStatement pstmt = null;
 		try {
 			this.log.debug("CRUDGestioneErrore type = 1");
-			DriverConfigurazioneDB_LIB.CRUDGestioneErroreComponenteIntegrazione(CostantiDB.CREATE, gestione, con);
+			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteIntegrazione(CostantiDB.CREATE, gestione, con);
 
 			// Aggiorno configurazione
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -14349,7 +14733,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDGestioneErrore type = 2");
-			DriverConfigurazioneDB_LIB.CRUDGestioneErroreComponenteIntegrazione(CostantiDB.UPDATE, gestione, con);
+			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteIntegrazione(CostantiDB.UPDATE, gestione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -14403,7 +14787,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			this.log.debug("CRUDGestioneErrore type = 3");
-			DriverConfigurazioneDB_LIB.CRUDGestioneErroreComponenteIntegrazione(CostantiDB.DELETE, gestione, con);
+			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteIntegrazione(CostantiDB.DELETE, gestione, con);
 
 		} catch (Exception qe) {
 			error = true;
@@ -14544,8 +14928,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -14725,8 +15115,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -14868,8 +15264,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -14970,8 +15372,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -15113,8 +15521,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -15256,8 +15670,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -15331,8 +15751,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -15406,8 +15832,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -15549,8 +15981,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -15682,8 +16120,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -15847,9 +16291,21 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();			
-				if(stmt!=null) stmt.close();
-				if(stmt1!=null) stmt1.close();
+				if(risultato!=null) 
+					risultato.close();			
+			}catch (Exception e) {
+				//ignore
+			}
+			//Chiudo statement and resultset
+			try{
+				if(stmt!=null) 
+					stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt1!=null) 
+					stmt1.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -15970,9 +16426,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();			
-				if(stmt!=null) stmt.close();
-				if(stmt1!=null) stmt1.close();
+				if(risultato!=null) 
+					risultato.close();			
+			}catch (Exception e) {
+				//ignore
+			}
+			try{		
+				if(stmt!=null) 
+					stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{		
+				if(stmt1!=null) 
+					stmt1.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -16115,9 +16582,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();			
-				if(stmt!=null) stmt.close();
-				if(stmt1!=null) stmt1.close();
+				if(risultato!=null) 
+					risultato.close();			
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt1!=null) 
+					stmt1.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -16256,8 +16734,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -16398,12 +16882,17 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
 			}catch (Exception e) {
 				//ignore
 			}
-
+			try{
+				if(stmt!=null) 
+					stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
 			try {
 				if (error && this.atomica) {
 					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
@@ -16534,8 +17023,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -16676,8 +17171,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -16785,8 +17286,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -16925,8 +17432,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -17065,8 +17578,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -17205,8 +17724,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -17379,8 +17904,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -17455,8 +17986,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -17534,8 +18071,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -17618,8 +18161,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -17694,8 +18243,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -17874,14 +18429,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(rs1!=null) rs1.close();
-				if(stmt!=null) stmt.close();
-				if(stmt1!=null) stmt1.close();
+				if(risultato!=null) 
+					risultato.close();
 			}catch (Exception e) {
 				//ignore
 			}
-
+			try{
+				if(rs1!=null) 
+					rs1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt1!=null) 
+					stmt1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
 			try {
 				if (error && this.atomica) {
 					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
@@ -18018,8 +18589,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -18160,8 +18737,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -18308,8 +18891,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -18453,8 +19042,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -18599,8 +19194,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -18746,8 +19347,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -18907,8 +19514,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -19053,8 +19666,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -19140,8 +19759,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -19299,8 +19924,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -19439,8 +20070,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -19523,8 +20160,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -19645,8 +20288,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -19780,8 +20429,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -19932,8 +20587,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -20001,11 +20662,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereIsNullCondition("status_max");
 			}
 			
-			if(fault) {
-				sqlQueryObject.addWhereCondition("fault = ?");
-			} else {
-				sqlQueryObject.addWhereCondition("fault = ?");
-			}
+			//if(fault) {
+			//	sqlQueryObject.addWhereCondition("fault = ?");
+			//} else {
+			sqlQueryObject.addWhereCondition("fault = ?");
+			//}
 			
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
@@ -20035,8 +20696,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -20189,8 +20856,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -20267,8 +20940,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -20399,8 +21078,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -20591,8 +21276,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -20803,8 +21494,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -20931,8 +21628,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -20988,27 +21691,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt = con.prepareStatement(queryString);
 			stmt.setLong(1, idSoggetto);
 			risultato = stmt.executeQuery();
-			if (risultato.next())
+			if (risultato.next()) {
 				silList = new String[risultato.getInt(1)];
+			}
 			risultato.close();
 			stmt.close();
 
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-			sqlQueryObject.addSelectField("nome");
-			sqlQueryObject.addSelectField("id_soggetto");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
-			sqlQueryObject.addOrderBy("nome");
-			sqlQueryObject.setSortType(true);
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idSoggetto);
-			risultato = stmt.executeQuery();
-
-			int i = 0;
-			while (risultato.next()) {
-				silList[i] = risultato.getString("nome");
-				i++;
+			if(silList!=null) {
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addSelectField("nome");
+				sqlQueryObject.addSelectField("id_soggetto");
+				sqlQueryObject.addWhereCondition("id_soggetto = ?");
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setLong(1, idSoggetto);
+				risultato = stmt.executeQuery();
+	
+				int i = 0;
+				while (risultato.next()) {
+					silList[i] = risultato.getString("nome");
+					i++;
+				}
 			}
 
 			return silList;
@@ -21020,8 +21726,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -21223,8 +21935,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -22677,8 +23395,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -23388,8 +24112,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -23479,8 +24209,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -23629,8 +24365,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				//ignore
 			}
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -24210,7 +24952,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				
 				// Trasformazioni
-				Trasformazioni trasformazioni = DriverConfigurazioneDB_LIB.readTrasformazioni(idPortaApplicativa, false, con);
+				Trasformazioni trasformazioni = DriverConfigurazioneDB_trasformazioniLIB.readTrasformazioni(idPortaApplicativa, false, con);
 				if(trasformazioni!=null) {
 					pa.setTrasformazioni(trasformazioni);
 				}
@@ -24849,13 +25591,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				
 				// dump_config
-				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, pa.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
+				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, pa.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
 				pa.setDump(dumpConfig);
 				
 				
 				// Handlers
-				ConfigurazioneMessageHandlers requestHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, null, pa.getId(), true);
-				ConfigurazioneMessageHandlers responseHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, null, pa.getId(), false);
+				ConfigurazioneMessageHandlers requestHandlers = DriverConfigurazioneDB_handlerLIB.readConfigurazioneMessageHandlers(con, null, pa.getId(), true);
+				ConfigurazioneMessageHandlers responseHandlers = DriverConfigurazioneDB_handlerLIB.readConfigurazioneMessageHandlers(con, null, pa.getId(), false);
 				if(requestHandlers!=null || responseHandlers!=null) {
 					pa.setConfigurazioneHandler(new ConfigurazionePortaHandler());
 					pa.getConfigurazioneHandler().setRequest(requestHandlers);
@@ -24918,10 +25660,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-				if(rs1!=null) rs1.close();
-				if(stm1!=null) stm1.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs1!=null) 
+					rs1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm1!=null) 
+					stm1.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -25490,7 +26248,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 						
 				
 				// Trasformazioni
-				Trasformazioni trasformazioni = DriverConfigurazioneDB_LIB.readTrasformazioni(idPortaDelegata, true, con);
+				Trasformazioni trasformazioni = DriverConfigurazioneDB_trasformazioniLIB.readTrasformazioni(idPortaDelegata, true, con);
 				if(trasformazioni!=null) {
 					pd.setTrasformazioni(trasformazioni);
 				}
@@ -25953,13 +26711,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				
 				// dump_config
-				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, pd.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
+				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, pd.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
 				pd.setDump(dumpConfig);
 				
 				
 				// Handlers
-				ConfigurazioneMessageHandlers requestHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, pd.getId(), null, true);
-				ConfigurazioneMessageHandlers responseHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, pd.getId(), null, false);
+				ConfigurazioneMessageHandlers requestHandlers = DriverConfigurazioneDB_handlerLIB.readConfigurazioneMessageHandlers(con, pd.getId(), null, true);
+				ConfigurazioneMessageHandlers responseHandlers = DriverConfigurazioneDB_handlerLIB.readConfigurazioneMessageHandlers(con, pd.getId(), null, false);
 				if(requestHandlers!=null || responseHandlers!=null) {
 					pd.setConfigurazioneHandler(new ConfigurazionePortaHandler());
 					pd.getConfigurazioneHandler().setRequest(requestHandlers);
@@ -26023,10 +26781,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-				if(rs1!=null) rs1.close();
-				if(stm1!=null) stm1.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs1!=null) 
+					rs1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm1!=null) 
+					stm1.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -26166,8 +26940,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -26325,8 +27105,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -26424,8 +27210,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -27061,7 +27853,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(stmt!=null) stmt.close();
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -27116,18 +27909,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		String sqlQuery = "";
 		ArrayList<PortaApplicativa> lista = new ArrayList<PortaApplicativa>();
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("getPorteApplicativeWithServizio");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithServizio] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("getPorteApplicativeWithServizio");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithServizio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 			sqlQueryObject.addSelectField("*");
@@ -27156,18 +27950,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				lista.add(pa);
 			}
 
-			rs.close();
-			stm.close();
-
 			return lista;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
 			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
+			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27186,18 +27992,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		String sqlQuery = "";
 		PortaApplicativa pa = new PortaApplicativa();
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("getPortaApplicativaWithSoggettoAndServizio");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithSoggettoAndServizio] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("getPortaApplicativaWithSoggettoAndServizio");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithSoggettoAndServizio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 			sqlQueryObject.addSelectField("*");
@@ -27246,18 +28053,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				throw new Exception("PA non trovata ["+DBUtils.formatSQLString(sqlQuery, idSoggetto, idServizio, -1, idSoggetto, idServizio)+"]");
 			}
 
-			rs.close();
-			stm.close();
-
 			return pa;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
 			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
+			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27274,20 +28093,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		ResultSet rs = null;
 		String sqlQuery = "";
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("getPortaApplicativaAzione");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		List<IDPortaApplicativa> id = new ArrayList<IDPortaApplicativa>();
 		try {
 
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("getPortaApplicativaAzione");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 			sqlQueryObject.addSelectField("*");
@@ -27307,17 +28126,29 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				id.add(idPA);
 			}
 
-			rs.close();
-			stm.close();
-
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
 			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
+			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27341,18 +28172,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		ResultSet rs = null;
 		String sqlQuery = "";
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("existsPortaApplicativaAzione");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("existsPortaApplicativaAzione");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			boolean esiste = false;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
@@ -27369,18 +28201,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			if (rs.next())
 				esiste = true;
 
-			rs.close();
-			stm.close();
-
 			return esiste;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
 			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
+			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27412,18 +28256,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		String sqlQuery = "";
 		ArrayList<PortaDelegata> lista = new ArrayList<PortaDelegata>();
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("getPorteDelegateWithServizio");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("getPorteDelegateWithServizio");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 			sqlQueryObject.addSelectField("*");
@@ -27449,18 +28294,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				lista.add(this.getPortaDelegata(rs.getLong("id")));
 			}
 
-			rs.close();
-			stm.close();
-
 			return lista;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
 			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
+			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27478,18 +28335,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		String sqlQuery = "";
 		ArrayList<PortaDelegata> lista = new ArrayList<PortaDelegata>();
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("getPorteDelegateWithServizio");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("getPorteDelegateWithServizio");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 			sqlQueryObject.addSelectField("*");
@@ -27507,18 +28365,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				lista.add(pde);
 			}
 
-			rs.close();
-			stm.close();
-
 			return lista;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
 			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
+			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27538,18 +28408,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		String sqlQuery = "";
 		ArrayList<IDServizioApplicativoDB> lista = new ArrayList<IDServizioApplicativoDB>();
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("getServiziApplicativiWithIdErogatore");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServiziApplicativiWithIdErogatore] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("getServiziApplicativiWithIdErogatore");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServiziApplicativiWithIdErogatore] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
@@ -27629,18 +28500,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				lista.add(idSA);
 			}
 
-			rs.close();
-			stm.close();
-
 			return lista;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
 			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
+			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27657,20 +28540,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		ResultSet rs = null;
 		String sqlQuery = "";
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("getPortaDelegataAzione");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		List<IDPortaDelegata> id = new ArrayList<IDPortaDelegata>();
 		try {
 
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("getPortaDelegataAzione");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 			sqlQueryObject.addSelectField("*");
@@ -27690,17 +28573,29 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				id.add(idPD);
 			}
 
-			rs.close();
-			stm.close();
-
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
 			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
+			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27724,18 +28619,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		ResultSet rs = null;
 		String sqlQuery = "";
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("existsPortaDelegataAzione");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataAzione] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("existsPortaDelegataAzione");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataAzione] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			boolean esiste = false;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
@@ -27752,21 +28648,33 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			if (rs.next())
 				esiste = true;
 
-			rs.close();
-			stm.close();
-
 			return esiste;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
 			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
+			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
-
+				// ignore
 			}
 
 		}
@@ -27792,19 +28700,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("existsServizioApplicativo");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoRegistro] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
-			return DriverConfigurazioneDB_LIB.getIdServizioApplicativo(idServizioApplicativo.getNome(), idSoggetto.getTipo(), idSoggetto.getNome(), con, this.tipoDB,this.tabellaSoggetti)>0;
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("existsServizioApplicativo");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoRegistro] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
+			return DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(idServizioApplicativo.getNome(), idSoggetto.getTipo(), idSoggetto.getNome(), con, this.tipoDB,this.tabellaSoggetti)>0;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
@@ -27812,7 +28721,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27831,19 +28742,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("getIdServizioApplicativo");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
-			return DriverConfigurazioneDB_LIB.getIdServizioApplicativo(nomeServizioApplicativo, idSoggetto.getTipo(), idSoggetto.getNome(), con, this.tipoDB,this.tabellaSoggetti);
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("getIdServizioApplicativo");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
+			return DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeServizioApplicativo, idSoggetto.getTipo(), idSoggetto.getNome(), con, this.tipoDB,this.tabellaSoggetti);
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
@@ -27851,7 +28763,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27868,18 +28782,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		ResultSet rs = null;
 		String sqlQuery = "";
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("existsServizioApplicativoSoggetto");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsServizioApplicativoSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("existsServizioApplicativoSoggetto");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsServizioApplicativoSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			boolean esiste = false;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
@@ -27896,18 +28811,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			if (rs.next())
 				esiste = true;
 
-			rs.close();
-			stm.close();
-
 			return esiste;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
 			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
+			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27926,18 +28853,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("existsSoggetto");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
 		try {
+			
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("existsSoggetto");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			return DBUtils.getIdSoggetto(idSoggetto.getNome(), idSoggetto.getTipo(), con, this.tipoDB,this.tabellaSoggetti)>0;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
@@ -27946,7 +28874,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
 
@@ -27960,19 +28890,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		Connection con = null;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("isServizioApplicativoInUsoComeErogatore");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::isServizioApplicativoInUsoComeErogatore] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
 
 		try {
 
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource("isServizioApplicativoInUsoComeErogatore");
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::isServizioApplicativoInUsoComeErogatore] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+			
 			ArrayList<String> nomiPorteApplicative = new ArrayList<String>();
 			boolean isInUso=false;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -28007,8 +28938,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				// ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				// ignore
 			}
@@ -28016,10 +28953,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			try{
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			}catch (Exception e) {
-
+				// ignore
 			}
 
 		}
@@ -28158,22 +29097,22 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		ArrayList<PortaApplicativa> lista = new ArrayList<PortaApplicativa>();
 
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource(nomeMetodo);
-
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
 		try {
 
+			if (this.atomica) {
+				try {
+					con = getConnectionFromDatasource(nomeMetodo);
+
+				} catch (Exception e) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+				}
+
+			} else
+				con = this.globalConnection;
+
+			this.log.debug("operazione this.atomica = " + this.atomica);
+			
 			if (!search.equals("")) {
 				//query con search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -28309,15 +29248,23 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 
 			} catch (Exception e) {
@@ -28530,8 +29477,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -28592,8 +29545,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -28655,14 +29614,25 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				PortaApplicativa pd = this.getPortaApplicativa(id);
 				lista.add(pd);
 			}
-			rs.close();
-			stm.close();
 
 			return lista;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
+			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
@@ -28731,14 +29701,25 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				PortaApplicativa pd = this.getPortaApplicativa(id);
 				lista.add(pd);
 			}
-			rs.close();
-			stm.close();
 
 			return lista;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
+			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
@@ -28887,14 +29868,25 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				PortaDelegata pd = this.getPortaDelegata(id);
 				lista.add(pd);
 			}
-			risultato.close();
-			stmt.close();
 
 			return lista;
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException(qe);
 		} finally {
 
+			try{
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
@@ -29139,8 +30131,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -29427,8 +30425,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -29716,8 +30720,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -29877,8 +30887,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -29951,8 +30967,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -30025,8 +31047,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -30126,8 +31154,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -30204,8 +31238,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -30362,8 +31402,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -30661,8 +31707,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -31140,8 +32192,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -31302,8 +32360,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -31397,8 +32461,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -31406,7 +32476,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessione al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			} catch (Exception e) {
 				// ignore
@@ -31470,7 +32542,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessione al db...");
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}
 			} catch (Exception e) {
 				// ignore
@@ -31608,8 +32682,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -31762,8 +32842,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -31916,8 +33002,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -32070,8 +33162,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -32180,22 +33278,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs2!=null) rs2.close();
+				if(rs2!=null) 
+					rs2.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm2!=null) stm2.close();
+				if(stm2!=null) 
+					stm2.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(rs!=null) rs.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
 				//ignore
 			}
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -32259,8 +33361,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -32332,8 +33440,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -32403,8 +33517,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -32448,7 +33568,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 
-			Connettore connettore = DriverConfigurazioneDB_LIB.getConnettore(idConnettore, con);
+			Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
 			if(connettore==null) {
 				throw new DriverConfigurazioneNotFound("Connettore con id '"+idConnettore+"' non esistente");
 			}
@@ -32511,7 +33631,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				throw new DriverConfigurazioneNotFound("Connettore con nome '"+nomeConnettore+"' non esistente");
 			}
 					
-			Connettore connettore = DriverConfigurazioneDB_LIB.getConnettore(idConnettore, con);
+			Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
 			if(connettore==null) {
 				throw new DriverConfigurazioneNotFound("Connettore con id '"+idConnettore+"' non esistente");
 			}
@@ -32530,8 +33650,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -32611,8 +33737,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -32801,8 +33933,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -32923,8 +34061,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -33053,8 +34197,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -33179,8 +34329,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -33257,8 +34413,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -33378,8 +34540,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -33455,8 +34623,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultato!=null) 
+					risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -33539,7 +34713,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					config.setStato(StatoFunzionalita.DISABILITATO);
 				}
 				if(StatoFunzionalita.ABILITATO.equals(config.getStato())) {
-					DriverConfigurazioneDB_LIB.readCanaliConfigurazione(con, config, false);
+					DriverConfigurazioneDB_canaliLIB.readCanaliConfigurazione(con, config, false);
 				}
 			} else {
 				throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::getCanaliConfigurazione] Configurazione non presente.");
@@ -33552,12 +34726,38 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-				if(rs1!=null) rs1.close();
-				if(stm1!=null) stm1.close();
-				if(rs2!=null) rs2.close();
-				if(stm2!=null) stm2.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs1!=null) 
+					rs1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm1!=null) 
+					stm1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs2!=null) 
+					rs2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm2!=null) 
+					stm2.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -33708,8 +34908,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -33799,8 +35005,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -34352,8 +35564,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}

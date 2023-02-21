@@ -85,7 +85,7 @@
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB" />
+    <Class name="org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB_utilsDriver" />
     <Method name="isAlive" />
     <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
   </Match>
@@ -161,7 +161,7 @@
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.protocol.engine.driver.repository.TestGestoreRepository" />
+    <Class name="org.openspcoop2.protocol.engine.driver.repository.test.TestGestoreRepository" />
     <Method name="test" />
     <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
   </Match>

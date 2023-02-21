@@ -472,7 +472,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 				lstObjects_statisticaOrariaContenuti.add(new JDBCObject(statisticaOraria_statisticaOrariaContenuti.getLatenzaServizio(), StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI.LATENZA_SERVIZIO.getFieldType()));
 				sqlQueryObjectUpdate_statisticaOrariaContenuti.addWhereCondition("id=?");
 				ids_statisticaOrariaContenuti_da_non_eliminare.add(statisticaOraria_statisticaOrariaContenuti.getId());
-				lstObjects_statisticaOrariaContenuti.add(new JDBCObject(Long.valueOf(statisticaOraria_statisticaOrariaContenuti.getId()),Long.class));
+				lstObjects_statisticaOrariaContenuti.add(new JDBCObject(statisticaOraria_statisticaOrariaContenuti.getId(),Long.class));
 
 				if(isUpdate_statisticaOrariaContenuti) {
 					// Update statisticaOraria_statisticaOrariaContenuti
@@ -633,7 +633,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.addFromTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI));
 		sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.addWhereCondition("id_stat=?");
 		java.util.List<Object> statisticaOraria_statisticaOrariaContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI, this.getStatisticaOrariaFetch(),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for statisticaOraria_statisticaOrariaContenuti
 		for (Object statisticaOraria_statisticaOrariaContenuti_object : statisticaOraria_statisticaOrariaContenuti_toDelete_list) {
@@ -648,7 +648,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 			// Delete statisticaOraria_statisticaOrariaContenuti
 			if(statisticaOraria_statisticaOrariaContenuti != null){
 				jdbcUtilities.execute(sqlQueryObjectDelete_statisticaOrariaContenuti.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(statisticaOraria_statisticaOrariaContenuti.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaContenuti.getId(),Long.class));
 			}
 		} // fine for statisticaOraria_statisticaOrariaContenuti
 

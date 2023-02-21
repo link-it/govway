@@ -145,8 +145,8 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 
 		List<IdAccordoServizioParteComune> list = new ArrayList<IdAccordoServizioParteComune>();
 
-		// TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+		// TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari a create l'ID logico
 		// 2. Usare metodo getAccordoServizioParteComuneFetch() sul risultato della select per ottenere un oggetto AccordoServizioParteComune
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
@@ -169,8 +169,8 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 
         List<AccordoServizioParteComune> list = new ArrayList<AccordoServizioParteComune>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+        // TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
 		// 2. Usare metodo getAccordoServizioParteComuneFetch() sul risultato della select per ottenere un oggetto AccordoServizioParteComune
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 

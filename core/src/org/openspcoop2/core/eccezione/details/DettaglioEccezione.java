@@ -62,6 +62,7 @@ import java.io.Serializable;
 
 public class DettaglioEccezione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DettaglioEccezione() {
+    super();
   }
 
   public Dominio getDomain() {

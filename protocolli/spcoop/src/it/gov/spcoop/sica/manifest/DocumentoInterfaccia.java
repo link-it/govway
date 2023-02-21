@@ -55,6 +55,7 @@ import java.io.Serializable;
 
 public class DocumentoInterfaccia extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DocumentoInterfaccia() {
+    super();
   }
 
   public String getBase() {

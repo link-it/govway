@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class DocumentoSemiformale extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DocumentoSemiformale() {
+    super();
   }
 
   public String getBase() {

@@ -128,8 +128,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -186,8 +192,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -225,8 +237,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -294,12 +312,13 @@ public class DBUtils {
 //			if(testServizioNonCorrelato)
 //			query = query + " AND servizio_correlato=?";
 			stm=con.prepareStatement(query);
-			stm.setLong(1, idSoggetto);
-			stm.setString(2, tipoServizio);
-			stm.setString(3, nomeServizio);
-			stm.setInt(4, versioneServizio);
+			int index = 1;
+			stm.setLong(index++, idSoggetto);
+			stm.setString(index++, tipoServizio);
+			stm.setString(index++, nomeServizio);
+			stm.setInt(index++, versioneServizio);
 			if(testServizioNonCorrelato)
-				stm.setString(5, CostantiDB.STATO_FUNZIONALITA_DISABILITATO);
+				stm.setString(index++, CostantiDB.STATO_FUNZIONALITA_DISABILITATO);
 
 			rs=stm.executeQuery();
 
@@ -317,8 +336,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -360,8 +385,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -407,8 +438,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -466,8 +503,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -513,8 +556,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -558,8 +607,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -604,8 +659,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -648,8 +709,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -700,8 +767,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -732,8 +805,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(selectRS!=null) selectRS.close();
-				if(selectStmt!=null) selectStmt.close();
+				if(selectRS!=null) 
+					selectRS.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(selectStmt!=null) 
+					selectStmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -764,8 +843,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(selectRS!=null) selectRS.close();
-				if(selectStmt!=null) selectStmt.close();
+				if(selectRS!=null) 
+					selectRS.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(selectStmt!=null) 
+					selectStmt.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -817,8 +902,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -871,8 +962,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -927,8 +1024,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -981,8 +1084,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1034,8 +1143,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1090,8 +1205,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1133,8 +1254,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1181,8 +1308,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1243,8 +1376,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -1288,8 +1427,14 @@ public class DBUtils {
 		{
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}

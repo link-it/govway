@@ -75,6 +75,7 @@ import java.io.Serializable;
 
 public class SoapConfiguration extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SoapConfiguration() {
+    super();
   }
 
   public Integration getIntegration() {

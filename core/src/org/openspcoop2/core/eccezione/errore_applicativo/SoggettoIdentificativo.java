@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class SoggettoIdentificativo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SoggettoIdentificativo() {
+    super();
   }
 
   public String getBase() {

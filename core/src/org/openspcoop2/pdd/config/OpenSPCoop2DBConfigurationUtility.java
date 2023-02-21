@@ -71,7 +71,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 		
 		                               
 		if (args.length  < 4) {
-			String errorMsg = "ERROR, Usage:  java TestXMLDataConverter proprietaAccessoDatabase tipologiaEliminazione(fruzione/erogazione) servizio(tipo/nome) soggettoErogatoreServizio(tipo/nome o *) fruitore(SOLO se tipologia=fruizione) [Logger]";
+			String errorMsg = "ERROR, Usage:  java OpenSPCoop2DBConfigurationUtility proprietaAccessoDatabase tipologiaEliminazione(fruzione/erogazione) servizio(tipo/nome) soggettoErogatoreServizio(tipo/nome o *) fruitore(SOLO se tipologia=fruizione) [Logger]";
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}

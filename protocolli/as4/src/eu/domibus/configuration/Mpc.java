@@ -55,6 +55,7 @@ import java.io.Serializable;
 
 public class Mpc extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Mpc() {
+    super();
   }
 
   public java.lang.String getName() {

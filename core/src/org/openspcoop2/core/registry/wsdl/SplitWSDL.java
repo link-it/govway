@@ -282,7 +282,7 @@ public class SplitWSDL {
 				throw new SplitWSDLException("Operations dei PortyTypes per il wsdl fruitore non forniti");
 			}
 			if(porttypesFruitore.length!=operationPorttypesFruitore.length){
-				throw new SplitWSDLException("Operations ["+operationPorttypesErogatore.length+"] dei PortyTypes ["+porttypesErogatore.length+"] per il wsdl fruitore non correlate correttamente ai port types");
+				throw new SplitWSDLException("Operations ["+operationPorttypesFruitore.length+"] dei PortyTypes ["+porttypesFruitore.length+"] per il wsdl fruitore non correlate correttamente ai port types");
 			}
 		}
 		

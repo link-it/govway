@@ -59,6 +59,7 @@ import java.io.Serializable;
 
 public class DatiBolloType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiBolloType() {
+    super();
   }
 
   public void set_value_bolloVirtuale(String value) {

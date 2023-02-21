@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class Message extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Message() {
+    super();
   }
 
   public java.lang.String getName() {

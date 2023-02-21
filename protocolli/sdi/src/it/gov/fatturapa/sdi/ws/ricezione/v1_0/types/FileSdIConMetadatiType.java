@@ -64,6 +64,7 @@ import java.io.Serializable;
 
 public class FileSdIConMetadatiType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public FileSdIConMetadatiType() {
+    super();
   }
 
   public java.lang.String getIdentificativoSdI() {

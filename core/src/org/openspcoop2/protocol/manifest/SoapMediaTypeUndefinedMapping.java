@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class SoapMediaTypeUndefinedMapping extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SoapMediaTypeUndefinedMapping() {
+    super();
   }
 
   public void set_value_messageType(String value) {

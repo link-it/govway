@@ -59,6 +59,7 @@ import java.io.Serializable;
 
 public class IdentificatoreServizio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IdentificatoreServizio() {
+    super();
   }
 
   public Soggetto getSoggetto() {

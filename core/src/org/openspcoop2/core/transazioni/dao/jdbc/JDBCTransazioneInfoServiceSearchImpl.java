@@ -105,8 +105,8 @@ public class JDBCTransazioneInfoServiceSearchImpl implements IJDBCServiceSearchW
 
         List<TransazioneInfo> list = new ArrayList<TransazioneInfo>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+        // TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
 		// 2. Usare metodo getTransazioneInfoFetch() sul risultato della select per ottenere un oggetto TransazioneInfo
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 

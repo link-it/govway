@@ -50,6 +50,7 @@ import java.io.Serializable;
 
 public class ResponderParty extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ResponderParty() {
+    super();
   }
 
   public java.lang.String getName() {

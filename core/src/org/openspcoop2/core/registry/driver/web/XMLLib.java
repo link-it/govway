@@ -188,7 +188,9 @@ public class XMLLib{
 		try{
 			File file = new File(fileName);
 			if(file.exists()){
-				file.delete();
+				if(!file.delete()) {
+					// ignore
+				}
 			}  
 
 			fos =new FileOutputStream(fileName);
@@ -245,6 +247,9 @@ public class XMLLib{
 				return null;
 
 		}catch(Exception e){
+			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la elaborazione del file di index ("+indexServizi+"): "+e.getMessage(),e);
+		}
+		finally {
 			try{
 				if( fr != null )
 					fr.close();
@@ -257,7 +262,6 @@ public class XMLLib{
 			} catch(Exception er) {
 				// close
 			}
-			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la elaborazione del file di index ("+indexServizi+"): "+e.getMessage(),e);
 		}
 	}
 
@@ -292,7 +296,9 @@ public class XMLLib{
 
 			File f = new File(indexServizi);
 			if(f.exists()){
-				f.delete();
+				if(!f.delete()) {
+					// ignore
+				}
 			}  
 
 			fos = new FileOutputStream(f);
@@ -888,7 +894,7 @@ public class XMLLib{
 			}
 			return accordiRegistrati;
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca degli accordi di cooperazione: "+e.getMessage(),e);
 		}
 	}
@@ -1472,7 +1478,7 @@ public class XMLLib{
 			}
 			return accordiRegistrati;
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca degli accordi di servizio: "+e.getMessage(),e);
 		}
 	}
@@ -1615,7 +1621,7 @@ public class XMLLib{
 			}
 			return pddRegistrate;
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca delle porte di dominio: "+e.getMessage(),e);
 		}
 	}
@@ -1758,7 +1764,7 @@ public class XMLLib{
 			}
 			return gruppiRegistrate;
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca dei gruppi: "+e.getMessage(),e);
 		}
 	}
@@ -1901,7 +1907,7 @@ public class XMLLib{
 			}
 			return ruoliRegistrate;
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca dei ruoli: "+e.getMessage(),e);
 		}
 	}
@@ -2042,7 +2048,7 @@ public class XMLLib{
 			}
 			return scopeRegistrate;
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca dei scope: "+e.getMessage(),e);
 		}
 	}
@@ -2270,7 +2276,7 @@ public class XMLLib{
 			}
 			return soggettiRegistrati;
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca dei soggetti: "+e.getMessage(),e);
 		}
 	}
@@ -2949,7 +2955,7 @@ public class XMLLib{
 			}
 			return serviziRegistrati;
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca dei soggetti: "+e.getMessage(),e);
 		}
 	}

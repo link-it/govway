@@ -52,6 +52,7 @@ import java.io.Serializable;
 
 public class Schema extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Schema() {
+    super();
   }
 
   public java.net.URI getLocation() {

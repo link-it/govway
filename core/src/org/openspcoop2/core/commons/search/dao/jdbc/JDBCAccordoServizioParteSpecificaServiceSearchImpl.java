@@ -141,8 +141,8 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 
 		List<IdAccordoServizioParteSpecifica> list = new ArrayList<IdAccordoServizioParteSpecifica>();
 
-		// TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+		// TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari a create l'ID logico
 		// 2. Usare metodo getAccordoServizioParteSpecificaFetch() sul risultato della select per ottenere un oggetto AccordoServizioParteSpecifica
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
@@ -160,14 +160,14 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 		
 	}
 	
-	@Override
+	private static boolean efficiente = true;
+    
+    @Override
 	public List<AccordoServizioParteSpecifica> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
 
         List<AccordoServizioParteSpecifica> list = new ArrayList<AccordoServizioParteSpecifica>();
         
-        boolean efficente = true;
-        
-        if(efficente){
+        if(efficiente){
         	
         	List<IField> fields = new ArrayList<IField>();
     		fields.add(AccordoServizioParteSpecifica.model().TIPO);

@@ -65,6 +65,7 @@ import java.io.Serializable;
 
 public class ServiceType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ServiceType() {
+    super();
   }
 
   public SoapMediaTypeCollection getSoapMediaTypeCollection() {

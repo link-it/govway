@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import java.io.Serializable;
@@ -61,22 +60,9 @@ import java.util.List;
 
 @XmlRootElement(name = "message")
 
-public class Message extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class Message extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public Message() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+    super();
   }
 
   public void addPart(MessagePart part) {
@@ -132,9 +118,6 @@ public class Message extends org.openspcoop2.utils.beans.BaseBean implements Ser
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
 
 

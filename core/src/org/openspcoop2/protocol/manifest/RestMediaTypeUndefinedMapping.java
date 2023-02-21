@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class RestMediaTypeUndefinedMapping extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RestMediaTypeUndefinedMapping() {
+    super();
   }
 
   public void set_value_messageType(String value) {

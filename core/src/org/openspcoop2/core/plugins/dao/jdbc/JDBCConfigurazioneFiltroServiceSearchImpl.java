@@ -128,8 +128,8 @@ public class JDBCConfigurazioneFiltroServiceSearchImpl implements IJDBCServiceSe
 
 		List<IdConfigurazioneFiltro> list = new ArrayList<IdConfigurazioneFiltro>();
 
-		// TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+		// TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari a create l'ID logico
 		// 2. Usare metodo getConfigurazioneFiltroFetch() sul risultato della select per ottenere un oggetto ConfigurazioneFiltro
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
@@ -152,8 +152,8 @@ public class JDBCConfigurazioneFiltroServiceSearchImpl implements IJDBCServiceSe
 
         List<ConfigurazioneFiltro> list = new ArrayList<ConfigurazioneFiltro>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+        // TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
 		// 2. Usare metodo getConfigurazioneFiltroFetch() sul risultato della select per ottenere un oggetto ConfigurazioneFiltro
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 

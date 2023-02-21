@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class PayloadURLType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public PayloadURLType() {
+    super();
   }
 
   public String getBase() {

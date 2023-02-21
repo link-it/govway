@@ -19,7 +19,7 @@
  */
 
 
-package org.openspcoop2.core.registry.driver.utils;
+package org.openspcoop2.core.registry.driver.test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,6 +70,9 @@ public class SerializationClientTest {
 	private static Logger log = null;
 	
 	public static void main(String [] args) throws Exception{
+		test(args);
+	}
+	public static void test(String ... params) throws Exception{
 		
 		File logFile = File.createTempFile("testSerializzazione_", ".log");
 		System.out.println("LogMessages write in "+logFile.getAbsolutePath());
@@ -83,8 +86,8 @@ public class SerializationClientTest {
 		long dataFine = -1;
 		
 		File dir = new File(".");
-		if(args.length>0){
-			dir = new File(args[0].trim());
+		if(params!=null && params.length>0){
+			dir = new File(params[0].trim());
 			if(dir.exists()){
 				if(dir.isDirectory()){
 					throw new Exception("Directory ["+dir.getAbsolutePath()+"] gia' esistente");
@@ -276,7 +279,7 @@ public class SerializationClientTest {
 		fwriterJava.close();
 		log.info("- OK");
 		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileReader.length()));
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Reader/Writer): ");
@@ -1197,7 +1200,7 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		
-		
+		System.out.println("Testsuite terminata");
 	}
 	
 	

@@ -58,6 +58,7 @@ import java.util.List;
 
 public class ElencoServiziComponenti extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ElencoServiziComponenti() {
+    super();
   }
 
   public void addServizioComponente(java.net.URI servizioComponente) {

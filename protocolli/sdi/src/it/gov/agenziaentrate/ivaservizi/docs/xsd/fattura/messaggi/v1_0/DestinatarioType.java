@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class DestinatarioType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DestinatarioType() {
+    super();
   }
 
   public java.lang.String getCodice() {

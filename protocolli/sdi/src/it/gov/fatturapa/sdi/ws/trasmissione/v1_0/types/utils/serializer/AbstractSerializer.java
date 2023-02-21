@@ -68,7 +68,7 @@ public abstract class AbstractSerializer {
 			try{
 				out.flush();
 			}catch(Exception e){
-				// close
+				// ignore
 			}
 		}
 	}
@@ -89,14 +89,18 @@ public abstract class AbstractSerializer {
 		}
 		finally{
 			try{
-				fout.flush();
+				if(fout!=null){
+					fout.flush();
+				}
 			}catch(Exception e){
-				// close
+				// ignore
 			}
 			try{
-				fout.close();
+				if(fout!=null){
+					fout.close();
+				}
 			}catch(Exception e){
-				// close
+				// ignore
 			}
 		}
 	}
@@ -110,14 +114,18 @@ public abstract class AbstractSerializer {
 		}
 		finally{
 			try{
-				bout.flush();
+				if(bout!=null){
+					bout.flush();
+				}
 			}catch(Exception e){
-				// close
+				// ignore
 			}
 			try{
-				bout.close();
+				if(bout!=null){
+					bout.close();
+				}
 			}catch(Exception e){
-				// close
+				// ignore
 			}
 		}
 		return bout;

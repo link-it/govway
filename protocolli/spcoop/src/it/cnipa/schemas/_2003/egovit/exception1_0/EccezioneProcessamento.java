@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class EccezioneProcessamento extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public EccezioneProcessamento() {
+    super();
   }
 
   public java.lang.String getCodiceEccezione() {

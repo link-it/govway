@@ -55,6 +55,7 @@ import java.io.Serializable;
 
 public class Servizio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Servizio() {
+    super();
   }
 
   public String getBase() {

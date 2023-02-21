@@ -169,11 +169,11 @@
 							Si pensava questo poichè anche se si utilizzava indici composti (cioè con più di una colonna), le successive colonne
 							erano tutte disordinate rispetto alla prima colonna.
 							Si è invece ravvisato che è utile usare gli indici composti, anche perchè scorrere un indice (anche scorrerlo tutto) 
-							è comunque molto più efficente che usare una tabella.
-							Inoltre si è constatato che il doppio accesso indice-tabella è inefficente, a volte è più performante fare uno scan sulla tabella.
+							è comunque molto più efficiente che usare una tabella.
+							Inoltre si è constatato che il doppio accesso indice-tabella è inefficiente, a volte è più performante fare uno scan sulla tabella.
 							Per risolvere tutte le problematiche di performance bisogna usare indici che contengono tutte le colonne, anche quelle usate nelle select list,
 							in modo da non dover proprio accedere alla tabella (su cui si accede solo per l'eventuale dettaglio della singola transazione), 
-							e in modo da poter effettuare una 'full index scan' che risulta efficente.
+							e in modo da poter effettuare una 'full index scan' che risulta efficiente.
 							Inoltre su Oracle, è stato rilevato che è utile forzare l'utilizzo di un indice, poichè a volte oracle sembra non effettuare la scelta di indice corretta.
 							
 							Quanto premesso sopra, la soluzione ideale sarebbe creare due indici ad hoc per la ricerca (INDEX_TR_SEARCH) e per le statistiche (INDEX_TR_STATS).

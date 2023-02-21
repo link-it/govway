@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class DatiFatturaRettificataType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiFatturaRettificataType() {
+    super();
   }
 
   public java.lang.String getNumeroFR() {

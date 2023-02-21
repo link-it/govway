@@ -56,6 +56,7 @@ import java.io.Serializable;
 
 public class Payload extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Payload() {
+    super();
   }
 
   public java.lang.String getName() {

@@ -395,7 +395,7 @@ public class StatisticsUtils {
 		// Numero Transazioni
 		FunctionField fCount = new FunctionField(
 				//Transazione.model().ID_TRANSAZIONE,
-				Transazione.model().DATA_INGRESSO_RICHIESTA, // piu' efficente
+				Transazione.model().DATA_INGRESSO_RICHIESTA, // piu' efficiente
 				//Function.COUNT_DISTINCT,
 				Function.COUNT,
 				"richieste");

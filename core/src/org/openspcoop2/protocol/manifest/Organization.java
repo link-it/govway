@@ -65,6 +65,7 @@ import java.io.Serializable;
 
 public class Organization extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Organization() {
+    super();
   }
 
   public OrganizationTypes getTypes() {

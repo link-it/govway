@@ -58,6 +58,7 @@ import java.util.List;
 
 public class ErrorHandlings extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ErrorHandlings() {
+    super();
   }
 
   public void addErrorHandling(ErrorHandling errorHandling) {

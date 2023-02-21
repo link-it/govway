@@ -106,27 +106,27 @@ public class OutRequestHandler extends LastPositionHandler implements  org.opens
 					//System.out.println("@@@@@REPOSITORY@@@@@ OutRequestHandler ID TRANSAZIONE ["+idTransazione+"] GESTIONE COMPLETA");
 									
 					Date dataElaborazioneMessaggio = context.getDataElaborazioneMessaggio();
-					// INEFFICENTE: RepositoryGestioneStateful.addDataUscitaRichiesta(idTransazione, dataElaborazioneMessaggio);
+					// INEFFICIENTE: RepositoryGestioneStateful.addDataUscitaRichiesta(idTransazione, dataElaborazioneMessaggio);
 					sObject.setDataUscitaRichiesta(dataElaborazioneMessaggio);
 									
 					if(context.getProtocollo()!=null){
-						// INEFFICENTE: RepositoryGestioneStateful.addScenarioCooperazione(idTransazione, context.getProtocollo().getScenarioCooperazione());
+						// INEFFICIENTE: RepositoryGestioneStateful.addScenarioCooperazione(idTransazione, context.getProtocollo().getScenarioCooperazione());
 						sObject.setScenarioCooperazione(context.getProtocollo().getScenarioCooperazione());
 					}
 					
 					if(context.getConnettore()!=null){
 						
-						// INEFFICENTE: RepositoryGestioneStateful.addTipoConnettore(idTransazione, context.getConnettore().getTipoConnettore());
+						// INEFFICIENTE: RepositoryGestioneStateful.addTipoConnettore(idTransazione, context.getConnettore().getTipoConnettore());
 						sObject.setTipoConnettore(context.getConnettore().getTipoConnettore());
 						
-						// INEFFICENTE: RepositoryGestioneStateful.addLocation(idTransazione, context.getConnettore().getLocation());
+						// INEFFICIENTE: RepositoryGestioneStateful.addLocation(idTransazione, context.getConnettore().getLocation());
 						sObject.setLocation(context.getConnettore().getLocation());
 						
 					}
 					
 					if(context.getIntegrazione()!=null){
 						
-						// INEFFICENTE: RepositoryGestioneStateful.addServizioApplicativoErogatore(context.getIntegrazione().getServizioApplicativoErogatore(i));
+						// INEFFICIENTE: RepositoryGestioneStateful.addServizioApplicativoErogatore(context.getIntegrazione().getServizioApplicativoErogatore(i));
 						for (int i = 0; i < context.getIntegrazione().sizeServiziApplicativiErogatori(); i++) {
 							sObject.addServizioApplicativoErogatore(context.getIntegrazione().getServizioApplicativoErogatore(i));	
 						}
@@ -147,7 +147,7 @@ public class OutRequestHandler extends LastPositionHandler implements  org.opens
 						//System.out.println("SET DATA ("+dataElaborazioneMessaggio.toString()+")");
 					}catch(TransactionDeletedException e){
 						//System.out.println("@@@@@REPOSITORY@@@@@ OutRequestHandler SET DATA ("+dataElaborazioneMessaggio.toString()+")");
-						// INEFFICENTE: RepositoryGestioneStateful.addDataUscitaRichiesta(idTransazione, dataElaborazioneMessaggio);
+						// INEFFICIENTE: RepositoryGestioneStateful.addDataUscitaRichiesta(idTransazione, dataElaborazioneMessaggio);
 						if(sObject==null)
 							sObject = new OutRequestStatefulObject();
 						sObject.setDataUscitaRichiesta(dataElaborazioneMessaggio);
@@ -160,7 +160,7 @@ public class OutRequestHandler extends LastPositionHandler implements  org.opens
 						}
 					}catch(TransactionDeletedException e){
 						//System.out.println("@@@@@REPOSITORY@@@@@ OutRequestHandler SET SCENARIO ["+context.getProtocollo().getScenarioCooperazione()+"]");
-						// INEFFICENTE: RepositoryGestioneStateful.addScenarioCooperazione(idTransazione, context.getProtocollo().getScenarioCooperazione());
+						// INEFFICIENTE: RepositoryGestioneStateful.addScenarioCooperazione(idTransazione, context.getProtocollo().getScenarioCooperazione());
 						if(sObject==null)
 							sObject = new OutRequestStatefulObject();
 						sObject.setScenarioCooperazione(context.getProtocollo().getScenarioCooperazione());
@@ -173,7 +173,7 @@ public class OutRequestHandler extends LastPositionHandler implements  org.opens
 							tr.setTipoConnettore(context.getConnettore().getTipoConnettore());
 						}catch(TransactionDeletedException e){
 							//System.out.println("@@@@@REPOSITORY@@@@@ OutRequestHandler SET TIPO CONNETTORE ["+context.getConnettore().getTipoConnettore()+"]");
-							// INEFFICENTE: RepositoryGestioneStateful.addTipoConnettore(idTransazione, context.getConnettore().getTipoConnettore());
+							// INEFFICIENTE: RepositoryGestioneStateful.addTipoConnettore(idTransazione, context.getConnettore().getTipoConnettore());
 							if(sObject==null)
 								sObject = new OutRequestStatefulObject();
 							sObject.setTipoConnettore(context.getConnettore().getTipoConnettore());
@@ -206,7 +206,7 @@ public class OutRequestHandler extends LastPositionHandler implements  org.opens
 							}
 						}catch(TransactionDeletedException e){
 							//System.out.println("@@@@@REPOSITORY@@@@@ OutRequestHandler SET LOCATION ["+context.getConnettore().getLocation()+"]");
-							// INEFFICENTE: RepositoryGestioneStateful.addLocation(idTransazione, context.getConnettore().getLocation());
+							// INEFFICIENTE: RepositoryGestioneStateful.addLocation(idTransazione, context.getConnettore().getLocation());
 							if(sObject==null)
 								sObject = new OutRequestStatefulObject();
 							sObject.setLocation(context.getConnettore().getLocation());
@@ -222,7 +222,7 @@ public class OutRequestHandler extends LastPositionHandler implements  org.opens
 								tr.addServizioApplicativoErogatore(context.getIntegrazione().getServizioApplicativoErogatore(i));
 							}catch(TransactionDeletedException e){
 								//System.out.println("@@@@@REPOSITORY@@@@@ OutRequestHandler ADD SERVIZIO APPLICATIVO EROGATORE ["+context.getIntegrazione().getServizioApplicativoErogatore(i)+"]");
-								// INEFFICENTE: RepositoryGestioneStateful.addServizioApplicativoErogatore(context.getIntegrazione().getServizioApplicativoErogatore(i));
+								// INEFFICIENTE: RepositoryGestioneStateful.addServizioApplicativoErogatore(context.getIntegrazione().getServizioApplicativoErogatore(i));
 								if(sObject==null)
 									sObject = new OutRequestStatefulObject();
 								sObject.addServizioApplicativoErogatore(context.getIntegrazione().getServizioApplicativoErogatore(i));	

@@ -60,6 +60,7 @@ import java.util.List;
 
 public class Parties extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Parties() {
+    super();
   }
 
   public PartyIdTypes getPartyIdTypes() {

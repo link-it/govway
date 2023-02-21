@@ -55,59 +55,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SubmitResponse }
+     * Create an instance of {@link PayloadType }
      */
-    public SubmitResponse createSubmitResponse() {
-        return new SubmitResponse();
-    }
-
-    /**
-     * Create an instance of {@link MessageErrorsRequest }
-     */
-    public MessageErrorsRequest createMessageErrorsRequest() {
-        return new MessageErrorsRequest();
-    }
-
-    /**
-     * Create an instance of {@link LargePayloadType }
-     */
-    public LargePayloadType createLargePayloadType() {
-        return new LargePayloadType();
-    }
-
-    /**
-     * Create an instance of {@link FaultDetail }
-     */
-    public FaultDetail createFaultDetail() {
-        return new FaultDetail();
-    }
-
-    /**
-     * Create an instance of {@link ListPendingMessagesResponse }
-     */
-    public ListPendingMessagesResponse createListPendingMessagesResponse() {
-        return new ListPendingMessagesResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetStatusRequest }
-     */
-    public GetStatusRequest createGetStatusRequest() {
-        return new GetStatusRequest();
-    }
-
-    /**
-     * Create an instance of {@link SubmitRequest }
-     */
-    public SubmitRequest createSubmitRequest() {
-        return new SubmitRequest();
-    }
-
-    /**
-     * Create an instance of {@link ErrorResultImpl }
-     */
-    public ErrorResultImpl createErrorResultImpl() {
-        return new ErrorResultImpl();
+    public PayloadType createPayloadType() {
+        return new PayloadType();
     }
 
     /**
@@ -118,38 +69,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatusRequest }
+     * Create an instance of {@link RetrieveMessageResponse }
      */
-    public StatusRequest createStatusRequest() {
-        return new StatusRequest();
+    public RetrieveMessageResponse createRetrieveMessageResponse() {
+        return new RetrieveMessageResponse();
     }
 
     /**
-     * Create an instance of {@link Collection }
+     * Create an instance of {@link MessageErrorsRequest }
      */
-    public Collection createCollection() {
-        return new Collection();
+    public MessageErrorsRequest createMessageErrorsRequest() {
+        return new MessageErrorsRequest();
     }
 
     /**
-     * Create an instance of {@link PayloadURLType }
+     * Create an instance of {@link ListPendingMessagesResponse }
      */
-    public PayloadURLType createPayloadURLType() {
-        return new PayloadURLType();
-    }
-
-    /**
-     * Create an instance of {@link GetErrorsRequest }
-     */
-    public GetErrorsRequest createGetErrorsRequest() {
-        return new GetErrorsRequest();
-    }
-
-    /**
-     * Create an instance of {@link PayloadType }
-     */
-    public PayloadType createPayloadType() {
-        return new PayloadType();
+    public ListPendingMessagesResponse createListPendingMessagesResponse() {
+        return new ListPendingMessagesResponse();
     }
 
     /**
@@ -160,6 +97,55 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetStatusRequest }
+     */
+    public GetStatusRequest createGetStatusRequest() {
+        return new GetStatusRequest();
+    }
+
+    /**
+     * Create an instance of {@link ErrorResultImpl }
+     */
+    public ErrorResultImpl createErrorResultImpl() {
+        return new ErrorResultImpl();
+    }
+
+    /**
+     * Create an instance of {@link PayloadURLType }
+     */
+    public PayloadURLType createPayloadURLType() {
+        return new PayloadURLType();
+    }
+
+    /**
+     * Create an instance of {@link SubmitResponse }
+     */
+    public SubmitResponse createSubmitResponse() {
+        return new SubmitResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetErrorsRequest }
+     */
+    public GetErrorsRequest createGetErrorsRequest() {
+        return new GetErrorsRequest();
+    }
+
+    /**
+     * Create an instance of {@link FaultDetail }
+     */
+    public FaultDetail createFaultDetail() {
+        return new FaultDetail();
+    }
+
+    /**
+     * Create an instance of {@link SubmitRequest }
+     */
+    public SubmitRequest createSubmitRequest() {
+        return new SubmitRequest();
+    }
+
+    /**
      * Create an instance of {@link RetrieveMessageRequest }
      */
     public RetrieveMessageRequest createRetrieveMessageRequest() {
@@ -167,10 +153,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RetrieveMessageResponse }
+     * Create an instance of {@link Collection }
      */
-    public RetrieveMessageResponse createRetrieveMessageResponse() {
-        return new RetrieveMessageResponse();
+    public Collection createCollection() {
+        return new Collection();
+    }
+
+    /**
+     * Create an instance of {@link LargePayloadType }
+     */
+    public LargePayloadType createLargePayloadType() {
+        return new LargePayloadType();
+    }
+
+    /**
+     * Create an instance of {@link StatusRequest }
+     */
+    public StatusRequest createStatusRequest() {
+        return new StatusRequest();
     }
 
     private final static QName _GetMessageErrorsResponse = new QName("http://org.ecodex.backend/1_1/", "getMessageErrorsResponse");

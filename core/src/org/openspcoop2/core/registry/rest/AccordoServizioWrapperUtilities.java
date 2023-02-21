@@ -138,6 +138,9 @@ public class AccordoServizioWrapperUtilities {
 			throw new DriverRegistroServiziException("Tipo specifica ["+this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()+"] non supportata");
 		}
 		
+		if(apiReader==null) {
+			throw new DriverRegistroServiziException("Inizializzazione Reader Specifica ["+this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()+"] fallita");
+		}
 		
 		
 		byte [] specifica = null;

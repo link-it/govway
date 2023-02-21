@@ -64,6 +64,7 @@ import java.io.Serializable;
 
 public class DatiRitenutaType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiRitenutaType() {
+    super();
   }
 
   public void set_value_tipoRitenuta(String value) {

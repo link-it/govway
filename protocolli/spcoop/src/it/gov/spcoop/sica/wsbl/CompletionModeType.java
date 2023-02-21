@@ -59,6 +59,7 @@ import java.io.Serializable;
 
 public class CompletionModeType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public CompletionModeType() {
+    super();
   }
 
   public void set_value_mode(String value) {
