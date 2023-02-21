@@ -414,7 +414,7 @@ public class RegistroServiziManager {
 		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper w = this.registroServiziReader.getWsdlAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, readDatiRegistro);
 		if(useRequestInfo && requestInfo!=null && requestInfo.getRequestConfig().getAsWrapper_soap(infoWsdlSource, buildSchemaXSD, readDatiRegistro)==null) {
 			requestInfo.getRequestConfig().setAsWrapper_soap(w, infoWsdlSource, buildSchemaXSD, readDatiRegistro,
-					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+					requestInfo.getIdTransazione());
 		}
 		return w;
 	}
@@ -431,7 +431,7 @@ public class RegistroServiziManager {
 		org.openspcoop2.core.registry.rest.AccordoServizioWrapper w = this.registroServiziReader.getRestAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
 		if(useRequestInfo && requestInfo!=null && requestInfo.getRequestConfig().getAsWrapper_rest(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro)==null) {
 			requestInfo.getRequestConfig().setAsWrapper_rest(w, infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro,
-					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+					requestInfo.getIdTransazione());
 		}
 		return w;
 	}
@@ -722,13 +722,13 @@ public class RegistroServiziManager {
 		}
 		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
 			if( requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePdd()!=null &&
-					nome.equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePdd().getNome())	) {
+					nome!=null && nome.equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePdd().getNome())	) {
 				return requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePdd();
 			}
 		}
 		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
 			if( requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePdd()!=null &&
-					nome.equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePdd().getNome())	) {
+					nome!=null && nome.equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePdd().getNome())	) {
 				return requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePdd();
 			}
 		}
@@ -747,7 +747,7 @@ public class RegistroServiziManager {
 		Ruolo r = this.registroServiziReader.getRuolo(this.getConnection(), nome, nomeRegistro);
 		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addRuolo(nome, r, 
-					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+					requestInfo.getIdTransazione());
 		}
 		return r;
 	}
@@ -766,7 +766,7 @@ public class RegistroServiziManager {
 		Scope s = this.registroServiziReader.getScope(this.getConnection(), nome, nomeRegistro);
 		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addScope(nome, s, 
-					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+					requestInfo.getIdTransazione());
 		}
 		return s;
 	}

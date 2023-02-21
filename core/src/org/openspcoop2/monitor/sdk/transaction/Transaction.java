@@ -20,8 +20,8 @@
 package org.openspcoop2.monitor.sdk.transaction;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.monitor.sdk.constants.TransactionExceptionCode;
 import org.openspcoop2.monitor.sdk.exceptions.TransactionException;
-import org.openspcoop2.monitor.sdk.exceptions.TransactionExceptionCode;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

@@ -83,7 +83,9 @@ public class PluginJar implements Serializable {
 	
 	public void close() {
 		if(this.fContent!=null) {
-			this.fContent.delete();
+			if(!this.fContent.delete()) {
+				// ignore
+			}
 		}
 	}
 	

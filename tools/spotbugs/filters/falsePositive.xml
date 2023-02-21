@@ -161,7 +161,7 @@
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.protocol.engine.driver.repository.test.TestGestoreRepository" />
+    <Class name="org.openspcoop2.protocol.engine.driver.repository.test.GestoreRepositoryTest" />
     <Method name="test" />
     <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
   </Match>

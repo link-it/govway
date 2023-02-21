@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.monitor.engine.constants.SondaStatus;
 import org.openspcoop2.monitor.engine.status.GatewayStatus;
 import org.openspcoop2.monitor.engine.status.IStatus;
-import org.openspcoop2.monitor.engine.status.SondaStatus;
 import org.openspcoop2.monitor.engine.status.StatusUtilities;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;

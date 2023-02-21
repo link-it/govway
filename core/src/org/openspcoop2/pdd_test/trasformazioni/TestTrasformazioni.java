@@ -58,7 +58,7 @@ public class TestTrasformazioni {
 	public void testDynamicReplace(TipoTrasformazione tipo) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.pdd.core.trasformazioni.Test.main(new String[] {tipo.name()});
+		org.openspcoop2.pdd.core.trasformazioni.test.TrasformazioniTest.main(new String[] {tipo.name()});
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

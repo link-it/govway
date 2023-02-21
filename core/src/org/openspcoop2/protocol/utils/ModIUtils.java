@@ -937,8 +937,8 @@ public class ModIUtils {
 				vStore = getBinaryValue_config(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
 			}
 			
-			String password = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
-			String vPassword = getStringValue_config(protocolPropertyList, password);
+			String pw = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
+			String vPassword = getStringValue_config(protocolPropertyList, pw);
 			
 			String aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
 			String vAliasKey = getStringValue_config(protocolPropertyList, aliasKey);
@@ -1006,7 +1006,7 @@ public class ModIUtils {
 			String type = null;
 			String path = null;
 			String archive = null;
-			String password = null;
+			String pw = null;
 			String crl = null;
 			String ocsp = null;
 			String aliasKey = null;
@@ -1017,20 +1017,20 @@ public class ModIUtils {
 			if(ssl) {
 				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE;
 				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH;
-				password = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD;
+				pw = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD;
 				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS;
 				ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY;
 			}
 			else if(truststore) {
 				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE;
 				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH;
-				password = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD;
+				pw = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD;
 				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS;
 				ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY;
 			}
 			else {
 				type = CostantiDB.MODIPA_KEYSTORE_TYPE;
-				password = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
+				pw = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
 				aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
 				String mode = getStringValue(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_MODE);
 				if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
@@ -1052,8 +1052,8 @@ public class ModIUtils {
 			}
 			
 			String vPassword = null;
-			if(password!=null) {
-				vPassword = getStringValue(protocolPropertyList, password);
+			if(pw!=null) {
+				vPassword = getStringValue(protocolPropertyList, pw);
 			}
 			
 			boolean hsm = false;

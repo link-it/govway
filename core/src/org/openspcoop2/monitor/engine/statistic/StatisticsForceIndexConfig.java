@@ -122,19 +122,28 @@ public class StatisticsForceIndexConfig {
 		Properties pRepoExternal = null;
 		if(tmpRepo!=null){
 			InputStream is = null;
-			File f = new File(tmpRepo);
-			if(f.exists()){
-				is = new FileInputStream(f);
+			try {
+				File f = new File(tmpRepo);
+				if(f.exists()){
+					is = new FileInputStream(f);
+				}
+				else{
+					// provo a cercarlo nel classpath
+					is = StatisticsForceIndexConfig.class.getResourceAsStream(tmpRepo);
+				}
+				if(is!=null){
+					pRepoExternal = new Properties();
+					pRepoExternal.load(is);
+				}
+			}finally {
+				try {
+					if(is!=null) {
+						is.close();
+					}
+				}catch(Exception e) {
+					// ignore
+				}
 			}
-			else{
-				// provo a cercarlo nel classpath
-				is = StatisticsForceIndexConfig.class.getResourceAsStream(tmpRepo);
-			}
-			if(is!=null){
-				pRepoExternal = new Properties();
-				pRepoExternal.load(is);
-				is.close();
-	 		}
 		}
 		return  pRepoExternal;
 	}

@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.monitor.sdk.exceptions;
 
+import org.openspcoop2.monitor.sdk.constants.TransactionExceptionCode;
+
 /**
  * TransactionException
  *

@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.pdd.core.dynamic;
+package org.openspcoop2.pdd.core.dynamic.test;
 
 import java.util.Map;
 

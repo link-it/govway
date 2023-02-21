@@ -113,9 +113,7 @@ public class IDSerialGenerator {
 		}catch(Exception e){
 			throw new ProtocolException("Connessione non disponibile: "+e.getMessage(),e);
 		}
-		if(conDB == null){
-			throw new ProtocolException("Connessione non disponibile");
-		}
+		checkConnection(conDB);
 
 		String identificativoUnivoco = null;
 		try{
@@ -133,13 +131,20 @@ public class IDSerialGenerator {
 				if(conDBFromDatasource)
 					IDSerialGenerator.releaseConnectionPdD(conDB);	
 			}catch(Exception e){
-				throw new ProtocolException("Rilascio connessione non riuscito: "+e.getMessage(),e);
+				if(this.log!=null) {
+					this.log.error("Rilascio connessione non riuscito: "+e.getMessage(),e);
+				}
+				//throw new ProtocolException("Rilascio connessione non riuscito: "+e.getMessage(),e);
 			}
 
 		}
 
 	}
 
-
+	private void checkConnection(Connection conDB) throws ProtocolException {
+		if(conDB == null){
+			throw new ProtocolException("Connessione non disponibile");
+		}
+	}
 
 }

@@ -636,7 +636,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.protocol.engine.driver.repository.test.TestGestoreRepository" fork="true">
+		<java classname="org.openspcoop2.protocol.engine.driver.repository.test.GestoreRepositoryTest" fork="true">
 		        <arg value="${tipoDatabase}" />
 			<arg value="${url}" /> <!-- opzionale -->
 			<arg value="${username}" /> <!-- opzionale -->

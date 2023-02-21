@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.pdd.core.dynamic;
+package org.openspcoop2.pdd.core.dynamic.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,6 +43,14 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PddProperties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazione;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
+import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
+import org.openspcoop2.pdd.core.dynamic.MessageContent;
+import org.openspcoop2.pdd.core.dynamic.Template;
+import org.openspcoop2.pdd.core.dynamic.ZipTemplate;
 import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
 import org.openspcoop2.protocol.sdk.ChannelSecurityToken;
 import org.openspcoop2.protocol.sdk.SecurityToken;
@@ -69,7 +77,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Test {
+public class DynamicTest {
 
 	private static final String ENVELOPE = 
 		"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
@@ -237,7 +245,7 @@ public class Test {
 		boolean addPrefixError = true;
 		boolean forceDollaro = true;
 		
-		Logger log = LoggerWrapperFactory.getLogger(Test.class);
+		Logger log = LoggerWrapperFactory.getLogger(DynamicTest.class);
 		
 		Map<String, Object> dynamicMap = new HashMap<>();
 		
@@ -1110,7 +1118,7 @@ public class Test {
 		if(prefix.equals("$")) {
 			
 			// ** freemarker **
-			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJson.ftl")).toByteArray();
+			byte[]template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJson.ftl")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			Template templateObject = new Template("xml2jsonFTL", template);
 			DynamicUtils.convertFreeMarkerTemplate(templateObject, dynamicMap, bout);
@@ -1124,7 +1132,7 @@ public class Test {
 			}
 			
 			// ** velocity **
-			template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJson.vm")).toByteArray();
+			template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJson.vm")).toByteArray();
 			bout = new ByteArrayOutputStream();
 			templateObject = new Template("xml2jsonVelocity", template);
 			DynamicUtils.convertVelocityTemplate(templateObject, dynamicMap, bout);
@@ -1141,9 +1149,9 @@ public class Test {
 		if(prefix.equals("$")) {
 			
 			// ** freemarker **
-			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.ftl")).toByteArray();
-			byte[]prova1 = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude_1.ftl")).toByteArray();
-			byte[]prova2 = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude_2.ftl")).toByteArray();
+			byte[]template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude.ftl")).toByteArray();
+			byte[]prova1 = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude_1.ftl")).toByteArray();
+			byte[]prova2 = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude_2.ftl")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			Map<String, byte[]> templateIncludes = new HashMap<>();
 			templateIncludes.put("TestJsonInclude_1.ftl", prova1);
@@ -1160,9 +1168,9 @@ public class Test {
 			}
 			
 			// ** velocity **
-			template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.vm")).toByteArray();
-			prova1 = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude_1.vm")).toByteArray();
-			prova2 = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude_2.vm")).toByteArray();
+			template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude.vm")).toByteArray();
+			prova1 = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude_1.vm")).toByteArray();
+			prova2 = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude_2.vm")).toByteArray();
 			bout = new ByteArrayOutputStream();
 			templateIncludes = new HashMap<>();
 			templateIncludes.put("TestJsonInclude_1.vm", prova1);
@@ -1183,7 +1191,7 @@ public class Test {
 		if(prefix.equals("$")) {
 			
 			// ** freemarker **
-			byte[]zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.ftl.zip")).toByteArray();
+			byte[]zip = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude.ftl.zip")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			ZipTemplate zipTemplateObject = new ZipTemplate("xml2jsonFTL_INCLUDE_ZIP", zip);
 			DynamicUtils.convertZipFreeMarkerTemplate(zipTemplateObject, dynamicMap, bout);
@@ -1197,7 +1205,7 @@ public class Test {
 			}
 			
 			// Riprovo passando da template
-			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.ftl.zip")).toByteArray();
+			zip = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude.ftl.zip")).toByteArray();
 			bout = new ByteArrayOutputStream();
 			Template templateObject = new Template("xml2jsonFTL_INCLUDE_ZIP", zip);
 			zipTemplateObject = templateObject.getZipTemplate();
@@ -1213,7 +1221,7 @@ public class Test {
 			
 			
 			// ** velocity **
-			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.vm.zip")).toByteArray();
+			zip = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude.vm.zip")).toByteArray();
 			bout = new ByteArrayOutputStream();
 			zipTemplateObject = new ZipTemplate("xml2jsonVelocity_INCLUDE_ZIP", zip);
 			DynamicUtils.convertZipVelocityTemplate(zipTemplateObject, dynamicMap, bout);
@@ -1227,7 +1235,7 @@ public class Test {
 			}
 			
 			// Riprovo passando da template
-			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.vm.zip")).toByteArray();
+			zip = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude.vm.zip")).toByteArray();
 			bout = new ByteArrayOutputStream();
 			templateObject = new Template("xml2jsonVelocity_INCLUDE_ZIP", zip);
 			zipTemplateObject = templateObject.getZipTemplate();
@@ -1245,7 +1253,7 @@ public class Test {
 		if(prefix.equals("$")) {
 			
 			// ** freemarker **
-			byte[]zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude2.ftl.zip")).toByteArray();
+			byte[]zip = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude2.ftl.zip")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			ZipTemplate zipTemplateObject = new ZipTemplate("xml2jsonFTL_INCLUDE_ZIP2", zip);
 			DynamicUtils.convertZipFreeMarkerTemplate(zipTemplateObject, dynamicMap, bout);
@@ -1259,7 +1267,7 @@ public class Test {
 			}
 			
 			// Riprovo passando da template
-			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude2.ftl.zip")).toByteArray();
+			zip = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude2.ftl.zip")).toByteArray();
 			bout = new ByteArrayOutputStream();
 			Template templateObject = new Template("xml2jsonFTL_INCLUDE_ZIP2", zip);
 			zipTemplateObject = templateObject.getZipTemplate();
@@ -1275,7 +1283,7 @@ public class Test {
 			
 			
 			// ** velocity **
-			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude2.vm.zip")).toByteArray();
+			zip = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude2.vm.zip")).toByteArray();
 			bout = new ByteArrayOutputStream();
 			zipTemplateObject = new ZipTemplate("xml2jsonVelocity_INCLUDE_ZIP2", zip);
 			DynamicUtils.convertZipVelocityTemplate(zipTemplateObject, dynamicMap, bout);
@@ -1289,7 +1297,7 @@ public class Test {
 			}
 			
 			// Riprovo passando da template
-			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude2.vm.zip")).toByteArray();
+			zip = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestJsonInclude2.vm.zip")).toByteArray();
 			bout = new ByteArrayOutputStream();
 			templateObject = new Template("xml2jsonVelocity_INCLUDE_ZIP2", zip);
 			zipTemplateObject = templateObject.getZipTemplate();
@@ -1313,7 +1321,7 @@ public class Test {
 			ExecutorService threadsPool = Executors.newFixedThreadPool(threadsNum);
 			Map<String, ClientTestThread> threads = new HashMap<String, ClientTestThread>();
 			
-			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestDynamic.ftl")).toByteArray();
+			byte[]template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestDynamic.ftl")).toByteArray();
 			Template templateObject = new Template("xml2jsonDynamicFTL", template);
 			// verifico thread safe template
 			
@@ -1377,7 +1385,7 @@ public class Test {
 			ExecutorService threadsPool = Executors.newFixedThreadPool(threadsNum);
 			Map<String, ClientTestThread> threads = new HashMap<String, ClientTestThread>();
 			
-			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestDynamic.vm")).toByteArray();
+			byte[]template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestDynamic.vm")).toByteArray();
 			Template templateObject = new Template("xml2jsonDynamicVelocity", template);
 			// verifico thread safe template
 			
@@ -1529,7 +1537,7 @@ public class Test {
 		if(prefix.equals("$")) {
 			
 			// freemarker
-			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestXml.ftl")).toByteArray();
+			byte[]template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestXml.ftl")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			Template templateObject = new Template("json2xmlFTL", template);
 			DynamicUtils.convertFreeMarkerTemplate(templateObject,  dynamicMap, bout);
@@ -1543,7 +1551,7 @@ public class Test {
 			}
 			
 			// velocity
-			template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestXml.vm")).toByteArray();
+			template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestXml.vm")).toByteArray();
 			bout = new ByteArrayOutputStream();
 			templateObject = new Template("json2xmlVelocity", template);
 			DynamicUtils.convertVelocityTemplate(templateObject,  dynamicMap, bout);
@@ -1618,7 +1626,7 @@ public class Test {
 		if(prefix.equals("$")) {
 			
 			// freemarker
-			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestUrl.ftl")).toByteArray();
+			byte[]template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestUrl.ftl")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			Template templateObject = new Template("testUrlFTL", template);
 			DynamicUtils.convertFreeMarkerTemplate(templateObject, dynamicMap, bout);
@@ -1632,7 +1640,7 @@ public class Test {
 			}
 			
 			// velocity
-			template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestUrl.vm")).toByteArray();
+			template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestUrl.vm")).toByteArray();
 			bout = new ByteArrayOutputStream();
 			templateObject = new Template("testUrlVelocity", template);
 			DynamicUtils.convertVelocityTemplate(templateObject, dynamicMap, bout);
@@ -1953,7 +1961,7 @@ class ClientTestThread implements Runnable{
 		MapKey<String> THREADNAME = org.openspcoop2.utils.Map.newMapKey("thread-name");
 		pddContext.addObject(THREADNAME, this.threadName);
 		DynamicInfo dInfo = new DynamicInfo(connettoreMsg, pddContext);
-		Logger log = LoggerWrapperFactory.getLogger(Test.class);
+		Logger log = LoggerWrapperFactory.getLogger(DynamicTest.class);
 		DynamicUtils.fillDynamicMap(log, this.dynamicMap, dInfo);
 		this.freemarker = freemarker;
 	}

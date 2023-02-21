@@ -995,22 +995,30 @@ public class TracciaDriverUtilities {
 			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
 		}finally{
 			try{
-				rsLista.close();
+				if(rsLista!=null) {
+					rsLista.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				pstmtLista.close();
+				if(pstmtLista!=null) {
+					pstmtLista.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				pstmt.close();
+				if(pstmt!=null) {
+					pstmt.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}

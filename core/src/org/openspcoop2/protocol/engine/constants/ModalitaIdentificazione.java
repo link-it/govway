@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.protocol.engine.mapping;
+package org.openspcoop2.protocol.engine.constants;
 
 
 /**

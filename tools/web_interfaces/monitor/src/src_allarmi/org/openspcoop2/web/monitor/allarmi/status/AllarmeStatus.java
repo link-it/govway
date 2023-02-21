@@ -30,9 +30,9 @@ import javax.faces.context.FacesContext;
 
 import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
+import org.openspcoop2.monitor.engine.constants.SondaStatus;
 import org.openspcoop2.monitor.engine.status.BaseStatus;
 import org.openspcoop2.monitor.engine.status.IStatus;
-import org.openspcoop2.monitor.engine.status.SondaStatus;
 import org.openspcoop2.web.monitor.allarmi.bean.AllarmiSearchForm;
 import org.openspcoop2.web.monitor.allarmi.dao.AllarmiService;
 import org.openspcoop2.web.monitor.allarmi.dao.IAllarmiService;

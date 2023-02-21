@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.monitor.engine.status;
 
+import org.openspcoop2.monitor.engine.constants.SondaStatus;
+
 /**
  * BaseStatus
  * 

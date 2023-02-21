@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.engine.driver;
 
+import java.security.SecureRandom;
+
 /**
  * ProtocolRandomUtilities
  *
@@ -31,7 +33,7 @@ public class ProtocolRandomUtilities {
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {

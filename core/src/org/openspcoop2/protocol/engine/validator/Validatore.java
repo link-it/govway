@@ -827,7 +827,8 @@ public class Validatore  {
 	}
 	
 	public void updateMsg(OpenSPCoop2Message msg) throws ProtocolException {
-		boolean update = !msg.getClass().getName().equals(this.msg.getClass().getName());
+		String msgClassName = msg.getClass().getName()+ "";
+		boolean update = !msgClassName.equals(this.msg.getClass().getName());
 		if(update){
 			this.msg = msg;
 			if(this.validatoreSintattico!=null){

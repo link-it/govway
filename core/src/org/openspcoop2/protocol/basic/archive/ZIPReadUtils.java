@@ -247,8 +247,11 @@ public class ZIPReadUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-				if(tmp!=null)
-					tmp.delete();
+				if(tmp!=null) {
+					if(!tmp.delete()) {
+						// ignore
+					}
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -995,7 +998,7 @@ public class ZIPReadUtils  {
 			}
 				
 			// finalize
-			this.finalize(archivio,validationDocuments);
+			this.finalizeArchive(archivio,validationDocuments);
 			
 			return archivio;
 
@@ -1069,7 +1072,7 @@ public class ZIPReadUtils  {
 			bf.append(nomeSoggetto==null?"":nomeSoggetto);
 			bf.append("_");
 			String nomeVersioneAccordo = (nomeAccordo==null?"":nomeAccordo) + (versioneAccordo==null?"":versioneAccordo);
-			bf.append(nomeVersioneAccordo==null?"":nomeVersioneAccordo);
+			bf.append(nomeVersioneAccordo);
 		}
 		else if(ProprietarioProprietaProtocollo.SOGGETTO.equals(proprietario) ||
 				ProprietarioProprietaProtocollo.SERVIZIO_APPLICATIVO.equals(proprietario)) {
@@ -1109,7 +1112,7 @@ public class ZIPReadUtils  {
 		return key;
 	}
 	
-	public void finalize(Archive archivio,boolean validationDocuments) throws ProtocolException{
+	public void finalizeArchive(Archive archivio,boolean validationDocuments) throws ProtocolException{
 		if(this.csvErogazioni!=null){
 			Deserializer deserializer = new Deserializer(validationDocuments, this.log);
 			for (byte[] erogazioneCsv : this.csvErogazioni) {
@@ -2213,11 +2216,13 @@ public class ZIPReadUtils  {
 			// wsdl
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL+File.separatorChar)){
 				
-				if(nomeFileSenzaAccordo.equalsIgnoreCase(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL+File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_EROGATORE_WSDL)){
-					as.setByteWsdlImplementativoErogatore(xml);
-				}
-				else if(nomeFileSenzaAccordo.equalsIgnoreCase(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL+File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_FRUITORE_WSDL)){
-					as.setByteWsdlImplementativoFruitore(xml);
+				if(as!=null) {
+					if(nomeFileSenzaAccordo.equalsIgnoreCase(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL+File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_EROGATORE_WSDL)){
+						as.setByteWsdlImplementativoErogatore(xml);
+					}
+					else if(nomeFileSenzaAccordo.equalsIgnoreCase(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL+File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_FRUITORE_WSDL)){
+						as.setByteWsdlImplementativoFruitore(xml);
+					}
 				}
 				
 			}
@@ -2225,32 +2230,40 @@ public class ZIPReadUtils  {
 			// allegati
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar)){
 				
-				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI, archiveVersion, entryName, xml, 
-						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getAllegatoList());
+				if(as!=null) {
+					processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI, archiveVersion, entryName, xml, 
+							tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getAllegatoList());
+				}
 				
 			}
 			
 			// specificheSemiformali
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar)){
 				
-				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI, archiveVersion, entryName, xml, 
-						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getSpecificaSemiformaleList());
+				if(as!=null) {
+					processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI, archiveVersion, entryName, xml, 
+							tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getSpecificaSemiformaleList());
+				}
 				
 			}
 			
 			// specificheLivelliServizio
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO+File.separatorChar)){
 				
-				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO, archiveVersion, entryName, xml, 
-						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getSpecificaLivelloServizioList());
+				if(as!=null) {
+					processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO, archiveVersion, entryName, xml, 
+							tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getSpecificaLivelloServizioList());
+				}
 				
 			}
 			
 			// specificheSicurezza
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA+File.separatorChar)){
 				
-				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA, archiveVersion, entryName, xml, 
-						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getSpecificaSicurezzaList());
+				if(as!=null) {
+					processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA, archiveVersion, entryName, xml, 
+							tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getSpecificaSicurezzaList());
+				}
 				
 			}
 			
@@ -2258,7 +2271,7 @@ public class ZIPReadUtils  {
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar)){
 
 				List<ProtocolProperty> listPP = new ArrayList<>();
-				if(as.sizeProtocolPropertyList()>0) {
+				if(as!=null && as.sizeProtocolPropertyList()>0) {
 					for (ProtocolProperty protocolProperty : as.getProtocolPropertyList()) {
 						if(protocolProperty.getTipoProprietario()==null) {
 							protocolProperty.setTipoProprietario(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name());

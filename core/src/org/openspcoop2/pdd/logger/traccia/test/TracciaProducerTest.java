@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.pdd.logger.traccia;
+package org.openspcoop2.pdd.logger.traccia.test;
 
 import java.io.File;
 import java.io.InputStream;
@@ -38,6 +38,9 @@ import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.logger.traccia.Converter;
+import org.openspcoop2.pdd.logger.traccia.Serializer;
+import org.openspcoop2.pdd.logger.traccia.Signature;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -62,7 +65,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Client {
+public class TracciaProducerTest {
 
 	public static void main(String[] args) throws Exception {
 		
@@ -78,7 +81,7 @@ public class Client {
 	
 	public static void process(String tipo, boolean extended, boolean init) throws Exception {
 		
-		Logger log = LoggerWrapperFactory.getLogger(Client.class);
+		Logger log = LoggerWrapperFactory.getLogger(TracciaProducerTest.class);
 		if(init) {
 			ConfigurazionePdD confPdD = new ConfigurazionePdD();
 			confPdD.setLoader(new Loader());

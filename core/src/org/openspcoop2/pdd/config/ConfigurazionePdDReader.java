@@ -178,8 +178,8 @@ import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthori
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.constants.ModalitaIdentificazioneAzione;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
-import org.openspcoop2.protocol.engine.mapping.ModalitaIdentificazioneAzione;
 import org.openspcoop2.protocol.engine.mapping.OperationFinder;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.registry.CertificateCheck;

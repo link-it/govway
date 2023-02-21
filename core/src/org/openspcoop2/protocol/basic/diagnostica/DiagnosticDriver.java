@@ -275,9 +275,8 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 				closeConnection=false;
 			}else{
 				con = this.datasource.getConnection();
-				if(con==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
+			checkConnection(con);
 
 			sqlObj = DiagnosticDriverUtilities.createSQLQueryObj_countMessaggiDiagnostici(filtro, this.tipoDatabase);
 			
@@ -295,8 +294,6 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 				countDiagnostici = rs.getInt("countMsgDiagnostici");
 				
 			}
-			rs.close();
-			stmt.close();
 			
 			this.log.debug("Query found "+countDiagnostici+" rows");
 			
@@ -308,17 +305,25 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 			throw new DriverMsgDiagnosticiException(e);
 		}finally{
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
-				
+				// ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
+			}catch (Exception e) {
+				// ignore
 			}
 			
 			if(closeConnection){
 				try{
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}catch (Exception e) {
-					
+					// ignore
 				}
 			}
 		}
@@ -346,10 +351,9 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 				closeConnection=false;
 			}else{
 				con = this.datasource.getConnection();
-				if(con==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
-
+			checkConnection(con);
+			
 			sqlObj = DiagnosticDriverUtilities.createSQLQueryObj_searchMessaggiDiagnostici(filtro, this.tipoDatabase);
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
@@ -387,17 +391,25 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 			throw new DriverMsgDiagnosticiException(e);
 		}finally{
 			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
+				if(rs!=null) 
+					rs.close();
 			}catch (Exception e) {
-				
+				// ignore
+			}
+			try{
+				if(stmt!=null) 
+					stmt.close();
+			}catch (Exception e) {
+				// ignore
 			}
 			
 			if(closeConnection){
 				try{
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}catch (Exception e) {
-					
+					// ignore
 				}
 			}
 		}
@@ -424,10 +436,9 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 				closeConnection=false;
 			}else{
 				con = this.datasource.getConnection();
-				if(con==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
-
+			checkConnection(con);
+			
 			sqlObj = DiagnosticDriverUtilities.createSQLQueryObj_deleteMessaggiDiagnostici(filter, this.tipoDatabase);
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLDelete());
@@ -452,15 +463,18 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 			throw new DriverMsgDiagnosticiException(e);
 		}finally{
 			try{
-				if(stmt!=null) stmt.close();
+				if(stmt!=null) 
+					stmt.close();
 			}catch (Exception e) {
-				
+				// ignore
 			}
 			if(closeConnection){
 				try{
-					con.close();
+					if(con!=null) {
+						con.close();
+					}
 				}catch (Exception e) {
-					
+					// ignore
 				}
 			}
 		}
@@ -508,6 +522,14 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 	
 	
 	/* ------------- UTILITY INTERNE -------------------------- */
+
+	private void checkConnection(Connection con) throws Exception {
+		if(con==null) {
+			if(this.con==null) {
+				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+		}
+	}
 	
 	/**
 	 * Viene chiamato in causa per ottenere una connessione al DB

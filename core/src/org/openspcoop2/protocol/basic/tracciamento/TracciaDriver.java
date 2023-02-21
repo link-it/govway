@@ -306,9 +306,9 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 				connectionDB = this.connection;
 			else{
 				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
+			
+			checkConnection(connectionDB);
 		
 			ISQLQueryObject sqlQueryObject = 
 				TracciaDriverUtilities.createSQLQueryObj_countTracce(filtro, this.tipoDatabase);
@@ -336,18 +336,25 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
 		}finally{
 			try{
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				pstmt.close();
+				if(pstmt!=null) {
+					pstmt.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				if(this.connection==null)
-					connectionDB.close();
+				if(this.connection==null) {
+					if(connectionDB!=null) {
+						connectionDB.close();
+					}
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -376,9 +383,9 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 				connectionDB = this.connection;
 			else{
 				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
+			
+			checkConnection(connectionDB);
 			
 			ISQLQueryObject sqlQueryObject = 
 				TracciaDriverUtilities.createSQLQueryObj_searchTracce(filtro, this.tipoDatabase);
@@ -417,18 +424,25 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
 		}finally{
 			try{
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				pstmt.close();
+				if(pstmt!=null) {
+					pstmt.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				if(this.connection==null)
-					connectionDB.close();
+				if(this.connection==null) {
+					if(connectionDB!=null) {
+						connectionDB.close();
+					}
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -523,9 +537,9 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 				connectionDB = this.connection;
 			else{
 				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
+			
+			checkConnection(connectionDB);
 			
 			ISQLQueryObject sqlQueryObject = TracciaDriverUtilities.getSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.TRACCE);
@@ -585,18 +599,25 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
 		}finally{
 			try{
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				pstmt.close();
+				if(pstmt!=null) {
+					pstmt.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				if(this.connection==null)
-					connectionDB.close();
+				if(this.connection==null) {
+					if(connectionDB!=null) {
+						connectionDB.close();
+					}
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -624,9 +645,8 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 				connectionDB = this.connection;
 			else{
 				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
+			checkConnection(connectionDB);
 			
 			ISQLQueryObject sqlQueryObject = TracciaDriverUtilities.getSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.TRACCE);
@@ -661,18 +681,25 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
 		}finally{
 			try{
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				pstmt.close();
+				if(pstmt!=null) {
+					pstmt.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				if(this.connection==null)
-					connectionDB.close();
+				if(this.connection==null) {
+					if(connectionDB!=null) {
+						connectionDB.close();
+					}
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -700,9 +727,8 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 				connectionDB = this.connection;
 			else{
 				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
+			checkConnection(connectionDB);
 			
 			ISQLQueryObject sqlQueryObject = TracciaDriverUtilities.getSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.TRACCE);
@@ -757,18 +783,25 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
 		}finally{
 			try{
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				pstmt.close();
+				if(pstmt!=null) {
+					pstmt.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
 			try{
-				if(this.connection==null)
-					connectionDB.close();
+				if(this.connection==null) {
+					if(connectionDB!=null) {
+						connectionDB.close();
+					}
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -803,7 +836,13 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 	/* ------------- UTILITY INTERNE -------------------------- */
 	
 	
-	
+	private void checkConnection(Connection connectionDB) throws Exception {
+		if(connectionDB==null) {
+			if(this.connection==null) {
+				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+		}
+	}
 
 	/**
 	 * Viene chiamato in causa per ottenere una connessione al DB

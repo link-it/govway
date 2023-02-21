@@ -79,7 +79,9 @@ public abstract class AbstractFSRecovery {
 						// Implementare il salvataggio nella classe concreta
 						// Se il salvataggio su database va a buon fine si puo eliminare il file.
 						this.insertObject(file, connection);
-						file.delete();
+						if(!file.delete()) {
+							// ignore
+						}
 						if(this.debug)
 							this.log.info("Inserimento del file ["+file.getName()+"] completato con successo");
 						countProcessatiCorrettamente++;
@@ -99,7 +101,9 @@ public abstract class AbstractFSRecovery {
 							// In modo da riconoscere gli originali *.xml da quelli che sono andati in errore almeno una volta *.error
 		
 							File newFile = new File(this.directory, FSRecoveryFileUtils.getNewFileNameFromFilename(file.getName()));
-							file.renameTo(newFile);
+							if(!file.renameTo(newFile)) {
+								// ignore
+							}
 							if(this.debug)
 								this.log.warn("File ["+file.getName()+"] rinominato in ["+newFile.getName()+"]");
 						} else {

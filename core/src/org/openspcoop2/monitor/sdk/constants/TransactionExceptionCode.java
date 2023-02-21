@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.monitor.sdk.exceptions;
+package org.openspcoop2.monitor.sdk.constants;
 
 /**
  * TransactionExceptionCode

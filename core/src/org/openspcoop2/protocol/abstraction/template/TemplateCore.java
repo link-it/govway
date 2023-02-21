@@ -137,8 +137,11 @@ public class TemplateCore {
 
 			this.updateTemplates(tmp);
 			
-			if(tmp!=null)
-				tmp.delete();
+			if(tmp!=null) {
+				if(!tmp.delete()) {
+					// ignore
+				}
+			}
 			
 		}catch(Exception e){
 			if(tmp!=null)

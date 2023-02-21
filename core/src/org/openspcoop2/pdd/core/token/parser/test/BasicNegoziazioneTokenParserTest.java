@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.pdd.core.token.parser;
+package org.openspcoop2.pdd.core.token.parser.test;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -28,6 +28,8 @@ import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.InformazioniJWTClientAssertion;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken_DatiRichiesta;
+import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
+import org.openspcoop2.pdd.core.token.parser.TipologiaClaimsNegoziazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -43,14 +45,14 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  *
  */
-public class TestBasicNegoziazioneTokenParser {
+public class BasicNegoziazioneTokenParserTest {
 
 	public static void main(String [] args) throws Exception{
 		test();
 	}
 	public static void test() throws Exception{
 		
-		Logger log = LoggerWrapperFactory.getLogger(TestBasicNegoziazioneTokenParser.class);
+		Logger log = LoggerWrapperFactory.getLogger(BasicNegoziazioneTokenParserTest.class);
 		String idTransazione = "66aa1676-1f9e-34e2-7777-0cfca111a9999";
 		InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta = null;
 		

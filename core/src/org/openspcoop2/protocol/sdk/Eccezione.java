@@ -486,7 +486,7 @@ public class Eccezione implements java.io.Serializable{
 		Eccezione clone = new Eccezione();
 		
 		// id
-		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()) : null);
+		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()+"") : null);
 		
 		clone.setCodiceEccezione(this.getCodiceEccezione());
 		clone.setCodiceEccezioneValue(this.eccezione.getCodice()!=null && this.eccezione.getCodice().getBase()!=null ? 

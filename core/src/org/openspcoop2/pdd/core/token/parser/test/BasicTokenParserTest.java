@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.pdd.core.token.parser;
+package org.openspcoop2.pdd.core.token.parser.test;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -27,6 +27,8 @@ import java.util.Properties;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.SorgenteInformazioniToken;
+import org.openspcoop2.pdd.core.token.parser.BasicTokenParser;
+import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 
@@ -38,7 +40,7 @@ import org.openspcoop2.utils.date.DateUtils;
  * @version $Rev$, $Date$
  *
  */
-public class TestBasicTokenParser {
+public class BasicTokenParserTest {
 
 	public static void main(String[] args) throws Exception {
 		

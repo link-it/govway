@@ -50,7 +50,7 @@ public class TestGenerazioneTraccia {
 	public void testGeneratoreTraccia(String tipo, boolean extended) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.pdd.logger.traccia.Client.process(tipo, extended, true);
+		org.openspcoop2.pdd.logger.traccia.test.TracciaProducerTest.process(tipo, extended, true);
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

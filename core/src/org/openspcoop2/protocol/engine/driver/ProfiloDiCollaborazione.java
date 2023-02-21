@@ -1138,14 +1138,12 @@ public class ProfiloDiCollaborazione {
 				Integer versioneServizioCorrelato = busta.getVersioneServizioCorrelato();
 
 				if(tipoServizioCorrelato==null || servizioCorrelato==null || versioneServizioCorrelato==null){
-					PreparedStatement pstmtServizioCorrelato = null;
 					ResultSet rsServizioCorrelato = null;
-					try{
-						StringBuilder query = new StringBuilder();
-						query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
-						query.append(Costanti.PROFILO_ASINCRONO);
-						query.append(" WHERE ID_MESSAGGIO = ? AND TIPO=?");
-						pstmtServizioCorrelato = connectionDB.prepareStatement(query.toString());
+					StringBuilder query = new StringBuilder();
+					query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
+					query.append(Costanti.PROFILO_ASINCRONO);
+					query.append(" WHERE ID_MESSAGGIO = ? AND TIPO=?");
+					try (PreparedStatement pstmtServizioCorrelato = connectionDB.prepareStatement(query.toString());){
 						pstmtServizioCorrelato.setString(1,id);
 						pstmtServizioCorrelato.setString(2,Costanti.OUTBOX);
 						rsServizioCorrelato = pstmtServizioCorrelato.executeQuery();		
@@ -1160,13 +1158,20 @@ public class ProfiloDiCollaborazione {
 								versioneServizioCorrelato = null;
 							}
 						}		
-						rsServizioCorrelato.close();
-						pstmtServizioCorrelato.close();
 						if(tipoServizioCorrelato==null || servizioCorrelato==null || versioneServizioCorrelato==null)
 							throw new Exception("Tipo/Nome/Versione servizio correlato non trovato");
 
 					}catch(Exception e){
 						throw new Exception("Lettura Servizio correlato non riuscita "+e.getMessage(),e );
+					}
+					finally {
+						try {
+							if(rsServizioCorrelato!=null) {
+								rsServizioCorrelato.close();
+							}
+						}catch(Throwable e){
+							// ignore
+						}
 					}
 				}
 

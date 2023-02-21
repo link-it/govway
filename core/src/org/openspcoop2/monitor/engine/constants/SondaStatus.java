@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.monitor.engine.status;
+package org.openspcoop2.monitor.engine.constants;
 
 import java.io.Serializable;
 

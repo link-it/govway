@@ -22,8 +22,8 @@ package org.openspcoop2.web.monitor.core.status;
 import java.util.List;
 import java.util.Properties;
 
+import org.openspcoop2.monitor.engine.constants.SondaStatus;
 import org.openspcoop2.monitor.engine.status.IStatus;
-import org.openspcoop2.monitor.engine.status.SondaStatus;
 import org.slf4j.Logger;
 
 /**

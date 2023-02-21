@@ -1812,8 +1812,11 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	
 			if (explode) {
 				List<String> arrayValues = new ArrayList<>();
-				while (matcher.find()) {
+				int index = 0;
+				int limit = 1000; // per gestire DOS
+				while (matcher.find() && index<limit) {
 					arrayValues.add(matcher.group(2));
+					index++;
 				}
 				return arrayValues;
 			} else {

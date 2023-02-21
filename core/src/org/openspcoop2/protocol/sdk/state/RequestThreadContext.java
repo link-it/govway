@@ -49,6 +49,10 @@ public class RequestThreadContext {
 		return transactionContext_threadLocal.get();
 	}
 	
+	public static void removeRequestThreadContext() {
+		transactionContext_threadLocal.remove();
+	}
+	
 	
 	public RequestThreadContext(String tName, Logger log) {
 		this.tName = tName;

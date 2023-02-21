@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.message.soap.mtom;
+package org.openspcoop2.message.soap.mtom.test;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -29,6 +29,8 @@ import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
+import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -43,7 +45,7 @@ import org.w3c.dom.Element;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Client {
+public class MTOMTest {
 
 	public static void main(String [] args) throws Exception{
 		test();
@@ -52,23 +54,23 @@ public class Client {
 		
 		// TEST 1
 		System.out.println("============ SOAP 11 ============");
-		new Client(MessageType.SOAP_11, null, false);
+		new MTOMTest(MessageType.SOAP_11, null, false);
 		
 		// TEST 2
 		System.out.println("============ SOAP 12 ============");
-		new Client(MessageType.SOAP_12, null, false);
+		new MTOMTest(MessageType.SOAP_12, null, false);
 		
 		// TEST 3
 		System.out.println("============ SOAP 11 (attach) ============");
-		new Client(MessageType.SOAP_11, null, true);
+		new MTOMTest(MessageType.SOAP_11, null, true);
 		
 		// TEST 4
 		System.out.println("============ SOAP 12 (attach) ============");
-		new Client(MessageType.SOAP_12, null, true);
+		new MTOMTest(MessageType.SOAP_12, null, true);
 				
 	}
 	
-	public Client(MessageType messageType, String messageFactoryClass, boolean addAttachInMsgOriginale) throws Exception {
+	public MTOMTest(MessageType messageType, String messageFactoryClass, boolean addAttachInMsgOriginale) throws Exception {
 		
 		if(messageFactoryClass!=null){
 			OpenSPCoop2MessageFactory.setMessageFactoryImpl(messageFactoryClass);

@@ -51,7 +51,7 @@ public class FileTraceConfig {
 	private static HashMap<String, FileTraceConfig> staticInstanceMap = new HashMap<String, FileTraceConfig>();
 	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("FileTraceConfig");
 
-	protected static void init(InputStream is, String fileNamePath, boolean globale) throws CoreException {
+	public static void init(InputStream is, String fileNamePath, boolean globale) throws CoreException {
 		//synchronized(staticInstanceMap) {
 		semaphore.acquireThrowRuntime("init_InputStream");
 		try {

@@ -32,6 +32,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
+import org.openspcoop2.protocol.engine.constants.ModalitaIdentificazione;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.manifest.UrlMapping;
 import org.openspcoop2.protocol.manifest.constants.UrlMappingSourceType;

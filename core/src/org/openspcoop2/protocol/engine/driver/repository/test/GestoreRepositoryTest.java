@@ -46,7 +46,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestGestoreRepository {
+public class GestoreRepositoryTest {
 
 	private static boolean systemOut = true; // utile per maven test 
 	
@@ -111,7 +111,7 @@ public class TestGestoreRepository {
 		File logFile = File.createTempFile("runGestoreRepositoryTest_", ".log");
 		System.out.println("LogMessages write in "+logFile.getAbsolutePath());
 		LoggerWrapperFactory.setDefaultLogConfiguration(Level.ALL, false, null, logFile, "%m %n");
-		log = LoggerWrapperFactory.getLogger(TestGestoreRepository.class);
+		log = LoggerWrapperFactory.getLogger(GestoreRepositoryTest.class);
 		
 		DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), log);
 		
@@ -200,7 +200,9 @@ public class TestGestoreRepository {
 						
 	    }finally{
 	    	try{
-	    		con.close();
+	    		if(con!=null) {
+	    			con.close();
+	    		}
 	    	}catch(Exception eClose){
 				// close
 			}
@@ -840,22 +842,26 @@ public class TestGestoreRepository {
 	    	
 	    }finally{
 	    	try{
-	    		stmtDelete.close();
+	    		if(stmtDelete!=null)
+	    			stmtDelete.close();
 	    	}catch(Exception eClose){
 				// close
 			}
 	    	try{
-	    		stmtInsert.close();
+	    		if(stmtInsert!=null)
+	    			stmtInsert.close();
 	    	}catch(Exception eClose){
 				// close
 			}
 	    	try{
-	    		rsQuery.close();
+	    		if(rsQuery!=null)
+	    			rsQuery.close();
 	    	}catch(Exception eClose){
 				// close
 			}
 	    	try{
-	    		stmtQuery.close();
+	    		if(stmtQuery!=null)
+	    			stmtQuery.close();
 	    	}catch(Exception eClose){
 				// close
 			}

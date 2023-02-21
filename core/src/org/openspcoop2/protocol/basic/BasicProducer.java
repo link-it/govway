@@ -160,8 +160,8 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 				if(this.ds!=null){
 					try{
 						con = this.ds.getConnection();
-						if(con == null)
-							throw new Exception("Connessione non fornita");
+//						if(con == null)
+//							throw new Exception("Connessione non fornita");
 						cr.setReleaseConnection(true);
 						//System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION FROM DATASOURCE");
 						if(this.debug){

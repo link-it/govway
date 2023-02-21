@@ -47,7 +47,7 @@ public class SubCodiceErrore implements Serializable {
 	
 	public SubCodiceErrore newInstance(){
 		SubCodiceErrore sub = new SubCodiceErrore();
-		sub.setSubCodice(this.subCodice!=null ? Integer.valueOf(this.subCodice.intValue()) : null);
+		sub.setSubCodice(this.subCodice!=null ? Integer.valueOf(this.subCodice.intValue()+"") : null);
 		return sub;
 	}
 }

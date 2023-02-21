@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.pdd.core.trasformazioni;
+package org.openspcoop2.pdd.core.trasformazioni.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,6 +54,9 @@ import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
 import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.pdd.core.dynamic.Template;
+import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioniUtilities;
+import org.openspcoop2.pdd.core.trasformazioni.RisultatoTrasformazioneContenuto;
+import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
@@ -84,7 +87,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Test {
+public class TrasformazioniTest {
 	
 	public static final String caratteri_element_name = "caratteri";
 	public static final String caratteriNonUTF_JSON_VALUE = "altro|!£$%&/()=?'^ìéè*+[]ç°§òàù@#<>;,._-fine";
@@ -1124,7 +1127,7 @@ public class Test {
 		
 		// Preparo Contesto
 		
-		Logger log = LoggerWrapperFactory.getLogger(Test.class);
+		Logger log = LoggerWrapperFactory.getLogger(TrasformazioniTest.class);
 		
 		PdDContext pddContext = new PdDContext();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, UUIDUtilsGenerator.newUUID());

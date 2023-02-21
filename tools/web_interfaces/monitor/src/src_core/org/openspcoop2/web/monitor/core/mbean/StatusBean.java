@@ -27,7 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.openspcoop2.monitor.engine.status.SondaStatus;
+import org.openspcoop2.monitor.engine.constants.SondaStatus;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.status.ISondaPdd;

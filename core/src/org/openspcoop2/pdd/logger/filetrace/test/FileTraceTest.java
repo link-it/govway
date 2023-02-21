@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.pdd.logger.filetrace;
+package org.openspcoop2.pdd.logger.filetrace.test;
 
 import java.io.File;
 import java.io.InputStream;
@@ -53,6 +53,8 @@ import org.openspcoop2.pdd.core.token.parser.BasicTokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaimsNegoziazione;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
+import org.openspcoop2.pdd.logger.filetrace.FileTraceManager;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ChannelSecurityToken;
@@ -83,7 +85,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Test {
+public class FileTraceTest {
 
 	public static void main(String [] args) throws Exception{
 		
@@ -146,7 +148,7 @@ public class Test {
 	
 	public static void test(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload) throws Exception{
 		
-		Logger log = LoggerWrapperFactory.getLogger(Test.class);
+		Logger log = LoggerWrapperFactory.getLogger(FileTraceTest.class);
 		ConfigurazionePdD confPdD = new ConfigurazionePdD();
 		confPdD.setLoader(new Loader());
 		confPdD.setLog(log);
@@ -336,8 +338,8 @@ public class Test {
 //		//LogTraceConfig config = LogTraceConfig.getConfig(fTmp);
 //		fTmp.delete();
 		
-		String path = "/org/openspcoop2/pdd/logger/filetrace/testFileTrace.properties";
-		InputStream is = Test.class.getResourceAsStream(path);
+		String path = "/org/openspcoop2/pdd/logger/filetrace/test/testFileTrace.properties";
+		InputStream is = FileTraceTest.class.getResourceAsStream(path);
 		FileTraceConfig.init(is, path, true);
 		FileTraceConfig config = FileTraceConfig.getConfig(new File(path), true); // inizializzato sopra
 			

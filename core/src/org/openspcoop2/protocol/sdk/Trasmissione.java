@@ -464,7 +464,7 @@ public class Trasmissione implements java.io.Serializable{
 		Trasmissione clone = new Trasmissione();
 		
 		// id
-		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()) : null);
+		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()+"") : null);
 		
 		// origine
 		clone.setOrigine(this.getOrigine()!=null ? new String(this.getOrigine()) : null);

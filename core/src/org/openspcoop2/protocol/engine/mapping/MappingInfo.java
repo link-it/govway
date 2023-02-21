@@ -20,6 +20,8 @@
 
 package org.openspcoop2.protocol.engine.mapping;
 
+import org.openspcoop2.protocol.engine.constants.ModalitaIdentificazione;
+
 /**
  * MappingInfo
  *

@@ -522,7 +522,7 @@ public class Traccia implements java.io.Serializable {
 		Traccia clone = new Traccia();
 		
 		// id
-		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()) : null);
+		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()+"") : null);
 		
     	// data
 		clone.setGdo(this.getGdo()!=null ? new Date(this.getGdo().getTime()) : null);

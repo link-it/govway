@@ -154,7 +154,8 @@ public class ValidazioneSintattica {
 
 
 	public void updateMsg(OpenSPCoop2Message msg) throws ProtocolException {
-		boolean update = !msg.getClass().getName().equals(this.msg.getClass().getName());
+		String msgClassName = msg.getClass().getName()+ "";
+		boolean update = !msgClassName.equals(this.msg.getClass().getName());
 		if(update){
 			this.msg = msg;
 			if(this.headerProtocollo!=null){
@@ -256,44 +257,43 @@ public class ValidazioneSintattica {
 			
 		} catch (ProtocolException e) {
 			protocolException = true;
-			return false;
-		} finally {
-			if(result != null){
-				if(result.getBusta() != null)
-					this.busta = result.getBusta();
-				
-				if(result.getBustaErrore()!= null)
-					this.bustaErroreHeaderIntestazione = result.getBustaErrore();
-				
-				this.errore = result.getErrore();
-				this.errore_integrationFunctionError = result.getErrore_integrationFunctionError();
-				
-				this.erroriProcessamento = result.getErroriProcessamento();
-				if(this.erroriProcessamento == null) 
-					this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
-				this.erroreProcessamento_internalMessage = result.getErroreProcessamento_internalMessage();
-				
-				this.erroriValidazione = result.getErroriValidazione();
-				if(this.erroriValidazione == null) 
-					this.erroriValidazione = new java.util.ArrayList<Eccezione>();
-				
-				this.errorsTrovatiSullaListaEccezioni = result.getErrorsTrovatiSullaListaEccezioni();
-				if(this.errorsTrovatiSullaListaEccezioni == null) 
-					this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
-				
-				if(result.getBustaRawContent() != null)
-					this.headerProtocollo = result.getBustaRawContent();
-				
-				return result.isValido();
-			}
-			else {
-				if(protocolException) {
-					if(this.isRichiesta==null || this.isRichiesta){
-						this.errore_integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
-					}
-					else {
-						this.errore_integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
-					}
+		} 
+		
+		if(result != null){
+			if(result.getBusta() != null)
+				this.busta = result.getBusta();
+			
+			if(result.getBustaErrore()!= null)
+				this.bustaErroreHeaderIntestazione = result.getBustaErrore();
+			
+			this.errore = result.getErrore();
+			this.errore_integrationFunctionError = result.getErrore_integrationFunctionError();
+			
+			this.erroriProcessamento = result.getErroriProcessamento();
+			if(this.erroriProcessamento == null) 
+				this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
+			this.erroreProcessamento_internalMessage = result.getErroreProcessamento_internalMessage();
+			
+			this.erroriValidazione = result.getErroriValidazione();
+			if(this.erroriValidazione == null) 
+				this.erroriValidazione = new java.util.ArrayList<Eccezione>();
+			
+			this.errorsTrovatiSullaListaEccezioni = result.getErrorsTrovatiSullaListaEccezioni();
+			if(this.errorsTrovatiSullaListaEccezioni == null) 
+				this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
+			
+			if(result.getBustaRawContent() != null)
+				this.headerProtocollo = result.getBustaRawContent();
+			
+			return result.isValido();
+		}
+		else {
+			if(protocolException) {
+				if(this.isRichiesta==null || this.isRichiesta){
+					this.errore_integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+				}
+				else {
+					this.errore_integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
 				}
 			}
 		}

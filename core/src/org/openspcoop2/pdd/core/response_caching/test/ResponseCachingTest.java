@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.pdd.core.response_caching;
+package org.openspcoop2.pdd.core.response_caching.test;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -34,6 +34,8 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.core.response_caching.HashGenerator;
+import org.openspcoop2.pdd.core.response_caching.ResponseCached;
 import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
@@ -50,7 +52,7 @@ import org.w3c.dom.Node;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Test {
+public class ResponseCachingTest {
 
 	private static final String SOAP_ENVELOPE_RISPOSTA = 
 			"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
@@ -63,7 +65,7 @@ public class Test {
 	}
 	public static void test() throws Exception{
 				
-		Logger log = LoggerWrapperFactory.getLogger(Test.class);
+		Logger log = LoggerWrapperFactory.getLogger(ResponseCachingTest.class);
 		
 		RequestInfo requestInfo = new RequestInfo();
 		requestInfo.setIdServizio(IDServizioFactory.getInstance().getIDServizioFromValues("gw", "serv", "gw", "RegioneToscana", 1));
