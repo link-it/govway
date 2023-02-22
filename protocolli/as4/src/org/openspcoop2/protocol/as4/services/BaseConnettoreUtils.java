@@ -62,10 +62,10 @@ public class BaseConnettoreUtils {
 						byte[] bytes = map.getBytes(key);
 						if(bytes!=null) {
 							File f = File.createTempFile("content", ".bin");
-							FileOutputStream fos =new FileOutputStream(f);
-							fos.write(bytes);
-							fos.flush();
-							fos.close();
+							try(FileOutputStream fos =new FileOutputStream(f)){
+								fos.write(bytes);
+								fos.flush();
+							}
 							this.log.debug("\t-Map["+key+"] scritto in "+f.getAbsolutePath());
 						}
 						else {

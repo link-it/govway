@@ -100,7 +100,7 @@ public class AS4ProtocolManager extends BasicManager {
 			if(busta!=null && msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())) {
 				OpenSPCoop2SoapMessage soapMsg = (OpenSPCoop2SoapMessage) msg.castAsSoap();
 				
-				OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+				OpenSPCoop2MessageFactory messageFactory = msg.getFactory();
 				
 				if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()==false) {
 					

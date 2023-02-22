@@ -143,7 +143,7 @@ public class Soggetto  {
 	public int sizeAzioni() {
 		int numAzioni = 0;
 		for(APS aps: this.aps) {
-			numAzioni =+ aps.getAzioni().size();
+			numAzioni += aps.getAzioni().size();
 		}
 		return numAzioni;
 	}
