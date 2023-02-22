@@ -1160,8 +1160,11 @@ public class NotificatoreEventi {
 				// close
 			}
 			try{
-				if(f!=null)
-					f.delete();
+				if(f!=null) {
+					if(!f.delete()) {
+						// ignore
+					}
+				}
 			}catch(Exception eClose){
 				// close
 			}

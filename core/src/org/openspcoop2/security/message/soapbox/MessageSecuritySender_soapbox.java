@@ -443,25 +443,29 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 					actionSignatureOrEncryptDo = true;
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){
-					if(actionSignatureOrEncryptDo){
-						byte[]xmlCifrato=xmlUtils.toByteArray(msgSecCtx.getDocument().getDocumentElement());
-						message.getSOAPPart().setContent(new DOMSource(xmlUtils.newElement(xmlCifrato)));
-						signMsgProc.setMessage(message);
-						Document dUpdated = message.getSOAPPart().getDocumentElement().getOwnerDocument();
-						msgSecCtx = new MessageSecurityContext(dUpdated, new MessageImpl(true, null, "http"));
-						updateSecurityContextForSignature(msgSecCtx, messageSecurityContext.getOutgoingProperties(), aliasSignatureUser);
+					if(signMsgProc!=null) {
+						if(actionSignatureOrEncryptDo){
+							byte[]xmlCifrato=xmlUtils.toByteArray(msgSecCtx.getDocument().getDocumentElement());
+							message.getSOAPPart().setContent(new DOMSource(xmlUtils.newElement(xmlCifrato)));
+							signMsgProc.setMessage(message);
+							Document dUpdated = message.getSOAPPart().getDocumentElement().getOwnerDocument();
+							msgSecCtx = new MessageSecurityContext(dUpdated, new MessageImpl(true, null, "http"));
+							updateSecurityContextForSignature(msgSecCtx, messageSecurityContext.getOutgoingProperties(), aliasSignatureUser);
+						}
+						signMsgProc.process(securityConfig_signature, msgSecCtx);
+						actionSignatureOrEncryptDo = true;
 					}
-					signMsgProc.process(securityConfig_signature, msgSecCtx);
-					actionSignatureOrEncryptDo = true;
 				}
 				else if(SecurityConstants.TIMESTAMP_ACTION.equals(actions[i].trim())){
-					if(securityConfig_signature!=null){
-						timestampProc.process(securityConfig_signature,msgSecCtx);
-					}
-					else if(securityConfig_encryption!=null){
-						timestampProc.process(securityConfig_encryption,msgSecCtx);
-					} else {
-						timestampProc.process(null,msgSecCtx);
+					if(timestampProc!=null) {
+						if(securityConfig_signature!=null){
+							timestampProc.process(securityConfig_signature,msgSecCtx);
+						}
+						else if(securityConfig_encryption!=null){
+							timestampProc.process(securityConfig_encryption,msgSecCtx);
+						} else {
+							timestampProc.process(null,msgSecCtx);
+						}
 					}
 				}
 			}

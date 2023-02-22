@@ -555,7 +555,9 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				try {
 					this.connection.close();
 				}catch(Throwable t) {
-					this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+					if(this.logger!=null) {
+						this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+					}
 					listExceptionChiusura.add(t);
 				}
 	    	}
@@ -564,7 +566,9 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 	    	try {
 	    		super.disconnect();
 	    	}catch(Throwable t) {
-    			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+	    		if(this.logger!=null) {
+					this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+	    		}
     			listExceptionChiusura.add(t);
     		}
 	    	

@@ -66,16 +66,16 @@ public class CheckStatoPdD extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static void sendError(HttpServletResponse res, Logger log, String msg, int code) throws IOException {
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code) {
 		sendError(res, log, msg, code, msg, null);
 	}
-	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, Throwable e) throws IOException {
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, Throwable e) {
 		sendError(res, log, msg, code, msg, e);
 	}
-	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg) throws IOException {
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg) {
 		sendError(res, log, msg, code, msg, null);
 	}
-	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg, Throwable e) throws IOException {
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg, Throwable e)  {
 		String prefix = "[GovWayCheck] ";
 		if(e!=null) {
 			log.error(prefix+logMsg, e);
@@ -85,10 +85,14 @@ public class CheckStatoPdD extends HttpServlet {
 		}
 		res.setStatus(code);
 		res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
-		res.getOutputStream().write(msg.getBytes());
+		try {
+			res.getOutputStream().write(msg.getBytes());
+		}catch(Throwable t) {
+			log.error("[CheckStato] SendError failed: "+t.getMessage(),t);
+		}
 	}
 
-	public static void serializeNotInitializedResponse(HttpServletResponse res, Logger log) throws IOException {
+	public static void serializeNotInitializedResponse(HttpServletResponse res, Logger log)  {
 		String msg = "API Gateway GovWay non inzializzato";
 		sendError(res, log, msg, 503);  // viene volutamente utilizzato il codice 503
 	}

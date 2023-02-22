@@ -121,7 +121,7 @@ public class GeneralInstanceProperties {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 		if(fClasspath!=null){
 			
@@ -698,7 +698,9 @@ public class GeneralInstanceProperties {
 				File tmp = null;
 				try{			
 					tmp = File.createTempFile("PddInterceptor", "PddInterceptor");
-					tmp.delete();
+					if(!tmp.delete()) {
+						// ignore
+					}
 					ZipUtilities.unzipFile(file.getAbsolutePath(), tmp.getAbsolutePath());
 					Object [] o = readDir(tmp,log);
 					if(o!=null){

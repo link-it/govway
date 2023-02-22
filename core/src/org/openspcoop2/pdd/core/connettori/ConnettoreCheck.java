@@ -447,10 +447,11 @@ public class ConnettoreCheck {
 						try {
 							check(connettore, log);
 						}catch(Throwable e) {
+							// lascio l'errore puro, il tipo di endpoint verrà gestito in altri log
 							//String tipo = getPropertyValue(connettore, POLICY_TIPO_ENDPOINT);
-							String tipo = null; // lascio l'errore puro, il tipo di endpoint verrà gestito in altri log
-							String prefixConnettore = tipo!=null ?  ("["+tipo+"] ") : "";
-							throw new ConnettoreException(prefixConnettore+e.getMessage(),e);
+							//String prefixConnettore = tipo!=null ?  ("["+tipo+"] ") : "";
+							//throw new ConnettoreException(prefixConnettore+e.getMessage(),e);
+							throw new ConnettoreException(e.getMessage(),e);					
 						}
 					}
 				}

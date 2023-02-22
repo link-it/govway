@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -89,7 +90,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {
@@ -753,7 +754,10 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 								}
 							} catch(Exception er) {
 								//System.out.println("ERROR UNSET:"+er.getMessage());
-								throw new UtilsException("CheckMap failed: unsetting connection error; "+er.getMessage());
+								//throw new UtilsException("CheckMap failed: unsetting connection error; "+er.getMessage());
+								if(this.log!=null) {
+									this.log.error("CheckMap failed: unsetting connection error; "+er.getMessage(),er);
+								}
 							}
 						}
 						
@@ -935,8 +939,6 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			
 			while(transactionUpdateFinished==false && DateManager.getTimeMillis() < scadenzaWhile){
 				
-				PreparedStatement pstmt = null;
-				ResultSet rs = null;
 				try {			
 					ISQLQueryObject sqlGet = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 					sqlGet.addSelectField(CT_MAP_COLUMN_VALUE);
@@ -948,58 +950,63 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 						sqlGet.setSelectForUpdate(true);
 					}
 					
+					ResultSet rsMap = null;
+					java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = null;
+					boolean updateDate = false;
 					String query = sqlGet.createSQLQuery();
 					if(this.debug) {
 						this.logSql.debug("[updateMap"+""+this.idTransazione+"] (forUpdate) execute "+DBUtils.formatSQLString(query, this.uniqueIdMap_idActivePolicy));
 					}
-					pstmt = con.prepareStatement(query);
-					pstmt.setString(1, this.uniqueIdMap_idActivePolicy);
-					rs = pstmt.executeQuery();
-					if(rs == null) {
-						pstmt.close();
-						throw new UtilsException("CheckMap failed: ResultSet is null?");		
-					}
-					boolean exist = rs.next();
-					if(this.debug) {
-						this.logSql.debug("[updateMap"+""+this.idTransazione+"] (forUpdate) executed (result:"+exist+") "+DBUtils.formatSQLString(query, this.uniqueIdMap_idActivePolicy));
-					}
-					//System.out.println("@update SELECT ["+opType+"] result:"+exist);
-					
-					java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = null;
-					boolean updateDate = false;
-					if(!exist) {
-						if(!OperationType.getMapActiveThreads.equals(opType) &&
-								!OperationType.resetCounters.equals(opType)  &&
-								!OperationType.remove.equals(opType) &&
-								!OperationType.getActiveThreads.equals(opType)  &&
-								!OperationType.printInfos.equals(opType)) {
-							throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' not found ?");
+					try (PreparedStatement pstmtMap = con.prepareStatement(query)){
+						pstmtMap.setString(1, this.uniqueIdMap_idActivePolicy);
+						rsMap = pstmtMap.executeQuery();
+						if(rsMap == null) {
+							throw new UtilsException("CheckMap failed: ResultSet is null?");		
 						}
-					}
-					else {
-						Timestamp tCheck = rs.getTimestamp(CT_MAP_COLUMN_UPDATE_TIME);
-						if(this.uniqueIdMap_updateTime.equals(tCheck)) {
-							try(InputStream is = this.jdbcAdapter.getBinaryStream(rs, CT_MAP_COLUMN_VALUE);){
-								mapActiveThreads = (java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati>) this.getJavaDeserializer().readObject(is, java.util.Map.class);
+						boolean exist = rsMap.next();
+						if(this.debug) {
+							this.logSql.debug("[updateMap"+""+this.idTransazione+"] (forUpdate) executed (result:"+exist+") "+DBUtils.formatSQLString(query, this.uniqueIdMap_idActivePolicy));
+						}
+						//System.out.println("@update SELECT ["+opType+"] result:"+exist);
+						
+						if(!exist) {
+							if(!OperationType.getMapActiveThreads.equals(opType) &&
+									!OperationType.resetCounters.equals(opType)  &&
+									!OperationType.remove.equals(opType) &&
+									!OperationType.getActiveThreads.equals(opType)  &&
+									!OperationType.printInfos.equals(opType)) {
+								throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' not found ?");
 							}
 						}
 						else {
-							// data aggiornata
-							mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
-							updateDate = true;
-						}
-						if(mapActiveThreads == null) {
-							if(!OperationType.getMapActiveThreads.equals(opType) &&
-									!OperationType.resetCounters.equals(opType)  &&
-									!OperationType.getActiveThreads.equals(opType)  &&
-									!OperationType.printInfos.equals(opType)) {
-								throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' null ?");
+							Timestamp tCheck = rsMap.getTimestamp(CT_MAP_COLUMN_UPDATE_TIME);
+							if(this.uniqueIdMap_updateTime.equals(tCheck)) {
+								try(InputStream is = this.jdbcAdapter.getBinaryStream(rsMap, CT_MAP_COLUMN_VALUE);){
+									mapActiveThreads = (java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati>) this.getJavaDeserializer().readObject(is, java.util.Map.class);
+								}
+							}
+							else {
+								// data aggiornata
+								mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
+								updateDate = true;
+							}
+							if(mapActiveThreads == null) {
+								if(!OperationType.getMapActiveThreads.equals(opType) &&
+										!OperationType.resetCounters.equals(opType)  &&
+										!OperationType.getActiveThreads.equals(opType)  &&
+										!OperationType.printInfos.equals(opType)) {
+									throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' null ?");
+								}
 							}
 						}
+					}finally {
+						try{
+							if( rsMap != null )
+								rsMap.close();
+						} catch(Throwable er) {
+							// close
+						}
 					}
-					
-					rs.close();
-					pstmt.close();
 					
 					
 					DatiCollezionati datiCollezionati = null;
@@ -1015,6 +1022,11 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 					case initMap:
 						
 						if(map!=null && map.size()>0){
+							
+							if(mapActiveThreads == null) {
+								throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' null ?");
+							}
+							
 							mapActiveThreads.putAll(map);
 							updateMap = true;
 						}
@@ -1022,6 +1034,10 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 						break;
 						
 					case registerStartRequest:
+						
+						if(mapActiveThreads == null) {
+							throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' null ?");
+						}
 						
 						try {
 							if(mapActiveThreads.containsKey(datiGroupBy)){
@@ -1055,6 +1071,10 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 
 					case updateDatiStartRequestApplicabile:
 						
+						if(mapActiveThreads == null) {
+							throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' null ?");
+						}
+						
 						try {
 							if(mapActiveThreads.containsKey(datiGroupBy)==false){
 								//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
@@ -1086,6 +1106,11 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 						break;
 						
 					case registerStopRequest:
+						
+						if(mapActiveThreads == null) {
+							throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' null ?");
+						}
+						
 						try {
 							if(mapActiveThreads.containsKey(datiGroupBy)==false){
 								//System.out.println("<"+idTransazione+">registerStopRequest Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
@@ -1230,17 +1255,29 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 							}
 						}
 						
-						//System.out.println("INSERT ["+queryInsert.toString()+"]");
-						pstmt = con.prepareStatement(queryUpdate);
-						int index = 1;
-						if(updateDate) {
-							Timestamp t = new Timestamp(this.uniqueIdMap_updateTime.getTime());
-							pstmt.setTimestamp(index++, t);
+						PreparedStatement pstmtUpdateMap = null;
+						int rows = -1;
+						try {
+							//System.out.println("INSERT ["+queryInsert.toString()+"]");
+							pstmtUpdateMap = con.prepareStatement(queryUpdate);
+							int index = 1;
+							if(updateDate) {
+								Timestamp t = new Timestamp(this.uniqueIdMap_updateTime.getTime());
+								pstmtUpdateMap.setTimestamp(index++, t);
+							}
+							this.jdbcAdapter.setBinaryData(pstmtUpdateMap, index++, bout.toByteArray());
+							pstmtUpdateMap.setString(index++, this.uniqueIdMap_idActivePolicy);
+							rows = pstmtUpdateMap.executeUpdate();
 						}
-						this.jdbcAdapter.setBinaryData(pstmt, index++, bout.toByteArray());
-						pstmt.setString(index++, this.uniqueIdMap_idActivePolicy);
-						int rows = pstmt.executeUpdate();
-						pstmt.close();
+						finally {
+							try {
+								if(pstmtUpdateMap!=null) {
+									pstmtUpdateMap.close();
+								}
+							}catch(Throwable t) {
+								// ignore
+							}
+						}
 						
 						if(this.debug) {
 							if(updateDate) {
@@ -1273,11 +1310,23 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 						}
 						
 						//System.out.println("INSERT ["+queryInsert.toString()+"]");
-						pstmt = con.prepareStatement(queryDelete);
-						int index = 1;
-						pstmt.setString(index++, this.uniqueIdMap_idActivePolicy);
-						int rows = pstmt.executeUpdate();
-						pstmt.close();
+						PreparedStatement pstmtDeleteMap = null;
+						int rows = -1;
+						try {
+							pstmtDeleteMap = con.prepareStatement(queryDelete);
+							int index = 1;
+							pstmtDeleteMap.setString(index++, this.uniqueIdMap_idActivePolicy);
+							rows = pstmtDeleteMap.executeUpdate();
+						}
+						finally {
+							try {
+								if(pstmtDeleteMap!=null) {
+									pstmtDeleteMap.close();
+								}
+							}catch(Throwable t) {
+								// ignore
+							}
+						}
 						
 						if(this.debug) {
 							this.logSql.debug("[updateMap"+""+this.idTransazione+"] executed (rows:"+rows+") "+DBUtils.formatSQLString(queryDelete,
@@ -1296,18 +1345,6 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 				} catch(Throwable e) {
 					//System.out.println("ERRORE UPDATE ("+iteration+"): "+e.getMessage());
 					//log.info("ERROR GET SERIAL SQL ["+e.getMessage()+"]",e);
-					try{
-						if( rs != null )
-							rs.close();
-					} catch(Exception er) {
-						// close
-					}
-					try{
-						if( pstmt != null )
-							pstmt.close();
-					} catch(Exception er) {
-						// close
-					}
 					if(this.transactionMode) {
 						try{
 							con.rollback();
@@ -1362,7 +1399,10 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 					}
 				} catch(Exception er) {
 					//System.out.println("ERROR UNSET:"+er.getMessage());
-					throw new PolicyException("CheckMap failed: unsetting connection error; "+er.getMessage());
+					//throw new PolicyException("CheckMap failed: unsetting connection error; "+er.getMessage());
+					if(this.log!=null) {
+						this.log.error("CheckMap failed: unsetting connection error; "+er.getMessage(),er);
+					}
 				}
 			}
 		}

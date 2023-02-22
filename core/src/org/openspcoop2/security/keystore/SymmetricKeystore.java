@@ -45,7 +45,7 @@ public class SymmetricKeystore implements Serializable {
 	
 	private SecretKeySpec key = null;
 	private transient KeyStore keyStore = null;
-	private String passwordKey = null;
+	private String pwKey = null;
 	private String alias = null;
 	
 	@Override
@@ -68,7 +68,7 @@ public class SymmetricKeystore implements Serializable {
 			this.key = new SecretKeySpec(key.getBytes(),algorithm);
 			
 			this.alias = alias;
-			this.passwordKey = "PASSWORD_CUSTOM";
+			this.pwKey = "PW_CUSTOM";
 			
 			this.initKS();
 			
@@ -87,7 +87,7 @@ public class SymmetricKeystore implements Serializable {
 			try {
 				java.security.KeyStore keyStore = java.security.KeyStore.getInstance("JCEKS");
 				keyStore.load(null);
-				keyStore.setKeyEntry(this.alias, this.key,this.passwordKey.toCharArray(), null);
+				keyStore.setKeyEntry(this.alias, this.key,this.pwKey.toCharArray(), null);
 				this.keyStore = new KeyStore(keyStore);
 				FixTrustAnchorsNotEmpty.addCertificate(this.keyStore.getKeystore());			
 			}
@@ -108,7 +108,7 @@ public class SymmetricKeystore implements Serializable {
 	}
 
 	public String getPasswordKey() {
-		return this.passwordKey;
+		return this.pwKey;
 	}
 	
 	

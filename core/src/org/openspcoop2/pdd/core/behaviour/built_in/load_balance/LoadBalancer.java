@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class LoadBalancer {
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandomInstance() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandomInstance() {

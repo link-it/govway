@@ -153,6 +153,9 @@ public class RegistroServizi  {
 	// Factory
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
+
+	private static String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
+	private static String excClassName = org.openspcoop2.core.registry.driver.DriverRegistroServiziException.class.getName() + "";
 		
 	
 	/* --------------- Cache --------------------*/
@@ -1578,7 +1581,6 @@ public class RegistroServizi  {
 			throw e;
 		}
 		catch(Exception e){
-			String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 			if(notFoundClassName.equals(e.getClass().getName()))
 				throw (DriverRegistroServiziNotFound) e;
 			else
@@ -1743,8 +1745,6 @@ public class RegistroServizi  {
 			}
 			catch(java.lang.reflect.InvocationTargetException e){
 				if(e.getTargetException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
-					String excClassName = org.openspcoop2.core.registry.driver.DriverRegistroServiziException.class.getName() + "";
 					if(notFoundClassName.equals(e.getTargetException().getClass().getName())){
 						// Non presente
 						this.log.debug("Ricerca nel registro ["+nomeRegistro+"] non riuscita [NotFound] (metodo ["+methodName+"]): "+e.getTargetException().getMessage());
@@ -1898,8 +1898,6 @@ public class RegistroServizi  {
 				}
 				catch(java.lang.reflect.InvocationTargetException e){
 					if(e.getTargetException()!=null){
-						String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
-						String excClassName = org.openspcoop2.core.registry.driver.DriverRegistroServiziException.class.getName() + "";
 						if(notFoundClassName.equals(e.getTargetException().getClass().getName())){
 							// Non presente
 							this.log.debug("Ricerca nel registro ["+nomeRegInLista+"] non riuscita [NotFound] (metodo ["+methodName+"]): "+e.getTargetException().getMessage());
@@ -2020,7 +2018,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2076,7 +2073,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2122,7 +2118,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2168,7 +2163,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2216,7 +2210,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2264,7 +2257,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2312,7 +2304,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2366,7 +2357,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2421,7 +2411,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2469,7 +2458,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2543,7 +2531,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2604,7 +2591,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2657,7 +2643,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2798,7 +2783,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -2902,7 +2886,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -3026,7 +3009,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -3143,7 +3125,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -3252,7 +3233,6 @@ public class RegistroServizi  {
 			throw e;
 		}
 		catch(Exception e){
-			String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 			if(notFoundClassName.equals(e.getClass().getName()))
 				throw (DriverRegistroServiziNotFound) e;
 			else
@@ -3537,7 +3517,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -3646,7 +3625,6 @@ public class RegistroServizi  {
 			throw e;
 		}
 		catch(Exception e){
-			String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 			if(notFoundClassName.equals(e.getClass().getName()))
 				throw (DriverRegistroServiziNotFound) e;
 			else
@@ -3938,7 +3916,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -4044,7 +4021,6 @@ public class RegistroServizi  {
 			throw e;
 		}
 		catch(Exception e){
-			String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 			if(notFoundClassName.equals(e.getClass().getName()))
 				throw (DriverRegistroServiziNotFound) e;
 			else
@@ -4246,7 +4222,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else
@@ -4287,7 +4262,6 @@ public class RegistroServizi  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					String notFoundClassName = DriverRegistroServiziNotFound.class.getName()+"";
 					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverRegistroServiziNotFound) response.getException();
 					else

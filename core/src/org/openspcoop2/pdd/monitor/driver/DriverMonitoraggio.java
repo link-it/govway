@@ -166,14 +166,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		try{
 			this.log.info("Inizializzo DriverMonitoraggioDB...");
 			ClassLoaderUtilities.newInstance(driverJDBC);
-			if(username!=null){
-				this.globalConnection = DriverManager.getConnection(connectionUrl,username,password);
-			}else{
-				this.globalConnection = DriverManager.getConnection(connectionUrl);
-			}
-			if(this.globalConnection == null){
-				throw new Exception("Connection is null");
-			}
+			this.globalConnection = initConnection(connectionUrl, username, password);
+			checkConnection(this.globalConnection);
 			this.log.info("Inizializzo DriverMonitoraggioDB terminata.");
 		} catch (Exception e) {
 			this.log.error("Errore durante l'inizializzazione della connessione...",e);
@@ -198,8 +192,33 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 	}
 
 
-
-
+	private static Connection initConnection(String connectionUrl, String username, String password) throws Exception {
+		if(username!=null){
+			return DriverManager.getConnection(connectionUrl,username,password);
+		}else{
+			return DriverManager.getConnection(connectionUrl);
+		}
+	}
+	private static void checkConnection(Connection con) throws Exception {
+		if(con == null){
+			throw new Exception("Connection is null");
+		}
+	}
+	
+	private Connection getConnection() throws Exception {
+		if (this.datasource!=null)
+			return this.datasource.getConnection();
+		else
+			return this.globalConnection;
+	}
+	private void releaseConnection(Connection con) {
+		try{
+			if(this.datasource!=null && con!=null)
+				con.close();
+		}catch(Exception e){
+			// close
+		}
+	}
 
 	/**
 	 * Ritorna lo stato delle richieste pendenti che matchano il criterio di filtro.
@@ -217,10 +236,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		try{
 
 			// Ottengo connessione
-			if (this.datasource!=null)
-				con = this.datasource.getConnection();
-			else
-				con = this.globalConnection;
+			con = getConnection();
 			if(con==null)
 				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 
@@ -436,12 +452,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}catch(Exception e){
 				// close
 			}
-			try{
-				if(this.datasource!=null && con!=null)
-					con.close();
-			}catch(Exception e){
-				// close
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -458,10 +469,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		try{
 
 			// Ottengo connessione
-			if (this.datasource!=null)
-				con = this.datasource.getConnection();
-			else
-				con = this.globalConnection;
+			con = getConnection();
 			if(con==null)
 				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 
@@ -495,12 +503,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}catch(Exception e){
 				// close
 			}
-			try{
-				if(this.datasource!=null && con!=null)
-					con.close();
-			}catch(Exception e){
-				// close
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -522,10 +525,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		long oldOffset = search.getOffset();
 		try{
 			// Ottengo connessione
-			if (this.datasource!=null)
-				con = this.datasource.getConnection();
-			else
-				con = this.globalConnection;
+			con = getConnection();
 			if(con==null)
 				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 
@@ -594,12 +594,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}catch(Exception e){
 				// close
 			}
-			try{
-				if(this.datasource!=null && con!=null)
-					con.close();
-			}catch(Exception e){
-				// close
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -618,10 +613,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		ISQLQueryObject sqlQueryObject = null;
 		try{
 			// Ottengo connessione
-			if (this.datasource!=null)
-				con = this.datasource.getConnection();
-			else
-				con = this.globalConnection;
+			con = getConnection();
 			if(con==null)
 				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 
@@ -836,12 +828,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}catch(Exception e){
 				// close
 			}
-			try{
-				if(this.datasource!=null && con!=null)
-					con.close();
-			}catch(Exception e){
-				// close
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -858,10 +845,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		try{
 
 			// Ottengo connessione
-			if (this.datasource!=null)
-				con = this.datasource.getConnection();
-			else
-				con = this.globalConnection;
+			con = getConnection();
 			if(con==null)
 				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 
@@ -939,12 +923,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}catch(Exception e){
 				// close
 			}
-			try{
-				if(this.datasource!=null && con!=null)
-					con.close();
-			}catch(Exception e){
-				// close
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -954,10 +933,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		try{
 
 			// Ottengo connessione
-			if (this.datasource!=null)
-				con = this.datasource.getConnection();
-			else
-				con = this.globalConnection;
+			con = getConnection();
 			if(con==null)
 				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 
@@ -1028,12 +1004,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}catch(Exception e){
 				// close
 			}
-			try{
-				if(this.datasource!=null && con!=null)
-					con.close();
-			}catch(Exception e){
-				// close
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -1073,10 +1044,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		ISQLQueryObject sqlQueryObject = null;
 		try{
 			// Ottengo connessione
-			if (this.datasource!=null)
-				con = this.datasource.getConnection();
-			else
-				con = this.globalConnection;
+			con = getConnection();
 			if(con==null)
 				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 
@@ -1171,12 +1139,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}catch(Exception e){
 				// close
 			}
-			try{
-				if(this.datasource!=null && con!=null)
-					con.close();
-			}catch(Exception e){
-				// close
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -1192,10 +1155,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		String sqlQuery = null;
 		try{
 			// Ottengo connessione
-			if (this.datasource!=null)
-				con = this.datasource.getConnection();
-			else
-				con = this.globalConnection;
+			con = getConnection();
 			if(con==null)
 				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 
@@ -1260,12 +1220,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}catch(Exception e){
 				// close
 			}
-			try{
-				if(this.datasource!=null && con!=null)
-					con.close();
-			}catch(Exception e){
-				// close
-			}
+			releaseConnection(con);
 		}
 		
 	}

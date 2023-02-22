@@ -656,7 +656,9 @@ public class RicezioneBuste {
 						outResponseContext.setResponseHeaders(new HashMap<String, List<String>>());
 					}
 					Map<String, List<String>> propertiesTrasporto = outResponseContext.getResponseHeaders();
-					ServicesUtils.setGovWayHeaderResponse(msgRisposta, OpenSPCoop2Properties.getInstance(),
+					ServiceBinding sb = requestMessage!=null ? requestMessage.getServiceBinding() : this.msgContext.getRequestInfo().getProtocolServiceBinding();
+					ServicesUtils.setGovWayHeaderResponse(sb,
+							msgRisposta, OpenSPCoop2Properties.getInstance(),
 							propertiesTrasporto, logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
@@ -4015,20 +4017,20 @@ public class RicezioneBuste {
 							}
 							
 							OpenSPCoop2Message errorOpenSPCoopMsg = null;
-							if(erroreCooperazione!=null){
+							//if(erroreCooperazione!=null){
 								if(integrationFunctionError==null) {
 									integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 								}
 								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 								errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
-							}
+							/*}
 							else {
 								if(integrationFunctionError==null) {
 									integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 								}
 								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 								errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
-							}
+							}*/
 							
 							// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 							parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);

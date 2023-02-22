@@ -1245,7 +1245,7 @@ public class TimerGestoreMessaggiLib  {
 
 					boolean verificaEffettuata = false;
 					if(this.logQuery){
-						if(!identificatoriConnettoriPD.isEmpty()){
+						if(!identificatoriConnettoriPA.isEmpty()){
 							this.logTimer.info("Sono state trovate connessioni attive sulle PorteApplicative, verifica in corso ...");
 						}
 					}

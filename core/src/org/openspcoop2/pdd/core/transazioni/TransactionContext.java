@@ -56,6 +56,11 @@ public class TransactionContext {
 		 }
 	};
        
+	public static void removeTransactionContext_threadLocal() {
+		if(transactionContext_threadLocal!=null) {
+			transactionContext_threadLocal.remove();
+		}
+	}
 	
 	private static Map<String, Transaction> transactionContext_shared = null;
 	public static synchronized void initResources() throws Exception{

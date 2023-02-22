@@ -68,10 +68,12 @@ public class Signature {
 				fieldName = fieldName.replace("_", ".");
 				if(pConf.containsKey(fieldName)) {
 					String value = pConf.getProperty(fieldName);
-					if(boolean.class.getName().equals(field.getType().getName())) {
+					String bCN = boolean.class.getName()+"";
+					String joseS = JOSESerialization.class.getName()+"";
+					if(bCN.equals(field.getType().getName())) {
 						field.set(this, "true".equalsIgnoreCase(value));
 					}
-					else if(JOSESerialization.class.getName().equals(field.getType().getName())) {
+					else if(joseS.equals(field.getType().getName())) {
 						field.set(this, JOSESerialization.valueOf(value));
 					}
 					else {

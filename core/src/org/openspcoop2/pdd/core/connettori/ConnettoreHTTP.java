@@ -945,7 +945,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	    			this.isResponse.close();
 	    		}
 	    		catch(Throwable t) {
-	    			this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+	    			if(this.logger!=null) {
+	    				this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+	    			}
 	    			listExceptionChiusura.add(t);
 	    		}
 			}
@@ -975,7 +977,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	    				this.httpConn.disconnect();
 	    			}
 	    		}catch(Throwable t) {
-	    			this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+	    			if(this.logger!=null) {
+	    				this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+	    			}
 	    			listExceptionChiusura.add(t);
 	    		}
 	    	}
@@ -984,7 +988,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	    	try {
 	    		super.disconnect();
 	    	}catch(Throwable t) {
-    			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+	    		if(this.logger!=null) {
+	    			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+	    		}
     			listExceptionChiusura.add(t);
     		}
 			

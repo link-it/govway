@@ -169,7 +169,9 @@ public class OpenSPCoop2DBConfigurationUtility {
 		// Inizializzo file di properties contenente le configurazioni per l'accesso al database
 		java.util.Properties reader = new java.util.Properties();
 		try{
-			reader.load(new FileInputStream(proprietaAccessoDatabase));
+			try(FileInputStream fin = new FileInputStream(proprietaAccessoDatabase)){
+				reader.load(fin);
+			}
 		}catch(java.io.IOException e) {
 			String errorMsg = "Errore durante il caricamento del file di properties ["+proprietaAccessoDatabase+"] : "+e.getMessage();
 			log.error(errorMsg,e);

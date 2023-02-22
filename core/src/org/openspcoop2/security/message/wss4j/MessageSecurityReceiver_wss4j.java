@@ -495,7 +495,7 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			}
 		}
 		
-		if(samlSigned && !crlByOcsp && this.trustStore!=null) {
+		if(samlSigned && !crlByOcsp && this.trustStore!=null && pTrustStore!=null) {
 			String trustStoreCRLs = null;
 			try {
 				trustStoreCRLs = pTrustStore.getProperty(prefixTrustStore + Merlin.X509_CRL_FILE);

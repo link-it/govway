@@ -161,7 +161,8 @@ public class Converter {
 				fieldName = fieldName.replace("_", ".");
 				if(pConf.containsKey(fieldName)) {
 					String value = pConf.getProperty(fieldName);
-					if(boolean.class.getName().equals(field.getType().getName())) {
+					String bCN = boolean.class.getName()+"";
+					if(bCN.equals(field.getType().getName())) {
 						field.set(this, "true".equalsIgnoreCase(value));
 					}else {
 						field.set(this, value);

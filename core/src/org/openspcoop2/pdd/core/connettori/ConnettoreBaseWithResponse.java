@@ -273,12 +273,12 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		
 		if(msgErrore!=null){
 			if(this.checkContentType){
-				if(exErrore!=null){
-					this.logger.error(msgErrore,exErrore);
-				}
-				else{
-					this.logger.error(msgErrore);
-				}
+				//if(exErrore!=null){
+				this.logger.error(msgErrore,exErrore);
+				//}
+				//else{
+				//	this.logger.error(msgErrore);
+				//}
 				Exception e = new Exception(msgErrore);
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION,
@@ -286,12 +286,12 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				throw e;
 			}else{
 				msgErrore = msgErrore+"; viene utilizzata forzatamente la tipologia "+MessageType.BINARY.name() +" come modalità di gestione del messaggio";
-				if(exErrore!=null){
-					this.logger.warn(msgErrore,exErrore);
-				}
-				else{
-					this.logger.warn(msgErrore);
-				}
+				//if(exErrore!=null){
+				this.logger.warn(msgErrore,exErrore);
+				//}
+				//else{
+				//	this.logger.warn(msgErrore);
+				//}
 				this.messageTypeResponse = MessageType.BINARY;
 			}
 		}

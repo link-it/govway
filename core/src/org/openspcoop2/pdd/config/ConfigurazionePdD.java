@@ -149,6 +149,8 @@ public class ConfigurazionePdD  {
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
 
+	private static String notFoundClassName = DriverConfigurazioneNotFound.class.getName()+"";
+	private static String excClassName = DriverConfigurazioneException.class.getName()+"";
 
 	/** Variabili statiche contenenti le configurazioni
 	 *  - ConfigurazioneGenerale
@@ -2157,7 +2159,7 @@ public class ConfigurazionePdD  {
 		}catch(DriverConfigurazioneNotFound e){
 			throw e;
 		}catch(Exception e){
-			if(DriverConfigurazioneNotFound.class.getName().equals(e.getClass().getName()))
+			if(notFoundClassName.equals(e.getClass().getName()))
 				throw (DriverConfigurazioneNotFound) e;
 			else
 				throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
@@ -2335,11 +2337,11 @@ public class ConfigurazionePdD  {
 		}
 		catch(java.lang.reflect.InvocationTargetException e){
 			if(e.getTargetException()!=null){
-				if(DriverConfigurazioneNotFound.class.getName().equals(e.getTargetException().getClass().getName())){
+				if(notFoundClassName.equals(e.getTargetException().getClass().getName())){
 					// Non presente
 					this.log.debug("Ricerca nella configurazione non riuscita [NotFound] (metodo ["+methodName+"]): "+e.getTargetException().getMessage());
 					notFound=new DriverConfigurazioneNotFound(e.getTargetException().getMessage(),e.getTargetException());
-				}else if(DriverConfigurazioneException.class.getName().equals(e.getTargetException().getClass().getName())){
+				}else if(excClassName.equals(e.getTargetException().getClass().getName())){
 					// Non presente
 					this.log.debug("Ricerca nella configurazione non riuscita [DriverException] (metodo ["+methodName+"]): "+e.getTargetException().getMessage(),e.getTargetException());
 					throw new DriverConfigurazioneException(e.getTargetException().getMessage(),e.getTargetException());
@@ -2409,8 +2411,10 @@ public class ConfigurazionePdD  {
 				if("getConfigurazioneWithOnlyExtendedInfo".equals(methodNameParam)){
 					Configurazione config = (Configurazione) obj;
 					Configurazione c = new Configurazione();
-					for (Object object : config.getExtendedInfoList()) {
-						c.addExtendedInfo(object);
+					if(config!=null) {
+						for (Object object : config.getExtendedInfoList()) {
+							c.addExtendedInfo(object);
+						}
 					}
 					obj = c;
 				}
@@ -2472,7 +2476,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -2509,7 +2513,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -2547,7 +2551,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -2585,7 +2589,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -2633,7 +2637,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -2676,7 +2680,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -2818,7 +2822,7 @@ public class ConfigurazionePdD  {
 		Template template = _getTemplate(connectionPdD,idPD, nomeMetodo, templateSource, identificativo, templateBytes, key);
 		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
-					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+					requestInfo.getIdTransazione());
 		}
 		return template;
 	}
@@ -2837,7 +2841,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -2860,7 +2864,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 				if(response != null){
 					if(response.getException()!=null){
-						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						if(notFoundClassName.equals(response.getException().getClass().getName()))
 							throw (DriverConfigurazioneNotFound) response.getException();
 						else
 							throw (DriverConfigurazioneException) response.getException();
@@ -2918,7 +2922,7 @@ public class ConfigurazionePdD  {
 		Template template = _getTemplate(connectionPdD, idPD, nomeMetodo, templateSource, file, key);
 		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
-					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+					requestInfo.getIdTransazione());
 		}
 		return template;
 	}
@@ -2931,7 +2935,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -2954,7 +2958,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 				if(response != null){
 					if(response.getException()!=null){
-						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						if(notFoundClassName.equals(response.getException().getClass().getName()))
 							throw (DriverConfigurazioneNotFound) response.getException();
 						else
 							throw (DriverConfigurazioneException) response.getException();
@@ -3018,7 +3022,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -3061,7 +3065,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -3247,7 +3251,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -3319,7 +3323,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -3380,7 +3384,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -3662,7 +3666,7 @@ public class ConfigurazionePdD  {
 		Template template = _getTemplate(connectionPdD, idPA, nomeMetodo, templateSource, identificativo, templateBytes, key);
 		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
-					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+					requestInfo.getIdTransazione());
 		}
 		return template;
 	}
@@ -3681,7 +3685,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -3704,7 +3708,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 				if(response != null){
 					if(response.getException()!=null){
-						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						if(notFoundClassName.equals(response.getException().getClass().getName()))
 							throw (DriverConfigurazioneNotFound) response.getException();
 						else
 							throw (DriverConfigurazioneException) response.getException();
@@ -3761,7 +3765,7 @@ public class ConfigurazionePdD  {
 		Template template = _getTemplate(connectionPdD, idPA, nomeMetodo, templateSource, file, key);
 		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
-					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+					requestInfo.getIdTransazione());
 		}
 		return template;
 	}
@@ -3774,7 +3778,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -3797,7 +3801,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 				if(response != null){
 					if(response.getException()!=null){
-						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						if(notFoundClassName.equals(response.getException().getClass().getName()))
 							throw (DriverConfigurazioneNotFound) response.getException();
 						else
 							throw (DriverConfigurazioneException) response.getException();
@@ -3868,7 +3872,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -3916,7 +3920,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -3964,7 +3968,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4016,7 +4020,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4069,7 +4073,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4117,7 +4121,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4165,7 +4169,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4207,7 +4211,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4264,7 +4268,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4313,7 +4317,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4362,7 +4366,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4411,7 +4415,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4460,7 +4464,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4510,7 +4514,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4560,7 +4564,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4611,7 +4615,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4681,7 +4685,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4751,7 +4755,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4814,7 +4818,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4864,7 +4868,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4913,7 +4917,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4957,7 +4961,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -4995,7 +4999,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5056,7 +5060,7 @@ public class ConfigurazionePdD  {
 		Template template = _getTemplate(connectionPdD, nomeMetodo, templateSource, identificativo, templateBytes, key);
 		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
-					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+					requestInfo.getIdTransazione());
 		}
 		return template;
 	}
@@ -5069,7 +5073,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5092,7 +5096,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 				if(response != null){
 					if(response.getException()!=null){
-						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						if(notFoundClassName.equals(response.getException().getClass().getName()))
 							throw (DriverConfigurazioneNotFound) response.getException();
 						else
 							throw (DriverConfigurazioneException) response.getException();
@@ -5149,7 +5153,7 @@ public class ConfigurazionePdD  {
 		Template template = _getTemplate(connectionPdD, nomeMetodo, templateSource, file, key);
 		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
-					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+					requestInfo.getIdTransazione());
 		}
 		return template;
 	}
@@ -5162,7 +5166,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5185,7 +5189,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 				if(response != null){
 					if(response.getException()!=null){
-						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						if(notFoundClassName.equals(response.getException().getClass().getName()))
 							throw (DriverConfigurazioneNotFound) response.getException();
 						else
 							throw (DriverConfigurazioneException) response.getException();
@@ -5270,7 +5274,7 @@ public class ConfigurazionePdD  {
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5314,7 +5318,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5352,7 +5356,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5449,7 +5453,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5504,7 +5508,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5542,7 +5546,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5580,7 +5584,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5628,7 +5632,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5676,7 +5680,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5713,7 +5717,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5761,7 +5765,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5808,7 +5812,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -5851,7 +5855,7 @@ public class ConfigurazionePdD  {
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
 				if(response.getException()!=null){
-					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
 						throw (DriverConfigurazioneNotFound) response.getException();
 					else
 						throw (DriverConfigurazioneException) response.getException();
@@ -6482,11 +6486,11 @@ public class ConfigurazionePdD  {
 			// Aggiungo la risposta in cache (se esiste una cache)	
 			// Se ho una eccezione aggiungo in cache solo una not found
 			if( this.cache!=null ){ 	
-				if(obj!=null){
-					this.log.info("Aggiungo oggetto ["+keyCache+"] in cache");
-				}else{
-					throw new Exception("Metodo ("+methodName+") ha ritornato un valore null");
-				}
+				//if(obj!=null){
+				this.log.info("Aggiungo oggetto ["+keyCache+"] in cache");
+				//}else{
+				//	throw new Exception("Metodo ("+methodName+") ha ritornato un valore null");
+				//}
 				try{	
 					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 					responseCache.setObject((java.io.Serializable)obj);

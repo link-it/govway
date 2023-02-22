@@ -972,26 +972,38 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
     private void setPermission(ConnettoreFile_outputConfig config) throws ConnettoreException {
     	if(config.getReadable()!=null) {
 			if(config.getReadable_ownerOnly()!=null) {
-				config.getOutputFile().setReadable(config.getReadable(), config.getReadable_ownerOnly());
+				if(!config.getOutputFile().setReadable(config.getReadable(), config.getReadable_ownerOnly())) {
+					// ignore
+				}
 			}
 			else {
-				config.getOutputFile().setReadable(config.getReadable());
+				if(!config.getOutputFile().setReadable(config.getReadable())) {
+					// ignore
+				}
 			}
 		}
 		if(config.getWritable()!=null) {
 			if(config.getWritable_ownerOnly()!=null) {
-				config.getOutputFile().setWritable(config.getWritable(), config.getWritable_ownerOnly());
+				if(!config.getOutputFile().setWritable(config.getWritable(), config.getWritable_ownerOnly())) {
+					// ignore
+				}
 			}
 			else {
-				config.getOutputFile().setWritable(config.getWritable());
+				if(!config.getOutputFile().setWritable(config.getWritable())) {
+					// ignore
+				}
 			}
 		}
 		if(config.getExecutable()!=null) {
 			if(config.getExecutable_ownerOnly()!=null) {
-				config.getOutputFile().setExecutable(config.getExecutable(), config.getExecutable_ownerOnly());
+				if(!config.getOutputFile().setExecutable(config.getExecutable(), config.getExecutable_ownerOnly())) {
+					// ignore
+				}
 			}
 			else {
-				config.getOutputFile().setExecutable(config.getExecutable());
+				if(!config.getOutputFile().setExecutable(config.getExecutable())) {
+					// ignore
+				}
 			}
 		}
     }

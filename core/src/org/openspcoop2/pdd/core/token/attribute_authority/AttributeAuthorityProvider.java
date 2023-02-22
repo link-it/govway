@@ -357,9 +357,16 @@ public class AttributeAuthorityProvider implements IProvider {
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
 
+	private static boolean secret = false;
+	public static boolean isSecret() {
+		return secret;
+	}
+	public static void setSecret(boolean secret) {
+		AttributeAuthorityProvider.secret = secret;
+	}
+
 	private List<String> getStoreType(String id,boolean value){
 		boolean trustStore = true;
-		boolean secret = false;
 		List<String> l = new ArrayList<String>();
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_JKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JKS_LABEL);
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE : SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL);

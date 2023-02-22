@@ -45,7 +45,7 @@
 				
 				<!-- org.openspcoop2.security.message -->
 				<var name="engine" value="engine/*.java" />
-				<var name="soapBox" value="soapbox/*.java" />
+				<var name="soapBox" value="soapbox/**/*.java" />
 				<var name="wss4j" value="wss4j/*.java" />
 				<var name="jose" value="jose/*.java" />
 				<var name="xml" value="xml/*.java" />

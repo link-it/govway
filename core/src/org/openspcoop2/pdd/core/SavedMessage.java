@@ -38,15 +38,12 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.context.MessageContext;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.protocol.engine.constants.Costanti;
-import org.openspcoop2.protocol.sdk.state.RequestInfo;
-import org.openspcoop2.protocol.sdk.state.RequestInfoConfigUtilities;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -75,9 +72,9 @@ public class SavedMessage implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** Logger utilizzato per debug. */
-	private Logger log = null;
+	protected Logger log = null;
 
-	private static final String REST_CONTENT_TYPE_EMPTY = "____EMPTY____";
+	protected static final String REST_CONTENT_TYPE_EMPTY = "____EMPTY____";
 	
 	private static final String MSG_BYTES = "_bytes.bin";
 	private static final String MSG_CONTEXT = "_context.bin";
@@ -88,27 +85,27 @@ public class SavedMessage implements java.io.Serializable {
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
 	/** Identificativo del Messaggio */
-	private String idMessaggio;
+	protected String idMessaggio;
 	/** Indicazione se il messaggio sara' salvato nella INBOX dei messaggi, o nella OUTBOX */
-	private String box;
+	protected String box;
 	/** Indicazione se il messaggio deve essere registrato su file System o su DB */
-	private boolean saveOnFS;
+	protected boolean saveOnFS;
 	/** Identificativo del Messaggio passato sotto una funziona HASH */
-	private String keyMsgBytes;
+	protected String keyMsgBytes;
 	/** Identificativo del MessaggeContext passato sotto una funziona HASH */
-	private String keyMsgContext;
+	protected String keyMsgContext;
 	/** Indica la directory dove effettuare salvataggi */
 	/** Identificativo del Messaggio passato sotto una funziona HASH */
-	private String keyMsgResponseBytes;
+	protected String keyMsgResponseBytes;
 	/** Identificativo del MessaggeContext passato sotto una funziona HASH */
-	private String keyMsgResponseContext;
+	protected String keyMsgResponseContext;
 	/** Indica la directory dove effettuare salvataggi */
 	private String workDir;
 	/** AdapterJDBC */
-	private IJDBCAdapter adapter;
+	protected IJDBCAdapter adapter;
 
 
-	private IOpenSPCoopState openspcoopstate;
+	protected IOpenSPCoopState openspcoopstate;
 
 	/** OpenSPCoopProperties */
 	private transient OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
@@ -302,128 +299,9 @@ public class SavedMessage implements java.io.Serializable {
 	 * 
 	 */
 	public void save(OpenSPCoop2Message msg, boolean isRichiesta, boolean portaDiTipoStateless, boolean consumeMessage, Timestamp oraRegistrazione) throws UtilsException{
-
-		if( !portaDiTipoStateless ) {
-			StateMessage stateMsg = (isRichiesta) ?  
-					(StateMessage)this.openspcoopstate.getStatoRichiesta() :
-						(StateMessage)this.openspcoopstate.getStatoRisposta();
-			Connection connectionDB = stateMsg.getConnectionDB();
-
-			PreparedStatement pstmt = null;
-			try{
-				// Save proprieta' msg
-				StringBuilder query = new StringBuilder();
-				query.append("INSERT INTO  ");
-				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
-				if(this.saveOnFS)
-					query.append(" (ID_MESSAGGIO,TIPO,CONTENT_TYPE,ORA_REGISTRAZIONE) VALUES ( ? , ? , ? , ? )");
-				else
-					query.append(" (ID_MESSAGGIO,TIPO,CONTENT_TYPE,ORA_REGISTRAZIONE,MSG_BYTES,MSG_CONTEXT) VALUES ( ? , ? , ? , ? , ? , ?)");
-
-				pstmt = connectionDB.prepareStatement(query.toString());
-				pstmt.setString(1,this.idMessaggio);
-				if(Costanti.INBOX.equals(this.box))
-					pstmt.setString(2,Costanti.INBOX);
-				else
-					pstmt.setString(2,Costanti.OUTBOX);		
-
-				//Sposto il set del contentType dopo la writeTo del messaggio 
-				//cosi nel caso di attachment lo trovo corretto.
-
-				// Elimino dalla RequestInfo i dati "cached"
-				RequestInfo requestInfoBackup = RequestInfoConfigUtilities.normalizeRequestInfoBeforeSerialization(msg);
-				try {
-					if(this.saveOnFS){
-						// SAVE IN FILE SYSTEM
-						
-						String saveDir = getBaseDir();
-						if(saveDir==null){
-							String errorMsg = "WorkDir non correttamente inizializzata";		
-							throw new UtilsException(errorMsg);
-						}
-						
-						// Save bytes message
-						String pathBytes = saveDir + this.keyMsgBytes;
-						this.saveMessageBytes(pathBytes,msg, consumeMessage,false);
-						
-						// Save message context
-						String pathContext = saveDir + this.keyMsgContext;
-						this.saveMessageContext(pathContext,msg,false);
-						
-					}else{
-						// SAVE IN DB
-						
-						// Save bytes message
-						java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-						msg.writeTo(bout,consumeMessage);
-						bout.flush();
-						bout.close();
-						//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
-						this.adapter.setBinaryData(pstmt,5,bout.toByteArray());
-						
-						// Save message context
-						bout = new java.io.ByteArrayOutputStream();
-						msg.serializeResourcesTo(bout);
-						bout.flush();
-						bout.close();
-						//System.out.println("---------SALVO CONTEXT: "+msgByte.toString());
-						this.adapter.setBinaryData(pstmt,6,bout.toByteArray());
-					}
-				}finally {
-					if(requestInfoBackup!=null) {
-						RequestInfoConfigUtilities.restoreRequestInfoAfterSerialization(msg, requestInfoBackup);
-					}
-				}
-
-				// Set del contentType nella query
-				String contentType = msg.getContentType();
-				if(contentType==null || "".equals(contentType)){
-					if(ServiceBinding.REST.equals(msg.getServiceBinding())){
-						if(MessageType.BINARY.equals(msg.getMessageType())) {
-							if(msg.castAsRest().hasContent()) {
-								throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" "+msg.getMessageType()+" con payload per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
-							}
-							else {
-								contentType = REST_CONTENT_TYPE_EMPTY;
-							}
-						}
-						else {
-							throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" "+msg.getMessageType()+" per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
-						}
-					}
-					else {
-						throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
-					}
-				}
-				pstmt.setString(3,contentType);
-				
-				// Set Ora Registrazione
-				pstmt.setTimestamp(4,oraRegistrazione);
-
-				// Add PreparedStatement
-				stateMsg.getPreparedStatement().put("INSERT (MSG_OP_STEP1a) saveMessage["+this.idMessaggio+","+this.box+"]",pstmt);
-
-			}catch(Exception e){
-				try{
-					if( pstmt != null )
-						pstmt.close();
-				} catch(Exception err) {
-					// close
-				}
-				String errorMsg = "SOAP_MESSAGE, save : "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
-				this.log.error(errorMsg,e);
-				throw new UtilsException(errorMsg,e);
-			}
-		}else { // if (portaDiTipoStateless){
-
-			if (isRichiesta) ((OpenSPCoopStateless)this.openspcoopstate).setRichiestaMsg(msg);
-			else ((OpenSPCoopStateless)this.openspcoopstate).setRispostaMsg(msg);
-
-
-		}
-
+		SavedMessagePSUtilities.save(this, msg, isRichiesta, portaDiTipoStateless, consumeMessage, oraRegistrazione);
 	}     
-	private void saveMessageBytes(String path,OpenSPCoop2Message msg, boolean consumeMessage, boolean overwrite) throws UtilsException{
+	protected void saveMessageBytes(String path,OpenSPCoop2Message msg, boolean consumeMessage, boolean overwrite) throws UtilsException{
 
 		FileOutputStream fos = null;
 		try{
@@ -455,7 +333,7 @@ public class SavedMessage implements java.io.Serializable {
 			throw new UtilsException("Utilities.saveMessage error "+e.getMessage(),e);
 		}
 	}
-	private void saveMessageContext(String path,OpenSPCoop2Message msg, boolean overwrite) throws UtilsException{
+	protected void saveMessageContext(String path,OpenSPCoop2Message msg, boolean overwrite) throws UtilsException{
 
 		FileOutputStream fos = null;
 		try{
@@ -490,117 +368,7 @@ public class SavedMessage implements java.io.Serializable {
 
 	
 	public void updateResponse(OpenSPCoop2Message msg, boolean consumeMessage) throws UtilsException{
-
-		StateMessage stateMsg = (StateMessage)this.openspcoopstate.getStatoRisposta();
-		Connection connectionDB = stateMsg.getConnectionDB();
-
-		PreparedStatement pstmt = null;
-		try{
-			// Save proprieta' msg
-			StringBuilder query = new StringBuilder();
-			query.append("UPDATE ");
-			query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
-			query.append(" SET ");
-			query.append(" RESPONSE_CONTENT_TYPE=? ");
-			if(!this.saveOnFS) {
-				query.append(" , RESPONSE_MSG_BYTES=? ");
-				query.append(" , RESPONSE_MSG_CONTEXT=? ");
-			}
-			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
-
-
-			pstmt = connectionDB.prepareStatement(query.toString());
-			int index = 1;
-			
-			// Set del contentType nella query
-			String contentType = msg.getContentType();
-			if(contentType==null || "".equals(contentType)){
-				if(ServiceBinding.REST.equals(msg.getServiceBinding())){
-					if(MessageType.BINARY.equals(msg.getMessageType())) {
-						if(msg.castAsRest().hasContent()) {
-							throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" "+msg.getMessageType()+" con payload per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
-						}
-						else {
-							contentType = REST_CONTENT_TYPE_EMPTY;
-						}
-					}
-					else {
-						throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" "+msg.getMessageType()+" per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
-					}
-				}
-				else {
-					throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
-				}
-			}
-			pstmt.setString(index++,contentType);
-			
-			// Elimino dalla RequestInfo i dati "cached"
-			RequestInfo requestInfoBackup = RequestInfoConfigUtilities.normalizeRequestInfoBeforeSerialization(msg);
-			try {
-				if(this.saveOnFS){
-					// SAVE IN FILE SYSTEM
-					
-					String saveDir = getBaseDir();
-					if(saveDir==null){
-						String errorMsg = "WorkDir non correttamente inizializzata";		
-						throw new UtilsException(errorMsg);
-					}
-					
-					// Save bytes message
-					String pathBytes = saveDir + this.keyMsgResponseBytes;
-					this.saveMessageBytes(pathBytes,msg, consumeMessage, false);
-					
-					// Save message context
-					String pathContext = saveDir + this.keyMsgResponseContext;
-					this.saveMessageContext(pathContext,msg, false);
-					
-				}else{
-					// SAVE IN DB
-					
-					// Save bytes message
-					java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-					msg.writeTo(bout,consumeMessage);
-					bout.flush();
-					bout.close();
-					//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
-					this.adapter.setBinaryData(pstmt,index++,bout.toByteArray());
-					
-					// Save message context
-					bout = new java.io.ByteArrayOutputStream();
-					msg.serializeResourcesTo(bout);
-					bout.flush();
-					bout.close();
-					//System.out.println("---------SALVO CONTEXT: "+msgByte.toString());
-					this.adapter.setBinaryData(pstmt,index++,bout.toByteArray());
-				}
-			}finally {
-				if(requestInfoBackup!=null) {
-					RequestInfoConfigUtilities.restoreRequestInfoAfterSerialization(msg, requestInfoBackup);
-				}
-			}
-			
-			pstmt.setString(index++,this.idMessaggio);
-			if(Costanti.INBOX.equals(this.box))
-				pstmt.setString(index++,Costanti.INBOX);
-			else
-				pstmt.setString(index++,Costanti.OUTBOX);		
-
-
-			// Add PreparedStatement
-			stateMsg.getPreparedStatement().put("UPDATE (RESPONSE) saveMessage["+this.idMessaggio+","+this.box+"]",pstmt);
-	
-		}catch(Exception e){
-			try{
-				if( pstmt != null )
-					pstmt.close();
-			} catch(Exception err) {
-				// close
-			}
-			String errorMsg = "SOAP_MESSAGE, update response : "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
-			this.log.error(errorMsg,e);
-			throw new UtilsException(errorMsg,e);
-		}
-
+		SavedMessagePSUtilities.updateResponse(this, msg, consumeMessage);
 	}     
 	
 	
@@ -838,13 +606,17 @@ public class SavedMessage implements java.io.Serializable {
 					String pathBytes = saveDir + this.keyMsgBytes;
 					File fileDeleteBytes = new File(pathBytes);
 					if(fileDeleteBytes.exists()){
-						fileDeleteBytes.delete();
+						if(!fileDeleteBytes.delete()) {
+							// ignore
+						}
 					}	
 					
 					String pathContext = saveDir + this.keyMsgContext;
 					File fileDeleteContext = new File(pathContext);
 					if(fileDeleteContext.exists()){
-						fileDeleteContext.delete();
+						if(!fileDeleteContext.delete()) {
+							// ignore
+						}
 					}
 				}
 
@@ -913,25 +685,33 @@ public class SavedMessage implements java.io.Serializable {
 				String pathBytes = saveDir + this.keyMsgBytes;
 				File fileDeleteBytes = new File(pathBytes);
 				if(fileDeleteBytes.exists()){
-					fileDeleteBytes.delete();
+					if(!fileDeleteBytes.delete()) {
+						// ignore
+					}
 				}	
 								
 				String pathContext = saveDir + this.keyMsgContext;
 				File fileDeleteContext = new File(pathContext);
 				if(fileDeleteContext.exists()){
-					fileDeleteContext.delete();
+					if(!fileDeleteContext.delete()) {
+						// ignore
+					}
 				}
 				
 				String pathResponseBytes = saveDir + this.keyMsgResponseBytes;
 				File fileDeleteResponseBytes = new File(pathResponseBytes);
 				if(fileDeleteResponseBytes.exists()){
-					fileDeleteResponseBytes.delete();
+					if(!fileDeleteResponseBytes.delete()) {
+						// ignore
+					}
 				}
 				
 				String pathResponseContext = saveDir + this.keyMsgResponseContext;
 				File fileDeleteResponseContext = new File(pathResponseContext);
 				if(fileDeleteResponseContext.exists()){
-					fileDeleteResponseContext.delete();
+					if(!fileDeleteResponseContext.delete()) {
+						// ignore
+					}
 				}
 			}
 

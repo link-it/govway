@@ -61,6 +61,11 @@ public class WsuIdAllocator implements org.apache.wss4j.dom.WsuIdAllocator {
     	}
     	return randomGenerator;
     }
+    public static void removeRandomBasedGenerator() {
+    	if(randomBasedGeneratorThreadLocal!=null) {
+    		randomBasedGeneratorThreadLocal.remove();
+    	}
+    }
 	
 	
 	

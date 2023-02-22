@@ -906,7 +906,7 @@ public class ConfigurazionePdDReader {
 							Object o = ConfigurazionePdDReader.getRawObjectCache(key);
 							if(o!=null && o instanceof ServizioApplicativo) {
 								ServizioApplicativo sa = (ServizioApplicativo) o;
-								if(idApplicativo.getNome().equals(idApplicativo.getNome()) &&
+								if(idApplicativo.getNome().equals(sa.getNome()) &&
 										idApplicativo.getIdSoggettoProprietario().getTipo().equals(sa.getTipoSoggettoProprietario()) &&
 										idApplicativo.getIdSoggettoProprietario().getNome().equals(sa.getNomeSoggettoProprietario())) {
 									keyForClean.add(key);
@@ -3616,7 +3616,9 @@ public class ConfigurazionePdDReader {
 						throw new DriverConfigurazioneException("HttpServletRequest non disponibile; risorsa richiesta dall'autorizzazione");
 					}
 				}
-				httpServletRequest = infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest();
+				if(infoConnettoreIngresso!=null && infoConnettoreIngresso.getUrlProtocolContext()!=null) {
+					httpServletRequest = infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest();
+				}
 			}
 		}
 
@@ -4991,7 +4993,7 @@ public class ConfigurazionePdDReader {
 		
 		ServizioApplicativo sa = null;
 		if(useCache) {
-			this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
+			sa = this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
 		}
 		else {
 			sa = this.configurazionePdD.getDriverConfigurazionePdD().getServizioApplicativo(idSA);
@@ -5064,7 +5066,7 @@ public class ConfigurazionePdDReader {
 		
 		ServizioApplicativo sa = null;
 		if(useCache) {
-			this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
+			sa = this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
 		}
 		else {
 			sa = this.configurazionePdD.getDriverConfigurazionePdD().getServizioApplicativo(idSA);

@@ -964,7 +964,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		if(context.getResponseHeaders()==null) {
 			context.setResponseHeaders(new HashMap<String,List<String>>());
 		}
-		ServicesUtils.setGovWayHeaderResponse(responseMessage, openSPCoopProperties,
+		ServicesUtils.setGovWayHeaderResponse(requestMessage!=null ? requestMessage.getServiceBinding() : requestInfo.getProtocolServiceBinding(),
+				responseMessage, openSPCoopProperties,
 				context.getResponseHeaders(), logCore, true, context.getPddContext(), requestInfo);
 		if(context.getResponseHeaders()!=null){
 			Iterator<String> keys = context.getResponseHeaders().keySet().iterator();

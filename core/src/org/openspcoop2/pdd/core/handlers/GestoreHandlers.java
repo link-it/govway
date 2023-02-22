@@ -1171,7 +1171,8 @@ public class GestoreHandlers  {
 				T sortHandler = sorted[i];
 				boolean found = false;
 				for (int j = 0; j < handlers1.length; j++) {
-					if(sortHandler.getClass().getName().equals(handlers1[j].getClass().getName())) {
+					String sortHandlerClassName = sortHandler.getClass().getName();
+					if(sortHandlerClassName.equals(handlers1[j].getClass().getName())) {
 						listSortedType.add(tipiHandlers1[j]);
 						found = true;
 						break;
@@ -1179,7 +1180,8 @@ public class GestoreHandlers  {
 				}
 				if(!found) {
 					for (int j = 0; j < handlers2.length; j++) {
-						if(sortHandler.getClass().getName().equals(handlers2[j].getClass().getName())) {
+						String sortHandlerClassName = sortHandler.getClass().getName();
+						if(sortHandlerClassName.equals(handlers2[j].getClass().getName())) {
 							listSortedType.add(tipiHandlers2[j]);
 							found = true;
 							break;

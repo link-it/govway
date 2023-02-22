@@ -257,10 +257,13 @@ public class DBManager implements IMonitoraggioRisorsa {
 	public static Resource buildResource(String dataSourceJndiName, DataSource dataSource, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
 		//System.out.println("### buildResource ["+dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+idTransazione+" ...");
 		Connection connectionDB = dataSource.getConnection();
-		if(connectionDB==null)
-			throw new Exception("is null");
+		checkConnection(connectionDB);
 		//System.out.println("### buildResource ["+dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+idTransazione+" OK");
 		return buildResource("DBRuntimeManager", connectionDB, idPDD, modulo, idTransazione);
+	}
+	private static void checkConnection(Connection connectionDB) throws Exception {
+		if(connectionDB==null)
+			throw new Exception("is null");
 	}
 	public static Resource buildResource(String managerId, Connection connectionDB, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
 		

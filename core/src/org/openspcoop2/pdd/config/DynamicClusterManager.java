@@ -583,6 +583,6 @@ public class DynamicClusterManager {
 	}
 	
 	public static String hashClusterId(String id) {
-		return DigestUtils.sha1Hex(id);
+		return DigestUtils.sha256Hex(id);
 	}
 }

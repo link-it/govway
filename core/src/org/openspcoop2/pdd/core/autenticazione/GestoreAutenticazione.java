@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.autenticazione;
 
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
@@ -179,7 +180,7 @@ public class GestoreAutenticazione {
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {
@@ -1490,12 +1491,12 @@ public class GestoreAutenticazione {
 			if(credenziale.getOraRegistrazione().after(scadenzaEntry)) {
 				return credenziale; // informazione in cache valida
 			}
-			else {
+			//else {
 				//return updateDataCredenzialeMittente(credenzialeMittentiService, scadenzaEntry, credenziale);
 				// ritorno la credenziale trovata sul database, che comunque è sicuramente stata "appena" creata da un altro nodo run. Altrimenti non arriverei a questo else
 				// il metodo di updateDataCredenzialeMittente imposta un ulteriore lock che non si desidera "pagare"
 				return credenziale;
-			}
+			//}
 		}
     }
     

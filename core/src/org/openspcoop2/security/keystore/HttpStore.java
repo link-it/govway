@@ -20,7 +20,6 @@
 
 package org.openspcoop2.security.keystore;
 
-import java.io.InputStream;
 import java.io.Serializable;
 
 import org.openspcoop2.security.SecurityException;
@@ -105,7 +104,6 @@ public class HttpStore implements Serializable {
 		this.trustStoreSsl = trustStoreSsl;
 		this.crlTrustStoreSsl = crlTrustStoreSsl;
 		
-		InputStream isStore = null;
 		try{
 			if(endpoint==null){
 				throw new Exception("Endpoint per lo Store non indicato");
@@ -132,14 +130,6 @@ public class HttpStore implements Serializable {
 
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
-		}finally{
-			try{
-				if(isStore!=null){
-					isStore.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
 		}
 		
 	}

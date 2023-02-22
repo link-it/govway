@@ -155,13 +155,19 @@ public class FileTraceConfig {
 	public FileTraceConfig(InputStream is, boolean globale) throws CoreException {
 		_init(is, globale);
 	}
+	
+	private static boolean escapeInFile = true;
+	public static boolean isEscapeInFile() {
+		return escapeInFile;
+	}
+	public static void setEscapeInFile(boolean escapeInFile) {
+		FileTraceConfig.escapeInFile = escapeInFile;
+	}
 	private void _init(InputStream is, boolean globale) throws CoreException {
 		try {
 			this.globale = false;
 			
 			Properties p = new Properties();
-			
-			boolean escapeInFile = true;
 			
 			if(escapeInFile) {
 				p.load(is); // non tratta bene i caratteri speciali
@@ -207,7 +213,9 @@ public class FileTraceConfig {
 						 p.load(finNewP);
 					}
 				}finally {
-					fTmp.delete();
+					if(!fTmp.delete()) {
+						// ignore
+					}
 				}
 			}
 			

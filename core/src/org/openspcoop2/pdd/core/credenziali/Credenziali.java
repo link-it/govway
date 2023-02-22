@@ -84,6 +84,9 @@ public class Credenziali  extends HttpServletCredential implements java.io.Seria
 		if(c==null) {
 			return false;
 		}
+		if (this.getClass() != c.getClass()) {
+			return false;
+		}
 		return this.toString().equals(((Credenziali)c).toString());
 	}
 	

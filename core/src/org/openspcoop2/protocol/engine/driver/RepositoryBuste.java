@@ -3063,14 +3063,13 @@ public class RepositoryBuste  {
 			} catch(Exception e) {
 				String errorMsg = "REPOSITORY_BUSTE, Errore di cancellazione utilizzo from PdD "+tipoBusta+"/"+id+": "+e.getMessage();
 				this.log.error(errorMsg,e);
-				throw new ProtocolException(errorMsg,e);
-			} finally {
 				try{
 					if(pstmtUpdate != null)
 						pstmtUpdate.close();
 				} catch(Exception er) {
 					// Eccezione SQL.
 				}
+				throw new ProtocolException(errorMsg,e);
 			}
 		}
 

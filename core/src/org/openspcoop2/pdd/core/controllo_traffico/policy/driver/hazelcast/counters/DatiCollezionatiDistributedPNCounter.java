@@ -147,7 +147,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		// Questo per via di come funziona l'aggiornamento delle policy: i datiCollezionati correnti per una map<IDUnivoco..., DatiCollezionati> vengono cancellati e reinizializzati.
 		// Per gli altri nodi in esecuzione, la updatePolicyDate locale resta sempre la stessa, ma non viene usata.
 		if(this.policyRealtime!=null && this.policyRealtime){
-			if (updatePolicyDate != null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
+			if (updatePolicyDate != null && this.distributedUpdatePolicyDate!=null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
 				this.resetCounters(updatePolicyDate);
 			}
 		}
@@ -187,7 +187,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 			// Se ci sono altri nodi che stanno andando, la distributedPolicyDate DEVE essere != 0 
 			// Se la policyDate è a zero vuol dire che questo è il primo nodo del cluster che sta inizializzando la policy per mezzo di un backup e che su tutto il cluster
 			// non sono ancora transitate richieste.
-			if (this.distributedPolicyDate.compareAndSet(0, super.getPolicyDate().getTime())) {
+			if (this.distributedPolicyDate!=null && this.distributedPolicyDate.compareAndSet(0, super.getPolicyDate().getTime())) {
 				// Se la data distribuita non era inizializzata e questo nodo l'ha settata, imposto i contatori come da immagine bin.
 				//	Faccio la addAndGet, in quanto tutti valori positivi, non entriamo in conflitto con gli altri nodi che stanno effettuando lo startup nello stesso momento
 				
@@ -217,13 +217,15 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 						this.distributedActiveRequestCounterForCheck.addAndGet(getActiveRequestCounter);
 					}
 					else {
-						this.distributedActiveRequestCounterForStats.addAndGet(getActiveRequestCounter);
+						if(this.distributedActiveRequestCounterForStats!=null) {
+							this.distributedActiveRequestCounterForStats.addAndGet(getActiveRequestCounter);
+						}
 					}
 				}
 												
 			} else {
 				
-				Long polDate = this.distributedPolicyDate.get();
+				Long polDate = this.distributedPolicyDate!=null ? this.distributedPolicyDate.get() : null;
 				initPolicyCounters(polDate);
 				
 			}
@@ -234,7 +236,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 			if (super.getPolicyDegradoPrestazionaleDate() != null) {
 				
 				// Imposto i contatori distribuiti solo se nel frattempo non l'ha fatto un altro thread del cluster.
-				if (this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(0, super.getPolicyDegradoPrestazionaleDate().getTime())) {
+				if (this.distributedPolicyDegradoPrestazionaleDate!=null && this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(0, super.getPolicyDegradoPrestazionaleDate().getTime())) {
 					
 					Long degradoPrestazionaleTime = super.getPolicyDegradoPrestazionaleDate().getTime();
 					initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
@@ -250,7 +252,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 					}
 				}  else {
 					
-					Long degradoPrestazionaleTime = this.distributedPolicyDegradoPrestazionaleDate.get();
+					Long degradoPrestazionaleTime = this.distributedPolicyDegradoPrestazionaleDate!=null ? this.distributedPolicyDegradoPrestazionaleDate.get() : null;
 					initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
 					
 				}

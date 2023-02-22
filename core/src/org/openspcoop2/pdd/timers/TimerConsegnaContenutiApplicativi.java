@@ -429,7 +429,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 		return null;
 	}
 
-	private void lock(Connection connectionDB, String causale) throws InterruptedException, UtilsException, TimerLockNotAvailableException {
+	private void lock(Connection connectionDB, String causale) throws UtilsException, TimerLockNotAvailableException {
 		GestoreMessaggi.acquireLock(
 				this.semaphore, connectionDB, this.timerLock,
 				this.msgDiag, causale, 

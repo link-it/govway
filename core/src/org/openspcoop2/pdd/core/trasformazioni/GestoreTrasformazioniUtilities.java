@@ -1126,7 +1126,7 @@ public class GestoreTrasformazioniUtilities {
 		}
 		
 		if(response!=null) {
-			if(msgFactory==null) {
+			if(msgFactory==null && request!=null) {
 				msgFactory = request.getFactory();
 			}
 			_buildEntryZipArchive(listEntries, response, false);

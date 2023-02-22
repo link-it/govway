@@ -613,7 +613,8 @@ public class RicezioneContenutiApplicativi {
 						outResponseContext.setResponseHeaders(new HashMap<String, List<String>>());
 					}
 					Map<String, List<String>> propertiesTrasporto = outResponseContext.getResponseHeaders();
-					ServicesUtils.setGovWayHeaderResponse(msgRisposta, OpenSPCoop2Properties.getInstance(),
+					ServicesUtils.setGovWayHeaderResponse(requestMessage.getServiceBinding(),
+							msgRisposta, OpenSPCoop2Properties.getInstance(),
 							propertiesTrasporto, logCore, true, outResponseContext.getPddContext(), this.msgContext.getRequestInfo());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
@@ -739,7 +740,12 @@ public class RicezioneContenutiApplicativi {
 			}
 		}
 		else {
-			logCore.error(posizione+": "+e.getMessage(),e);
+			if(e!=null) {
+				logCore.error(posizione+": "+e.getMessage(),e);
+			}
+			else {
+				logCore.error(posizione);
+			}
 		}
 		
 		IntegrationFunctionError ifError = integrationFunctionError;
@@ -752,7 +758,13 @@ public class RicezioneContenutiApplicativi {
 		}
 		
 		if (this.msgContext.isGestioneRisposta()) {
-			String posizioneFault = posizione+": "+e.getMessage();
+			String posizioneFault = null;
+			if(e!=null) {
+				posizioneFault = posizione+": "+e.getMessage();
+			}
+			else {
+				posizioneFault = posizione;
+			}
 			if(erroreIntegrazioneGenerato==null) {
 				erroreIntegrazioneGenerato = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneFault);
 			}
@@ -4793,6 +4805,7 @@ public class RicezioneContenutiApplicativi {
 		msgDiag.mediumDebug("Controllo non esistenza di una busta ...");
 		ValidazioneSintattica validatoreSintattico = new ValidazioneSintattica(pddContext, openspcoopstate.getStatoRichiesta(),requestMessage, protocolFactory);
 		boolean esisteProtocolloMsgRichiesta = false;
+		boolean esisteProtocolloMsgRichiestaExit = false;
 		try{
 			esisteProtocolloMsgRichiesta = validatoreSintattico.
 					verifyProtocolPresence(this.msgContext.getTipoPorta(),infoServizio.getProfiloDiCollaborazione(),RuoloMessaggio.RICHIESTA);
@@ -4804,7 +4817,7 @@ public class RicezioneContenutiApplicativi {
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,null)));
 			}
-			return;
+			esisteProtocolloMsgRichiestaExit = true;
 		} finally {
 			if(esisteProtocolloMsgRichiesta) {
 				msgDiag.logPersonalizzato("richiestaContenenteBusta");
@@ -4814,7 +4827,7 @@ public class RicezioneContenutiApplicativi {
 							ErroriIntegrazione.ERRORE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA.
 							getErroreIntegrazione(),null,null)));
 				}
-				return;
+				esisteProtocolloMsgRichiestaExit = true;
 			}
 			// *** GB ***
 			if(validatoreSintattico!=null){
@@ -4822,6 +4835,9 @@ public class RicezioneContenutiApplicativi {
 			}
 			validatoreSintattico = null;
 			// *** GB ***
+		}
+		if(esisteProtocolloMsgRichiestaExit) {
+			return;
 		}
 		
 		

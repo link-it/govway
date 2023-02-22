@@ -115,14 +115,16 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}catch(Throwable t) { 
 				//come default si lasciano abilitati
 			}
-			if(HttpRequestMethod.PATCH.equals(m)) {
-				enabled = op2Properties.isServiceRequestHttpMethodPatchEnabled();
-			}
-			else if(HttpRequestMethod.LINK.equals(m)) {
-				enabled = op2Properties.isServiceRequestHttpMethodLinkEnabled();
-			}
-			else if(HttpRequestMethod.UNLINK.equals(m)) {
-				enabled = op2Properties.isServiceRequestHttpMethodUnlinkEnabled();
+			if(op2Properties!=null) {
+				if(HttpRequestMethod.PATCH.equals(m)) {
+					enabled = op2Properties.isServiceRequestHttpMethodPatchEnabled();
+				}
+				else if(HttpRequestMethod.LINK.equals(m)) {
+					enabled = op2Properties.isServiceRequestHttpMethodLinkEnabled();
+				}
+				else if(HttpRequestMethod.UNLINK.equals(m)) {
+					enabled = op2Properties.isServiceRequestHttpMethodUnlinkEnabled();
+				}
 			}
 			if(enabled) {
 				dispatch(req, resp, m);
@@ -181,7 +183,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 	}
 
 	
-	private void dispatch(HttpServletRequest req, HttpServletResponse res,HttpRequestMethod method) throws ServletException, IOException {
+	private void dispatch(HttpServletRequest req, HttpServletResponse res,HttpRequestMethod method) {
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		Logger logOpenSPCoop2Servlet = getLogger();
@@ -479,12 +481,21 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			
 			// log su file core
 			StringBuilder bfLogError = new StringBuilder();
-			ConnectorUtils.generateErrorMessage(IDService.OPENSPCOOP2_SERVLET,method,req,bfLogError, e.getMessage(), true, false);
-			if(logCore!=null){
-				logCore.error(bfLogError.toString());
-			}
-			else{
-				logOpenSPCoop2Servlet.error(bfLogError.toString());
+			try {
+				ConnectorUtils.generateErrorMessage(IDService.OPENSPCOOP2_SERVLET,method,req,bfLogError, e.getMessage(), true, false);
+				if(logCore!=null){
+					logCore.error(bfLogError.toString());
+				}
+				else{
+					logOpenSPCoop2Servlet.error(bfLogError.toString());
+				}
+			}catch(Throwable t) {
+				if(logCore!=null){
+					logCore.error("generateErrorMessage log failed: "+t.getMessage(),t);
+				}
+				else{
+					logOpenSPCoop2Servlet.error("generateErrorMessage log failed: "+t.getMessage(),t);
+				}
 			}
 			
 			// messaggio di errore
@@ -494,21 +505,39 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			
 			if(errore404){
-				res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeProtocolUnsupported(IDService.OPENSPCOOP2_SERVLET)));
+				try {
+					res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeProtocolUnsupported(IDService.OPENSPCOOP2_SERVLET)));
+				}catch(Throwable t) {
+					if(logCore!=null){
+						logCore.error("sendError404 failed: "+t.getMessage(),t);
+					}
+					else{
+						logOpenSPCoop2Servlet.error("sendError404 failed: "+t.getMessage(),t);
+					}
+				}
 			}
 			else{
 				res.setStatus(500);
 
-				ConnectorUtils.generateErrorMessage(IDService.OPENSPCOOP2_SERVLET,method,req,res, e.getMessage(), true, true);
+				try {
+					ConnectorUtils.generateErrorMessage(IDService.OPENSPCOOP2_SERVLET,method,req,res, e.getMessage(), true, true);
+				}catch(Throwable t) {
+					if(logCore!=null){
+						logCore.error("generateErrorMessage failed: "+t.getMessage(),t);
+					}
+					else{
+						logOpenSPCoop2Servlet.error("generateErrorMessage failed: "+t.getMessage(),t);
+					}
+				}
 				
 				try{
 					res.getOutputStream().flush();
-				}catch(Exception eClose){
+				}catch(Throwable eClose){
 					// ignore
 				}
 				try{
 					res.getOutputStream().close();
-				}catch(Exception eClose){
+				}catch(Throwable eClose){
 					// ignore
 				}
 				

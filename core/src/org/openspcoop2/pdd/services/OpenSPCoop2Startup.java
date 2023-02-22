@@ -425,7 +425,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				o = instanceProperties.reads(OpenSPCoop2Startup.log);
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			}
 			try{
 				if(o!=null){
@@ -983,7 +983,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						
 						// Log
 						// stampo comunque saaj factory
-						OpenSPCoop2Startup.log.info("OpenSPCoop MessageFactory (open:"+OpenSPCoop2MessageFactory_impl.class.getName().equals(factory.getClass().getName())+"): "+factory.getClass().getName());
+						String factoryClassName = OpenSPCoop2MessageFactory_impl.class.getName()+"";
+						OpenSPCoop2Startup.log.info("OpenSPCoop MessageFactory (open:"+factoryClassName.equals(factory.getClass().getName())+"): "+factory.getClass().getName());
 						if(propertiesReader.isPrintInfoFactory()){
 							MessageType [] mt = MessageType.values();
 							for (int i = 0; i < mt.length; i++) {
@@ -2654,7 +2655,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 								if(fDati.exists() && fDati.canRead() && fDati.length()>0){
 									FileInputStream fin = new FileInputStream(fDati);
 									GestorePolicyAttive.getInstance(type).initialize(fin,confControlloTraffico);
-									fDati.delete();
+									if(!fDati.delete()) {
+										// ignore
+									}
 								}
 							}
 						}catch(Throwable e){

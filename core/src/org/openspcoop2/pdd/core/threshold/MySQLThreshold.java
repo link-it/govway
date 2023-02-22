@@ -118,9 +118,17 @@ public class MySQLThreshold implements IThreshold {
 			throw new ThresholdException("MySQLThreshold error: "+e.getMessage(),e);
 		}finally{
 			try {
-				if(rs!=null) rs.close();
-				if(s!=null) s.close();
-			}catch(SQLException ex){}
+				if(rs!=null) 
+					rs.close();
+			}catch(SQLException ex){
+				// ignore
+			}
+			try {
+				if(s!=null) 
+					s.close();
+			}catch(SQLException ex){
+				// ignore
+			}
 			rs=null;s=null;
 			dbManager.releaseResource(MySQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), MySQLThreshold.ID_MODULO, resource);
 		}

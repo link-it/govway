@@ -259,14 +259,20 @@ public class TimerUtils {
 						if(dbTransazioniManager!=null) {
 							resource = dbTransazioniManager.getResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, null, false);
 						}
-						else {
+						else if(dbStatisticheManager!=null){
 							resource = dbStatisticheManager.getResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, null, false);
 						}
 						
 						for (TipoLock tipoLock : tipiStatistiche) {
-							boolean result = _lock(propertiesReader, (Connection)resource.getResource(), tipoLock, logCore, release);
-							if(!result) {
-								ok = false; // l'errore è registrato all'interno del metodo _lock
+							if(resource!=null) {
+								boolean result = _lock(propertiesReader, (Connection)resource.getResource(), tipoLock, logCore, release);
+								if(!result) {
+									ok = false; // l'errore è registrato all'interno del metodo _lock
+								}
+							}
+							else {
+								ok = false;
+								logCore.error("Timer Resource is null?");
 							}
 						}
 					}catch(Exception e){
@@ -282,7 +288,7 @@ public class TimerUtils {
 						if(dbTransazioniManager!=null) {
 							dbTransazioniManager.releaseResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, resource, false);
 						}
-						else {
+						else if(dbStatisticheManager!=null){
 							dbStatisticheManager.releaseResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, resource, false);
 						}
 					}

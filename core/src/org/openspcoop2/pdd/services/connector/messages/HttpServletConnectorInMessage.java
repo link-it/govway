@@ -371,11 +371,17 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 					TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.getValue());
 			Utilities.writeAsByteArrayOuputStream(bout, this.buildInputStream(),false); // se l'input stream is empty ritorna null grazie al parametro false
 			bout.flush();
-			bout.close();
 			return bout;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}finally {
+			try {
+				if(bout!=null) {
+					bout.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
 			if(!consume) {
 				this.buffer = bout;
 				this.buffered = true;

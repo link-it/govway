@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.handlers;
 
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,9 +52,22 @@ public class GeneratoreCasualeDate {
 		return GeneratoreCasualeDate.generatore;
 	}
 	
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new SecureRandom();
+		}
+	}
+	public static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
 	private static long getRandom(long inizio, long fine){
 		long value = inizio + 
-			Math.round( Math.random() * (fine - inizio) );
+			Math.round( getRandom().nextDouble() * (fine - inizio) );
 		return value;
 	}
 	

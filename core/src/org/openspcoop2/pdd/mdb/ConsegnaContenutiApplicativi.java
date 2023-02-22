@@ -1190,7 +1190,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						|| 
 						(requestInfoForMemoryOptimization)
 					) {
-					Object o = consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+					Object o = consegnaMessagePrimaTrasformazione!=null ?
+							consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO) 
+							:
+							null;
 					if(o==null) {
 						throw new Exception("RequestInfo non presente nel contesto");
 					}

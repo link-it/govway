@@ -550,9 +550,16 @@ public class NegoziazioneTokenProvider implements IProvider {
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
 	
+	private static boolean secret = false;
+	public static boolean isSecret() {
+		return secret;
+	}
+	public static void setSecret(boolean secret) {
+		NegoziazioneTokenProvider.secret = secret;
+	}
+
 	private List<String> getStoreType(String id,boolean value){
 		boolean trustStore = true;
-		boolean secret = false;
 		List<String> l = new ArrayList<String>();
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_JKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JKS_LABEL);
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE : SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL);
@@ -802,20 +809,20 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
 			
-			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
-				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
-					item.setValue("-");
-					item.setType(ItemType.HIDDEN);
-					return item.getValue();
-				}
-				else {
-					item.setType(ItemType.TEXT);
-				}
+			//if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
+				item.setValue("-");
+				item.setType(ItemType.HIDDEN);
+				return item.getValue();
 			}
 			else {
 				item.setType(ItemType.TEXT);
 			}
+			//}
+			//else {
+			//	item.setType(ItemType.TEXT);
+			//}
 			
 		}		
 		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())) {

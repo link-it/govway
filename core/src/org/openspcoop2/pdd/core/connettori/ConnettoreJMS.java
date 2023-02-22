@@ -581,7 +581,9 @@ public class ConnettoreJMS extends ConnettoreBase {
 			this.logger.error("Errore avvenuto durante la consegna JMS: "+msgErrore,e);
 			try{
 				// Rilascio Risorse
-				sender.close();
+				if(sender!=null) {
+					sender.close();
+				}
 			}catch(Exception ec){
 				// close
 			}

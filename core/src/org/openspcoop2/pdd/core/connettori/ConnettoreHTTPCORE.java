@@ -699,7 +699,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			this.codice = httpResponse.getStatusLine().getStatusCode();
 			this.resultHTTPMessage = httpResponse.getStatusLine().getReasonPhrase();
 			
-			if(this.codice<300)
+			if(this.codice<300) {
 				if(this.isSoap && this.acceptOnlyReturnCode_202_200){
 					if(this.codice!=200 && this.codice!=202){
 						throw new Exception("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
@@ -708,7 +708,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				if(httpBody.isDoInput()){
 					this.isResponse = this.httpEntityResponse.getContent();
 				}
-			else{
+			}else{
 				this.isResponse = this.httpEntityResponse.getContent();
 			}
 			
@@ -798,7 +798,9 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			}				
 		}
 		catch(Throwable t) {
-			this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+			if(this.logger!=null) {
+				this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+			}
 			listExceptionChiusura.add(t);
     	}
     	try{
@@ -817,14 +819,18 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	    	}
 				
     	}catch(Throwable t) {
-			this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+    		if(this.logger!=null) {
+				this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+    		}
 			listExceptionChiusura.add(t);
 		}
     	try{
 	    	// super.disconnect (Per risorse base)
 	    	super.disconnect();
     	}catch(Throwable t) {
-			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+    		if(this.logger!=null) {
+				this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+    		}
 			listExceptionChiusura.add(t);
 		}
     	
@@ -936,7 +942,7 @@ class ConnectionKeepAliveStrategyCustom implements ConnectionKeepAliveStrategy{
 //        }
         // otherwise keep alive for 2 minutes
         //System.out.println("RETURN 2 minuti");
-        return 2 * 60 * 1000;
+        return 2l * 60l * 1000l;
 		
 	}
 	

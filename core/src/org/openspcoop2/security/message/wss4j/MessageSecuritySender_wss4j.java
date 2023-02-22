@@ -204,18 +204,20 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 					msgCtx.put(SecurityConstants.SAML_CALLBACK_REF, samlCallbackHandler);
 				}
 				else if(SecurityConstants.SAML_PROF_REF_ID.equals(key)){
-					if(oValue instanceof Properties) {
+					if(oValue!=null && oValue instanceof Properties) {
 						Properties p = (Properties) oValue;
 						SAMLBuilderConfig config = SAMLBuilderConfig.getSamlConfig(p, requestInfo);
 						SAMLCallbackHandler samlCallbackHandler = new SAMLCallbackHandler(config);
 						msgCtx.put(SecurityConstants.SAML_CALLBACK_REF, samlCallbackHandler);
 					}
 					else {
-						throw new Exception("Property ["+key+"] with uncorrect type: "+oValue.getClass().getName());
+						throw new Exception("Property ["+key+"] with uncorrect type: "+(oValue!=null ? oValue.getClass().getName() : "value is null"));
 					}
 				}
 				else if(SecurityConstants.ENCRYPTION_PARTS.equals(key) || SecurityConstants.SIGNATURE_PARTS.equals(key)){
-					msgCtx.put(key, normalizeWss4jParts(value,message));
+					if(value!=null) {
+						msgCtx.put(key, normalizeWss4jParts(value,message));
+					}
 				}
 				else if(SecurityConstants.PASSWORD_CALLBACK_REF.equals(key)) {
 					msgCtx.put(key, oValue);

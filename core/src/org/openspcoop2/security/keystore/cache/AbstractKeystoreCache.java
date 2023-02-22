@@ -110,7 +110,7 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 		if(keystore==null) {
 			throw new SecurityException("Keystore undefined");
 		}
-		return DigestUtils.sha1Hex(keystore);
+		return DigestUtils.sha256Hex(keystore);
 	}
 	
 	@SuppressWarnings("unchecked")

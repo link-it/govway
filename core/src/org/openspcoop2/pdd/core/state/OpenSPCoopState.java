@@ -373,7 +373,9 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 //						String key = en.nextElement();
 //						System.out.println("PREPARED STATEMENT (RICHIESTA): "+key);
 //					}			
-					this.richiestaStato.executePreparedStatement();
+					if(this.richiestaStato!=null) {
+						this.richiestaStato.executePreparedStatement();
+					}
 					
 //					System.out.println("PREPARED STATEMENT (RISPOSTA)");
 //					en = this.rispostaStato.getPreparedStatement().keys();
@@ -381,7 +383,9 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 //						String key = en.nextElement();
 //						System.out.println("PREPARED STATEMENT (RISPOSTA): "+key);
 //					}	
-					this.rispostaStato.executePreparedStatement();
+					if(this.rispostaStato!=null) {
+						this.rispostaStato.executePreparedStatement();
+					}
 					
 					this.connectionDB.commit();
 					this.connectionDB.setAutoCommit(true);
@@ -389,8 +393,14 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 				}catch (Exception e) {
 					// Chiudo eventuali prepared statement non chiuse
 					try{
-						this.richiestaStato.closePreparedStatement();
-						this.rispostaStato.closePreparedStatement();
+						if(this.richiestaStato!=null) {
+							this.richiestaStato.closePreparedStatement();
+						}
+					}catch(Exception eClose){}
+					try{
+						if(this.rispostaStato!=null) {
+							this.rispostaStato.closePreparedStatement();
+						}
 					}catch(Exception eClose){}
 					//  Rollback quanto effettuato (se l'errore e' avvenuto sul commit, o prima nell'execute delle PreparedStatement)
 					try{

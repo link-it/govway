@@ -506,23 +506,25 @@ public class UrlInvocazioneAPI implements Serializable {
 						CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(contextWithoutBinding);
 			}
 			
-			if(CostantiLabel.TRASPARENTE_PROTOCOL_NAME.equalsIgnoreCase(protocolFactory.getProtocol())) {
-				if(RuoloContesto.PORTA_APPLICATIVA.equals(ruolo)) {
-					if(contestoEsterno.endsWith("in/")) {
-						contestoEsterno = contestoEsterno.substring(0, contestoEsterno.length()-"in/".length());
-					}
-					else if(contestoEsterno.endsWith("in")) {
-						contestoEsterno = contestoEsterno.substring(0, contestoEsterno.length()-"in".length());
+			if(contestoEsterno!=null) {
+				if(CostantiLabel.TRASPARENTE_PROTOCOL_NAME.equalsIgnoreCase(protocolFactory.getProtocol())) {
+					if(RuoloContesto.PORTA_APPLICATIVA.equals(ruolo)) {
+						if(contestoEsterno.endsWith("in/")) {
+							contestoEsterno = contestoEsterno.substring(0, contestoEsterno.length()-"in/".length());
+						}
+						else if(contestoEsterno.endsWith("in")) {
+							contestoEsterno = contestoEsterno.substring(0, contestoEsterno.length()-"in".length());
+						}
 					}
 				}
-			}
-			else if(CostantiLabel.SDI_PROTOCOL_NAME.equalsIgnoreCase(protocolFactory.getProtocol())) {
-				if(RuoloContesto.PORTA_DELEGATA.equals(ruolo)) {
-					if(contestoEsterno.endsWith("out/")) {
-						contestoEsterno = contestoEsterno + "xml2soap/";
-					}
-					else if(contestoEsterno.endsWith("out")) {
-						contestoEsterno = contestoEsterno + "/xml2soap/";
+				else if(CostantiLabel.SDI_PROTOCOL_NAME.equalsIgnoreCase(protocolFactory.getProtocol())) {
+					if(RuoloContesto.PORTA_DELEGATA.equals(ruolo)) {
+						if(contestoEsterno.endsWith("out/")) {
+							contestoEsterno = contestoEsterno + "xml2soap/";
+						}
+						else if(contestoEsterno.endsWith("out")) {
+							contestoEsterno = contestoEsterno + "/xml2soap/";
+						}
 					}
 				}
 			}
@@ -537,7 +539,12 @@ public class UrlInvocazioneAPI implements Serializable {
 			}
 						
 			if(useInterfaceName && interfaceNameNormalizzata!=null && !"".equals(interfaceNameNormalizzata)) {
-				contestoEsterno = contestoEsterno + "/" +interfaceNameNormalizzata;
+				if(contestoEsterno!=null) {
+					contestoEsterno = contestoEsterno + "/" +interfaceNameNormalizzata;
+				}
+				else {
+					contestoEsterno = interfaceNameNormalizzata;
+				}
 			}
 			
 			if(contestoEsterno!=null) {

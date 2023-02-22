@@ -173,7 +173,9 @@ public class InoltroBusteMDB implements MessageDrivenBean, MessageListener {
 			try{
 				lib = new InoltroBuste(this.log);
 			}catch(Exception e){
-				this.log.error("InoltroBuste.instanziazione: "+e.getMessage(),e);
+				if(this.log!=null) {
+					this.log.error("InoltroBuste.instanziazione: "+e.getMessage(),e);
+				}
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
@@ -245,7 +247,9 @@ public class InoltroBusteMDB implements MessageDrivenBean, MessageListener {
 				}
 				
 			}catch (Exception e) {
-				this.log.error("["+InoltroBuste.ID_MODULO+"] Invocazione della libreria non riuscita (verrà effettuato un rollback sulla coda JMS)",e);
+				if(this.log!=null) {
+					this.log.error("["+InoltroBuste.ID_MODULO+"] Invocazione della libreria non riuscita (verrà effettuato un rollback sulla coda JMS)",e);
+				}
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
@@ -286,20 +290,26 @@ public class InoltroBusteMDB implements MessageDrivenBean, MessageListener {
 				esito = lib.onMessage(stato);
 				
 			}catch (Exception e) {
-				this.log.error("["+InoltroBuste.ID_MODULO+"] Invocazione della libreria non riuscita (verrà effettuato un rollback sulla coda JMS)",e);
+				if(this.log!=null) {
+					this.log.error("["+InoltroBuste.ID_MODULO+"] Invocazione della libreria non riuscita (verrà effettuato un rollback sulla coda JMS)",e);
+				}
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
 
 	
 			if (esito.isEsitoInvocazione() == false){
-				this.log.info("["+InoltroBuste.ID_MODULO+"] Invocazione della libreria terminata con esito negativo, verrà effettuato un rollback sulla coda JMS");
+				if(this.log!=null) {
+					this.log.info("["+InoltroBuste.ID_MODULO+"] Invocazione della libreria terminata con esito negativo, verrà effettuato un rollback sulla coda JMS");
+				}
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}	
 			
 			else {
-				this.log.debug("["+InoltroBuste.ID_MODULO+"] Invocazione della libreria terminata correttamente");
+				if(this.log!=null) {
+					this.log.debug("["+InoltroBuste.ID_MODULO+"] Invocazione della libreria terminata correttamente");
+				}
 			}
 		}
 	}

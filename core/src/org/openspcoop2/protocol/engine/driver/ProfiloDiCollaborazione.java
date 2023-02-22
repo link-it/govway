@@ -1138,18 +1138,20 @@ public class ProfiloDiCollaborazione {
 				Integer versioneServizioCorrelato = busta.getVersioneServizioCorrelato();
 
 				if(tipoServizioCorrelato==null || servizioCorrelato==null || versioneServizioCorrelato==null){
-					ResultSet rsServizioCorrelato = null;
 					StringBuilder query = new StringBuilder();
 					query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 					query.append(Costanti.PROFILO_ASINCRONO);
 					query.append(" WHERE ID_MESSAGGIO = ? AND TIPO=?");
-					try (PreparedStatement pstmtServizioCorrelato = connectionDB.prepareStatement(query.toString());){
+					PreparedStatement pstmtServizioCorrelato = null;
+					ResultSet rsServizioCorrelato = null;
+					try {
+						pstmtServizioCorrelato = connectionDB.prepareStatement(query.toString());
 						pstmtServizioCorrelato.setString(1,id);
 						pstmtServizioCorrelato.setString(2,Costanti.OUTBOX);
 						rsServizioCorrelato = pstmtServizioCorrelato.executeQuery();		
-						if(rsServizioCorrelato == null) {
-							throw new ProtocolException("RS Check Null?");			
-						}
+//						if(rsServizioCorrelato == null) {
+//							throw new ProtocolException("RS Check Null?");			
+//						}
 						if(rsServizioCorrelato.next()){
 							tipoServizioCorrelato = rsServizioCorrelato.getString("TIPO_SERVIZIO_CORRELATO");
 							servizioCorrelato = rsServizioCorrelato.getString("SERVIZIO_CORRELATO");
@@ -1168,6 +1170,13 @@ public class ProfiloDiCollaborazione {
 						try {
 							if(rsServizioCorrelato!=null) {
 								rsServizioCorrelato.close();
+							}
+						}catch(Throwable e){
+							// ignore
+						}
+						try {
+							if(pstmtServizioCorrelato!=null) {
+								pstmtServizioCorrelato.close();
 							}
 						}catch(Throwable e){
 							// ignore

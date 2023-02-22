@@ -738,8 +738,11 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 						zipFile.close();
 				}catch(Exception eClose){}
 				try{
-					if(f!=null)
-						f.delete();
+					if(f!=null) {
+						if(!f.delete()) {
+							// ignore
+						}
+					}
 				}catch(Exception eClose){}
 				try{
 					if(in!=null)

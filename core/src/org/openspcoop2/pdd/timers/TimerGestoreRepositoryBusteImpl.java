@@ -69,11 +69,11 @@ public class TimerGestoreRepositoryBusteImpl implements SessionBean, TimedObject
 	/**
 	 * Timeout che definisce la cadenza di avvio di questo timer. 
 	 */
-	private long timeout = 10; // ogni 10 secondi avvio il Thread
+	private long timeout = 10l; // ogni 10 secondi avvio il Thread
 	/**
 	 * Timeout che definisce la scadenza di un messaggio
 	 */
-	private long scadenzaMessaggio = 60 * 24 * 5; // cablato a 5 giorni (60m * 24h * 5giorni).
+	private long scadenzaMessaggio = 60l * 24l * 5l; // cablato a 5 giorni (60m * 24h * 5giorni).
 	/** Properties Reader */
 	private OpenSPCoop2Properties propertiesReader;
 	/** MsgDiagnostico */

@@ -26,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,7 +100,7 @@ import org.w3c.dom.Text;
 public class GestoreCorrelazioneApplicativa {
 
 	/** Logger utilizzato per debug. */
-	private Logger log = null;
+	protected Logger log = null;
 
 
 	/* ********  F I E L D S    S T A T I C    P U B L I C  ******** */
@@ -114,30 +113,30 @@ public class GestoreCorrelazioneApplicativa {
 	/** Se IState e' un'istanza di StatefulMessage possiede una Connessione SQL in autoCommit mode su cui effettuare query
 	 *  Altrimenti, e' un'istanza di StatelessMessage e nn necessita di connessioni
 	 * */
-	private IState state;
+	protected IState state;
 
 	/** id precedentemente associato alla correlazione */
 	private String idBustaCorrelato;
 	/** id Correlazione Applicativo */
 	private String idCorrelazione;
 	/** errore */
-	private ErroreIntegrazione errore;
+	protected ErroreIntegrazione errore;
 	/** SoggettoFruitore */
-	private IDSoggetto soggettoFruitore;
+	protected IDSoggetto soggettoFruitore;
 	/** Servizio */
-	private IDServizio idServizio;
+	protected IDServizio idServizio;
 	/** Busta */
 	private Busta busta;
 	/** Resource REST */
 	private Resource restResource;
 	/** Servizio Applicativo */
-	private String servizioApplicativo;
+	protected String servizioApplicativo;
 	/** Scadenza correlazione applicativa */
 	//private long scadenzaDefault; e' stata aggiunta l'ora di registrazione per differenziare la gestione tra quelle con scadenza e quelle senza.
 	/** Indicazione se deve essere effettuato riuso id */
 	private boolean riusoIdentificativo = false;
 	/** ProtocolFactory */
-	private IProtocolFactory<?> protocolFactory = null;
+	protected IProtocolFactory<?> protocolFactory = null;
 	/** Transaction */
 	private Transaction transaction;
 	/** PddContext */
@@ -848,15 +847,28 @@ public class GestoreCorrelazioneApplicativa {
 				boolean correlazionePresente = rs.next();
 				if(correlazionePresente){
 					this.idBustaCorrelato = rs.getString("ID_MESSAGGIO");
-				}		
-				rs.close();
-				pstmt.close();
+				}
 	
 			} catch(Exception er) {
 				this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA);
 				this.log.error("Verifica correlazione IDApplicativo - ID non riuscita: "+er.getMessage());
 				throw new GestoreMessaggiException("Verifica correlazione IDApplicativo - ID non riuscita: "+er.getMessage(),er);
+			} finally {
+				try {
+					if(rs!=null) {
+						rs.close();
+					}
+				}catch(Throwable t) {
+					// ignore
+				}
+				try {
+					if(pstmt!=null) {
+						pstmt.close();
+					}
+				}catch(Throwable t) {
+					// ignore
+				}
 			}
 	
 			if(this.idBustaCorrelato!=null)
@@ -1432,90 +1444,7 @@ public class GestoreCorrelazioneApplicativa {
 	 * @throws ProtocolException 
 	 */
 	public void applicaCorrelazione(CorrelazioneApplicativa correlazioneApplicativa,String idApplicativo,String idBustaRequest) throws GestoreMessaggiException, ProtocolException{
-
-		if(correlazioneApplicativa==null){
-			this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-					getErrore416_CorrelazioneApplicativaRichiesta("dati per l'identificazione dell'id di correlazione non presenti");
-			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
-		}
-		if(idBustaRequest==null){
-			this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-					getErrore416_CorrelazioneApplicativaRichiesta("identificativo non presente tra i parametri di invocazione");
-			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
-		}
-		if(idApplicativo==null){
-			this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-					getErrore416_CorrelazioneApplicativaRichiesta("identificativo applicativo non presente tra i parametri di invocazione");
-			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
-		}
-
-		Timestamp scadenzaCorrelazioneT = null;
-		if(correlazioneApplicativa.getScadenza()!=null){
-			try{
-				long scadenza = Long.parseLong(correlazioneApplicativa.getScadenza());
-				scadenzaCorrelazioneT = new Timestamp(DateManager.getTimeMillis()+(scadenza*60*1000));
-			}catch(Exception e){
-				this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA);
-				throw new GestoreMessaggiException("Scadenza impostata per la correlazione applicativa non corretta: "+e.getMessage(),e);
-			}
-		}
-		// E' stata introdotta l'ora di registrazione per gestire le scadenze null
-//		else{
-//			scadenzaCorrelazioneT = new Timestamp(DateManager.getTimeMillis()+(this.scadenzaDefault*60*1000));
-//		}
-
-		/** Fase di verifica dell'id di correlazione con l'id */
-		PreparedStatement pstmtInsert = null;
-		try{
-			StateMessage stateMSG = (StateMessage)this.state;
-			Connection connectionDB = stateMSG.getConnectionDB();
-
-			// nuova correlazione
-			StringBuilder queryInsert = new StringBuilder();
-			queryInsert.append("INSERT INTO "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
-			queryInsert.append(" (ID_MESSAGGIO,ID_APPLICATIVO,SERVIZIO_APPLICATIVO,TIPO_MITTENTE,MITTENTE,TIPO_DESTINATARIO,DESTINATARIO,TIPO_SERVIZIO,SERVIZIO,VERSIONE_SERVIZIO,AZIONE ");
-			if(scadenzaCorrelazioneT!=null){
-				queryInsert.append(",SCADENZA");
-			}
-			queryInsert.append(") VALUES (?,?,?,?,?,?,?,?,?,?,?");
-			if(scadenzaCorrelazioneT!=null){
-				queryInsert.append(",?");
-			}
-			queryInsert.append(")");
-			pstmtInsert = connectionDB.prepareStatement(queryInsert.toString());
-			int index = 1;
-			pstmtInsert.setString(index++,idBustaRequest);
-			pstmtInsert.setString(index++,idApplicativo);
-			pstmtInsert.setString(index++,this.servizioApplicativo);
-			pstmtInsert.setString(index++,this.soggettoFruitore.getTipo());
-			pstmtInsert.setString(index++,this.soggettoFruitore.getNome());
-			pstmtInsert.setString(index++,this.idServizio.getSoggettoErogatore().getTipo());
-			pstmtInsert.setString(index++,this.idServizio.getSoggettoErogatore().getNome());
-			pstmtInsert.setString(index++,this.idServizio.getTipo());
-			pstmtInsert.setString(index++,this.idServizio.getNome());
-			pstmtInsert.setInt(index++,this.idServizio.getVersione());
-			pstmtInsert.setString(index++,this.idServizio.getAzione());
-			if(scadenzaCorrelazioneT!=null){
-				pstmtInsert.setTimestamp(index++,scadenzaCorrelazioneT);
-			}
-
-			//	Add PreparedStatement
-			String valoreAzione = "N.D.";
-			if( (this.idServizio.getAzione()!=null) && ("".equals(this.idServizio.getAzione())==false) ){
-				valoreAzione = this.idServizio.getAzione();
-			}
-			stateMSG.getPreparedStatement().put("INSERT CorrelazioneApplicativa_"+idBustaRequest+"_"+idApplicativo+"_"+this.soggettoFruitore.getTipo()+this.soggettoFruitore.getNome()+
-					"_"+this.idServizio.getSoggettoErogatore().getTipo()+this.idServizio.getSoggettoErogatore().getNome()+"_"+
-					this.idServizio.getTipo()+this.idServizio.getNome()+":"+this.idServizio.getVersione()+"_"+valoreAzione,pstmtInsert);
-
-		}catch(Exception er){
-			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA);
-			this.log.error("Correlazione IDApplicativo - ID non riuscita: "+er.getMessage());
-			throw new GestoreMessaggiException("Correlazione IDApplicativo - ID non riuscita: "+er.getMessage(),er);
-		}
-
+		GestoreCorrelazioneApplicativaPSUtilities.applicaCorrelazione(this, correlazioneApplicativa, idApplicativo, idBustaRequest);
 	}
 
 

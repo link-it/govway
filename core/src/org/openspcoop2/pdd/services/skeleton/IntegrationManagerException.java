@@ -423,7 +423,7 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	
 	@Override
 	@XmlTransient
-	public Throwable getCause() {
+	public synchronized Throwable getCause() {
 		return super.getCause();
     }
 	

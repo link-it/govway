@@ -263,7 +263,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			this.idMessaggio=this.busta.getID();
 		
 		// - Debug mode
-		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
+		if(this.properties!=null && this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
 			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
 				this.debug = true;
 		}

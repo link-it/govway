@@ -133,7 +133,7 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 		try {
 			String apiKey = ApiKeyUtilities.getKey(true, this.header, this.cookie, this.queryParameter, 
 					this.nomeHeaderApiKey, this.nomeCookieApiKey, this.nomeQueryParameterApiKey, 
-					datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), false,
+					datiInvocazione.getInfoConnettoreIngresso(), this.getPddContext(), false,
 					new StringBuilder());
 			if(apiKey==null) {
 				return null;
@@ -141,7 +141,7 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 			if(this.appId) {
 				String appId = ApiKeyUtilities.getKey(false, this.header, this.cookie, this.queryParameter, 
 						this.nomeHeaderAppId, this.nomeCookieAppId, this.nomeQueryParameterAppId, 
-						datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), false,
+						datiInvocazione.getInfoConnettoreIngresso(), this.getPddContext(), false,
 						new StringBuilder());
 				if(appId==null) {
 					return null;
@@ -266,7 +266,8 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
     	
     	IDSoggetto idSoggetto = null;
 		try{
-			idSoggetto = RegistroServiziManager.getInstance(datiInvocazione.getState()).getIdSoggettoByCredenzialiApiKey(identitaAutenticata, password, this.appId, cryptConfigSoggetti, null); // all registry
+			RegistroServiziManager registroServiziManager = datiInvocazione!=null ? RegistroServiziManager.getInstance(datiInvocazione.getState()) : RegistroServiziManager.getInstance();
+			idSoggetto = registroServiziManager.getIdSoggettoByCredenzialiApiKey(identitaAutenticata, password, this.appId, cryptConfigSoggetti, null); // all registry
 		}
 		catch(DriverRegistroServiziNotFound notFound){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug("AutenticazioneApiKey (appId:"+this.appId+") non ha trovato risultati",notFound);
@@ -284,7 +285,8 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 		IDServizioApplicativo idServizioApplicativo = null;
 		try {
 			if(idSoggetto==null && this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
-				idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
+				ConfigurazionePdDManager configurazionePdDManager = datiInvocazione!=null ? ConfigurazionePdDManager.getInstance(datiInvocazione.getState()) : ConfigurazionePdDManager.getInstance();
+				idServizioApplicativo = configurazionePdDManager.
 						getIdServizioApplicativoByCredenzialiApiKey(identitaAutenticata, password, this.appId, cryptConfigApplicativi);
 				if(idServizioApplicativo!=null) {
 					if(idSoggetto==null) {

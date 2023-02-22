@@ -203,7 +203,9 @@ public class PreLoadingConfig  {
 				}
 			}
 		}finally {
-			fTmp.delete();
+			if(!fTmp.delete()) {
+				// ignore
+			}
 		}
 
 		if(registryNameList.size()>0) {

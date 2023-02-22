@@ -3246,6 +3246,15 @@ public class OpenSPCoop2Properties {
 					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP;
 				}
 				
+				if(propSetRequestPD==null) {
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.*'. Set is null");
+					return false;
+				}
+				if(propSetResponsePD==null) {
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.response.enabled.*'. Set is null");
+					return false;
+				}
+				
 				List<MapKey<String>> keywords = this.getKeywordsIntegrazione();
 				for (MapKey<String> mapkey : keywords) {
 					
@@ -11232,12 +11241,12 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							if(request) {
-								_tmp.put(key, b);
-							}
-							else {
-								_tmp.put(key, b);
-							}
+							//if(request) {
+							//	_tmp.put(key, b);
+							//}
+							//else {
+							_tmp.put(key, b);
+							//}
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
@@ -11674,12 +11683,12 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							if(request) {
-								_tmp.put(key, b);
-							}
-							else {
-								_tmp.put(key, b);
-							}
+							//if(request) {
+							//	_tmp.put(key, b);
+							//}
+							//else {
+							_tmp.put(key, b);
+							//}
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}

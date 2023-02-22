@@ -332,6 +332,85 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
+		<!-- Runtime security -->
+		<var name="projectAnalyze" value="runtime-security"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="security"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="core/src/org/openspcoop2/security"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},core/src/org/openspcoop2/security"/>
+					</else>
+				</if>
+
+				<!-- Classi di test -->
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/security/message/soapbox/test/*.java"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="runtime-security"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>
+					<param name="analyzeSrc" value="${openspcoop2}/core/src/org/openspcoop2/security"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_security*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Runtime pdd -->
+		<var name="projectAnalyze" value="runtime-pdd"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="pdd"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="core/src/org/openspcoop2/pdd"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},core/src/org/openspcoop2/pdd"/>
+					</else>
+				</if>
+
+				<!-- Classi di test -->
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/pdd/**/test/*.java"/>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/runtime/pdd/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.pdd.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/runtime/pdd/enum.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.pdd.enum.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/runtime/pdd/security_hotspots.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.pdd.sec.falsePositives}"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.pdd.tmp.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="runtime-pdd"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>
+					<param name="analyzeSrc" value="${openspcoop2}/core/src/org/openspcoop2/pdd"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_pdd*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
 
 
 		<!-- Esclusioni -->
@@ -384,10 +463,10 @@
 
                 <if>
 			<not>
-				<and>
+				<or>
 		                        <equals arg1="${sonar.serializeProperties}" arg2="$${sonar.serializeProperties}"/>
 					<equals arg1="${sonar.serializeProperties}" arg2=""/>
-				</and>
+				</or>
 			</not>
                         <then>
                                 <echo message="serialize sonar properties in '${sonar.serializeProperties}'"/>

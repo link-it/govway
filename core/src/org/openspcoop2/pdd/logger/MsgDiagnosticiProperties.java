@@ -606,7 +606,9 @@ public class MsgDiagnosticiProperties {
 						String valore = msgDiagnostici.getProperty(key);
 						try{
 							Integer v = Integer.parseInt(valore);
-							v.toString();
+							if(v.toString()!=null) {
+								// ignore
+							}
 							//tmp_livelliMsgDiagnosticiPersonalizzati.put(chiave, v);
 							tmp_livelliMsgDiagnosticiPersonalizzati.put(chiave, valore);
 							//System.out.println("ADD LIVELLO ["+chiave+"] ["+v+"]");

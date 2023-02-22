@@ -147,6 +147,12 @@ public class NotifierStreamingHandler extends AbstractStreamingHandler {
 					try{
 						if(fout!=null){
 							fout.flush();
+						}
+					}catch(Exception eClose){
+						// close
+					}
+					try{
+						if(fout!=null){
 							fout.close();
 						}
 					}catch(Exception eClose){

@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.security.message.soapbox;
+package org.openspcoop2.security.message.soapbox.test;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -51,6 +51,12 @@ import org.openspcoop2.security.message.SubErrorCodeSecurity;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.engine.MessageUtilities;
+import org.openspcoop2.security.message.soapbox.MessageSecurityContext_soapbox;
+import org.openspcoop2.security.message.soapbox.ProcessPartialEncryptedMessage;
+import org.openspcoop2.security.message.soapbox.ProcessTimestampedMessage;
+import org.openspcoop2.security.message.soapbox.SignPartialMessageProcessor;
+import org.openspcoop2.security.message.soapbox.TimestampMessageProcessor;
+import org.openspcoop2.security.message.soapbox.WSSUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
