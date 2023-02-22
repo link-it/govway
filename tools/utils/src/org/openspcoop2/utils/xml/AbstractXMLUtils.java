@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.DocumentBuilder;
@@ -179,6 +180,10 @@ public abstract class AbstractXMLUtils {
 	public synchronized void initTransformerFactory() throws XMLException {
 		if(this.transformerFactory==null){
 			this.transformerFactory = newTransformerFactory();
+			if(DISABLE_DTDs) {
+				this.transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+				this.transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+			}
 		}
 	}
 	

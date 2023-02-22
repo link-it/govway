@@ -1102,13 +1102,20 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 	}
 		
+	private static boolean permettiModificaNomeAccordo = true;
+	public static boolean isPermettiModificaNomeAccordo() {
+		return permettiModificaNomeAccordo;
+	}
+	public static void setPermettiModificaNomeAccordo(boolean permettiModificaNomeAccordo) {
+		ModIDynamicConfiguration.permettiModificaNomeAccordo = permettiModificaNomeAccordo;
+	}
+
 	@Override
 	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 		
 		boolean rest = this.isApiRest(consoleOperationType, consoleHelper, registryReader, id);
 		
-		boolean permettiModificaNomeAccordo = true;
 		// Lascio il codice se servisse, ma è stato aggiunto la gestione sull'update dell'API
 		if(!permettiModificaNomeAccordo && ConsoleOperationType.CHANGE.equals(consoleOperationType) && id!=null) {
 			try {
@@ -1470,7 +1477,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					//this.addKeStoreConfigOAuth_choice(configuration);
 					this.addTrustStoreKeystoreFruizioneOAuthConfig_choice(configuration);
 					
-					boolean requiredValue = casoSpecialeModificaNomeFruizione ? false : true;
+					//boolean requiredValue = casoSpecialeModificaNomeFruizione ? false : true;
+					boolean requiredValue = true;
 					this.addKeystoreConfig(configuration, true, false, requiredValue);
 				
 					return configuration;
@@ -1538,7 +1546,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			
 			if(fruizioni) {
 				
-				boolean requiredValue = casoSpecialeModificaNomeFruizione ? false : true;
+				//boolean requiredValue = casoSpecialeModificaNomeFruizione ? false : true;
+				boolean requiredValue = true;
 				
 				boolean hideSceltaArchivioFilePath = false;
 				boolean addHiddenSubjectIssuer = false;

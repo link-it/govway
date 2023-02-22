@@ -49,6 +49,7 @@ import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.protocol.modipa.builder.ModIImbustamentoSoap;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
@@ -885,8 +886,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		secProperties.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_20);
 		secProperties.put(SecurityConstants.SAML_ENVELOPED_SAML_SIGNATURE_XMLCONFIG_PREFIX_ID, SecurityConstants.TRUE);
 		
-		boolean senderVouche = true;
-		if(senderVouche) {
+		if(ModIImbustamentoSoap.isSenderVouche()) {
 			secProperties.put("validateSamlSubjectConfirmation", SecurityConstants.TRUE);
 			secProperties.put(SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID, SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID_SENDER_VOUCHES);
 		}

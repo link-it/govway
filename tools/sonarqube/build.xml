@@ -453,6 +453,40 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
+		<!-- Profilo ModI -->
+		<var name="projectAnalyze" value="protocol-modipa"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="modipa"/>
+				<equals arg1="${govway.group}" arg2="modi"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="protocolli/modipa/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},protocolli/modipa/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="protocol-modipa"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/protocolli/modipa"/>
+					<param name="analyzeSrc" value="${openspcoop2}/protocolli/modipa/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_modipa-protocol*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
 
 		<!-- Esclusioni -->
 		<var name="govway.exclusion" value=""/>

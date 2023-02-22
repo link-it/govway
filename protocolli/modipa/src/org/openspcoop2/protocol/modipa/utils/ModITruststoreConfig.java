@@ -61,7 +61,7 @@ public class ModITruststoreConfig {
 			
 			String mode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
 					ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE);
-			boolean ridefinisci = ssl ? ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(mode) : ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(mode);
+			boolean ridefinisci =  ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(mode);
 			
 			if(ridefinisci) {
 				
