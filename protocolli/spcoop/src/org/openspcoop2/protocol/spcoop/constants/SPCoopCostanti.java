@@ -88,7 +88,7 @@ public class SPCoopCostanti {
     public final static String IDENTIFICATIVO_EGOV_SERIALE_DYNAMIC = CostantiProtocollo.IDENTIFICATIVO_SERIALE_DYNAMIC;
     
     /** Attesa attiva di default effettuata per la gestione del livello serializable nel DB, in millisecondi */
-    public final static long GESTIONE_SERIALIZABLE_ATTESA_ATTIVA = 60 * 1000; // 1 minut
+    public final static long GESTIONE_SERIALIZABLE_ATTESA_ATTIVA = 60l * 1000l; // 1 minuto
     /** Intervallo maggiore per frequenza di check nell'attesa attiva effettuata per la gestione del livello serializable nel DB, in millisecondi */
     public final static int GESTIONE_SERIALIZABLE_CHECK_INTERVAL = 100; 
 

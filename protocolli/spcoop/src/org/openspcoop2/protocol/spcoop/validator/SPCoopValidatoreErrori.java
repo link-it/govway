@@ -93,7 +93,11 @@ public class SPCoopValidatoreErrori extends BasicStateComponentFactory implement
 			return true;
 		}
 		else{
-			if( protocolManager.isIgnoraEccezioniLivelloNonGrave() ||  proprietaValidazioneErrori.isIgnoraEccezioniNonGravi()){
+			if( 
+					(protocolManager!=null && protocolManager.isIgnoraEccezioniLivelloNonGrave()) 
+					||  
+					proprietaValidazioneErrori.isIgnoraEccezioniNonGravi()
+				){
 				if(  busta.containsEccezioniGravi() ){
 					return true;
 				}else{
@@ -171,7 +175,11 @@ public class SPCoopValidatoreErrori extends BasicStateComponentFactory implement
 			return false;
 		}
 		else{
-			if( protocolManager.isIgnoraEccezioniLivelloNonGrave() ||  proprietaValidazioneErrori.isIgnoraEccezioniNonGravi()){
+			if( 
+					(protocolManager!=null && protocolManager.isIgnoraEccezioniLivelloNonGrave()) 
+					||  
+					proprietaValidazioneErrori.isIgnoraEccezioniNonGravi()
+				){
 				if(  busta.containsEccezioniGravi() ){
 					return true;
 				}else{

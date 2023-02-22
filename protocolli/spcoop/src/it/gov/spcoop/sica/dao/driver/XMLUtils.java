@@ -108,8 +108,15 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-				if(tmp!=null)
-					tmp.delete();
+			}catch(Exception eClose){
+				// ignore
+			}
+			try {
+				if(tmp!=null) {
+					if(!tmp.delete()) {
+						// ignore
+					}
+				}
 			}catch(Exception eClose){
 				// ignore
 			}
@@ -632,8 +639,15 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-				if(tmp!=null)
-					tmp.delete();
+			}catch(Exception eClose){
+				// ignore
+			}
+			try {
+				if(tmp!=null) {
+					if(!tmp.delete()) {
+						// ignore
+					}
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -1138,8 +1152,15 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-				if(tmp!=null)
-					tmp.delete();
+			}catch(Exception eClose){
+				// ignore
+			}
+			try {
+				if(tmp!=null) {
+					if(!tmp.delete()) {
+						// ignore
+					}
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -1490,8 +1511,15 @@ public class XMLUtils  {
 			try{
 				if(fout!=null)
 					fout.close();
-				if(tmp!=null)
-					tmp.delete();
+			}catch(Exception eClose){
+				// ignore
+			}
+			try {
+				if(tmp!=null) {
+					if(!tmp.delete()) {
+						// ignore
+					}
+				}
 			}catch(Exception eClose){
 				// close
 			}

@@ -945,7 +945,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				this.bustaErroreHeaderIntestazione = errore;
 				this.bustaErroreHeaderIntestazione.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO, 
 						SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_INTESTAZIONE_MESSAGGIO.toString(),this.protocolFactory));
-				throw new Exception("Header eGov con header intestazione che possiede first child ["+intestazioneMsg.getNodeName()+"] diverso da IntestazioneMessaggio");
+				throw new Exception("Header eGov con header intestazione che possiede first child ["+(intestazioneMsg!=null ? intestazioneMsg.getNodeName() : "null")+"] diverso da IntestazioneMessaggio");
 			}
 			
 			List<Node> intestMsgChild = SoapUtils.getNotEmptyChildNodes(messageFactory, intestazioneMsg);
@@ -1985,8 +1985,8 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 
 		// MessaggioSingoloOneWay e Sincrono
 		if (   servizioCorrelato != null  && 
-				(  profilo.equals(SPCoopCostanti.PROFILO_COLLABORAZIONE_ONEWAY) == true || 
-						profilo.equals(SPCoopCostanti.PROFILO_COLLABORAZIONE_SINCRONO) == true    )) {
+				(  SPCoopCostanti.PROFILO_COLLABORAZIONE_ONEWAY.equals(profilo) == true || 
+						SPCoopCostanti.PROFILO_COLLABORAZIONE_SINCRONO.equals(profilo) == true    )) {
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.SERVIZIO_CORRELATO_NON_VALIDO);
@@ -1995,8 +1995,8 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			this.erroriValidazione.add(ecc);
 		}
 		if ( tipoServizioCorrelatoValido && (tipo!=null) &&  
-				(  profilo.equals(SPCoopCostanti.PROFILO_COLLABORAZIONE_ONEWAY) == true || 
-						profilo.equals(SPCoopCostanti.PROFILO_COLLABORAZIONE_SINCRONO) == true    )) {
+				(  SPCoopCostanti.PROFILO_COLLABORAZIONE_ONEWAY.equals(profilo) == true || 
+						SPCoopCostanti.PROFILO_COLLABORAZIONE_SINCRONO.equals(profilo) == true    )) {
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.TIPO_SERVIZIO_CORRELATO_NON_VALIDO);

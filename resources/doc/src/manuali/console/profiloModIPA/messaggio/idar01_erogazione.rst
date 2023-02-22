@@ -16,7 +16,7 @@ Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_
 
 - ModI - Richiesta (:numref:`erogazione_richiesta_fig`): la maschera relativa alla richiesta prevede la configurazione del meccanismo di validazione del token ricevuto sul messaggio di richiesta:
 
-    + Riferimento X.509: il metodo per la localizzazione del certificato dell'applicativo mittente nel messaggio di richiesta. Il valore fornito deve corrispondere alla scelta operata dai mittenti.  I valori possibili (differenziati per il caso REST e SOAP) sono quelli previsti nella specifica AGID.
+    + Riferimento X.509 (presente solo per API REST): il metodo per la localizzazione del certificato dell'applicativo mittente nel messaggio di richiesta. Il valore fornito deve corrispondere alla scelta operata dai mittenti.  I valori possibili sono quelli previsti nella specifica AGID.
     + TrustStore Certificati: Riferimento al truststore che contiene le CA, i certificati, CRL e policy OCSP da utilizzare per poter verificare i token di sicurezza ricevuti nelle richieste. È possibile mantenere l'impostazione di default che è stata fornita al momento dell'installazione del prodotto, oppure definire un diverso riferimento (opzione "Ridefinito") fornendo Path, Tipo, Password del TrustStore e criteri di verifica tramite CRL o OCSP.
     + Audience: valore del campo Audience atteso nel token di sicurezza della richiesta.
 
@@ -30,7 +30,7 @@ Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_
 - ModI - Risposta (:numref:`erogazione_risposta_fig`): la maschera prevede la configurazione del meccanismo di firma digitale del messaggio di risposta, e la produzione del relativo token di sicurezza, da inviare all'applicativo mittente:
 
     + Algoritmo: l'algoritmo che si vuole utilizzare per la firma digitale del messaggio di risposta
-    + Riferimento X.509: il metodo da utilizzare per l'inserimento del certificato nel messaggio di risposta. Si può mantenere la medesima impostazione prevista per il messaggio di richiesta o ridefinirla.
+    + Riferimento X.509: il metodo da utilizzare per l'inserimento del certificato nel messaggio di risposta. Nelle API di tipo REST si può mantenere la medesima impostazione prevista per il messaggio di richiesta o ridefinirla.
     + Certificate Chain: se è stata selezionata la modalità 'x5c', è possibile indicare se nel token di sicurezza verrà incluso solo il certificato utilizzato per la firma o l'intera catena.
     + Keystore: il keystore da utilizzare per la firma del messaggio di risposta. È possibile mantenere il riferimento al keystore di default, fornito in fase di installazione del prodotto, oppure indicare un diverso riferimento (opzione "Ridefinito") fornendo il path sul filesystem, o in alternativa direttamente l'archivio, unitamente a Tipo, Password, Alias Chiave Privata e Password Chiave Privata.
     + Time to Live (secondi): validità temporale del token prodotto.

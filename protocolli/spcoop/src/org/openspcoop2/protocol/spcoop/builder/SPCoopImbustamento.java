@@ -236,8 +236,15 @@ public class SPCoopImbustamento {
 			bf.append('_');
 	
 			if ( SPCoopCostanti.IDENTIFICATIVO_EGOV_SERIALE_MYSQL.equals(this.spcoopProperties.getTipoSeriale_IdentificativoBusta()) ) {
-	
-				serialGeneratorParameter.setTipo(IDSerialGeneratorType.MYSQL);
+
+				if(serialGeneratorParameter!=null) {
+					serialGeneratorParameter.setTipo(IDSerialGeneratorType.MYSQL);
+				}
+				
+				if(serialGenerator==null) {
+					throw new Exception("SerialGenerator undefined");
+				}
+				
 				counter = serialGenerator.buildIDAsNumber(serialGeneratorParameter);
 	
 			} else if(SPCoopCostanti.IDENTIFICATIVO_EGOV_SERIALE_STATIC.equals(this.spcoopProperties.getTipoSeriale_IdentificativoBusta())
@@ -248,6 +255,10 @@ public class SPCoopImbustamento {
 					
 			} else {
 	
+				if(serialGenerator==null) {
+					throw new Exception("SerialGenerator undefined");
+				}
+				
 				counter = serialGenerator.buildIDAsNumber(serialGeneratorParameter);
 	
 			}

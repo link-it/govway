@@ -245,7 +245,7 @@ public class SPCoopProperties {
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.id.tipo");
 				if(name==null)
 					throw new Exception("proprieta non definita");
-				this.tipoSeriale_IdentificativoBusta  = (name !=null) ? name.trim() : null;
+				this.tipoSeriale_IdentificativoBusta  = name.trim();
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.id.tipo': "+e.getMessage();
 				this.log.error(msg,e);

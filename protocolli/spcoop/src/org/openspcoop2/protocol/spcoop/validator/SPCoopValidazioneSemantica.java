@@ -579,6 +579,18 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 
 		// 2) Validazione Azione (solo se c'e' un servizio)
 		if(this.busta.getServizio()!=null && this.busta.getTipoServizio()!=null){
+			
+			if(validazione==null) {
+				this.log.error("Errore durante l'accesso al registro per la validazione del servizio e dell'azione: validazione is null");
+				Eccezione ecc = new Eccezione();
+				ecc.setContestoCodifica(ContestoCodificaEccezione.PROCESSAMENTO);
+				ecc.setCodiceEccezione(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
+				ecc.setRilevanza(LivelloRilevanza.ERROR);
+				ecc.setDescrizione("Riconoscimento Azione: errore di processamento");
+				this.erroriProcessamento.add(ecc);
+				return null;
+			}
+			
 			//log.info("Validazione Azione...");
 			if(this.busta.getAzione() == null){
 				// Controllo che sia valida una invocazione senza azione
@@ -633,6 +645,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			// NEW ALGORITM:
 			if( 
 					(this.busta.getServizioCorrelato()!=null) && 
+					validazione!=null &&
 					(this.busta.getServizioCorrelato().equals(validazione.getServizioCorrelato())== false)
 			){
 				Eccezione ecc = new Eccezione();
@@ -645,6 +658,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			}
 			if( 
 					(this.busta.getTipoServizioCorrelato()!=null) && 
+					validazione!=null &&
 					(this.busta.getTipoServizioCorrelato().equals(validazione.getTipoServizioCorrelato())== false)
 			){
 				Eccezione ecc = new Eccezione();
@@ -675,6 +689,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			// NEW ALGORITM:
 			if( 
 					(this.busta.getServizioCorrelato()!=null) && 
+					validazione!=null &&
 					(this.busta.getServizioCorrelato().equals(validazione.getServizioCorrelato())== false)
 			){
 				Eccezione ecc = new Eccezione();
@@ -687,6 +702,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			}
 			if( 
 					(this.busta.getTipoServizioCorrelato()!=null) && 
+					validazione!=null &&
 					(this.busta.getTipoServizioCorrelato().equals(validazione.getTipoServizioCorrelato())== false)
 			){
 				Eccezione ecc = new Eccezione();
@@ -814,7 +830,9 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 				return false;
 			try{
 				Integer test = Integer.valueOf(split[2]);
-				test.intValue();
+				if(test.intValue()<0) {
+					// ignore
+				}
 			} catch(Exception e){
 				return false;
 			} 
