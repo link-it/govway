@@ -69,6 +69,14 @@ public class AuditHelper {
 		this.session = session;
 	}
 
+	private static boolean useXml = false; // deprecato
+	public static boolean isUseXml() {
+		return useXml;
+	}
+	public static void setUseXml(boolean useXml) {
+		AuditHelper.useXml = useXml;
+	}
+
 	public Vector<DataElement> addAuditingToDati(String statoaudit,
 			String stato, String dump, String formatodump, String log4j,
 			int numFiltri) throws Exception {
@@ -136,7 +144,6 @@ public class AuditHelper {
 				{ Costanti.DUMP_JSON_FORMAT, Costanti.DUMP_XML_FORMAT };
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_FORMATO_DUMP);
-			boolean useXml = false; // deprecato
 			if(!useXml) {
 				formatodump = Costanti.DUMP_JSON_FORMAT;
 			}

@@ -96,53 +96,42 @@ public class AuditDBAppender implements IAuditAppender {
 	@Override
 	public Object registraOperazioneInFaseDiElaborazione(Operation operation) throws AuditException{
 		
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		Connection con = null;
 		try{
 		
 			con = this.ds.getConnection();
-			if(con == null)
-				throw new Exception("Connessione non fornita dal datasource ["+this.dsName+"]");
+			checkConnection(con);
 			
 			DriverAuditDBAppender driverDBAppender = new DriverAuditDBAppender(con,this.tipoDatabase);
 			driverDBAppender.createOperation(operation);
-			return Long.valueOf(operation.getId());
+			return operation.getId();
 			
 		}catch(Exception e){
 			throw new AuditException("Appender["+this.nomeAppender+"] Errore durante la registrazione dell'operazione: "+e.getMessage(),e);
 		}finally{
 			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				if(stmt!=null)
-					stmt.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				con.close();
+				if(con!=null) {
+					con.close();
+				}
 			}catch(Exception e){
 				// close
 			}
 		}
 	}
 	
+	private void checkConnection(Connection con) throws Exception {
+		if(con == null)
+			throw new Exception("Connessione non fornita dal datasource ["+this.dsName+"]");
+	}
+	
 	@Override
 	public void registraOperazioneCompletataConSuccesso(Object idOperation) throws AuditException{
 		
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		Connection con = null;
 		try{
 		
 			con = this.ds.getConnection();
-			if(con == null)
-				throw new Exception("Connessione non fornita dal datasource ["+this.dsName+"]");
+			checkConnection(con);
 			
 			DriverAuditDBAppender driverDBAppender = new DriverAuditDBAppender(con,this.tipoDatabase);
 			Operation operation = driverDBAppender.getOperation((Long)idOperation);
@@ -159,19 +148,9 @@ public class AuditDBAppender implements IAuditAppender {
 			throw new AuditException("Appender["+this.nomeAppender+"] Errore durante la registrazione dell'operazione: "+e.getMessage(),e);
 		}finally{
 			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				if(stmt!=null)
-					stmt.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				con.close();
+				if(con!=null) {
+					con.close();
+				}
 			}catch(Exception e){
 				// close
 			}
@@ -181,14 +160,11 @@ public class AuditDBAppender implements IAuditAppender {
 	@Override
 	public void registraOperazioneTerminataConErrore(Object idOperation,String motivoErrore) throws AuditException{
 		
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		Connection con = null;
 		try{
 		
 			con = this.ds.getConnection();
-			if(con == null)
-				throw new Exception("Connessione non fornita dal datasource ["+this.dsName+"]");
+			checkConnection(con);
 			
 			DriverAuditDBAppender driverDBAppender = new DriverAuditDBAppender(con,this.tipoDatabase);
 			Operation operation = driverDBAppender.getOperation((Long)idOperation);
@@ -206,19 +182,9 @@ public class AuditDBAppender implements IAuditAppender {
 			throw new AuditException("Appender["+this.nomeAppender+"] Errore durante la registrazione dell'operazione: "+e.getMessage(),e);
 		}finally{
 			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				if(stmt!=null)
-					stmt.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				con.close();
+				if(con!=null) {
+					con.close();
+				}
 			}catch(Exception e){
 				// close
 			}

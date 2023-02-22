@@ -123,8 +123,6 @@ public class DriverAuditDBAppender {
 			}else{
 				throw new AuditException("[DriverAudit::getOperation] non presente");
 			}
-			rs.close();
-			stm.close();
 		
 			return operation;
 		} catch (SQLException se) {
@@ -133,8 +131,16 @@ public class DriverAuditDBAppender {
 			throw new AuditException("[DriverAudit::getOperation] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				rs.close();
-				stm.close();
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
@@ -163,8 +169,6 @@ public class DriverAuditDBAppender {
 			while (rs.next()) {
 				binaries.add(this.getBinary(rs.getLong("id")));
 			}
-			rs.close();
-			stm.close();
 		
 			return binaries;
 		} catch (SQLException se) {
@@ -173,8 +177,16 @@ public class DriverAuditDBAppender {
 			throw new AuditException("[DriverAudit::getBinaries] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				rs.close();
-				stm.close();
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
@@ -211,8 +223,6 @@ public class DriverAuditDBAppender {
 			}else{
 				throw new AuditException("[DriverAudit::getBinary] non presente");
 			}
-			rs.close();
-			stm.close();
 		
 			return binary;
 		} catch (SQLException se) {
@@ -221,8 +231,16 @@ public class DriverAuditDBAppender {
 			throw new AuditException("[DriverAudit::getBinary] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				rs.close();
-				stm.close();
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
@@ -231,8 +249,6 @@ public class DriverAuditDBAppender {
 	
 	
 	public void createOperation(Operation operation) throws AuditException {
-		ResultSet rs = null;
-		PreparedStatement stm = null;
 		
 		if (operation == null)
 			throw new AuditException("[DriverAudit::createOperation] Parametro non valido.");
@@ -285,22 +301,7 @@ public class DriverAuditDBAppender {
 			
 		} catch (Exception qe) {
 			throw new AuditException(qe.getMessage(),qe);
-		} finally {
-
-			//Chiudo statement and resultset
-			try {
-				if (rs != null)
-					rs.close();
-			} catch (Exception e) {
-				//ignore
-			}
-			try {
-				if (stm != null)
-					stm.close();
-			} catch (Exception e) {
-				//ignore
-			}
-		}
+		} 
 	}
 	
 	public void createBinary(Binary binary) throws AuditException {
@@ -348,25 +349,24 @@ public class DriverAuditDBAppender {
 			}else{
 				throw new Exception("Identificativo dopo l'insert non recuperato");
 			}
-			rs.close();
-			stm.close();
 			
 		} catch (Exception qe) {
 			throw new AuditException(qe.getMessage(),qe);
 		} finally {
 
-			//Chiudo statement and resultset
 			try {
-				if (rs != null)
+				if(rs!=null) {
 					rs.close();
+				}
 			} catch (Exception e) {
-				//ignore
+				// ignore exception
 			}
 			try {
-				if (stm != null)
+				if(stm!=null) {
 					stm.close();
+				}
 			} catch (Exception e) {
-				//ignore
+				// ignore exception
 			}
 		}
 	}
@@ -780,8 +780,16 @@ public class DriverAuditDBAppender {
 			throw new AuditException("[DriverAuditDBAppender::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 			try {
-				risultato.close();
-				stmt.close();
+				if(risultato!=null) {
+					risultato.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stmt!=null) {
+					stmt.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}

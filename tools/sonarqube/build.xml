@@ -563,6 +563,74 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
+		<!-- Profilo API Gateway -->
+		<var name="projectAnalyze" value="protocol-trasparente"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="trasparente"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="protocolli/trasparente/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},protocolli/trasparente/src"/>
+					</else>
+				</if>
+
+				<!-- Classi di test -->
+				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/protocol/trasparente/properties/TrasparenteConfigurazioneTest.java"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="protocol-trasparente"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/protocolli/trasparente"/>
+					<param name="analyzeSrc" value="${openspcoop2}/protocolli/trasparente/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_trasparente-protocol*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
+		<!-- WEB Lib audit -->
+		<var name="projectAnalyze" value="web-lib-audit"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="audit"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/web_interfaces/lib/audit/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/lib/audit/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-lib-audit"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/lib/audit"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/audit/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-lib-audit*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
 
 
 		<!-- Esclusioni -->
