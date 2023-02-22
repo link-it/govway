@@ -1,3 +1,9 @@
+2023-02-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-24998: aggiornata libreria 'commons-fileupload' alla versione 1.5
+
 2023-02-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
@@ -3734,7 +3740,7 @@
 	commons-compress-1.19.jar -> commons-compress-1.20.jar
 	commons-csv-1.5.jar -> commons-csv-1.8.jar
 	commons-dbcp2-2.5.0.jar -> commons-dbcp2-2.7.0.jar
-	commons-fileupload-1.3.3.jar -> commons-fileupload-1.4.jar
+	commons-fileupload-1.3.3.jar -> commons-fileupload-1.5.jar
 	commons-lang3-3.8.jar -> commons-lang3-3.9.jar
 	commons-pool2-2.6.0.jar -> commons-pool2-2.8.0.jar
 	-- cxf

@@ -127,10 +127,10 @@ public class XMLUtils extends AbstractXMLUtils {
 //			System.setProperty("javax.xml.transform.TransformerFactory", org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
 //			return TransformerFactory.newInstance();
 			TransformerFactory transformerFactory = TransformerFactory.newInstance(org.apache.xalan.processor.TransformerFactoryImpl.class.getName(), this.getClass().getClassLoader());
-			if(DISABLE_DTDs) {
-				transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-				transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-			}
+			/*if(DISABLE_DTDs) {
+				transformerFactory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
+				transformerFactory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+			}*/
 			return transformerFactory;
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);

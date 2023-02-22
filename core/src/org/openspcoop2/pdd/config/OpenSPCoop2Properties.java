@@ -3250,10 +3250,6 @@ public class OpenSPCoop2Properties {
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.*'. Set is null");
 					return false;
 				}
-				if(propSetResponsePD==null) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.response.enabled.*'. Set is null");
-					return false;
-				}
 				
 				List<MapKey<String>> keywords = this.getKeywordsIntegrazione();
 				for (MapKey<String> mapkey : keywords) {
@@ -3290,7 +3286,7 @@ public class OpenSPCoop2Properties {
 									mapkey+"'.");
 							return false;
 						}
-						if( propSetResponsePD.containsKey(mapkey) == false){
+						if( propSetResponsePD==null || propSetResponsePD.containsKey(mapkey) == false){
 							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 									mapkey+"'.");
 							return false;
@@ -3346,7 +3342,7 @@ public class OpenSPCoop2Properties {
 								mapkey+"'.");
 						return false;
 					}
-					if( propSetResponsePD.containsKey(mapkey) == false){
+					if( propSetResponsePD==null || propSetResponsePD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 								mapkey+"'.");
 						return false;
@@ -3370,7 +3366,7 @@ public class OpenSPCoop2Properties {
 								mapkey+"'.");
 						return false;
 					}
-					if( propSetResponsePD.containsKey(mapkey) == false){
+					if( propSetResponsePD==null || propSetResponsePD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 								mapkey+"'.");
 						return false;
@@ -3406,7 +3402,7 @@ public class OpenSPCoop2Properties {
 								mapkey+"'.");
 						return false;
 					}
-					if( propSetResponsePD.containsKey(mapkey) == false){
+					if( propSetResponsePD==null || propSetResponsePD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 								mapkey+"'.");
 						return false;
