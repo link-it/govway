@@ -158,7 +158,9 @@ public class SDISbustamento {
 							//System.out.println("NON OTTIMIZZATO MTOM");
 							// mtom
 							AttachmentPart ap = this.getAttachmentPart(msg, e);
-							xmlFattura = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());						
+							if(ap!=null) {
+								xmlFattura = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
+							}
 						}else{
 							//System.out.println("NON OTTIMIZZATO NO MTOM");
 							// no mtom
@@ -266,7 +268,9 @@ public class SDISbustamento {
 										//System.out.println("NON OTTIMIZZATO MTOM");
 										// mtom
 										AttachmentPart ap = this.getAttachmentPart(msg, e);
-										xmlNotificaScartoEsitoCommittente = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());						
+										if(ap!=null) {
+											xmlNotificaScartoEsitoCommittente = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
+										}
 									}else{
 										//System.out.println("NON OTTIMIZZATO NO MTOM");
 										// no mtom
@@ -421,7 +425,9 @@ public class SDISbustamento {
 								//System.out.println("NON OTTIMIZZATO MTOM");
 								// mtom
 								AttachmentPart ap = this.getAttachmentPart(msg, e);
-								xmlNotifica = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());						
+								if(ap!=null) {
+									xmlNotifica = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
+								}
 							}else{
 								//System.out.println("NON OTTIMIZZATO NO MTOM");
 								// no mtom

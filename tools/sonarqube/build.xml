@@ -486,6 +486,44 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
+		<!-- Profilo SDI -->
+		<var name="projectAnalyze" value="protocol-sdi"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="sdi"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="protocolli/sdi/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},protocolli/sdi/src"/>
+					</else>
+				</if>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/protocol/sdi/enum.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${protocol.sdi.enum.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/protocol/sdi/security_hotspots.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${protocol.sdi.tmp.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="protocol-sdi"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/protocolli/sdi"/>
+					<param name="analyzeSrc" value="${openspcoop2}/protocolli/sdi/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_sdi-protocol*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
 
 
 		<!-- Esclusioni -->
