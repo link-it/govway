@@ -142,7 +142,7 @@ public class ReadPropertiesUtilities {
 		if(item.getProperty() != null && item.getProperty().isAppend()) {
 			// estraggo il valore della property che contiene la sequenza delle chiavi salvate
 			String propertiesKeysValues = getPropertyValue(propertiesMap, Costanti.PRE_KEY_PROPERTIES_DEFAULT + name, collectionName);
-			if(propertiesKeysValues != null) {
+			if(propertiesKeysValues != null && propertyValue!=null) {
 				String [] chiaviSalvate = propertiesKeysValues.split(Costanti.KEY_PROPERTIES_DEFAULT_SEPARATOR);
 				String [] propertyValueSplit = propertyValue.split(item.getProperty().getAppendSeparator());
 				

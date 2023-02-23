@@ -42,16 +42,16 @@ public class DataElementPassword implements Serializable {
 	private boolean visualizzaPasswordChiaro = false;
 	private PasswordGenerator passwordGenerator = null;
 	private int numeroSample = 20;
-	private String labelButtonGeneraPassword = Costanti.LABEL_MONITOR_BUTTON_GENERA;
-	private String tooltipButtonGeneraPassword = Costanti.TOOLTIP_MONITOR_BUTTON_GENERA_PWD;
+	private String labelButtonGeneraPw = Costanti.LABEL_MONITOR_BUTTON_GENERA;
+	private String tooltipButtonGeneraPw = Costanti.TOOLTIP_MONITOR_BUTTON_GENERA_PWD;
 	
 	public DataElementPassword() {
 		this.visualizzaBottoneGeneraPassword = false;
 		this.visualizzaPasswordChiaro = false;
 		this.passwordGenerator = PasswordGenerator.DEFAULT;
 		this.numeroSample = 20;
-		this.labelButtonGeneraPassword = Costanti.LABEL_MONITOR_BUTTON_GENERA;
-		this.tooltipButtonGeneraPassword = Costanti.TOOLTIP_MONITOR_BUTTON_GENERA_PWD;
+		this.labelButtonGeneraPw = Costanti.LABEL_MONITOR_BUTTON_GENERA;
+		this.tooltipButtonGeneraPw = Costanti.TOOLTIP_MONITOR_BUTTON_GENERA_PWD;
 	}
 
 	public boolean isVisualizzaBottoneGeneraPassword() {
@@ -86,18 +86,18 @@ public class DataElementPassword implements Serializable {
 	}
 
 	public String getLabelButtonGeneraPassword() {
-		return this.labelButtonGeneraPassword;
+		return this.labelButtonGeneraPw;
 	}
 
-	public void setLabelButtonGeneraPassword(String labelButtonGeneraPassword) {
-		this.labelButtonGeneraPassword = labelButtonGeneraPassword;
+	public void setLabelButtonGeneraPassword(String labelButtonGeneraPw) {
+		this.labelButtonGeneraPw = labelButtonGeneraPw;
 	}
 
 	public String getTooltipButtonGeneraPassword() {
-		return this.tooltipButtonGeneraPassword;
+		return this.tooltipButtonGeneraPw;
 	}
 
-	public void setTooltipButtonGeneraPassword(String tooltipButtonGeneraPassword) {
-		this.tooltipButtonGeneraPassword = tooltipButtonGeneraPassword;
+	public void setTooltipButtonGeneraPassword(String tooltipButtonGeneraPw) {
+		this.tooltipButtonGeneraPw = tooltipButtonGeneraPw;
 	}
 }

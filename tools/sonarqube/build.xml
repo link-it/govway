@@ -12,6 +12,7 @@
 	     https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner-for-ant/
 	     https://docs.sonarqube.org/latest/analyzing-source-code/analysis-parameters/
 	     https://docs.sonarqube.org/latest/project-administration/narrowing-the-focus/
+	     https://docs.sonarqube.org/latest/setup-and-upgrade/install-the-server/
  	-->
 
 	<!-- directory root -->
@@ -625,6 +626,110 @@
 					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/audit/src"/>
 					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 					<param name="analyzeJar" value="openspcoop2_web-lib-audit*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- WEB Lib mvc -->
+		<var name="projectAnalyze" value="web-lib-mvc"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="mvc"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/web_interfaces/lib/mvc/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/lib/mvc/src"/>
+					</else>
+				</if>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/mvc/enum.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.mvc.enum.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-lib-mvc"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/lib/mvc"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/mvc/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-lib-mvc*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- WEB Lib queue -->
+		<var name="projectAnalyze" value="web-lib-queue"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="queue"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/web_interfaces/lib/queue/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/lib/queue/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-lib-queue"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/lib/queue"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/queue/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-lib-queue*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- WEB Lib users -->
+		<var name="projectAnalyze" value="web-lib-users"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="users"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/web_interfaces/lib/users/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/lib/users/src"/>
+					</else>
+				</if>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/users/enum.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.users.enum.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-lib-users"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/lib/users"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/users/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-lib-users*.jar"/>
 				</antcall>
 			</then>
 			<else>

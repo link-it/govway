@@ -157,26 +157,35 @@ public class ClassQueue {
 
 		//Inserisco l'operazione nella coda indicata
 		Queue queue = null;
+		InitialContext ctx = null;
+		QueueConnection qc = null;
+		Session s = null;
 		try {
+			
+			Session sessionJMSforSend = null;
 			if(this.connectionFactoryName!=null){
 				// Gestione in autoCommit
-				InitialContext ctx = new InitialContext(this.jndiContext);
+				ctx = new InitialContext(this.jndiContext);
 				QueueConnectionFactory qcf = (QueueConnectionFactory) ctx.lookup(this.connectionFactoryName);
-				QueueConnection qc = qcf.createQueueConnection();
-				this.sessionJMS = qc.createQueueSession(false,javax.jms.Session.AUTO_ACKNOWLEDGE);
-				ctx.close();
+				qc = qcf.createQueueConnection();
+				s = qc.createQueueSession(false,javax.jms.Session.AUTO_ACKNOWLEDGE);
+				sessionJMSforSend = s;
+			}
+			else {
+				sessionJMSforSend = this.sessionJMS;
 			}
 
 			// Lookup Queue
-			InitialContext ctx = new InitialContext(this.jndiContext);
+			if(ctx==null) {
+				ctx = new InitialContext(this.jndiContext);
+			}
 			queue = (Queue) ctx.lookup(queueName);
-			ctx.close();
 
 			// Message Producer
-			MessageProducer sender = this.sessionJMS.createProducer(queue);
+			MessageProducer sender = sessionJMSforSend.createProducer(queue);
 
 			// Create a message
-			ObjectMessage message = this.sessionJMS.createObjectMessage(idOp);
+			ObjectMessage message = sessionJMSforSend.createObjectMessage(idOp);
 
 			// Se e' stato specificato un id da filtrare
 			if (idForFilter!=null && !idForFilter.equals(""))
@@ -187,6 +196,28 @@ public class ClassQueue {
 
 		} catch (Exception e) {
 			throw new ClassQueueException("ERRORE DURANTE L'INSERIMENTO IN CODA ["+queueName+"]",e);
+		} finally {
+			try {
+				if(ctx!=null) {
+					ctx.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+			try {
+				if(s!=null) {
+					s.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+			try {
+				if(qc!=null) {
+					qc.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
 		}
 
 		return idOp;
@@ -195,7 +226,6 @@ public class ClassQueue {
 	public long insertOperation(QueueOperation po, String hostname,String tipoDatabase)
 	throws Exception {
 		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		try {
 			//Inserimento della traccia nel DB
 			if(!TipiDatabase.isAMember(this.tipoDatabase)){
@@ -237,12 +267,6 @@ public class ClassQueue {
 			java.util.Date now = new java.util.Date();
 			throw new Exception (now+" OperationDBException: "+ex.getMessage(),ex);
 		} finally{
-			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception e){
-				// close
-			}
 			try{
 				if(stmt!=null)
 					stmt.close();
@@ -309,7 +333,8 @@ public class ClassQueue {
 			throw new ClassQueueException("Errore durante updateOperation",e);
 		}finally{
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -372,7 +397,8 @@ public class ClassQueue {
 			throw new ClassQueueException("Errore durante updateOperation",e);
 		}finally{
 			try{
-				if(stm!=null) stm.close();
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -472,8 +498,14 @@ public class ClassQueue {
 			throw new ClassQueueException(e);
 		}finally{
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -582,8 +614,14 @@ public class ClassQueue {
 				throw new ClassQueueException(e);
 		}finally{
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
@@ -716,11 +754,17 @@ public class ClassQueue {
 			throw new ClassQueueException("[ClassQueue::operationsList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			// Chiudo statement and resultset
-			try {
-				if (rs != null) rs.close();
-				if (stm != null) stm.close();
-			} catch (Exception e) {
-				// ignore
+			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
 			}
 		}
 	}
@@ -749,11 +793,17 @@ public class ClassQueue {
 			throw new ClassQueueException("[ClassQueue::hostnameList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			// Chiudo statement and resultset
-			try {
-				if (rs != null) rs.close();
-				if (stm != null) stm.close();
-			} catch (Exception e) {
-				// ignore
+			try{
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
+			}catch (Exception e) {
+				//ignore
 			}
 		}
 	}
@@ -807,8 +857,14 @@ public class ClassQueue {
 			throw new ClassQueueException(e);
 		}finally{
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
+				if(rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) 
+					stm.close();
 			}catch (Exception e) {
 				//ignore
 			}
