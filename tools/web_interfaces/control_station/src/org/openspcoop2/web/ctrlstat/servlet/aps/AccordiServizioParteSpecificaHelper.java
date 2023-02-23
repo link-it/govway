@@ -1327,10 +1327,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Controllo che non esistano altri accordi di servizio parte specifica con stesso nome, versione e soggetto
 			if (tipoOp.equals(TipoOperazione.ADD)){
 				if(!gestioneFruitori && !gestioneErogatori && this.apsCore.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
-					if(this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo))
-						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
-					else
-						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
+					//if(this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo))
+					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
+					//else
+					//	this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
 					return false;
 				}
 			}else{
@@ -1341,10 +1341,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					if(servizio!=null){
 						if (idInt != servizio.getId()) {
 							if(!gestioneFruitori && !gestioneErogatori) {
-								if(this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo))
+								//if(this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo))
 									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
-								else
-									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
+								//else
+								//	this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
 								return false;
 							}
 							else {
@@ -1778,6 +1778,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 
+	private static boolean documentoUnivocoIndipendentementeTipo = true;
+	public static boolean isDocumentoUnivocoIndipendentementeTipo() {
+		return documentoUnivocoIndipendentementeTipo;
+	}
+	public static void setDocumentoUnivocoIndipendentementeTipo(boolean documentoUnivocoIndipendentementeTipo) {
+		AccordiServizioParteSpecificaHelper.documentoUnivocoIndipendentementeTipo = documentoUnivocoIndipendentementeTipo;
+	}
 	public boolean serviziAllegatiCheckData(TipoOperazione tipoOp,FormFile formFile,Documento documento, IProtocolFactory<?> pf)
 			throws Exception {
 
@@ -1812,7 +1819,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			String labelServizio = getLabelServizioMessaggioErroreDocumentoDuplicato();
 			
-			boolean documentoUnivocoIndipendentementeTipo = true;
 			if(this.archiviCore.existsDocumento(documento,ProprietariDocumento.servizio,documentoUnivocoIndipendentementeTipo)){
 
 				String tipo = documento.getTipo();
@@ -1878,21 +1884,21 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				gestioneFruitori = true;
 			}
 		}
-		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
-		if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+		//Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
+		//if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 			if(gestioneFruitori) {
 				labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_FRUIZIONE;
 			} else {
 				labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_EROGAZIONE;
 			}
-		} else {
+		/*} else {
 			if(gestioneFruitori) {
 				labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_FRUIZIONE;
 			}
 			else {
 				labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_EROGAZIONE;
 			}
-		}
+		}*/
 		return labelServizio;
 	}
 	
@@ -7874,7 +7880,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
-		de.setValue(portType != null && !"".equals(portType) ? portType : portType);
+		de.setValue(portType);
 		dati.addElement(de);
 
 		//Sezione Soggetto Erogatore (provider)
@@ -9049,7 +9055,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return dati;
 	}
 
-
+	private static boolean addFruitoreToDati_farVedere =false;
+	public static boolean isAddFruitoreToDati_farVedere() {
+		return addFruitoreToDati_farVedere;
+	}
+	public static void setAddFruitoreToDati_farVedere(boolean addFruitoreToDati_farVedere) {
+		AccordiServizioParteSpecificaHelper.addFruitoreToDati_farVedere = addFruitoreToDati_farVedere;
+	}
 	public Vector<DataElement> addFruitoreToDati(TipoOperazione tipoOp, String[] versioniLabel, String[] versioniValues,
 			Vector<DataElement> dati,
 			String oldStatoPackage, String idServizio, String idServizioFruitore, String idSoggettoErogatoreDelServizio,
@@ -9058,9 +9070,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
-		boolean farVedere =false;
 		// Occhio che sotto questo if ci sono dei campi HIDDEN
-		if(farVedere && tipoOp.equals(TipoOperazione.CHANGE)){
+		if(addFruitoreToDati_farVedere && tipoOp.equals(TipoOperazione.CHANGE)){
 
 			Soggetto fruitoreSogg = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(fruitore.getTipo(), fruitore.getNome()));
 			

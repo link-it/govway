@@ -118,17 +118,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * 
  */
 public final class ServiziApplicativiChange extends Action {
-	
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
-	private IConfigIntegrationReader configRegistryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
-	private String protocolPropertiesSet = null;
-	
+		
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -142,8 +132,18 @@ public final class ServiziApplicativiChange extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
+		// Protocol Properties
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+		ConsoleConfiguration consoleConfiguration =null;
+		ProtocolProperties protocolProperties = null;
+		IProtocolFactory<?> protocolFactory= null;
+		IRegistryReader registryReader = null; 
+		IConfigIntegrationReader configRegistryReader = null; 
+		ConsoleOperationType consoleOperationType = null;
+		String protocolPropertiesSet = null;
+		
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
-		this.consoleOperationType = ConsoleOperationType.CHANGE;
+		consoleOperationType = ConsoleOperationType.CHANGE;
 		
 		// Parametri relativi al tipo operazione
 		List<ProtocolProperty> oldProtocolPropertyList = null;
@@ -168,7 +168,7 @@ public final class ServiziApplicativiChange extends Action {
 			boolean interfacciaStandard = saHelper.isModalitaStandard();
 			
 			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
-			int idServizioApplicativo = Integer.parseInt(id);
+			long idServizioApplicativoLong = Long.valueOf(id);
 			
 			String ruoloFruitore = null; //saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_FRUITORE);
 			String ruoloErogatore = null; //saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_EROGATORE);
@@ -213,7 +213,7 @@ public final class ServiziApplicativiChange extends Action {
 			
 			
 			
-			this.protocolPropertiesSet = saHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
+			protocolPropertiesSet = saHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 			
 			String nomeParameter = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 			String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
@@ -441,7 +441,7 @@ public final class ServiziApplicativiChange extends Action {
 			saHelper.makeMenu();
 
 			// Prendo il nome e il provider del servizioApplicativo
-			ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativo);
+			ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativoLong);
 			String oldNome = sa.getNome();
 			IDSoggetto oldIdSoggetto = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
 			IDServizioApplicativo oldIdServizioApplicativo = new IDServizioApplicativo();
@@ -486,12 +486,12 @@ public final class ServiziApplicativiChange extends Action {
 			
 			InvocazioneServizio is = sa.getInvocazioneServizio();
 			if(is==null) {
-				throw new Exception("ServizioApplicativo con id '"+idServizioApplicativo+"' senza InvocazioneServizio");
+				throw new Exception("ServizioApplicativo con id '"+idServizioApplicativoLong+"' senza InvocazioneServizio");
 			}
 			InvocazioneCredenziali cis = is.getCredenziali();
 			Connettore connis = is.getConnettore();
 			if(connis==null) {
-				throw new Exception("ServizioApplicativo con id '"+idServizioApplicativo+"' senza connettore in InvocazioneServizio");
+				throw new Exception("ServizioApplicativo con id '"+idServizioApplicativoLong+"' senza connettore in InvocazioneServizio");
 			}
 			List<Property> cp = connis.getPropertyList();
 			
@@ -559,17 +559,17 @@ public final class ServiziApplicativiChange extends Action {
 //			IDServizioApplicativo idSA = new IDServizioApplicativo();
 //			idSA.setNome(oldNome);
 //			idSA.setIdSoggettoProprietario(idSoggetto);
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(nomeProtocollo);
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = saCore.getRegistryReader(this.protocolFactory); 
-			this.configRegistryReader = saCore.getConfigIntegrationReader(this.protocolFactory);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigServizioApplicativo(this.consoleOperationType, saHelper, 
-					this.registryReader, this.configRegistryReader, oldIdServizioApplicativo);
-			this.protocolProperties = saHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(nomeProtocollo);
+			consoleDynamicConfiguration =  protocolFactory.createDynamicConfigurationConsole();
+			registryReader = saCore.getRegistryReader(protocolFactory); 
+			configRegistryReader = saCore.getConfigIntegrationReader(protocolFactory);
+			consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigServizioApplicativo(consoleOperationType, saHelper, 
+					registryReader, configRegistryReader, oldIdServizioApplicativo);
+			protocolProperties = saHelper.estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType);
 			oldProtocolPropertyList = sa.getProtocolPropertyList(); 
 			
 			Properties propertiesProprietario = new Properties();
-			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, idServizioApplicativo+"");
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, idServizioApplicativoLong+"");
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_SERVIZIO_APPLICATIVO);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, oldIdServizioApplicativo.toString());
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE, URLEncoder.encode( ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE + "?" + request.getQueryString(), "UTF-8"));
@@ -815,7 +815,7 @@ public final class ServiziApplicativiChange extends Action {
 						soggettiCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo(alias),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelApplicativo),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelApplicativo),
-						idServizioApplicativo);				
+						idServizioApplicativoLong);				
 				
 				String resetFromLista = saHelper.getParameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA);
 				boolean arrivoDaLista = "true".equalsIgnoreCase(resetFromLista);
@@ -1554,8 +1554,8 @@ public final class ServiziApplicativiChange extends Action {
 				}
 				
 				// Inizializzazione delle properties da db al primo accesso alla pagina
-				if(this.protocolPropertiesSet == null){
-					ProtocolPropertiesUtils.mergeProtocolPropertiesConfig(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+				if(protocolPropertiesSet == null){
+					ProtocolPropertiesUtils.mergeProtocolPropertiesConfig(protocolProperties, oldProtocolPropertyList, consoleOperationType);
 				}
 				
 				// preparo i campi
@@ -1563,11 +1563,11 @@ public final class ServiziApplicativiChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, oldIdServizioApplicativo); 
+				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
+						registryReader, configRegistryReader, oldIdServizioApplicativo); 
 				
 				dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, tipoENomeSoggetto, fault, 
-						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider,dominio,
+						TipoOperazione.CHANGE, idServizioApplicativoLong, contaListe,null,null,provider,dominio,
 						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,id,nomeProtocollo,
@@ -1605,7 +1605,7 @@ public final class ServiziApplicativiChange extends Action {
 						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
 
 				// aggiunta campi custom
-				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, consoleConfiguration,consoleOperationType, protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 			
 				pd.setDati(dati);
 
@@ -1621,14 +1621,14 @@ public final class ServiziApplicativiChange extends Action {
 			
 			// updateDynamic
 			if(isOk) {
-				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, oldIdServizioApplicativo); 
+				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
+						registryReader, configRegistryReader, oldIdServizioApplicativo); 
 			}
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					saHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
+					saHelper.validaProtocolProperties(consoleConfiguration, consoleOperationType, protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -1640,8 +1640,8 @@ public final class ServiziApplicativiChange extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, oldIdServizioApplicativo);   
+					consoleDynamicConfiguration.validateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
+							registryReader, configRegistryReader, oldIdServizioApplicativo);   
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -1675,11 +1675,11 @@ public final class ServiziApplicativiChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, oldIdServizioApplicativo); 
+				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
+						registryReader, configRegistryReader, oldIdServizioApplicativo); 
 				
 				dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, tipoENomeSoggetto, fault, 
-						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider,dominio,
+						TipoOperazione.CHANGE, idServizioApplicativoLong, contaListe,null,null,provider,dominio,
 						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,id,nomeProtocollo,
@@ -1717,7 +1717,7 @@ public final class ServiziApplicativiChange extends Action {
 						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
 
 				// aggiunta campi custom
-				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, consoleConfiguration,consoleOperationType, protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 							
 				pd.setDati(dati);
 
@@ -2160,7 +2160,7 @@ public final class ServiziApplicativiChange extends Action {
 			}
 			
 			//imposto properties custom
-			sa.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesConfig(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList)); 
+			sa.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesConfig(protocolProperties, consoleOperationType, oldProtocolPropertyList)); 
 			
 			// eseguo l'aggiornamento
 			List<Object> listOggettiDaAggiornare = ServiziApplicativiUtilities.getOggettiDaAggiornare(saCore, oldIdServizioApplicativo, sa);

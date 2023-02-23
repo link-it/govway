@@ -60,9 +60,8 @@ import org.openspcoop2.web.loader.servlet.LoaderHelper;
  * @version $Rev$, $Date$
  * 
  */
-public final class ImportaXML extends Action {
+public class ImportaXML extends Action {
 
-	private String tipoxml;
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -78,6 +77,8 @@ public final class ImportaXML extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
+		String tipoxml = null;
+		
 		try{
 			
 			LoaderHelper loaderHelper = new LoaderHelper(request,pd,session);
@@ -85,9 +86,9 @@ public final class ImportaXML extends Action {
 			//Eseguo la logica della servlet
 			LoaderCore core = new LoaderCore();
 			
-			this.tipoxml = request.getParameter(Costanti.PARAMETRO_ARCHIVI_TIPO_XML);
-			if(this.tipoxml==null){
-				this.tipoxml = Costanti.TIPOLOGIA_XML_REGISTRO_SERVIZI;
+			tipoxml = request.getParameter(Costanti.PARAMETRO_ARCHIVI_TIPO_XML);
+			if(tipoxml==null){
+				tipoxml = Costanti.TIPOLOGIA_XML_REGISTRO_SERVIZI;
 			}
 			
 			loaderHelper.makeMenu();
@@ -103,7 +104,7 @@ public final class ImportaXML extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				loaderHelper.addImportaXMLtoDati(dati, this.tipoxml);
+				loaderHelper.addImportaXMLtoDati(dati, tipoxml);
 
 				pd.setDati(dati);
 
@@ -116,7 +117,7 @@ public final class ImportaXML extends Action {
 			FileUploadForm fileUpload = (FileUploadForm) form;
 			FormFile ff = fileUpload.getTheFile();
 
-			boolean ok = loaderHelper.validateFileXml(LoaderCore.getLog(),ff,errorBuffer,this.tipoxml);
+			boolean ok = loaderHelper.validateFileXml(LoaderCore.getLog(),ff,errorBuffer,tipoxml);
 
 			if(!ok){
 				
@@ -129,7 +130,7 @@ public final class ImportaXML extends Action {
 				
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				loaderHelper.addImportaXMLtoDati(dati, this.tipoxml);
+				loaderHelper.addImportaXMLtoDati(dati, tipoxml);
 
 				pd.setDati(dati);
 
@@ -148,7 +149,7 @@ public final class ImportaXML extends Action {
 
 			String errore = null;
 
-			if(Costanti.TIPOLOGIA_XML_REGISTRO_SERVIZI.equals(this.tipoxml)){
+			if(Costanti.TIPOLOGIA_XML_REGISTRO_SERVIZI.equals(tipoxml)){
 
 				AccessoRegistroRegistro accesso = new AccessoRegistroRegistro();
 				accesso.setLocation(core.getDataSourceRegistroServizi());
@@ -217,7 +218,7 @@ public final class ImportaXML extends Action {
 			
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 			
-			loaderHelper.addImportaXMLtoDati(dati, this.tipoxml);
+			loaderHelper.addImportaXMLtoDati(dati, tipoxml);
 
 			pd.setDati(dati);
 

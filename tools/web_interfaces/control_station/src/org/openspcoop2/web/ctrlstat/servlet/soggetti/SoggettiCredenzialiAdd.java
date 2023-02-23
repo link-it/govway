@@ -69,11 +69,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class SoggettiCredenzialiAdd extends Action {
 
-
-	private String editMode = null;
-
-	
-
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession(true);
@@ -102,7 +97,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-			this.editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			String editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			
 			String tipoauthSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			if (tipoauthSoggetto == null) {
@@ -423,7 +418,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
 			
-			if(ServletUtils.isEditModeInProgress(this.editMode) || checkWizard){
+			if(ServletUtils.isEditModeInProgress(editMode) || checkWizard){
 
 				// setto la barra del titolo
 				List<Parameter> listParameter = new ArrayList<Parameter>();

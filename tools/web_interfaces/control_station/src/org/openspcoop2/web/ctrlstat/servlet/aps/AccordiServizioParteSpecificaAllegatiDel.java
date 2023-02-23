@@ -96,6 +96,10 @@ public final class AccordiServizioParteSpecificaAllegatiDel extends Action {
 				}
 
 			}
+			
+			if(asps==null) {
+				throw new Exception("Accordo servizio parte specifica non trovato");
+			}
 
 			AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecificaAllegati(asps, userLogin, apsCore, apsHelper, idAllegati);
 

@@ -94,6 +94,7 @@ import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
 import org.openspcoop2.protocol.engine.archive.UtilitiesMappingFruizioneErogazione;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
@@ -246,6 +247,43 @@ public class DriverControlStationDB  {
 	}
 
 	
+	private Connection getConnection(String nomeMetodo) throws DriverControlStationException {
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+		return con;
+	}
+	private Connection getConnection(String nomeMetodo, BooleanNullable setAutoCommit) throws DriverControlStationException {
+		Connection con = getConnection(nomeMetodo);
+		if (this.atomica) {
+			if(setAutoCommit!=null && setAutoCommit.getValue()!=null) {
+				try {
+					con.setAutoCommit(setAutoCommit.getValue());
+				} catch (SQLException e) {
+					throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+				}
+			}
+		}
+		return con;
+	}
+	private void releaseConnection(Connection con) {
+		try {
+			if (this.atomica) {
+				this.log.debug("rilascio connessioni al db...");
+				con.close();
+			}
+		} catch (Exception e) {
+			// ignore exception
+		}
+	}
 	
 	
 	
@@ -255,21 +293,8 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "createPdd";
 
 		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -280,25 +305,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -307,21 +314,8 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "deletePdd";
 
 		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -333,26 +327,7 @@ public class DriverControlStationDB  {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -361,21 +336,8 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "updatePdd";
 
 		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -386,25 +348,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -426,18 +370,7 @@ public class DriverControlStationDB  {
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		try {
 
@@ -528,6 +461,10 @@ public class DriverControlStationDB  {
 				if (risultato != null) {
 					risultato.close();
 				}
+			} catch (Exception e) {
+				// ignore
+			}
+			try {
 				if (stmt != null) {
 					stmt.close();
 				}
@@ -535,14 +472,7 @@ public class DriverControlStationDB  {
 				// ignore
 			}
 
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -562,18 +492,7 @@ public class DriverControlStationDB  {
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		try {
 
@@ -633,6 +552,10 @@ public class DriverControlStationDB  {
 				if (risultato != null) {
 					risultato.close();
 				}
+			} catch (Exception e) {
+				// ignore
+			}
+			try {
 				if (stmt != null) {
 					stmt.close();
 				}
@@ -669,18 +592,7 @@ public class DriverControlStationDB  {
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		ArrayList<org.openspcoop2.core.config.Soggetto> lista = null;
 
@@ -796,20 +708,17 @@ public class DriverControlStationDB  {
 				if (risultato != null) {
 					risultato.close();
 				}
+			} catch (Exception e) {
+				// ignore
+			}
+			try {
 				if (stmt != null) {
 					stmt.close();
 				}
 			} catch (Exception e) {
 				// ignore
 			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -832,18 +741,7 @@ public class DriverControlStationDB  {
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		try {
 
@@ -880,6 +778,10 @@ public class DriverControlStationDB  {
 				if (risultato != null) {
 					risultato.close();
 				}
+			} catch (Exception e) {
+				// ignore
+			}
+			try {
 				if (stmt != null) {
 					stmt.close();
 				}
@@ -904,18 +806,8 @@ public class DriverControlStationDB  {
 		ResultSet risultato = null;
 		String queryString = "";
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException(e);
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		String nomeMetodo = "soggettiWithServer";
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -949,21 +841,17 @@ public class DriverControlStationDB  {
 				if (risultato != null) {
 					risultato.close();
 				}
+			} catch (Exception e) {
+				// ignore
+			}
+			try {
 				if (stmt != null) {
 					stmt.close();
 				}
 			} catch (Exception e) {
 				// ignore
 			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -982,18 +870,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1004,14 +881,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 		mapping.setTableId(this.getTableIdMappingFruizionePortaDelegata(mapping));
@@ -1022,18 +892,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1044,14 +903,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1061,18 +913,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1083,14 +924,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1100,18 +934,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1122,14 +945,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1139,18 +955,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1161,14 +966,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1178,18 +976,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1200,14 +987,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1217,18 +997,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1239,14 +1008,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1257,18 +1019,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1279,14 +1030,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 		mapping.setTableId(mapping.getTableId());
@@ -1298,18 +1042,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1320,14 +1053,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1337,18 +1063,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1359,14 +1074,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1376,18 +1084,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1398,14 +1095,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1415,18 +1105,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1437,14 +1116,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1454,18 +1126,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1476,14 +1137,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1493,18 +1147,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1515,16 +1158,32 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
+	}
+	
+	private void initMappingErogazione_releaseConnectionGestioneErrore(boolean error, Connection con) {
+		try {
+			if (error && this.atomica) {
+				this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+				if(con!=null) {
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} else if (!error && this.atomica) {
+				this.log.debug("eseguo commit e rilascio connessioni...");
+				if(con!=null) {
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+			}
+		} catch (Exception e) {
+			// ignore exception
+		}
 	}
 	
 	public void initMappingErogazione(Logger log) throws DriverControlStationException {
@@ -1548,18 +1207,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		boolean error = false;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo, BooleanNullable.FALSE());
 
 		log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1595,22 +1243,7 @@ public class DriverControlStationDB  {
 			error = true;
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (error && this.atomica) {
-					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.atomica) {
-					this.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			initMappingErogazione_releaseConnectionGestioneErrore(error, con);
 		}
 
 	}
@@ -1634,18 +1267,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1656,14 +1278,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1673,18 +1288,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1695,14 +1299,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1712,18 +1309,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1734,14 +1320,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 	}
@@ -1751,18 +1330,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -1773,14 +1341,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -1812,18 +1373,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		try {
 			return DBOggettiInUsoUtils.isAccordoServizioParteComuneInUso(con, this.tipoDB, idAccordo, whereIsInUso, normalizeObjectIds);
@@ -1831,14 +1381,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 	}
@@ -1848,18 +1391,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		try {
 			return DBOggettiInUsoUtils.isAccordoServizioParteComuneInUso(con, this.tipoDB, this.idAccordoFactory.getIDAccordoFromAccordo(as), whereIsInUso, normalizeObjectIds);
@@ -1867,14 +1399,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 	}
@@ -1884,18 +1409,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		try {
 			return DBOggettiInUsoUtils.isAccordoCooperazioneInUso(con, this.tipoDB, this.idAccordoCooperazioneFactory.getIDAccordoFromAccordo(as), whereIsInUso, normalizeObjectIds);
@@ -1903,14 +1417,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 	}
@@ -1920,18 +1427,7 @@ public class DriverControlStationDB  {
 
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		try {
 
@@ -1940,14 +1436,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -1964,18 +1453,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isSoggettoInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -2006,14 +1484,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -2021,18 +1492,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isRuoloInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -2043,14 +1503,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -2058,18 +1511,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isRuoloConfigInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -2080,14 +1522,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -2096,18 +1531,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isScopeInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -2118,14 +1542,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -2133,18 +1550,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isScopeConfigInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -2155,14 +1561,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -2180,23 +1579,14 @@ public class DriverControlStationDB  {
 	/* *********** METODI EXISTS ****************** */
 	
 	public long existServizio(String nomeServizio, String tipoServizio, int versioneServizio, long idSoggettoErogatore) throws DriverControlStationException {
-				String nomeMetodo = "existServizio";
+		String nomeMetodo = "existServizio";
 		
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 		String queryString;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-			}
-		} else {
-			con = this.globalConnection;
-		}
-		
+		con = getConnection(nomeMetodo);		
 		try {
 		
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -2229,21 +1619,17 @@ public class DriverControlStationDB  {
 				if (risultato != null) {
 					risultato.close();
 				}
+			} catch (Exception e) {
+				// ignore
+			}
+			try {
 				if (stmt != null) {
 					stmt.close();
 				}
 			} catch (Exception e) {
 				// ignore
 			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-		
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 		
@@ -2255,16 +1641,7 @@ public class DriverControlStationDB  {
 		ResultSet risultato = null;
 		String queryString;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-		
-			}
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 		
 		try {
 		
@@ -2308,21 +1685,17 @@ public class DriverControlStationDB  {
 				if (risultato != null) {
 					risultato.close();
 				}
+			} catch (Exception e) {
+				// ignore
+			}
+			try {
 				if (stmt != null) {
 					stmt.close();
 				}
 			} catch (Exception e) {
 				// ignore
 			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-		
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -2335,18 +1708,7 @@ public class DriverControlStationDB  {
 		ResultSet risultato = null;
 		String queryString = "";
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		try {
 
@@ -2372,6 +1734,10 @@ public class DriverControlStationDB  {
 				if (risultato != null) {
 					risultato.close();
 				}
+			} catch (Exception e) {
+				// ignore
+			}
+			try {
 				if (stmt != null) {
 					stmt.close();
 				}
@@ -2404,18 +1770,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		ConfigurazioneGenerale config = null;
@@ -2424,14 +1779,7 @@ public class DriverControlStationDB  {
 		}catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 		return config;
@@ -2446,18 +1794,7 @@ public class DriverControlStationDB  {
 	public void updateConfigurazioneControlloTraffico(ConfigurazioneGenerale configurazioneControlloTraffico) throws DriverControlStationException {
 		String nomeMetodo = "updateConfigurazioneControlloTraffico";
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -2466,14 +1803,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -2482,18 +1812,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		List<Proprieta> l = null;
@@ -2502,14 +1821,7 @@ public class DriverControlStationDB  {
 		}catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 		return l;
@@ -2525,18 +1837,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "countConfigurazioneControlloTrafficoConfigurazionePolicy";
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		long count = 0;
@@ -2545,14 +1846,7 @@ public class DriverControlStationDB  {
 		}catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 		return count;
@@ -2569,18 +1863,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		long count = 0;
@@ -2589,14 +1872,7 @@ public class DriverControlStationDB  {
 		}catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 		return count;
@@ -2607,18 +1883,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		List<ConfigurazionePolicy> listaPolicy = new ArrayList<ConfigurazionePolicy>();
@@ -2628,14 +1893,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		return listaPolicy;
@@ -2647,18 +1905,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		List<ConfigurazionePolicy> listaPolicy = new ArrayList<ConfigurazionePolicy>();
@@ -2668,14 +1915,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		return listaPolicy;
@@ -2687,18 +1927,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		
@@ -2709,14 +1938,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 	}
@@ -2756,18 +1978,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		List<AttivazionePolicy> listaPolicy = null;
@@ -2792,14 +2003,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		if(tipoRisorsa) {
@@ -2815,18 +2019,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		AttivazionePolicy policy = null;
@@ -2839,14 +2032,7 @@ public class DriverControlStationDB  {
 		catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		return policy;
@@ -2858,18 +2044,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		List<InfoPolicy> listaPolicy = new ArrayList<InfoPolicy>();
@@ -2879,14 +2054,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		return listaPolicy;
@@ -2897,18 +2065,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		List<AttivazionePolicy> listaPolicy = new ArrayList<AttivazionePolicy>();
@@ -2918,14 +2075,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		return listaPolicy;
@@ -2936,18 +2086,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try {
@@ -2955,32 +2094,14 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
 	public ConfigurazionePolicy getConfigurazionePolicy(long id) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "getConfigurazionePolicy";
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		ConfigurazionePolicy policy = null;
@@ -2992,14 +2113,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		return policy;
@@ -3008,18 +2122,7 @@ public class DriverControlStationDB  {
 	public ConfigurazionePolicy getConfigurazionePolicy(String nomePolicy) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "getConfigurazionePolicy";
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		ConfigurazionePolicy policy = null;
@@ -3031,14 +2134,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		return policy;
@@ -3047,18 +2143,7 @@ public class DriverControlStationDB  {
 	public void createConfigurazionePolicy(ConfigurazionePolicy policy) throws DriverControlStationException{
 		String nomeMetodo = "createConfigurazionePolicy";
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try {
@@ -3066,32 +2151,14 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}	
 	}
 
 	public void createAttivazionePolicy(AttivazionePolicy policy) throws DriverControlStationException {
 		String nomeMetodo = "createAttivazionePolicy";
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try {
@@ -3099,32 +2166,14 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}	
 	}
 
 	public void updateConfigurazionePolicy(ConfigurazionePolicy policy)throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "updateConfigurazionePolicy";
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try {
@@ -3134,32 +2183,14 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}	
 	}
 
 	public void updateAttivazionePolicy(AttivazionePolicy policy) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "updateAttivazionePolicy";
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try {
@@ -3169,32 +2200,14 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}	
 	}
 
 	public void deleteConfigurazionePolicy(ConfigurazionePolicy policy) throws DriverControlStationException {
 		String nomeMetodo = "deleteConfigurazionePolicy";
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try {
@@ -3202,32 +2215,14 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
 	public void deleteAttivazionePolicy(AttivazionePolicy policy) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "deleteAttivazionePolicy";
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try {
@@ -3235,32 +2230,14 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
 	public AttivazionePolicy getAttivazionePolicy(long id) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "getAttivazionePolicy"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		AttivazionePolicy policy = null;
@@ -3272,14 +2249,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		return policy;
@@ -3288,18 +2258,7 @@ public class DriverControlStationDB  {
 	public AttivazionePolicy getAttivazionePolicy(String nomePolicy) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "getAttivazionePolicy"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		AttivazionePolicy policy = null;
@@ -3311,14 +2270,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		return policy;
@@ -3327,18 +2279,7 @@ public class DriverControlStationDB  {
 	public String getNextPolicyInstanceSerialId(String policyId) throws DriverControlStationException{
 		String nomeMetodo = "getNextPolicyInstanceSerialId"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		
@@ -3347,14 +2288,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -3362,18 +2296,7 @@ public class DriverControlStationDB  {
 			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "getPolicy"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3384,14 +2307,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -3399,18 +2315,7 @@ public class DriverControlStationDB  {
 			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "getPolicyByAlias"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3421,32 +2326,14 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
 	public List<AttivazionePolicy> getPolicyByServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "getPolicyByServizioApplicativo"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3456,14 +2343,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -3472,18 +2352,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		
@@ -3492,14 +2361,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 	}
@@ -3507,18 +2369,7 @@ public class DriverControlStationDB  {
 	public List<IDSoggetto> getSoggettiErogatori(String protocolloSelezionato,List<String> protocolliSupportati) throws DriverControlStationException{
 		String nomeMetodo = "getSoggettiErogatori"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		
@@ -3534,32 +2385,14 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	public List<IDServizio> getServizi(String protocolloSelezionato,List<String> protocolliSupportati, 
 			String tipoErogatore, String nomeErogatore, String tag) throws DriverControlStationException{
 		String nomeMetodo = "getServizi"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3573,32 +2406,14 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	public List<IDServizio> getServizi(String protocolloSelezionato,List<String> protocolliSupportati, 
 			String tipoServizio, String nomeServizio, Integer versioneServizio, String tag) throws DriverControlStationException{
 		String nomeMetodo = "getServizi"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3612,32 +2427,14 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	public List<String> getAzioni(String protocolloSelezionato,List<String> protocolliSupportati, 
 			String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws DriverControlStationException{
 		String nomeMetodo = "getAzioni"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3653,14 +2450,7 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	public List<IDServizioApplicativo> getServiziApplicativiErogatori(String protocolloSelezionato,List<String> protocolliSupportati, 
@@ -3668,18 +2458,7 @@ public class DriverControlStationDB  {
 			String azione) throws DriverControlStationException {
 		String nomeMetodo = "getServiziApplicativiErogatori"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3697,31 +2476,13 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	public List<IDSoggetto> getSoggetti(String protocolloSelezionato,List<String> protocolliSupportati) throws DriverControlStationException{
 		String nomeMetodo = "getSoggetti"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3735,32 +2496,14 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	public List<IDSoggetto> getSoggettiFruitori(String protocolloSelezionato,List<String> protocolliSupportati, 
 			String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws DriverControlStationException{
 		String nomeMetodo = "getSoggettiFruitori"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3776,14 +2519,7 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	public List<IDServizioApplicativo> getServiziApplicativiFruitore(String protocolloSelezionato,List<String> protocolliSupportati, 
@@ -3792,18 +2528,7 @@ public class DriverControlStationDB  {
 			String azione) throws DriverControlStationException{
 		String nomeMetodo = "getServiziApplicativiFruitore"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3823,32 +2548,14 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	public List<IDServizioApplicativo> getServiziApplicativiFruitore(String protocolloSelezionato,List<String> protocolliSupportati, 
 			String tipoFruitore, String nomeFruitore) throws DriverControlStationException{
 		String nomeMetodo = "getServiziApplicativiFruitore"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3864,32 +2571,14 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	public List<IDServizioApplicativo> getServiziApplicativi(String protocolloSelezionato,List<String> protocolliSupportati, 
 			String tipoProprietario, String nomeProprietario) throws DriverControlStationException{
 		String nomeMetodo = "getServiziApplicativi"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3905,14 +2594,7 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -3932,18 +2614,7 @@ public class DriverControlStationDB  {
 			String nomeAzione) throws DriverControlStationException{
 		String nomeMetodo = "getErogazioni"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -3952,14 +2623,7 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -3981,18 +2645,7 @@ public class DriverControlStationDB  {
 			String nomeAzione) throws DriverControlStationException{
 		String nomeMetodo = "getFruizioni"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
@@ -4001,14 +2654,7 @@ public class DriverControlStationDB  {
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4016,18 +2662,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isGruppoInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -4038,14 +2673,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4053,18 +2681,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isGruppoConfigInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -4075,14 +2692,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4090,18 +2700,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isRisorsaInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -4112,14 +2711,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4127,18 +2719,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isPortTypeInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -4149,14 +2730,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4164,18 +2738,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isOperazioneInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -4186,14 +2749,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -4221,14 +2777,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4256,14 +2805,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4291,14 +2833,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4326,14 +2861,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4361,14 +2889,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -4395,14 +2916,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4429,14 +2943,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4463,14 +2970,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4497,14 +2997,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -4531,14 +3024,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4569,14 +3055,7 @@ public class DriverControlStationDB  {
 		catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4584,18 +3063,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "isPluginInUso";
 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -4604,14 +3072,7 @@ public class DriverControlStationDB  {
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4639,14 +3100,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4674,14 +3128,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4709,14 +3156,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4744,14 +3184,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4779,14 +3212,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4814,14 +3240,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4849,14 +3268,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -4883,14 +3295,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4918,14 +3323,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -4953,14 +3351,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -4987,14 +3378,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -5021,14 +3405,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -5055,14 +3432,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -5089,14 +3459,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -5127,14 +3490,7 @@ public class DriverControlStationDB  {
 		}  catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -5163,32 +3519,14 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
 	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws DriverControlStationException{
 		String nomeMetodo = "getNextAlarmInstanceSerialId"; 
 		Connection con = null;
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		
@@ -5197,14 +3535,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -5232,18 +3563,7 @@ public class DriverControlStationDB  {
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
+		con = getConnection(nomeMetodo);
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		List<ConfigurazioneAllarmeBean> listaAllarmi = null;
@@ -5260,14 +3580,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 		
 		return listaAllarmi;
@@ -5298,14 +3611,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 
@@ -5346,14 +3652,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -5398,14 +3697,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -5447,14 +3739,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -5496,14 +3781,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -5545,14 +3823,7 @@ public class DriverControlStationDB  {
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 }

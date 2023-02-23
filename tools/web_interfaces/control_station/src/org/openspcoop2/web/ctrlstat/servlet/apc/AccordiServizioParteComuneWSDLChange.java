@@ -66,16 +66,10 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
-import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
-import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
-import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
-import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
@@ -108,26 +102,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComuneWSDLChange extends Action {
 
-	private String id, tipo, wsdl,tipoAccordo;
-	private boolean validazioneDocumenti = true;
-	private boolean decodeRequestValidazioneDocumenti = false;
-	private String editMode = null;
-	private BinaryParameter wsdlservcorr, wsdldef, wsdlserv, wsdlconc, wsblconc, wsblserv, wsblservcorr;
 	
-	private boolean aggiornaEsistenti = true;
-	private boolean decodeRequestAggiornaEsistenti= false;
-	
-	private boolean eliminaNonPresentiNuovaInterfaccia = true;
-	private boolean decodeRequestEliminaNonPresentiNuovaInterfaccia= false;
-	
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
-	private IConfigIntegrationReader configRegistryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
 	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -149,7 +124,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 		boolean isSupportoProfiloAsincrono = false;
 		
-		this.consoleOperationType = ConsoleOperationType.CHANGE;
+		AccordiServizioParteComuneWSDLChangeStrutsBean strutsBean = new AccordiServizioParteComuneWSDLChangeStrutsBean();
+		
+		strutsBean.consoleOperationType = ConsoleOperationType.CHANGE;
 		
 		try {
 			ApiHelper apcHelper = new ApiHelper(request, pd, session);
@@ -158,27 +135,27 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			
 			String actionConfirm = apcHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
-			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			strutsBean.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
-			this.id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			this.tipo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL);
-			this.wsdl = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL);
-			this.tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
-			if("".equals(this.tipoAccordo))
-				this.tipoAccordo = null;
+			strutsBean.id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			strutsBean.tipo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL);
+			strutsBean.wsdl = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL);
+			strutsBean.tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
+			if("".equals(strutsBean.tipoAccordo))
+				strutsBean.tipoAccordo = null;
 
 			if(apcHelper.isMultipart()){
-				this.decodeRequestValidazioneDocumenti = true;
+				strutsBean.decodeRequestValidazioneDocumenti = true;
 				String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
-				this.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
+				strutsBean.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
 				
-				this.decodeRequestAggiornaEsistenti = true;
+				strutsBean.decodeRequestAggiornaEsistenti = true;
 				String aggiornaEsistentiS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UPDATE_WSDL_AGGIORNA);
-				this.aggiornaEsistenti = ServletUtils.isCheckBoxEnabled(aggiornaEsistentiS);
+				strutsBean.aggiornaEsistenti = ServletUtils.isCheckBoxEnabled(aggiornaEsistentiS);
 				
-				this.decodeRequestEliminaNonPresentiNuovaInterfaccia = true;
+				strutsBean.decodeRequestEliminaNonPresentiNuovaInterfaccia = true;
 				String eliminaNonPresentiNuovaInterfacciaS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UPDATE_WSDL_ELIMINA);
-				this.eliminaNonPresentiNuovaInterfaccia = ServletUtils.isCheckBoxEnabled(eliminaNonPresentiNuovaInterfacciaS);
+				strutsBean.eliminaNonPresentiNuovaInterfaccia = ServletUtils.isCheckBoxEnabled(eliminaNonPresentiNuovaInterfacciaS);
 			}
 	
 			//rimuovo eventuali tracce della procedura 
@@ -186,36 +163,32 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				ServletUtils.removeObjectFromSession(request, session, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 			}else {
 				// se passo da qui sto tornando dalla maschera di conferma ripristino il wsdl dalla sessione 
-					this.wsdl = ServletUtils.getObjectFromSession(request, session, String.class, 
+					strutsBean.wsdl = ServletUtils.getObjectFromSession(request, session, String.class, 
 							AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 					ServletUtils.removeObjectFromSession(request, session, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 			}
 			
-			if(ServletUtils.isEditModeInProgress(this.editMode)){// && apcHelper.isEditModeInProgress()){
+			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){// && apcHelper.isEditModeInProgress()){
 				// primo accesso alla servlet
-				this.validazioneDocumenti = true;
-				this.aggiornaEsistenti = true;
-				this.eliminaNonPresentiNuovaInterfaccia = true;
+				strutsBean.validazioneDocumenti = true;
+				strutsBean.aggiornaEsistenti = true;
+				strutsBean.eliminaNonPresentiNuovaInterfaccia = true;
 			}else{
-				if(!this.decodeRequestValidazioneDocumenti){
+				if(!strutsBean.decodeRequestValidazioneDocumenti){
 					String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
-					this.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
+					strutsBean.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
 				}
-				if(!this.decodeRequestAggiornaEsistenti){
+				if(!strutsBean.decodeRequestAggiornaEsistenti){
 					String aggiornaEsistentiS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UPDATE_WSDL_AGGIORNA);
-					this.aggiornaEsistenti = ServletUtils.isCheckBoxEnabled(aggiornaEsistentiS);
+					strutsBean.aggiornaEsistenti = ServletUtils.isCheckBoxEnabled(aggiornaEsistentiS);
 				}
-				if(!this.decodeRequestEliminaNonPresentiNuovaInterfaccia){
+				if(!strutsBean.decodeRequestEliminaNonPresentiNuovaInterfaccia){
 					String eliminaNonPresentiNuovaInterfacciaS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UPDATE_WSDL_ELIMINA);
-					this.eliminaNonPresentiNuovaInterfaccia = ServletUtils.isCheckBoxEnabled(eliminaNonPresentiNuovaInterfacciaS);
+					strutsBean.eliminaNonPresentiNuovaInterfaccia = ServletUtils.isCheckBoxEnabled(eliminaNonPresentiNuovaInterfacciaS);
 				}
 			}
 
-			int idAcc = 0;
-			try {
-				idAcc = Integer.parseInt(this.id);
-			} catch (Exception e) {
-			}
+			long idAccordoLong = Long.valueOf(strutsBean.id);
 			
 			String apiGestioneParziale = apcHelper.getParameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
 			if(apiGestioneParziale == null) {
@@ -243,7 +216,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
 			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idAcc));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			boolean asWithAllegati = apcHelper.asWithAllegatiXsd(as);
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
@@ -296,12 +269,12 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			String label = null;
 			String tipologiaDocumentoScaricare = null;
 			boolean facilityUnicoWSDL_interfacciaStandard = false;
-			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
+			if (strutsBean.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
 				wsdlbyte = as.getByteWsdlDefinitorio();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_DEFINITORIO;
 			}
-			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
+			if (strutsBean.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
 				wsdlbyte = as.getByteWsdlConcettuale();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_CONCETTUALE;
@@ -317,7 +290,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				}
 				
 			}
-			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
+			if (strutsBean.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
 				wsdlbyte = as.getByteWsdlLogicoErogatore();
 				if(isModalitaAvanzata){
 					if(isSupportoProfiloAsincrono) {
@@ -332,22 +305,22 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				}
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_EROGATORE;
 			}
-			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
+			if (strutsBean.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
 				wsdlbyte = as.getByteWsdlLogicoFruitore();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_FRUITORE;
 			}
-			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
+			if (strutsBean.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneConcettuale();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_CONCETTUALE;
 			}
-			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
+			if (strutsBean.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneErogatore();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_LOGICO_EROGATORE;
 			}
-			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
+			if (strutsBean.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneFruitore();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_LOGICO_FRUITORE;
@@ -364,9 +337,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}
 
 			IDAccordo idAccordoOLD = idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione());
-			Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, this.id+"");
+			Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, strutsBean.id+"");
 			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, as.getNome());
-			Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo);
+			Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(strutsBean.tipoAccordo);
 
 			String tipoProtocollo = null;
 			// controllo se l'accordo e' utilizzato da qualche asps
@@ -385,10 +358,10 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			String servletNameApcChange = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE;
 			Parameter parameterApcChange = new Parameter(labelASTitle, servletNameApcChange, pIdAccordo, pNomeAccordo, pTipoAccordo);
 
-			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.OTHER, as, this.tipoAccordo, labelASTitle, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, isGestioneAllegati); 
+			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.OTHER, as, strutsBean.tipoAccordo, labelASTitle, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, isGestioneAllegati); 
 			listaParams.add(new Parameter(label,null));
 			
-			if(apcHelper.isEditModeInProgress() && ServletUtils.isEditModeInProgress(this.editMode)){
+			if(apcHelper.isEditModeInProgress() && ServletUtils.isEditModeInProgress(strutsBean.editMode)){
 
 				// setto la barra del titolo				
 				ServletUtils.setPageDataTitle(pd, listaParams);
@@ -398,9 +371,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
-						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare,
-						serviceBinding, this.aggiornaEsistenti, this.eliminaNonPresentiNuovaInterfaccia);
+				apcHelper.addAccordiWSDLChangeToDati(dati, strutsBean.id,strutsBean.tipoAccordo,strutsBean.tipo,label,
+						oldwsdl,as.getStatoPackage(),strutsBean.validazioneDocumenti,tipologiaDocumentoScaricare,
+						serviceBinding, strutsBean.aggiornaEsistenti, strutsBean.eliminaNonPresentiNuovaInterfaccia);
 
 				pd.setDati(dati);
 
@@ -411,7 +384,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiWSDLCheckData(pd,this.tipo, this.wsdl,as,this.validazioneDocumenti, protocollo);
+			boolean isOk = apcHelper.accordiWSDLCheckData(pd,strutsBean.tipo, strutsBean.wsdl,as,strutsBean.validazioneDocumenti, protocollo);
 			if (!isOk) {
 
 				// setto la barra del titolo
@@ -422,9 +395,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
-						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare,
-						serviceBinding, this.aggiornaEsistenti, this.eliminaNonPresentiNuovaInterfaccia);
+				apcHelper.addAccordiWSDLChangeToDati(dati, strutsBean.id,strutsBean.tipoAccordo,strutsBean.tipo,label,
+						oldwsdl,as.getStatoPackage(),strutsBean.validazioneDocumenti,tipologiaDocumentoScaricare,
+						serviceBinding, strutsBean.aggiornaEsistenti, strutsBean.eliminaNonPresentiNuovaInterfaccia);
 
 				pd.setDati(dati);
 
@@ -435,26 +408,26 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}
 
 			// creo parametri binari finti per i wsdl 
-			this.wsdldef = new BinaryParameter();
-			this.wsdlconc = new BinaryParameter();
-			this.wsdlserv = new BinaryParameter();
-			this.wsdlservcorr = new BinaryParameter();
-			this.wsblconc = new BinaryParameter();
-			this.wsblserv = new BinaryParameter();
-			this.wsblservcorr = new BinaryParameter();
+			strutsBean.wsdldef = new BinaryParameter();
+			strutsBean.wsdlconc = new BinaryParameter();
+			strutsBean.wsdlserv = new BinaryParameter();
+			strutsBean.wsdlservcorr = new BinaryParameter();
+			strutsBean.wsblconc = new BinaryParameter();
+			strutsBean.wsblserv = new BinaryParameter();
+			strutsBean.wsblservcorr = new BinaryParameter();
 
 			// il wsdl definitorio rimane fuori dal nuovo comportamento quindi il flusso della pagina continua come prima
-			if (!this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
+			if (!strutsBean.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
 				// se sono state definiti dei port type ed e' la prima volta che ho passato i controlli 
 				//Informo l'utente che potrebbe sovrascrivere i servizi definiti tramite l'aggiornamento del wsdl
 				// Questa Modalita' e' controllata tramite la proprieta' isenabledAutoMappingWsdlIntoAccordo
 				// e se non e' un reset
-				if(enableAutoMapping && apcCore.isInterfaceDefined(this.wsdl) ){
+				if(enableAutoMapping && apcCore.isInterfaceDefined(strutsBean.wsdl) ){
 					if(actionConfirm == null){
 						if(as.sizePortTypeList() > 0 || as.sizeResourceList()>0 ){
 							
 							// salvo il wsdl che ha inviato l'utente
-							ServletUtils.setObjectIntoSession(request, session, this.wsdl, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
+							ServletUtils.setObjectIntoSession(request, session, strutsBean.wsdl, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 
 							// setto la barra del titolo
 							ServletUtils.setPageDataTitle(pd, listaParams);
@@ -465,9 +438,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							dati.addElement(ServletUtils.getDataElementForEditModeInProgress());
 
 							// salvo lo stato dell'invio
-							apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
-									oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare,
-									serviceBinding, this.aggiornaEsistenti, this.eliminaNonPresentiNuovaInterfaccia);
+							apcHelper.addAccordiWSDLChangeToDati(dati, strutsBean.id,strutsBean.tipoAccordo,strutsBean.tipo,label,
+									oldwsdl,as.getStatoPackage(),strutsBean.validazioneDocumenti,tipologiaDocumentoScaricare,
+									serviceBinding, strutsBean.aggiornaEsistenti, strutsBean.eliminaNonPresentiNuovaInterfaccia);
 
 							pd.setDati(dati);
 
@@ -492,11 +465,11 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 									"Il caricamento della specifica comporter&agrave;:<BR/>"+
 									"- l'aggiornamento degli allegati esistenti e l'eventuale creazione di nuovi allegati;<BR/>"+
 									"- l'eventuale creazione di "+nuoviOggetti+""+
-									(this.aggiornaEsistenti? ";<BR/>- l'aggiornamento "+updateOggetti+" esistenti" : "")+
-									(this.eliminaNonPresentiNuovaInterfaccia? ";<BR/>- l'eliminazione "+updateOggetti+" non presenti nella nuova interfaccia" : "")+
+									(strutsBean.aggiornaEsistenti? ";<BR/>- l'aggiornamento "+updateOggetti+" esistenti" : "")+
+									(strutsBean.eliminaNonPresentiNuovaInterfaccia? ";<BR/>- l'eliminazione "+updateOggetti+" non presenti nella nuova interfaccia" : "")+
 									".<BR/><BR/>"+
-									(!this.aggiornaEsistenti ? warnUpdateOggetti+" esistenti non verranno aggiornati.<BR/>" : "")+ 
-									(!this.eliminaNonPresentiNuovaInterfaccia ? warnUpdateOggetti+" non presenti nella nuova interfaccia verranno mantenute.<BR/>" : "")+ 
+									(!strutsBean.aggiornaEsistenti ? warnUpdateOggetti+" esistenti non verranno aggiornati.<BR/>" : "")+ 
+									(!strutsBean.eliminaNonPresentiNuovaInterfaccia ? warnUpdateOggetti+" non presenti nella nuova interfaccia verranno mantenute.<BR/>" : "")+ 
 									"<BR/>Procedere con l'operazione richiesta?";
 							
 							String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
@@ -529,11 +502,11 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			List<IDResource> risorseEliminate = new ArrayList<IDResource>();
 			List<IDPortType> portTypeEliminati = new ArrayList<IDPortType>();
 			List<IDPortTypeAzione> operationEliminate = new ArrayList<IDPortTypeAzione>();
-			AccordiServizioParteComuneUtilities.updateInterfacciaAccordoServizioParteComune(this.tipo, this.wsdl, as,
-					enableAutoMapping, this.validazioneDocumenti, enableAutoMapping_estraiXsdSchemiFromWsdlTypes, facilityUnicoWSDL_interfacciaStandard,
+			AccordiServizioParteComuneUtilities.updateInterfacciaAccordoServizioParteComune(strutsBean.tipo, strutsBean.wsdl, as,
+					enableAutoMapping, strutsBean.validazioneDocumenti, enableAutoMapping_estraiXsdSchemiFromWsdlTypes, facilityUnicoWSDL_interfacciaStandard,
 					tipoProtocollo, 
 					apcCore,
-					this.aggiornaEsistenti, this.eliminaNonPresentiNuovaInterfaccia,
+					strutsBean.aggiornaEsistenti, strutsBean.eliminaNonPresentiNuovaInterfaccia,
 					risorseEliminate, portTypeEliminati, operationEliminate);
 			
 			String newLine = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
@@ -576,7 +549,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			if(inUsoMessage.length()==0) {
 				if(risorseEliminate!=null && !risorseEliminate.isEmpty()) {
 					
-					AccordoServizioParteComuneSintetico asSintetico = apcCore.getAccordoServizioSintetico(Long.valueOf(idAcc));
+					AccordoServizioParteComuneSintetico asSintetico = apcCore.getAccordoServizioSintetico(idAccordoLong);
 					
 					boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
 					for (IDResource idRisorsa : risorseEliminate) {
@@ -614,9 +587,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
-						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare,
-						serviceBinding, this.aggiornaEsistenti, this.eliminaNonPresentiNuovaInterfaccia);
+				apcHelper.addAccordiWSDLChangeToDati(dati, strutsBean.id,strutsBean.tipoAccordo,strutsBean.tipo,label,
+						oldwsdl,as.getStatoPackage(),strutsBean.validazioneDocumenti,tipologiaDocumentoScaricare,
+						serviceBinding, strutsBean.aggiornaEsistenti, strutsBean.eliminaNonPresentiNuovaInterfaccia);
 
 				pd.setMessage("Non è possibile procedere con l'aggiornamento dell'interfaccia a causa di dipendenze verso oggetti che verrebbero eliminati.<BR/><BR/>"+inUsoMessage.toString());
 				
@@ -642,7 +615,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			// visualizzo il form di modifica accordo come in accordiChange
 			// setto la barra del titolo
-			listaParams = apcHelper.getTitoloApc(TipoOperazione.OTHER, as, this.tipoAccordo, labelASTitle, null, isGestioneAllegati); 
+			listaParams = apcHelper.getTitoloApc(TipoOperazione.OTHER, as, strutsBean.tipoAccordo, labelASTitle, null, isGestioneAllegati); 
 			ServletUtils.setPageDataTitle(pd, listaParams);
 
 			String descr = as.getDescrizione();
@@ -738,28 +711,28 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}
 			String statoPackage = as.getStatoPackage();
 			
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
-			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
-			this.consoleConfiguration = this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE) ? 
-					this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(this.consoleOperationType, apcHelper, 
-							this.registryReader, this.configRegistryReader, idAccordoOLD)
-					: this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(this.consoleOperationType, apcHelper, 
-							this.registryReader, this.configRegistryReader, idAccordoOLD);
+			strutsBean.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+			strutsBean.consoleDynamicConfiguration =  strutsBean.protocolFactory.createDynamicConfigurationConsole();
+			strutsBean.registryReader = soggettiCore.getRegistryReader(strutsBean.protocolFactory); 
+			strutsBean.configRegistryReader = soggettiCore.getConfigIntegrationReader(strutsBean.protocolFactory);
+			strutsBean.consoleConfiguration = strutsBean.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE) ? 
+					strutsBean.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(strutsBean.consoleOperationType, apcHelper, 
+							strutsBean.registryReader, strutsBean.configRegistryReader, idAccordoOLD)
+					: strutsBean.consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(strutsBean.consoleOperationType, apcHelper, 
+							strutsBean.registryReader, strutsBean.configRegistryReader, idAccordoOLD);
 					
 			List<ProtocolProperty> oldProtocolPropertyList = as.getProtocolPropertyList();
-			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
-			ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+			strutsBean.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(strutsBean.consoleConfiguration, strutsBean.consoleOperationType);
+			ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(strutsBean.protocolProperties, oldProtocolPropertyList, strutsBean.consoleOperationType);
 			
 			Properties propertiesProprietario = new Properties();
-			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, this.id);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, strutsBean.id);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_ACCORDO_SERVIZIO_PARTE_COMUNE);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, uriAS);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE,
 					URLEncoder.encode(parameterApcChange.getValue(), "UTF-8"));
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, tipoProtocollo);
-			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, this.tipoAccordo);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, strutsBean.tipoAccordo);
 			
 			
 			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
@@ -789,17 +762,18 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-			dati = apcHelper.addAccordiToDati(dati, as.getNome(), descr, profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
-					filtrodup, confric, idcoll, idRifRichiesta, consord, scadenza, this.id, TipoOperazione.CHANGE, 
+			dati = apcHelper.addAccordiToDati(dati, as.getNome(), descr, profcoll, strutsBean.wsdldef, strutsBean.wsdlconc, strutsBean.wsdlserv, strutsBean.wsdlservcorr,
+					strutsBean.wsblconc,strutsBean.wsblserv,strutsBean.wsblservcorr, 
+					filtrodup, confric, idcoll, idRifRichiesta, consord, scadenza, strutsBean.id, TipoOperazione.CHANGE, 
 					showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
 					(as.getPrivato()!=null && as.getPrivato()),isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-					accordoCooperazioneId,statoPackage,statoPackage,this.tipoAccordo,this.validazioneDocumenti, 
-					tipoProtocollo,listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,serviceBinding,messageType,formatoSpecifica,gruppi, elencoGruppi,
+					accordoCooperazioneId,statoPackage,statoPackage,strutsBean.tipoAccordo,strutsBean.validazioneDocumenti, 
+					tipoProtocollo,listaTipiProtocollo,used,asWithAllegati,strutsBean.protocolFactory,serviceBinding,messageType,formatoSpecifica,gruppi, elencoGruppi,
 					false, -1, false, -1,
 					false, canaleStato, canale, canaleList, gestioneCanaliEnabled);
 
 			// aggiunta campi custom
-			dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+			dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 			pd.setDati(dati);
 
 			// setto la baseurl per il redirect (alla servlet accordiChange)

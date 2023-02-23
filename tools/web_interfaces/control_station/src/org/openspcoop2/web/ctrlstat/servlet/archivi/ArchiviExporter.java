@@ -106,7 +106,7 @@ public class ArchiviExporter extends HttpServlet {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void processRequest(HttpServletRequest request, HttpServletResponse response) {
 
 		String redirect = null;
 		try{
@@ -386,6 +386,9 @@ public class ArchiviExporter extends HttpServlet {
 			String fileName = null;
 			switch (archiveType) {
 			case SOGGETTO:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"Soggetti."+ext;
 				}else{
@@ -394,6 +397,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case ACCORDO_SERVIZIO_PARTE_COMUNE:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"APIs."+ext;
 				}
@@ -410,6 +416,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case ACCORDO_SERVIZIO_COMPOSTO:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"AccordiServizioComposto."+ext;
 				}
@@ -426,6 +435,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"Servizi."+ext;
 				}
@@ -440,6 +452,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case ACCORDO_COOPERAZIONE:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"AccordiCooperazione."+ext;
 				}
@@ -456,6 +471,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case EROGAZIONE:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"Erogazioni."+ext;
 				}
@@ -470,6 +488,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case FRUIZIONE:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"Fruizioni."+ext;
 				}
@@ -486,6 +507,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case SERVIZIO_APPLICATIVO:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"Applicativi."+ext;
 				}else{
@@ -497,6 +521,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case GRUPPO:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"Tags."+ext;
 				}else{
@@ -505,6 +532,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case RUOLO:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"Ruoli."+ext;
 				}else{
@@ -513,6 +543,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case SCOPE:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"Scope."+ext;
 				}else{
@@ -521,6 +554,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"ControlloTrafficoPolicy."+ext;
 				}else{
@@ -529,6 +565,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"RateLimitingPolicy."+ext;
 				}else{
@@ -537,6 +576,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case ALLARME:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"Allarmi."+ext;
 				}else{
@@ -545,6 +587,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case CONFIGURAZIONE_TOKEN_POLICY:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"TokenPolicy."+ext;
 				}else{
@@ -553,6 +598,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case CONFIGURAZIONE_ATTRIBUTE_AUTHORITY:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"AttributeAuthority."+ext;
 				}else{
@@ -563,6 +611,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case CONFIGURAZIONE_PLUGIN_CLASSE:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"PluginClassi."+ext;
 				}else{
@@ -571,6 +622,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case CONFIGURAZIONE_PLUGIN_ARCHVIO:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"PluginArchivi."+ext;
 				}else{
@@ -579,6 +633,9 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				break;
 			case CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
 				if(identificativi.size()>1){
 					fileName = prefix+"RegoleProxyPass."+ext;
 				}else{
@@ -617,11 +674,18 @@ public class ArchiviExporter extends HttpServlet {
 	            redirect+="&"+Costanti.PARAMETER_MESSAGE_TEXT+"='"+msg+"'";
 	            redirect+="&"+Costanti.PARAMETER_MESSAGE_BREADCRUMB+"="+ArchiviCostanti.LABEL_ARCHIVI_EXPORT+"";
 	            
-	            response.sendRedirect(redirect);
+	            try {
+	            	response.sendRedirect(redirect);
+	            }catch(Throwable t) {
+	            	ControlStationCore.logError("Errore durante l'esportazione dell'archivio (redirect:"+redirect+"): "+t.getMessage(), t);
+	            }
 			}
 			else{
-				response.sendRedirect(LoginCostanti.SERVLET_NAME_MESSAGE_PAGE);
-//				throw new ServletException(Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE);
+				try {
+					response.sendRedirect(LoginCostanti.SERVLET_NAME_MESSAGE_PAGE);
+				}catch(Throwable t) {
+	            	ControlStationCore.logError("Errore durante l'esportazione dell'archivio (redirect:"+LoginCostanti.SERVLET_NAME_MESSAGE_PAGE+"): "+t.getMessage(), t);
+	            }
 			}
 		}
 		

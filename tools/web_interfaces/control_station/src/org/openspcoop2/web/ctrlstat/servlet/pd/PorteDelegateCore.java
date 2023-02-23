@@ -1092,6 +1092,15 @@ public class PorteDelegateCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
+	private static boolean showGroup = true;
+	public static boolean isShowGroup() {
+		return showGroup;
+	}
+	public static void setShowGroup(boolean showGroup) {
+		PorteDelegateCore.showGroup = showGroup;
+	}
+	
 	public String getLabelRegolaMappingFruizionePortaDelegata(String functionDi, String function, PortaDelegata pd) throws DriverConfigurazioneException {
 		return getLabelRegolaMappingFruizionePortaDelegata(functionDi, function, pd, 50);
 	}
@@ -1102,9 +1111,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		return getLabelRegolaMappingFruizionePortaDelegata(functionDi, function, pd, sizeSubstring, false);
 	}
 	public String getLabelRegolaMappingFruizionePortaDelegata(String functionDi, String function, PortaDelegata pd, int sizeSubstring, boolean forceGroupName) throws DriverConfigurazioneException {
-		
-		boolean showGroup = true;
-		
+				
 		String prefix = "";
 		if(functionDi!=null) {
 			prefix = functionDi;

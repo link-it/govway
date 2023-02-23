@@ -78,7 +78,7 @@ public final class UtentePasswordChange extends Action {
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
 
-			String newpw = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
+			String newpw = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PW);
 			String first = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
 
 			PageData oldPD = ServletUtils.getObjectFromSession(request, session, PageData.class, Costanti.SESSION_ATTRIBUTE_PAGE_DATA_REDIRECT);

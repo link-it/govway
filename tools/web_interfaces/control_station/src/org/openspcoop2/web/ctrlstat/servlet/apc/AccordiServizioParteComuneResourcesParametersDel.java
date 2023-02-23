@@ -78,7 +78,7 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idInt = Integer.parseInt(id);
+			long idAccordoLong = Long.valueOf(id);
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
@@ -103,7 +103,7 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 			apcHelper.makeMenu();
 
 			ArrayList<String> resourcesToRemove = Utilities.parseIdsToRemove(objToRemove);
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 
 			Resource risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {
@@ -111,6 +111,10 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 				if (nomeRisorsa.equals(risorsa.getNome())) {
 					break;
 				}
+			}
+			
+			if(risorsa==null) {
+				throw new Exception("Risorsa con nome '"+nomeRisorsa+"' non trovata nell'accordo con id '"+idAccordoLong+"'");
 			}
 			
 			Long idResponse = null;
@@ -177,7 +181,7 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei port-type
-			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			as = apcCore.getAccordoServizioFull(idAccordoLong);
 			
 			risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {
@@ -185,6 +189,10 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 				if (nomeRisorsa.equals(risorsa.getNome())) {
 					break;
 				}
+			}
+			
+			if(risorsa==null) {
+				throw new Exception("Risorsa con nome '"+nomeRisorsa+"' non trovata nell'accordo con id '"+idAccordoLong+"'");
 			}
 			
 			idResponse = null;

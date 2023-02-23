@@ -95,8 +95,8 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 			String idAllegato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_ALLEGATO);
 			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			String nomeDocumento = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_DOCUMENTO);
-			int idAllegatoInt = Integer.parseInt(idAllegato);
-			int idServizioInt = Integer.parseInt(idServizio);
+			long idAllegatoLong = Long.valueOf(idAllegato);
+			long idServizioLong = Long.valueOf(idServizio);
 			String tipoFile = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_FILE);
 
 			String modificaAPI = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API);
@@ -118,7 +118,7 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 			apsHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.valueOf(idServizioInt));
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizioLong);
 			
 			String tipoSoggettoFruitore = null;
 			String nomeSoggettoFruitore = null;
@@ -141,7 +141,7 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 				tmpTitle = apsHelper.getLabelServizioErogazione(tipoProtocollo, asps);
 			}
 			
-			Documento doc = archiviCore.getDocumento(idAllegatoInt,false);
+			Documento doc = archiviCore.getDocumento(idAllegatoLong,false);
 			
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 			

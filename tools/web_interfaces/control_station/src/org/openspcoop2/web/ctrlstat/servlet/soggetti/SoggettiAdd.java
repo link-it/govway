@@ -21,7 +21,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,21 +46,15 @@ import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.pdd.core.autenticazione.ApiKey;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
-import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
-import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
-import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
-import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
@@ -92,30 +85,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class SoggettiAdd extends Action {
 
-
-	private String editMode = null;
-	private String nomeprov , tipoprov, portadom, descr, versioneProtocollo,pdd, codiceIpa, pd_url_prefix_rewriter,pa_url_prefix_rewriter,protocollo,dominio;
-	private boolean isRouter,privato; 
-	private Boolean singlePdD = null;
-	private String tipologia = null;
-
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
-	private IConfigIntegrationReader configRegistryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
-	
-	private String tipoauthSoggetto = null;
-	private String utenteSoggetto = null;
-	private String passwordSoggetto = null;
-	private String subjectSoggetto = null;
-	private String principalSoggetto = null;
-
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
-
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession(true);
@@ -128,8 +97,10 @@ public final class SoggettiAdd extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
+		SoggettiAddStrutsBean strutsBean = new SoggettiAddStrutsBean();
+		
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
-		this.consoleOperationType = ConsoleOperationType.ADD;
+		strutsBean.consoleOperationType = ConsoleOperationType.ADD;
 
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
@@ -137,33 +108,33 @@ public final class SoggettiAdd extends Action {
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
-			this.protocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
-			this.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-			this.tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
-			this.tipologia = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPOLOGIA);
-			this.portadom = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
-			this.descr = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
-			this.versioneProtocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
-			this.pdd = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
+			strutsBean.protocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
+			strutsBean.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
+			strutsBean.tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
+			strutsBean.tipologia = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPOLOGIA);
+			strutsBean.portadom = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
+			strutsBean.descr = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
+			strutsBean.versioneProtocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
+			strutsBean.pdd = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
 			String is_router = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
 			String is_privato = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO);
-			this.privato = ServletUtils.isCheckBoxEnabled(is_privato);
-			this.codiceIpa = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
-			this.pd_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-			this.pa_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
-			this.isRouter = ServletUtils.isCheckBoxEnabled(is_router);
-			this.dominio = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
+			strutsBean.privato = ServletUtils.isCheckBoxEnabled(is_privato);
+			strutsBean.codiceIpa = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
+			strutsBean.pd_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
+			strutsBean.pa_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
+			strutsBean.isRouter = ServletUtils.isCheckBoxEnabled(is_router);
+			strutsBean.dominio = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			this.singlePdD = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			strutsBean.singlePdD = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
-			this.editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			strutsBean.editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
-			this.tipoauthSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
-			this.utenteSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-			this.passwordSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			this.subjectSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
-			this.principalSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+			strutsBean.tipoauthSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+			strutsBean.utenteSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			strutsBean.passwordSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			strutsBean.subjectSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+			strutsBean.principalSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 			
 			String changepwd = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
 						
@@ -246,8 +217,8 @@ public final class SoggettiAdd extends Action {
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(request, session);
 			// primo accesso
-			if(this.protocollo == null){
-				this.protocollo = soggettiCore.getProtocolloDefault(request, session, null);
+			if(strutsBean.protocollo == null){
+				strutsBean.protocollo = soggettiCore.getProtocolloDefault(request, session, null);
 			}
 
 			if(soggettiCore.isRegistroServiziLocale()){
@@ -275,10 +246,10 @@ public final class SoggettiAdd extends Action {
 				for (PdDControlStation pddTmp : lista) {
 					pddList[i] = pddTmp.getNome();
 					i++;
-					if(this.singlePdD && (nomePddGestioneLocale==null) && (PddTipologia.OPERATIVO.toString().equals(pddTmp.getTipo())) ){
+					if(strutsBean.singlePdD && (nomePddGestioneLocale==null) && (PddTipologia.OPERATIVO.toString().equals(pddTmp.getTipo())) ){
 						nomePddGestioneLocale = pddTmp.getNome();
 					}
-					if(this.singlePdD && PddTipologia.ESTERNO.toString().equals(pddTmp.getTipo())){
+					if(strutsBean.singlePdD && PddTipologia.ESTERNO.toString().equals(pddTmp.getTipo())){
 						pddEsterne.add(pddTmp.getNome());
 					}
 				}
@@ -291,22 +262,22 @@ public final class SoggettiAdd extends Action {
 						throw new Exception("Non è stata rilevata una pdd di tipologia 'operativo'");
 					}
 
-					if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(this.dominio)) {
-						this.pdd = nomePddGestioneLocale;
+					if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(strutsBean.dominio)) {
+						strutsBean.pdd = nomePddGestioneLocale;
 					}
 					else {
-						this.pdd = null;
+						strutsBean.pdd = null;
 					}
 				}
 			}
 
 			//Carico la lista dei tipi di soggetti gestiti dal protocollo
-			tipiSoggetti = soggettiCore.getTipiSoggettiGestitiProtocollo(this.protocollo);
+			tipiSoggetti = soggettiCore.getTipiSoggettiGestitiProtocollo(strutsBean.protocollo);
 
 			// lista tipi
 			//			tipiSoggetti = soggettiCore.getTipiSoggettiGestiti(); // all tipi soggetti gestiti
-			if(this.tipoprov==null){
-				this.tipoprov = soggettiCore.getTipoSoggettoDefaultProtocollo(this.protocollo);
+			if(strutsBean.tipoprov==null){
+				strutsBean.tipoprov = soggettiCore.getTipoSoggettoDefaultProtocollo(strutsBean.protocollo);
 			}
 
 			String postBackElementName = soggettiHelper.getPostBackElementName();
@@ -315,23 +286,23 @@ public final class SoggettiAdd extends Action {
 			// Controllo se ho modificato il protocollo, ricalcolo il default della versione del protocollo
 			if(postBackElementName != null ){
 				if(postBackElementName.equalsIgnoreCase(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO)){
-					this.tipoauthSoggetto = null;
-					this.tipologia = SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE;
+					strutsBean.tipoauthSoggetto = null;
+					strutsBean.tipologia = SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE;
 				}
 				
 				if(postBackElementName.equalsIgnoreCase(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO)){
-					this.versioneProtocollo = null;
+					strutsBean.versioneProtocollo = null;
 					// cancello file temporanei
 					soggettiHelper.deleteProtocolPropertiesBinaryParameters();
 				}  
 				
 				if(postBackElementName.equalsIgnoreCase(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPOLOGIA)){
-					this.tipoauthSoggetto = null;
+					strutsBean.tipoauthSoggetto = null;
 				}  
 
 				// tipo autenticazione
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE)){
-					if(this.tipoauthSoggetto.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+					if(strutsBean.tipoauthSoggetto!=null && strutsBean.tipoauthSoggetto.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
 						// reset impostazioni sezione ssl
 						tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO;
 						tipoCredenzialiSSLTipoArchivio = ArchiveType.CER;
@@ -371,7 +342,7 @@ public final class SoggettiAdd extends Action {
 					tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
 
 					if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) {
-						this.subjectSoggetto = "";
+						strutsBean.subjectSoggetto = "";
 						issuerSoggetto = "";
 						tipoCredenzialiSSLConfigurazioneManualeSelfSigned = Costanti.CHECK_BOX_DISABLED;
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD;
@@ -420,50 +391,50 @@ public final class SoggettiAdd extends Action {
 			}
 
 			//			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
-			if(this.versioneProtocollo == null){
-				this.versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(this.protocollo);
+			if(strutsBean.versioneProtocollo == null){
+				strutsBean.versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(strutsBean.protocollo);
 			}
 
 			if(soggettiHelper.isModalitaAvanzata()){
-				versioniProtocollo = soggettiCore.getVersioniProtocollo(this.protocollo);
+				versioniProtocollo = soggettiCore.getVersioniProtocollo(strutsBean.protocollo);
 			}else {
 				versioniProtocollo = new ArrayList<String>();
 				//				versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(protocollo);
-				versioniProtocollo.add(this.versioneProtocollo);
+				versioniProtocollo.add(strutsBean.versioneProtocollo);
 			}
-			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(this.protocollo); 
-			boolean isSupportatoIdentificativoPorta = soggettiCore.isSupportatoIdentificativoPorta(this.protocollo);
+			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(strutsBean.protocollo); 
+			boolean isSupportatoIdentificativoPorta = soggettiCore.isSupportatoIdentificativoPorta(strutsBean.protocollo);
 
-			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(this.protocollo);
-			boolean isPddEsterna = pddCore.isPddEsterna(this.pdd);
+			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(strutsBean.protocollo);
+			boolean isPddEsterna = pddCore.isPddEsterna(strutsBean.pdd);
 			if(isSupportatoAutenticazioneSoggetti){
 				if(isPddEsterna){
 
-					if(this.tipologia==null || "".equals(this.tipologia)){
-						this.tipologia = SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE;
+					if(strutsBean.tipologia==null || "".equals(strutsBean.tipologia)){
+						strutsBean.tipologia = SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE;
 					}
 
-					if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)){
-						this.tipoauthSoggetto = null;
+					if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(strutsBean.tipoauthSoggetto)){
+						strutsBean.tipoauthSoggetto = null;
 					}
 				}
-				if (this.tipoauthSoggetto == null) {
+				if (strutsBean.tipoauthSoggetto == null) {
 					if(isPddEsterna){
 
-						if(SoggettiCostanti.SOGGETTO_RUOLO_FRUITORE.equals(this.tipologia) || SoggettiCostanti.SOGGETTO_RUOLO_ENTRAMBI.equals(this.tipologia)){
-							this.tipoauthSoggetto = soggettiCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
+						if(SoggettiCostanti.SOGGETTO_RUOLO_FRUITORE.equals(strutsBean.tipologia) || SoggettiCostanti.SOGGETTO_RUOLO_ENTRAMBI.equals(strutsBean.tipologia)){
+							strutsBean.tipoauthSoggetto = soggettiCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
 						}else{
-							this.tipoauthSoggetto = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
+							strutsBean.tipoauthSoggetto = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
 						}						
 					}
 					else{
-						this.tipoauthSoggetto = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
+						strutsBean.tipoauthSoggetto = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
 					}
 				}
 			}
 
 			boolean checkWizard = false;
-			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(this.tipoauthSoggetto)) {
+			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(strutsBean.tipoauthSoggetto)) {
 				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
 					if(tipoCredenzialiSSLFileCertificato.getValue() != null && tipoCredenzialiSSLFileCertificato.getValue().length > 0) {
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ALIAS_NON_SCELTO;
@@ -510,8 +481,8 @@ public final class SoggettiAdd extends Action {
 										tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
 										tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
 										tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
-										tipoCredenzialiSSLAliasCertificatoNotBefore = this.sdf.format(cSelezionato.getCertificate().getNotBefore());
-										tipoCredenzialiSSLAliasCertificatoNotAfter = this.sdf.format(cSelezionato.getCertificate().getNotAfter());
+										tipoCredenzialiSSLAliasCertificatoNotBefore = strutsBean.sdf.format(cSelezionato.getCertificate().getNotBefore());
+										tipoCredenzialiSSLAliasCertificatoNotAfter = strutsBean.sdf.format(cSelezionato.getCertificate().getNotAfter());
 										tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CERTIFICATO_OK;
 									}catch(UtilsException e) {
 										pd.setMessage("Il Certificato selezionato non &egrave; valido: "+e.getMessage());
@@ -539,8 +510,8 @@ public final class SoggettiAdd extends Action {
 								tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
 								tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
 								tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
-								tipoCredenzialiSSLAliasCertificatoNotBefore = this.sdf.format(cSelezionato.getCertificate().getNotBefore());
-								tipoCredenzialiSSLAliasCertificatoNotAfter = this.sdf.format(cSelezionato.getCertificate().getNotAfter());
+								tipoCredenzialiSSLAliasCertificatoNotBefore = strutsBean.sdf.format(cSelezionato.getCertificate().getNotBefore());
+								tipoCredenzialiSSLAliasCertificatoNotAfter = strutsBean.sdf.format(cSelezionato.getCertificate().getNotAfter());
 								
 								// dalla seconda volta che passo, posso salvare, la prima mostro il recap del certificato estratto
 								
@@ -588,18 +559,18 @@ public final class SoggettiAdd extends Action {
 				pd.setLabelBottoneInvia(labelButtonSalva);
 			}
 
-			IDSoggetto idSoggetto = new IDSoggetto(this.tipoprov,this.nomeprov);
-			this.protocolFactory  = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocollo); 
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
-			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigSoggetto(this.consoleOperationType, soggettiHelper, 
-					this.registryReader, this.configRegistryReader, idSoggetto);
-			this.protocolProperties = soggettiHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			IDSoggetto idSoggetto = new IDSoggetto(strutsBean.tipoprov,strutsBean.nomeprov);
+			strutsBean.protocolFactory  = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(strutsBean.protocollo); 
+			strutsBean.consoleDynamicConfiguration =  strutsBean.protocolFactory.createDynamicConfigurationConsole();
+			strutsBean.registryReader = soggettiCore.getRegistryReader(strutsBean.protocolFactory); 
+			strutsBean.configRegistryReader = soggettiCore.getConfigIntegrationReader(strutsBean.protocolFactory);
+			strutsBean.consoleConfiguration = strutsBean.consoleDynamicConfiguration.getDynamicConfigSoggetto(strutsBean.consoleOperationType, soggettiHelper, 
+					strutsBean.registryReader, strutsBean.configRegistryReader, idSoggetto);
+			strutsBean.protocolProperties = soggettiHelper.estraiProtocolPropertiesDaRequest(strutsBean.consoleConfiguration, strutsBean.consoleOperationType);
 
 			boolean multipleApiKeysEnabled = false;
 			boolean appIdModificabile = ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_MODIFICABILE;
-			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(this.tipoauthSoggetto)) {
+			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(strutsBean.tipoauthSoggetto)) {
 				multipleApiKeysEnabled = ServletUtils.isCheckBoxEnabled(multipleApiKey);
 				if(appIdModificabile && multipleApiKeysEnabled) {
 					boolean soggettoDefined =
@@ -608,7 +579,7 @@ public final class SoggettiAdd extends Action {
 							idSoggetto.getNome()!=null && !"".equals(idSoggetto.getNome());
 					if(appId==null || "".equals(appId)) {
 						if(soggettoDefined) {
-							appId = soggettiCore.toAppId(this.protocollo, idSoggetto, multipleApiKeysEnabled);
+							appId = soggettiCore.toAppId(strutsBean.protocollo, idSoggetto, multipleApiKeysEnabled);
 						}
 					}
 				}
@@ -616,7 +587,7 @@ public final class SoggettiAdd extends Action {
 			
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
 			
-			if(ServletUtils.isEditModeInProgress(this.editMode) || checkWizard){
+			if(ServletUtils.isEditModeInProgress(strutsBean.editMode) || checkWizard){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
@@ -626,27 +597,27 @@ public final class SoggettiAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				if(this.nomeprov==null){
-					this.nomeprov = "";
-					idSoggetto = new IDSoggetto(this.tipoprov,this.nomeprov);
+				if(strutsBean.nomeprov==null){
+					strutsBean.nomeprov = "";
+					idSoggetto = new IDSoggetto(strutsBean.tipoprov,strutsBean.nomeprov);
 				}
-				if(this.portadom==null){
-					this.portadom = "";
+				if(strutsBean.portadom==null){
+					strutsBean.portadom = "";
 				}
-				if(this.descr==null){
-					this.descr = "";
+				if(strutsBean.descr==null){
+					strutsBean.descr = "";
 				}
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, soggettiHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idSoggetto); 
-				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
-						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,
+				strutsBean.consoleDynamicConfiguration.updateDynamicConfigSoggetto(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, soggettiHelper, strutsBean.protocolProperties, 
+						strutsBean.registryReader, strutsBean.configRegistryReader, idSoggetto); 
+				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, strutsBean.nomeprov, strutsBean.tipoprov, strutsBean.portadom, strutsBean.descr, 
+						isRouter, tipiSoggetti, strutsBean.versioneProtocollo, strutsBean.privato,strutsBean.codiceIpa,versioniProtocollo,
 						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
-						pddList,pddEsterneList,nomePddGestioneLocale, this.pdd, 
-						listaTipiProtocollo, this.protocollo ,
-						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
-						isPddEsterna,this.tipologia,this.dominio,
+						pddList,pddEsterneList,nomePddGestioneLocale, strutsBean.pdd, 
+						listaTipiProtocollo, strutsBean.protocollo ,
+						isSupportatoAutenticazioneSoggetti,strutsBean.utenteSoggetto,strutsBean.passwordSoggetto,strutsBean.subjectSoggetto,strutsBean.principalSoggetto,strutsBean.tipoauthSoggetto,
+						isPddEsterna,strutsBean.tipologia,strutsBean.dominio,
 						tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
@@ -657,7 +628,7 @@ public final class SoggettiAdd extends Action {
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
 
 				// aggiunta campi custom
-				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -667,18 +638,18 @@ public final class SoggettiAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, null, this.tipoprov, this.nomeprov, this.codiceIpa, this.pd_url_prefix_rewriter, this.pa_url_prefix_rewriter,
-					null, false, this.descr);
+			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, null, strutsBean.tipoprov, strutsBean.nomeprov, strutsBean.codiceIpa, strutsBean.pd_url_prefix_rewriter, strutsBean.pa_url_prefix_rewriter,
+					null, false, strutsBean.descr);
 
 			if (isOk) {
 				if(soggettiCore.isRegistroServiziLocale()){
-					if (!this.singlePdD) {
+					if (!strutsBean.singlePdD) {
 						isOk = false;
 						// Controllo che pdd appartenga alla lista di pdd
 						// esistenti
 						for (int i = 0; i < totPdd; i++) {
 							String tmpPdd = pddList[i];
-							if (tmpPdd.equals(this.pdd) && !this.pdd.equals("-")) {
+							if (tmpPdd.equals(strutsBean.pdd) && !strutsBean.pdd.equals("-")) {
 								isOk = true;
 							}
 						}
@@ -691,14 +662,14 @@ public final class SoggettiAdd extends Action {
 
 			// updateDynamic
 			if(isOk) {
-				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, soggettiHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idSoggetto); 
+				strutsBean.consoleDynamicConfiguration.updateDynamicConfigSoggetto(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, soggettiHelper, strutsBean.protocolProperties, 
+						strutsBean.registryReader, strutsBean.configRegistryReader, idSoggetto); 
 			}
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					soggettiHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
+					soggettiHelper.validaProtocolProperties(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, strutsBean.protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -710,8 +681,8 @@ public final class SoggettiAdd extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, soggettiHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idSoggetto);   
+					strutsBean.consoleDynamicConfiguration.validateDynamicConfigSoggetto(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, soggettiHelper, strutsBean.protocolProperties, 
+							strutsBean.registryReader, strutsBean.configRegistryReader, idSoggetto);   
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -730,16 +701,16 @@ public final class SoggettiAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, soggettiHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idSoggetto); 
+				strutsBean.consoleDynamicConfiguration.updateDynamicConfigSoggetto(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, soggettiHelper, strutsBean.protocolProperties, 
+						strutsBean.registryReader, strutsBean.configRegistryReader, idSoggetto); 
 
-				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
-						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,
+				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, strutsBean.nomeprov, strutsBean.tipoprov, strutsBean.portadom, strutsBean.descr, 
+						isRouter, tipiSoggetti, strutsBean.versioneProtocollo, strutsBean.privato,strutsBean.codiceIpa,versioniProtocollo,
 						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
-						pddList,pddEsterneList,nomePddGestioneLocale, this.pdd,  
-						listaTipiProtocollo, this.protocollo,
-						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
-						isPddEsterna,this.tipologia,this.dominio,
+						pddList,pddEsterneList,nomePddGestioneLocale, strutsBean.pdd,  
+						listaTipiProtocollo, strutsBean.protocollo,
+						isSupportatoAutenticazioneSoggetti,strutsBean.utenteSoggetto,strutsBean.passwordSoggetto,strutsBean.subjectSoggetto,strutsBean.principalSoggetto,strutsBean.tipoauthSoggetto,
+						isPddEsterna,strutsBean.tipologia,strutsBean.dominio,
 						tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
@@ -750,7 +721,7 @@ public final class SoggettiAdd extends Action {
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
 
 				// aggiunta campi custom
-				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -760,12 +731,12 @@ public final class SoggettiAdd extends Action {
 			}
 
 			// Inserisco il soggetto nel db
-			if (this.codiceIpa==null || this.codiceIpa.equals("")) {
-				this.codiceIpa = soggettiCore.getCodiceIPADefault(this.protocollo, idSoggetto, false);
+			if (strutsBean.codiceIpa==null || strutsBean.codiceIpa.equals("")) {
+				strutsBean.codiceIpa = soggettiCore.getCodiceIPADefault(strutsBean.protocollo, idSoggetto, false);
 			}
 
-			if (this.portadom==null || this.portadom.equals("")) {
-				this.portadom=soggettiCore.getIdentificativoPortaDefault(this.protocollo, idSoggetto);
+			if (strutsBean.portadom==null || strutsBean.portadom.equals("")) {
+				strutsBean.portadom=soggettiCore.getIdentificativoPortaDefault(strutsBean.protocollo, idSoggetto);
 			}
 
 			boolean secret = false;
@@ -783,55 +754,55 @@ public final class SoggettiAdd extends Action {
 
 			// imposto soggettoRegistro
 			if(soggettiCore.isRegistroServiziLocale()){
-				soggettoRegistro.setNome(this.nomeprov);
-				soggettoRegistro.setTipo(this.tipoprov);
-				soggettoRegistro.setDescrizione(this.descr);
-				soggettoRegistro.setVersioneProtocollo(this.versioneProtocollo);
-				soggettoRegistro.setIdentificativoPorta(this.portadom);
-				soggettoRegistro.setCodiceIpa(this.codiceIpa);
+				soggettoRegistro.setNome(strutsBean.nomeprov);
+				soggettoRegistro.setTipo(strutsBean.tipoprov);
+				soggettoRegistro.setDescrizione(strutsBean.descr);
+				soggettoRegistro.setVersioneProtocollo(strutsBean.versioneProtocollo);
+				soggettoRegistro.setIdentificativoPorta(strutsBean.portadom);
+				soggettoRegistro.setCodiceIpa(strutsBean.codiceIpa);
 
 				if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
-					if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(this.dominio)) {
-						this.pdd = nomePddGestioneLocale;
+					if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(strutsBean.dominio)) {
+						strutsBean.pdd = nomePddGestioneLocale;
 					}
 					else {
-						this.pdd = null;
+						strutsBean.pdd = null;
 					}
 				}
 
 				if(soggettiCore.isSinglePdD()){
-					if (this.pdd==null || this.pdd.equals("-"))
+					if (strutsBean.pdd==null || strutsBean.pdd.equals("-"))
 						soggettoRegistro.setPortaDominio(null);
 					else
-						soggettoRegistro.setPortaDominio(this.pdd);
+						soggettoRegistro.setPortaDominio(strutsBean.pdd);
 				}else{
-					soggettoRegistro.setPortaDominio(this.pdd);
+					soggettoRegistro.setPortaDominio(strutsBean.pdd);
 				}
 				soggettoRegistro.setSuperUser(userLogin);
-				soggettoRegistro.setPrivato(this.privato);
+				soggettoRegistro.setPrivato(strutsBean.privato);
 
 				if(isSupportatoAutenticazioneSoggetti){
-					if(this.tipoauthSoggetto!=null && !"".equals(this.tipoauthSoggetto) && !ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)){
+					if(strutsBean.tipoauthSoggetto!=null && !"".equals(strutsBean.tipoauthSoggetto) && !ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(strutsBean.tipoauthSoggetto)){
 						CredenzialiSoggetto credenziali = new CredenzialiSoggetto();
-						credenziali.setTipo(CredenzialeTipo.toEnumConstant(this.tipoauthSoggetto));
-						credenziali.setUser(this.utenteSoggetto);
-						if(this.principalSoggetto!=null && !"".equals(this.principalSoggetto)){
-							credenziali.setUser(this.principalSoggetto); // al posto di user
+						credenziali.setTipo(CredenzialeTipo.toEnumConstant(strutsBean.tipoauthSoggetto));
+						credenziali.setUser(strutsBean.utenteSoggetto);
+						if(strutsBean.principalSoggetto!=null && !"".equals(strutsBean.principalSoggetto)){
+							credenziali.setUser(strutsBean.principalSoggetto); // al posto di user
 						}
-						credenziali.setPassword(this.passwordSoggetto);
+						credenziali.setPassword(strutsBean.passwordSoggetto);
 
 						ApiKey apiKeyGenerated = null;
-						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(this.tipoauthSoggetto)) {
+						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(strutsBean.tipoauthSoggetto)) {
 							credenziali.setAppId(multipleApiKeysEnabled);
 							if(multipleApiKeysEnabled) {
 								apiKeyGenerated = soggettiCore.newMultipleApiKey();
 								if(!appIdModificabile) {
-									appId = soggettiCore.toAppId(this.protocollo, idSoggetto, multipleApiKeysEnabled);
+									appId = soggettiCore.toAppId(strutsBean.protocollo, idSoggetto, multipleApiKeysEnabled);
 								}
 							}
 							else {
-								appId = soggettiCore.toAppId(this.protocollo, idSoggetto, multipleApiKeysEnabled);
-								apiKeyGenerated = soggettiCore.newApiKey(this.protocollo, idSoggetto);
+								appId = soggettiCore.toAppId(strutsBean.protocollo, idSoggetto, multipleApiKeysEnabled);
+								apiKeyGenerated = soggettiCore.newApiKey(strutsBean.protocollo, idSoggetto);
 							}
 							credenziali.setUser(appId);
 							credenziali.setPassword(apiKeyGenerated.getPassword());
@@ -841,7 +812,7 @@ public final class SoggettiAdd extends Action {
 						}
 						
 						if(soggettiCore.isSoggettiPasswordEncryptEnabled()) {
-							if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(this.tipoauthSoggetto) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(this.tipoauthSoggetto)) {
+							if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(strutsBean.tipoauthSoggetto) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(strutsBean.tipoauthSoggetto)) {
 								secret = true;
 								secret_user = credenziali.getUser();
 								if (apiKeyGenerated!=null) {
@@ -854,7 +825,7 @@ public final class SoggettiAdd extends Action {
 							}
 						}
 						
-						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(this.tipoauthSoggetto)) {
+						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(strutsBean.tipoauthSoggetto)) {
 							if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
 								Certificate cSelezionato = null;
 								if(tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.CER)) {
@@ -868,9 +839,9 @@ public final class SoggettiAdd extends Action {
 								credenziali.setCnSubject(cSelezionato.getCertificate().getSubject().getCN()); 
 								credenziali.setCertificate(cSelezionato.getCertificate().getCertificate().getEncoded());
 							} else { // configurazione manuale
-								credenziali.setSubject(this.subjectSoggetto);
+								credenziali.setSubject(strutsBean.subjectSoggetto);
 								if(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLConfigurazioneManualeSelfSigned)) {
-									credenziali.setIssuer(this.subjectSoggetto);
+									credenziali.setIssuer(strutsBean.subjectSoggetto);
 								} else {
 									credenziali.setIssuer(issuerSoggetto);
 								}
@@ -891,9 +862,9 @@ public final class SoggettiAdd extends Action {
 				connettore.setTipo(CostantiDB.CONNETTORE_TIPO_DISABILITATO);
 			}
 
-			if ( !this.singlePdD && soggettiCore.isRegistroServiziLocale() && !this.pdd.equals("-")) {
+			if ( !strutsBean.singlePdD && soggettiCore.isRegistroServiziLocale() && !strutsBean.pdd.equals("-")) {
 
-				PdDControlStation aPdD = pddCore.getPdDControlStation(this.pdd);
+				PdDControlStation aPdD = pddCore.getPdDControlStation(strutsBean.pdd);
 				int porta = aPdD.getPorta() <= 0 ? 80 : aPdD.getPorta();
 
 				// nel caso in cui e' stata selezionato un nal
@@ -901,12 +872,12 @@ public final class SoggettiAdd extends Action {
 				// allora setto come default il tipo HTTP
 				// altrimenti il connettore e' disabilitato
 				String tipoPdD = aPdD.getTipo();
-				if ((tipoPdD != null) && (!this.singlePdD) && (tipoPdD.equals(PddTipologia.OPERATIVO.toString()) || tipoPdD.equals(PddTipologia.NONOPERATIVO.toString()))) {
+				if ((tipoPdD != null) && (!strutsBean.singlePdD) && (tipoPdD.equals(PddTipologia.OPERATIVO.toString()) || tipoPdD.equals(PddTipologia.NONOPERATIVO.toString()))) {
 					String ipPdd = aPdD.getIp();
 
 					String url = aPdD.getProtocollo() + "://" + ipPdd + ":" + porta + "/" + soggettiCore.getSuffissoConnettoreAutomatico();
 					url = url.replace(CostantiControlStation.PLACEHOLDER_SOGGETTO_ENDPOINT_CREAZIONE_AUTOMATICA, 
-							soggettiCore.getWebContextProtocolAssociatoTipoSoggetto(this.tipoprov));
+							soggettiCore.getWebContextProtocolAssociatoTipoSoggetto(strutsBean.tipoprov));
 					connettore.setTipo(CostantiDB.CONNETTORE_TIPO_HTTP);
 
 					Property property = new Property();
@@ -922,16 +893,16 @@ public final class SoggettiAdd extends Action {
 			}
 
 			// imposto soggettoConfig
-			soggettoConfig.setNome(this.nomeprov);
-			soggettoConfig.setTipo(this.tipoprov);
-			soggettoConfig.setDescrizione(this.descr);
-			soggettoConfig.setIdentificativoPorta(this.portadom);
-			soggettoConfig.setRouter(this.isRouter);
+			soggettoConfig.setNome(strutsBean.nomeprov);
+			soggettoConfig.setTipo(strutsBean.tipoprov);
+			soggettoConfig.setDescrizione(strutsBean.descr);
+			soggettoConfig.setIdentificativoPorta(strutsBean.portadom);
+			soggettoConfig.setRouter(strutsBean.isRouter);
 			soggettoConfig.setSuperUser(userLogin);
 
 			//imposto properties custom
 			if(soggettoRegistro!=null) {
-				soggettoRegistro.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType,null));
+				soggettoRegistro.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(strutsBean.protocolProperties, strutsBean.consoleOperationType,null));
 			}
 
 
@@ -940,12 +911,12 @@ public final class SoggettiAdd extends Action {
 			soggettiCore.performCreateOperation(userLogin, soggettiHelper.smista(), sog);
 
 			// cancello file temporanei
-			soggettiHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
+			soggettiHelper.deleteBinaryProtocolPropertiesTmpFiles(strutsBean.protocolProperties);
 			soggettiHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 
 			// Messaggio 'Please Copy'
 			if(secret) {
-				soggettiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, this.tipoauthSoggetto, OggettoDialogEnum.SOGGETTO, sog.getNome());
+				soggettiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, strutsBean.tipoauthSoggetto, OggettoDialogEnum.SOGGETTO, sog.getNome());
 			}
 									
 			// recupero la lista dei soggetti
@@ -981,7 +952,7 @@ public final class SoggettiAdd extends Action {
 				soggettiHelper.prepareSoggettiConfigList(listaSoggettiConfig, ricerca);
 			}
 
-			if(!pddCore.isPddEsterna(this.pdd)) {
+			if(!pddCore.isPddEsterna(strutsBean.pdd)) {
 				generalHelper = new GeneralHelper(session);
 				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
 			}

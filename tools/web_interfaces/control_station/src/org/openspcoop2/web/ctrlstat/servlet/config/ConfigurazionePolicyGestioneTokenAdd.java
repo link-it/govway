@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -247,7 +248,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			policy.setTipologia(tipologia);
 			policy.setTipo(tipo);
 			
-			Map<String, Properties> mappaDestinazione = configurazioneBean.getPropertiesMap();	
+			Map<String, Properties> mappaDestinazione = configurazioneBean!=null ? configurazioneBean.getPropertiesMap() : new HashMap<>();	
 			Map<String, String> map = DBPropertiesUtils.toMap(mappaDestinazione);
 			
 			for (String propKey : map.keySet()) {
@@ -281,7 +282,9 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
 			
 			// reset di eventuali configurazioni salvate in sessione
-			ServletUtils.removeConfigurazioneBeanFromSession(request, session, configurazioneBean.getId());
+			if(configurazioneBean!=null) {
+				ServletUtils.removeConfigurazioneBeanFromSession(request, session, configurazioneBean.getId());
+			}
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);

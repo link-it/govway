@@ -79,7 +79,7 @@ public final class ConfigurazioneDumpAppenderPropertiesAdd extends Action {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
 			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
-			int idInt = Integer.parseInt(id);
+			long idLong = Long.valueOf(id);
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
 			String valore = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE);
 
@@ -95,12 +95,19 @@ public final class ConfigurazioneDumpAppenderPropertiesAdd extends Action {
 			String oldTipo = null;
 			for (int j = 0; j < t.sizeOpenspcoopAppenderList(); j++) {
 				oa = t.getOpenspcoopAppender(j);
-				if (idInt == oa.getId().intValue()) {
+				if (idLong == oa.getId().longValue()) {
 					oldTipo = oa.getTipo();
 					break;
 				}
 			}
 
+			if(oa==null) {
+				throw new Exception("Appender non trovato");
+			}
+			if(oldTipo==null) {
+				throw new Exception("Appender 'oldTipo' non trovato");
+			}
+			
 			// Se nome = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if (confHelper.isEditModeInProgress()) {
@@ -201,6 +208,10 @@ public final class ConfigurazioneDumpAppenderPropertiesAdd extends Action {
 				}
 			}
 
+			if(oa==null) {
+				throw new Exception("Appender non trovato");
+			}
+			
 			confHelper.prepareDumpAppenderPropList(oa, oa.getPropertyList());
 
 			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);

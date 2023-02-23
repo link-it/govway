@@ -849,7 +849,7 @@ public class AccordiServizioParteComuneUtilities {
 				}
 				// Non devo inserire le azioni gia correlate une alle altre.
 				// Devo quindi verificare se l'azione suddetta 'operation.getNome' risulta gia' correlata, oppure e' utilizzata come correlata
-				if (!core.isOperationCorrelata(ptSel.getNome(), ptSel.getId(), operation.getNome(), operation.getId())) {
+				if (ptSel!=null && !core.isOperationCorrelata(ptSel.getNome(), ptSel.getId(), operation.getNome(), operation.getId())) {
 					aziCorrUniche.add(operation.getNome());
 				}
 			}

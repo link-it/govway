@@ -186,12 +186,12 @@ public class PorteApplicativeMTOM extends Action {
 				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG_DI+idporta;
 			}
 			
-			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+			//if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
 				lstParam.add(new Parameter(labelPerPorta,  null));
-			}
-			else {
-				lstParam.add(new Parameter(labelPerPorta,  null));
-			}
+			//}
+			//else {
+			//	lstParam.add(new Parameter(labelPerPorta,  null));
+			//}
 			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);

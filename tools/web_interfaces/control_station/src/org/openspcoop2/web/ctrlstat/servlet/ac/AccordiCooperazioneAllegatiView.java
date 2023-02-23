@@ -79,8 +79,8 @@ public final class AccordiCooperazioneAllegatiView extends Action {
 			String idAllegato = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO);
 			String idAccordo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO);
 			String nomeDocumento = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO);
-			int idAllegatoInt = Integer.parseInt(idAllegato);
-			int idAccordoInt = Integer.parseInt(idAccordo);
+			long idAllegatoLong = Long.valueOf(idAllegato);
+			long idAccordoLong = Long.valueOf(idAccordo);
 
 			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
@@ -93,10 +93,10 @@ public final class AccordiCooperazioneAllegatiView extends Action {
 			acHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.valueOf(idAccordoInt));
+			AccordoCooperazione ac = acCore.getAccordoCooperazione(idAccordoLong);
 			String titleAS = acHelper.getLabelIdAccordoCooperazione(ac);
 
-			Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
+			Documento doc = archiviCore.getDocumento(idAllegatoLong,true);
 
 			StringBuilder contenutoAllegato = new StringBuilder();
 			String errore = Utilities.getTestoVisualizzabile(doc.getByteContenuto(),contenutoAllegato);

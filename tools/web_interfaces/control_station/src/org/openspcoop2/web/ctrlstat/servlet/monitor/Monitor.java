@@ -2293,7 +2293,7 @@ public final class Monitor extends Action {
 			pd.setPageSize(limit);
 			pd.setSearch("off");
 
-			int totMsg = Long.valueOf(countMessaggi).intValue();
+			int totMsg = (int) countMessaggi;
 
 			pd.setNumEntries(totMsg);
 

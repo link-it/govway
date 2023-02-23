@@ -581,7 +581,9 @@ public final class AuthorizationFilter implements Filter {
 	}
 	
 	private boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
-		boolean sessionInValid = (httpServletRequest.getRequestedSessionId() != null)
+		boolean sessionInValid = 
+				//(httpServletRequest.getRequestedSessionId() != null)
+				(httpServletRequest.getSession(false)!=null)
 				&& !httpServletRequest.isRequestedSessionIdValid();
 		return sessionInValid;
 	}

@@ -123,6 +123,10 @@ public final class PorteApplicativeConnettoriMultipliProprietaDel extends Action
 					oldPaSA = paSATmp;					
 				}
 			}
+
+			if(oldPaSA==null) {
+				throw new Exception("Connettore '"+nomeSAConnettore+"' non trovato");
+			}
 			
 			idPaSa = oldPaSA.getId();
 

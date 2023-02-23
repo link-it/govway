@@ -262,7 +262,8 @@ public class ErogazioniDetailsUtilities {
 		sb.append("=== Informazioni Generali ===");
 		
 		// Nome
-		String labelServizio = gestioneFruitori ? consoleHelper.getLabelIdServizioSenzaErogatore(idServizio) :  consoleHelper.getLabelIdServizioSenzaErogatore(idServizio);
+		//String labelServizio = gestioneFruitori ? consoleHelper.getLabelIdServizioSenzaErogatore(idServizio) :  consoleHelper.getLabelIdServizioSenzaErogatore(idServizio);
+		String labelServizio = consoleHelper.getLabelIdServizioSenzaErogatore(idServizio);
 		String labelServizioConPortType = labelServizio;
 		if(asps.getPortType()!=null && !"".equals(asps.getPortType()) && !asps.getNome().equals(asps.getPortType())) {
 			labelServizioConPortType = labelServizioConPortType +" ("+asps.getPortType()+")";
@@ -407,7 +408,7 @@ public class ErogazioniDetailsUtilities {
 					String canaleAPINome = as.getCanale();
 					if(canaleAPINome == null) { // default sistema
 						List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
-						CanaleConfigurazione canaleConfigurazioneDefault = canaleList.stream().filter((c) -> c.isCanaleDefault()).findFirst().get();
+						CanaleConfigurazione canaleConfigurazioneDefault = consoleHelper.getCanaleDefault(canaleList);
 						canaleNome =  canaleConfigurazioneDefault.getNome();
 					}
 					else { // default API

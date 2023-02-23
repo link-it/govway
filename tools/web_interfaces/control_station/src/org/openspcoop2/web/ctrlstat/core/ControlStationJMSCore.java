@@ -58,56 +58,76 @@ public class ControlStationJMSCore {
 
 		QueueConnection qc = null;
 		QueueSession qs = null;
+		QueueSender sender = null;
+		try{
 
-		// try{
-
-		// Estraggo i dati dall'Operazione da smistare, che tanto mi servono
-		// per settare la StringProperty
-		long idTable = operazioneDaSmistare.getIDTable();
-		Operazione operazione = operazioneDaSmistare.getOperazione();
-		String pdd = operazioneDaSmistare.getPdd();
-		TipoOggettoDaSmistare oggettoDaSmistare = operazioneDaSmistare.getOggetto();
-
-		ControlStationCore.log.debug("[ControlStationCore::setDati] id[" + idTable + "] operazione[" + operazione.name() + 
-				"] pdd[" + pdd + "] oggetto[" + oggettoDaSmistare.name() + "]");
-
-		InitialContext ctx = new InitialContext(cfProp);
-		Queue queue = (Queue) ctx.lookup(smistatoreQueue);
-		QueueConnectionFactory qcf = (QueueConnectionFactory) ctx.lookup(cfName);
-		qc = qcf.createQueueConnection();
-		qs = qc.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-		QueueSender sender = qs.createSender(queue);
-		ctx.close();
-
-		// Create a message
-		ObjectMessage message = qs.createObjectMessage(operazioneDaSmistare);
-
-		// Preparo la StringProperty, che serve per il filtro
-		StringBuilder idOperazione = new StringBuilder();
-		idOperazione.append("[" + operazione.name() + "]");
-		idOperazione.append("[" + oggettoDaSmistare.name() + "]");
-
-		Map<OperationsParameter, List<String>> params = operazioneDaSmistare.getParameters();
-		if(params!=null && !params.isEmpty()) {
-			// aggiungo informazioni il filtro
-			for (OperationsParameter key : params.keySet()) {
-				List<String> values = params.get(key);
-				for (String value : values) {
-					idOperazione.append("[" + value + "]");
-				}
+			// Estraggo i dati dall'Operazione da smistare, che tanto mi servono
+			// per settare la StringProperty
+			long idTable = operazioneDaSmistare.getIDTable();
+			Operazione operazione = operazioneDaSmistare.getOperazione();
+			String pdd = operazioneDaSmistare.getPdd();
+			TipoOggettoDaSmistare oggettoDaSmistare = operazioneDaSmistare.getOggetto();
 	
+			ControlStationCore.log.debug("[ControlStationCore::setDati] id[" + idTable + "] operazione[" + operazione.name() + 
+					"] pdd[" + pdd + "] oggetto[" + oggettoDaSmistare.name() + "]");
+	
+			InitialContext ctx = new InitialContext(cfProp);
+			Queue queue = (Queue) ctx.lookup(smistatoreQueue);
+			QueueConnectionFactory qcf = (QueueConnectionFactory) ctx.lookup(cfName);
+			qc = qcf.createQueueConnection();
+			qs = qc.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+			sender = qs.createSender(queue);
+			ctx.close();
+	
+			// Create a message
+			ObjectMessage message = qs.createObjectMessage(operazioneDaSmistare);
+	
+			// Preparo la StringProperty, che serve per il filtro
+			StringBuilder idOperazione = new StringBuilder();
+			idOperazione.append("[" + operazione.name() + "]");
+			idOperazione.append("[" + oggettoDaSmistare.name() + "]");
+	
+			Map<OperationsParameter, List<String>> params = operazioneDaSmistare.getParameters();
+			if(params!=null && !params.isEmpty()) {
+				// aggiungo informazioni il filtro
+				for (OperationsParameter key : params.keySet()) {
+					List<String> values = params.get(key);
+					for (String value : values) {
+						idOperazione.append("[" + value + "]");
+					}
+		
+				}
+			}
+	
+			ControlStationCore.log.debug("[ControlStationCore::setDati] id=[" + idOperazione.toString() + "]");
+			message.setStringProperty("ID", idOperazione.toString());
+	
+			// send a message
+			sender.send(message);
+
+		}finally {
+			try {
+				if(sender!=null) {
+					sender.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+			try {
+				if(qs!=null) {
+					qs.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+			try {
+				if(qc!=null) {
+					qc.close();
+				}
+			}catch(Throwable t) {
+				// ignore
 			}
 		}
-
-		ControlStationCore.log.debug("[ControlStationCore::setDati] id=[" + idOperazione.toString() + "]");
-		message.setStringProperty("ID", idOperazione.toString());
-
-		// send a message
-		sender.send(message);
-
-		// fix: 19/01
-		qs.close();
-		qc.close();
 
 	}
 	

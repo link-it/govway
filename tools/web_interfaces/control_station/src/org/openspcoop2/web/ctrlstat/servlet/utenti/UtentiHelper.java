@@ -915,7 +915,7 @@ public class UtentiHelper extends ConsoleHelper {
 				// se l'utente e' stato configurato con controllo scadenza password visualizzo il messaggio di stato attuale della password
 				if(oldScadenza) {
 					if(passwordExpire) {
-						de.setNote(UtentiCostanti.LABEL_UTENTI_SCADENZA_PASSWORD_SCADUTA);
+						de.setNote(UtentiCostanti.LABEL_UTENTI_SCADENZA_PW_SCADUTA);
 						de.setValoreBoldRed();
 					} else {
 						long giorni = 0;
@@ -942,7 +942,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setLabel(UtentiCostanti.LABEL_MODIFICA);
 			de.setType(DataElementType.CHECKBOX);
 			//			de.setOnClick("cambiaPassword(\"suChange\");");
-			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PW);
 			de.setPostBack(true);
 			de.setSelected(changepwd);
 			de.setSize(this.getSize());
@@ -951,7 +951,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if( (TipoOperazione.ADD.equals(tipoOperazione)) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD);
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PW);
 			if(loginApplication) {
 				de.setValue(pwsu);
 				de.setType(DataElementType.CRYPT);
@@ -967,9 +967,9 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setRequired(true);
 			} else {
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(UtentiCostanti.VALORE_PARAMETRO_PASSWORD_MODALITA_NO_LOGIN_APPLICATION);
+				de.setValue(UtentiCostanti.VALORE_PARAMETRO_PW_MODALITA_NO_LOGIN_APPLICATION);
 			}
-			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PW);
 			de.setSize(this.getSize());
 			dati.addElement(de);
 		}
@@ -998,24 +998,24 @@ public class UtentiHelper extends ConsoleHelper {
 		if(ServletUtils.isCheckBoxEnabled(changepwd)){
 
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD);
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PW);
 			de.setValue(pwsu);
 			de.setType(DataElementType.HIDDEN);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PW);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PW);
 			de.setValue(confpwsu);
 			de.setType(DataElementType.HIDDEN);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PW);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CHANGE_PASSWORD);
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CHANGE_PW);
 			de.setValue(changepwd);
 			de.setType(DataElementType.HIDDEN);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PW);
 			dati.addElement(de);
 		}
 
@@ -1420,7 +1420,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setLabel(UtentiCostanti.LABEL_MODIFICA);
 			de.setType(DataElementType.CHECKBOX);
 			//		de.setOnClick("cambiaPassword(\"changePwd\");");
-			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PW);
 			de.setPostBack(true);
 			de.setSelected(changepw);
 			de.setSize(this.getSize());
@@ -1435,9 +1435,9 @@ public class UtentiHelper extends ConsoleHelper {
 	//			if(ServletUtils.getUserFromSession(this.session).getPermessi().isUtenti()==false){
 				
 				de = new DataElement();
-				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PW);
 				de.setType(DataElementType.CRYPT);
-				de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PW);
 				de.setValue("");
 				de.setSize(this.getSize());
 				de.setRequired(true);
@@ -1446,18 +1446,18 @@ public class UtentiHelper extends ConsoleHelper {
 	//			}
 	
 				de = new DataElement();
-				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD);
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PW);
 				de.setType(DataElementType.CRYPT);
-				de.setName(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PW);
 				de.setSize(this.getSize());
 				de.setValue("");
 				de.setRequired(true);
 				dati.addElement(de);
 	
 				de = new DataElement();
-				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PW);
 				de.setType(DataElementType.CRYPT);
-				de.setName(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PW);
 				de.setSize(this.getSize());
 				de.setValue("");
 				de.setRequired(true);
@@ -1479,7 +1479,7 @@ public class UtentiHelper extends ConsoleHelper {
 	public boolean utentiCheckData(TipoOperazione tipoOperazione,boolean singlePdD,List<String> oldProtocolliSupportati, boolean oldUserHasOnlyPermessiUtenti) throws Exception {
 		try {
 			String nomesu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
-			String pwsu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
+			String pwsu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PW);
 			// String confpwsu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
 			String tipoGui = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 			String isServizi = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
@@ -1490,7 +1490,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String isUtenti = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
 			String isAccordiCooperazione = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
 			String isAuditing = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
-			String changepwd = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
+			String changepwd = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PW);
 
 			List<String> protocolliRegistratiConsole = this.utentiCore.getProtocolli();
 			
@@ -1525,9 +1525,9 @@ public class UtentiHelper extends ConsoleHelper {
 				if(checkPassword){
 					if (pwsu==null || pwsu.equals("")) {
 						if (tmpElenco.equals("")) {
-							tmpElenco = UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD;
+							tmpElenco = UtentiCostanti.LABEL_PARAMETRO_UTENTI_PW;
 						} else {
-							tmpElenco = tmpElenco + ", "+UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD;
+							tmpElenco = tmpElenco + ", "+UtentiCostanti.LABEL_PARAMETRO_UTENTI_PW;
 						}
 					}
 //					if (confpwsu.equals("")) {
@@ -1893,10 +1893,10 @@ public class UtentiHelper extends ConsoleHelper {
 
 		try{
 
-			String oldpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
-			String newpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
-			String confpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
-			String changepwd = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_PASSWORD);
+			String oldpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PW);
+			String newpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PW);
+			String confpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PW);
+			String changepwd = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_PW);
 
 			if (!ServletUtils.isCheckBoxEnabled(changepwd)) {
 				// non si vuole cambiare le pwd
@@ -2067,8 +2067,8 @@ public class UtentiHelper extends ConsoleHelper {
 					if(this.core.isCheckPasswordExpire(passwordVerifier)) {
 						if(mySU.isCheckLastUpdatePassword()) {
 							if(passwordVerifier.isPasswordExpire(mySU.getLastUpdatePassword())) {
-								de.setToolTip(UtentiCostanti.LABEL_UTENTI_SCADENZA_PASSWORD_SCADUTA);
-								de.setValue(UtentiCostanti.LABEL_UTENTI_SCADENZA_PASSWORD_SCADUTA);
+								de.setToolTip(UtentiCostanti.LABEL_UTENTI_SCADENZA_PW_SCADUTA);
+								de.setValue(UtentiCostanti.LABEL_UTENTI_SCADENZA_PW_SCADUTA);
 								de.setSelected(CheckboxStatusType.DISABILITATO);
 							}
 						}
@@ -2609,27 +2609,27 @@ public class UtentiHelper extends ConsoleHelper {
 		PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PW);
 		de.setType(DataElementType.CRYPT);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PW);
 		de.setValue("");
 		de.setSize(this.getSize());
 		de.setRequired(true);
 		dati.addElement(de);
 			
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD);
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PW);
 		de.setType(DataElementType.CRYPT);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PW);
 		de.setSize(this.getSize());
 		de.setValue("");
 		de.setRequired(true);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PW);
 		de.setType(DataElementType.CRYPT);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PW);
 		de.setSize(this.getSize());
 		de.setValue("");
 		de.setRequired(true);
@@ -2649,9 +2649,9 @@ public class UtentiHelper extends ConsoleHelper {
 
 		try{
 
-			String oldpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
-			String newpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
-			String confpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+			String oldpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PW);
+			String newpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PW);
+			String confpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PW);
 
 			// String cpwd = this.procToCall.cryptPw(oldpw);
 			String userToUpdate = ServletUtils.getObjectFromSession(this.request, this.session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);

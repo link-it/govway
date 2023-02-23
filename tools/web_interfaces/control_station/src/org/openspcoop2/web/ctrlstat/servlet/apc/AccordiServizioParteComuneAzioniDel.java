@@ -87,7 +87,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idAccordo = Integer.parseInt(id);
+			long idAccordoLong = Long.valueOf(id);
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
@@ -101,7 +101,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idAccordo));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			//String nomeacc = as.getNome();
 			int totAz = as.sizeAzioneList();
 			String nomeaz = "";
@@ -121,7 +121,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 
 				
 				// Controllo che l'azione non sia stata correlata da un'altra azione
-				if (apcCore.isAzioneCorrelata(Long.valueOf(as.getId()).intValue(), nomeaz, nomeaz)) {
+				if (apcCore.isAzioneCorrelata(as.getId(), nomeaz, nomeaz)) {
 					// non rimuovo in quanto correlata
 					ArrayList<String> tmp = new ArrayList<String>();
 					// cerco le azioni che contengono quella che
@@ -257,7 +257,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 			// implementano l'accordo a cui e' stata aggiunta l'azione
 			// basta fare un update del servizio per attivare le operazioni
 			// necessarie all'aggiornamento
-			List<AccordoServizioParteSpecifica> listaServizi = apsCore.serviziWithIdAccordoList(idAccordo);
+			List<AccordoServizioParteSpecifica> listaServizi = apsCore.serviziWithIdAccordoList(idAccordoLong);
 			for (AccordoServizioParteSpecifica servizio : listaServizi) {
 				apcCore.performUpdateOperation(userLogin, apcHelper.smista(), servizio);
 			}
@@ -269,7 +269,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 			int idLista = Liste.ACCORDI_AZIONI;
 
 			ricerca = apcHelper.checkSearchParameters(idLista, ricerca);
-			List<Azione> lista = apcCore.accordiAzioniList(idAccordo, ricerca);
+			List<Azione> lista = apcCore.accordiAzioniList(idAccordoLong, ricerca);
 			apcHelper.prepareAccordiAzioniList(as, lista, ricerca, id, tipoAccordo);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

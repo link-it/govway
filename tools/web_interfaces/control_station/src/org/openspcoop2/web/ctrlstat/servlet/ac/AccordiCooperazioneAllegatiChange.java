@@ -94,8 +94,8 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 			String idAllegato = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO);
 			String idAccordo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO);
 			String nomeDocumento = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO);
-			int idAllegatoInt = Integer.parseInt(idAllegato);
-			int idAccordoInt = Integer.parseInt(idAccordo);
+			long idAllegatoLong = Long.valueOf(idAllegato);
+			long idAccordoLong = Long.valueOf(idAccordo);
 			String tipoFile = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_FILE);
 			
 			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
@@ -111,11 +111,11 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 			acHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.valueOf(idAccordoInt));
+			AccordoCooperazione ac = acCore.getAccordoCooperazione(idAccordoLong);
 			String titleAS = acHelper.getLabelIdAccordoCooperazione(ac);
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(ac.getSoggettoReferente().getTipo());
 			
-			Documento doc = archiviCore.getDocumento(idAllegatoInt,false);
+			Documento doc = archiviCore.getDocumento(idAllegatoLong,false);
 			
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati

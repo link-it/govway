@@ -85,6 +85,10 @@ public final class ConfigurazioneDiagnosticaDatasourcePropertiesList extends Act
 				}
 			}
 
+			if(od==null) {
+				throw new Exception("Datasource non trovato");
+			}
+			
 			// Preparo il menu
 			confHelper.makeMenu();
 

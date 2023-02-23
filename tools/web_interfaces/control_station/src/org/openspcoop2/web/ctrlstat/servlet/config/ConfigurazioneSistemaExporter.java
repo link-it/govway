@@ -76,7 +76,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void processRequest(HttpServletRequest request, HttpServletResponse response) {
 
 		HttpSession session = request.getSession(true);
 
@@ -97,11 +97,6 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			}
 			ControlStationCore.logDebug("-----------------");
 			
-		}catch(Exception e){
-			throw new ServletException(e.getMessage(),e);
-		}
-	
-		try {
 			
 			String alias = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 			
@@ -117,7 +112,6 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		} catch (Exception e) {
 			ControlStationCore.logError("Errore durante l'export della configurazione di sistema: "+e.getMessage(), e);
-			throw new ServletException(e);
 		} 
 	}
 

@@ -82,6 +82,10 @@ public final class ConfigurazioneTracciamentoAppenderPropertiesList extends Acti
 				}
 			}
 
+			if(oa==null) {
+				throw new Exception("Appender non trovato");
+			}
+			
 			// Preparo il menu
 			confHelper.makeMenu();
 

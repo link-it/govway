@@ -63,7 +63,7 @@ public class ResocontoExporter extends HttpServlet {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void processRequest(HttpServletRequest request, HttpServletResponse response) {
 
 
 		ControlStationCore.logDebug("Ricevuta Richiesta di esportazione resoconto...");
@@ -89,7 +89,6 @@ public class ResocontoExporter extends HttpServlet {
 		
 		} catch (Exception e) {
 			ControlStationCore.logError("Errore durante il download del resoconto: "+e.getMessage(), e);
-			throw new ServletException(e);
 		} 
 	}
 

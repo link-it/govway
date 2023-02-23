@@ -76,7 +76,7 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			String nomeRisorsa = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
-			int idInt = Integer.parseInt(id);
+			long idAccordoLong = Long.valueOf(id);
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
@@ -86,7 +86,7 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 			apcHelper.makeMenu();
 
 			ArrayList<String> resourcesToRemove = Utilities.parseIdsToRemove(objToRemove);
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			Resource risorsa =  null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {
 				risorsa = as.getResource(j);
@@ -125,7 +125,7 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 			
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei port-type
-			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			as = apcCore.getAccordoServizioFull(idAccordoLong);
 			
 			risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {
@@ -134,12 +134,16 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 					break;
 				}
 			}
+			
+			if(risorsa==null) {
+				throw new Exception("Risorsa con nome '"+nomeRisorsa+"' non trovata nell'accordo con id '"+idAccordoLong+"'");
+			}
 
 			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(risorsa.getId(), ricerca);
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei port-type
-			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			as = apcCore.getAccordoServizioFull(idAccordoLong);
 
 			apcHelper.prepareAccordiResourcesResponseList(ricerca, lista, id, as, tipoAccordo, risorsa);
 

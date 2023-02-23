@@ -1888,7 +1888,9 @@ public class ConsoleProperties {
 							}
 							config.setBuiltIn(builtIdList);
 						}finally {
-							fTmp.delete();
+							if(!fTmp.delete()) {
+								// ignore
+							}
 						}
 					}
 				}finally {

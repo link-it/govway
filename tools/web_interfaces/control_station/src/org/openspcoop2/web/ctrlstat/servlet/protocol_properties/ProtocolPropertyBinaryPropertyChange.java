@@ -33,19 +33,13 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.BinaryProperty;
-import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
-import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
-import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
-import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -67,21 +61,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @version $Rev$, $Date$
  */
 public class ProtocolPropertyBinaryPropertyChange extends Action {
-
-	private String id, nome, idProprietario,  nomeProprietario, nomeParentProprietario, urlChange, editMode, protocollo, tipoAccordo;
-
-//	private byte[] byteDocumento;
-	private ProprietariProtocolProperty tipoProprietario = null;
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null;
-	private IConfigIntegrationReader configRegistryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
-	
-	private BinaryParameter contenutoDocumento= null;
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -105,8 +84,10 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 		List<ProtocolProperty> oldProtocolPropertyListRegistry = null;
 		List<org.openspcoop2.core.config.ProtocolProperty> oldProtocolPropertyListConfig = null;
 
+		ProtocolPropertiesStrutsBean strutsBean = new ProtocolPropertiesStrutsBean();
+		
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
-		this.consoleOperationType = ConsoleOperationType.CHANGE;
+		strutsBean.consoleOperationType = ConsoleOperationType.CHANGE;
 		
 		BinaryParameter oldContenutoDocumento = null; 
 		String tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PROTOCOL_PROPERTY_BINARY;
@@ -114,53 +95,49 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 		try{
 			ProtocolPropertiesHelper ppHelper = new ProtocolPropertiesHelper(request, pd, session);
 			
-			this.id = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID);
-			this.idProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO);
+			strutsBean.id = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID);
+			strutsBean.idProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO);
 			String tipoProprietarioS = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO);
 			if(tipoProprietarioS!= null)
-				this.tipoProprietario = ProprietariProtocolProperty.valueOf(tipoProprietarioS);
-			boolean propertyRegistry = ppHelper.isProtocolPropertiesRegistry(this.tipoProprietario);
-			this.nome = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME);
-			this.nomeProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO);
-			this.nomeParentProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PARENT_PROPRIETARIO);
-			this.urlChange = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE);
-			this.editMode = ppHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
-			this.contenutoDocumento = ppHelper.getBinaryParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
-			this.protocollo = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO);
-			this.tipoAccordo = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO);
+				strutsBean.tipoProprietario = ProprietariProtocolProperty.valueOf(tipoProprietarioS);
+			boolean propertyRegistry = ppHelper.isProtocolPropertiesRegistry(strutsBean.tipoProprietario);
+			strutsBean.nome = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME);
+			strutsBean.nomeProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO);
+			strutsBean.nomeParentProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PARENT_PROPRIETARIO);
+			strutsBean.urlChange = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE);
+			strutsBean.editMode = ppHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			strutsBean.contenutoDocumento = ppHelper.getBinaryParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+			strutsBean.protocollo = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO);
+			strutsBean.tipoAccordo = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO);
 
 			ProtocolPropertiesCore ppCore = new ProtocolPropertiesCore();
 
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocollo);
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = ppCore.getRegistryReader(this.protocolFactory); 
-			this.configRegistryReader = ppCore.getConfigIntegrationReader(this.protocolFactory);
+			strutsBean.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(strutsBean.protocollo);
+			strutsBean.consoleDynamicConfiguration =  strutsBean.protocolFactory.createDynamicConfigurationConsole();
+			strutsBean.registryReader = ppCore.getRegistryReader(strutsBean.protocolFactory); 
+			strutsBean.configRegistryReader = ppCore.getConfigIntegrationReader(strutsBean.protocolFactory);
 
-			int idProtocolProperty = 0;
-			try {
-				idProtocolProperty = Integer.parseInt(this.id);
-			} catch (Exception e) {
-			}
+			long idProtocolPropertyLong = Long.valueOf(strutsBean.id);
 
 			// prelevo l'oggetto proprietario
-			Object oggettoProprietario = ppHelper.getOggettoProprietario(this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+			Object oggettoProprietario = ppHelper.getOggettoProprietario(strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);
 
 			// prelevo l'id oggetto proprietario
-			Object idOggettoProprietario = ppHelper.getIdOggettoProprietario(oggettoProprietario, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+			Object idOggettoProprietario = ppHelper.getIdOggettoProprietario(oggettoProprietario, strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);
 
-			this.consoleConfiguration = ppHelper.getConsoleDynamicConfiguration(idOggettoProprietario, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo,
-					this.consoleOperationType,  
-					this.registryReader, this.configRegistryReader, this.consoleDynamicConfiguration);
+			strutsBean.consoleConfiguration = ppHelper.getConsoleDynamicConfiguration(idOggettoProprietario, strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo,
+					strutsBean.consoleOperationType,  
+					strutsBean.registryReader, strutsBean.configRegistryReader, strutsBean.consoleDynamicConfiguration);
 
-			this.protocolProperties = ppHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType, this.nome, this.contenutoDocumento);
+			strutsBean.protocolProperties = ppHelper.estraiProtocolPropertiesDaRequest(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, strutsBean.nome, strutsBean.contenutoDocumento);
 
 			if(propertyRegistry) {
-				oldProtocolPropertyListRegistry = ppHelper.getProtocolPropertiesRegistry(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
-				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, oldProtocolPropertyListRegistry, this.consoleOperationType);
+				oldProtocolPropertyListRegistry = ppHelper.getProtocolPropertiesRegistry(oggettoProprietario, strutsBean.id, strutsBean.nome, strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);
+				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(strutsBean.protocolProperties, oldProtocolPropertyListRegistry, strutsBean.consoleOperationType);
 			}
 			else {
-				oldProtocolPropertyListConfig = ppHelper.getProtocolPropertiesConfig(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
-				ProtocolPropertiesUtils.mergeProtocolPropertiesConfig(this.protocolProperties, oldProtocolPropertyListConfig, this.consoleOperationType);
+				oldProtocolPropertyListConfig = ppHelper.getProtocolPropertiesConfig(oggettoProprietario, strutsBean.id, strutsBean.nome, strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);
+				ProtocolPropertiesUtils.mergeProtocolPropertiesConfig(strutsBean.protocolProperties, oldProtocolPropertyListConfig, strutsBean.consoleOperationType);
 			}
 
 			// vecchio valore della property sul DB 
@@ -168,7 +145,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			org.openspcoop2.core.config.ProtocolProperty protocolPropertyConfig = null; 
 
 			// binaryConsoleItem
-			AbstractConsoleItem<?> binaryConsoleItem = ProtocolPropertiesUtils.getAbstractConsoleItem(this.consoleConfiguration.getConsoleItem(), this.nome); 
+			AbstractConsoleItem<?> binaryConsoleItem = ProtocolPropertiesUtils.getAbstractConsoleItem(strutsBean.consoleConfiguration.getConsoleItem(), strutsBean.nome); 
 
 			label = binaryConsoleItem.getLabel();
 			
@@ -187,12 +164,12 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			ppHelper.makeMenu();
 
 			// se la property e' presente sul db allora la leggo
-			if(idProtocolProperty > 0){
+			if(idProtocolPropertyLong > 0){
 				if(propertyRegistry) {
-					protocolPropertyRegistry = ProtocolPropertiesUtils.getProtocolPropertyRegistry(this.nome, oldProtocolPropertyListRegistry);
+					protocolPropertyRegistry = ProtocolPropertiesUtils.getProtocolPropertyRegistry(strutsBean.nome, oldProtocolPropertyListRegistry);
 				}
 				else {
-					protocolPropertyConfig = ProtocolPropertiesUtils.getProtocolPropertyConfig(this.nome, oldProtocolPropertyListConfig);
+					protocolPropertyConfig = ProtocolPropertiesUtils.getProtocolPropertyConfig(strutsBean.nome, oldProtocolPropertyListConfig);
 				}
 			}
 
@@ -201,13 +178,13 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				// carico il vecchio contenuto della property
 				oldContenutoDocumento.setValue(protocolPropertyRegistry.getByteFile());
 				oldContenutoDocumento.setFilename(protocolPropertyRegistry.getFile());
-				oldContenutoDocumento.setName(this.nome); 
+				oldContenutoDocumento.setName(strutsBean.nome); 
 			}
 			else if(protocolPropertyConfig != null){
 				// carico il vecchio contenuto della property
 				oldContenutoDocumento.setValue(protocolPropertyConfig.getByteFile());
 				oldContenutoDocumento.setFilename(protocolPropertyConfig.getFile());
-				oldContenutoDocumento.setName(this.nome); 
+				oldContenutoDocumento.setName(strutsBean.nome); 
 			}
 
 			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
@@ -226,10 +203,10 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			}
 			
 			// Parametri Barra titolo TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO
-			List<Parameter> lstParam = ppHelper.getTitolo(oggettoProprietario, this.tipoProprietario,  this.id, this.nome, this.idProprietario, this.nomeProprietario,this.nomeParentProprietario,this.urlChange, this.tipoAccordo);
+			List<Parameter> lstParam = ppHelper.getTitolo(oggettoProprietario, strutsBean.tipoProprietario,  strutsBean.id, strutsBean.nome, strutsBean.idProprietario, strutsBean.nomeProprietario,strutsBean.nomeParentProprietario,strutsBean.urlChange, strutsBean.tipoAccordo);
 			lstParam.add(new Parameter(label,null));
 
-			if(ServletUtils.isEditModeInProgress(this.editMode)){
+			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){
 
 				// setto la barra del titolo	TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO			
 				ServletUtils.setPageDataTitle(pd,lstParam);
@@ -239,7 +216,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
+				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, strutsBean.protocollo, strutsBean.id, strutsBean.nome, strutsBean.idProprietario,strutsBean.tipoProprietario,strutsBean.tipoAccordo,strutsBean.nomeProprietario,strutsBean.nomeParentProprietario,strutsBean.urlChange, label,
 						oldContenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly, noteAggiornamento);
 
 				pd.setDati(dati);
@@ -251,19 +228,19 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			}
 
 			// update del valore della singola property
-			AbstractProperty<?> abstractPropertyById = ProtocolPropertiesUtils.getAbstractPropertyById(this.protocolProperties, binaryConsoleItem.getId());
+			AbstractProperty<?> abstractPropertyById = ProtocolPropertiesUtils.getAbstractPropertyById(strutsBean.protocolProperties, binaryConsoleItem.getId());
 			if(abstractPropertyById != null){
 				BinaryProperty bp = (BinaryProperty) abstractPropertyById;
-				bp.setValue(this.contenutoDocumento.getValue());
-				bp.setFileName(this.contenutoDocumento.getFilename());
-				bp.setFileId(this.contenutoDocumento.getId()); 
+				bp.setValue(strutsBean.contenutoDocumento.getValue());
+				bp.setFileName(strutsBean.contenutoDocumento.getFilename());
+				bp.setFileId(strutsBean.contenutoDocumento.getId()); 
 			}
 
 			// validazione del contenuto
 			boolean isOk = true;
 
 			try{
-				ppHelper.validaProtocolPropertyBinaria(this.nome,this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
+				ppHelper.validaProtocolPropertyBinaria(strutsBean.nome,strutsBean.consoleConfiguration, strutsBean.consoleOperationType, strutsBean.protocolProperties);
 			}catch(ProtocolException e){
 				ControlStationCore.getLog().error(e.getMessage(),e);
 				pd.setMessage(e.getMessage());
@@ -273,8 +250,8 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
 			if(isOk){
 				try{
-					ppHelper.validateDynamicConfig(this.consoleDynamicConfiguration, idOggettoProprietario, this.tipoAccordo, this.tipoProprietario, this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader);
+					ppHelper.validateDynamicConfig(strutsBean.consoleDynamicConfiguration, idOggettoProprietario, strutsBean.tipoAccordo, strutsBean.tipoProprietario, strutsBean.consoleConfiguration, strutsBean.consoleOperationType, strutsBean.protocolProperties, 
+							strutsBean.registryReader, strutsBean.configRegistryReader);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -295,16 +272,16 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				contenutoDocumentoStringBuilder = new StringBuilder();
 				errore = null;
 				if(showContent) {
-					errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuilder);
+					errore = Utilities.getTestoVisualizzabile(strutsBean.contenutoDocumento.getValue(),contenutoDocumentoStringBuilder);
 				}
 
-				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-						this.contenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly, noteAggiornamento);
+				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, strutsBean.protocollo, strutsBean.id, strutsBean.nome, strutsBean.idProprietario,strutsBean.tipoProprietario,strutsBean.tipoAccordo,strutsBean.nomeProprietario,strutsBean.nomeParentProprietario,strutsBean.urlChange, label,
+						strutsBean.contenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly, noteAggiornamento);
 				
 				pd.setDati(dati);
 				
 				//cancello il file temporaneo
-				ppHelper.deleteBinaryProtocolPropertyTmpFiles(this.protocolProperties, this.nome, ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+				ppHelper.deleteBinaryProtocolPropertyTmpFiles(strutsBean.protocolProperties, strutsBean.nome, ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
@@ -314,22 +291,22 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 
 			// salvataggio delle properties con hack in ADD per far settare il valore della property binary
 			if(propertyRegistry) {
-				List<ProtocolProperty> protocolPropertiesAggiornate = ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, ConsoleOperationType.ADD, oldProtocolPropertyListRegistry);
-				ppHelper.salvaPropertiesRegistry(userLogin, ppHelper.smista(), oggettoProprietario, protocolPropertiesAggiornate, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+				List<ProtocolProperty> protocolPropertiesAggiornate = ProtocolPropertiesUtils.toProtocolPropertiesRegistry(strutsBean.protocolProperties, ConsoleOperationType.ADD, oldProtocolPropertyListRegistry);
+				ppHelper.salvaPropertiesRegistry(userLogin, ppHelper.smista(), oggettoProprietario, protocolPropertiesAggiornate, strutsBean.id, strutsBean.nome, strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);
 			}
 			else {
-				List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertiesAggiornate = ProtocolPropertiesUtils.toProtocolPropertiesConfig(this.protocolProperties, ConsoleOperationType.ADD, oldProtocolPropertyListConfig);
-				ppHelper.salvaPropertiesConfig(userLogin, ppHelper.smista(), oggettoProprietario, protocolPropertiesAggiornate, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+				List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertiesAggiornate = ProtocolPropertiesUtils.toProtocolPropertiesConfig(strutsBean.protocolProperties, ConsoleOperationType.ADD, oldProtocolPropertyListConfig);
+				ppHelper.salvaPropertiesConfig(userLogin, ppHelper.smista(), oggettoProprietario, protocolPropertiesAggiornate, strutsBean.id, strutsBean.nome, strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);
 			}
 				
 			//cancello il file temporaneo
-			ppHelper.deleteBinaryProtocolPropertyTmpFiles(this.protocolProperties, this.nome, ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+			ppHelper.deleteBinaryProtocolPropertyTmpFiles(strutsBean.protocolProperties, strutsBean.nome, ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
 			
 			// mostro la visualizzazione del file
 			
 			// setto la barra del titolo	TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO	
 			// Aggiorno la barra perche' possono essere cambiati gli id delle breadcrumbs a seconda del proprietario
-			lstParam = ppHelper.getTitolo(oggettoProprietario, this.tipoProprietario,  this.id, this.nome, this.idProprietario, this.nomeProprietario,this.nomeParentProprietario,this.urlChange, this.tipoAccordo,true);
+			lstParam = ppHelper.getTitolo(oggettoProprietario, strutsBean.tipoProprietario,  strutsBean.id, strutsBean.nome, strutsBean.idProprietario, strutsBean.nomeProprietario,strutsBean.nomeParentProprietario,strutsBean.urlChange, strutsBean.tipoAccordo,true);
 			lstParam.add(new Parameter(label,null));
 			
 			ServletUtils.setPageDataTitle(pd, lstParam);
@@ -340,35 +317,35 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 			
 			// ricaricare il valore dell'id property
-			oggettoProprietario = ppHelper.getOggettoProprietario(this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+			oggettoProprietario = ppHelper.getOggettoProprietario(strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);
 			
 			if(propertyRegistry) {
-				oldProtocolPropertyListRegistry = ppHelper.getProtocolPropertiesRegistry(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
-				ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyRegistry(this.nome, oldProtocolPropertyListRegistry);
-				this.id = null;
+				oldProtocolPropertyListRegistry = ppHelper.getProtocolPropertiesRegistry(oggettoProprietario, strutsBean.id, strutsBean.nome, strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);
+				ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyRegistry(strutsBean.nome, oldProtocolPropertyListRegistry);
+				strutsBean.id = null;
 				if(protocolProperty != null)
-					this.id = ""+ protocolProperty.getId();
+					strutsBean.id = ""+ protocolProperty.getId();
 			}
 			else {
-				oldProtocolPropertyListConfig = ppHelper.getProtocolPropertiesConfig(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
-				org.openspcoop2.core.config.ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyConfig(this.nome, oldProtocolPropertyListConfig);
-				this.id = null;
+				oldProtocolPropertyListConfig = ppHelper.getProtocolPropertiesConfig(oggettoProprietario, strutsBean.id, strutsBean.nome, strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);
+				org.openspcoop2.core.config.ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyConfig(strutsBean.nome, oldProtocolPropertyListConfig);
+				strutsBean.id = null;
 				if(protocolProperty != null)
-					this.id = ""+ protocolProperty.getId();
+					strutsBean.id = ""+ protocolProperty.getId();
 			}
 			
 			contenutoDocumentoStringBuilder = new StringBuilder();
 			errore = null;
 			if(showContent) {
-				errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuilder);
+				errore = Utilities.getTestoVisualizzabile(strutsBean.contenutoDocumento.getValue(),contenutoDocumentoStringBuilder);
 			}
 
-			dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-					this.contenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly, noteAggiornamento);
+			dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, strutsBean.protocollo, strutsBean.id, strutsBean.nome, strutsBean.idProprietario,strutsBean.tipoProprietario,strutsBean.tipoAccordo,strutsBean.nomeProprietario,strutsBean.nomeParentProprietario,strutsBean.urlChange, label,
+					strutsBean.contenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly, noteAggiornamento);
 
 			pd.setDati(dati);
 			
-			// setto la baseurl per il redirect (alla servlet XXXChange) ,this.urlChange
+			// setto la baseurl per il redirect (alla servlet XXXChange) ,strutsBean.urlChange
 			// se viene premuto invio
 			gd = generalHelper.initGeneralData(request);
 

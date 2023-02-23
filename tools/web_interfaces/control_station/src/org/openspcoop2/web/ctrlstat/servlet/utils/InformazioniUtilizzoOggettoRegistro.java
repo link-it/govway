@@ -90,13 +90,19 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		IOUtils.copy(req.getInputStream(), baos);
+		try {
+			IOUtils.copy(req.getInputStream(), baos);
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la ricerca delle informazioni oggetto: "+e.getMessage(), e);
+			return;
+		}			
 
 		this.processRequest(req, resp);
 	}
 
-	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void processRequest(HttpServletRequest request, HttpServletResponse response) {
 		try(ByteArrayOutputStream baosPayload = new ByteArrayOutputStream();){
 			HttpRequestMethod httpRequestMethod = HttpRequestMethod.valueOf(request.getMethod().toUpperCase()); 
 
@@ -280,7 +286,6 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la ricerca delle informazioni oggetto: "+e.getMessage(), e);
-			throw new ServletException(e);
 		}
 	}
 }

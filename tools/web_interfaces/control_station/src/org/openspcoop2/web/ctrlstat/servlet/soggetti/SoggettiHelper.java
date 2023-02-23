@@ -1679,13 +1679,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_SENZA_PROFILO, dominioLabel));
 				}
 			} else {
-				if(showProtocolli) {
-					String labelProtocollo =this.getLabelProtocollo(protocollo); 
-					de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_SOLO_PROFILO, labelProtocollo));
-				} else {
-					de.setValue(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_VUOTI);
-					addMetadati = false;
-				}
+				//if(showProtocolli) {
+				String labelProtocollo =this.getLabelProtocollo(protocollo); 
+				de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_SOLO_PROFILO, labelProtocollo));
+				//} else {
+				//	de.setValue(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_VUOTI);
+				//	addMetadati = false;
+				//}
 			}
 			
 			de.setType(DataElementType.SUBTITLE);

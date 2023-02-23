@@ -140,9 +140,9 @@ public class UtentiCostanti {
 	
 	public final static String PARAMETRO_UTENTI_FIRST = "first";
 	public final static String PARAMETRO_UTENTI_USERNAME = "nomesu";
-	public final static String PARAMETRO_UTENTI_PASSWORD = "pwsu";
-	public final static String PARAMETRO_UTENTI_CONFERMA_PASSWORD = "confpwsu";
-	public final static String PARAMETRO_UTENTI_CHANGE_PASSWORD = "changepwd";
+	public final static String PARAMETRO_UTENTI_PW = "pwsu";
+	public final static String PARAMETRO_UTENTI_CONFERMA_PW = "confpwsu";
+	public final static String PARAMETRO_UTENTI_CHANGE_PW = "changepwd";
 	public final static String PARAMETRO_UTENTI_TIPO_GUI = "tipo_gui";
 	public final static String PARAMETRO_UTENTI_IS_SERVIZI = "isServizi";
 	public final static String PARAMETRO_UTENTI_IS_DIAGNOSTICA = "isDiagnostica";
@@ -161,11 +161,11 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTI_SCADENZA = "scadenza";
 	
 	public final static String PARAMETRO_UTENTE_LOGIN = "login";
-	public final static String PARAMETRO_UTENTE_PASSWORD = "password";
-	public final static String PARAMETRO_UTENTE_VECCHIA_PASSWORD = "oldpw";
-	public final static String PARAMETRO_UTENTE_NUOVA_PASSWORD = "newpw";
-	public final static String PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD = "confpw";
-	public final static String PARAMETRO_UTENTE_CHANGE_PASSWORD = "changepwd";
+	public final static String PARAMETRO_UTENTE_PW = "password";
+	public final static String PARAMETRO_UTENTE_VECCHIA_PW = "oldpw";
+	public final static String PARAMETRO_UTENTE_NUOVA_PW = "newpw";
+	public final static String PARAMETRO_UTENTE_CONFERMA_NUOVA_PW = "confpw";
+	public final static String PARAMETRO_UTENTE_CHANGE_PW = "changepwd";
 	public final static String PARAMETRO_UTENTE_TIPO_GUI = "tipo_gui";
 	public final static String PARAMETRO_UTENTE_CHANGE_GUI = "change_gui";
 	public final static String PARAMETRO_UTENTE_ESEGUI = "changePw";
@@ -208,9 +208,9 @@ public class UtentiCostanti {
 	/* LABEL PARAMETRI */
 	
 	public final static String LABEL_PARAMETRO_UTENTI_USERNAME = "Nome";
-	public final static String LABEL_PARAMETRO_UTENTI_PASSWORD = "Password";
-	public final static String LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD = "Conferma Password";
-	public final static String LABEL_PARAMETRO_UTENTI_CHANGE_PASSWORD = "Nuova Password";
+	public final static String LABEL_PARAMETRO_UTENTI_PW = "Password";
+	public final static String LABEL_PARAMETRO_UTENTI_CONFERMA_PW = "Conferma Password";
+	public final static String LABEL_PARAMETRO_UTENTI_CHANGE_PW = "Nuova Password";
 	public final static String LABEL_PARAMETRO_UTENTI_TIPO_GUI =  "Tipo";
 	public final static String LABEL_PARAMETRO_UTENTI_REGISTRO_SUBSECTION = "Registro";
 	public final static String LABEL_PARAMETRO_UTENTI_IS_SERVIZI = "Gestione API [S]";
@@ -227,7 +227,7 @@ public class UtentiCostanti {
 	public final static String LABEL_PARAMETRO_UTENTI_SCADENZA = "Scadenza";
 	public final static String LABEL_NOTA_UTENTI_SCADENZA_ADD = "La password scade dopo {0} giorni";
 	public final static String LABEL_NOTA_UTENTI_SCADENZA_CHANGE = "La password scade fra {0} giorni";
-	public final static String LABEL_UTENTI_SCADENZA_PASSWORD_SCADUTA = "Password scaduta";
+	public final static String LABEL_UTENTI_SCADENZA_PW_SCADUTA = "Password scaduta";
 	public final static String LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO = "Home Page";
 	public final static String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI = "Ricerca Transazioni";
 	public final static String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE = "Report Statistico";
@@ -238,9 +238,9 @@ public class UtentiCostanti {
 	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI = "Ultimi 30 giorni";
 	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO = "Ultimo anno";
 
-	public final static String LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD = "Vecchia";
-	public final static String LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD = "Conferma Nuova";
-	public final static String LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD = "Nuova";
+	public final static String LABEL_PARAMETRO_UTENTE_VECCHIA_PW = "Vecchia";
+	public final static String LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PW = "Conferma Nuova";
+	public final static String LABEL_PARAMETRO_UTENTE_NUOVA_PW = "Nuova";
 	
 	public final static String LABEL_PARAMETRO_UTENTI_SOGGETTO = "Soggetto";
 	public final static String LABEL_PARAMETRO_UTENTI_SOGGETTO_EROGATORE = "Soggetto Erogatore";
@@ -261,7 +261,7 @@ public class UtentiCostanti {
 	
 	/* VALORI PARAMETRI */
 	public final static String VALORE_PARAMETRO_MODALITA_ALL = "all";
-	public final static String VALORE_PARAMETRO_PASSWORD_MODALITA_NO_LOGIN_APPLICATION = "changeit";
+	public final static String VALORE_PARAMETRO_PW_MODALITA_NO_LOGIN_APPLICATION = "changeit";
 	
 	/* MESSAGGI ERRORE */
 	public final static String MESSAGGIO_ERRORE_NOME_SOGGETTO_OBBLIGATORIO = "Selezionare un soggetto";

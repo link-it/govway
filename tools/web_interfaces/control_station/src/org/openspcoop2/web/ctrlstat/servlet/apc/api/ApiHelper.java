@@ -249,7 +249,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			CanaliConfigurazione gestioneCanali = this.confCore.getCanaliConfigurazione(false);
 			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
-			CanaleConfigurazione canaleConfigurazioneDefault = gestioneCanaliEnabled ? canaleList.stream().filter((c) -> c.isCanaleDefault()).findFirst().get(): null;
+			CanaleConfigurazione canaleConfigurazioneDefault = getCanaleDefault(canaleList);
 
 			for (int i = 0; i < lista.size(); i++) {
 				Vector<DataElement> e = new Vector<DataElement>();
@@ -538,7 +538,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				this.apcCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi(alias),
 				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelASTitle),
 				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelASTitle),
-				as.getId().longValue());
+				as.getId());
 		
 		String resetElementoCacheS = this.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 		boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);

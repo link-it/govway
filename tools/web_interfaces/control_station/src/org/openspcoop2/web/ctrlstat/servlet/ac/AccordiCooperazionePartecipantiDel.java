@@ -58,9 +58,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  */
 public final class AccordiCooperazionePartecipantiDel extends Action {
 
-	
-	private String idAccordoCoop="";
-	
+		
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -82,7 +80,7 @@ public final class AccordiCooperazionePartecipantiDel extends Action {
 			String objToRemove = acHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			
-			this.idAccordoCoop = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
+			String idAccordoCoop = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 			
 			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
@@ -93,7 +91,7 @@ public final class AccordiCooperazionePartecipantiDel extends Action {
 			// Preparo il menu
 			acHelper.makeMenu();
 			
-			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(this.idAccordoCoop));
+			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(idAccordoCoop));
 			
 			for (String partecipante : idsToRemove) {
 				String tipo = partecipante.split("/")[0];

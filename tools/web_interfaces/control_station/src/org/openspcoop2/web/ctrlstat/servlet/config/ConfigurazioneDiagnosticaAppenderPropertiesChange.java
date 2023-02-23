@@ -226,6 +226,10 @@ public final class ConfigurazioneDiagnosticaAppenderPropertiesChange extends Act
 					break;
 				}
 			}
+
+			if(oa==null) {
+				throw new Exception("Appender non trovato");
+			}
 			
 			confHelper.prepareDiagnosticaAppenderPropList(oa, oa.getPropertyList());
 

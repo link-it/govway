@@ -272,7 +272,7 @@ public class ControlStationCore {
 		ControlStationCore.checkInitLogger();
 		ControlStationCore.log.error(msg);
 	}
-	public static void logError(String msg,Exception e){
+	public static void logError(String msg,Throwable e){
 		ControlStationCore.checkInitLogger();
 		ControlStationCore.log.error(msg,e);
 	}
@@ -698,67 +698,67 @@ public class ControlStationCore {
 		ControlStationCore.applicativiPasswordVerifierEngine_apiMode = applicativiPasswordVerifierEngine_apiMode;
 	}
 
-	private String applicativiPasswordConfiguration = null;
+	private String applicativiPwConfiguration = null;
 	public String getApplicativiPasswordConfiguration() {
-		return this.applicativiPasswordConfiguration;
+		return this.applicativiPwConfiguration;
 	}
-	private boolean applicativiBasicPasswordEnableConstraints = false;
+	private boolean applicativiBasicPwEnableConstraints = false;
 	public boolean isApplicativiBasicPasswordEnableConstraints() {
-		return this.applicativiBasicPasswordEnableConstraints;
+		return this.applicativiBasicPwEnableConstraints;
 	}
-	private PasswordVerifier applicativiPasswordVerifierEngine = null;
-	private CryptConfig applicativiPasswordEncryptEngine = null;
+	private PasswordVerifier applicativiPwVerifierEngine = null;
+	private CryptConfig applicativiPwEncryptEngine = null;
 	private synchronized void initApplicativiPassword() throws UtilsException {
-		if(this.applicativiBasicPasswordEnableConstraints && this.applicativiPasswordVerifierEngine==null){
-			this.applicativiPasswordVerifierEngine = new PasswordVerifier(this.applicativiPasswordConfiguration); 
+		if(this.applicativiBasicPwEnableConstraints && this.applicativiPwVerifierEngine==null){
+			this.applicativiPwVerifierEngine = new PasswordVerifier(this.applicativiPwConfiguration); 
 		}
-		if(this.applicativiPasswordEncryptEngine==null){
-			this.applicativiPasswordEncryptEngine = new CryptConfig(this.applicativiPasswordConfiguration); 
+		if(this.applicativiPwEncryptEngine==null){
+			this.applicativiPwEncryptEngine = new CryptConfig(this.applicativiPwConfiguration); 
 		}
 	}
 	public PasswordVerifier getApplicativiPasswordVerifier() {
-		if(this.applicativiBasicPasswordEnableConstraints && this.applicativiPasswordConfiguration!=null){
-			if(this.applicativiPasswordVerifierEngine==null){
+		if(this.applicativiBasicPwEnableConstraints && this.applicativiPwConfiguration!=null){
+			if(this.applicativiPwVerifierEngine==null){
 				try{
 					this.initApplicativiPassword();
 				}catch(Exception e){
 					log.error(e.getMessage(),e);
 				}
 			}
-			if(this.applicativiPasswordVerifierEngine!=null && this.applicativiPasswordVerifierEngine.existsRestriction()){
-				return this.applicativiPasswordVerifierEngine;
+			if(this.applicativiPwVerifierEngine!=null && this.applicativiPwVerifierEngine.existsRestriction()){
+				return this.applicativiPwVerifierEngine;
 			}
 		}
 		return null;
 	}
 	public CryptConfig getApplicativiPasswordEncrypt() {
-		if(this.applicativiPasswordConfiguration!=null){
-			if(this.applicativiPasswordEncryptEngine==null){
+		if(this.applicativiPwConfiguration!=null){
+			if(this.applicativiPwEncryptEngine==null){
 				try{
 					this.initApplicativiPassword();
 				}catch(Exception e){
 					log.error(e.getMessage(),e);
 				}
 			}
-			return this.applicativiPasswordEncryptEngine;
+			return this.applicativiPwEncryptEngine;
 		}
 		return null;
 	}
 	public boolean isApplicativiPasswordEncryptEnabled() {
 		return this.getApplicativiPasswordEncrypt()!=null && !CryptType.PLAIN.equals(this.getApplicativiPasswordEncrypt().getCryptType());
 	}
-	private int applicativiBasicLunghezzaPasswordGenerate;
+	private int applicativiBasicLunghezzaPwGenerate;
 	public int getApplicativiBasicLunghezzaPasswordGenerate() {
-		return this.applicativiBasicLunghezzaPasswordGenerate;
+		return this.applicativiBasicLunghezzaPwGenerate;
 	}
-	private int applicativiApiKeyLunghezzaPasswordGenerate;
+	private int applicativiApiKeyLunghezzaPwGenerate;
 	protected int getApplicativiApiKeyLunghezzaPasswordGenerate() {
-		return this.applicativiApiKeyLunghezzaPasswordGenerate;
+		return this.applicativiApiKeyLunghezzaPwGenerate;
 	}
 	
-	protected ICrypt applicativiPasswordManager;
+	protected ICrypt applicativiPwManager;
 	public ICrypt getApplicativiPasswordManager() {
-		return this.applicativiPasswordManager;
+		return this.applicativiPwManager;
 	}
 	
 	/** Soggetti */
@@ -786,67 +786,67 @@ public class ControlStationCore {
 		ControlStationCore.soggettiPasswordVerifierEngine_apiMode = soggettiPasswordVerifierEngine_apiMode;
 	}
 	
-	private String soggettiPasswordConfiguration = null;
+	private String soggettiPwConfiguration = null;
 	public String getSoggettiPasswordConfiguration() {
-		return this.soggettiPasswordConfiguration;
+		return this.soggettiPwConfiguration;
 	}
-	private boolean soggettiBasicPasswordEnableConstraints = false;
+	private boolean soggettiBasicPwEnableConstraints = false;
 	public boolean isSoggettiBasicPasswordEnableConstraints() {
-		return this.soggettiBasicPasswordEnableConstraints;
+		return this.soggettiBasicPwEnableConstraints;
 	}
-	private PasswordVerifier soggettiPasswordVerifierEngine = null;
-	private CryptConfig soggettiPasswordEncryptEngine = null;
+	private PasswordVerifier soggettiPwVerifierEngine = null;
+	private CryptConfig soggettiPwEncryptEngine = null;
 	private synchronized void initSoggettiPassword() throws UtilsException {
-		if(this.soggettiBasicPasswordEnableConstraints && this.soggettiPasswordVerifierEngine==null){
-			this.soggettiPasswordVerifierEngine = new PasswordVerifier(this.soggettiPasswordConfiguration); 
+		if(this.soggettiBasicPwEnableConstraints && this.soggettiPwVerifierEngine==null){
+			this.soggettiPwVerifierEngine = new PasswordVerifier(this.soggettiPwConfiguration); 
 		}
-		if(this.soggettiPasswordEncryptEngine==null){
-			this.soggettiPasswordEncryptEngine = new CryptConfig(this.soggettiPasswordConfiguration); 
+		if(this.soggettiPwEncryptEngine==null){
+			this.soggettiPwEncryptEngine = new CryptConfig(this.soggettiPwConfiguration); 
 		}
 	}
 	public PasswordVerifier getSoggettiPasswordVerifier() {
-		if(this.soggettiBasicPasswordEnableConstraints && this.soggettiPasswordConfiguration!=null){
-			if(this.soggettiPasswordVerifierEngine==null){
+		if(this.soggettiBasicPwEnableConstraints && this.soggettiPwConfiguration!=null){
+			if(this.soggettiPwVerifierEngine==null){
 				try{
 					this.initSoggettiPassword();
 				}catch(Exception e){
 					log.error(e.getMessage(),e);
 				}
 			}
-			if(this.soggettiPasswordVerifierEngine!=null && this.soggettiPasswordVerifierEngine.existsRestriction()){
-				return this.soggettiPasswordVerifierEngine;
+			if(this.soggettiPwVerifierEngine!=null && this.soggettiPwVerifierEngine.existsRestriction()){
+				return this.soggettiPwVerifierEngine;
 			}
 		}
 		return null;
 	}
 	public CryptConfig getSoggettiPasswordEncrypt() {
-		if(this.soggettiPasswordConfiguration!=null){
-			if(this.soggettiPasswordEncryptEngine==null){
+		if(this.soggettiPwConfiguration!=null){
+			if(this.soggettiPwEncryptEngine==null){
 				try{
 					this.initSoggettiPassword();
 				}catch(Exception e){
 					log.error(e.getMessage(),e);
 				}
 			}
-			return this.soggettiPasswordEncryptEngine;
+			return this.soggettiPwEncryptEngine;
 		}
 		return null;
 	}
 	public boolean isSoggettiPasswordEncryptEnabled() {
 		return this.getSoggettiPasswordEncrypt()!=null && !CryptType.PLAIN.equals(this.getSoggettiPasswordEncrypt().getCryptType());
 	}
-	private int soggettiBasicLunghezzaPasswordGenerate;
+	private int soggettiBasicLunghezzaPwGenerate;
 	public int getSoggettiBasicLunghezzaPasswordGenerate() {
-		return this.soggettiBasicLunghezzaPasswordGenerate;
+		return this.soggettiBasicLunghezzaPwGenerate;
 	}
-	private int soggettiApiKeyLunghezzaPasswordGenerate;
+	private int soggettiApiKeyLunghezzaPwGenerate;
 	protected int getSoggettiApiKeyLunghezzaPasswordGenerate() {
-		return this.soggettiApiKeyLunghezzaPasswordGenerate;
+		return this.soggettiApiKeyLunghezzaPwGenerate;
 	}
 	
-	protected ICrypt soggettiPasswordManager;
+	protected ICrypt soggettiPwManager;
 	public ICrypt getSoggettiPasswordManager() {
-		return this.soggettiPasswordManager;
+		return this.soggettiPwManager;
 	}
 	
 	/** MessageSecurity PropertiesSourceConfiguration */
@@ -2296,17 +2296,17 @@ public class ControlStationCore {
 				applicativiConfig = ControlStationCore.getApplicativiPasswordEncryptEngine_apiMode();
 				soggettiConfig = ControlStationCore.getSoggettiPasswordEncryptEngine_apiMode();
 				
-				this.applicativiPasswordConfiguration = "APIMode";
-				this.applicativiPasswordEncryptEngine = applicativiConfig;
-				this.applicativiApiKeyLunghezzaPasswordGenerate = ControlStationCore.getApplicativiApiKeyPasswordGeneratedLength_apiMode();
-				this.applicativiPasswordVerifierEngine = ControlStationCore.getApplicativiPasswordVerifierEngine_apiMode();
-				this.applicativiBasicPasswordEnableConstraints = (this.applicativiPasswordVerifierEngine!=null);
+				this.applicativiPwConfiguration = "APIMode";
+				this.applicativiPwEncryptEngine = applicativiConfig;
+				this.applicativiApiKeyLunghezzaPwGenerate = ControlStationCore.getApplicativiApiKeyPasswordGeneratedLength_apiMode();
+				this.applicativiPwVerifierEngine = ControlStationCore.getApplicativiPasswordVerifierEngine_apiMode();
+				this.applicativiBasicPwEnableConstraints = (this.applicativiPwVerifierEngine!=null);
 				
-				this.soggettiPasswordConfiguration = "APIMode";
-				this.soggettiPasswordEncryptEngine = soggettiConfig;
-				this.soggettiApiKeyLunghezzaPasswordGenerate = ControlStationCore.getSoggettiApiKeyPasswordGeneratedLength_apiMode();
-				this.soggettiPasswordVerifierEngine = ControlStationCore.getSoggettiPasswordVerifierEngine_apiMode();
-				this.soggettiBasicPasswordEnableConstraints = (this.soggettiPasswordVerifierEngine!=null);
+				this.soggettiPwConfiguration = "APIMode";
+				this.soggettiPwEncryptEngine = soggettiConfig;
+				this.soggettiApiKeyLunghezzaPwGenerate = ControlStationCore.getSoggettiApiKeyPasswordGeneratedLength_apiMode();
+				this.soggettiPwVerifierEngine = ControlStationCore.getSoggettiPasswordVerifierEngine_apiMode();
+				this.soggettiBasicPwEnableConstraints = (this.soggettiPwVerifierEngine!=null);
 			}
 			else {
 				utenzeConfig = this.getUtenzePasswordEncrypt();
@@ -2317,8 +2317,8 @@ public class ControlStationCore {
 			if(utenzeConfig.isBackwardCompatibility()) {
 				this.utenzePasswordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
 			}
-			this.applicativiPasswordManager = CryptFactory.getCrypt(log, applicativiConfig);
-			this.soggettiPasswordManager = CryptFactory.getCrypt(log, soggettiConfig);
+			this.applicativiPwManager = CryptFactory.getCrypt(log, applicativiConfig);
+			this.soggettiPwManager = CryptFactory.getCrypt(log, soggettiConfig);
 			
 			if(initForApi) {
 				this.singlePdD = true;
@@ -2429,22 +2429,22 @@ public class ControlStationCore {
 		this.logoutUrlDestinazione = core.logoutUrlDestinazione;
 		
 		/** Applicativi Console */
-		this.applicativiPasswordConfiguration = core.applicativiPasswordConfiguration;
-		this.applicativiBasicPasswordEnableConstraints = core.applicativiBasicPasswordEnableConstraints;
-		this.applicativiBasicLunghezzaPasswordGenerate = core.applicativiBasicLunghezzaPasswordGenerate;
-		this.applicativiApiKeyLunghezzaPasswordGenerate = core.applicativiApiKeyLunghezzaPasswordGenerate;
-		this.applicativiPasswordVerifierEngine = core.applicativiPasswordVerifierEngine;
-		this.applicativiPasswordEncryptEngine = core.applicativiPasswordEncryptEngine;
-		this.applicativiPasswordManager = core.applicativiPasswordManager;
+		this.applicativiPwConfiguration = core.applicativiPwConfiguration;
+		this.applicativiBasicPwEnableConstraints = core.applicativiBasicPwEnableConstraints;
+		this.applicativiBasicLunghezzaPwGenerate = core.applicativiBasicLunghezzaPwGenerate;
+		this.applicativiApiKeyLunghezzaPwGenerate = core.applicativiApiKeyLunghezzaPwGenerate;
+		this.applicativiPwVerifierEngine = core.applicativiPwVerifierEngine;
+		this.applicativiPwEncryptEngine = core.applicativiPwEncryptEngine;
+		this.applicativiPwManager = core.applicativiPwManager;
 		
 		/** Soggetti Console */
-		this.soggettiPasswordConfiguration = core.soggettiPasswordConfiguration;
-		this.soggettiBasicPasswordEnableConstraints = core.soggettiBasicPasswordEnableConstraints;
-		this.soggettiBasicLunghezzaPasswordGenerate = core.soggettiBasicLunghezzaPasswordGenerate;
-		this.soggettiApiKeyLunghezzaPasswordGenerate = core.soggettiApiKeyLunghezzaPasswordGenerate;
-		this.soggettiPasswordVerifierEngine = core.soggettiPasswordVerifierEngine;
-		this.soggettiPasswordEncryptEngine = core.soggettiPasswordEncryptEngine;
-		this.soggettiPasswordManager = core.soggettiPasswordManager;
+		this.soggettiPwConfiguration = core.soggettiPwConfiguration;
+		this.soggettiBasicPwEnableConstraints = core.soggettiBasicPwEnableConstraints;
+		this.soggettiBasicLunghezzaPwGenerate = core.soggettiBasicLunghezzaPwGenerate;
+		this.soggettiApiKeyLunghezzaPwGenerate = core.soggettiApiKeyLunghezzaPwGenerate;
+		this.soggettiPwVerifierEngine = core.soggettiPwVerifierEngine;
+		this.soggettiPwEncryptEngine = core.soggettiPwEncryptEngine;
+		this.soggettiPwManager = core.soggettiPwManager;
 		
 		/** MessageSecurity PropertiesSourceConfiguration */
 		this.messageSecurityPropertiesSourceConfiguration = core.messageSecurityPropertiesSourceConfiguration;
@@ -2910,14 +2910,14 @@ public class ControlStationCore {
 			this.utenzeLunghezzaPasswordGenerate = consoleProperties.getConsoleUtenzeLunghezzaPasswordGenerate();
 			this.utenzeModificaProfiloUtenteDaFormAggiornaSessione = consoleProperties.isConsoleUtenzeModificaProfiloUtenteDaFormAggiornaSessione();
 			this.utenzeModificaProfiloUtenteDaLinkAggiornaDB = consoleProperties.isConsoleUtenzeModificaProfiloUtenteDaLinkAggiornaDB();
-			this.applicativiPasswordConfiguration = consoleProperties.getConsoleApplicativiPassword();
-			this.applicativiBasicPasswordEnableConstraints = consoleProperties.isConsoleApplicativiBasicPasswordEnableConstraints();
-			this.applicativiBasicLunghezzaPasswordGenerate = consoleProperties.getConsoleApplicativiBasicLunghezzaPasswordGenerate();
-			this.applicativiApiKeyLunghezzaPasswordGenerate = consoleProperties.getConsoleApplicativiApiKeyLunghezzaPasswordGenerate();
-			this.soggettiPasswordConfiguration = consoleProperties.getConsoleSoggettiPassword();
-			this.soggettiBasicPasswordEnableConstraints = consoleProperties.isConsoleSoggettiBasicPasswordEnableConstraints();
-			this.soggettiBasicLunghezzaPasswordGenerate = consoleProperties.getConsoleSoggettiBasicLunghezzaPasswordGenerate();
-			this.soggettiApiKeyLunghezzaPasswordGenerate = consoleProperties.getConsoleSoggettiApiKeyLunghezzaPasswordGenerate();			
+			this.applicativiPwConfiguration = consoleProperties.getConsoleApplicativiPassword();
+			this.applicativiBasicPwEnableConstraints = consoleProperties.isConsoleApplicativiBasicPasswordEnableConstraints();
+			this.applicativiBasicLunghezzaPwGenerate = consoleProperties.getConsoleApplicativiBasicLunghezzaPasswordGenerate();
+			this.applicativiApiKeyLunghezzaPwGenerate = consoleProperties.getConsoleApplicativiApiKeyLunghezzaPasswordGenerate();
+			this.soggettiPwConfiguration = consoleProperties.getConsoleSoggettiPassword();
+			this.soggettiBasicPwEnableConstraints = consoleProperties.isConsoleSoggettiBasicPasswordEnableConstraints();
+			this.soggettiBasicLunghezzaPwGenerate = consoleProperties.getConsoleSoggettiBasicLunghezzaPasswordGenerate();
+			this.soggettiApiKeyLunghezzaPwGenerate = consoleProperties.getConsoleSoggettiApiKeyLunghezzaPasswordGenerate();			
 			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
 			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			this.isPolicyGestioneTokenVerificaCertificati = consoleProperties.isPolicyGestioneTokenVerificaCertificati();
@@ -3383,9 +3383,13 @@ public class ControlStationCore {
 					OpenspcoopSorgenteDati od = null;
 					for (int j = 0; j < t.sizeOpenspcoopSorgenteDatiList(); j++) {
 						od = lista.get(j);
-						if (nomeDs == od.getNome()) {
+						if (od!=null && nomeDs!=null && nomeDs.equals(od.getNome())) {
 							break;
 						}
+					}
+					
+					if(od==null) {
+						throw new Exception("Sorgente Dati non trovata");
 					}
 
 					//proprieta
@@ -3435,10 +3439,15 @@ public class ControlStationCore {
 					OpenspcoopSorgenteDati od = null;
 					for (int j = 0; j < md.sizeOpenspcoopSorgenteDatiList(); j++) {
 						od = lista.get(j);
-						if (nomeDs == od.getNome()) {
+						if (od!=null && nomeDs!=null && nomeDs.equals(od.getNome())) {
 							break;
 						}
 					}
+					
+					if(od==null) {
+						throw new Exception("Sorgente Dati non trovata");
+					}
+					
 					//proprieta
 					Properties prop = new Properties();
 
@@ -5421,9 +5430,10 @@ public class ControlStationCore {
 
 			try {
 				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
-				if(con!=null)con.rollback();
-
+				if(con!=null)
+					con.rollback();
 			} catch (Exception ex) {
+				// ignore
 			}
 
 			throw new ControlStationCoreException(e.getMessage(),e);
@@ -5431,8 +5441,10 @@ public class ControlStationCore {
 			// qui posso riabilitare l'auto commit
 			// e rilasciare la connessione
 			try {
-				con.setAutoCommit(true);
-				ControlStationCore.dbM.releaseConnection(con);
+				if(con!=null) {
+					con.setAutoCommit(true);
+					ControlStationCore.dbM.releaseConnection(con);
+				}
 			} catch (Exception e) {
 				// ignore
 			}
@@ -8053,11 +8065,11 @@ public class ControlStationCore {
 	}
 	
 	private void _cryptPassword(ServizioApplicativo sa) throws UtilsException {
-		if(this.isApplicativiPasswordEncryptEnabled() && this.applicativiPasswordManager!=null) {
+		if(this.isApplicativiPasswordEncryptEnabled() && this.applicativiPwManager!=null) {
 			if(sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().sizeCredenzialiList()>0) {
 				for (Credenziali credenziali : sa.getInvocazionePorta().getCredenzialiList()) {
 					if(StringUtils.isNotEmpty(credenziali.getPassword()) && !credenziali.isCertificateStrictVerification()) {
-						credenziali.setPassword(this.applicativiPasswordManager.crypt(credenziali.getPassword()));
+						credenziali.setPassword(this.applicativiPwManager.crypt(credenziali.getPassword()));
 						credenziali.setCertificateStrictVerification(true); // viene salvata a true per salvare l'informazione che è cifrata
 					}
 				}
@@ -8066,11 +8078,11 @@ public class ControlStationCore {
 	} 
 	
 	private void _cryptPassword(org.openspcoop2.core.registry.Soggetto soggetto) throws UtilsException {
-		if(this.isSoggettiPasswordEncryptEnabled() && this.soggettiPasswordManager!=null) {
+		if(this.isSoggettiPasswordEncryptEnabled() && this.soggettiPwManager!=null) {
 			if(soggetto.sizeCredenzialiList()>0) {
 				for (CredenzialiSoggetto credenziali : soggetto.getCredenzialiList()) {
 					if(StringUtils.isNotEmpty(credenziali.getPassword()) && !credenziali.isCertificateStrictVerification()) {
-						credenziali.setPassword(this.applicativiPasswordManager.crypt(credenziali.getPassword()));
+						credenziali.setPassword(this.applicativiPwManager.crypt(credenziali.getPassword()));
 						credenziali.setCertificateStrictVerification(true); // viene salvata a true per salvare l'informazione che è cifrata
 					}
 				}

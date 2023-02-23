@@ -75,9 +75,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComuneResourcesRepresentationChange extends Action {
 
-	private IProtocolFactory<?> protocolFactory= null;
-	private String editMode = null;
-
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -104,9 +101,9 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
-			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idInt = Integer.parseInt(id);
+			long idAccordoLong = Long.valueOf(id);
 			String nomeRisorsa = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 			if (nomeRisorsa == null) {
 				nomeRisorsa = "";
@@ -149,7 +146,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 
@@ -163,7 +160,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 			//calcolo del serviceBinding dall'accordo
 			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 
 			Resource risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {
@@ -171,6 +168,10 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 				if (nomeRisorsa.equals(risorsa.getNome())) {
 					break;
 				}
+			}
+			
+			if(risorsa==null) {
+				throw new Exception("Risorsa con nome '"+nomeRisorsa+"' non trovata nell'accordo con id '"+idAccordoLong+"'");
 			}
 			
 			Long idResponse = null;
@@ -246,7 +247,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if(ServletUtils.isEditModeInProgress(this.editMode)){
+			if(ServletUtils.isEditModeInProgress(editMode)){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd,listaParams); 
@@ -281,7 +282,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceRepresentationToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,protocollo, 
-						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, idRepInt, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
+						protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, idRepInt, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
 				pd.setDati(dati);
 
 				if( apcHelper.isModalitaStandard() || (apcHelper.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage()))){
@@ -308,7 +309,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceRepresentationToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,protocollo, 
-						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, idRepInt, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
+						protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, idRepInt, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
@@ -363,7 +364,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 			
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei nuovi port-type
-			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			as = apcCore.getAccordoServizioFull(idAccordoLong);
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -374,6 +375,10 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 				if (nomeRisorsa.equals(risorsa.getNome())) {
 					break;
 				}
+			}
+			
+			if(risorsa==null) {
+				throw new Exception("Risorsa con nome '"+nomeRisorsa+"' non trovata nell'accordo con id '"+idAccordoLong+"'");
 			}
 			
 			idResponse = null;

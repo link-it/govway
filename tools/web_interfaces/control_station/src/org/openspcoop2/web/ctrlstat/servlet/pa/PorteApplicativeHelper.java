@@ -601,6 +601,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			if (TipoOperazione.CHANGE.equals(tipoOp) && isSupportatoAutenticazione) {
 				
+				if(pa==null) {
+					throw new Exception("Porta applicativa non fornita");
+				}
+				
 				if(autenticazione!=null && autenticazione.equals(pa.getAutenticazione())==false &&
 						!TipoAutenticazione.DISABILITATO.equals(autenticazione) &&
 						!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione)){
@@ -8928,7 +8932,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				// filtro
 				if(StringUtils.isNotBlank(filtroConnettoreFiltro)) {
 					if(paSA.getDatiConnettore()==null || paSA.getDatiConnettore().sizeFiltroList()<=0) {
-						mapSA_filtrati.add(paSA.getNome());
+						if(mapSA_filtrati!=null) {
+							mapSA_filtrati.add(paSA.getNome());
+						}
 						continue;
 					}
 					boolean find = false;
@@ -8938,14 +8944,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						}
 					}
 					if(!find) {
-						mapSA_filtrati.add(paSA.getNome());
+						if(mapSA_filtrati!=null) {
+							mapSA_filtrati.add(paSA.getNome());
+						}
 						continue;
 					}
 				}
 				
 				if(joinConnettore) {
 				
-					if(mapSA_filtrati.contains(paSA.getNome())) {
+					if(mapSA_filtrati!=null && mapSA_filtrati.contains(paSA.getNome())) {
 						continue;
 					}
 					if(!mapSA_ok.contains(paSA.getNome())) {
@@ -8960,13 +8968,17 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						}
 						
 						if(connettore==null) {
-							mapSA_filtrati.add(paSA.getNome());
+							if(mapSA_filtrati!=null) {
+								mapSA_filtrati.add(paSA.getNome());
+							}
 							continue;
 						}
 						
 						if(endpointType!=null) {
 							if(connettore.getTipo()==null || !connettore.getTipo().equalsIgnoreCase(endpointType)) {
-								mapSA_filtrati.add(paSA.getNome());
+								if(mapSA_filtrati!=null) {
+									mapSA_filtrati.add(paSA.getNome());
+								}
 								continue;
 							}
 						}
@@ -8981,7 +8993,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 									}
 								}
 								if(!find) {
-									mapSA_filtrati.add(paSA.getNome());
+									if(mapSA_filtrati!=null) {
+										mapSA_filtrati.add(paSA.getNome());
+									}
 									continue;
 								}
 							}
@@ -8990,7 +9004,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						if(tipoConnettoreIntegrationManager) {
 							if(sa.getInvocazioneServizio()==null || sa.getInvocazioneServizio().getGetMessage()==null ||
 									!StatoFunzionalita.ABILITATO.equals(sa.getInvocazioneServizio().getGetMessage())) {
-								mapSA_filtrati.add(paSA.getNome());
+								if(mapSA_filtrati!=null) {
+									mapSA_filtrati.add(paSA.getNome());
+								}
 								continue;
 							}
 						}
@@ -8998,7 +9014,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						if(filtroConnettoreTokenPolicy!=null) {
 							String valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_TOKEN_POLICY);
 							if(!filtroConnettoreTokenPolicy.equalsIgnoreCase(valoreProperty)) {
-								mapSA_filtrati.add(paSA.getNome());
+								if(mapSA_filtrati!=null) {
+									mapSA_filtrati.add(paSA.getNome());
+								}
 								continue;
 							}
 						}
@@ -10782,17 +10800,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		
 		if(tipoOp.equals(TipoOperazione.ADD)) {
-			if(regoleEsistenti != null) {
-				if(regoleEsistenti.contains(nome)) {
-					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_REGOLA_XX, nome));	
-					return false;
-				}
+			if(regoleEsistenti != null && regoleEsistenti.contains(nome)) {
+				this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_REGOLA_XX, nome));	
+				return false;
 			}
 		}
 		
 		if(tipoOp.equals(TipoOperazione.CHANGE)) { 
 			if(!oldNome.equals(nome)) { // cambio nome alla regola nella change
-				if(regoleEsistenti.contains(nome)) {
+				if(regoleEsistenti != null && regoleEsistenti.contains(nome)) {
 					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_REGOLA_XX, nome));	
 					return false;
 				}

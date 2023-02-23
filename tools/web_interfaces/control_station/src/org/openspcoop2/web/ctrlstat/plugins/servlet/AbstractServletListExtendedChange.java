@@ -95,7 +95,9 @@ public abstract class AbstractServletListExtendedChange extends AbstractServletL
 				con = dbManager.getConnection();
 				extendedBean = extendedServlet.getExtendedBean(con, extendedServlet.getId(request));
 			}finally{
-				dbManager.releaseConnection(con);
+				if(dbManager!=null) {
+					dbManager.releaseConnection(con);
+				}
 			}
 			
 			extendedBean = extendedServlet.readHttpParameters(object, TipoOperazione.CHANGE, extendedBean, request);

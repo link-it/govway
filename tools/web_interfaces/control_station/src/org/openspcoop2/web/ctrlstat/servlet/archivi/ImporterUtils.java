@@ -362,7 +362,9 @@ public class ImporterUtils {
 			}
 			if(deleteFile){
 				try{
-					f.delete();
+					if(!f.delete()) {
+						// ignore
+					}
 				}catch(Exception e){
 					// ignore
 				}

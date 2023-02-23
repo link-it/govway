@@ -884,7 +884,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			CanaliConfigurazione gestioneCanali = this.confCore.getCanaliConfigurazione(false);
 			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
-			CanaleConfigurazione canaleConfigurazioneDefault = gestioneCanaliEnabled ? canaleList.stream().filter((c) -> c.isCanaleDefault()).findFirst().get(): null;
+			CanaleConfigurazione canaleConfigurazioneDefault = gestioneCanaliEnabled ? this.getCanaleDefault(canaleList) : null;
 
 			if(lista!=null) {
 				for (AccordoServizioParteSpecifica asps : lista) {
@@ -1034,7 +1034,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						}
 						
 						if(labelCanalePorta == null) { // default del sistema
-							labelCanalePorta =  canaleConfigurazioneDefault.getNome();
+							labelCanalePorta =  canaleConfigurazioneDefault!=null ? canaleConfigurazioneDefault.getNome() : null;
 						}
 						
 						if(showProtocolli) {
@@ -1730,7 +1730,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		
 		// Titolo Servizio
 		DataElement de = new DataElement();
-		String labelServizio = gestioneFruitori ? this.getLabelIdServizioSenzaErogatore(idServizio) :  this.getLabelIdServizioSenzaErogatore(idServizio);
+		//String labelServizio = gestioneFruitori ? this.getLabelIdServizioSenzaErogatore(idServizio) :  this.getLabelIdServizioSenzaErogatore(idServizio);
+		String labelServizio = this.getLabelIdServizioSenzaErogatore(idServizio);
 		String labelServizioConPortType = labelServizio;
 		if(asps.getPortType()!=null && !"".equals(asps.getPortType()) && !asps.getNome().equals(asps.getPortType())) {
 			labelServizioConPortType = labelServizioConPortType +" ("+asps.getPortType()+")";
@@ -2015,16 +2016,16 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			if(showVerificaCertificatiModi)	{
 				image = new DataElementImage();
-				if(gestioneFruitori) {
+				//if(gestioneFruitori) {
 					image.setUrl(
 							ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI,
 							listParametersServizioModificaProfilo.toArray(new Parameter[1]));
-				}
-				else {
-					image.setUrl(
-							ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI,
-							listParametersServizioModificaProfilo.toArray(new Parameter[1]));
-				}
+				//}
+				//else {
+				//	image.setUrl(
+				//			ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI,
+				//			listParametersServizioModificaProfilo.toArray(new Parameter[1]));
+				//}
 				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,
 						AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO));
 				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CERTIFICATI);
@@ -3960,13 +3961,25 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		if(aliases!=null && !aliases.isEmpty()) {
 			alias = aliases.get(0);
 		}
+		
+		long idOjectLong = -1;
+		if(gestioneFruitori) {
+			if(fruitore==null) {
+				throw new Exception("Fruitore non trovato");
+			}
+			idOjectLong = fruitore.getId();
+		}
+		else {
+			idOjectLong = asps.getId();
+		}
+		
 		this.apcCore.invokeJmxMethodAllNodesAndSetResult(this.pd, this.apcCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 				gestioneFruitori ?
 						this.apcCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione(alias) :
 						this.apcCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione(alias),
 				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelServizio),
 				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelServizio),
-				gestioneFruitori ? fruitore.getId().longValue() : asps.getId().longValue());
+				idOjectLong);
 		
 		String resetElementoCacheS = this.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 		boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);

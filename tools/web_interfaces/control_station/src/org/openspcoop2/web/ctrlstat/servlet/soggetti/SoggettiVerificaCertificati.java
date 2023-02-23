@@ -500,7 +500,7 @@ public class SoggettiVerificaCertificati extends Action {
 											tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
 											tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
 											tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
-											SimpleDateFormat sdf = new SimpleDateFormat(SoggettiChange.CERTIFICATE_FORMAT);
+											SimpleDateFormat sdf = new SimpleDateFormat(SoggettiChangeStrutsBean.CERTIFICATE_FORMAT);
 											tipoCredenzialiSSLAliasCertificatoNotBefore = sdf.format(cSelezionato.getCertificate().getNotBefore());
 											tipoCredenzialiSSLAliasCertificatoNotAfter = sdf.format(cSelezionato.getCertificate().getNotAfter());
 										}catch(UtilsException e) {

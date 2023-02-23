@@ -95,7 +95,7 @@ public final class UtentiChange extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(utentiCore);
 			
 			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
-			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
+			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PW);
 			String confpwsu = null; //utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
 			String tipoGui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 
@@ -110,7 +110,7 @@ public final class UtentiChange extends Action {
 
 			String singleSuServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
 			String singleSuAccordiCooperazione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
-			String changepwd = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
+			String changepwd = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PW);
 
 			String isSoggettiAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
 			String isServiziAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL);

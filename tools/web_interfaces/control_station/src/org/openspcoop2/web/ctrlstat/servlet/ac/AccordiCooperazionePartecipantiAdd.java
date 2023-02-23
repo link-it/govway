@@ -63,9 +63,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public final class AccordiCooperazionePartecipantiAdd extends Action {
 
 
-	private String idAccordoCoop="";
-	private String partecipante="" ;
-
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -85,8 +82,8 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
 
-			this.idAccordoCoop = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
-			this.partecipante = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE);
+			String idAccordoCoop = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
+			String partecipante = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE);
 
 			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
@@ -98,7 +95,7 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 			// Preparo il menu
 			acHelper.makeMenu();
 
-			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(this.idAccordoCoop));
+			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(idAccordoCoop));
 			String titleAS = acHelper.getLabelIdAccordoCooperazione(ac);
 			
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(ac.getSoggettoReferente().getTipo());
@@ -162,7 +159,7 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = acHelper.addPartecipanteToDati(TipoOperazione.ADD, this.idAccordoCoop,
+				dati = acHelper.addPartecipanteToDati(TipoOperazione.ADD, idAccordoCoop,
 						partecipantiNonInseriti.toArray(new String[partecipantiNonInseriti.size()]),
 						partecipantiNonInseritiLabels.toArray(new String[partecipantiNonInseritiLabels.size()]),
 						dati);
@@ -197,7 +194,7 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
  
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = acHelper.addPartecipanteToDati(TipoOperazione.ADD, this.idAccordoCoop,
+				dati = acHelper.addPartecipanteToDati(TipoOperazione.ADD, idAccordoCoop,
 						partecipantiNonInseriti.toArray(new String[partecipantiNonInseriti.size()]), 
 						partecipantiNonInseritiLabels.toArray(new String[partecipantiNonInseritiLabels.size()]),
 						dati);
@@ -210,9 +207,9 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 				
 			}
 
-			if(!"-".equals(this.partecipante)){
-				String tipo = this.partecipante.split("/")[0];
-				String nome = this.partecipante.split("/")[1];
+			if(!"-".equals(partecipante)){
+				String tipo = partecipante.split("/")[0];
+				String nome = partecipante.split("/")[1];
 
 				IdSoggetto asog = new IdSoggetto();
 				asog.setTipo(tipo);

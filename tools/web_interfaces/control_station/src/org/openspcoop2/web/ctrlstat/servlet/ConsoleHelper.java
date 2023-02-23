@@ -505,8 +505,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(tmpDirectory == null){
 			File file = File.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
 			tmpDirectory = FilenameUtils.getFullPath(file.getAbsolutePath());
-			if(file.exists())
-				file.delete();
+			if(file.exists()) {
+				if(!file.delete()) {
+					// ignore
+				}
+			}
 		}
 	}
 	
@@ -654,6 +657,10 @@ public class ConsoleHelper implements IConsoleHelper {
 				for(int i = 0 ; i < this.mimeMultipart.countBodyParts() ;  i ++) {
 					BodyPart bodyPart = this.mimeMultipart.getBodyPart(i);
 					String partName = getBodyPartName(bodyPart);
+					
+					if(partName==null) {
+						throw new Exception("Part name non trovato per body part alla posizione '"+i+"'");
+					}
 					
 					List<InputStream> list = null;
 					if(this.mapParametri.containsKey(partName)) {
@@ -1122,8 +1129,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			fileId = this.getParameter(ProtocolPropertiesCostanti.PARAMETER_FILEID_PREFIX+ parameterName);
 			if(StringUtils.isNotBlank(fileId) && StringUtils.isNotBlank(filename)){
 				file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX +  fileId + CostantiControlStation.TEMP_FILE_SUFFIX);
-				if(file.exists())
-					file.delete();
+				if(file.exists()) {
+					if(!file.delete()) {
+						// ignore
+					}
+				}
 			}
 
 			//salvataggio nuovo contenuto
@@ -1139,11 +1149,19 @@ public class ConsoleHelper implements IConsoleHelper {
 				IOUtils.copy(bais, fos);
 			}
 			finally {
-				if(bais!=null) {
-					bais.close();
+				try {
+					if(bais!=null) {
+						bais.close();
+					}
+				}catch(Exception e) {
+					// ignore
 				}
-				if(fos!=null) {
-					fos.close();
+				try {
+					if(fos!=null) {
+						fos.close();
+					}
+				}catch(Exception e) {
+					// ignore
 				}
 			}
 			
@@ -1169,11 +1187,19 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 					}
 					finally {
-						if(fis!=null) {
-							fis.close();
+						try {
+							if(fis!=null) {
+								fis.close();
+							}
+						}catch(Exception e) {
+							// ignore
 						}
-						if(baos!=null) {
-							baos.close();
+						try {
+							if(baos!=null) {
+								baos.close();
+							}
+						}catch(Exception e) {
+							// ignore
 						}
 					}
 				} else {
@@ -1252,8 +1278,11 @@ public class ConsoleHelper implements IConsoleHelper {
 				String[] ids = fileIds.split(",");
 				for (String id : ids) {
 					file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX +  id + CostantiControlStation.TEMP_FILE_SUFFIX);
-					if(file.exists())
-						file.delete();
+					if(file.exists()) {
+						if(!file.delete()) {
+							// ignore
+						}
+					}
 				}
 			}
 			
@@ -1273,8 +1302,20 @@ public class ConsoleHelper implements IConsoleHelper {
 					IOUtils.copy(bais, fos);
 				}
 				finally {
-					bais.close();
-					fos.close();
+					try {
+						if(bais!=null) {
+							bais.close();
+						}
+					}catch(Exception e) {
+						// ignore
+					}
+					try {
+						if(fos!=null) {
+							fos.close();
+						}
+					}catch(Exception e) {
+						// ignore
+					}
 				}
 				
 				BinaryParameter bp = newBinaryParameter(parameterName);
@@ -1311,8 +1352,20 @@ public class ConsoleHelper implements IConsoleHelper {
 							
 						}
 						finally {
-							fis.close();
-							baos.close();
+							try {
+								if(fis!=null) {
+									fis.close();
+								}
+							}catch(Exception e) {
+								// ignore
+							}
+							try {
+								if(baos!=null) {
+									baos.close();
+								}
+							}catch(Exception e) {
+								// ignore
+							}
 						}
 					} else {
 						bpContent = null;
@@ -1475,8 +1528,11 @@ public class ConsoleHelper implements IConsoleHelper {
 					String val = this.getParameter(bp);
 					file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX +  val + CostantiControlStation.TEMP_FILE_SUFFIX);
 					
-					if(file.exists())
-						file.delete();
+					if(file.exists()) {
+						if(!file.delete()) {
+							// ignore
+						}
+					}
 				}
 			}
 		}
@@ -1508,8 +1564,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(StringUtils.isNotBlank(bp.getId())){
 			file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX +  bp.getId() + CostantiControlStation.TEMP_FILE_SUFFIX);
 			
-			if(file.exists())
-				file.delete();
+			if(file.exists()) {
+				if(!file.delete()) {
+					// ignore
+				}
+			}
 		}
 		
 		bp.setValue(null);
@@ -2259,10 +2318,12 @@ public class ConsoleHelper implements IConsoleHelper {
 					int index = 0;
 					// link utenti sotto quello di configurazione  generale
 					if (pu.isUtenti()) {
-						for (int j = 0; j < entriesUtenti.length; j++) {
-							entries[index][0] = entriesUtenti[j][0];
-							entries[index][1] = entriesUtenti[j][1];
-							index++;		
+						if(entriesUtenti!=null) {
+							for (int j = 0; j < entriesUtenti.length; j++) {
+								entries[index][0] = entriesUtenti[j][0];
+								entries[index][1] = entriesUtenti[j][1];
+								index++;		
+							}
 						}
 					}
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
@@ -2352,10 +2413,12 @@ public class ConsoleHelper implements IConsoleHelper {
 						int index = 0;
 						// link utenti sotto quello di configurazione  generale
 						if (pu.isUtenti()) {
-							for (int j = 0; j < entriesUtenti.length; j++) {
-								entries[index][0] = entriesUtenti[j][0];
-								entries[index][1] = entriesUtenti[j][1];
-								index++;		
+							if(entriesUtenti!=null) {
+								for (int j = 0; j < entriesUtenti.length; j++) {
+									entries[index][0] = entriesUtenti[j][0];
+									entries[index][1] = entriesUtenti[j][1];
+									index++;		
+								}
 							}
 						}
 						if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
@@ -3429,6 +3492,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
+	private static boolean riusoIdCorrelazioneApplicativaPA = false; // riuso non abilitato nella porta applicativa
+	public static boolean isRiusoIdCorrelazioneApplicativaPA() {
+		return riusoIdCorrelazioneApplicativaPA;
+	}
+	public static void setRiusoIdCorrelazioneApplicativaPA(boolean riusoIdCorrelazioneApplicativaPA) {
+		ConsoleHelper.riusoIdCorrelazioneApplicativaPA = riusoIdCorrelazioneApplicativaPA;
+	}
+
 	// Dati schermata correlazione applicativa
 	public Vector<DataElement> addCorrelazioneApplicativaToDati(Vector<DataElement> dati,boolean portaDelegata,
 			boolean riusoID,String scadcorr, String urlRichiesta, String urlRisposta, Boolean contaListe, int numCorrelazioneReq, int numCorrelazioneRes) {
@@ -3456,8 +3527,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				dati.addElement(de);
 			}
 		} else {
-			boolean riuso = false; // riuso non abilitato nella porta applicativa
-			if (riuso && numCorrelazioneReq > 0 && this.isModalitaAvanzata()) {
+			if (riusoIdCorrelazioneApplicativaPA && numCorrelazioneReq > 0 && this.isModalitaAvanzata()) {
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL);
 				de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
@@ -7000,7 +7070,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							if(line!=null && line.startsWith("#")) {
 								continue;
 							}
-							if(line.contains("=")==false) {
+							if(line!=null && line.contains("=")==false) {
 								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_TOKEN);
 								return false;
 							}
@@ -9803,12 +9873,28 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setStatusToolTip(statusTooltip);
 	}
 
+	public CanaleConfigurazione getCanaleDefault(List<CanaleConfigurazione> canaleList) throws DriverConfigurazioneNotFound {
+		CanaleConfigurazione canaleConfigurazioneDefault = null;
+		if(canaleList!=null && !canaleList.isEmpty()) {
+			for (CanaleConfigurazione c : canaleList) {
+				if(c.isCanaleDefault()) {
+					canaleConfigurazioneDefault = c;
+					break;
+				}
+			}
+		}
+		if(canaleConfigurazioneDefault==null) {
+			throw new DriverConfigurazioneNotFound("Canale di default non trovato nella lista fornita '"+canaleList+"'");
+		}
+		return canaleConfigurazioneDefault;
+	}
+	
 	public void setStatoCanale(DataElement de, String canaleNome, List<CanaleConfigurazione> canaleList) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		de.setType(DataElementType.TEXT);
 		
 		String canaleTooltip;
 		if(canaleNome == null) { // default
-			CanaleConfigurazione canaleConfigurazioneDefault = canaleList.stream().filter((c) -> c.isCanaleDefault()).findFirst().get();
+			CanaleConfigurazione canaleConfigurazioneDefault = getCanaleDefault(canaleList);
 			canaleNome =  canaleConfigurazioneDefault.getNome();
 			canaleTooltip = CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE_DEFAULT;
 		} else {
@@ -9825,7 +9911,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		String canaleTooltip;
 		if(canaleNome == null) { // default
 			if(canaleAPINome == null) { // default sistema
-				CanaleConfigurazione canaleConfigurazioneDefault = canaleList.stream().filter((c) -> c.isCanaleDefault()).findFirst().get();
+				CanaleConfigurazione canaleConfigurazioneDefault = getCanaleDefault(canaleList);
 				canaleNome =  canaleConfigurazioneDefault.getNome();
 				canaleTooltip = CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE_DEFAULT;	
 			} else { // default API
@@ -10291,7 +10377,12 @@ public class ConsoleHelper implements IConsoleHelper {
 							if(bfToolTip.length()>0) {
 								bfToolTip.append("\n");
 							}
-							bfToolTip.append("La regola '"+trasformazioneRegola.getNome()+"' possiede una configurazione per la risposta ('"+trasformazioneRegolaRisposta.getNome()+"') senza alcuna trasformazione attiva");
+							if(trasformazioneRegolaRisposta!=null) {
+								bfToolTip.append("La regola '"+trasformazioneRegola.getNome()+"' possiede una configurazione per la risposta ('"+trasformazioneRegolaRisposta.getNome()+"') senza alcuna trasformazione attiva");
+							}
+							else {
+								bfToolTip.append("La regola '"+trasformazioneRegola.getNome()+"' non possiede una configurazione per la risposta");
+							}
 							break;
 						}
 					}				
@@ -15293,7 +15384,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			if(!findDaScartare) {
 				
-				boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esiti.getEsitoTransazioneName(listFallite.get(i).intValue()));
+				boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esiti.getEsitoTransazioneName(listFallite.get(i)));
 				if(statiConsegnaMultipla) {
 					continue; // non vengono gestiti in questa configurazione
 				}
@@ -15312,7 +15403,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		int i = 0;
 		for (; i < listOk.size(); i++) {
 			
-			boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esiti.getEsitoTransazioneName(listOk.get(i).intValue()));
+			boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esiti.getEsitoTransazioneName(listOk.get(i)));
 			if(statiConsegnaMultipla) {
 				continue; // non vengono gestiti in questa configurazione
 			}
@@ -20660,33 +20751,41 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoAuth)) {
-			utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-			utente.setType(DataElementType.TEXT_EDIT);
-			utente.setValue(StringEscapeUtils.escapeHtml(secret_user));
-			utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME));
+			if(utente!=null) {
+				utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				utente.setType(DataElementType.TEXT_EDIT);
+				utente.setValue(StringEscapeUtils.escapeHtml(secret_user));
+				utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME));
+			}
 			
-			password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			password.setType(DataElementType.TEXT_EDIT);
-			password.setValue(StringEscapeUtils.escapeHtml(secret_password));
-			password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD));
+			if(password!=null) {
+				password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password.setType(DataElementType.TEXT_EDIT);
+				password.setValue(StringEscapeUtils.escapeHtml(secret_password));
+				password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD));
+			}
 			
 			header1 = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME+" e " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD + " generata" ;
 		}
 		else if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoAuth)) {
 			if(appId) {
-				utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
-				utente.setType(DataElementType.TEXT_EDIT);
-				utente.setValue(StringEscapeUtils.escapeHtml(secret_user));
-				utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
+				if(utente!=null) {
+					utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+					utente.setType(DataElementType.TEXT_EDIT);
+					utente.setValue(StringEscapeUtils.escapeHtml(secret_user));
+					utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
+				}
 			} else {
 				utente = null;
 			}
 			
-			password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
-			password.setType(DataElementType.TEXT_AREA);
-			password.setValue(StringEscapeUtils.escapeHtml(secret_password));
-			password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY));
-			password.setCols(44);
+			if(password!=null) {
+				password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+				password.setType(DataElementType.TEXT_AREA);
+				password.setValue(StringEscapeUtils.escapeHtml(secret_password));
+				password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY));
+				password.setCols(44);
+			}
 			
 			header1 = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY + " generata" ;
 			if(appId) {
@@ -20831,12 +20930,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void addCanaleToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale, String canaleAPI,
-			List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled) {
+			List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled) throws DriverConfigurazioneNotFound {
 		this.addCanaleToDati(dati, tipoOperazione, canaleStato, canale, canaleAPI, canaleList, gestioneCanaliEnabled, true);
 	}
 	
 	public void addCanaleToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale, String canaleAPI,
-			List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled, boolean addTitle) {
+			List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled, boolean addTitle) throws DriverConfigurazioneNotFound {
 		DataElement de;
 		// canale
 		if(gestioneCanaliEnabled) {
@@ -20852,7 +20951,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValues(CostantiControlStation.VALUES_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO);
 			
 			List<String> labelsCanaleStato = new ArrayList<>();
-			CanaleConfigurazione canaleConfigurazioneDefault = canaleList.stream().filter((c) -> c.isCanaleDefault()).findFirst().get();
+			
+			CanaleConfigurazione canaleConfigurazioneDefault = getCanaleDefault(canaleList);
+			
 			String nomeCanaleDefault = MessageFormat.format(CostantiControlStation.LABEL_DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO_DEFAULT, canaleConfigurazioneDefault.getNome());
 			if(canaleAPI != null) {
 				nomeCanaleDefault = MessageFormat.format(CostantiControlStation.LABEL_DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO_DEFAULT_API, canaleAPI);

@@ -1917,6 +1917,10 @@ public class AccordiServizioParteSpecificaUtilities {
 				mappingSelezionato = mappingDefault;
 			}
 
+			if(mappingSelezionato==null) {
+				throw new Exception("Mapping not found");
+			}
+			
 			PortaApplicativa paMappingTmp = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
 			paMappingSelezionatoMulti = paMappingTmp.getBehaviour() != null;
 			
@@ -2462,6 +2466,10 @@ public class AccordiServizioParteSpecificaUtilities {
 
 			if(mappingSelezionato == null) {
 				mappingSelezionato = mappingDefault;
+			}
+			
+			if(mappingSelezionato==null) {
+				throw new Exception("Mapping not found");
 			}
 			
 			if(!mappingSelezionato.isDefault()) {

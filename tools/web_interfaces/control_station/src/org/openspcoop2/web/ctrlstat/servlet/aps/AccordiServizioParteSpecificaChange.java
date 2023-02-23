@@ -72,17 +72,11 @@ import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
-import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
-import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
-import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
-import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -128,19 +122,6 @@ import org.openspcoop2.web.lib.users.dao.PermessiUtente;
  * 
  */
 public final class AccordiServizioParteSpecificaChange extends Action {
-
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
-	private IConfigIntegrationReader configRegistryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
-	private String protocolPropertiesSet = null;
-	private String editMode = null;
-
-	private BinaryParameter wsdlimpler, wsdlimplfru;
 	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -159,8 +140,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 		
+		AccordiServizioParteSpecificaChangeStrutsBean strutsBean = new AccordiServizioParteSpecificaChangeStrutsBean();
+		
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
-		this.consoleOperationType = ConsoleOperationType.CHANGE;
+		strutsBean.consoleOperationType = ConsoleOperationType.CHANGE;
 		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.CHANGE;
@@ -172,8 +155,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			String tipoProtocollo = apsHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 			
-			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
-			this.protocolPropertiesSet = apsHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
+			strutsBean.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			strutsBean.protocolPropertiesSet = apsHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			// int idInt = Integer.parseInt(id);
 			String nomeservizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO);
@@ -333,7 +316,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			boolean validazioneDocumenti = true;
 			String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
-			if(ServletUtils.isEditModeInProgress(this.editMode)){
+			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){
 				// primo accesso alla servlet
 				if(tmpValidazioneDocumenti!=null){
 					if(Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(tmpValidazioneDocumenti) || Costanti.CHECK_BOX_ENABLED.equalsIgnoreCase(tmpValidazioneDocumenti)){
@@ -862,21 +845,21 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				statoPackage = backToStato;
 			
 			
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
-			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
+			strutsBean.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+			strutsBean.consoleDynamicConfiguration =  strutsBean.protocolFactory.createDynamicConfigurationConsole();
+			strutsBean.registryReader = soggettiCore.getRegistryReader(strutsBean.protocolFactory); 
+			strutsBean.configRegistryReader = soggettiCore.getConfigIntegrationReader(strutsBean.protocolFactory);
 			IDServizio oldIdAps = apsHelper.getIDServizioFromValues(oldtiposervizio, oldnomeservizio, oldtiposoggetto,oldnomesoggetto, oldversioneaccordo);
 			oldIdAps.setUriAccordoServizioParteComune(idAccordoFactory.getUriFromAccordo(as));
 			oldIdAps.setPortType((portType != null && !"".equals(portType) ? portType : asps.getPortType()));
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, apsHelper, 
-					this.registryReader, this.configRegistryReader, oldIdAps );
-			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			strutsBean.consoleConfiguration = strutsBean.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleOperationType, apsHelper, 
+					strutsBean.registryReader, strutsBean.configRegistryReader, oldIdAps );
+			strutsBean.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(strutsBean.consoleConfiguration, strutsBean.consoleOperationType);
 
 			oldProtocolPropertyList = asps.getProtocolPropertyList(); 
 
-			if(this.protocolPropertiesSet == null){
-				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+			if(strutsBean.protocolPropertiesSet == null){
+				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(strutsBean.protocolProperties, oldProtocolPropertyList, strutsBean.consoleOperationType);
 			}
 
 			
@@ -929,7 +912,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if (ServletUtils.isEditModeInProgress(this.editMode)) {
+			if (ServletUtils.isEditModeInProgress(strutsBean.editMode)) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
@@ -1273,14 +1256,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				privato = asps.getPrivato()!=null && asps.getPrivato();
 				
-				if(this.wsdlimpler == null){
-					this.wsdlimpler = new BinaryParameter();
-					this.wsdlimpler.setValue(asps.getByteWsdlImplementativoErogatore());
+				if(strutsBean.wsdlimpler == null){
+					strutsBean.wsdlimpler = new BinaryParameter();
+					strutsBean.wsdlimpler.setValue(asps.getByteWsdlImplementativoErogatore());
 				}
 				
-				if(this.wsdlimplfru == null){
-					this.wsdlimplfru = new BinaryParameter();
-					this.wsdlimplfru.setValue(asps.getByteWsdlImplementativoFruitore());
+				if(strutsBean.wsdlimplfru == null){
+					strutsBean.wsdlimplfru = new BinaryParameter();
+					strutsBean.wsdlimplfru.setValue(asps.getByteWsdlImplementativoFruitore());
 				}
 				
 				if(backToStato == null && backToConfermaModificaDatiServizio==null){
@@ -1289,14 +1272,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 					
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
-							this.registryReader, this.configRegistryReader, oldIdAps);
+					strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
+							strutsBean.registryReader, strutsBean.configRegistryReader, oldIdAps);
 					
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio,
 							provider, tipoSoggettoErogatore, nomeSoggettoErogatore,
-							soggettiList, soggettiListLabel, accordo,serviceBinding, formatoSpecifica, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
+							soggettiList, soggettiListLabel, accordo,serviceBinding, formatoSpecifica, accordiList, accordiListLabel, servcorr, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage
 							,versione,versioniProtocollo,validazioneDocumenti,
@@ -1380,10 +1363,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// aggiunta campi custom
 					if(addPropertiesHidden) {
-						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 					else {
-						dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 
 					pd.setDati(dati);
@@ -1419,7 +1402,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					nomeservizio, tiposervizio, provider,
 					nomeSoggettoErogatore, tipoSoggettoErogatore, accordo, serviceBinding, 
 					servcorr, endpointtype, url, nome, tipo, user, password,
-					initcont, urlpgk, provurl, connfact, sendas, this.wsdlimpler, this.wsdlimplfru, id,
+					initcont, urlpgk, provurl, connfact, sendas, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, id,
 					profilo, portType,ptList,accordoPrivato,privato,
 					httpsurl, httpstipologia, httpshostverify,
 					httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo,
@@ -1447,14 +1430,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			// updateDynamic
 			if(isOk) {
-				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
-						this.registryReader, this.configRegistryReader, oldIdAps);
+				strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
+						strutsBean.registryReader, strutsBean.configRegistryReader, oldIdAps);
 			}
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
+					apsHelper.validaProtocolProperties(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, strutsBean.protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -1466,8 +1449,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, oldIdAps);
+					strutsBean.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
+							strutsBean.registryReader, strutsBean.configRegistryReader, oldIdAps);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -1490,15 +1473,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
-						this.registryReader, this.configRegistryReader, oldIdAps);
+				strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
+						strutsBean.registryReader, strutsBean.configRegistryReader, oldIdAps);
 
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
 				dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
 						provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList, 
 						soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
-						accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
+						accordiList, accordiListLabel, servcorr, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, tipoOp, 
 						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 						null,null,generaPACheckSoggetto,asParteComuneCompatibili,
@@ -1583,10 +1566,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				// aggiunta campi custom
 				if(addPropertiesHidden) {
-					dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+					dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 				}
 				else {
-					dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+					dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 				}
 
 				pd.setDati(dati);
@@ -1615,15 +1598,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 					
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
-							this.registryReader, this.configRegistryReader, oldIdAps);
+					strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
+							strutsBean.registryReader, strutsBean.configRegistryReader, oldIdAps);
 					
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
 							provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList, 
 							soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
-							accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
+							accordiList, accordiListLabel, servcorr, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,generaPACheckSoggetto,asParteComuneCompatibili,
@@ -1729,13 +1712,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// aggiunta campi custom
 					if(addPropertiesHidden) {
-						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 					else {
-						dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 						
 						// aggiunta campi custom come hidden, quelli sopra vengono bruciati dal no-edit
-						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 						
 					String msg = null;
@@ -1981,15 +1964,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 					
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
-							this.registryReader, this.configRegistryReader, oldIdAps);
+					strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
+							strutsBean.registryReader, strutsBean.configRegistryReader, oldIdAps);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
 							provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList,
 							soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
-							accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
+							accordiList, accordiListLabel, servcorr, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,generaPACheckSoggetto,asParteComuneCompatibili,
@@ -2074,10 +2057,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// aggiunta campi custom
 					if(addPropertiesHidden) {
-						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 					else {
-						dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 
 					pd.setDati(dati);
@@ -2093,7 +2076,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 
 			//imposto properties custom
-			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
+			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(strutsBean.protocolProperties, strutsBean.consoleOperationType, oldProtocolPropertyList));
 
 			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps, apsCore);
 			

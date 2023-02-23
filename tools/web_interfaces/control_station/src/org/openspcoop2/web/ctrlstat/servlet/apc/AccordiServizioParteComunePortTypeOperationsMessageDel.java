@@ -74,7 +74,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageDel extends Acti
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idInt = Integer.parseInt(id);
+			long idAccordoLong = Long.valueOf(id);
 			String nomept = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			String nomeop = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NOME);
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
@@ -98,7 +98,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageDel extends Acti
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
 			ArrayList<String> optsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 
 			// Prendo il port-type e l'operation
 			PortType pt = null;

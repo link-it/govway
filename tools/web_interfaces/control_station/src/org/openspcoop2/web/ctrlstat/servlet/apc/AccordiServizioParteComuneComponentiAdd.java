@@ -88,7 +88,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 
 			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			String idServizioComponente = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_COMPONENTE);
-			int idAccordoInt = Integer.parseInt(idAccordo);
+			long idAccordoLong = Long.valueOf(idAccordo);
 			//String portType = apcHelper.getParameter("port_type");
 
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_TIPO_SICA );
@@ -103,7 +103,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idAccordoInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			ServiceBinding serviceBinding = org.openspcoop2.protocol.basic.Utilities.convert(as.getServiceBinding());
 
@@ -118,7 +118,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			String[] serviziList = null;
 			String[] serviziListLabel = null;
 			//String[] ptList = null;
-			List<String[]> lst = apcCore.getAccordiServizioCompostoLabels(as, idAccordoInt, userLogin, tipiServiziCompatibili, tipiSoggettiCompatibili, apcHelper);
+			List<String[]> lst = apcCore.getAccordiServizioCompostoLabels(as, idAccordoLong, userLogin, tipiServiziCompatibili, tipiSoggettiCompatibili, apcHelper);
 
 			serviziList = lst.get(0);
 			serviziListLabel = lst.get(1);
@@ -261,7 +261,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
-			List<AccordoServizioParteComuneServizioCompostoServizioComponente> lista = apcCore.accordiComponentiList(idAccordoInt, ricerca);
+			List<AccordoServizioParteComuneServizioCompostoServizioComponente> lista = apcCore.accordiComponentiList(idAccordoLong, ricerca);
 
 			apcHelper.prepareAccordiComponentiList(as, ricerca, lista, tipoAccordo);
 

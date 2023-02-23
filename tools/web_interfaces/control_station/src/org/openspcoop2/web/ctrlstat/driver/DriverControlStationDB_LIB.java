@@ -255,10 +255,23 @@ public class DriverControlStationDB_LIB {
 		} finally {
 
 			try {
-				updateStmt.close();
-				selectRS.close();
-				selectStmt.close();
-
+				if(updateStmt!=null) {
+					updateStmt.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(selectRS!=null) {
+					selectRS.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(selectStmt!=null) {
+					selectStmt.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
