@@ -149,8 +149,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			
 			ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
 			
-			strutsBean.parametersPOST = null;
-
 			strutsBean.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
 			strutsBean.nomeservizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO);
@@ -411,7 +409,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsHelper, 
-							strutsBean.parametersPOST, (strutsBean.endpointtype==null), strutsBean.endpointtype); // uso endpointtype per capire se è la prima volta che entro
+							null, //strutsBean.parametersPOST, 
+							(strutsBean.endpointtype==null), strutsBean.endpointtype); // uso endpointtype per capire se è la prima volta che entro
 
 			// Tipi protocollo supportati
 			boolean filtraSoggettiEsistenti = true;

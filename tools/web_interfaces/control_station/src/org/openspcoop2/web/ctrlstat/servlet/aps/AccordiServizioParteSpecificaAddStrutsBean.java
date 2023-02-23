@@ -21,7 +21,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -75,7 +74,7 @@ public class AccordiServizioParteSpecificaAddStrutsBean {
 	protected String nomeSA = null;
 	protected String oldPortType = null;
 	protected String autenticazioneHttp;
-	protected Properties parametersPOST;
+	//protected Properties parametersPOST;
 	protected ServiceBinding serviceBinding = null;
 	protected org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = null;
 
