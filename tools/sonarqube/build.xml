@@ -891,6 +891,43 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
+		<!-- RS API Monitor -->
+		<var name="projectAnalyze" value="rs-monitor"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="rs-monitor"/>
+				<equals arg1="${govway.group}" arg2="api-monitor"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/rs/monitor/server/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/rs/monitor/server/src"/>
+					</else>
+				</if>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/rs/monitor/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.rs.monitor.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="rs-monitor"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/rs/monitor/server"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/rs/monitor/server/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_rs-monitor-server*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
 
 
 

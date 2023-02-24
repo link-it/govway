@@ -117,7 +117,7 @@ public class ReportisticaHelper {
 
 		if (filtro != null) {
 
-			EsitoTransazioneFullSearchEnum tipo = (filtro.getTipo() != null) ? filtro.getTipo() : EsitoTransazioneFullSearchEnum.QUALSIASI;
+			EsitoTransazioneFullSearchEnum tipo = CheckNotNull.getEsitoTransazione(filtro);
 			
 			switch (tipo) {
 			case QUALSIASI:
@@ -1017,9 +1017,7 @@ public class ReportisticaHelper {
 		if(body.getEsito()==null) {
 			body.setEsito(new FiltroEsito());
 		}
-		if(body.getEsito().getTipo()==null) {
-			body.getEsito().setTipo(EsitoTransazioneFullSearchEnum.FALLITE_E_FAULT);
-		}
+		CheckNotNull.setTipoEsito(body);
 		
 		if(EsitoTransazioneFullSearchEnum.QUALSIASI.equals(body.getEsito().getTipo())) {
 			body.getEsito().setTipo(EsitoTransazioneFullSearchEnum.FALLITE_E_FAULT); // forzo fallite

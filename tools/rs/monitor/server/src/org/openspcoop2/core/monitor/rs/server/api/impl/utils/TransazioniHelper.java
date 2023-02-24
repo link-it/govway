@@ -191,7 +191,7 @@ public class TransazioniHelper {
 
 		if (filtro != null) {
 			
-			EsitoTransazioneFullSearchEnum tipo = (filtro.getTipo() != null) ? filtro.getTipo() : EsitoTransazioneFullSearchEnum.QUALSIASI;
+			EsitoTransazioneFullSearchEnum tipo = CheckNotNull.getEsitoTransazione(filtro);
 			
 			switch (tipo) {
 			case QUALSIASI:
