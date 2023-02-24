@@ -102,8 +102,10 @@ public class CsrfFilter implements Filter {
 						
 						// setto gli attributi che riguardano il
 						// messaggio da visualizzare all'utente
-						session.setAttribute(msgErroreKey, Costanti.MESSAGGIO_ERRORE_CSRF_TOKEN_NON_VALIDO);
-						session.setAttribute(accLimKey, true);
+						if(session!=null) {
+							session.setAttribute(msgErroreKey, Costanti.MESSAGGIO_ERRORE_CSRF_TOKEN_NON_VALIDO);
+							session.setAttribute(accLimKey, true);
+						}
 						// redirect
 						response.sendRedirect(request.getContextPath()+ jspErrore);
 						

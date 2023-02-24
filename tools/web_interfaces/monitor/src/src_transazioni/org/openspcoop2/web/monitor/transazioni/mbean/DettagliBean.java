@@ -913,8 +913,9 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		if(tr!=null && tr.getBustaAsString()!=null)
 			toRet = Utils.prettifyXml(tr.getBustaAsString());
 		
-		if(toRet == null)
+		if(toRet == null && tr!=null) {
 			toRet = tr.getBustaAsString() != null ? tr.getBustaAsString() : "";
+		}
 			
 		return toRet;
 	}
@@ -1216,10 +1217,10 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			String dirPath = null; // per non far produrre la directory contenuti
 			String fileName = SingleFileExporter.getDirName(this.exportContenuto);
 									
-			if (this.isRisposta)
+			//if (this.isRisposta)
 				fileName = fileName+".zip";
-			else
-				fileName = fileName+".zip";
+			//else
+			//	fileName = fileName+".zip";
 
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);

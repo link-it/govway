@@ -443,8 +443,14 @@ public class ExportUtils {
 			//.setTextAdjust(net.sf.dynamicreports.report.constant.TextAdjust.STRETCH_HEIGHT)
 			.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true");
 	}
+	private static boolean useDeprecatedMethod = false;
+	public static boolean isUseDeprecatedMethod() {
+		return useDeprecatedMethod;
+	}
+	public static void setUseDeprecatedMethod(boolean useDeprecatedMethod) {
+		ExportUtils.useDeprecatedMethod = useDeprecatedMethod;
+	}
 	private static TextColumnBuilder<String> buildColumn(String label, String category){
-		boolean useDeprecatedMethod = false;
 		if(useDeprecatedMethod) {
 			return buildColumnDeprecated(label, category);
 		}
@@ -725,6 +731,9 @@ public class ExportUtils {
 				c.setTime((Date)risultato.getRisultato());
 				c.add(Calendar.WEEK_OF_MONTH, 1);
 				c.add(Calendar.DAY_OF_WEEK, -1);
+				if(sdf_last_hour==null) {
+					throw new Exception("sdf_last_hour undefined");
+				}
 				label = sdf.format(risultato.getRisultato())+"-"+sdf_last_hour.format(c.getTime());
 				break;
 
@@ -1155,6 +1164,11 @@ public class ExportUtils {
 						c.setTime((Date)risultato.getRisultato());
 						c.add(Calendar.WEEK_OF_MONTH, 1);
 						c.add(Calendar.DAY_OF_WEEK, -1);
+						
+						if(sdf_last_hour==null) {
+							throw new Exception("sdf_last_hour is null");
+						}
+						
 						label = sdf.format(risultato.getRisultato())+"-"+sdf_last_hour.format(c.getTime());
 						break;
 

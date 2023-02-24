@@ -254,7 +254,7 @@ public class DettagliDumpMultipart extends PdDBaseBean<Transazione, String, ITra
 		}
 
 		if(toRet == null || "".equals(toRet)) {
-			toRet = this.dumpMessaggio.getBody() != null ? new String(this.dumpMessaggio.getBody()) : "";
+			toRet = (this.dumpMessaggio!=null && this.dumpMessaggio.getBody() != null) ? new String(this.dumpMessaggio.getBody()) : "";
 		}
 
 		return toRet;

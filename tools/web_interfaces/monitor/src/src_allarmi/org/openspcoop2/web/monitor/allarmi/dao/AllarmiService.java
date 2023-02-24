@@ -122,27 +122,26 @@ public class AllarmiService implements IAllarmiService {
 
 	private static Logger log = LoggerManager.getPddMonitorSqlLogger();
 
-	private int LIMIT_SEARCH = 10000;
-	private static String TIPOLOGIA_SOLO_ASSOCIATE = CostantiConfigurazione.ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE;
+	private int lIMIT_SEARCH = 10000;
+	private static final String TIPOLOGIA_SOLO_ASSOCIATE = CostantiConfigurazione.ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE;
 	
-	private transient IServiceManager pluginsServiceManager;
-	private transient DriverRegistroServiziDB driverRegistroDB = null;
-	private transient DriverConfigurazioneDB driverConfigDB = null;
+	private IServiceManager pluginsServiceManager;
+	private DriverRegistroServiziDB driverRegistroDB = null;
+	private DriverConfigurazioneDB driverConfigDB = null;
 	private IAllarmeService allarmeDAO;
 	private IAllarmeServiceSearch allarmeSearchDAO;
 	private IAllarmeHistoryServiceSearch allarmeHistorySearchDAO;
 	private IAllarmeHistoryService allarmeHistoryDAO;
-	private transient org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseServiceManager;
-//	private IPluginServiceSearch pluginsServiceSearchDAO;
-	private transient org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
+	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseServiceManager;
+	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
 	protected DynamicPdDBeanUtils dynamicUtils = null;
 	private IPortaDelegataServiceSearch portaDelegataDAO = null;
 	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
 
 	private AllarmiSearchForm searchForm;
 
-	private static final boolean useDriverConfig = true; 
-	
+	private static final boolean USE_DRIVER_CONFIG = true; 
+
 	public AllarmiService() {
 		try {
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
@@ -160,9 +159,8 @@ public class AllarmiService implements IAllarmiService {
 			// init Service Manager plugins
 			this.pluginsBaseServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
 					.getInstance(AllarmiService.log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),AllarmiService.log);
-//			this.pluginsServiceSearchDAO = this.pluginsBaseServiceManager.getPluginServiceSearch();
 
-			this.LIMIT_SEARCH = pddMonitorProperties.getSearchFormLimit();
+			this.lIMIT_SEARCH = pddMonitorProperties.getSearchFormLimit();
 			
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
 					.getInstance(log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), AllarmiService.log);
@@ -384,7 +382,7 @@ public class AllarmiService implements IAllarmiService {
 		Long retValue = 0L;
 		try {
 
-			AllarmiSearchForm search = (AllarmiSearchForm) this.searchForm.clone();
+			AllarmiSearchForm search = (AllarmiSearchForm) this.searchForm.cloneSearchForm();
 
 			if(Utility.isAmministratore()) { // amministratore vede tutti gli allarmi, indipendentemente dai filtri di ricerca
 				search.ripulisci(); 
@@ -396,7 +394,7 @@ public class AllarmiService implements IAllarmiService {
 			
 			search.setStatoSelezionato(stato);
 
-			if(useDriverConfig) {
+			if(USE_DRIVER_CONFIG) {
 				
 				AllarmiDriverParams params = this.buildDriverParams(search);
 				
@@ -467,7 +465,7 @@ public class AllarmiService implements IAllarmiService {
 		try {
 			
 			List<Allarme> findAll = null;
-			if(useDriverConfig) {
+			if(USE_DRIVER_CONFIG) {
 				
 				AllarmiDriverParams params = this.buildDriverParams(this.searchForm);
 				
@@ -597,7 +595,7 @@ public class AllarmiService implements IAllarmiService {
 			return 0;
 
 		try {
-			if(useDriverConfig) {
+			if(USE_DRIVER_CONFIG) {
 				
 				AllarmiDriverParams params = this.buildDriverParams(this.searchForm);
 				
@@ -616,7 +614,7 @@ public class AllarmiService implements IAllarmiService {
 				long retValue = this.driverConfigDB.countAllarmi(tipologiaRicerca, enabledParam, statoParam, acknowledgedParam, nomeAllarme, 
 						listSoggettiProprietariAbilitati, listIDServizioAbilitati, tipoSoggettiByProtocollo, tipoServiziByProtocollo, idSoggettoProprietario, listIDServizio);
 				
-				return  Long.valueOf(retValue).intValue();
+				return (int) retValue;
 			}
 			else {
 			
@@ -624,7 +622,7 @@ public class AllarmiService implements IAllarmiService {
 				NonNegativeNumber nnn = this.allarmeSearchDAO.count(e);
 			
 				// Long res = (Long) this.createQuery(true).getSingleResult();
-				return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+				return nnn != null ? ((int) nnn.longValue()) : 0;
 			}
 		} catch (ServiceException e1) {
 			AllarmiService.log.error("Errore durante il calcolo del numero dei record", e1);
@@ -675,7 +673,7 @@ public class AllarmiService implements IAllarmiService {
 
 		try {
 			List<Allarme> findAll = null;
-			if(useDriverConfig) {
+			if(USE_DRIVER_CONFIG) {
 				
 				AllarmiDriverParams params = this.buildDriverParams(this.searchForm);
 				
@@ -999,7 +997,7 @@ public class AllarmiService implements IAllarmiService {
 			ServiceException, NotImplementedException, CoreException, UserInvalidException {
 		IExpression exprPD = this.createPDExpression(this.portaDelegataDAO, formRicerca, false);
 		IPaginatedExpression pagExpr = this.portaDelegataDAO.toPaginatedExpression(exprPD);
-		pagExpr.offset(0).limit(this.LIMIT_SEARCH); 
+		pagExpr.offset(0).limit(this.lIMIT_SEARCH); 
 
 		if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
 
@@ -1027,7 +1025,7 @@ public class AllarmiService implements IAllarmiService {
 			ServiceException, NotImplementedException, CoreException, UserInvalidException {
 		IExpression exprPA = this.createPAExpression(this.portaApplicativaDAO, formRicerca, false);
 		IPaginatedExpression pagExpr = this.portaApplicativaDAO.toPaginatedExpression(exprPA);
-		pagExpr.offset(0).limit(this.LIMIT_SEARCH);  
+		pagExpr.offset(0).limit(this.lIMIT_SEARCH);  
 
 		if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
 
@@ -1038,7 +1036,7 @@ public class AllarmiService implements IAllarmiService {
 				exprIdServizio.equals(PortaApplicativa.model().NOME_SERVIZIO,idServizio.getNome());
 				exprIdServizio.equals(PortaApplicativa.model().VERSIONE_SERVIZIO,idServizio.getVersione());
 				boolean setSoggettoProprietario = false;
-				if(formRicerca.getTipoNomeSoggettoLocale()!=null && 
+				if(formRicerca!=null && formRicerca.getTipoNomeSoggettoLocale()!=null && 
 						!StringUtils.isEmpty(formRicerca.getTipoNomeSoggettoLocale()) && !"--".equals(formRicerca.getTipoNomeSoggettoLocale())){
 					setSoggettoProprietario = true; // impostato dentro createPAExpression
 				}
@@ -1526,7 +1524,7 @@ public class AllarmiService implements IAllarmiService {
 
 			IPaginatedExpression pagExpr = this.allarmeSearchDAO
 					.toPaginatedExpression(expr);
-			pagExpr.offset(0).limit(this.LIMIT_SEARCH);
+			pagExpr.offset(0).limit(this.lIMIT_SEARCH);
 
 			List<Object> select = this.allarmeSearchDAO.select(pagExpr, true, Allarme.model().ALIAS);
 

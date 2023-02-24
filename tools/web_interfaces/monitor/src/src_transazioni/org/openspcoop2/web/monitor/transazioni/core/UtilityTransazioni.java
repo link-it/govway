@@ -1557,7 +1557,7 @@ public class UtilityTransazioni {
 		
 		org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Esito esito = new org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Esito();
 		Integer esitoNumber = null;
-		if(EsitoUtils.ALL_VALUE!=searchForm.getEsitoDettaglio()){
+		if(searchForm.getEsitoDettaglio()!=null && EsitoUtils.ALL_VALUE.intValue()!=searchForm.getEsitoDettaglio().intValue()){
 			esitoNumber = searchForm.getEsitoDettaglio();
 		}
 		else{

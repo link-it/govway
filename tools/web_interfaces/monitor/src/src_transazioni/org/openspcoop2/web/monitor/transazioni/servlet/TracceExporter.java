@@ -71,7 +71,7 @@ public class TracceExporter extends HttpServlet{
 
 	private static final long serialVersionUID = 1272767433184676700L;
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
-	private transient ITracciaDriver tracciamentoService = null;
+	private static ITracciaDriver tracciamentoService = null;
 	
 	private static Boolean enableHeaderInfo = false;
 	
@@ -81,7 +81,7 @@ public class TracceExporter extends HttpServlet{
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(TracceExporter.log);
 			TracceExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
 			
-			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
+			tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
 		}catch(Exception e){
 			TracceExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
@@ -101,7 +101,7 @@ public class TracceExporter extends HttpServlet{
 	}
 	
 	
-	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
+	private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 			if(context==null) {
@@ -203,7 +203,7 @@ public class TracceExporter extends HttpServlet{
 						Traccia tracciaRisposta  = null;
 						ArrayList<Traccia> tracce = new ArrayList<Traccia>();
 						try{
-							tracciaRichiesta=this.tracciamentoService.getTraccia(RuoloMessaggio.RICHIESTA,properties);
+							tracciaRichiesta=tracciamentoService.getTraccia(RuoloMessaggio.RICHIESTA,properties);
 							tracce.add(tracciaRichiesta);
 						}catch(DriverTracciamentoException e){
 							//ignore
@@ -211,7 +211,7 @@ public class TracceExporter extends HttpServlet{
 							//ignore
 						}
 						try{
-							tracciaRisposta = this.tracciamentoService.getTraccia(RuoloMessaggio.RISPOSTA,properties);
+							tracciaRisposta = tracciamentoService.getTraccia(RuoloMessaggio.RISPOSTA,properties);
 							tracce.add(tracciaRisposta);
 						}catch(DriverTracciamentoException e){
 							//ignore
@@ -286,7 +286,7 @@ public class TracceExporter extends HttpServlet{
 			
 		}catch(Throwable e){
 			TracceExporter.log.error(e.getMessage(),e);
-			throw new ServletException(e.getMessage(),e);
+			//throw new ServletException(e.getMessage(),e);
 		}
 	}
 	

@@ -202,8 +202,11 @@ public class StatsSearchForm extends BaseSearchForm{
 	
 	public List<SelectItem> getEsitiDettaglio() {
 		if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_ERRORI)) {
-			if(EsitoUtils.ALL_VALUE == this.getEsitoGruppo() || EsitoUtils.ALL_OK_VALUE == this.getEsitoGruppo()){
-				this.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
+			Integer esitoGruppo = this.getEsitoGruppo();
+			if(esitoGruppo!=null) {
+				if((EsitoUtils.ALL_VALUE.intValue() == this.getEsitoGruppo().intValue()) || (EsitoUtils.ALL_OK_VALUE.intValue() == this.getEsitoGruppo().intValue())){
+					this.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
+				}
 			}
 		}
 		

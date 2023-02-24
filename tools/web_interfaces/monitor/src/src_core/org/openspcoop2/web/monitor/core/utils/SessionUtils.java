@@ -19,40 +19,24 @@
  */
 package org.openspcoop2.web.monitor.core.utils;
 
-import java.util.HashMap;
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * MessageProvider
+ * SessionUtils
  * 
  * @author Pintori Giuliano (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  *
  */
-@SuppressWarnings("rawtypes")
-public class MessageProvider extends HashMap{
+public class SessionUtils {
+
+	public static boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
+		boolean sessionInValid = 
+				//(httpServletRequest.getRequestedSessionId() != null)
+				(httpServletRequest.getSession(false)!=null)
+				&& !httpServletRequest.isRequestedSessionIdValid();
+		return sessionInValid;
+	}
 	
-	private static final long serialVersionUID = -1658180152509756791L;
-	private MessageManager msgMgr;
-	public MessageProvider() {
-	}
-
-	@Override
-	public Object get(Object key) {
-		try {
-			return this.msgMgr.getMessage((String)key);
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-			return null;
-		}
-	}
-
-	public void setMsgMgr(MessageManager msgMgr) {
-		this.msgMgr = msgMgr;
-	}
-
-	public MessageManager getMsgMgr() {
-		return this.msgMgr;
-	}
-
 }

@@ -116,10 +116,13 @@ public abstract class BaseBean {
 	
 	
 	
-	@Override
-	public int hashCode(){
-		return this.getClass().getName().hashCode();
-	}
+	
+	// Non lo si vuole realizzare, si demanda eventualmente alla classe che lo implementa
+	// Se lo si aggiunge poi viene invocato l'equals e per alcuni field per cui non esiste il metodo get si ottiene errore (es. transazioneBean)
+//	@Override
+//	public int hashCode(){
+//		return this.getClass().getName().hashCode();
+//	}
 	
 	/* ********** EQUALS ********* */
 	

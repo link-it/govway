@@ -192,7 +192,10 @@ implements StatisticsContext{
 
 				idAccordo = getIDAccordoFromAsps(aspsFromValues);
 
-				r = leggiStatistiche(idAccordo,nomeServizioKey).get(nomeServizioKey);
+				Map<String, Statistiche> ms = leggiStatistiche(idAccordo,nomeServizioKey); 
+				if(ms!=null) {
+					r = ms.get(nomeServizioKey);
+				}
 
 				if (r != null) {
 					// setto il contesto per le statistiche
@@ -289,7 +292,10 @@ implements StatisticsContext{
 				nomeServizioKey = aspsFromValues.getPortType() != null ? aspsFromValues.getPortType() : nomeServizio;
 				idAccordo = getIDAccordoFromAsps(aspsFromValues);
 
-				r = leggiStatistiche(idAccordo,nomeServizioKey).get(nomeServizioKey);
+				Map<String, Statistiche> ms = leggiStatistiche(idAccordo,nomeServizioKey); 
+				if(ms!=null) {
+					r = ms.get(nomeServizioKey);
+				}
 				if (r != null) {
 					// setto il contesto per le statistiche
 					List<ConfigurazioneStatistica> statistiche = r.getStatistiche();
@@ -442,7 +448,8 @@ implements StatisticsContext{
 
 	@Override
 	public EsitoTransazione getEsitoTransazione() {
-		if(EsitoUtils.ALL_VALUE != this.getEsitoDettaglio()){
+		Integer esitoDettaglio = this.getEsitoDettaglio();
+		if(esitoDettaglio!=null && (EsitoUtils.ALL_VALUE.intValue() != esitoDettaglio.intValue())){
 			try{
 				return EsitiProperties.getInstanceFromProtocolName(this.getLogger(),this.getProtocollo()).convertToEsitoTransazione( this.getEsitoDettaglio(), this.getEsitoContesto());
 			}catch(Exception e){
@@ -635,7 +642,12 @@ implements StatisticsContext{
 					String nomeServizioKey = aspsFromValues.getPortType() != null ? aspsFromValues.getPortType() : nomeServizio;
 
 					IDAccordo idAccordo = getIDAccordoFromAsps(aspsFromValues);
-					Statistiche s = leggiStatistiche(idAccordo,nomeServizioKey).get(nomeServizioKey);
+					
+					Statistiche s = null;
+					Map<String, Statistiche> ms = leggiStatistiche(idAccordo,nomeServizioKey); 
+					if(ms!=null) {
+						s = ms.get(nomeServizioKey);
+					}
 
 					// se non ci sono statistiche vuol dire che non va bene
 					if (s == null || s.getStatistiche() == null
@@ -672,7 +684,12 @@ implements StatisticsContext{
 					AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(idServizio);
 					nomeServizioKey = aspsFromValues.getPortType() != null ? aspsFromValues.getPortType() : nomeServizio;
 					idAccordo = getIDAccordoFromAsps(aspsFromValues);
-					s = leggiStatistiche(idAccordo,nomeServizioKey).get(nomeServizioKey);
+					
+					Map<String, Statistiche> ms = leggiStatistiche(idAccordo,nomeServizioKey); 
+					if(ms!=null) {
+						s = ms.get(nomeServizioKey);
+					}
+					
 					// se non ci sono statistiche vuol dire che non va bene
 
 					if (s == null || s.getStatistiche() == null || s.getStatistiche().size() < 1) {

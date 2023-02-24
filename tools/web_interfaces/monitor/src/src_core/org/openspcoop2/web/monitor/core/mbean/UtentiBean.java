@@ -415,21 +415,25 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 						}
 					}
 					
-					for (UserPassword userPassword : precedentiPassword) {
-						trovato = this.passwordManager.check(this.nuovaPassword, userPassword.getPassword());
-						if(!trovato && this.passwordManager_backwardCompatibility!=null) {
-							trovato = this.passwordManager_backwardCompatibility.check(this.nuovaPassword, userPassword.getPassword());
-						}
-						if (trovato) {
-							MessageUtils.addErrorMsg("La password scelta non deve corrispondere ad una precedente password");
-							return null;
+					if(precedentiPassword!=null) {
+						for (UserPassword userPassword : precedentiPassword) {
+							trovato = this.passwordManager.check(this.nuovaPassword, userPassword.getPassword());
+							if(!trovato && this.passwordManager_backwardCompatibility!=null) {
+								trovato = this.passwordManager_backwardCompatibility.check(this.nuovaPassword, userPassword.getPassword());
+							}
+							if (trovato) {
+								MessageUtils.addErrorMsg("La password scelta non deve corrispondere ad una precedente password");
+								return null;
+							}
 						}
 					}
 					
 					UserPassword userPassword = new UserPassword();
 					userPassword.setDatePassword(findById.getLastUpdatePassword());
 					userPassword.setPassword(findById.getPassword());
-					precedentiPassword.add(userPassword );
+					if(precedentiPassword!=null) {
+						precedentiPassword.add(userPassword );
+					}
 					updateStoricoPassword = true;
 				}
 			}

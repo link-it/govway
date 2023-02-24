@@ -19,9 +19,6 @@
  */
 package org.openspcoop2.web.monitor.core.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -835,26 +832,6 @@ public class Utility {
 			}
 		}
 		return idPorta;
-	}
-
-	public static void copy(InputStream in, OutputStream out) 
-			throws IOException {
-
-		// do not allow other threads to read from the
-		// input or write to the output while copying is
-		// taking place
-
-		synchronized (in) {
-			synchronized (out) {
-
-				byte[] buffer = new byte[256];
-				while (true) {
-					int bytesRead = in.read(buffer);
-					if (bytesRead == -1) break;
-					out.write(buffer, 0, bytesRead);
-				}
-			}
-		}
 	}
 
 	public static List<String> getListaProtocolli(User utente, List<Soggetto> listaSoggettiGestione, ProtocolFactoryManager pfManager,	MapReader<String, IProtocolFactory<?>> protocolFactories) throws ProtocolException {

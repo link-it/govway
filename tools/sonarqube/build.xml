@@ -810,6 +810,47 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
+		<!-- WEB Monitor -->
+		<var name="projectAnalyze" value="web-govwayMonitor"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="govwaymonitor"/>
+				<equals arg1="${govway.group}" arg2="govwayMonitor"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/web_interfaces/monitor/src/src_allarmi"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/src/src_allarmi"/>
+					</else>
+				</if>
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/src/src_core"/>
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/src/src_eventi"/>
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/src/src_stat"/>
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/src/src_transazioni"/>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/monitor/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.monitor.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-govwayMonitor"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/monitor"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/monitor/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-govwayMonitor*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
 
 
 		<!-- Esclusioni -->

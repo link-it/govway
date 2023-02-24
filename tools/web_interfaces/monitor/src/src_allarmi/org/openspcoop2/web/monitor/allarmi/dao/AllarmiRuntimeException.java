@@ -1,5 +1,5 @@
 /*
- * GovWay - A customizable API Gateway 
+ * GovWay - A customizable API Gateway
  * https://govway.org
  * 
  * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
@@ -18,26 +18,40 @@
  *
  */
 
-package org.openspcoop2.web.monitor.allarmi.constants;
+
+
+
+package org.openspcoop2.web.monitor.allarmi.dao;
+
 
 /**
- * AllarmiCostanti 
- *
- * @author Giuliano Pintori (pintori@link.it)
+ * AllarmiRuntimeException
+ * 
+ * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AllarmiCostanti {
 
-	private AllarmiCostanti() {
-		throw new IllegalStateException("Costanti class");
+public class AllarmiRuntimeException extends RuntimeException {
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public AllarmiRuntimeException(String message, Throwable cause) {
+		super(message, cause);
 	}
 	
-	public static final String SEARCH_TIPOLOGIA_CONFIGURAZIONE_LABEL_KEY = "allarmi.search.tipologia.configurazione.label";
-	public static final String SEARCH_TIPOLOGIA_EROGAZIONE_LABEL_KEY = "allarmi.search.tipologia.erogazione.label";
-	public static final String SEARCH_TIPOLOGIA_FRUIZIONE_LABEL_KEY = "allarmi.search.tipologia.fruizione.label";
+	public AllarmiRuntimeException(Throwable cause) {
+		super(cause);
+	}
+
+	public AllarmiRuntimeException() {
+		super();
+    }
 	
-	public static final String CRITERI_ACKNOWLEDGE_LABEL_KEY = "allarmi.criteriAcknowledge.label";
-	
-	
+	public AllarmiRuntimeException(String msg) {
+        super(msg);
+    }
 }
+

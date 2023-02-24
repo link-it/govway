@@ -134,7 +134,7 @@ public class MultipartFilter  implements Filter{
 				this.bais = new ByteArrayInputStream(this.buffer);
 				this.bsis = new BufferedServletInputStream(this.bais);
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				ex.printStackTrace(System.err);
 			}
 
 			return this.bsis;

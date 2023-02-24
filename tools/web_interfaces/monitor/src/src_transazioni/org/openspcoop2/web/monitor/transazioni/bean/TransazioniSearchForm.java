@@ -984,7 +984,7 @@ Context, Cloneable {
 				return null;
 			
 			
-			if(this.getEsitoGruppo()!=null && (EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.getEsitoGruppo())){
+			if(this.getEsitoGruppo()!=null && (EsitoUtils.ALL_PERSONALIZZATO_VALUE.intValue() == this.getEsitoGruppo().intValue())){
 				if(this.getEsitoDettaglioPersonalizzato()==null || this.getEsitoDettaglioPersonalizzato().length<=0){
 					MessageUtils.addErrorMsg("Selezionare almeno un esito di dettaglio");
 					return null;
@@ -1091,7 +1091,8 @@ Context, Cloneable {
 	
 	@Override
 	public EsitoTransazione getEsitoTransazione() {
-		if(EsitoUtils.ALL_VALUE != this.getEsitoDettaglio()){
+		Integer esitoDettaglio = this.getEsitoDettaglio();
+		if(esitoDettaglio!=null && (EsitoUtils.ALL_VALUE.intValue() != esitoDettaglio.intValue())){
 			try{
 				return EsitiProperties.getInstanceFromProtocolName(this.getLogger(),this.getProtocollo()).convertToEsitoTransazione( this.getEsitoDettaglio(), this.getEsitoContesto());
 			}catch(Exception e){

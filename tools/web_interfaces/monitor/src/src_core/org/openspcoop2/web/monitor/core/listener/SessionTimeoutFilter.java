@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.web.monitor.core.utils.SessionUtils;
 import org.slf4j.Logger;
 
 /**
@@ -73,7 +74,7 @@ public class SessionTimeoutFilter implements Filter {
 			if (isSessionControlRequiredForThisResource(httpServletRequest)) {
 
 				// is session invalid?
-				if (isSessionInvalid(httpServletRequest)) {					
+				if (SessionUtils.isSessionInvalid(httpServletRequest)) {					
 					String redirPageUrl = httpServletRequest.getContextPath() + "/";
 					//se la pagina richiesta e' quella di login allora redirigo direttamente a quella, altrimenti a quella di timeout
 					//redirPageUrl += StringUtils.contains(httpServletRequest.getRequestURI(), getLoginPage()) ? getLoginPage() : getTimeoutPage();
@@ -106,12 +107,6 @@ public class SessionTimeoutFilter implements Filter {
 		}
 
 		return controlRequired;
-	}
-
-	private boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
-		boolean sessionInValid = (httpServletRequest.getRequestedSessionId() != null)
-		&& !httpServletRequest.isRequestedSessionIdValid();
-		return sessionInValid;
 	}
 
 	private String getRedirPage(HttpServletRequest req){

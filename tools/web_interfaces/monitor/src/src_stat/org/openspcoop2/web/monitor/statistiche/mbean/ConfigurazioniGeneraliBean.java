@@ -123,15 +123,15 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 			return new ArrayList<SelectItem>();
 		}
 		
-		PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
+		//PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
 		
-		if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
+		//if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
 			//return _getSoggetti(false,true,null);
 			// bug fix: devo usare sempre i soggetti operativi
 			return _getSoggetti(true,false,null);
-		} else {
-			return _getSoggetti(true,false,null);
-		}
+		//} else {
+		//	return _getSoggetti(true,false,null);
+		//}
 	}
 	
 	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiErogatoreAutoComplete(Object val) throws Exception{
@@ -140,14 +140,14 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		if(val==null || StringUtils.isEmpty((String)val)) {
 		}else{
 			if(this.search!=null){
-				PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
-				if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
+				//PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
+				//if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
 					//listaSoggettiTmp = _getSoggetti(false,true,(String)val);
 					// bug fix: devo usare sempre i soggetti operativi
 					listaSoggettiTmp = _getSoggetti(true,false,(String)val);
-				} else {
-					listaSoggettiTmp = _getSoggetti(true,false,(String)val);
-				}
+				//} else {
+				//	listaSoggettiTmp = _getSoggetti(true,false,(String)val);
+				//}
 			}
 		}
 		

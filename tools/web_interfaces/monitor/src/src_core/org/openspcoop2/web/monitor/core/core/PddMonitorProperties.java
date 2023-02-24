@@ -258,23 +258,32 @@ public class PddMonitorProperties {
 	
 	public Properties getExternalForceIndexRepository() throws Exception{
 		InputStream is = null;
-		String s = this.appProperties.getProperty("forceIndex.repository", false, true);
-		if(s!=null){
-			File f = new File(s);
-			if(f.exists()){
-				is = new FileInputStream(f);
+		try {
+			String s = this.appProperties.getProperty("forceIndex.repository", false, true);
+			if(s!=null){
+				File f = new File(s);
+				if(f.exists()){
+					is = new FileInputStream(f);
+				}
+				else{
+					// provo a cercarlo nel classpath
+					is = PddMonitorProperties.class.getResourceAsStream(s);
+				}
 			}
-			else{
-				// provo a cercarlo nel classpath
-				is = PddMonitorProperties.class.getResourceAsStream(s);
+			if(is!=null){
+				Properties p = new Properties();
+				p.load(is);
+				return p;
+	 		}
+		}finally {
+			try {
+				if(is!=null) {
+					is.close();
+				}
+			}catch(Throwable t) {
+				// ignore
 			}
 		}
-		if(is!=null){
-			Properties p = new Properties();
-			p.load(is);
-			is.close();
-			return p;
- 		}
 		return null;
 	}
 	

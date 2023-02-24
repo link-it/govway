@@ -182,6 +182,7 @@ public class EventiService implements IEventiService{
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.eventiDao.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					EventiService.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof ServiceException) {
 						throw (ServiceException) e.getCause();
@@ -337,6 +338,7 @@ public class EventiService implements IEventiService{
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.eventiDao.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					EventiService.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof ServiceException) {
 						throw (ServiceException) e.getCause();

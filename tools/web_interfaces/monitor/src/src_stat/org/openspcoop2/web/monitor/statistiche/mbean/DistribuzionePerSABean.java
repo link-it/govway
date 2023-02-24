@@ -79,15 +79,15 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 	public DistribuzionePerSABean() {
 		super();
-		this.init();
+		this.initDpSAB();
 	}
 	public DistribuzionePerSABean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
 			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB) {
 		super(serviceManager, pluginsServiceManager,
 				driverRegistroServiziDB, driverConfigurazioneDB);
-		this.init();
+		this.initDpSAB();
 	}
-	private void init() {
+	private void initDpSAB() {
 		this.setChartId("distribuzioneSA");
 		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}

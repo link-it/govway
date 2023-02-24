@@ -79,7 +79,7 @@ public class LoginPhaseListener implements PhaseListener {
 	        
 	        String msg = null;
 	      //Controllo se sto andando alla pagina di errore e se c'e' un errore da visualizzare
-	        if(allowedPage && StringUtils.contains(vr.getViewId(), "error")){
+	        if(allowedPage && vr!=null && StringUtils.contains(vr.getViewId(), "error")){
 	        	msg = (String) ec.getSessionMap().get(LoginPhaseListener.PRINCIPAL_ERROR_MSG);
 	        	if(msg != null){
 	        		// 
@@ -97,13 +97,17 @@ public class LoginPhaseListener implements PhaseListener {
 	        
 	        //se non sono nella pagina di login e se non sono loggato
 	        if (!allowedPage && !isLogged) {
-	        	addError(fc, (msg != null ? msg : "Autenticazione richiesta."));
+	        	addError(fc, getErrorAutenticazione(msg));
 	            NavigationHandler nh = fc.getApplication().getNavigationHandler();
 	            nh.handleNavigation(fc, null, "login");
 	        }
 		}catch (Exception e) {
 			LoginPhaseListener.log.error(e.getMessage(),e);
 		}
+	}
+	
+	private String getErrorAutenticazione(String msg) {
+		return (msg != null ? msg : "Autenticazione richiesta.");
 	}
 
 	private boolean isAllowedPage(String viewId){

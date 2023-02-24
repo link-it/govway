@@ -51,9 +51,13 @@ public class MultiEmailValidator implements Validator{
 		}
 		
 		String email = (String) value;
-		String [] tmp = email.split(",");
-		for (int i = 0; i < tmp.length; i++) {
-			EmailValidator.validaEMail(tmp[i].trim(), this.emailPattern, context);	
+		if(email!=null) {
+			String [] tmp = email.split(",");
+			if(tmp!=null) {
+				for (int i = 0; i < tmp.length; i++) {
+					EmailValidator.validaEMail(tmp[i].trim(), this.emailPattern, context);	
+				}
+			}
 		}
 		 
 	}

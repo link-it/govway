@@ -640,7 +640,7 @@ public class SingleFileExporter implements IExporter{
 
 			Date dataFine = Calendar.getInstance().getTime();
 			
-			if(this.abilitaMarcamentoTemporale){
+			if(this.abilitaMarcamentoTemporale && te!=null){
 				te.setExportState(ExportState.COMPLETED);
 				te.setExportTimeEnd(dataFine);
 				this.transazioniExporterService.store(te);
@@ -655,7 +655,7 @@ public class SingleFileExporter implements IExporter{
 		}catch(ExportException e){
 			SingleFileExporter.log.error("Errore durante esportazione su file",e);
 			
-			if(this.abilitaMarcamentoTemporale){
+			if(this.abilitaMarcamentoTemporale && te!=null){
 				try{
 					te.setExportState(ExportState.ERROR);
 					StringWriter sw = new StringWriter();

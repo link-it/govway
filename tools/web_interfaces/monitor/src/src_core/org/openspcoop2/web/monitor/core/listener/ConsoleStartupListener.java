@@ -118,7 +118,12 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
         try {
             ThreadExecutorManager.shutdown();
             log.info("Shutdown pool thread ricerche completato.");
-        } catch (Exception e) {
+        } 
+        catch (InterruptedException e) {
+        	log.warn("Shutdown pool thread ricerche fallito:" + e);
+		    Thread.currentThread().interrupt();
+        }
+        catch (Exception e) {
             log.warn("Shutdown pool thread ricerche fallito:" + e);
         }
 	}

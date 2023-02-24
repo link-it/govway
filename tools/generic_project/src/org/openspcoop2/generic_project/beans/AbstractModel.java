@@ -44,10 +44,11 @@ public abstract class AbstractModel<T> implements IModel<T> {
 	}
 
 
-	@Override
-	public int hashCode(){
-		return this.getClass().getName().hashCode();
-	}
+	// Non lo si vuole realizzare, si demanda eventualmente alla classe che lo implementa
+//	@Override
+//	public int hashCode(){
+//		return this.getClass().getName().hashCode();
+//	}
 	
 	@Override
 	public boolean equals(Object o){

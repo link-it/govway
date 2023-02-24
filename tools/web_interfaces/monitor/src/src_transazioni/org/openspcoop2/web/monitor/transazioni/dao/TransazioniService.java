@@ -681,6 +681,7 @@ public class TransazioniService implements ITransazioniService {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.transazioniSearchDAO.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					this.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof ServiceException) {
 						throw (ServiceException) e.getCause();
@@ -718,6 +719,9 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 		} catch (Exception e) {
+			if(e!=null && e instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			this.log.error(e.getMessage(), e);
 		}
 		return listaBean;
@@ -765,6 +769,7 @@ public class TransazioniService implements ITransazioniService {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.transazioniSearchDAO.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					this.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof ServiceException) {
 						throw (ServiceException) e.getCause();
@@ -802,6 +807,9 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 		} catch (Exception e) {
+			if(e!=null && e instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			this.log.error(e.getMessage(), e);
 		}
 		return listaBean;
@@ -909,6 +917,7 @@ public class TransazioniService implements ITransazioniService {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.transazioniSearchDAO.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					this.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof ServiceException) {
 						throw (ServiceException) e.getCause();
@@ -946,6 +955,9 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 		} catch (Exception e) {
+			if(e!=null && e instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			this.log.error(e.getMessage(), e);
 		}
 		return listaBean;
@@ -1010,6 +1022,7 @@ public class TransazioniService implements ITransazioniService {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.transazioniSearchDAO.findAll(pagExpr)).get(this.timeoutRicercheLive.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					this.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof ServiceException) {
 						throw (ServiceException) e.getCause();
@@ -1044,6 +1057,9 @@ public class TransazioniService implements ITransazioniService {
 				}
 
 		} catch (Exception e) {
+			if(e!=null && e instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			this.log.error(e.getMessage(), e);
 		}
 

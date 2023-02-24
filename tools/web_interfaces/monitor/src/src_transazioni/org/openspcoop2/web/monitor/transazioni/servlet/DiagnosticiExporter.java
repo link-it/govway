@@ -70,7 +70,7 @@ public class DiagnosticiExporter extends HttpServlet{
 
 	private static final long serialVersionUID = 1272767433184676700L;
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
-	private transient IDiagnosticDriver diagnosticiService = null;
+	private static IDiagnosticDriver diagnosticiService = null;
 	private static Boolean enableHeaderInfo = false;
 
 	@Override
@@ -79,7 +79,7 @@ public class DiagnosticiExporter extends HttpServlet{
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DiagnosticiExporter.log);
 			DiagnosticiExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
 
-			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
+			diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
 		}catch(Exception e){
 			DiagnosticiExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
@@ -99,7 +99,7 @@ public class DiagnosticiExporter extends HttpServlet{
 	}
 
 
-	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
+	private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 			if(context==null) {
@@ -197,7 +197,7 @@ public class DiagnosticiExporter extends HttpServlet{
 					filter.setProperties(properties);
 
 
-					List<MsgDiagnostico> list = this.diagnosticiService.getMessaggiDiagnostici(filter);
+					List<MsgDiagnostico> list = diagnosticiService.getMessaggiDiagnostici(filter);
 					// Add ZIP entry to output stream.
 					zip.putNextEntry(new ZipEntry(/*++i + "_" + */t.getIdTransazione() + " (" + list.size() + " entries)" + ".xml"));
 					if(DiagnosticiExporter.enableHeaderInfo){
@@ -259,7 +259,7 @@ public class DiagnosticiExporter extends HttpServlet{
 			zip.close();
 		}catch(Throwable e){
 			DiagnosticiExporter.log.error(e.getMessage(),e);
-			throw new ServletException(e.getMessage(),e);
+			//throw new ServletException(e.getMessage(),e);
 		}
 	}
 
@@ -276,21 +276,23 @@ public class DiagnosticiExporter extends HttpServlet{
 		}
 
 		// numero di id ricevuti non coincidente.
-		if(ids.length != idsFromSession.length)
+		if(ids!=null && idsFromSession!=null && ids.length != idsFromSession.length)
 			return false;
 
-		for (String id : ids) {
-			boolean found = false;
-			for (String idFromSession : idsFromSession) {
-				if(id.equals(idFromSession)){
-					found = true;
-					break;
-				}
-			}	
-			
-			// Se l'id ricevuto dalla richiesta non e' tra quelli consentiti allora non puoi accedere alla risorsa
-			if(!found)
-				return false;
+		if(ids!=null) {
+			for (String id : ids) {
+				boolean found = false;
+				for (String idFromSession : idsFromSession) {
+					if(id.equals(idFromSession)){
+						found = true;
+						break;
+					}
+				}	
+				
+				// Se l'id ricevuto dalla richiesta non e' tra quelli consentiti allora non puoi accedere alla risorsa
+				if(!found)
+					return false;
+			}
 		}
 
 		return true;

@@ -235,6 +235,7 @@ IStatisticaPersonalizzataService {
 								.limit(limit))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
 						StatistichePersonalizzateService.log.error(e.getMessage(), e);
+						Thread.currentThread().interrupt();
 					} catch (ExecutionException e) {
 						if(e.getCause() instanceof ServiceException) {
 							throw (ServiceException) e.getCause();
@@ -311,7 +312,7 @@ IStatisticaPersonalizzataService {
 
 				NonNegativeNumber nnn = this.statisticaSearchDAO.count(expr);
 
-				return Long.valueOf(nnn.longValue()).intValue();
+				return nnn != null ? ((int) nnn.longValue()) : 0;
 			}
 
 		} catch (Exception e) {
@@ -450,6 +451,7 @@ IStatisticaPersonalizzataService {
 						return ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.statisticaSearchDAO.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
 						StatistichePersonalizzateService.log.error(e.getMessage(), e);
+						Thread.currentThread().interrupt();
 					} catch (ExecutionException e) {
 						if(e.getCause() instanceof ServiceException) {
 							throw (ServiceException) e.getCause();

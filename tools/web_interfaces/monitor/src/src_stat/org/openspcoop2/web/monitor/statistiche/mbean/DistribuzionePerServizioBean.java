@@ -83,15 +83,15 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 
 	public DistribuzionePerServizioBean() {
 		super();
-		this.init();
+		this.initDpSB();
 	}
 	public DistribuzionePerServizioBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
 			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB) {
 		super(serviceManager, pluginsServiceManager,
 				driverRegistroServiziDB, driverConfigurazioneDB);
-		this.init();
+		this.initDpSB();
 	}
-	private void init() {
+	private void initDpSB() {
 		this.setChartId("distribuzioneServizio");
 		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}
