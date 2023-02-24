@@ -249,7 +249,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			CanaliConfigurazione gestioneCanali = this.confCore.getCanaliConfigurazione(false);
 			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
-			CanaleConfigurazione canaleConfigurazioneDefault = getCanaleDefault(canaleList);
+			CanaleConfigurazione canaleConfigurazioneDefault = null;
+			if(gestioneCanaliEnabled) {
+				canaleConfigurazioneDefault = getCanaleDefault(canaleList);
+			}
 
 			for (int i = 0; i < lista.size(); i++) {
 				Vector<DataElement> e = new Vector<DataElement>();

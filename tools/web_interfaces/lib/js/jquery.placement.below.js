@@ -34,7 +34,8 @@ jQuery.fn.below = function(element, options)
 			var left = what[0].offsetWidth - options.adjustRight, top = what[0].offsetHeight + options.adjustDown;
 			if(jQuery.browser.opera)
 			{
-				var version = navigator.userAgent.match(/\d+\.\d+/);
+				var version = parseInt(jQuery.browser.version);
+				//var version = navigator.userAgent.match(/\d+\.\d+/);
 				if(version < 9)
 				{
 					left += (parseInt(jQuery.css(what[0], 'borderLeftWidth'))  || 0) +

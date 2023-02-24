@@ -41,8 +41,8 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 <tr class="trPageFooter">
 	<td colspan="2" class="tdPageFooter">
 		<div>
-			<a href="<%= gd.getLinkFoot() %>" target="_blank">
-				<img src="images/tema_link/logo_link_footer.png" />
+			<a href="<%= gd.getLinkFoot() %>" target="_blank" rel="noopener">
+				<img src="images/tema_link/logo_link_footer.png" alt="link.it" />
 			</a>
 		</div>
 		<jsp:include page="/jsplib/status.jsp" flush="true" />

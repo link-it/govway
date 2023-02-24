@@ -19,7 +19,7 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
-<html>
+<html lang="it">
 <%
 String iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);
@@ -715,13 +715,13 @@ $(document).ready(function(){
 	</table>
 	<div id="confermaEliminazioneModal" title="Conferma Operazione">
  		<p class="contenutoEliminazioneModal">
- 			<img src="images/tema_link/alert_orange.png"/>
+ 			<img src="images/tema_link/alert_orange.png" alt="Attenzione"/>
  			<span>Eliminare gli elementi selezionati?</span>
  		</p>
 	</div>
 	<div id="selezioneRichiestaModal" title="Selezione richiesta">
  		<p class="contenutoSelezioneRichiestaModal">
- 			<img src="images/tema_link/alert_orange.png"/>
+ 			<img src="images/tema_link/alert_orange.png" alt="Attenzione"/>
  			<span>&Egrave; necessario selezionare almeno 1 elemento.</span>
  		</p>
 	</div>

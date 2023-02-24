@@ -47,7 +47,7 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 
 %>
 
-<html>
+<html lang="it">
 <head>
 	<meta charset="UTF-8">
 	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />

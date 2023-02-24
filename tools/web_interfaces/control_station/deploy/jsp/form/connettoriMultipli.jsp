@@ -842,7 +842,7 @@ function inizializzaSelectFiltro(){
 																							}
 																							%>
 																							<span class="<%=classSpanNoEdit %>-image" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>">
-																								<img src="images/tema_link/<%= imageCheckBox %>"/>
+																								<img src="images/tema_link/<%= imageCheckBox %>" alt="Stato"/>
 																							</span>
 																							<%
 																						   		String idToRemoveTab = de.getIdToRemove() != null ? de.getIdToRemove() : "";
@@ -950,7 +950,7 @@ function inizializzaSelectFiltro(){
 																										}
 									                            											%>
 									                            												<span class="<%=classSpanNoEdit %>-image-msval" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>_<%=y%>">
-																													<img src="images/tema_link/<%= imageCheckBox %>"/>
+																													<img src="images/tema_link/<%= imageCheckBox %>" alt="Stato"/>
 																												</span>
 																												<span class="<%=classSpanNoEdit %>-msval" <%= statusTooltipTitleAttribute %> ><%= lab %></span>
 																											<%

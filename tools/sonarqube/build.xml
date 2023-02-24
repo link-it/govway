@@ -737,6 +737,63 @@
 			</else>
                 </if>
 
+		<!-- WEB Lib js -->
+		<var name="projectAnalyze" value="web-lib-js"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="js"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/web_interfaces/lib/js"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/lib/js"/>
+					</else>
+				</if>
+
+				<echo message="Analizzo sorgenti: tools/web_interfaces/lib/js"/>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- WEB Lib jsp -->
+		<var name="projectAnalyze" value="web-lib-jsp"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="jsp"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/web_interfaces/lib/jsplib"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/lib/jsplib"/>
+					</else>
+				</if>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/jsplib/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.jsplib.falsePositives}"/>
+
+				<echo message="Analizzo sorgenti: tools/web_interfaces/lib/jsplib"/>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
 		<!-- WEB Loader -->
 		<var name="projectAnalyze" value="web-loader"/>
 		<if>
@@ -790,8 +847,11 @@
 						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/control_station/src"/>
 					</else>
 				</if>
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/control_station/deploy/jsp"/>
 
 				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/control_station/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.control_station.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/control_station/enum.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.control_station.enum.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/control_station/security_hotspots.properties"/>

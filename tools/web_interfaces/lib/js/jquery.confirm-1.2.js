@@ -36,7 +36,7 @@ jQuery.fn.confirm = function(options) {
     timeout: 0
   }, options);
   options.stopAfter = options.stopAfter.toLowerCase();
-  if (!options.stopAfter in ['never', 'once', 'ok', 'cancel']) {
+  if (!(options.stopAfter in ['never', 'once', 'ok', 'cancel'])) {
     options.stopAfter = 'never';
   }
   options.buttons = jQuery.extend({

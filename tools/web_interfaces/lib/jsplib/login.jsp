@@ -46,7 +46,7 @@ GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData
 
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 %>
-<html>
+<html lang="it">
 <head>
 <meta charset="UTF-8">
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />

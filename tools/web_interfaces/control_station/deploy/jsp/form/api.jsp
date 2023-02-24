@@ -420,7 +420,7 @@
 																	}
 																	%>
 																	<span class="<%=classSpanNoEdit %>-image" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>">
-																		<img src="images/tema_link/<%= imageCheckBox %>"/>
+																		<img src="images/tema_link/<%= imageCheckBox %>" alt="Stato"/>
 																	</span>
 									                				<span class="<%=classSpanNoEdit %>" <%= statusTooltipTitleAttribute %> ><%= statusValueText %></span>
 									                				<% if(firstText){%>
@@ -512,7 +512,7 @@
 																				}
 			                            											%>
 			                            												<span class="<%=classSpanNoEdit %>-image-msval" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>_<%=y%>">
-																							<img src="images/tema_link/<%= imageCheckBox %>"/>
+																							<img src="images/tema_link/<%= imageCheckBox %>" alt="Stato"/>
 																						</span>
 																						<span class="<%=classSpanNoEdit %>-msval" <%= statusTooltipTitleAttribute %> ><%= lab %></span>
 																					<%
