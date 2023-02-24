@@ -929,6 +929,74 @@
 			</else>
                 </if>
 
+		<!-- Batch Statistiche -->
+		<var name="projectAnalyze" value="batch-statistiche"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="statistiche"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/batch/statistiche/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/batch/statistiche/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="batch-statistiche"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/batch/statistiche"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/batch/statistiche/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_batch-statistiche*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Batch Runtime -->
+		<var name="projectAnalyze" value="batch-runtime-repository"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="runtime-repository"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/batch/runtime-repository/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/batch/runtime-repository/src"/>
+					</else>
+				</if>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/batch/runtime-repository/enum.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.batch.runtime-repository.enum.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="batch-runtime-repository"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/batch/runtime-repository"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/batch/runtime-repository/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_batch-runtime-repository*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
 
 
 		<!-- Esclusioni -->

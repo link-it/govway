@@ -99,7 +99,7 @@ public class GestoreBuste extends AbstractGestore {
 				}
 				
 				if(rightInterval!=null) {
-					while(rightInterval.before(maxDate)) {
+					while(rightInterval!=null && rightInterval.before(maxDate)) {
 						
 						cleanBusteInutili(leftInterval, rightInterval);
 						

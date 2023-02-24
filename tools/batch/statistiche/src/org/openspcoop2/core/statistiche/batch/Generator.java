@@ -89,12 +89,13 @@ public class Generator {
 		Logger logSql = null;
 		try{
 			Properties props = new Properties();
-			FileInputStream fis = new FileInputStream(Generator.class.getResource("/batch-statistiche.log4j2.properties").getFile());
-			props.load(fis);
-			LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
-			LoggerWrapperFactory.setLogConfiguration(props);
-			logCore = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione.error");
-			logSql = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione.sql.error");
+			try(FileInputStream fis = new FileInputStream(Generator.class.getResource("/batch-statistiche.log4j2.properties").getFile())){
+				props.load(fis);
+				LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
+				LoggerWrapperFactory.setLogConfiguration(props);
+				logCore = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione.error");
+				logSql = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione.sql.error");
+			}
 		}catch(Exception e) {
 			throw new Exception("Impostazione logging fallita: "+e.getMessage());
 		}
