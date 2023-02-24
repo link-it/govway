@@ -476,10 +476,7 @@ public class ApiApiHelper {
 			ApiAllegatoSpecificaSemiformale allegatoSS = (ApiAllegatoSpecificaSemiformale) body.getAllegato();
 			documento.setFile(allegatoSS.getNome());
 			documento.setByteContenuto(allegatoSS.getDocumento());
-			if(allegatoSS.getTipoSpecifica()==null) {
-				documento.setTipo(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()); // default
-			}
-			else {
+			if(ApiCheckNotNull.isNotNullTipoSpecifica(allegatoSS, documento)) {
 				TipoSpecificaSemiformaleEnum tipoAllegato = (TipoSpecificaSemiformaleEnum) allegatoSS.getTipoSpecifica();
 				documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(tipoAllegato) ).toString() );
 			}

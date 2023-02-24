@@ -2161,7 +2161,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			Proprieta to_get = null;
 			if(pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
 				Optional<Proprieta> op = BaseHelper.findFirst(pd.getProprietaList(), p -> p.getNome().equals(proprieta));
-				if(op!=null && op.isPresent()) {
+				if(op.isPresent()) {
 					to_get = op.get();
 				}
 			}

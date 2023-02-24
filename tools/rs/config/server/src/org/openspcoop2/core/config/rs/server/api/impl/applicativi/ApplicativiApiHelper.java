@@ -520,7 +520,7 @@ public class ApplicativiApiHelper {
 			tipo_protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(sa.getTipoSoggettoProprietario());
 		} catch (ProtocolException e) {
 		
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new RuntimeException(e);
 		}		
 		
@@ -552,7 +552,7 @@ public class ApplicativiApiHelper {
 			tipo_protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(sa.getTipoSoggettoProprietario());
 		} catch (ProtocolException e) {
 		
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new RuntimeException(e);
 		}		
 		

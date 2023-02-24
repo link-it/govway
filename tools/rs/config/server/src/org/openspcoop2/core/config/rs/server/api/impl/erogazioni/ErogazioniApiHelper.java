@@ -432,9 +432,7 @@ public class ErogazioniApiHelper {
 		}
 		case NUOVA: {
 			GruppoNuovaConfigurazione conf = deserializeDefault(body, GruppoNuovaConfigurazione.class);
-			if (conf.getAutenticazione() == null) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(GruppoNuovaConfigurazione.class.getName()+": Indicare il campo obbligatorio 'autenticazione'");
-			}
+			ErogazioniCheckNotNull.checkAutenticazione(conf);
 			
 			return (T) conf;
 		}
@@ -1626,14 +1624,7 @@ public class ErogazioniApiHelper {
 	  	
 		final boolean httpsstato = httpsClient != null;	// Questo è per l'autenticazione client.
 	  	 
-		String httpskeystore = null;
-		if ( httpsClient != null ) {
-			if ( httpsClient.getKeystorePath() != null || httpsClient.getKeystoreTipo() != null ) {
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;  
-			}
-			else
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-		}
+		String httpskeystore = ErogazioniCheckNotNull.getHttpskeystore(httpsClient);
         			    
 	     
 		env.apsHelper.fillConnettore(
@@ -1850,6 +1841,9 @@ public class ErogazioniApiHelper {
 			idFruizione.setIdFruitore(idFruitore);
 
 			Fruitore fruitore = getFruitore(asps, env.idSoggetto.getNome());
+			if(fruitore==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il fruitore '" + env.idSoggetto.getNome() + "' non risulta definito");
+			}
 			p = getProtocolProperties(idFruizione, fruitore, env);
 		}
 		
@@ -2036,10 +2030,7 @@ public class ErogazioniApiHelper {
 			ApiImplAllegatoSpecificaSemiformale allegatoSS = (ApiImplAllegatoSpecificaSemiformale) body.getAllegato();
 			documento.setFile(allegatoSS.getNome());
 			documento.setByteContenuto(allegatoSS.getDocumento());
-			if(allegatoSS.getTipoSpecifica()==null) {
-				documento.setTipo(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()); // default
-			}
-			else {
+			if(ErogazioniCheckNotNull.isNotNullTipoSpecifica(allegatoSS, documento)) {
 				TipoSpecificaSemiformaleEnum tipoAllegato = (TipoSpecificaSemiformaleEnum) allegatoSS.getTipoSpecifica();
 				documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(tipoAllegato) ).toString() );
 			}
@@ -2053,10 +2044,7 @@ public class ErogazioniApiHelper {
 			ApiImplAllegatoSpecificaLivelloServizio allegatoLS = (ApiImplAllegatoSpecificaLivelloServizio) body.getAllegato();
 			documento.setFile(allegatoLS.getNome());
 			documento.setByteContenuto(allegatoLS.getDocumento());
-			if(allegatoLS.getTipoSpecifica()==null) {
-				documento.setTipo(TipiDocumentoLivelloServizio.WSLA.toString()); // default
-			}
-			else {
+			if(ErogazioniCheckNotNull.isNotNullTipoSpecifica(allegatoLS, documento)) {
 				TipoSpecificaLivelloServizioEnum tipoAllegato = (TipoSpecificaLivelloServizioEnum) allegatoLS.getTipoSpecifica();
 				documento.setTipo( evalnull( () -> Enums.tipoDocumentoLivelloServizioFromSpecifica.get(tipoAllegato).toString()) );
 			}
@@ -2070,10 +2058,7 @@ public class ErogazioniApiHelper {
 			ApiImplAllegatoSpecificaSicurezza allegatoSSec = (ApiImplAllegatoSpecificaSicurezza) body.getAllegato();
 			documento.setFile(allegatoSSec.getNome());
 			documento.setByteContenuto(allegatoSSec.getDocumento());
-			if(allegatoSSec.getTipoSpecifica()==null) {
-				documento.setTipo(TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.toString()); // default
-			}
-			else {
+			if(ErogazioniCheckNotNull.isNotNullTipoSpecifica(allegatoSSec, documento)) {
 				TipoSpecificaSicurezzaEnum tipoAllegato = (TipoSpecificaSicurezzaEnum) allegatoSSec.getTipoSpecifica();
 				documento.setTipo( evalnull( () -> Enums.tipoDocumentoSicurezzaFromSpecifica.get(tipoAllegato).toString()) );
 			}
@@ -2120,11 +2105,7 @@ public class ErogazioniApiHelper {
 			allegatoSL.setNome(doc.getFile());
 			TipiDocumentoLivelloServizio tipo = TipiDocumentoLivelloServizio.toEnumConstant(doc.getTipo());
 			allegatoSL.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaLivelloServizioEnum.class)));
-			if(allegatoSL.getTipoSpecifica()==null) {
-				if(TipiDocumentoLivelloServizio.WSAGREEMENT.equals(tipo)) {
-					allegatoSL.setTipoSpecifica(TipoSpecificaLivelloServizioEnum.WS_AGREEMENT);
-				}
-			}
+			ErogazioniCheckNotNull.documentoToImplAllegato(allegatoSL, tipo);
 			ret.setAllegato(allegatoSL);
 			break;
 		}
@@ -2137,14 +2118,7 @@ public class ErogazioniApiHelper {
 			allegatoSSec.setNome(doc.getFile());
 			TipiDocumentoSicurezza tipo = TipiDocumentoSicurezza.toEnumConstant(doc.getTipo());
 			allegatoSSec.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSicurezzaEnum.class)));
-			if(allegatoSSec.getTipoSpecifica()==null) {
-				if(TipiDocumentoSicurezza.WSPOLICY.equals(tipo)) {
-					allegatoSSec.setTipoSpecifica(TipoSpecificaSicurezzaEnum.WS_POLICY);
-				}
-				else if(TipiDocumentoSicurezza.XACML_POLICY.equals(tipo)) {
-					allegatoSSec.setTipoSpecifica(TipoSpecificaSicurezzaEnum.XACML_POLICY);
-				}
-			}
+			ErogazioniCheckNotNull.documentoToImplAllegato(allegatoSSec, tipo);
 			ret.setAllegato(allegatoSSec);
 			break;
 		}
@@ -4334,12 +4308,13 @@ public class ErogazioniApiHelper {
 		
 		// Imposto l'autenticazione custom
 		if ( evalnull( () -> auth.getTipo() ) == TipoAutenticazioneEnum.CUSTOM) {
-			if(auth instanceof APIImplAutenticazioneCustom) {
+			if(auth!=null && auth instanceof APIImplAutenticazioneCustom) {
 				APIImplAutenticazioneCustom authnCustom = (APIImplAutenticazioneCustom) auth;
 				newPa.setAutenticazione(authnCustom.getNome());
 			}
 			else {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La configurazione dell'autenticazione '"+auth.getTipo()+"' non è correttamente definita (trovata configurazione '"+auth.getClass().getName()+"')"  );
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La configurazione dell'autenticazione '"+(auth!=null ? auth.getTipo() : "null?")+"' non è correttamente definita (trovata configurazione '"+
+						(auth!=null ? auth.getClass().getName() : "null?")+"')"  );
 			}
 		}
 		// Gestione Token
@@ -4383,12 +4358,13 @@ public class ErogazioniApiHelper {
 		newPd.setProprietaAutenticazioneList(proprietaAutenticazione);
 		
 		if ( evalnull( () -> auth.getTipo() ) == TipoAutenticazioneEnum.CUSTOM) {
-			if(auth instanceof APIImplAutenticazioneCustom) {
+			if(auth!=null && auth instanceof APIImplAutenticazioneCustom) {
 				APIImplAutenticazioneCustom authnCustom = (APIImplAutenticazioneCustom) auth;
 				newPd.setAutenticazione(authnCustom.getNome());
 			}
 			else {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La configurazione dell'autenticazione '"+auth.getTipo()+"' non è correttamente definita (trovata configurazione '"+auth.getClass().getName()+"')"  );
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La configurazione dell'autenticazione '"+(auth!=null ? auth.getTipo() : "null?")+"' non è correttamente definita (trovata configurazione '"+
+						(auth!=null ? auth.getClass().getName() : "null?")+"')"  );
 			}
 		}
 		// Gestione Token
@@ -5020,14 +4996,16 @@ public class ErogazioniApiHelper {
 		RateLimitingPolicyFiltroErogazione filtro = body.getFiltro();
 		override( filtro, idPropietarioSa, wrap );
 		
-		final String filtroFruitore = evalnull(() -> filtro.getSoggettoFruitore()) != null   
-				? new IDSoggetto(idPropietarioSa.getTipo(), filtro.getSoggettoFruitore()).toString()
-				: null;
-		
-		wrap.overrideParameter(
-				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE,
-				filtroFruitore 
-			);
+		if(filtro!=null) {
+			final String filtroFruitore = evalnull(() -> filtro.getSoggettoFruitore()) != null   
+					? new IDSoggetto(idPropietarioSa.getTipo(), filtro.getSoggettoFruitore()).toString()
+					: null;
+			
+			wrap.overrideParameter(
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE,
+					filtroFruitore 
+				);
+		}
 		
 		RateLimitingPolicyGroupBy groupCriteria = body.getRaggruppamento();
 		override( groupCriteria, idPropietarioSa, wrap );
@@ -5047,14 +5025,16 @@ public class ErogazioniApiHelper {
 		RateLimitingPolicyFiltroErogazione filtro = body.getFiltro();
 		override( filtro, idPropietarioSa, wrap );
 		
-		final String filtroFruitore = evalnull(() -> filtro.getSoggettoFruitore()) != null   
-				? new IDSoggetto(idPropietarioSa.getTipo(), filtro.getSoggettoFruitore()).toString()
-				: null;
-		
-		wrap.overrideParameter(
-				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE,
-				filtroFruitore 
-			);
+		if(filtro!=null) {
+			final String filtroFruitore = evalnull(() -> filtro.getSoggettoFruitore()) != null   
+					? new IDSoggetto(idPropietarioSa.getTipo(), filtro.getSoggettoFruitore()).toString()
+					: null;
+			
+			wrap.overrideParameter(
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE,
+					filtroFruitore 
+				);
+		}
 		
 		RateLimitingPolicyGroupBy groupCriteria = body.getRaggruppamento();
 		override( groupCriteria, idPropietarioSa, wrap );

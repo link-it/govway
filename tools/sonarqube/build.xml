@@ -852,6 +852,47 @@
 			</else>
                 </if>
 
+		<!-- RS API Config -->
+		<var name="projectAnalyze" value="rs-config"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="rs-config"/>
+				<equals arg1="${govway.group}" arg2="api-config"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/rs/config/server/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/rs/config/server/src"/>
+					</else>
+				</if>
+
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/rs/config/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.rs.config.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/tools/rs/config/security_hotspots.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.rs.config.sec.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="rs-config"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/rs/config/server"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/rs/config/server/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_rs-config-server*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
+
 
 		<!-- Esclusioni -->
 		<var name="govway.exclusion" value=""/>

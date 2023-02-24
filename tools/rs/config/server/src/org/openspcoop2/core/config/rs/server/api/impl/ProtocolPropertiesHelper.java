@@ -38,10 +38,10 @@ public class ProtocolPropertiesHelper {
 
 	public static Boolean getBooleanProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws Exception {
 		AbstractProperty<?> prop = getProperty(p, key, required);
-		if(prop instanceof BooleanProperty) {
+		if(prop!=null && prop instanceof BooleanProperty) {
 			return ((BooleanProperty)prop).getValue();
 		} else {
-			throw new Exception("Property "+key+" non e' una Boolean:" + prop.getClass().getName());
+			throw new Exception("Property "+key+" non e' una Boolean:" + (prop!=null ? prop.getClass().getName() : "null prop" ) );
 		}
 	}
 

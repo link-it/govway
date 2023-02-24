@@ -2673,7 +2673,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			Proprieta to_get = null;
 			if(pa.getProprietaList()!=null && !pa.getProprietaList().isEmpty()) {
 				Optional<Proprieta> op = BaseHelper.findFirst(pa.getProprietaList(), p -> p.getNome().equals(proprieta));
-				if(op!=null && op.isPresent()) {
+				if(op.isPresent()) {
 					to_get = op.get();
 				}
 			}
