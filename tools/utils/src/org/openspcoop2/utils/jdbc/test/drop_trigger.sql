@@ -1,0 +1,1 @@
+DROP TRIGGER trg_prova;
