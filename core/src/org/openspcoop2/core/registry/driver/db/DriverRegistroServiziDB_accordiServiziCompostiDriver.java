@@ -46,6 +46,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -62,7 +63,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 
 	private DriverRegistroServiziDB driver = null;
 	
-	public DriverRegistroServiziDB_accordiServiziCompostiDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_accordiServiziCompostiDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 	}
 	
@@ -156,40 +157,11 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readPortTypes] Exception :" + se.getMessage(),se);
 		} finally {
 
-			try{
-				if(rs2!=null) 
-					rs2.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm2!=null) 
-					stm2.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs2, stm2);
 
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (conParam==null && this.driver.atomica) {
-					this.driver.log.debug("rilascio connessione al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			this.driver.closeConnection(conParam, con);
 
 		}
 	}
@@ -259,27 +231,9 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(con);
 		}
 
 
@@ -356,27 +310,9 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(con);
 		}
 
 
@@ -451,27 +387,9 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(con);
 		}
 
 
@@ -516,18 +434,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
 		}
 	}
@@ -679,27 +586,8 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -812,27 +700,8 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
+			this.driver.closeConnection(con);
 		}
 	}
 }

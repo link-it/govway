@@ -55,6 +55,7 @@ import org.openspcoop2.utils.jdbc.InsertAndGeneratedKey;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -673,17 +674,7 @@ public class DriverConfigurazioneDB_trasformazioniLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] Exception [" + se.getMessage() + "].",se);
 		} finally {
 	
-			try {
-				if(rs!=null)rs.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			
-			try {
-				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(rs, updateStmt);
 			
 		}
 	}
@@ -1145,30 +1136,8 @@ public class DriverConfigurazioneDB_trasformazioniLIB {
 			}
 			
 		}finally {
-			try {
-				if(rs1!=null)
-					rs1.close();
-			}catch(Exception eClose) {
-				// close
-			}
-			try {
-				if(rs!=null)
-					rs.close();
-			}catch(Exception eClose) {
-				// close
-			}
-			try {
-				if(stm1!=null)
-					stm1.close();
-			}catch(Exception eClose) {
-				// close
-			}
-			try {
-				if(stm!=null)
-					stm.close();
-			}catch(Exception eClose) {
-				// close
-			}
+			JDBCUtilities.closeResources(rs1, stm1);
+			JDBCUtilities.closeResources(rs, stm);
 		}
 		
 		return trasformazioni;

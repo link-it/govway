@@ -32,6 +32,7 @@ import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -162,20 +163,7 @@ public class DBOggettiInUsoUtils_scope {
 			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 		}
 	}
 

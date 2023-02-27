@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -673,18 +674,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		}catch (Exception se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConnettore] Exception : " + se.getMessage(),se);
 		} finally {
-			try {
-				if(rs!=null) 
-					rs.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) 
-					stm.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 
@@ -994,18 +984,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::getConnettore] Exception : " + sqle.getMessage(),sqle);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	
@@ -1063,18 +1042,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::readPropertiesConnettoreCustom] Exception : " + sqle.getMessage(),sqle);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	
@@ -1132,18 +1100,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::readPropertiesConnettoreExtendedInfo] Exception : " + sqle.getMessage(),sqle);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 
@@ -1193,18 +1150,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		}finally
 		{
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
 		}
 	}
@@ -1238,18 +1184,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		}finally
 		{
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs,stm);
 
 		}
 	}

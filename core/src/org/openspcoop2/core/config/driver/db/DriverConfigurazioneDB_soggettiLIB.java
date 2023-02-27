@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -206,10 +207,12 @@ public class DriverConfigurazioneDB_soggettiLIB {
 			// in caso di create eseguo la select e ritorno l'id dell'oggetto
 			// creato
 			if (type == CostantiDB.CREATE) {
-				selectRS = selectStmt.executeQuery();
-				if (selectRS.next()) {
-					soggetto.setId(selectRS.getLong("id"));
-					return soggetto.getId();
+				if(selectStmt!=null) {
+					selectRS = selectStmt.executeQuery();
+					if (selectRS.next()) {
+						soggetto.setId(selectRS.getLong("id"));
+						return soggetto.getId();
+					}
 				}
 			}
 
@@ -221,24 +224,9 @@ public class DriverConfigurazioneDB_soggettiLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDSoggetto] Exception [" + se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(selectRS!=null) 
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(selectStmt!=null) 
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
+			
 		}
 	}
 

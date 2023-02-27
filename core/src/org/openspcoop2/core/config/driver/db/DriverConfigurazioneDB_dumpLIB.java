@@ -39,6 +39,7 @@ import org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKey;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -189,11 +190,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] Exception [" + se.getMessage() + "].",se);
 		} finally {
 	
-			try {
-				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
 			
 		}
 	}
@@ -277,20 +274,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 			return dumpConfig;
 
 		}finally {
-			try {
-				if(rs1!=null) {
-					rs1.close();
-				}
-			}catch(Exception e) {
-				// close
-			}
-			try {
-				if(stm1!=null) {
-					stm1.close();
-				}
-			}catch(Exception e) {
-				// close
-			}
+			JDBCUtilities.closeResources(rs1, stm1);
 		}
 	}
 	
@@ -326,20 +310,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 			return dumpConfig;
 
 		}finally {
-			try {
-				if(rs1!=null) {
-					rs1.close();
-				}
-			}catch(Exception e) {
-				// close
-			}
-			try {
-				if(stm1!=null) {
-					stm1.close();
-				}
-			}catch(Exception e) {
-				// close
-			}
+			JDBCUtilities.closeResources(rs1, stm1);
 		}
 	}
 	

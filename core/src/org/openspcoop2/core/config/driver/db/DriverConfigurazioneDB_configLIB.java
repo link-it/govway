@@ -82,6 +82,7 @@ import org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKey;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -209,24 +210,9 @@ public class DriverConfigurazioneDB_configLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoRegistro] Exception [" + se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null)
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
+
 		}
 
 	}
@@ -341,24 +327,9 @@ public class DriverConfigurazioneDB_configLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoRegistro] Exception [" + se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null)
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
+			
 		}
 
 	}
@@ -429,12 +400,7 @@ public class DriverConfigurazioneDB_configLIB {
 		}catch (Exception se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoConfigurazione] Exception [" + se.getMessage() + "].",se);
 		} finally {
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
 		}
 
 	}
@@ -505,12 +471,7 @@ public class DriverConfigurazioneDB_configLIB {
 		}catch (Exception se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoDatiAutorizzazione] Exception [" + se.getMessage() + "].",se);
 		} finally {
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
 		}
 
 	}
@@ -604,24 +565,9 @@ public class DriverConfigurazioneDB_configLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoRegistro] Exception [" + se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null)
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
+			
 		}
 
 	}
@@ -759,24 +705,9 @@ public class DriverConfigurazioneDB_configLIB {
 			 
 		} finally {
 
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null)
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
+			
 		}
 	}
 	
@@ -867,24 +798,9 @@ public class DriverConfigurazioneDB_configLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoRegistro] Exception [" + se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null)
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
+			
 		}
 
 	}
@@ -1007,24 +923,9 @@ public class DriverConfigurazioneDB_configLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDGenericProperties] Exception [" + se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null)
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
+			
 		}
 
 	}
@@ -1075,13 +976,7 @@ public class DriverConfigurazioneDB_configLIB {
 			updateStmt.close();
 			
 		} finally {
-
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
 		}
 	}
 	
@@ -1145,13 +1040,7 @@ public class DriverConfigurazioneDB_configLIB {
 		}catch (Exception se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDRegistroPlugin] Exception [" + se.getMessage() + "].",se);
 		} finally {
-
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
 		}
 
 	}
@@ -3044,17 +2933,8 @@ public class DriverConfigurazioneDB_configLIB {
 		}catch (Exception se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] Exception [" + se.getMessage() + "].",se);
 		} finally {
-
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-				if(selectStmt!=null)
-					selectStmt.close();
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
 		}
 	}
 

@@ -36,6 +36,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.LikeConfig;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -262,34 +263,8 @@ public class DBOggettiInUsoUtils_canali {
 			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			// Chiudo statement and resultset
-			try {
-				if (risultato2 != null) {
-					risultato2.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt2 != null) {
-					stmt2.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(risultato2, stmt2);
+			JDBCUtilities.closeResources(risultato, stmt);
 		}
 	}
 

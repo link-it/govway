@@ -33,7 +33,7 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzio
 public class CheckNotNull {
 
 	public static EsitoTransazioneFullSearchEnum getEsitoTransazione(FiltroEsito filtro) {
-		return (filtro.getTipo() != null) ? filtro.getTipo() : EsitoTransazioneFullSearchEnum.QUALSIASI;
+		return (filtro!=null && filtro.getTipo() != null) ? filtro.getTipo() : EsitoTransazioneFullSearchEnum.QUALSIASI;
 	}
 	
 	public static void setTipoEsito(RicercaStatisticaDistribuzioneErrori body) {

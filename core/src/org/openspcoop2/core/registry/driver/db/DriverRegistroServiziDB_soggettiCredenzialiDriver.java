@@ -49,6 +49,7 @@ import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -66,7 +67,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 	private DriverRegistroServiziDB driver = null;
 	private DriverRegistroServiziDB_soggettiDriver soggettiDriver = null;
 	
-	public DriverRegistroServiziDB_soggettiCredenzialiDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_soggettiCredenzialiDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 		this.soggettiDriver = new DriverRegistroServiziDB_soggettiDriver(driver);
 	}
@@ -132,36 +133,9 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null)
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 	
@@ -221,36 +195,9 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null)
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 	
@@ -613,28 +560,8 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggettoAutenticato] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
 		}
 		
 		if(idSoggetto!=null){
@@ -751,36 +678,9 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 			
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 	
@@ -884,26 +784,8 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 		} catch (Exception qe) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggettiFromTipoAutenticazione] Exception: " + qe.getMessage(),qe);
 		} finally {
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
+			this.driver.closeConnection(con);
 		}
 	}
 	

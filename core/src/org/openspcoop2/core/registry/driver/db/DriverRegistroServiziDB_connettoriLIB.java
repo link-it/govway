@@ -38,6 +38,7 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -684,13 +685,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDConnettore] Exception : " + se.getMessage(),se);
 		}finally {
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(stm);
 		}
 	}
 	

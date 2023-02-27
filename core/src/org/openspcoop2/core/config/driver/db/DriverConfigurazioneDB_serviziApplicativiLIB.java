@@ -53,6 +53,7 @@ import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -1145,30 +1146,9 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 			throw new DriverConfigurazioneException("Exception : " + se.getMessage(),se);
 		} finally {
 			//Chiudo statement and resultset
-			try {
-				if(rs!=null) 
-					rs.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stmQuery!=null) 
-					stmQuery.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) 
-					stm.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm2!=null) 
-					stm2.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stmQuery);
+			JDBCUtilities.closeResources(stm);
+			JDBCUtilities.closeResources(stm2);
 		}
 	}
 
@@ -1219,18 +1199,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 		}finally
 		{
 			//Chiudo statement and resultset
-			try {
-				if(rs!=null) 
-					rs.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) 
-					stm.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
 		}
 	}

@@ -65,6 +65,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
@@ -491,27 +492,9 @@ public class DriverRegistroServiziDB_LIB {
 					+ se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(updateStmt!=null) {
-					updateStmt.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectRS!=null) {
-					selectRS.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null) {
-					selectStmt.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+
 		}
 	}
 	
@@ -691,27 +674,8 @@ public class DriverRegistroServiziDB_LIB {
 					+ se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(updateStmt!=null) {
-					updateStmt.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectRS!=null) {
-					selectRS.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null) {
-					selectStmt.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
+			JDBCUtilities.closeResources(selectRS, selectStmt);
 		}
 	}
 	
@@ -891,27 +855,8 @@ public class DriverRegistroServiziDB_LIB {
 					+ se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(updateStmt!=null) {
-					updateStmt.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectRS!=null) {
-					selectRS.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null) {
-					selectStmt.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
+			JDBCUtilities.closeResources(selectRS, selectStmt);
 		}
 	}
 	
@@ -960,20 +905,7 @@ public class DriverRegistroServiziDB_LIB {
 			DriverRegistroServiziDB_LIB.log.error("Errore", e);
 			throw new DriverRegistroServiziException(e);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 
@@ -1031,20 +963,7 @@ public class DriverRegistroServiziDB_LIB {
 			DriverRegistroServiziDB_LIB.log.error("Errore", e);
 			throw new DriverRegistroServiziException(e);
 		}finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 
@@ -1086,20 +1005,7 @@ public class DriverRegistroServiziDB_LIB {
 			DriverRegistroServiziDB_LIB.log.error("Errore Generico: "+e.getMessage(), e);
 			throw new DriverRegistroServiziException(e);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	
@@ -1141,20 +1047,7 @@ public class DriverRegistroServiziDB_LIB {
 			DriverRegistroServiziDB_LIB.log.error("Errore Generico: "+e.getMessage(), e);
 			throw new DriverRegistroServiziException(e);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	
@@ -1192,20 +1085,7 @@ public class DriverRegistroServiziDB_LIB {
 			DriverRegistroServiziDB_LIB.log.error("Errore", e);
 			throw new DriverRegistroServiziException(e);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	
@@ -1243,20 +1123,7 @@ public class DriverRegistroServiziDB_LIB {
 			DriverRegistroServiziDB_LIB.log.error("Errore", e);
 			throw new DriverRegistroServiziException(e);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 

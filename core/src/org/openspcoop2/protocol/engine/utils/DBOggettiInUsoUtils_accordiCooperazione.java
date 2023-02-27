@@ -36,6 +36,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -150,34 +151,8 @@ public class DBOggettiInUsoUtils_accordiCooperazione {
 			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			//Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (risultato2 != null) {
-					risultato2.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt2 != null) {
-					stmt2.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
+			JDBCUtilities.closeResources(risultato2, stmt2);
 		}
 	}
 

@@ -138,7 +138,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	public boolean create = false;
 
 	// Datasource per la connessione al DB
-	public DataSource datasource = null;
+	private DataSource datasource = null;
 	// Connection passata al momento della creazione dell'oggetto
 	protected Connection globalConnection = null;
 	// Variabile di controllo del tipo di operazione da effettuare
@@ -458,6 +458,58 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		}
 	}
+	
+	public void closeConnection(Connection conParam, Connection con) {
+		try {
+			if (conParam==null && this.atomica) {
+				this.log.debug("rilascio connessione al db...");
+				if(con!=null) {
+					con.close();
+				}
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+	}
+	
+	public void closeConnection(Connection con) {
+		try {
+			if (this.atomica) {
+				this.log.debug("rilascio connessioni al db...");
+				if(con!=null) {
+					con.close();
+				}
+			}
+		} catch (Exception e) {
+			// ignore exception
+		}
+	}
+	
+	public void closeConnection(boolean error, Connection con) {
+		try {
+			if (error && this.atomica) {
+				this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+				if(con!=null) {
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} else if (!error && this.atomica) {
+				this.log.debug("eseguo commit e rilascio connessioni...");
+				if(con!=null) {
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+			}
+
+		} catch (Exception e) {
+			// ignore exception
+		}
+	}
+	
+	
 	
 	
 

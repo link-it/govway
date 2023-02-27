@@ -68,6 +68,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CRUDType;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -3217,14 +3218,8 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 		} catch (Exception e) {
 			throw new DriverConfigurazioneException("Errore durante operazione("+type+") CRUDPortaApplicativa.",e);
 		}finally {
-
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	

@@ -49,6 +49,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -65,7 +66,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 
 	private DriverRegistroServiziDB driver = null;
 	
-	public DriverRegistroServiziDB_accordiSinteticiDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_accordiSinteticiDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 	}
 	
@@ -103,16 +104,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteComuneSintetico] Exception :" + se.getMessage(),se);
 		} finally {
 
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessione al db...");
-					if(con!=null) {
-						con.close();
-					}
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			this.driver.closeConnection(con);
 
 		}
 		return getAccordoServizioParteComuneSintetico(idAccordoLong);
@@ -606,29 +598,9 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteComuneSintetico] Exception :" + se.getMessage(),se);
 		} finally {
 
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if(conParam==null) {
-					if (this.driver.atomica) {
-						this.driver.log.debug("rilascio connessione al db...");
-						con.close();
-					}
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			this.driver.closeConnection(conParam, con);
 
 		}
 	}
@@ -948,27 +920,9 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(con);
 		}
 	}
 }

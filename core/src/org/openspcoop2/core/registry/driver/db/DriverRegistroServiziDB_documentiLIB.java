@@ -44,6 +44,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -407,18 +408,7 @@ public class DriverRegistroServiziDB_documentiLIB {
 		}catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDDocumento] Exception : " + se.getMessage(),se);
 		} finally {
-			try {
-				if(rs!=null) 
-					rs.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) 
-					stm.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	
@@ -478,18 +468,7 @@ public class DriverRegistroServiziDB_documentiLIB {
 		}catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::getListaDocumenti] Exception : " + se.getMessage(),se);
 		} finally {
-			try {
-				if(rs!=null) 
-					rs.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) 
-					stm.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	
@@ -555,18 +534,7 @@ public class DriverRegistroServiziDB_documentiLIB {
 		}catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::getDocumento] Exception : " + se.getMessage(),se);
 		} finally {
-			try {
-				if(rs!=null) 
-					rs.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) 
-					stm.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	

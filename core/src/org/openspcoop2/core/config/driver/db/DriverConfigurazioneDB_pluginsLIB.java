@@ -45,6 +45,7 @@ import org.openspcoop2.utils.jdbc.InsertAndGeneratedKey;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -204,21 +205,8 @@ public class DriverConfigurazioneDB_pluginsLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDRegistroPlugin] Exception [" + se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(selectRS!=null)selectRS.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null)selectStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
 		}
 
 	}
@@ -290,21 +278,8 @@ public class DriverConfigurazioneDB_pluginsLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDRegistroPlugin] Exception [" + se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(selectRS!=null)selectRS.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null)selectStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
 		}
 	}
 	
@@ -446,21 +421,8 @@ public class DriverConfigurazioneDB_pluginsLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDRegistroPluginArchivio] Exception [" + se.getMessage() + "].",se);
 		} finally {
 
-			try {
-				if(selectRS!=null)selectRS.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null)selectStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
 		}
 
 	}

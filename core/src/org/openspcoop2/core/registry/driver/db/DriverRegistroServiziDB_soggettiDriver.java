@@ -66,6 +66,7 @@ import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -83,7 +84,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 	private DriverRegistroServiziDB driver = null;
 	private DriverRegistroServiziDB_protocolPropertiesDriver protocolPropertiesDriver = null;
 	
-	public DriverRegistroServiziDB_soggettiDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_soggettiDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 		this.protocolPropertiesDriver = new DriverRegistroServiziDB_protocolPropertiesDriver(driver);
 	}
@@ -152,28 +153,8 @@ public class DriverRegistroServiziDB_soggettiDriver {
 
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggetto] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
 		}
 		
 		return this.getSoggetto(idSoggettoLong);
@@ -425,27 +406,9 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (conParam==null && this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(conParam, con);
 		}
 	}
 	
@@ -756,27 +719,9 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessione al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			this.driver.closeConnection(con);
 
 		}
 	}
@@ -812,23 +757,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createSoggetto] Errore durante la creazione del soggetto : " + qe.getMessage(), qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 
@@ -856,12 +785,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			this.driver.log.error("Errore durante verifica esistenza soggetto :", e);
 		} finally {
 
-			if (this.driver.atomica) {
-				try {
-					con.close();
-				} catch (Exception e) {
-				}
-			}
+			this.driver.closeConnection(con);
 		}
 
 		return exist;
@@ -904,18 +828,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
 		}
 
@@ -958,24 +871,8 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			this.driver.log.error("Errore durante verifica esistenza soggetto :", e);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			if (this.driver.atomica) {
-				try {
-					con.close();
-				} catch (Exception e) {
-				}
-			}
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
 		}
 
 		return exist;
@@ -1023,25 +920,9 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					con.close();
-				} catch (Exception e) {
-				}
-			}
+			this.driver.closeConnection(con);
 		}
 
 		return exist;
@@ -1089,25 +970,9 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					con.close();
-				} catch (Exception e) {
-				}
-			}
+			this.driver.closeConnection(con);
 		}
 
 		if(idSoggetto<=0){
@@ -1169,25 +1034,9 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					con.close();
-				} catch (Exception e) {
-				}
-			}
+			this.driver.closeConnection(con);
 		}
 
 		if(codiceIPA==null){
@@ -1346,36 +1195,9 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateSoggetto] Errore durante l'aggiornamento del soggetto : " + qe.getMessage(),qe);
 		} finally {
 
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 
@@ -1410,23 +1232,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteSoggetto] Errore durante l'eliminazione del soggetto : " + qe.getMessage(),qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 
@@ -1488,26 +1294,8 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziException::getSoggettiWithSuperuser] Exception: " + se.getMessage(),se);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
 		}
 		return idSoggetti;
 	}
@@ -1565,35 +1353,8 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			throw new DriverConfigurazioneException("[DriverRegistroServiziDB::nomiProprietaSoggetti] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
+			this.driver.closeConnection(error,con);
 		}
 	}
 	
@@ -1815,26 +1576,8 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -1912,27 +1655,9 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (conParam==null && this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(conParam, con);
 		}
 	}
 	
@@ -2001,27 +1726,9 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (conParam==null && this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(conParam, con);
 		}
 	}
 }

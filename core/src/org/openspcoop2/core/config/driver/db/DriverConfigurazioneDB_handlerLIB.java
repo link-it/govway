@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.ConfigurazioneMessageHandlers;
 import org.openspcoop2.core.config.ConfigurazioneServiceHandlers;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -139,20 +140,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 			return config;
 			
 		}finally {
-			try {
-				if(rs1!=null) {
-					rs1.close();
-				}
-			}catch(Exception e) {
-				// close
-			}
-			try {
-				if(stm1!=null) {
-					stm1.close();
-				}
-			}catch(Exception e) {
-				// close
-			}
+			JDBCUtilities.closeResources(rs1, stm1);
 		}
 	}
 	
@@ -239,20 +227,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 			return config;
 			
 		}finally {
-			try {
-				if(rs1!=null) {
-					rs1.close();
-				}
-			}catch(Exception e) {
-				// close
-			}
-			try {
-				if(stm1!=null) {
-					stm1.close();
-				}
-			}catch(Exception e) {
-				// close
-			}
+			JDBCUtilities.closeResources(rs1, stm1);
 		}
 	}
 	
@@ -337,11 +312,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneMessageHandlers] Exception [" + se.getMessage() + "].",se);
 		} finally {
 	
-			try {
-				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
 			
 		}
 	}
@@ -422,11 +393,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneMessageHandlers] Exception [" + se.getMessage() + "].",se);
 		} finally {
 	
-			try {
-				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
 			
 		}
 	}
@@ -459,12 +426,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 					updateStmt.close();
 					updateStmt = null;
 				} finally {
-					try {
-						if(updateStmt!=null)updateStmt.close();
-					} catch (Exception e) {
-						// ignore exception
-					}
-					
+					JDBCUtilities.closeResources(updateStmt);	
 				}
 			}
 		}

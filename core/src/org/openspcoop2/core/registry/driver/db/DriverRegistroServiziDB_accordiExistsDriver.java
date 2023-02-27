@@ -32,6 +32,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -48,7 +49,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 
 	private DriverRegistroServiziDB driver = null;
 	
-	public DriverRegistroServiziDB_accordiExistsDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_accordiExistsDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 	}
 	
@@ -85,13 +86,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} catch (Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 	}
 
@@ -136,27 +131,8 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} catch (Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			if (this.driver.atomica) {
-				try {
-					if(connection!=null) {
-						connection.close();
-					}
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(connection);
 		}
 	}
 
@@ -189,13 +165,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		}catch (Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 	}
@@ -250,26 +220,9 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return exist;
@@ -319,26 +272,9 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return exist;
@@ -363,13 +299,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		}catch (Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 	}
 
@@ -419,26 +349,9 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return exist;
@@ -494,26 +407,9 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return exist;
@@ -546,13 +442,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		}catch (Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 	}
 
@@ -606,26 +496,9 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return exist;
@@ -682,26 +555,9 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return exist;
@@ -766,26 +622,9 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return exist;
@@ -841,26 +680,9 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return exist;
@@ -914,26 +736,9 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return exist;
@@ -988,26 +793,9 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return exist;

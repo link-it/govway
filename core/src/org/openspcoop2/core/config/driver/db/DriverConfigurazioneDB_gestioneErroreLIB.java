@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.constants.GestioneErroreComportamento;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -147,30 +148,8 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 			throw new DriverConfigurazioneException(" Exception: " + se.getMessage(),se);
 		} finally {
 			//Chiudo statement and resultset
-			try {
-				if(rs1!=null) 
-					rs1.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm1!=null) 
-					stm1.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(rs!=null) 
-					rs.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) 
-					stm.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs1, stm1);
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	
@@ -203,18 +182,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 		}finally
 		{
 			//Chiudo statement and resultset
-			try {
-				if(rs!=null) 
-					rs.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(stm!=null) 
-					stm.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
 		}
 	}
@@ -628,24 +596,8 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 		}catch (Exception se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDGestioneErrore] Exception [" + se.getMessage() + "].",se);
 		} finally {			
-			try {
-				if(selectRS!=null) 
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(selectStmt!=null) 
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
 		}
 	}
 

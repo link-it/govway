@@ -48,6 +48,7 @@ import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -240,28 +241,8 @@ public class DriverRegistroServiziDB_soggettiLIB {
 					"[DriverControlStationDB_LIB::CRUDPdd] Exception ["
 					+ se.getMessage() + "].",se);
 		} finally {
-
-			try {
-				if(updateStmt!=null) {
-					updateStmt.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectRS!=null) {
-					selectRS.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null) {
-					selectStmt.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
+			JDBCUtilities.closeResources(selectRS, selectStmt);
 		}
 	}
 	
@@ -942,27 +923,8 @@ public class DriverRegistroServiziDB_soggettiLIB {
 		}catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDSoggetto] Exception [" + se.getMessage() + "].",se);
 		} finally {
-			try {
-				if(updateStmt!=null) {
-					updateStmt.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectRS!=null) {
-					selectRS.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(selectStmt!=null) {
-					selectStmt.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
+			JDBCUtilities.closeResources(selectRS, selectStmt);
 		}
 
 	}

@@ -59,7 +59,7 @@ public class DriverRegistroServiziDB_protocolPropertiesDriver {
 
 	private DriverRegistroServiziDB driver = null;
 	
-	public DriverRegistroServiziDB_protocolPropertiesDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_protocolPropertiesDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 	}
 	
@@ -85,13 +85,7 @@ public class DriverRegistroServiziDB_protocolPropertiesDriver {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 	}
@@ -119,14 +113,7 @@ public class DriverRegistroServiziDB_protocolPropertiesDriver {
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage());
 		} finally {
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -155,14 +142,7 @@ public class DriverRegistroServiziDB_protocolPropertiesDriver {
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage());
 		} finally {
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(con);
 		}
 	}
 	

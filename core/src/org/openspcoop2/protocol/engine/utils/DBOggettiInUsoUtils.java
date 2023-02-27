@@ -56,6 +56,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.constants.ModalitaIdentificazioneAzione;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -184,20 +185,7 @@ public class DBOggettiInUsoUtils  {
 			
 		} finally {
 			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 		}
 	}
 	protected static ResultPorta formatPortaApplicativa(String nomePorta, String tipoDB, Connection con, boolean normalizeObjectIds) throws Exception {
@@ -287,20 +275,7 @@ public class DBOggettiInUsoUtils  {
 			
 		} finally {
 			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 		}
 	}
 
@@ -598,20 +573,7 @@ public class DBOggettiInUsoUtils  {
 			}
 			finally {
 				// Chiudo statement and resultset
-				try {
-					if (risultato != null) {
-						risultato.close();
-					}
-				} catch (Exception e) {
-					// ignore
-				}
-				try {
-					if (stmt != null) {
-						stmt.close();
-					}
-				} catch (Exception e) {
-					// ignore
-				}
+				JDBCUtilities.closeResources(risultato, stmt);
 			}
 		}
 	}

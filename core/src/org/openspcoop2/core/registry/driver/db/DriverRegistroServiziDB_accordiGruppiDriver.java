@@ -32,6 +32,7 @@ import org.openspcoop2.core.registry.GruppiAccordo;
 import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -48,7 +49,7 @@ public class DriverRegistroServiziDB_accordiGruppiDriver {
 
 	private DriverRegistroServiziDB driver = null;
 	
-	public DriverRegistroServiziDB_accordiGruppiDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_accordiGruppiDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 	}
 	
@@ -108,27 +109,9 @@ public class DriverRegistroServiziDB_accordiGruppiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readAccordiGruppi] Exception :" + se.getMessage(),se);
 		} finally {
 
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (conParam==null && this.driver.atomica) {
-					this.driver.log.debug("rilascio connessione al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			this.driver.closeConnection(conParam, con);
 
 		}
 	}

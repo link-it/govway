@@ -47,6 +47,7 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -63,7 +64,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 
 	private DriverRegistroServiziDB driver = null;
 	
-	public DriverRegistroServiziDB_ruoliDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_ruoliDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 	}
 	
@@ -102,14 +103,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		}catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getRuolo] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(con);
 		}
 	}
 	protected Ruolo getRuolo(Connection conParam,
@@ -174,20 +168,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getRuolo] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 
@@ -224,14 +205,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getRuolo] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(con);
 		}
 	}
 	protected Ruolo getRuolo(Connection conParam,
@@ -272,20 +246,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getRuolo] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 		
 		return this.getRuolo(conParam,idRuoloObject);
@@ -407,27 +368,9 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessione al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			this.driver.closeConnection(con);
 
 		}
 	}
@@ -462,23 +405,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createRuolo] Errore durante la creazione del ruolo : " + qe.getMessage(), qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 
@@ -527,25 +454,9 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					con.close();
-				} catch (Exception e) {
-				}
-			}
+			this.driver.closeConnection(con);
 		}
 
 		return exist;
@@ -582,23 +493,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateRuolo] Errore durante l'aggiornamento del ruolo : " + qe.getMessage(),qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}	
 
@@ -632,23 +527,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteRuolo] Errore durante l'eliminazione del ruolo : " + qe.getMessage(),qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 	
@@ -1455,36 +1334,9 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 		
 		

@@ -46,6 +46,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -63,7 +64,7 @@ public class DriverRegistroServiziDB_accordiFindAllDriver {
 	private DriverRegistroServiziDB driver = null;
 	private DriverRegistroServiziDB_protocolPropertiesDriver protocolPropertiesDriver = null;
 	
-	public DriverRegistroServiziDB_accordiFindAllDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_accordiFindAllDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 		this.protocolPropertiesDriver = new DriverRegistroServiziDB_protocolPropertiesDriver(driver);
 	}
@@ -527,28 +528,9 @@ public class DriverRegistroServiziDB_accordiFindAllDriver {
 			throw new DriverRegistroServiziException(nomeMetodo+" error",e);
 		} finally {
 
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessione al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			this.driver.closeConnection(con);
 
 		}
 	}

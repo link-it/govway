@@ -58,6 +58,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -75,7 +76,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 	private DriverRegistroServiziDB driver = null;
 	private DriverRegistroServiziDB_protocolPropertiesDriver protocolPropertiesDriver = null;
 	
-	public DriverRegistroServiziDB_accordiParteSpecificaDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_accordiParteSpecificaDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 		this.protocolPropertiesDriver = new DriverRegistroServiziDB_protocolPropertiesDriver(driver);
 	}
@@ -434,27 +435,9 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessione al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			this.driver.closeConnection(con);
 
 		}
 	}
@@ -512,29 +495,9 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessione al db...");
-					if(con!=null) {
-						con.close();
-					}
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			this.driver.closeConnection(con);
 
 		}
 	}
@@ -570,23 +533,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createAccordoServizioParteSpecifica] Errore durante la creazione del servizio : " + qe.getMessage(), qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 
@@ -630,23 +577,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			throw new DriverRegistroServiziException("Errore durante existsAccordoServizioParteSpecifica : " + qe.getMessage(), qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 
@@ -686,24 +617,9 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			this.driver.log.error("Errore durante verifica esistenza servizio :", e);
 		} finally {
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			if (this.driver.atomica) {
-				try {
-					con.close();
-				} catch (Exception e) {
-				}
-			}
+			JDBCUtilities.closeResources(rs, stm);
+			
+			this.driver.closeConnection(con);
 		}
 
 		return exist;
@@ -765,26 +681,9 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+			this.driver.closeConnection(connection);
 		}
 
 		return idServ;
@@ -826,23 +725,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateAccordoServizioParteSpecifica] Errore durante l'update del servizio : " + qe.getMessage(),qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 
@@ -877,23 +760,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteAccordoServizioParteSpecifica] Errore durante la delete del servizio : " + qe.getMessage(),qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 
@@ -947,36 +814,9 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 			
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 	
@@ -1545,39 +1385,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] Exception:" + se.getMessage(),se);
 
 		} finally {
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(rs1!=null) 
-					rs1.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm1!=null) 
-					stm1.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
+			JDBCUtilities.closeResources(rs1, stm1);
 
-			try {
-				if (conParam==null && this.driver.atomica) {
-					this.driver.log.debug("rilascio le connessioni al db...");
-					con.close();
-				}				
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(conParam, con);
 		}
 	}
 	
@@ -1669,27 +1480,9 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			try {
-				if (conParam==null && this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(conParam, con);
 		}
 
 		return this.getAccordoServizioParteSpecifica(idServizioObject,readContenutoAllegati,conParam);
@@ -1741,36 +1534,9 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 	
@@ -1837,28 +1603,8 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
+			this.driver.closeConnection(con);
 		}
 	}
 	

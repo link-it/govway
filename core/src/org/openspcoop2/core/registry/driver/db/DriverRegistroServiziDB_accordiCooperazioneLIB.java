@@ -50,6 +50,7 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -349,24 +350,8 @@ public class DriverRegistroServiziDB_accordiCooperazioneLIB {
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioServizioComposto] Exception : " + se.getMessage(),se);
 		} finally {
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(selectStmt!=null)
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
 		}
 	}
 	
@@ -787,18 +772,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneLIB {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoCooperazione] Exception [" + se.getMessage() + "].", se);
 
 		} finally {
-			try {
-				if(updateRS!=null)
-					updateRS.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(updateRS, updateStmt);
 		}
 
 	}

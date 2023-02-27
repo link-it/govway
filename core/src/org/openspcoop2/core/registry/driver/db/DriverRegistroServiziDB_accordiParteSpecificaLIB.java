@@ -54,6 +54,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -630,12 +631,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica] Exception [" + se.getMessage() + "].", se);
 
 		} finally {
-			try {
-				if(updateRS!=null) updateRS.close();
-				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception ex) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(updateRS, updateStmt);
 		}
 
 	}
@@ -923,24 +919,8 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 		}  catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDFruitore] Exception : " + se.getMessage(),se);
 		}finally {
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(selectStmt!=null)
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
 		}
 	}
 	
@@ -1136,24 +1116,8 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 		}  catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaAzioni] Exception : " + se.getMessage(),se);
 		}finally {
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(selectStmt!=null)
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
 		}
 	}
 	
@@ -1334,24 +1298,8 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 		}  catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaFruitoreAzioni] Exception : " + se.getMessage(),se);
 		}finally {
-			try {
-				if(selectRS!=null)
-					selectRS.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(selectStmt!=null)
-					selectStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+			JDBCUtilities.closeResources(updateStmt);
 		}
 	}
 
@@ -1455,13 +1403,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 			DriverRegistroServiziDB_LIB.log.error("Errore", e);
 			throw new DriverRegistroServiziException(e);
 		} finally {
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(stm);
 		}
 	}
 	
@@ -1556,13 +1498,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 			DriverRegistroServiziDB_LIB.log.error("Errore", e);
 			throw new DriverRegistroServiziException(e);
 		} finally {
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(stm);
 		}
 	}
 
@@ -1651,13 +1587,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 			DriverRegistroServiziDB_LIB.log.error("Errore", e);
 			throw new DriverRegistroServiziException(e);
 		} finally {
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(stm);
 		}
 	}
 	

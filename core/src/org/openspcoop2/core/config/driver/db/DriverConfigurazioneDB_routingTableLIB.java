@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -413,30 +414,10 @@ public class DriverConfigurazioneDB_routingTableLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDRoutingTable] Exception [" + se.getMessage() + "].",se);
 		} finally {
 
-			try {				
-				if(updateStmt!=null)
-					updateStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {				
-				if(insertStmt!=null)
-					insertStmt.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {				
-				if(rsSelectRegistri!=null)
-					rsSelectRegistri.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {				
-				if(updateStmtSelectRegistri!=null)
-					updateStmtSelectRegistri.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(updateStmt);
+			JDBCUtilities.closeResources(insertStmt);
+			JDBCUtilities.closeResources(rsSelectRegistri, updateStmtSelectRegistri);
+			
 		}
 	}
 	

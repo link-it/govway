@@ -42,6 +42,7 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -58,7 +59,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 
 	private DriverRegistroServiziDB driver = null;
 	
-	public DriverRegistroServiziDB_gruppiDriver(DriverRegistroServiziDB driver) {
+	protected DriverRegistroServiziDB_gruppiDriver(DriverRegistroServiziDB driver) {
 		this.driver = driver;
 	}
 	
@@ -134,28 +135,8 @@ public class DriverRegistroServiziDB_gruppiDriver {
 
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getGruppo] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -212,28 +193,8 @@ public class DriverRegistroServiziDB_gruppiDriver {
 
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getGruppo] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				if(rs!=null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if(stm!=null) {
-					stm.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
 		}
 		
 		return this.getGruppo(idGruppoObject);
@@ -360,26 +321,8 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try {
-				if (this.driver.atomica) {
-					this.driver.log.debug("rilascio connessione al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
 
 		}
 	}
@@ -416,23 +359,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createGruppo] Errore durante la creazione del gruppo : " + qe.getMessage(), qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 
@@ -481,25 +408,9 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(rs, stm);
 
-			if (this.driver.atomica) {
-				try {
-					con.close();
-				} catch (Exception e) {
-				}
-			}
+			this.driver.closeConnection(con);
 		}
 
 		return exist;
@@ -536,23 +447,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateGruppo] Errore durante l'aggiornamento del gruppo : " + qe.getMessage(),qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}	
 
@@ -586,23 +481,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteGruppo] Errore durante l'eliminazione del gruppo : " + qe.getMessage(),qe);
 		} finally {
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 	}
 	
@@ -755,36 +634,9 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) 
-					risultato.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			JDBCUtilities.closeResources(risultato, stmt);
 
-			try {
-				if (error && this.driver.atomica) {
-					this.driver.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.driver.atomica) {
-					this.driver.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			this.driver.closeConnection(error,con);
 		}
 		
 		

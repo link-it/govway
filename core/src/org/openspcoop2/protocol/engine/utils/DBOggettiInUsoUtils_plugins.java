@@ -37,6 +37,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.jdbc.JDBCParameterUtilities;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.LikeConfig;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -668,35 +669,8 @@ public class DBOggettiInUsoUtils_plugins {
 			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			// Chiudo statement and resultset
-			try {
-				if (risultato2 != null) {
-					risultato2.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt2 != null) {
-					stmt2.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(risultato2, stmt2);
+			JDBCUtilities.closeResources(risultato, stmt);
 		}
 	}
 

@@ -57,6 +57,7 @@ import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
@@ -314,13 +315,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 		}catch (Exception e) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createAccordoServizioParteComune] Exception [" + e.getMessage() + "].",e);
 		}finally {
-
-			try{
-				stm.close();
-			}catch(Exception e){
-				// close
-			}
-
+			JDBCUtilities.closeResources(stm);
 		}
 
 	}
@@ -760,18 +755,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			log.error(se.getMessage(),se);
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateAccordoServizio] Exception [" + se.getMessage() + "].",se);
 		}finally {
-			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				if(stm!=null)
-					stm.close();
-			}catch(Exception e){
-				// close
-			}
+			JDBCUtilities.closeResources(rs, stm);
 		}
 
 	}
@@ -846,10 +830,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] Exception : " + se.getMessage(),se);
 		} finally {
-			try {
-				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception e) {
-			}
+			JDBCUtilities.closeResources(updateStmt);
 		}
 	}
 	
@@ -1271,20 +1252,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteAccordoServizio] Exception [" + se.getMessage() + "].",se);
 		}finally {
-
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try{
-				if(stm!=null) 
-					stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
+			JDBCUtilities.closeResources(rs, stm);
 		}
 	}
 	
