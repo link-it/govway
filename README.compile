@@ -78,7 +78,36 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
                    -Dspotbugs.home=/tmp/spotbugs-4.7.3 
                    -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-queue,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository
 
-2.6 Analisi dinamica tramite OWASP Zed Attack Proxy (ZAP)
+2.6 Analisi statica dei sorgenti tramite SonarQube
+
+    Usare il comando:
+	mvn verify -Dsonarqube=verify -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000
+
+    Per evitare la compilazione, il packaging e la verifica owasp descritte nelle precedenti sezioni, utilizzare il comando:
+	mvn verify -Dsonarqube=verify -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000 -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none
+
+    Verranno analizzati i sorgenti di tutti gli archivi jar prodotti con la compilazione descritta al punto 2.2.
+    Il risultato dell'analisi viene pubblicato su SonarQube sul progetto 'govway', consultabile all'indirizzo indicato nella proprietà 'sonar.host.url'.
+
+    Gli identificativi dei package analizzati sono classificati come segue: 
+    - utilità di base: utils-commons, utils-generic-project
+    - runtime di GovWay: runtime-message, runtime-core, runtime-protocol, runtime-monitor, runtime-security, runtime-pdd;
+    - profili di interoperabiltà: protocol-as4, protocol-modipa, protocol-sdi, protocol-spcoop, protocol-trasparente;
+    - console web: web-lib-audit, web-lib-mvc, web-lib-queue, web-lib-users, web-loader, web-govwayConsole, web-govwayMonitor;
+    - api di configurazione e monitoraggio: rs-config, rs-monitor;
+    - batch: batch-statistiche, batch-runtime-repository.
+
+    Per effettuare l'analisi di un solo package è possibile utilizzare la proprietà 'sonar.govway.project'.   
+
+    L'esempio seguente attiva l'analisi dei sorgenti solamente per il profilo di interoperabilità 'ModI':
+        mvn verify -Dsonarqube=verify 
+                   -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none 
+                   -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000
+                   -Dsonar.govway.project=protocol-modipa
+
+    NOTA: l'analisi dei js richiede una corretta installazione di 'nodejs.org' versione 16 o 18.
+
+2.7 Analisi dinamica tramite OWASP Zed Attack Proxy (ZAP)
 
     Prequisito: 
 	- govway sia attivo 
@@ -107,7 +136,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 	           -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=Ente
                    -Dzaproxy.skipTests=api-config,api-monitor
 
-2.7 Librerie 3parti
+2.8 Librerie 3parti
 
     I precedenti comandi utilizzano tutti la fase maven 'initialize' per salvare le librerie 3parti nella directory lib.
     Tali librerie vengono poi utilizzati dagli script ant che implementano la compilazione ed il packaging dei tools.

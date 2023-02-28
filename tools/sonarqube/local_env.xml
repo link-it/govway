@@ -12,7 +12,8 @@
 	<property name="sonar.host.url" value="http://localhost:9000" />
 
 	<!-- Define the SonarQube project properties -->
-	<property name="sonar.projectKey" value="org.sonarqube:sonarqube-scanner-ant" />
+	<property name="sonar.projectKey" value="govway" />
+	<property name="sonar.projectName" value="govway" />
 	<property name="sonar.projectVersion" value="master" />
 	<property name="sonar.java.libraries" value="${required_lib},${openspcoop2}/dist" />
 	<property name="sonar.java.source" value="11" />

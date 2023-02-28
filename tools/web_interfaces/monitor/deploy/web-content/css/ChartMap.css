@@ -1,5 +1,5 @@
 .c3-chart-font {
-    font-family: Roboto;
+    font-family: Roboto, sans-serif;
 }
 .c3-chart-nodata{
     font-size: 20px;
@@ -29,7 +29,7 @@ g.tick text,
 }
 .label-text {
     alignment-baseline: middle;
-    font: 10px Roboto;
+    font: 10px Roboto, sans-serif;
     fill: #393939;
 }
 .label-line {

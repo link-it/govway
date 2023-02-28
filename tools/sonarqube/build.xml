@@ -793,6 +793,33 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
+		<!-- WEB Lib css -->
+		<var name="projectAnalyze" value="web-lib-css"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="css"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/web_interfaces/lib/web-content/css"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/lib/web-content/css"/>
+					</else>
+				</if>
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/lib/web-content/tema_css/css/"/>
+
+				<echo message="Analizzo sorgenti: tools/web_interfaces/lib/web-content/css"/>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
 
 		<!-- WEB Loader -->
 		<var name="projectAnalyze" value="web-loader"/>
@@ -814,6 +841,7 @@
 						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/loader/src"/>
 					</else>
 				</if>
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/loader/deploy/jsp"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="web-loader"/>
@@ -848,6 +876,7 @@
 					</else>
 				</if>
 				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/control_station/deploy/jsp"/>
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/control_station/deploy/public"/>
 
 				<!-- Falsi positivi -->
 				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/control_station/core.properties"/>
@@ -894,10 +923,22 @@
 				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/src/src_eventi"/>
 				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/src/src_stat"/>
 				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/src/src_transazioni"/>
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/deploy/tema_css/css"/>
+                                <!-- css
+    				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/deploy/web-content/css"/>
+                                -->
+				<!-- js 
+                                <var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/deploy/web-content/FusionCharts"/>
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/deploy/web-content/scripts"/> 
+                                -->
+				<!-- includo web-content che contiene anche jsp nella root -->
+				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/deploy/web-content"/>
 
 				<!-- Falsi positivi -->
 				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/monitor/core.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.monitor.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/monitor/security_hotspots.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.monitor.sec.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="web-govwayMonitor"/>
@@ -1097,8 +1138,6 @@
 		<echo message="Esclusioni: ${govway.exclusion}"/>
 		<echo message="Test: ${govway.tests}"/>
 		<echo message="Falsi Positivi: ${sonar.issue.ignore.multicriteria}"/>
-		<property name="sonar.projectName" value="govway" />
-		<property name="sonar.projectKey" value="govway" />
 		<property name="sonar.projectBaseDir" value="${openspcoop2}" />
 		<property name="sonar.sources" value="${sonar.sources.analyze}" />
 		<property name="sonar.exclusions" value="${govway.exclusion}" />

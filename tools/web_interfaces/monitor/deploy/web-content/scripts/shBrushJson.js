@@ -64,5 +64,7 @@
 	SyntaxHighlighter.brushes.Json = Brush;
 
 	// CommonJS
-	typeof(exports) != 'undefined' ? exports.Brush = Brush : null;
+	if(typeof(exports) != 'undefined'){
+		exports.Brush = Brush;
+	}
 })();

@@ -1,8 +1,25 @@
 // https://d3js.org/d3-format/ v2.0.0 Copyright 2020 Mike Bostock
 (function (global, factory) {
-typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-typeof define === 'function' && define.amd ? define(['exports'], factory) :
-(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.d3 = global.d3 || {}));
+if( (typeof exports === 'object') && (typeof module !== 'undefined') ){
+	factory(exports);
+}
+else{
+	if( (typeof define === 'function') && define.amd ){
+		define(['exports'], factory);
+	}
+	else{
+		if( typeof globalThis !== 'undefined' ){
+			global = globalThis;
+		}
+		else{
+			global = global || self; 
+			factory(global.d3 = global.d3 || {});
+		}
+	}
+}
+//typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+//typeof define === 'function' && define.amd ? define(['exports'], factory) :
+//(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.d3 = global.d3 || {}));
 }(this, (function (exports) { 'use strict';
 
 function formatDecimal(x) {

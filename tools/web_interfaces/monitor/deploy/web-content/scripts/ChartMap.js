@@ -543,13 +543,14 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.cats = [];
     if( _type !== 'pie') {
         dpChart.legendTooltip = {};
-        Object.keys(dpChart.labelRef).map(function(key) {
+        Object.keys(dpChart.labelRef).forEach(function(key) {
             dpChart.legendTooltip[key] = dpChart.labelRef[key];
             if(dpChart.limitLegenda !== -1) {
                 if(dpChart.limitLegenda < dpChart.labelRef[key].length) {
                     dpChart.labelRef[key] = labelRef[key].substr(0, dpChart.limitLegenda) + '...';
                 }
             }
+            return;
         });
         dpChart.cats = cats.map(function(key, index) {
             dpChart.catsTooltip[index] = key.data;

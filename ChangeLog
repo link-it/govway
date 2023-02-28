@@ -1,3 +1,9 @@
+2023-02-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2022-45688: aggiornata libreria 'org.json:json' alla versione 20230227
+
 2023-02-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
