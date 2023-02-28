@@ -118,7 +118,7 @@
 	<archive path="/op2_3.3.dev/lib/json/btf-1.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-schema-validator-2.2.10.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/handy-uri-templates-2.1.8.jar"/>
-	<archive path="/op2_3.3.dev/lib/json/json-20220924.jar"/>
+	<archive path="/op2_3.3.dev/lib/json/json-20230227.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-schema-core-1.2.8.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/libphonenumber-8.12.57.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/failureaccess-1.0.1.jar"/>
