@@ -1,4 +1,4 @@
-.. _releaseProcessGovWay_staticCodeAnalysis_eclipse:
+.. _releaseProcessGovWay_staticCodeAnalysis_spotbugs_eclipse:
 
 SpotBugs Eclipse Plugin
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -7,7 +7,7 @@ In questa sezione viene descritto come utilizzare il `plugin per Eclipse <https:
 
 Come prerequisito il plugin deve essere stato installato tramite 'Eclipse Marketplace' come mostrato nella figura :numref:`SpotBugs_eclipse_markeplace`.
 
-.. figure:: ../_figure_console/SpotBugs_eclipse_markeplace.png
+.. figure:: ../../_figure_console/SpotBugs_eclipse_markeplace.png
   :scale: 80%
   :name: SpotBugs_eclipse_markeplace
 
@@ -21,7 +21,7 @@ Impostare i seguenti criteri di analisi statica accedendo alla sezione "Window -
 
 - un 'rank' impostato al valore '15'.
 
-.. figure:: ../_figure_console/SpotBugs_eclipse_config.png
+.. figure:: ../../_figure_console/SpotBugs_eclipse_config.png
   :scale: 80%
   :name: SpotBugs_eclipse_config
 
@@ -29,15 +29,15 @@ Impostare i seguenti criteri di analisi statica accedendo alla sezione "Window -
 
 Deve inoltre essere caricato il filtro che esclude alcuni `falsi positivi <https://github.com/link-it/govway/blob/master/tools/spotbugs/filters/falsePositive.xml>`_ come mostrato nella figura :numref:`SpotBugs_eclipse_config_falsePositive`.
 
-.. figure:: ../_figure_console/SpotBugs_eclipse_config_falsePositive.png
+.. figure:: ../../_figure_console/SpotBugs_eclipse_config_falsePositive.png
   :scale: 80%
   :name: SpotBugs_eclipse_config_falsePositive
 
   SpotBugs Eclipse Plugin: filtro
 
-L'analisi statica dei sorgenti è adesso effettuabile selezionando il progetto 'op2_3.3.dev' con il tasto destro e cliccando sulla voce 'SpotBugs -> Find Bugs' come mostrato nella figura :numref:`SpotBugs_eclipse_find`.
+L'analisi statica dei sorgenti è adesso effettuabile selezionando il progetto 'op2_3.x.dev' (:ref:`releaseProcessGovWay_staticCodeAnalysis_src_eclipse`) con il tasto destro e cliccando sulla voce 'SpotBugs -> Find Bugs' come mostrato nella figura :numref:`SpotBugs_eclipse_find`.
 
-.. figure:: ../_figure_console/SpotBugs_eclipse_find.png
+.. figure:: ../../_figure_console/SpotBugs_eclipse_find.png
   :scale: 80%
   :name: SpotBugs_eclipse_find
 
@@ -45,7 +45,7 @@ L'analisi statica dei sorgenti è adesso effettuabile selezionando il progetto '
 
 Eventuali bug individuati vengono evidenziati sulla singola classe come ad esempio viene mostrato nella figura :numref:`SpotBugs_eclipse_bug`.
 
-.. figure:: ../_figure_console/SpotBugs_eclipse_bug.png
+.. figure:: ../../_figure_console/SpotBugs_eclipse_bug.png
   :scale: 40%
   :name: SpotBugs_eclipse_bug
 
