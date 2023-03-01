@@ -1163,7 +1163,14 @@
 				<echo message="sonar.tests=${sonar.tests}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.test.inclusions=${sonar.test.inclusions}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.exclusions=${sonar.exclusions}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+				<echo message="sonar.java.libraries=${sonar.java.libraries}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+				<echo message="sonar.java.test.libraries=${sonar.java.test.libraries}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.java.binaries=${sonar.java.binaries}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+				<echo message="sonar.java.source=${sonar.java.source}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+				<echo message="sonar.java.target=${sonar.java.target}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+				<echo message="sonar.sourceEncoding=${sonar.sourceEncoding}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+				<echo message="sonar.verbose=${sonar.verbose}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+				<echo message="sonar.log.level=${sonar.log.level}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.issue.ignore.multicriteria=${sonar.issue.ignore.multicriteria}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<delete file="${sonar.build}/_propertiesSonar.tmp"/>
 				<echoproperties destfile="${sonar.build}/_propertiesSonar.tmp">
