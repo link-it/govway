@@ -10,7 +10,6 @@
 		<a4j:loadScript src="resource:///scripts/pagedDataTable.min.js" />
 		<a4j:loadStyle src="resource:///css/dataTable.css"  />
 	
-		
 		<c:if test="#{empty width}">
 			<c:set var="width" value="100%"/>
 		</c:if>
@@ -60,6 +59,9 @@
 				 });
 			</script>
 			<c:if test="#{useCount == true}">
+				<style type="text/css" nonce="#{_csp_random_nonce}">
+					table[id$="#{id}_ds_top_table"] { padding-bottom: 4px; line-height: 0px;}
+				</style>
 				<rich:datascroller for="#{id}_tbl"
 							   id="#{id}_ds_top" 
 							   maxPages="10"
@@ -129,7 +131,7 @@
 			</c:if>
 			<c:if test="#{useCount == false}">
 				<style type="text/css" nonce="#{_csp_random_nonce}">
-					.#{id}-ds-top-table { text-align:#{topScrollerAlign}; }
+					.#{id}_ds_top_table { padding-bottom: 4px; line-height: 0px; text-align:#{topScrollerAlign}; }
 				</style>
 				<a4j:outputPanel layout="block" id="#{id}_ds_top">
 					<div class="rich-datascr" align="center" id="#{id}_ds_top_div">
@@ -166,22 +168,45 @@
 				      		<a4j:outputPanel layout="block" rendered="#{mostraComandiFooter}" styleClass="selectionInfoCtr" id="#{id}_panelComandiFooter">
 					      		<div class="selectionInfoItems">
 									<c:if test="#{useCount == true}">
+										<script type="text/javascript" nonce="#{_csp_random_nonce}">
+											jQuery(document).ready(function() {
+												jQuery("a[id$='#{id}_selectAllLink']").click(function() {
+													selectAllListener('#{id}',true,#{value.rowCount} , #{useCount}); return false;
+								         		});
+												
+												jQuery("a[id$='#{id}_undoSelectAllLink']").click(function() {
+													selectAllListener('#{id}',false,#{value.rowCount} , #{useCount}); return false;
+								         		});
+					                      	});
+	                      				</script>
 										<h:outputText id="#{id}_selectedInfoLbl" value="" styleClass="selectionInfoItem output-text-display-none"/>
 										<h:outputText id="#{id}_selectedInfoPipe1"  value="|" styleClass="selectionInfoItem output-text-display-none"/>
-										<h:outputLink id="#{id}_selectAllLink" styleClass="selectionInfoItem output-text-display-none" value="Seleziona tutti gli elementi" onclick="selectAllListener('#{id}',true,#{value.rowCount} , #{useCount}); return false;"/>
-				      					<h:outputLink id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem output-text-display-none" value="Annulla selezione" onclick="selectAllListener('#{id}',false,#{value.rowCount} , #{useCount}); return false;"/>
+										<h:outputLink id="#{id}_selectAllLink" styleClass="selectionInfoItem output-text-display-none" value="Seleziona tutti gli elementi"  />
+				      					<h:outputLink id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem output-text-display-none" value="Annulla selezione" />
 				      				</c:if>
 				      				<c:if test="#{useCount == false}">
+				      					<script type="text/javascript" nonce="#{_csp_random_nonce}">
+					      					jQuery(document).ready(function() {
+					      						jQuery("a[id$='#{id}_selectAllTableItemsLink']").click(function() {
+					      							checkVisualizzaSelezionePrimiElementi(); checkAllCheckboxesInTable( '#{id}', true , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay} , #{useCount}); return false;
+								         		});
+					      						
+					      						jQuery("a[id$='#{id}_selectAllLink']").click(function() {
+					      							selectAllListener('#{id}',true,#{value.rowCount} , #{useCount}, '#{value.selezionatiPrimiElementiLabel}'); return false;
+								         		});
+					      						
+					      						jQuery("a[id$='#{id}_undoSelectAllLink']").click(function() {
+					      							checkVisualizzaSelezionePrimiElementi(); selectAllListener('#{id}',false,#{value.rowCount} , #{useCount}); return false;
+								         		});
+					                      	});
+	                      				</script>
 				      					<h:outputText id="#{id}_selectedInfoLbl" value="" styleClass="selectionInfoItem output-text-display-none"/>
 				      					<h:outputText id="#{id}_selectedInfoPipe1"  value="|" styleClass="selectionInfoItem output-text-display-none"/>
-				      					<h:outputLink id="#{id}_selectAllTableItemsLink" styleClass="selectionInfoItem output-text-display-none" value="#" 				
-				      						onclick="checkVisualizzaSelezionePrimiElementi(); checkAllCheckboxesInTable( '#{id}', true , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay} , #{useCount}); return false;">Seleziona tutti gli elementi visualizzati</h:outputLink>
+				      					<h:outputLink id="#{id}_selectAllTableItemsLink" styleClass="selectionInfoItem output-text-display-none" value="#">Seleziona tutti gli elementi visualizzati</h:outputLink>
 				      					<h:outputText id="#{id}_selectedInfoPipe2"  value="|" styleClass="selectionInfoItem output-text-display-none"/>
-				      					<h:outputLink id="#{id}_selectAllLink" styleClass="selectionInfoItem output-text-display-none" value="#" 
-				      						onclick="selectAllListener('#{id}',true,#{value.rowCount} , #{useCount}, '#{value.selezionatiPrimiElementiLabel}'); return false;">#{value.numeroMassimoRisultatiLabel}</h:outputLink>
+				      					<h:outputLink id="#{id}_selectAllLink" styleClass="selectionInfoItem output-text-display-none" value="#">#{value.numeroMassimoRisultatiLabel}</h:outputLink>
 				      					<h:outputText id="#{id}_selectedInfoPipe3"  value="|" styleClass="selectionInfoItem output-text-display-none"/>
-				      					<h:outputLink id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem output-text-display-none" value="#" 
-				      						onclick="checkVisualizzaSelezionePrimiElementi(); selectAllListener('#{id}',false,#{value.rowCount} , #{useCount}); return false;">Annulla selezione</h:outputLink>
+				      					<h:outputLink id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem output-text-display-none" value="#">Annulla selezione</h:outputLink>
 				      				</c:if>
 					      		</div>
 			      			</a4j:outputPanel>
@@ -332,7 +357,6 @@
 						<style type="text/css" nonce="#{_csp_random_nonce}">
 							.#{id}_ds_down_table { text-align:#{topScrollerAlign}; }
 							.line-height-28 { line-height: 28px;}
-						
 						</style>
 						<table id="#{id}_ds_down_table" border="0" cellpadding="0" cellspacing="1" class="rich-dtascroller-table #{id}_ds_down_table">
 	                        <tbody>
@@ -402,9 +426,14 @@
 		      		<c:if test="#{not empty customDelete and customDelete==true and enableDelete}">
 		      			<ui:insert name="customDelete"/>
 		      		</c:if>
-		      					      			
-	      			<h:commandButton id="#{id}_deleteBtn" styleClass="negative icon-delete" value="Elimina Selezionati" 
-	      				onclick="showConfirm('#{id}','#{id}_deleteConfirmation'); return false" rendered="#{enableDelete and showSelectAll}"/>
+		      		<script type="text/javascript" nonce="#{_csp_random_nonce}">
+			      		jQuery(document).ready(function() {
+			      			jQuery("input[id$='#{id}_deleteBtn']").click(function() {
+			      				showConfirm('#{id}','#{id}_deleteConfirmation'); return false;
+			         		});
+	                  	});
+                   	</script>	      			
+	      			<h:commandButton id="#{id}_deleteBtn" styleClass="negative icon-delete" value="Elimina Selezionati" rendered="#{enableDelete and showSelectAll}"/>
 	      			
 	      			<ui:insert name="buttons"/>
 	      		</div>
@@ -424,10 +453,18 @@
 			</div>
 	        	<div class="errorsSpacer"/>
 		         <div class="buttonrowmodal">
-		     		<input id="#{id}_confermaRimozioneBtn" type="button" value="Conferma rimozione" class=""
-						   onclick="Richfaces.hideModalPanel('#{id}_deleteConfirmation');#{id}_deleteSelected();return false" />
-					<input id="#{id}_annullaRimozioneBtn" type="button" value="Annulla" class="negative icon-delete"
-						   onclick="Richfaces.hideModalPanel('#{id}_deleteConfirmation');return false" />
+		         	<script type="text/javascript" nonce="#{_csp_random_nonce}">
+			         	jQuery(document).ready(function() {
+			         		jQuery("input[id$='#{id}_confermaRimozioneBtn']").click(function() {
+			         			Richfaces.hideModalPanel('#{id}_deleteConfirmation'); #{id}_deleteSelected(); return false;
+			         		});
+			         		jQuery("input[id$='#{id}_annullaRimozioneBtn']").click(function() {
+			         			Richfaces.hideModalPanel('#{id}_deleteConfirmation'); return false;
+			         		});
+	                  	});  	
+                  	</script>
+		     		<input id="#{id}_confermaRimozioneBtn" type="button" value="Conferma rimozione" class=""  />
+					<input id="#{id}_annullaRimozioneBtn" type="button" value="Annulla" class="negative icon-delete" />
 		         </div>
 			 </div>
 		</rich:modalPanel>
@@ -445,8 +482,14 @@
 			  </div>
 	        <div class="errorsSpacer"/>
 	         <div class="buttonrowmodal">
-	     		<input type="button" value="Chiudi" 
-					   onclick="Richfaces.hideModalPanel('#{id}_checkSelection');return false" />
+	         	<script type="text/javascript" nonce="#{_csp_random_nonce}">
+		         	jQuery(document).ready(function() {
+		         		jQuery("input[id$='#{id}_checkSelectionBtn']").click(function() {
+		         			Richfaces.hideModalPanel('#{id}_checkSelection'); return false;
+		         		});
+	              	});   	
+               	</script>
+	     		<input type="button" value="Chiudi" id="#{id}_checkSelectionBtn" />
 	         </div>
 		   </div>
 		</rich:modalPanel>
@@ -467,8 +510,14 @@
 			  </div>
 	        <div class="errorsSpacer"/>
 	         <div class="buttonrowmodal">
-	     		<input type="button" value="Chiudi" 
-					   onclick="Richfaces.hideModalPanel('#{id}_timeoutModal');return false" />
+	         	<script type="text/javascript" nonce="#{_csp_random_nonce}">
+		         	jQuery(document).ready(function() {
+		         		jQuery("input[id$='#{id}_timeoutModalBtn']").click(function() {
+		         			Richfaces.hideModalPanel('#{id}_timeoutModal'); return false;
+		         		});
+	              	});   	
+               	</script>
+	     		<input type="button" value="Chiudi" id="#{id}_timeoutModalBtn" />
 	         </div>
 		   </div>
 		</rich:modalPanel>
@@ -489,8 +538,14 @@
 			  </div>
 	        <div class="errorsSpacer"/>
 	         <div class="buttonrowmodal">
-	     		<input type="button" value="Chiudi" 
-					   onclick="Richfaces.hideModalPanel('#{id}_timeoutIdentificativiModal');return false" />
+	         	<script type="text/javascript" nonce="#{_csp_random_nonce}">
+		         	jQuery(document).ready(function() {
+		         		jQuery("input[id$='#{id}_timeoutIdentificativiModalBtn']").click(function() {
+		         			Richfaces.hideModalPanel('#{id}_timeoutIdentificativiModal'); return false;
+		         		});
+	              	});  	
+               	</script>
+	     		<input type="button" value="Chiudi" id="#{id}_timeoutIdentificativiModalBtn" />
 	         </div>
 		   </div>
 		</rich:modalPanel>
@@ -511,8 +566,14 @@
 			  </div>
 	        <div class="errorsSpacer"/>
 	         <div class="buttonrowmodal">
-	     		<input type="button" value="Chiudi" 
-					   onclick="Richfaces.hideModalPanel('#{id}_profiloDifferenteModal');return false" />
+	         	<script type="text/javascript" nonce="#{_csp_random_nonce}">
+		         	jQuery(document).ready(function() {
+		         		jQuery("input[id$='#{id}_profiloDifferenteModalBtn']").click(function() {
+		         			Richfaces.hideModalPanel('#{id}_profiloDifferenteModal'); return false;
+		         		});
+	              	});    	
+               	</script>
+	     		<input type="button" value="Chiudi" id="#{id}_profiloDifferenteModalBtn" />
 	         </div>
 		   </div>
 		</rich:modalPanel>
@@ -533,8 +594,14 @@
 			  </div>
 	        <div class="errorsSpacer"/>
 	         <div class="buttonrowmodal">
-	     		<input type="button" value="Chiudi" 
-					   onclick="Richfaces.hideModalPanel('#{id}_soggettoDifferenteModal');return false" />
+	         	<script type="text/javascript" nonce="#{_csp_random_nonce}">
+		         	jQuery(document).ready(function() {
+		         		jQuery("input[id$='#{id}_soggettoDifferenteModalBtn']").click(function() {
+		         			Richfaces.hideModalPanel('#{id}_soggettoDifferenteModal'); return false;
+		         		});
+	              	});      	
+               	</script>
+	     		<input type="button" value="Chiudi" id="#{id}_soggettoDifferenteModalBtn" />
 	         </div>
 		   </div>
 		</rich:modalPanel>

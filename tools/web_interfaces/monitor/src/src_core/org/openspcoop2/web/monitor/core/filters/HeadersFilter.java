@@ -31,6 +31,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -98,13 +99,30 @@ public class HeadersFilter implements Filter {
 	private void gestioneContentSecurityPolicy(HttpServletRequest request, HttpServletResponse response) {
 		// Per abilitare l'esecuzione solo degli script che vogliamo far eseguire, si genera un UUID random e si assegna ai tag script con attributo src e a gli script inline nelle pagine
 		// L'id degli script abilitati e' indicato all'interno del campo script-src
+		HttpSession session = request.getSession();
+		String nonceValue = leggiNonceValue(session);
 		
-		String uuId = UUID.randomUUID().toString().replace("-", "");
-		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, uuId);
+		if(nonceValue == null) {
+			nonceValue = UUID.randomUUID().toString().replace("-", "");
+			salvaNonceValueInSessione(session, nonceValue);
+		}
+		
+//		String uuId = UUID.randomUUID().toString().replace("-", "");
+		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, nonceValue);
 		
 		if(StringUtils.isNoneBlank(this.cspHeaderValue)) {
-			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.cspHeaderValue, uuId, uuId));
-//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.cspHeaderValue, uuId, uuId));
+//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.cspHeaderValue, nonceValue, nonceValue));
+			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.cspHeaderValue, nonceValue, nonceValue));
 		}
+	}
+	
+	public static String leggiNonceValue(HttpSession session) {
+		if(session == null) return null;
+		return (String) session.getAttribute(Costanti.SESSION_ATTRIBUTE_CSP_RANDOM_NONCE);
+	}
+	
+	public static void salvaNonceValueInSessione(HttpSession session, String nonceValue) {
+		if(session == null) return;
+		session.setAttribute(Costanti.SESSION_ATTRIBUTE_CSP_RANDOM_NONCE, nonceValue);
 	}
 }

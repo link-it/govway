@@ -39,3 +39,230 @@ g.tick text,
 .label-circle {
     fill: #393939;
 }
+
+.tooltip-table-style {
+	word-wrap: break-word !important; 
+	max-width: 250px;
+}
+
+/* Classi introdotte per correzione delle problematiche CSP, ogni colore che veniva impostato attraverso l'attributo style e' diventato una classe */
+
+/* Colori definiti all'interno del codice java */ 
+
+.background-color-3B83B7 {
+	background-color: #3B83B7;
+}
+
+.background-color-95B964 {
+	background-color: #95B964;
+}
+
+.background-color-FF8F52 {
+	background-color: #FF8F52;
+}
+
+.background-color-CD4A50 {
+	background-color: #CD4A50;
+}
+
+/* Colori automatici definiti all'interno del codice javascript */ 
+
+.background-color-2484c1 {
+	background-color: #2484c1;
+}
+
+.background-color-65a620 {
+	background-color: #65a620;
+}
+
+.background-color-7b6888 {
+	background-color: #7b6888;
+}
+
+.background-color-a05d56 {
+	background-color: #a05d56;
+}
+
+.background-color-961a1a {
+	background-color: #961a1a;
+}
+
+.background-color-d8d23a {
+	background-color: #d8d23a;
+}
+
+.background-color-e98125 {
+	background-color: #e98125;
+}
+
+.background-color-d0743c {
+	background-color: #d0743c;
+}
+
+.background-color-635222 {
+	background-color: #635222;
+}
+
+.background-color-6ada6a {
+	background-color: #6ada6a;
+}
+
+.background-color-0c6197 {
+	background-color: #0c6197;
+}
+
+.background-color-7d9058 {
+	background-color: #7d9058;
+}
+
+.background-color-207f33 {
+	background-color: #207f33;
+}
+
+.background-color-44b9b0 {
+	background-color: #44b9b0;
+}
+
+.background-color-bca44a {
+	background-color: #bca44a;
+}
+
+.background-color-e4a14b {
+	background-color: #e4a14b;
+}
+
+.background-color-a3acb2 {
+	background-color: #a3acb2;
+}
+
+.background-color-8cc3e9 {
+	background-color: #8cc3e9;
+}
+
+.background-color-69a6f9 {
+	background-color: #69a6f9;
+}
+
+.background-color-5b388f {
+	background-color: #5b388f;
+}
+
+.background-color-546e91 {
+	background-color: #546e91;
+}
+
+.background-color-8bde95 {
+	background-color: #8bde95;
+}
+
+.background-color-d2ab58 {
+	background-color: #d2ab58;
+}
+
+.background-color-273c71 {
+	background-color: #273c71;
+}
+
+.background-color-98bf6e {
+	background-color: #98bf6e;
+}
+
+.background-color-4daa4b {
+	background-color: #4daa4b;
+}
+
+.background-color-98abc5 {
+	background-color: #98abc5;
+}
+
+.background-color-cc1010 {
+	background-color: #cc1010;
+}
+
+.background-color-31383b {
+	background-color: #31383b;
+}
+
+.background-color-006391 {
+	background-color: #006391;
+}
+
+.background-color-c2643f {
+	background-color: #c2643f;
+}
+
+.background-color-b0a474 {
+	background-color: #b0a474;
+}
+
+.background-color-a5a39c {
+	background-color: #a5a39c;
+}
+
+.background-color-a9c2bc {
+	background-color: #a9c2bc;
+}
+
+.background-color-22af8c {
+	background-color: #22af8c;
+}
+
+.background-color-7fcecf {
+	background-color: #7fcecf;
+}
+
+.background-color-987ac6 {
+	background-color: #987ac6;
+}
+
+.background-color-3d3b87 {
+	background-color: #3d3b87;
+}
+
+.background-color-b77b1c {
+	background-color: #b77b1c;
+}
+
+.background-color-c9c2b6 {
+	background-color: #c9c2b6;
+}
+
+.background-color-807ece {
+	background-color: #807ece;
+}
+
+.background-color-8db27c {
+	background-color: #8db27c;
+}
+
+.background-color-be66a2 {
+	background-color: #be66a2;
+}
+
+.background-color-9ed3c6 {
+	background-color: #9ed3c6;
+}
+
+.background-color-00644b {
+	background-color: #00644b;
+}
+
+.background-color-005064 {
+	background-color: #005064;
+}
+
+.background-color-77979f {
+	background-color: #77979f;
+}
+
+.background-color-77e079 {
+	background-color: #77e079;
+}
+
+.background-color-9c73ab {
+	background-color: #9c73ab;
+}
+
+.background-color-1f79a7 {
+	background-color: #1f79a7;
+}

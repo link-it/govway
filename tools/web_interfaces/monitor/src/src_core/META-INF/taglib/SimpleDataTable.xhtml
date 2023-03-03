@@ -68,8 +68,15 @@
 						      		<c:if test="#{not empty customDelete and customDelete==true and enableDelete}">
 						      			<ui:insert name="customDelete"/>
 						      		</c:if>
-						      					      			
-					      			<h:commandButton id="#{id}_deleteBtn" styleClass="negative icon-delete" value="Elimina Selezionati" onclick="showConfirm('#{id}','#{id}_deleteConfirmation'); return false" rendered="#{enableDelete and showSelectAll}"/>
+						      		
+						      		<script type="text/javascript" nonce="#{_csp_random_nonce}">
+							      		jQuery(document).ready(function() {
+							      			jQuery("input[id$='#{id}_deleteBtn']").click(function() {
+							      				showConfirm('#{id}','#{id}_deleteConfirmation'); return false;
+							         		});
+					                  	});
+				                   	</script>	      			
+					      			<h:commandButton id="#{id}_deleteBtn" styleClass="negative icon-delete" value="Elimina Selezionati" rendered="#{enableDelete and showSelectAll}"/>
 					      			
 					      			<ui:insert name="buttons"/>
 					      		</div>
@@ -92,10 +99,18 @@
 				</div>
 		        	<div class="errorsSpacer"/>
 			         <div class="buttonrowmodal">
-			     		<input id="#{id}_confermaRimozioneBtn" type="button" value="Conferma rimozione" class=""
-							   onclick="Richfaces.hideModalPanel('#{id}_deleteConfirmation');#{id}_deleteSelected();return false" />
-						<input id="#{id}_annullaRimozioneBtn" type="button" value="Annulla" class="negative icon-delete"
-							   onclick="Richfaces.hideModalPanel('#{id}_deleteConfirmation');return false" />
+			     		<script type="text/javascript" nonce="#{_csp_random_nonce}">
+				         	jQuery(document).ready(function() {
+				         		jQuery("input[id$='#{id}_confermaRimozioneBtn']").click(function() {
+				         			Richfaces.hideModalPanel('#{id}_deleteConfirmation'); #{id}_deleteSelected(); return false;
+				         		});
+				         		jQuery("input[id$='#{id}_annullaRimozioneBtn']").click(function() {
+				         			Richfaces.hideModalPanel('#{id}_deleteConfirmation'); return false;
+				         		});
+		                  	});  	
+	                  	</script>
+			     		<input id="#{id}_confermaRimozioneBtn" type="button" value="Conferma rimozione" class=""  />
+						<input id="#{id}_annullaRimozioneBtn" type="button" value="Annulla" class="negative icon-delete" />
 			         </div>
 				 </div>
 			</rich:modalPanel>

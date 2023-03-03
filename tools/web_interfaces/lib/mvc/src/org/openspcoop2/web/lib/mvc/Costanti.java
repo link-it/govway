@@ -370,4 +370,5 @@ public class Costanti {
 	
 	/* CSP */
 	public static final String REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE = "_csp_random_nonce";
+	public static final String SESSION_ATTRIBUTE_CSP_RANDOM_NONCE =  REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE;
 }

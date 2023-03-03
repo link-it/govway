@@ -669,7 +669,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 								if(cd>0){
 									cd--;
 									jQuery("[id='cdLabel']").text("Prossimo Aggiornamento tra "+cd+" secondi");
-									cdt = setTimeout("updateCountDown()", 1000);
+									cdt = setTimeout(function () { updateCountDown();}, 1000);
 								}
 							}
 						
@@ -677,7 +677,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 							{
 								visualizzaMessaggioNoData('dtTblLive', 'dtTblLive');
 								cd=cdifp;
-								t=setTimeout("poll()",cd*1000);
+								t=setTimeout(function () {poll();},cd*1000);
 								
 								var pol = 'true';
 								// non disponibile su IE 
