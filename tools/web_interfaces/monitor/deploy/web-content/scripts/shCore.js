@@ -11,8 +11,14 @@ function lineWrap(){
 	   			for (var i = 0; i < gLines.length; ++i) {
 	   				var h = jQuery(cLines[i]).height();
 	   				if (h != stand) {
-	   					//console.log(i);
-	   					gLines[i].setAttribute('style', 'height: ' + h + 'px !important;');
+						var divId = 'lineNotStand'+ i;
+						jQuery(gLines[i]).attr('id', divId);
+						var css = document.createElement("style");
+    					css.type = 'text/css';
+    					css.nonce = document.getElementById('expiredMsgScript').nonce;
+    					css.appendChild(document.createTextNode("#"+divId+" { height: "+h+"px !important; }"));
+    					jQuery(gLines[i]).not('.cssfix').append(css);
+    					jQuery(gLines[i]).not('.cssfix').addClass('cssfix');
 	   				}
 	   			}
   			}

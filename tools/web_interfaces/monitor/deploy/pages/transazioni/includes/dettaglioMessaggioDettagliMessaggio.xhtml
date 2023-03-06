@@ -186,16 +186,16 @@
 					<input type="hidden" id="_csrfFormDuplicatiReq" name="_csrf" value="#{loginBean.csrf}"/>									
 					<h:outputLink id="hideDups-iconLink" styleClass="icon-details display-none" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}">
                    		<h:outputText id="outNascondiDuplicati" value="Nascondi" />
-                   		<rich:effect id="blindUpHideDups" for="hideDups-iconLink" event="onclick" type="BlindUp" targetId="duplicatiDiv" params="duration:0.8"/>
-                   		<rich:effect id="fadeHideDups" for="hideDups-iconLink" event="onclick" type="Fade" targetId="hideDups-iconLink" params="delay:0.0,duration:0.0"/>
-                   		<rich:effect id="appearHideDups" for="hideDups-iconLink" event="onclick" type="Appear" targetId="showDups-iconLink" params="delay:0.0,duration:0.0"/>
+                   		<rich:effect id="blindUpHideDups" for="hideDups-iconLink" event="onclick" type="BlindUpCheckClassWrapped" targetId="duplicatiDiv" params="duration:0.8"/>
+                   		<rich:effect id="fadeHideDups" for="hideDups-iconLink" event="onclick" type="FadeCheckClassWrapped" targetId="hideDups-iconLink" params="delay:0.0,duration:0.0"/>
+                   		<rich:effect id="appearHideDups" for="hideDups-iconLink" event="onclick" type="AppearCheckClassWrapped" targetId="showDups-iconLink" params="delay:0.0,duration:0.0"/>
                    	</h:outputLink>
                    	<h:outputLink id="showDups-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}">
                    		<h:outputText id="outVisualizzaDuplicati" value="Visualizza (#{dettagliBean.dettaglio.duplicatiRichiesta})" />
-                   		<rich:effect id="blindDownShowDups" for="showDups-iconLink" event="onclick" type="BlindDown" targetId="duplicatiDiv" params="delay:0.1,duration:1.0,from:0.0,to:1.0"/>
-                   		<rich:effect id="appearShowDups1" for="showDups-iconLink" event="onclick" type="Appear" targetId="duplicatiDiv" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
-                   		<rich:effect id="fadeShowDups" for="showDups-iconLink" event="onclick" type="Fade" targetId="showDups-iconLink" params="delay:0.0,duration:0.0"/>
-                   		<rich:effect id="appearShowDups2" for="showDups-iconLink" event="onclick" type="Appear" targetId="hideDups-iconLink" params="delay:0.0,duration:0.0"/>
+                   		<rich:effect id="blindDownShowDups" for="showDups-iconLink" event="onclick" type="BlindDownCheckClassWrapped" targetId="duplicatiDiv" params="delay:0.1,duration:1.0,from:0.0,to:1.0"/>
+                   		<rich:effect id="appearShowDups1" for="showDups-iconLink" event="onclick" type="AppearCheckClassWrapped" targetId="duplicatiDiv" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
+                   		<rich:effect id="fadeShowDups" for="showDups-iconLink" event="onclick" type="FadeCheckClassWrapped" targetId="showDups-iconLink" params="delay:0.0,duration:0.0"/>
+                   		<rich:effect id="appearShowDups2" for="showDups-iconLink" event="onclick" type="AppearCheckClassWrapped" targetId="hideDups-iconLink" params="delay:0.0,duration:0.0"/>
                    	</h:outputLink>
 				</h:form>
 			</h:panelGroup>	
@@ -447,16 +447,16 @@
 				<input type="hidden" id="_csrfFormDuplicatiRes" name="_csrf" value="#{loginBean.csrf}"/>									
 					<h:outputLink id="hideDupsResp-iconLink" styleClass="icon-details display-none" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}">
                    		<h:outputText id="outNascondiDuplicati" value="Nascondi" />
-                   		<rich:effect id="blindUpHideDups" for="hideDupsResp-iconLink" event="onclick" type="BlindUp" targetId="duplicatiDivResp" params="duration:0.8"/>
-                   		<rich:effect id="fadeHideDups" for="hideDupsResp-iconLink" event="onclick" type="Fade" targetId="hideDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
-                   		<rich:effect id="appearHideDups" for="hideDupsResp-iconLink" event="onclick" type="Appear" targetId="showDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
+                   		<rich:effect id="blindUpHideDups" for="hideDupsResp-iconLink" event="onclick" type="BlindUpCheckClassWrapped" targetId="duplicatiDivResp" params="duration:0.8"/>
+                   		<rich:effect id="fadeHideDups" for="hideDupsResp-iconLink" event="onclick" type="FadeCheckClassWrapped" targetId="hideDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
+                   		<rich:effect id="appearHideDups" for="hideDupsResp-iconLink" event="onclick" type="AppearCheckClassWrapped" targetId="showDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
                    	</h:outputLink>
                    	<h:outputLink id="showDupsResp-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}">
                    		<h:outputText id="outVisualizzaDuplicati" value="Visualizza (#{dettagliBean.dettaglio.duplicatiRisposta})" />
-                   		<rich:effect id="blindDownShowDups" for="showDupsResp-iconLink" event="onclick" type="BlindDown" targetId="duplicatiDivResp" params="delay:0.1,duration:1.0,from:0.0,to:1.0"/>
-                   		<rich:effect id="appearShowDups1" for="showDupsResp-iconLink" event="onclick" type="Appear" targetId="duplicatiDivResp" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
-                   		<rich:effect id="fadeShowDups" for="showDupsResp-iconLink" event="onclick" type="Fade" targetId="showDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
-                   		<rich:effect id="appearShowDups2" for="showDupsResp-iconLink" event="onclick" type="Appear" targetId="hideDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
+                   		<rich:effect id="blindDownShowDups" for="showDupsResp-iconLink" event="onclick" type="BlindDownCheckClassWrapped" targetId="duplicatiDivResp" params="delay:0.1,duration:1.0,from:0.0,to:1.0"/>
+                   		<rich:effect id="appearShowDups1" for="showDupsResp-iconLink" event="onclick" type="AppearCheckClassWrapped" targetId="duplicatiDivResp" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
+                   		<rich:effect id="fadeShowDups" for="showDupsResp-iconLink" event="onclick" type="FadeCheckClassWrapped" targetId="showDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
+                   		<rich:effect id="appearShowDups2" for="showDupsResp-iconLink" event="onclick" type="AppearCheckClassWrapped" targetId="hideDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
                    	</h:outputLink>
 				</h:form>
 			</h:panelGroup>	
