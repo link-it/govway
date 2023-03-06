@@ -38,6 +38,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.core.Utilities;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -194,7 +195,9 @@ public class ConnettoreNULL extends ConnettoreBase {
 					bout.flush();
 					bout.close();
 					close = false;
-										
+								
+					this.dataRichiestaInoltrata = DateManager.getDate();
+					
 					this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 				}finally {
 					try {
@@ -223,6 +226,8 @@ public class ConnettoreNULL extends ConnettoreBase {
 				}
 				nullOutputStream.flush();
 				nullOutputStream.close();
+				
+				this.dataRichiestaInoltrata = DateManager.getDate();
 			}
 		
 		}catch(Exception e){

@@ -301,7 +301,7 @@ public class JsonStatsUtils {
 									if(showSeries){
 										JSONObject categoria = new JSONObject();
 										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
-										categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue());
+										categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
 										categorie.add(i,categoria);
 									}
@@ -657,7 +657,7 @@ public class JsonStatsUtils {
 								if(showSeries){
 									JSONObject categoria = new JSONObject();
 									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue());
+									categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
 									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
 									categorie.add(i,categoria);
 								}

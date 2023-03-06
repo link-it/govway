@@ -24,7 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.web.monitor.core.bean.SelectItem;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 
 /**
  * ColonnaExportManager
@@ -76,11 +78,26 @@ public class ColonnaExportManager {
 		this._addColonna(CostantiExport.KEY_COL_PDD_SOGGETTO, CostantiExport.LABEL_COL_PDD_SOGGETTO, !SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_DATA_ACCETTAZIONE_RICHIESTA, CostantiExport.LABEL_COL_DATA_ACCETTAZIONE_RICHIESTA, SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_DATA_INGRESSO_RICHIESTA, CostantiExport.LABEL_COL_DATA_INGRESSO_RICHIESTA, SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_DATA_INGRESSO_RICHIESTA_STREAM, CostantiExport.LABEL_COL_DATA_INGRESSO_RICHIESTA_STREAM, !SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_DATA_USCITA_RICHIESTA, CostantiExport.LABEL_COL_DATA_USCITA_RICHIESTA, SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_DATA_USCITA_RICHIESTA_STREAM, CostantiExport.LABEL_COL_DATA_USCITA_RICHIESTA_STREAM, !SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_DATA_ACCETTAZIONE_RISPOSTA, CostantiExport.LABEL_COL_DATA_ACCETTAZIONE_RISPOSTA, SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_DATA_INGRESSO_RISPOSTA, CostantiExport.LABEL_COL_DATA_INGRESSO_RISPOSTA, SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_DATA_INGRESSO_RISPOSTA_STREAM, CostantiExport.LABEL_COL_DATA_INGRESSO_RISPOSTA_STREAM, !SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_DATA_USCITA_RISPOSTA, CostantiExport.LABEL_COL_DATA_USCITA_RISPOSTA, SHOW_IN_CUSTOM_VIEW);
-		this._addColonna(CostantiExport.KEY_COL_LATENZA_PORTA, CostantiExport.LABEL_COL_LATENZA_PORTA, SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_DATA_USCITA_RISPOSTA_STREAM, CostantiExport.LABEL_COL_DATA_USCITA_RISPOSTA_STREAM, !SHOW_IN_CUSTOM_VIEW);
+		boolean latenzaPorta = true;
+		try {
+			latenzaPorta = PddMonitorProperties.getInstance(LoggerWrapperFactory.getLogger(ColonnaExportManager.class)).isTransazioniLatenzaPortaEnabled();
+		}catch(Throwable t) {
+			// ignore
+		}
+		if(latenzaPorta) {
+			this._addColonna(CostantiExport.KEY_COL_LATENZA_PORTA, CostantiExport.LABEL_COL_LATENZA_PORTA, SHOW_IN_CUSTOM_VIEW);
+		}
+//		else {
+//			this._addColonna(CostantiExport.KEY_COL_LATENZA_PORTA, CostantiExport.LABEL_COL_LATENZA_PORTA, !SHOW_IN_CUSTOM_VIEW);
+//		}
 		this._addColonna(CostantiExport.KEY_COL_LATENZA_SERVIZIO, CostantiExport.LABEL_COL_LATENZA_SERVIZIO, SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_LATENZA_TOTALE, CostantiExport.LABEL_COL_LATENZA_TOTALE, SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_CODICE_RISPOSTA_INGRESSO, CostantiExport.LABEL_COL_CODICE_RISPOSTA_INGRESSO, SHOW_IN_CUSTOM_VIEW);

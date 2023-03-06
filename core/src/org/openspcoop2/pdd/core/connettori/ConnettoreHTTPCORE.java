@@ -76,6 +76,7 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -623,6 +624,9 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				this.logger.debug("Spedizione byte...");
 			// Eseguo la richiesta e prendo la risposta
 			HttpResponse httpResponse = this.httpClient.execute(this.httpRequest);
+			
+			this.dataRichiestaInoltrata = DateManager.getDate();
+			
 			this.httpEntityResponse = httpResponse.getEntity();
 			
 			

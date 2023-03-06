@@ -34,9 +34,11 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
@@ -82,6 +84,8 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	private PdDContext pddContext;
 	private Date dataIngressoRichiesta;
 	
+	protected OpenSPCoop2Properties openspcoopProperties;
+	
 	private Context context;
 	@SuppressWarnings("unused")
 	private String idTransazione;
@@ -95,11 +99,18 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	@SuppressWarnings("unused")
 	private SogliaDimensioneMessaggio requestLimitSize;
 	
+	@SuppressWarnings("unused")
+	private boolean useDiagnosticInputStream;
+	@SuppressWarnings("unused")
+	private MsgDiagnostico msgDiagnostico;
+	
 	public AS4ConnectorInMessage(UserMessage userMessage,HashMap<String, byte[]> content) throws ConnectorException{
 		try{
 			this.message = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.SOAP_12, MessageRole.REQUEST);
 			this.message.addContextProperty(AS4Costanti.AS4_CONTEXT_USER_MESSAGE, userMessage);
 			this.message.addContextProperty(AS4Costanti.AS4_CONTEXT_CONTENT, content);
+			
+			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 			
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			if(this.log==null)
@@ -145,8 +156,12 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 			
 			this.requestInfo = ConnectorUtils.getRequestInfo(this.protocolFactory, urlProtocolContext);
 			
-			if(this.pddContext!=null){
-				this.setAttribute(Costanti.REQUEST_INFO.getValue(),this.requestInfo);
+			//if(this.pddContext!=null){
+			this.setAttribute(Costanti.REQUEST_INFO.getValue(),this.requestInfo);
+			//}
+			
+			if(this.openspcoopProperties!=null) {
+				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_ricezioneBuste();
 			}
 			
 			this.message.setTransportRequestContext(urlProtocolContext);
@@ -185,6 +200,14 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 		// nop
 	}
 
+	@Override
+	public void setDiagnosticProducer(Context context, MsgDiagnostico msgDiag) {
+		if(this.context==null) {
+			this.context = context;
+		}
+		this.msgDiagnostico = msgDiag;
+	}
+	
 	@Override
 	public IDService getIdModuloAsIDService(){
 		return this.idModuloAsIDService;

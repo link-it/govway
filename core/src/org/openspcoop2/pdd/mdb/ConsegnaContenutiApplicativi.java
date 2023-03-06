@@ -129,6 +129,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioni;
 import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioniException;
 import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioniUtilities;
+import org.openspcoop2.pdd.logger.DiagnosticInputStream;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -395,6 +396,17 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				else {
 					transazioneApplicativoServer.setUltimoErrore("Errore Generico durante il processamento del messaggio");
+				}
+			}
+			
+			if(consegnaContenutiApplicativiMsg!=null && consegnaContenutiApplicativiMsg.getPddContext()!=null) {
+				Object o = consegnaContenutiApplicativiMsg.getPddContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_COMPLETE_DATE);
+				if(o==null) {
+					o = consegnaContenutiApplicativiMsg.getPddContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_ERROR_DATE);
+				}
+				if(o!=null && o instanceof Date) {
+					Date d = (Date) o;
+					transazioneApplicativoServer.setDataIngressoRispostaStream(d);
 				}
 			}
 			
@@ -2868,6 +2880,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					inResponseContext.setConnettore(outRequestContext.getConnettore());
 					inResponseContext.setDataPrimaInvocazioneConnettore(dataPrimaInvocazioneConnettore);
 					inResponseContext.setDataTerminataInvocazioneConnettore(dataTerminataInvocazioneConnettore);
+					inResponseContext.setDataRichiestaInoltrata(connectorSender.getDataRichiestaInoltrata());
 					inResponseContext.setDataAccettazioneRisposta(connectorSender.getDataAccettazioneRisposta());
 					inResponseContext.setDataElaborazioneMessaggio(ejbUtils.getRicezioneMsgRisposta());
 					inResponseContext.setProtocollo(outRequestContext.getProtocollo());

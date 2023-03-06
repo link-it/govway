@@ -143,6 +143,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private Boolean hasDumpBinarioMultipartRispostaIngresso = null;
 	private Boolean hasDumpBinarioMultipartRispostaUscita = null;
 	
+	private boolean dataUscitaRispostaValorizzataDopoSpedizioneRisposta = false;
+	
 	private TipoMessaggio exportContenuto;
 	
 	private Integer multipartThreshold=null;
@@ -192,6 +194,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			this.visualizzaDataAccettazione = govwayMonitorProperties.isAttivoTransazioniDataAccettazione();
 			
 			this.multipartThreshold = govwayMonitorProperties.getTransazioniDettaglioAnalisiMultipartThreshold();
+			
+			this.dataUscitaRispostaValorizzataDopoSpedizioneRisposta = govwayMonitorProperties.isDataUscitaRispostaUseDateAfterResponseSent();
 			
 
 		} catch (Exception e) {
@@ -930,6 +934,14 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	public void setVisualizzaDataAccettazione(boolean visualizzaDataAccettazione) {
 		this.visualizzaDataAccettazione = visualizzaDataAccettazione;
+	}
+	
+	public boolean isDataUscitaRispostaValorizzataDopoSpedizioneRisposta() {
+		return this.dataUscitaRispostaValorizzataDopoSpedizioneRisposta;
+	}
+	public void setDataUscitaRispostaValorizzataDopoSpedizioneRisposta(
+			boolean isDataUscitaRispostaValorizzataDopoSpedizioneRisposta) {
+		this.dataUscitaRispostaValorizzataDopoSpedizioneRisposta = isDataUscitaRispostaValorizzataDopoSpedizioneRisposta;
 	}
 	
 	public String getTextCredenziali() {

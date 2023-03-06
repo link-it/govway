@@ -376,8 +376,12 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				if(this.debug)
 					this.logger.debug("Send...");
 				
+				SOAPMessage soapMsg = this.connection.call( this.soapRequestMessage, this.location);
+				
+				this.dataRichiestaInoltrata = DateManager.getDate();
+				
 				this.responseMsg = messageFactory.
-						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,this.connection.call( this.soapRequestMessage, this.location));
+						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,soapMsg);
 				
 				this.dataAccettazioneRisposta = DateManager.getDate();
 				

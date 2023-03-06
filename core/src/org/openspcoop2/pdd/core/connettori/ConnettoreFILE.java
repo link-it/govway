@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -392,6 +393,11 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 						out.write(bout.toByteArray());
 					}
 					
+					out.flush();
+					out.close();
+					
+					this.dataRichiestaInoltrata = DateManager.getDate();
+					
 					this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 				}finally {
 					try {
@@ -408,9 +414,13 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				}else{
 					this.requestMsg.writeTo(out, consumeRequestMessage);
 				}
+				
+				out.flush();
+				out.close();
+				
+				this.dataRichiestaInoltrata = DateManager.getDate();
 			}
-			out.flush();
-			out.close();
+
 			if(this.debug)
 				this.logger.debug("Serializzazione ["+this.outputFile.getOutputFile().getAbsolutePath()+"] effettuata");
 			

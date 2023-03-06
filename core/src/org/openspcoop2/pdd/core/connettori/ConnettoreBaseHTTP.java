@@ -475,6 +475,9 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			// Registro HTML ricevuto.
 			String htmlRicevuto = null;
 			if(this.isResponse!=null){
+				
+				this.emitDiagnosticResponseRead(this.isResponse);
+				
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 //				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
 //				int readByte = 0;

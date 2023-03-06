@@ -37,6 +37,9 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
+import org.openspcoop2.pdd.logger.DiagnosticInputStream;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LimitedInputStream;
@@ -107,6 +110,14 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						this.getPddContext());
 			}
 		}
+		if(this.isResponse!=null && this.useDiagnosticInputStream && this.msgDiagnostico!=null) {
+			String idModuloFunzionale = 
+					ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? 
+							MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI : MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE;
+			this.isResponse = new DiagnosticInputStream(this.isResponse, idModuloFunzionale, "letturaPayloadRisposta", false, this.msgDiagnostico, 
+					(this.logger!=null && this.logger.getLogger()!=null) ? this.logger.getLogger() : OpenSPCoop2Logger.getLoggerOpenSPCoopCore(),
+					this.getPddContext());
+		}
 	}
 	
 	protected void initCheckContentTypeConfiguration(){		
@@ -172,8 +183,13 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 
 	}
 	
+	
+	
 	private boolean _dumpResponse(Map<String, List<String>> trasporto) throws Exception{
 		if(this.isResponse!=null){
+			
+			this.emitDiagnosticResponseRead(this.isResponse);
+			
 			// Registro Debug.
 			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
@@ -319,6 +335,10 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		responseContext.setCodiceTrasporto(this.codice+"");
 		responseContext.setContentLength(this.contentLength);
 		responseContext.setHeaders(this.propertiesTrasportoRisposta);
+		
+		if(isParam!=null) {
+			this.emitDiagnosticResponseRead(isParam);
+		}
 		
 		OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
 				createMessage(this.messageTypeResponse,responseContext,
@@ -479,6 +499,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			responseContext.setCodiceTrasporto(this.codice+"");
 			responseContext.setContentLength(this.contentLength);
 			responseContext.setHeaders(this.propertiesTrasportoRisposta);
+			
+			this.emitDiagnosticResponseRead(this.isResponse);
 			
 			try{
 				

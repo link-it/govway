@@ -72,6 +72,13 @@ public interface IConnettore extends ICore {
     public String getErrore();
     
     /**
+     * Data dalla quale è stata inoltrata completamente la richiesta
+     * 
+     * @return data dalla quale è stata inoltrata completamente la richiesta
+     */
+    public Date getDataRichiestaInoltrata();
+    
+    /**
      * Data dalla quale è disponibile la risposta
      * 
      * @return data dalla quale è disponibile la risposta

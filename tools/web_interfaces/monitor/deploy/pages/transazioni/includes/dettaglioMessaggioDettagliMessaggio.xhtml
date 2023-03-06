@@ -18,30 +18,7 @@
 		
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdEgovRich" value="ID Messaggio" rendered="#{not empty dettagliBean.dettaglio.idMessaggioRichiesta}"/>
 			<h:outputText id="outIdEgovRich" value="#{dettagliBean.dettaglio.idMessaggioRichiesta}" rendered="#{not empty dettagliBean.dettaglio.idMessaggioRichiesta}"/>
-						
-			<h:outputLabel value="Data Accettazione" id="dataAccR-iconLabel" styleClass="outputFieldLabel icon-date" 
-				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRichiesta}"/>
-			<h:outputText id="outDataAccettazioneRich" value="#{dettagliBean.dettaglio.dataAccettazioneRichiesta}" 
-				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRichiesta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
-			</h:outputText>	
-						
-			<h:outputLabel value="Data Ingresso" id="dataInR-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRichiesta}"/>
-			<h:outputText id="outDataIngressoRich" value="#{dettagliBean.dettaglio.dataIngressoRichiesta}" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRichiesta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
-			</h:outputText>	
-			
-			<h:outputLabel value="Data Uscita" id="dataOR-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}"/>
-			<h:outputText id="outDataUscitaRich" value="#{dettagliBean.dettaglio.dataUscitaRichiesta}" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
-			</h:outputText>
-			
-			<h:outputLabel value="Bytes Ingresso" id="dimInR-iconLabel" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{(empty dettagliBean.dettaglio.richiestaIngressoBytes or dettagliBean.dettaglio.richiestaIngressoBytes lt 0) ? 'n.d.' : dettagliBean.dettaglio.richiestaIngressoBytes}" converter="fileSizeConverter"/>
-			
-			<h:outputLabel value="Bytes Uscita" id="dimOutR-iconLabel" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{(empty dettagliBean.dettaglio.richiestaUscitaBytes or dettagliBean.dettaglio.richiestaUscitaBytes lt 0) ? 'n.d.' : dettagliBean.dettaglio.richiestaUscitaBytes}" converter="fileSizeConverter"/>										
-																			
+		
 			<h:outputLabel id="req-iconLabel" styleClass="outputFieldLabel icon-show-traccia" value="Traccia" rendered="#{dettagliBean.existsTracciaRichiesta}"/>
 			<h:panelGroup id="panelGroupReq" rendered="#{dettagliBean.existsTracciaRichiesta}">
 				<h:form id="formTracciaReq">
@@ -66,8 +43,34 @@
 					</h:panelGrid>
 				</h:form>
 			</h:panelGroup>
+		
+		</h:panelGrid>
+		<a4j:outputPanel layout="block" rendered="#{true}" styleClass="outputSeparator8">
+			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+		</a4j:outputPanel>
+		<h:panelGrid id="panelGridDettRich2" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
 			
-			<h:outputLabel id="req-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}"/>
+			<h:outputLabel value="Data Accettazione" id="dataAccR-iconLabel" styleClass="outputFieldLabel icon-date" 
+				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRichiesta}"/>
+			<h:outputText id="outDataAccettazioneRich" value="#{dettagliBean.dettaglio.dataAccettazioneRichiesta}" 
+				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRichiesta}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>	
+						
+			<h:outputLabel value="In Ricezione" id="dataInR-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRichiesta}"/>
+			<h:outputText id="outDataIngressoRich" value="#{dettagliBean.dettaglio.dataIngressoRichiesta}" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRichiesta}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>	
+			
+			<h:outputLabel value="Acquisita" id="dataInRStream-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRichiesta}"/>
+			<h:outputText id="outDataIngressoRichStream" value="#{(empty dettagliBean.dettaglio.dataIngressoRichiestaStream) ? '-' : dettagliBean.dettaglio.dataIngressoRichiestaStream}" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRichiesta}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>	
+			
+			<h:outputLabel value="Dimensione" id="dimInR-iconLabel" styleClass="outputFieldLabel icon-compress"/>
+			<h:outputText value="#{(empty dettagliBean.dettaglio.richiestaIngressoBytes or dettagliBean.dettaglio.richiestaIngressoBytes lt 0) ? '-' : dettagliBean.dettaglio.richiestaIngressoBytes}" converter="fileSizeConverter"/>
+			
+			<h:outputLabel id="req-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}"/>
 			<h:panelGroup id="panelGroupDumpMessaggiReqIngresso" rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}">
 				<h:form id="formDumpMessaggiReqIngresso">
 					<input type="hidden" id="_csrfFormDumpMessaggiReqIngresso" name="_csrf" value="#{loginBean.csrf}"/>
@@ -89,29 +92,7 @@
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel id="req-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}"/>
-			<h:panelGroup id="panelGroupDumpMessaggiReqUscita" rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}">
-				<h:form id="formDumpMessaggiReqUscita">
-					<input type="hidden" id="_csrfFormDumpMessaggiReqUscita" name="_csrf" value="#{loginBean.csrf}"/>
-					<a4j:htmlCommandLink id="dumpMessaggiUscita-iconLink"
-                   						 styleClass="icon-details"
-                   						 value="Visualizza"
-                   						 rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}"
-                   						 action="dettaglioDump">
-                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
-                   		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliDump.tipoMessaggio}"/>
-                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
-                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
-                   	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpMessaggiReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
-                   		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliBean.exportContenuto}"/>
-						<h:outputText id="outEsportaDumpMessaggiReqUscita" value="Esporta" />
-					</h:commandLink>
-				</h:form>
-			</h:panelGroup>
-			
-			<h:outputLabel id="req-dumpBinarioIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Ingresso" rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}"/>
+			<h:outputLabel id="req-dumpBinarioIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}"/>
 			<h:panelGroup id="panelGroupDumpBinarioReqIngresso" rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}">
 				<h:form id="formDumpBinarioReqIngresso">
 					<input type="hidden" id="_csrfFormDumpBinarioReqIngresso" name="_csrf" value="#{loginBean.csrf}"/>
@@ -136,8 +117,49 @@
 					</h:commandLink>
 				</h:form>
 			</h:panelGroup>
+						
+		</h:panelGrid>
+		<a4j:outputPanel layout="block" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}" styleClass="outputSeparator8">
+			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+		</a4j:outputPanel>
+		<h:panelGrid id="panelGridDettRich3" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
+						
+			<h:outputLabel value="In Spedizione" id="dataOR-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}"/>
+			<h:outputText id="outDataUscitaRich" value="#{dettagliBean.dettaglio.dataUscitaRichiesta}" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
+								
+			<h:outputLabel value="Consegnata" id="dataORStream-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}"/>
+			<h:outputText id="outDataUscitaRichStream" value="#{(empty dettagliBean.dettaglio.dataUscitaRichiestaStream) ? '-' : dettagliBean.dettaglio.dataUscitaRichiestaStream}" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
 			
-			<h:outputLabel id="req-dumpBinarioUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Uscita" rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}"/>
+			<h:outputLabel value="Dimensione" id="dimOutR-iconLabel" styleClass="outputFieldLabel icon-compress" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}"/>
+			<h:outputText value="#{(empty dettagliBean.dettaglio.richiestaUscitaBytes or dettagliBean.dettaglio.richiestaUscitaBytes lt 0) ? '-' : dettagliBean.dettaglio.richiestaUscitaBytes}" converter="fileSizeConverter" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}"/>										
+		
+			<h:outputLabel id="req-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}"/>
+			<h:panelGroup id="panelGroupDumpMessaggiReqUscita" rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}">
+				<h:form id="formDumpMessaggiReqUscita">
+					<input type="hidden" id="_csrfFormDumpMessaggiReqUscita" name="_csrf" value="#{loginBean.csrf}"/>
+					<a4j:htmlCommandLink id="dumpMessaggiUscita-iconLink"
+                   						 styleClass="icon-details"
+                   						 value="Visualizza"
+                   						 rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}"
+                   						 action="dettaglioDump">
+                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+                   		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliDump.tipoMessaggio}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                   	</a4j:htmlCommandLink>
+                   	<h:outputLabel value="&#160;|&#160;" />	 
+                   	<h:commandLink id="exportDumpMessaggiReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+                   		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliBean.exportContenuto}"/>
+						<h:outputText id="outEsportaDumpMessaggiReqUscita" value="Esporta" />
+					</h:commandLink>
+				</h:form>
+			</h:panelGroup>
+			
+			<h:outputLabel id="req-dumpBinarioUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}"/>
 			<h:panelGroup id="panelGroupDumpBinarioReqUscita" rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}">
 				<h:form id="formDumpBinarioReqUscita">
 					<input type="hidden" id="_csrfFormDumpBinarioReqUscita" name="_csrf" value="#{loginBean.csrf}"/>
@@ -162,7 +184,14 @@
 					</h:commandLink>
 				</h:form>
 			</h:panelGroup>
-			
+		
+		</h:panelGrid>
+		
+		<a4j:outputPanel layout="block" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and ((dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta) or (dettagliBean.dettaglio.duplicatiRichiesta>0))}" styleClass="outputSeparator8">
+			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+		</a4j:outputPanel>
+		<h:panelGrid id="panelGridDettRich4" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
+																						
 			<h:outputLabel value="Duplicato" id="bustaDupR-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata font-weight-bold" 
 							rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta}"/>
 			<h:form id="formDuplicaRich" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta}">
@@ -184,7 +213,7 @@
 			<h:panelGroup id="panelGroupDuplicatiReq" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}">
 				<h:form id="formDuplicatiReq">	
 					<input type="hidden" id="_csrfFormDuplicatiReq" name="_csrf" value="#{loginBean.csrf}"/>									
-					<h:outputLink id="hideDups-iconLink" styleClass="icon-details display-none" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}">
+					<h:outputLink id="hideDups-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}" style="display: none;">
                    		<h:outputText id="outNascondiDuplicati" value="Nascondi" />
                    		<rich:effect id="blindUpHideDups" for="hideDups-iconLink" event="onclick" type="BlindUp" targetId="duplicatiDiv" params="duration:0.8"/>
                    		<rich:effect id="fadeHideDups" for="hideDups-iconLink" event="onclick" type="Fade" targetId="hideDups-iconLink" params="delay:0.0,duration:0.0"/>
@@ -204,7 +233,7 @@
 
 		<!-- Originale, visualizza duplicati: Tabella -->
 		<rich:spacer id="spacerDuplicatiDivReq" height="5px" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}"/>
-		<h:panelGroup id="duplicatiDiv" layout="block" styleClass="display-none" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}" switchType="client">
+		<h:panelGroup id="duplicatiDiv" layout="block" style="display: none;" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}" switchType="client">
 			<a4j:form id="formDupsReq">
 				<input type="hidden" id="_csrfFormDupsReq" name="_csrf" value="#{loginBean.csrf}"/>
 				<link:dataTable id="dupsReqDt" 
@@ -247,29 +276,6 @@
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdEgovRisp" value="ID Messaggio" rendered="#{not empty dettagliBean.dettaglio.idMessaggioRisposta and dettagliBean.existsTracciaRisposta}"/>
 			<h:outputText id="outIdEgovRisp" value="#{dettagliBean.dettaglio.idMessaggioRisposta}" rendered="#{not empty dettagliBean.dettaglio.idMessaggioRisposta and dettagliBean.existsTracciaRisposta}"/>
 			
-			<h:outputLabel value="Data Accettazione" id="dataAccResp-iconLabel" styleClass="outputFieldLabel icon-date" 
-				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRisposta}"/>
-			<h:outputText id="outDataAccettazioneRisp" value="#{dettagliBean.dettaglio.dataAccettazioneRisposta}" 
-				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRisposta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
-			</h:outputText>
-					
-			<h:outputLabel value="Data Ingresso" id="dataInResp-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}"/>
-			<h:outputText id="outDataIngressoRisp" value="#{dettagliBean.dettaglio.dataIngressoRisposta}" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
-			</h:outputText>
-			
-			<h:outputLabel value="Data Uscita" id="dataOResp-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRisposta}"/>
-			<h:outputText id="outDataUscitaRisp" value="#{dettagliBean.dettaglio.dataUscitaRisposta}" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRisposta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
-			</h:outputText>
-			
-			<h:outputLabel value="Bytes Ingresso" id="dimInRes-iconLabel" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{(empty dettagliBean.dettaglio.rispostaIngressoBytes or dettagliBean.dettaglio.rispostaIngressoBytes lt 0) ? 'n.d.' : dettagliBean.dettaglio.rispostaIngressoBytes}" converter="fileSizeConverter"/>
-			
-			<h:outputLabel value="Bytes Uscita" id="dimOutRes-iconLabel" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{(empty dettagliBean.dettaglio.rispostaUscitaBytes or dettagliBean.dettaglio.rispostaUscitaBytes lt 0) ? 'n.d.' : dettagliBean.dettaglio.rispostaUscitaBytes}" converter="fileSizeConverter"/>
-			
 			<h:outputLabel id="risp-iconLabel" styleClass="outputFieldLabel icon-show-traccia" value="Traccia" rendered="#{dettagliBean.existsTracciaRisposta}"/>
 			<h:panelGroup id="panelGroupIdEgovRisp" rendered="#{dettagliBean.existsTracciaRisposta}">
 				<h:form id="formTracciaResp">
@@ -292,9 +298,35 @@
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel id="risp-faultCooperazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Ingresso' : 'Fault Uscita'}" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"/>
-			<h:panelGroup id="panelGroupFaultCooperazioneRisp" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
-				<h:form id="formFaultCooperazione">
+		</h:panelGrid>
+		<a4j:outputPanel layout="block" rendered="#{dettagliBean.existsTracciaRisposta and not empty dettagliBean.dettaglio.dataIngressoRisposta}" styleClass="outputSeparator8">
+			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+		</a4j:outputPanel>
+		<h:panelGrid id="panelGridDettagliRisp2" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+			
+			<h:outputLabel value="Data Accettazione" id="dataAccResp-iconLabel" styleClass="outputFieldLabel icon-date" 
+				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRisposta}"/>
+			<h:outputText id="outDataAccettazioneRisp" value="#{dettagliBean.dettaglio.dataAccettazioneRisposta}" 
+				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRisposta}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
+					
+			<h:outputLabel value="In Ricezione" id="dataInResp-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}"/>
+			<h:outputText id="outDataIngressoRisp" value="#{dettagliBean.dettaglio.dataIngressoRisposta}" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
+								
+			<h:outputLabel value="Acquisita" id="dataInRespStream-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}"/>
+			<h:outputText id="outDataIngressoRispStream" value="#{(empty dettagliBean.dettaglio.dataIngressoRispostaStream) ? '-' : dettagliBean.dettaglio.dataIngressoRispostaStream}" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
+			
+			<h:outputLabel value="Dimensione" id="dimInRes-iconLabel" styleClass="outputFieldLabel icon-compress" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}"/>
+			<h:outputText value="#{(empty dettagliBean.dettaglio.rispostaIngressoBytes or dettagliBean.dettaglio.rispostaIngressoBytes lt 0) ? '-' : dettagliBean.dettaglio.rispostaIngressoBytes}" converter="fileSizeConverter" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}"/>
+			
+			<h:outputLabel id="risp-faultCooperazioneIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Fault" rendered="#{(dettagliBean.dettaglio.pddRuolo=='DELEGATA') and (not empty dettagliBean.dettaglio.faultCooperazione)}"/>
+			<h:panelGroup id="panelGroupFaultCooperazioneIngressoRisp" rendered="#{(dettagliBean.dettaglio.pddRuolo=='DELEGATA') and (not empty dettagliBean.dettaglio.faultCooperazione)}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
+				<h:form id="formFaultCooperazioneIntegrazione">
 					<input type="hidden" id="_csrfFormFaultCooperazione" name="_csrf" value="#{loginBean.csrf}"/>
                            <a4j:htmlCommandLink id="faultCooperazione-iconLink"
                                                             styleClass="icon-details"
@@ -310,9 +342,9 @@
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel id="risp-faultIntegrazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Uscita' : 'Fault Ingresso'}" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"/>
-			<h:panelGroup id="panelGroupFaultIntegrazioneRisp" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
-				<h:form id="formFaultIntegrazione">
+			<h:outputLabel id="risp-faultIntegrazioneIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Fault" rendered="#{(dettagliBean.dettaglio.pddRuolo!='DELEGATA') and (not empty dettagliBean.dettaglio.faultIntegrazione)}"/>
+			<h:panelGroup id="panelGroupFaultIntegrazioneIngressoRisp" rendered="#{(dettagliBean.dettaglio.pddRuolo!='DELEGATA') and (not empty dettagliBean.dettaglio.faultIntegrazione)}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
+				<h:form id="formFaultIntegrazioneIntegrazione">
 					<input type="hidden" id="_csrfFormFaultIntegrazione" name="_csrf" value="#{loginBean.csrf}"/>
                       	<a4j:htmlCommandLink id="faultIntegrazione-iconLink"
                                                          styleClass="icon-details"
@@ -326,9 +358,9 @@
 						<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                		</a4j:htmlCommandLink>
 				</h:form>
-			</h:panelGroup>								
+			</h:panelGroup>
 			
-			<h:outputLabel id="res-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}"/>
+			<h:outputLabel id="res-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}"/>
 			<h:panelGroup id="panelGroupDumpMessaggiResIngresso" rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}">
 				<h:form id="formDumpMessaggiResIngresso">
 					<input type="hidden" id="_csrfFormDumpMessaggiResIngresso" name="_csrf" value="#{loginBean.csrf}"/>
@@ -350,29 +382,7 @@
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel id="res-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}"/>
-			<h:panelGroup id="panelGroupDumpMessaggiResUscita" rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}">
-				<h:form id="formDumpMessaggiResUscita">
-					<input type="hidden" id="_csrfFormDumpMessaggiReqUscita" name="_csrf" value="#{loginBean.csrf}"/>
-					<a4j:htmlCommandLink id="dumpMessaggiResUscita-iconLink"
-                   						 styleClass="icon-details"
-                   						 value="Visualizza"
-                   						 rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}"
-                   						 action="dettaglioDump">
-                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
-                   		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliDump.tipoMessaggio}"/>
-                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
-                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
-                   	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpMessaggiResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
-                   		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliBean.exportContenuto}"/>
-						<h:outputText id="outEsportaDumpMessaggiResUscita" value="Esporta" />
-					</h:commandLink>
-				</h:form>
-			</h:panelGroup>
-			
-			<h:outputLabel id="res-dumpBinarioIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Ingresso" rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}"/>
+			<h:outputLabel id="res-dumpBinarioIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}"/>
 			<h:panelGroup id="panelGroupDumpBinarioResIngresso" rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}">
 				<h:form id="formDumpBinarioResIngresso">
 					<input type="hidden" id="_csrfFormDumpBinarioResIngresso" name="_csrf" value="#{loginBean.csrf}"/>
@@ -397,8 +407,93 @@
 					</h:commandLink>
 				</h:form>
 			</h:panelGroup>
+						
+		</h:panelGrid>
+		<a4j:outputPanel layout="block" rendered="#{true}" styleClass="outputSeparator8">
+			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+		</a4j:outputPanel>
+		<h:panelGrid id="panelGridDettagliRisp3" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+					
+			<h:outputLabel value="In Spedizione" id="dataORespStream-iconLabel" styleClass="outputFieldLabel icon-date" 
+				rendered="#{(not dettagliBean.dataUscitaRispostaValorizzataDopoSpedizioneRisposta and not empty dettagliBean.dettaglio.dataUscitaRisposta) or (dettagliBean.dataUscitaRispostaValorizzataDopoSpedizioneRisposta and not empty dettagliBean.dettaglio.dataUscitaRispostaStream)}"/>
+			<h:outputText id="outDataUscitaRispStream" value="#{dettagliBean.dettaglio.dataUscitaRisposta}" rendered="#{not dettagliBean.dataUscitaRispostaValorizzataDopoSpedizioneRisposta and not empty dettagliBean.dettaglio.dataUscitaRisposta}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
+			<h:outputText id="outDataUscitaRispStream2" value="#{dettagliBean.dettaglio.dataUscitaRispostaStream}" rendered="#{dettagliBean.dataUscitaRispostaValorizzataDopoSpedizioneRisposta and not empty dettagliBean.dettaglio.dataUscitaRispostaStream}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
 			
-			<h:outputLabel id="res-dumpBinarioUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Uscita" rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}"/>
+			<h:outputLabel value="Consegnata" id="dataOResp-iconLabel" styleClass="outputFieldLabel icon-date" 
+				rendered="#{(dettagliBean.dataUscitaRispostaValorizzataDopoSpedizioneRisposta and not empty dettagliBean.dettaglio.dataUscitaRisposta) or (not dettagliBean.dataUscitaRispostaValorizzataDopoSpedizioneRisposta and not empty dettagliBean.dettaglio.dataUscitaRispostaStream)}"/>
+			<h:outputText id="outDataUscitaRisp" value="#{dettagliBean.dettaglio.dataUscitaRisposta}" rendered="#{dettagliBean.dataUscitaRispostaValorizzataDopoSpedizioneRisposta and not empty dettagliBean.dettaglio.dataUscitaRisposta}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
+			<h:outputText id="outDataUscitaRisp2" value="#{dettagliBean.dettaglio.dataUscitaRispostaStream}" rendered="#{not dettagliBean.dataUscitaRispostaValorizzataDopoSpedizioneRisposta and not empty dettagliBean.dettaglio.dataUscitaRispostaStream}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
+			
+			<h:outputLabel value="Dimensione" id="dimOutRes-iconLabel" styleClass="outputFieldLabel icon-compress"/>
+			<h:outputText value="#{(empty dettagliBean.dettaglio.rispostaUscitaBytes or dettagliBean.dettaglio.rispostaUscitaBytes lt 0) ? '-' : dettagliBean.dettaglio.rispostaUscitaBytes}" converter="fileSizeConverter"/>
+			
+			<h:outputLabel id="risp-faultCooperazioneUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Fault" rendered="#{(dettagliBean.dettaglio.pddRuolo!='DELEGATA') and (not empty dettagliBean.dettaglio.faultCooperazione)}"/>
+			<h:panelGroup id="panelGroupFaultCooperazioneUscitaRisp" rendered="#{(dettagliBean.dettaglio.pddRuolo!='DELEGATA') and (not empty dettagliBean.dettaglio.faultCooperazione)}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
+				<h:form id="formFaultCooperazioneUscita">
+					<input type="hidden" id="_csrfFormFaultCooperazione" name="_csrf" value="#{loginBean.csrf}"/>
+                           <a4j:htmlCommandLink id="faultCooperazione-iconLink"
+                                                            styleClass="icon-details"
+                                                            value="Visualizza"
+                                                            rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}" 
+                                                            action="fault">
+                    	        <f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                    	        <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+          					<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+						<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.showFaultCooperazione}"/>
+						<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                 			</a4j:htmlCommandLink>
+				</h:form>
+			</h:panelGroup>
+			
+			<h:outputLabel id="risp-faultIntegrazioneUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Fault" rendered="#{(dettagliBean.dettaglio.pddRuolo=='DELEGATA') and (not empty dettagliBean.dettaglio.faultIntegrazione)}"/>
+			<h:panelGroup id="panelGroupFaultIntegrazioneUscitaRisp" rendered="#{(dettagliBean.dettaglio.pddRuolo=='DELEGATA') and (not empty dettagliBean.dettaglio.faultIntegrazione)}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
+				<h:form id="formFaultIntegrazioneUscita">
+					<input type="hidden" id="_csrfFormFaultIntegrazione" name="_csrf" value="#{loginBean.csrf}"/>
+                      	<a4j:htmlCommandLink id="faultIntegrazione-iconLink"
+                                                         styleClass="icon-details"
+                                                         value="Visualizza"
+                                                         rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"
+                                                         action="fault">
+                         		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                         		<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+                         		<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+						<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.showFaultIntegrazione}"/>
+						<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+               		</a4j:htmlCommandLink>
+				</h:form>
+			</h:panelGroup>
+			
+			<h:outputLabel id="res-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}"/>
+			<h:panelGroup id="panelGroupDumpMessaggiResUscita" rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}">
+				<h:form id="formDumpMessaggiResUscita">
+					<input type="hidden" id="_csrfFormDumpMessaggiReqUscita" name="_csrf" value="#{loginBean.csrf}"/>
+					<a4j:htmlCommandLink id="dumpMessaggiResUscita-iconLink"
+                   						 styleClass="icon-details"
+                   						 value="Visualizza"
+                   						 rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}"
+                   						 action="dettaglioDump">
+                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+                   		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliDump.tipoMessaggio}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                   	</a4j:htmlCommandLink>
+                   	<h:outputLabel value="&#160;|&#160;" />	 
+                   	<h:commandLink id="exportDumpMessaggiResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+                   		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliBean.exportContenuto}"/>
+						<h:outputText id="outEsportaDumpMessaggiResUscita" value="Esporta" />
+					</h:commandLink>
+				</h:form>
+			</h:panelGroup>								
+			
+			<h:outputLabel id="res-dumpBinarioUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}"/>
 			<h:panelGroup id="panelGroupDumpBinarioResUscita" rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}">
 				<h:form id="formDumpBinarioResUscita">
 					<input type="hidden" id="_csrfFormDumpBinarioResUscita" name="_csrf" value="#{loginBean.csrf}"/>
@@ -423,7 +518,13 @@
 					</h:commandLink>
 				</h:form>
 			</h:panelGroup>
-			
+
+		</h:panelGrid>
+		<a4j:outputPanel layout="block" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and ((dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta) or (dettagliBean.dettaglio.duplicatiRisposta>0))}" styleClass="outputSeparator8">
+			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+		</a4j:outputPanel>
+		<h:panelGrid id="panelGridDettagliRisp4" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+					
 			<h:outputLabel value="Duplicato" id="bustaDupResp-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata font-weight-bold" 
 							rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta}"/>
 			<h:form id="formDuplicaRisp" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta}">
@@ -445,7 +546,7 @@
 			<h:panelGroup id="panelGroupDuplicatiRes" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}">
 				<h:form id="formDuplicatiRes">	
 				<input type="hidden" id="_csrfFormDuplicatiRes" name="_csrf" value="#{loginBean.csrf}"/>									
-					<h:outputLink id="hideDupsResp-iconLink" styleClass="icon-details display-none" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}">
+					<h:outputLink id="hideDupsResp-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}" style="display: none;">
                    		<h:outputText id="outNascondiDuplicati" value="Nascondi" />
                    		<rich:effect id="blindUpHideDups" for="hideDupsResp-iconLink" event="onclick" type="BlindUp" targetId="duplicatiDivResp" params="duration:0.8"/>
                    		<rich:effect id="fadeHideDups" for="hideDupsResp-iconLink" event="onclick" type="Fade" targetId="hideDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
@@ -464,7 +565,7 @@
 		</h:panelGrid>
 
 		<rich:spacer id="spacerDuplicatiDivRes" height="5px" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}"/>
-		<h:panelGroup id="duplicatiDivResp" layout="block" styleClass="display-none" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}" switchType="client">
+		<h:panelGroup id="duplicatiDivResp" layout="block" style="display: none;" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}" switchType="client">
 			<a4j:form id="formDupsRes">
 				<input type="hidden" id="_csrfFormDupsRes" name="_csrf" value="#{loginBean.csrf}"/>
 				<link:dataTable id="dupsResDt" 

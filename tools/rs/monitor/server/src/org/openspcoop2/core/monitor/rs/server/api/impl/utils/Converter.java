@@ -275,6 +275,8 @@ public class Converter {
 			transazione.getRichiesta().setContenutiUscita(null);
 			transazione.getRichiesta().setDuplicatiMessaggio(null);
 			transazione.getRichiesta().setTraccia(null);
+			transazione.getRichiesta().setDataRicezioneAcquisita(null);
+			transazione.getRichiesta().setDataConsegnaEffettuata(null);
 		}
 		if(transazione.getRisposta()!=null) {
 			transazione.getRisposta().setContenutiIngresso(null);
@@ -286,6 +288,11 @@ public class Converter {
 			transazione.getRisposta().setFaultRicezione(null);
 			transazione.getRisposta().setFaultRicezioneFormato(null);
 			transazione.getRisposta().setDettagliErrore(null);
+			transazione.getRisposta().setDataRicezioneAcquisita(null);
+			if(transazione.getRisposta().getDataConsegnaEffettuata()!=null) { // inverto
+				transazione.getRisposta().setDataConsegna(transazione.getRisposta().getDataConsegnaEffettuata());
+			}
+			transazione.getRisposta().setDataConsegnaEffettuata(null);
 		}
 		if(transazione.getApi()!=null) {
 			transazione.getApi().setProfiloCollaborazione(null);

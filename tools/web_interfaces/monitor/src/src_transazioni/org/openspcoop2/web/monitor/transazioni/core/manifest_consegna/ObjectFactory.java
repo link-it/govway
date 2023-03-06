@@ -146,7 +146,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/web/monitor/transazioni/core/manifest_consegna", name = "consegna")
     public JAXBElement<ConsegnaType> createConsegna(ConsegnaType value) {
-        return new JAXBElement<ConsegnaType>(ObjectFactory._Consegna_QNAME, ConsegnaType.class, null, value);
+        return new JAXBElement<>(ObjectFactory._Consegna_QNAME, ConsegnaType.class, null, value);
     }
 
 }

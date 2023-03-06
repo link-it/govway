@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.File;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -196,6 +197,12 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	/** Policy Token */
 	private PolicyNegoziazioneToken policyNegoziazioneToken;
 	
+	protected Date dataRichiestaInoltrata;
+	@Override
+	public Date getDataRichiestaInoltrata() {
+		return this.dataRichiestaInoltrata;
+	}
+	
 	protected Date dataAccettazioneRisposta;
     @Override
 	public Date getDataAccettazioneRisposta(){
@@ -225,6 +232,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	protected boolean useLimitedInputStream = false;
 	protected SogliaDimensioneMessaggio limitBytes = null;
+	
+	protected boolean useDiagnosticInputStream = false;
 	
 	protected List<Proprieta> proprietaPorta;
 	
@@ -320,11 +329,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						this.useLimitedInputStream = true;
 						this.limitBytes = soglia;
 					}
-				}catch(Throwable t) {}
+				}catch(Throwable t) {
+					// ignore
+				}
 			}
 		}
 		
-		// Timeout e Dump
+		// Timeout, Dump
 		this.useTimeoutInputStream = this.openspcoopProperties.isConnettoriUseTimeoutInputStream();
 		boolean dumpBinario = this.debug;
 		DumpConfigurazione dumpConfigurazione = null;
@@ -420,6 +431,16 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				this.logger.error("Errore durante l'inizializzazione del dump binario: "+this.readExceptionMessageFromException(e),e);
 				this.errore = "Errore durante l'inizializzazione del dump binario: "+this.readExceptionMessageFromException(e);
 				return false;
+			}
+		}
+		
+		// Diagnostic Input Stream
+		if(this.idModulo!=null && this.msgDiagnostico!=null) {
+			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi();
+			}
+			else {
+				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_inoltroBuste();
 			}
 		}
 		
@@ -1343,5 +1364,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     			this.messaggioDumpUscita.getHeaders().put(key, this.headersImpostati.get(key));
     		}
     	}
+    }
+    
+    private boolean emitDiagnosticResponseRead = false;
+    protected void emitDiagnosticResponseRead(InputStream is) {
+		if(is!=null && this.msgDiagnostico!=null && !this.emitDiagnosticResponseRead) {
+			this.msgDiagnostico.logPersonalizzato("ricezioneRisposta.firstAccessRequestStream");
+			this.emitDiagnosticResponseRead = true;
+		}
     }
 }

@@ -259,8 +259,10 @@ public class TransactionServerUtils {
 				// date
 				transazioneApplicativoServerReadFromDB.setDataAccettazioneRichiesta(serverInfoParam.getDataAccettazioneRichiesta());
 				transazioneApplicativoServerReadFromDB.setDataUscitaRichiesta(serverInfoParam.getDataUscitaRichiesta());
+				transazioneApplicativoServerReadFromDB.setDataUscitaRichiestaStream(serverInfoParam.getDataUscitaRichiestaStream());
 				transazioneApplicativoServerReadFromDB.setDataAccettazioneRisposta(serverInfoParam.getDataAccettazioneRisposta());
 				transazioneApplicativoServerReadFromDB.setDataIngressoRisposta(serverInfoParam.getDataIngressoRisposta());
+				transazioneApplicativoServerReadFromDB.setDataIngressoRispostaStream(serverInfoParam.getDataIngressoRispostaStream());
 				
 				// dimensioni
 				transazioneApplicativoServerReadFromDB.setRichiestaUscitaBytes(serverInfoParam.getRichiestaUscitaBytes());
@@ -358,7 +360,7 @@ public class TransactionServerUtils {
 			}
 			if(transazioneApplicativoServer.getDataPrelievoIm()!=null) {
 				transazioneApplicativoServer.setDataPrimoPrelievoIm(transazioneApplicativoServer.getDataPrelievoIm());
-			}			
+			}
 			
 			// numero tentativi
 			transazioneApplicativoServer.setNumeroTentativi(0);

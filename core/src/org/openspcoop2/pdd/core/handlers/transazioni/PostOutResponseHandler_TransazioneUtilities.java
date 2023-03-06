@@ -71,6 +71,7 @@ import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.logger.DiagnosticInputStream;
 import org.openspcoop2.pdd.logger.DumpUtility;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -421,9 +422,27 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 			}
 			
+			// data_ingresso_richiesta_stream
+			if(context.getPddContext()!=null) {
+				Object o = context.getPddContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_REQUEST_COMPLETE_DATE);
+				if(o==null) {
+					o = context.getPddContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_REQUEST_ERROR_DATE);
+				}
+				if(o!=null && o instanceof Date) {
+					Date d = (Date) o;
+					transactionDTO.setDataIngressoRichiestaStream(d);
+				}
+			}
+			
 			// data_uscita_richiesta si imposta se e' diversa da null
-			if (transaction.getDataUscitaRichiesta()!=null)
+			if (transaction.getDataUscitaRichiesta()!=null) {
 				transactionDTO.setDataUscitaRichiesta(transaction.getDataUscitaRichiesta());
+			}
+			
+			// data_uscita_richiesta_stream
+			if(transaction.getDataRichiestaInoltrata()!=null) {
+				transactionDTO.setDataUscitaRichiestaStream(transaction.getDataRichiestaInoltrata());
+			}
 
 			// data_accettazione_risposta
 			// La porta di dominio mi passa sempre questa informazione.
@@ -447,9 +466,25 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					transactionDTO.setDataIngressoRisposta(transaction.getDataIngressoRisposta());
 				}
 			}
+			
+			// data_ingresso_risposta_stream
+			if(context.getPddContext()!=null) {
+				Object o = context.getPddContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_COMPLETE_DATE);
+				if(o==null) {
+					o = context.getPddContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_ERROR_DATE);
+				}
+				if(o!=null && o instanceof Date) {
+					Date d = (Date) o;
+					transactionDTO.setDataIngressoRispostaStream(d);
+				}
+			}
 
 			// data_uscita_risposta
-			if(context.getDataPrimaSpedizioneRisposta()!=null) {
+			boolean calcolaDataUscitaRispostaConDateAfterResponseSent = op2Properties.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent();
+			if(calcolaDataUscitaRispostaConDateAfterResponseSent && context.getDataRispostaSpedita()!=null) {
+				transactionDTO.setDataUscitaRisposta(context.getDataRispostaSpedita());
+			}
+			else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && context.getDataPrimaSpedizioneRisposta()!=null) {
 				transactionDTO.setDataUscitaRisposta(context.getDataPrimaSpedizioneRisposta());
 			}
 			else if (transaction.getDataUscitaRisposta()!=null){
@@ -463,6 +498,18 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				else{
 					transactionDTO.setDataUscitaRisposta(DateManager.getDate());
 				}
+			}
+			
+			// data_uscita_risposta_stream
+			if(calcolaDataUscitaRispostaConDateAfterResponseSent && context.getDataPrimaSpedizioneRisposta()!=null) {
+				transactionDTO.setDataUscitaRispostaStream(context.getDataPrimaSpedizioneRisposta());
+			}
+			else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && context.getDataRispostaSpedita()!=null) {
+				transactionDTO.setDataUscitaRispostaStream(context.getDataRispostaSpedita());
+			}
+			
+			if(calcolaDataUscitaRispostaConDateAfterResponseSent && transactionDTO.getDataUscitaRispostaStream()==null) {
+				transactionDTO.setDataUscitaRispostaStream(transactionDTO.getDataUscitaRisposta()); // uso la stessa
 			}
 
 

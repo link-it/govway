@@ -34,10 +34,12 @@ import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
@@ -79,6 +81,8 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	private PdDContext pddContext;
 	private Date dataIngressoRichiesta;
 	
+	protected OpenSPCoop2Properties openspcoopProperties;
+	
 	private Context context;
 	private String idTransazione;
 	private int soglia;
@@ -88,6 +92,11 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	private int requestReadTimeout;
 	@SuppressWarnings("unused")
 	private SogliaDimensioneMessaggio requestLimitSize;
+	
+	@SuppressWarnings("unused")
+	private boolean useDiagnosticInputStream;
+	@SuppressWarnings("unused")
+	private MsgDiagnostico msgDiagnostico;
 	
 	public DirectVMConnectorInMessage(OpenSPCoop2Message msg,IDService idModuloAsIDService, String idModulo,
 			Map<String, List<String>> trasporto,
@@ -101,6 +110,8 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			PdDContext pddContext) throws ConnectorException{
 		try{
 			this.message = msg;
+			
+			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 			
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			if(this.log==null)
@@ -169,6 +180,15 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 				this.setAttribute(Costanti.REQUEST_INFO.getValue(),this.requestInfo);
 			}
 			
+			if(this.openspcoopProperties!=null) {
+				if(IDService.PORTA_APPLICATIVA.equals(idModuloAsIDService) || IDService.PORTA_APPLICATIVA_NIO.equals(idModuloAsIDService)){
+					this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_ricezioneBuste();
+				}
+				else {
+					this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi();
+				}
+			}
+			
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -201,6 +221,14 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public void disableLimitedStream() {
 		// nop
+	}
+	
+	@Override
+	public void setDiagnosticProducer(Context context, MsgDiagnostico msgDiag) {
+		if(this.context==null) {
+			this.context = context;
+		}
+		this.msgDiagnostico = msgDiag;
 	}
 	
 	public DirectVMProtocolInfo getDirectVMProtocolInfo() {

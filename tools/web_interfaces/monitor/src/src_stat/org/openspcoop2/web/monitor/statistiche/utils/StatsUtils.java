@@ -270,7 +270,7 @@ public class StatsUtils {
 								}
 								else if(tipoLat.equals("1")){
 									if(showSeries){
-										series[i] = TipoLatenza.LATENZA_SERVIZIO.getValue();
+										series[i] = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO; // TipoLatenza.LATENZA_SERVIZIO.getValue();
 									}
 									if(color!=null){
 										color = color + ",";
@@ -762,7 +762,7 @@ public class StatsUtils {
 							}
 							else if(tipoLat.equals("1")){
 								if(visualizzaSeriesName){
-									series[i] = TipoLatenza.LATENZA_SERVIZIO.getValue();
+									series[i] = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO; //TipoLatenza.LATENZA_SERVIZIO.getValue();
 								}
 								if(color!=null){
 									color = color + ",";
@@ -1242,7 +1242,6 @@ public class StatsUtils {
 				tipoLatenzaLabel = CostantiGrafici.WHITE_SPACE + CostantiGrafici.PORTA_LABEL;
 				break;
 			case LATENZA_SERVIZIO:
-				// TODO Parlare con Poli
 				tipoLatenzaLabel = CostantiGrafici.WHITE_SPACE + "Servizio";
 				break;
 			case LATENZA_TOTALE:

@@ -130,6 +130,8 @@ public class Transaction {
 	private Date dataIngressoRichiesta;
 	/** Tempo in uscita del messaggio iniziale */
 	private Date dataUscitaRichiesta;
+	/** Tempo in uscita del messaggio quando è stata completamente inviata */
+	private Date dataRichiestaInoltrata;
 	/** Tempo di accettazione del messaggio di risposta */
 	private Date dataAccettazioneRisposta;
 	/** Tempo in ingresso del messaggio di risposta */
@@ -265,6 +267,10 @@ public class Transaction {
 	
 	public Date getDataUscitaRichiesta() {
 		return this.dataUscitaRichiesta;
+	}
+	
+	public Date getDataRichiestaInoltrata() {
+		return this.dataRichiestaInoltrata;
 	}
 	
 	public Date getDataAccettazioneRisposta() {
@@ -637,6 +643,23 @@ public class Transaction {
 			this.dataUscitaRichiesta = dataUscitaRichiesta;
 		}
 	}
+	
+	public void setDataRichiestaInoltrata(Date dataRichiestaInoltrata) throws TransactionDeletedException {
+		if(this.gestioneStateful){
+			//synchronized (this.semaphore) {
+			this.semaphore.acquireThrowRuntime("setDataRichiestaInoltrata");
+			try {
+				if(this.deleted){
+					throw new TransactionDeletedException("Transaction eliminata");
+				}
+				this.dataRichiestaInoltrata = dataRichiestaInoltrata;
+			}finally {
+				this.semaphore.release("setDataRichiestaInoltrata");
+			}
+		}else{
+			this.dataRichiestaInoltrata = dataRichiestaInoltrata;
+		}
+	}
 
 	public void setDataAccettazioneRisposta(Date dataAccettazioneRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
@@ -861,6 +884,9 @@ public class Transaction {
 		}
 		if(this.dataUscitaRichiesta!=null) {
 			sb.append("\n").append("dataUscitaRichiesta: ").append(DateUtils.getSimpleDateFormatMs().format(this.dataUscitaRichiesta));
+		}
+		if(this.dataRichiestaInoltrata!=null) {
+			sb.append("\n").append("dataRichiestaInoltrata: ").append(DateUtils.getSimpleDateFormatMs().format(this.dataRichiestaInoltrata));
 		}
 		if(this.dataAccettazioneRisposta!=null) {
 			sb.append("\n").append("dataAccettazioneRisposta: ").append(DateUtils.getSimpleDateFormatMs().format(this.dataAccettazioneRisposta));

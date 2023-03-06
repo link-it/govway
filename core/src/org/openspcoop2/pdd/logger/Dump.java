@@ -122,8 +122,9 @@ public class Dump {
 	/** OpenSPCoopProperties */
 	private OpenSPCoop2Properties properties = null;
 
-	/** MsgDiagnostico per eventuali errori di tracciamento */
+	/** MsgDiagnostico per eventuali errori di tracciamento (viene usato anche per registrare il dump in corso e completato) */
 	private MsgDiagnostico msgDiagErroreDump = null;
+	private boolean emitDiagnosticDump = false;
 	
 	/** Appender personalizzati per i dump applicativi di OpenSPCoop */
 	private List<IDumpProducer> loggerDumpOpenSPCoopAppender = null; 
@@ -210,6 +211,7 @@ public class Dump {
 		
 		this.msgDiagErroreDump = MsgDiagnostico.newInstance(this.tipoPdD,dominio,modulo,nomePorta,this.requestInfo,this.statoRichiesta,this.statoRisposta);
 		this.msgDiagErroreDump.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
+		this.emitDiagnosticDump = op2Properties.isDumpEmitDiagnostic();
 		
 		if(this.pddContext!=null) {
 			this.idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
@@ -612,7 +614,68 @@ public class Dump {
 		boolean dumpMultipartHeaders = dumpHeaders;
 		
 		
+		String identificativoDiagnostico = null;
+		if(tipoMessaggio!=null) {
+			switch (tipoMessaggio) {
+			case RICHIESTA_INGRESSO:
+			case RICHIESTA_INGRESSO_DUMP_BINARIO:
+				identificativoDiagnostico = "dumpContenutiApplicativi.richiestaIngresso.";
+				break;
+			case RICHIESTA_USCITA:
+			case RICHIESTA_USCITA_DUMP_BINARIO:
+				identificativoDiagnostico = "dumpContenutiApplicativi.richiestaUscita.";
+				break;
+			case RISPOSTA_INGRESSO:
+			case RISPOSTA_INGRESSO_DUMP_BINARIO:
+				identificativoDiagnostico = "dumpContenutiApplicativi.rispostaIngresso.";
+				break;
+			case RISPOSTA_USCITA:
+			case RISPOSTA_USCITA_DUMP_BINARIO:
+				identificativoDiagnostico = "dumpContenutiApplicativi.rispostaUscita.";
+				break;
+			default:
+				break;
+			}
+		}
+		if(identificativoDiagnostico!=null && this.emitDiagnosticDump) {
+			try {
+				this.msgDiagErroreDump.logPersonalizzato(identificativoDiagnostico+"inCorso");
+			}catch(Throwable t) {
+				if(this.loggerDump!=null) {
+					this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
+							") con identificativo di transazione ["+this.idTransazione+"]:"+t.getMessage(),t);
+				}
+			}
+		}
 		
+		try {
+			dumpEngine(onlyLogFileTrace_headers, onlyLogFileTrace_body, 
+					tipoMessaggio, msg, msgBytes, messageType,
+					location, transportHeaderParam,
+					dumpHeaders, dumpBody, dumpAttachments, dumpMultipartHeaders, 
+					dumpIntegrationManager,
+					dumpBinario, dumpBinarioAttivatoTramiteRegolaConfigurazione);
+		}finally {
+			if(identificativoDiagnostico!=null && this.emitDiagnosticDump) {
+				try {
+					this.msgDiagErroreDump.logPersonalizzato(identificativoDiagnostico+"completato");
+				}catch(Throwable t) {
+					if(this.loggerDump!=null) {
+						this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
+								") con identificativo di transazione ["+this.idTransazione+"]:"+t.getMessage(),t);
+					}
+				}
+			}
+		}
+	}
+	
+	
+	private void dumpEngine(boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+			TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,DumpByteArrayOutputStream msgBytes, MessageType messageType,
+			String location,Map<String, List<String>> transportHeaderParam,
+			boolean dumpHeaders, boolean dumpBody, boolean dumpAttachments, boolean dumpMultipartHeaders, 
+			boolean dumpIntegrationManager,
+			boolean dumpBinario, boolean dumpBinarioAttivatoTramiteRegolaConfigurazione) throws DumpException {
 		
 		
 		Messaggio messaggio = new Messaggio();

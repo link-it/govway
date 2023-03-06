@@ -62,10 +62,14 @@
 				<!-- Tempi di latenza -->
 				<xsd:element name="data-accettazione-richiesta" type="xsd:dateTime" minOccurs="0"/>
 				<xsd:element name="data-ingresso-richiesta" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="data-ingresso-richiesta-stream" type="xsd:dateTime" minOccurs="0"/>
 				<xsd:element name="data-uscita-richiesta" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="data-uscita-richiesta-stream" type="xsd:dateTime" minOccurs="0"/>
 				<xsd:element name="data-accettazione-risposta" type="xsd:dateTime" minOccurs="0"/>
 				<xsd:element name="data-ingresso-risposta" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="data-ingresso-risposta-stream" type="xsd:dateTime" minOccurs="0"/>
 				<xsd:element name="data-uscita-risposta" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="data-uscita-risposta-stream" type="xsd:dateTime" minOccurs="0"/>
 			    
 				<!-- Dimensione messaggi gestiti -->
 				<xsd:element name="richiesta-ingresso-bytes" type="xsd:unsignedLong" minOccurs="0"/>
@@ -235,8 +239,10 @@
 				
 				<xsd:element name="data-accettazione-richiesta" type="xsd:dateTime" minOccurs="0"/>
 				<xsd:element name="data-uscita-richiesta" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="data-uscita-richiesta-stream" type="xsd:dateTime" minOccurs="0"/>
 				<xsd:element name="data-accettazione-risposta" type="xsd:dateTime" minOccurs="0"/>
 				<xsd:element name="data-ingresso-risposta" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="data-ingresso-risposta-stream" type="xsd:dateTime" minOccurs="0"/>
 				
 				<xsd:element name="richiesta-uscita-bytes" type="xsd:unsignedLong" minOccurs="0"/>
 				<xsd:element name="risposta-ingresso-bytes" type="xsd:unsignedLong" minOccurs="0"/>

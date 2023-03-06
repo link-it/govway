@@ -654,6 +654,10 @@ public class PddMonitorProperties {
 		String timeoutS = this.appProperties.getProperty("statistiche.timeoutRicercaStatistiche", false, true);
 		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
 	}
+	
+	public boolean isStatisticheLatenzaPortaEnabled() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.latenzaPorta.enabled", true, true));
+	}
 
 
 	
@@ -990,6 +994,14 @@ public class PddMonitorProperties {
 	
 	public int getTransazioniDettaglioAnalisiMultipartThreshold() throws Exception{
 		return Integer.valueOf(this.appProperties.getProperty("transazioni.dettaglio.analisiMultipart.threshold", true, true));
+	}
+	
+	public boolean isDataUscitaRispostaUseDateAfterResponseSent() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dataUscitaRisposta.useDateAfterResponseSent", true, true));
+	}
+	
+	public boolean isTransazioniLatenzaPortaEnabled() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.latenzaPorta.enabled", true, true));
 	}
 	
 	public boolean escludiRichiesteScartateDefaultValue() throws Exception{

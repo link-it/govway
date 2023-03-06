@@ -281,6 +281,8 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 				this.requestBout.flush();
 				this.requestBout.close();
 									
+				this.dataRichiestaInoltrata = DateManager.getDate();
+				
 				this.dumpBinarioRichiestaUscita(this.requestBout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 			}
 			else {
@@ -294,6 +296,8 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 				}
 				this.requestBout.flush();
 				this.requestBout.close();
+				
+				this.dataRichiestaInoltrata = DateManager.getDate();
 			}
 			
 			
@@ -333,6 +337,10 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			
 			if(this.isDumpBinarioRisposta()){
 				this.dumpResponse(this.propertiesTrasportoRisposta);
+			}
+			
+			if(this.isResponse!=null) {
+				this.emitDiagnosticResponseRead(this.isResponse);
 			}
 			
 			OpenSPCoop2MessageFactory messageFactory = Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo, MessageRole.RESPONSE);

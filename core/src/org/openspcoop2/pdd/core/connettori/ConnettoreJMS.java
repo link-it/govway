@@ -46,6 +46,7 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 
@@ -541,7 +542,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 			if(this.debug)
 				this.logger.debug("Connettore jms ha pubblicato con successo");
 			
-			
+			this.dataRichiestaInoltrata = DateManager.getDate();
 			
 			
 			

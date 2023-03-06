@@ -1339,6 +1339,12 @@ public class OpenSPCoop2Properties {
 			this.getReadConnectionTimeout_ricezioneContenutiApplicativi();
 			this.getReadConnectionTimeout_ricezioneBuste();
 			
+			this.isConnettoriUseDiagnosticInputStream_inoltroBuste();
+			this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi();
+			this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi();
+			this.isConnettoriUseDiagnosticInputStream_ricezioneBuste();
+			this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream();
+			
 			// Connettore https
 			this.getConnettoreHttps_secureRandomAlgo();
 			this.isConnettoreHttps_useSecureRandom();
@@ -1660,6 +1666,7 @@ public class OpenSPCoop2Properties {
 			this.isDumpFallito_BloccoServiziPdD();
 			this.getDumpHeaderWhiteList();
 			this.getDumpHeaderBlackList();
+			this.isDumpEmitDiagnostic();
 			
 			// DumpBinario
 			this.isDumpBinario_registrazioneDatabase();
@@ -2142,6 +2149,7 @@ public class OpenSPCoop2Properties {
 				this.isTransazioniSaveDiagnosticiInUniqueTransaction();
 				this.isTransazioniSaveDumpInUniqueTransaction();
 				this.isTransazioniValorizzaDataIngressoConDataAccettazione();
+				this.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent();
 				this.isTransazioniFaultPrettyPrint();
 				
 				this._isTransazioniFiltroDuplicatiSaveDateEnabled();
@@ -13556,6 +13564,126 @@ public class OpenSPCoop2Properties {
 		return this.readConnectionTimeout_ricezioneBuste;
 	}
 	
+	
+	
+	private Boolean isConnettoriUseDiagnosticInputStream_inoltroBuste = null;
+	public boolean isConnettoriUseDiagnosticInputStream_inoltroBuste() {	
+		if(this.isConnettoriUseDiagnosticInputStream_inoltroBuste==null){
+			String pName = "org.openspcoop2.pdd.connettori.inoltroBuste.useDiagnosticInputStream";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isConnettoriUseDiagnosticInputStream_inoltroBuste = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.isConnettoriUseDiagnosticInputStream_inoltroBuste = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.isConnettoriUseDiagnosticInputStream_inoltroBuste = true;
+			}  
+		}
+
+		return this.isConnettoriUseDiagnosticInputStream_inoltroBuste;
+	}
+	
+	private Boolean isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi = null;
+	public boolean isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi() {	
+		if(this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi==null){
+			String pName = "org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.useDiagnosticInputStream";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi = true;
+			}  
+		}
+
+		return this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi;
+	}
+	
+	private Boolean isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi = null;
+	public boolean isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi() {	
+		if(this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi==null){
+			String pName = "org.openspcoop2.pdd.connettori.ricezioneContenutiApplicativi.useDiagnosticInputStream";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi = true;
+			}  
+		}
+
+		return this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi;
+	}
+	
+	private Boolean isConnettoriUseDiagnosticInputStream_ricezioneBuste = null;
+	public boolean isConnettoriUseDiagnosticInputStream_ricezioneBuste() {	
+		if(this.isConnettoriUseDiagnosticInputStream_ricezioneBuste==null){
+			String pName = "org.openspcoop2.pdd.connettori.ricezioneBuste.useDiagnosticInputStream";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isConnettoriUseDiagnosticInputStream_ricezioneBuste = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.isConnettoriUseDiagnosticInputStream_ricezioneBuste = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.isConnettoriUseDiagnosticInputStream_ricezioneBuste = true;
+			}  
+		}
+
+		return this.isConnettoriUseDiagnosticInputStream_ricezioneBuste;
+	}
+	
+	
+	private Boolean isConnettoriUseDiagnosticInputStream_setDateEmptyStream = null;
+	public boolean isConnettoriUseDiagnosticInputStream_setDateEmptyStream() {	
+		if(this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream==null){
+			String pName = "org.openspcoop2.pdd.connettori.useDiagnosticInputStream.setDateEmptyStream";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream = false;
+			}  
+		}
+
+		return this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream;
+	}
+	
+	
+	
 
 	/* ***************** HTTPS  ************* */
 	
@@ -18481,6 +18609,32 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getDumpHeaderBlackList;
+	}
+	
+	
+	private Boolean isDumpEmitDiagnostic = null;
+	public boolean isDumpEmitDiagnostic(){
+
+		if(this.isDumpEmitDiagnostic==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.emitDiagnostic";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isDumpEmitDiagnostic = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					this.isDumpEmitDiagnostic = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.isDumpEmitDiagnostic = true;
+			}
+		}
+
+		return this.isDumpEmitDiagnostic;
 	}
 	
 	
@@ -25246,6 +25400,28 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isTransazioniValorizzaDataIngressoConDataAccettazione;
+	}
+	
+	private Boolean isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent = null;
+	public boolean isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent() {	
+		String pName = "org.openspcoop2.pdd.transazioni.dataUscitaRisposta.useDateAfterResponseSent";
+		if(this.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				this.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent = true;
+			}    
+		}
+
+		return this.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent;
 	}
 	
 	private Boolean isTransazioniFaultPrettyPrint = null;

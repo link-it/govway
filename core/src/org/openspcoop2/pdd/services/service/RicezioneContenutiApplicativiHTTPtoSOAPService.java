@@ -337,6 +337,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			logCore.error("Errore generazione diagnostico di ingresso",e);
 		}
 		
+		try{
+			req.setDiagnosticProducer(context!=null ? context.getPddContext(): null, msgDiag);
+		}catch(Throwable e){
+			logCore.error("Errore registrazione diagnostico sulla richiesta",e);
+		}
+		
 		// emitDiagnostic preAccept handler
 		GestoreHandlers.emitDiagnostic(msgDiag, preInAcceptRequestContext, context!=null ? context.getPddContext() : null, 
 				logCore, logCore);
@@ -957,6 +963,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		// Imposto risposta
 
 		Date dataPrimaSpedizioneRisposta = DateManager.getDate();
+		Date dataRispostaSpedita = null; 
 		
 		if(context.getMsgDiagnostico()!=null){
 			msgDiag = context.getMsgDiagnostico();
@@ -1410,6 +1417,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				res.flush(true);
 				res.close(true);
 				
+				dataRispostaSpedita = DateManager.getDate();
+				
 				// Emetto diagnostico
 				if(erroreConsegnaRisposta!=null){
 					
@@ -1455,6 +1464,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					// non dovrebbe mai essere null
 				}
 				
+			} finally {
+				if(dataRispostaSpedita==null) {
+					dataRispostaSpedita = DateManager.getDate();
+				}
 			}
 			
 			if(dumpRaw!=null && dumpRaw.isActiveDumpRisposta()){
@@ -1520,6 +1533,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				}
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				postOutResponseContext.setDataPrimaSpedizioneRisposta(dataPrimaSpedizioneRisposta);
+				postOutResponseContext.setDataRispostaSpedita(dataRispostaSpedita);
 				if(erroreConsegnaRisposta==null){
 					postOutResponseContext.setEsito(esito);
 				}else{

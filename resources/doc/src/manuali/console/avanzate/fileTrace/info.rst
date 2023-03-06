@@ -117,15 +117,23 @@ L'elenco dei diagnostici sono accessibili anche con i seguenti parametri:
 
 - acceptedRequestDate: data in cui la richiesta è pervenuta sul gateway;
 
-- inRequestDate: data in cui la richiesta è stata completamente ricevuta sul gateway;
+- inRequestDate e inRequestStartTime: data in cui la richiesta è iniziata ad essere gestita sul gateway;
 
-- outRequestDate: data in cui la richiesta viene inoltrata dal gateway al backend;
+- inRequestEndTime: data in cui la richiesta è stata completamente ricevuta sul gateway;
+
+- outRequestDate e outRequestStartTime: data in cui la richiesta viene inoltrata dal gateway al backend;
+
+- outRequestEndTime: data in cui la richiesta è stata consegnata al backend;
 
 - acceptedResponseDate: data in cui la risposta è pervenuta sul gateway;
 
-- inResponseDate: data in cui la risposta è stata completamente ricevuta sul gateway;
+- inResponseDate e inResponseStartTime: data in cui la risposta è iniziata ad essere gestita sul gateway;
 
-- outResponseDate: data in cui la risposta viene ritornata al client.
+- inResponseEndTime: data in cui la risposta è stata completamente ricevuta sul gateway;
+
+- outResponseStartTime: data in cui la risposta viene ritornata al client;
+
+- outResponseDate e outResponseEndTime: data in cui la risposta è stata completamente consegnata al client.
 
 Tutte le date indicate sono accessibili anche con i seguenti parametri:
 

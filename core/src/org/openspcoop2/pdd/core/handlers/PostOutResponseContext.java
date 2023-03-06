@@ -60,7 +60,10 @@ public class PostOutResponseContext extends OutResponseContext {
 	
 	/** Data prima della spedizione della risposta */
 	private Date dataPrimaSpedizioneRisposta;
+	/** Data risposta spedita */
+	private Date dataRispostaSpedita;
 	
+
 	public EsitoTransazione getEsito() {
 		return this.esito;
 	}
@@ -90,10 +93,8 @@ public class PostOutResponseContext extends OutResponseContext {
 	}
 
 	public void setInputRequestMessageSize(Long inputRequestMessageSize) {
-		if(inputRequestMessageSize!=null){
-			if(inputRequestMessageSize>0){
-				this.inputRequestMessageSize = inputRequestMessageSize;
-			}
+		if(inputRequestMessageSize!=null && inputRequestMessageSize>0){
+			this.inputRequestMessageSize = inputRequestMessageSize;
 		}
 	}
 
@@ -102,10 +103,8 @@ public class PostOutResponseContext extends OutResponseContext {
 	}
 
 	public void setOutputRequestMessageSize(Long outputRequestMessageSize) {
-		if(outputRequestMessageSize!=null){
-			if(outputRequestMessageSize>0){
-				this.outputRequestMessageSize = outputRequestMessageSize;
-			}
+		if(outputRequestMessageSize!=null && outputRequestMessageSize>0){
+			this.outputRequestMessageSize = outputRequestMessageSize;
 		}
 	}
 
@@ -114,10 +113,8 @@ public class PostOutResponseContext extends OutResponseContext {
 	}
 
 	public void setInputResponseMessageSize(Long inputResponseMessageSize) {
-		if(inputResponseMessageSize!=null){
-			if(inputResponseMessageSize>0){
-				this.inputResponseMessageSize = inputResponseMessageSize;
-			}
+		if(inputResponseMessageSize!=null && inputResponseMessageSize>0){
+			this.inputResponseMessageSize = inputResponseMessageSize;
 		}
 	}
 
@@ -126,10 +123,8 @@ public class PostOutResponseContext extends OutResponseContext {
 	}
 
 	public void setOutputResponseMessageSize(Long outputResponseMessageSize) {
-		if(outputResponseMessageSize!=null){
-			if(outputResponseMessageSize>0){
-				this.outputResponseMessageSize = outputResponseMessageSize;
-			}
+		if(outputResponseMessageSize!=null && outputResponseMessageSize>0){
+			this.outputResponseMessageSize = outputResponseMessageSize;
 		}
 	}
 	
@@ -139,5 +134,13 @@ public class PostOutResponseContext extends OutResponseContext {
 
 	public void setDataPrimaSpedizioneRisposta(Date dataPrimaSpedizioneRisposta) {
 		this.dataPrimaSpedizioneRisposta = dataPrimaSpedizioneRisposta;
+	}
+	
+	public Date getDataRispostaSpedita() {
+		return this.dataRispostaSpedita;
+	}
+
+	public void setDataRispostaSpedita(Date dataRispostaSpedita) {
+		this.dataRispostaSpedita = dataRispostaSpedita;
 	}
 }

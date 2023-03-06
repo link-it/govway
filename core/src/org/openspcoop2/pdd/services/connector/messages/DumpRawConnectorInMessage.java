@@ -33,6 +33,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -64,6 +65,9 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	private String idTransazione;
 	private int soglia;
 	private File repositoryFile;
+	
+	@SuppressWarnings("unused")
+	private MsgDiagnostico msgDiagnostico;
 	
 	public DumpRawConnectorInMessage(Logger log,ConnectorInMessage connectorInMessage, Context context,
 			int soglia, File repositoryFile){
@@ -100,6 +104,14 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public void disableLimitedStream() {
 		// nop
+	}
+	
+	@Override
+	public void setDiagnosticProducer(Context context, MsgDiagnostico msgDiag) {
+		if(this.context==null) {
+			this.context = context;
+		}
+		this.msgDiagnostico = msgDiag;
 	}
 	
 	public ConnectorInMessage getWrappedConnectorInMessage() {

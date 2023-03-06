@@ -19,18 +19,6 @@
  */
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
-import org.openspcoop2.pdd.core.transazioni.InResponseStatefulObject;
-import org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful;
-import org.openspcoop2.pdd.core.transazioni.Transaction;
-import org.openspcoop2.pdd.core.transazioni.TransactionContext;
-import org.openspcoop2.pdd.core.transazioni.TransactionDeletedException;
-import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
-import org.openspcoop2.pdd.core.transazioni.TransactionStatefulNotSupportedException;
-import org.openspcoop2.pdd.logger.DumpUtility;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.utils.json.JSONUtils;
-import org.openspcoop2.utils.transport.http.HttpRequestMethod;
-
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
@@ -47,6 +35,17 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InResponseContext;
+import org.openspcoop2.pdd.core.transazioni.InResponseStatefulObject;
+import org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.core.transazioni.TransactionDeletedException;
+import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
+import org.openspcoop2.pdd.core.transazioni.TransactionStatefulNotSupportedException;
+import org.openspcoop2.pdd.logger.DumpUtility;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -179,7 +178,7 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 			
 			try{
 			
-				// date
+				// date				
 				context.getTransazioneApplicativoServer().setDataAccettazioneRisposta(context.getDataAccettazioneRisposta());
 				
 				Date dataIngressoRisposta = context.getDataElaborazioneMessaggio();
@@ -191,6 +190,10 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 				if(context.getDataPrimaInvocazioneConnettore()!=null) {
 					// aggiorno informazione sulla data, poiche' piu' precisa (nella latenza porta deve rientrare anche il dump ed il rilascio della connessione)
 					context.getTransazioneApplicativoServer().setDataUscitaRichiesta(context.getDataPrimaInvocazioneConnettore());
+				}
+				
+				if(context.getDataRichiestaInoltrata()!=null) {
+					context.getTransazioneApplicativoServer().setDataUscitaRichiestaStream(context.getDataRichiestaInoltrata());
 				}
 				
 				
@@ -237,6 +240,14 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 					sObject = new InResponseStatefulObject();
 					
 					//System.out.println("@@@@@REPOSITORY@@@@@ InResponseHandler ID TRANSAZIONE ["+idTransazione+"] GESTIONE COMPLETA");
+					
+					Date dataRichiestaInoltrata = context.getDataRichiestaInoltrata();
+					// La porta di dominio mi passa sempre questa informazione.
+					// Nel PddMonitor, invece, la data deve essere visualizzata solo se la dimensione e' diverso da 0 e cioe' se c'e' un messaggio di risposta.
+					//if(dimensione!=null && dimensione>0){
+					// L'INFORMAZIONE DEVE INVECE ESSERE SEMPRE SALVATA PER LA SIMULAZIONE DEI MESSAGGI DIAGNOSTICI
+					// INEFFICIENTE: RepositoryGestioneStateful.addDataAccettazioneRisposta(idTransazione, dataAccettazioneRisposta);
+					sObject.setDataRichiestaInoltrata(dataRichiestaInoltrata);
 					
 					Date dataAccettazioneRisposta = context.getDataAccettazioneRisposta();
 					// La porta di dominio mi passa sempre questa informazione.
@@ -290,6 +301,22 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 					}
 					if(context==null) {
 						throw new HandlerException("Context is null");
+					}
+					
+					Date dataRichiestaInoltrata = context.getDataRichiestaInoltrata();
+					// La porta di dominio mi passa sempre questa informazione.
+					// Nel PddMonitor, invece, la data deve essere visualizzata solo se la dimensione e' diverso da 0 e cioe' se c'e' un messaggio di risposta.
+					//if(dimensione!=null && dimensione>0){
+					// L'INFORMAZIONE DEVE INVECE ESSERE SEMPRE SALVATA PER LA SIMULAZIONE DEI MESSAGGI DIAGNOSTICI
+					try{
+						tr.setDataRichiestaInoltrata(dataRichiestaInoltrata);
+						//System.out.println("SET DATA ("+dataAccettazioneRisposta.toString()+")");
+					}catch(TransactionDeletedException e){
+						//System.out.println("@@@@@REPOSITORY@@@@@ InResponseHandler SET DATA ("+dataAccettazioneRisposta.toString()+")");
+						// INEFFICIENTE: RepositoryGestioneStateful.addDataAccettazioneRisposta(idTransazione, dataAccettazioneRisposta);
+						if(sObject==null)
+							sObject = new InResponseStatefulObject();
+						sObject.setDataRichiestaInoltrata(dataRichiestaInoltrata);
 					}
 					
 					Date dataAccettazioneRisposta = context.getDataAccettazioneRisposta();

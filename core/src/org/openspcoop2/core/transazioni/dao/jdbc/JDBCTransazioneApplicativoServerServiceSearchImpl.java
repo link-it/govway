@@ -223,8 +223,10 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
     		fields.add(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO);
     		fields.add(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA);
     		fields.add(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA);
+    		fields.add(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM);
     		fields.add(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA);
     		fields.add(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA);
+    		fields.add(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM);
     		fields.add(TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES);
     		fields.add(TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES);
     		fields.add(TransazioneApplicativoServer.model().LOCATION_CONNETTORE);
@@ -630,8 +632,10 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().LOCATION_CONNETTORE,true));

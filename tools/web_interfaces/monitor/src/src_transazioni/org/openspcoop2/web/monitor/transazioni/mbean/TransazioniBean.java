@@ -106,6 +106,8 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	
 	private boolean visualizzazioneStoricoTabellare = false;
 	private boolean exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = false;
+	
+	private boolean transazioniLatenzaPortaEnabled = false;
 
 	public TransazioniBean(){
 		super();
@@ -120,7 +122,9 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			this.applicationBean.setLoginBean(Utility.getLoginBean()); 
 			
 			this.visualizzazioneStoricoTabellare = !govwayMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni();
-			this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = PddMonitorProperties.getInstance(log).isExportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti();
+			this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = govwayMonitorProperties.isExportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti();
+			
+			this.transazioniLatenzaPortaEnabled = govwayMonitorProperties.isTransazioniLatenzaPortaEnabled();
 			
 		}catch(Exception e){
 			TransazioniBean.log.error(e.getMessage(), e);
@@ -1042,5 +1046,13 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		this.tipiStoricoLivello2.add(gruppoId);
 		
 		return this.tipiStoricoLivello2;
+	}
+	
+	public boolean isTransazioniLatenzaPortaEnabled() {
+		return this.transazioniLatenzaPortaEnabled;
+	}
+
+	public void setTransazioniLatenzaPortaEnabled(boolean transazioniLatenzaPortaEnabled) {
+		this.transazioniLatenzaPortaEnabled = transazioniLatenzaPortaEnabled;
 	}
 }

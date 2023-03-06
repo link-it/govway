@@ -354,8 +354,14 @@ public class Converter {
 				if(transazioneDB.getDataIngressoRichiesta()!=null) {
 					((TransazioneExtDettaglioRichiesta)richiesta).setDataRicezione(new DateTime(transazioneDB.getDataIngressoRichiesta().getTime()));
 				}
+				if(transazioneDB.getDataIngressoRichiestaStream()!=null) {
+					((TransazioneExtDettaglioRichiesta)richiesta).setDataRicezioneAcquisita(new DateTime(transazioneDB.getDataIngressoRichiestaStream().getTime()));
+				}
 				if(transazioneDB.getDataUscitaRichiesta()!=null) {
 					((TransazioneExtDettaglioRichiesta)richiesta).setDataConsegna(new DateTime(transazioneDB.getDataUscitaRichiesta().getTime()));
+				}
+				if(transazioneDB.getDataUscitaRichiestaStream()!=null) {
+					((TransazioneExtDettaglioRichiesta)richiesta).setDataConsegnaEffettuata(new DateTime(transazioneDB.getDataUscitaRichiestaStream().getTime()));
 				}
 			}
 			if(this.richiesta_tipo && transazioneDB.getTipoRichiesta()!=null) {
@@ -447,8 +453,15 @@ public class Converter {
 				if(transazioneDB.getDataIngressoRisposta()!=null) {
 					((TransazioneExtDettaglioRisposta)risposta).setDataRicezione(new DateTime(transazioneDB.getDataIngressoRisposta().getTime()));
 				}
+				if(transazioneDB.getDataIngressoRispostaStream()!=null) {
+					((TransazioneExtDettaglioRisposta)risposta).setDataRicezioneAcquisita(new DateTime(transazioneDB.getDataIngressoRispostaStream().getTime()));
+				}
+				// inverto
 				if(transazioneDB.getDataUscitaRisposta()!=null) {
-					((TransazioneExtDettaglioRisposta)risposta).setDataConsegna(new DateTime(transazioneDB.getDataUscitaRisposta().getTime()));
+					((TransazioneExtDettaglioRisposta)risposta).setDataConsegnaEffettuata(new DateTime(transazioneDB.getDataUscitaRisposta().getTime()));
+				}
+				if(transazioneDB.getDataUscitaRispostaStream()!=null) {
+					((TransazioneExtDettaglioRisposta)risposta).setDataConsegna(new DateTime(transazioneDB.getDataUscitaRispostaStream().getTime()));
 				}
 			}
 			if(this.risposta_esito) {

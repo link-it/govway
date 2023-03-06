@@ -141,6 +141,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			//fout.flush();
 			//fout.close();
 			
+			this.dataRichiestaInoltrata = DateManager.getDate();
 			
 			
 			

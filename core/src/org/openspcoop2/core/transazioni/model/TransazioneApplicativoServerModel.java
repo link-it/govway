@@ -53,8 +53,10 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.IDENTIFICATIVO_MESSAGGIO = new Field("identificativo-messaggio",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ACCETTAZIONE_RICHIESTA = new Field("data-accettazione-richiesta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_USCITA_RICHIESTA = new Field("data-uscita-richiesta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_USCITA_RICHIESTA_STREAM = new Field("data-uscita-richiesta-stream",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ACCETTAZIONE_RISPOSTA = new Field("data-accettazione-risposta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_INGRESSO_RISPOSTA = new Field("data-ingresso-risposta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_INGRESSO_RISPOSTA_STREAM = new Field("data-ingresso-risposta-stream",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.RICHIESTA_USCITA_BYTES = new Field("richiesta-uscita-bytes",java.lang.Long.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.RISPOSTA_INGRESSO_BYTES = new Field("risposta-ingresso-bytes",java.lang.Long.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.LOCATION_CONNETTORE = new Field("location-connettore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
@@ -99,8 +101,10 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.IDENTIFICATIVO_MESSAGGIO = new ComplexField(father,"identificativo-messaggio",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ACCETTAZIONE_RICHIESTA = new ComplexField(father,"data-accettazione-richiesta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_USCITA_RICHIESTA = new ComplexField(father,"data-uscita-richiesta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_USCITA_RICHIESTA_STREAM = new ComplexField(father,"data-uscita-richiesta-stream",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ACCETTAZIONE_RISPOSTA = new ComplexField(father,"data-accettazione-risposta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_INGRESSO_RISPOSTA = new ComplexField(father,"data-ingresso-risposta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_INGRESSO_RISPOSTA_STREAM = new ComplexField(father,"data-ingresso-risposta-stream",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.RICHIESTA_USCITA_BYTES = new ComplexField(father,"richiesta-uscita-bytes",java.lang.Long.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.RISPOSTA_INGRESSO_BYTES = new ComplexField(father,"risposta-ingresso-bytes",java.lang.Long.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.LOCATION_CONNETTORE = new ComplexField(father,"location-connettore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
@@ -156,9 +160,13 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	 
 	public IField DATA_USCITA_RICHIESTA = null;
 	 
+	public IField DATA_USCITA_RICHIESTA_STREAM = null;
+	 
 	public IField DATA_ACCETTAZIONE_RISPOSTA = null;
 	 
 	public IField DATA_INGRESSO_RISPOSTA = null;
+	 
+	public IField DATA_INGRESSO_RISPOSTA_STREAM = null;
 	 
 	public IField RICHIESTA_USCITA_BYTES = null;
 	 

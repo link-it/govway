@@ -23,7 +23,6 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.net.Authenticator;
@@ -57,6 +56,7 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -90,8 +90,6 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	public ByteArrayOutputStream outByte = new ByteArrayOutputStream();
-		
 	/** Proxy Configuration */
 	protected Proxy.Type proxyType = null;
 	protected String proxyHostname = null;
@@ -131,13 +129,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	
 	@Override
 	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
-		
-		if(this.initialize(request, true, responseCachingConfig)==false){
-			return false;
-		}
-		
-		return true;
-		
+		return this.initialize(request, true, responseCachingConfig);
 	}
 	
 	@Override
@@ -666,6 +658,11 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 							out.write(bout.toByteArray());
 						}
 						
+						out.flush();
+						out.close();
+						
+						this.dataRichiestaInoltrata = DateManager.getDate();
+						
 						this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 					}finally {
 						try {
@@ -682,9 +679,13 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					}else{
 						this.requestMsg.writeTo(out, consumeRequestMessage);
 					}
+					
+					out.flush();
+					out.close();
+					
+					this.dataRichiestaInoltrata = DateManager.getDate();
 				}
-				out.flush();
-				out.close();
+
 			}
 			else {
 				if(this.isDumpBinarioRichiesta()) {

@@ -570,6 +570,11 @@ public class GestoreTransazioniStateful {
 		
 		List<UpdateField> updateFields = new ArrayList<UpdateField>();
 		
+		if(object.getDataRichiestaInoltrata()!=null){
+			UpdateField updateField = new UpdateField(Transazione.model().DATA_USCITA_RICHIESTA_STREAM, object.getDataRichiestaInoltrata());
+			updateFields.add(updateField);
+		}
+		
 		if(object.getDataAccettazioneRisposta()!=null){
 			UpdateField updateField = new UpdateField(Transazione.model().DATA_ACCETTAZIONE_RISPOSTA, object.getDataAccettazioneRisposta());
 			updateFields.add(updateField);

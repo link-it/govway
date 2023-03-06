@@ -103,12 +103,12 @@
 										<a4j:outputPanel layout="block" id="titoloInfoLatenzaTransazione" styleClass="titoloEntry">
 											<i class="material-icons md-24">hourglass_empty</i>			
 										</a4j:outputPanel>
-										<rich:toolTip for="entryInfoLatenzaTransazioneTitolo">
+										<rich:toolTip for="entryInfoLatenzaTransazioneTitolo" rendered="#{((not empty item.latenzaServizio and item.consegnaMultipla == false) or transazioniBean.transazioniLatenzaPortaEnabled)}">
 												<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 												<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 												<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
-												<h:outputText value="Latenza Gateway: "/>
-												<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter"/>
+												<h:outputText value="Latenza Gateway: " rendered="#{transazioniBean.transazioniLatenzaPortaEnabled}"/>
+												<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter" rendered="#{transazioniBean.transazioniLatenzaPortaEnabled}"/>
 											</rich:toolTip>
 									</a4j:outputPanel>
 									<a4j:outputPanel layout="block" id="entryInfoEsitoTransazioneTitolo" styleClass="entryInfoEsitoTransazione #{item.cssColonnaEsito}">
@@ -199,12 +199,12 @@
 									<a4j:outputPanel layout="block" id="entryInfoLatenzaTransazioneSottotitolo" styleClass="entryInfoLatenzaTransazione #{item.cssColonnaLatenza}">
 										<a4j:outputPanel layout="block" id="sottotitoloInfoLatenzaTransazione" styleClass="metadatiEntry">
 											<h:outputText id="outLatenzaServizio2" value="#{item.latenzaTotale}" converter="latenzaConverter"/>
-											<rich:toolTip for="entryInfoLatenzaTransazioneSottotitolo">
+											<rich:toolTip for="entryInfoLatenzaTransazioneSottotitolo" rendered="#{((not empty item.latenzaServizio and item.consegnaMultipla == false) or transazioniBean.transazioniLatenzaPortaEnabled)}">
 												<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 												<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 												<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
-												<h:outputText value="Latenza Gateway: "/>
-												<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter"/>
+												<h:outputText value="Latenza Gateway: " rendered="#{transazioniBean.transazioniLatenzaPortaEnabled}"/>
+												<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter" rendered="#{transazioniBean.transazioniLatenzaPortaEnabled}"/>
 											</rich:toolTip>
 										</a4j:outputPanel>
 									</a4j:outputPanel>

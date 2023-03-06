@@ -42,6 +42,9 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
+import org.openspcoop2.pdd.logger.DiagnosticInputStream;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.Context;
@@ -76,6 +79,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	protected InputStream is;
 	protected LimitedInputStream _limitedIS;
 	protected TimeoutInputStream _timeoutIS;
+	protected DiagnosticInputStream _diagnosticIS;
 	protected DumpByteArrayOutputStream buffer;
 	protected boolean buffered = false;
 	protected OpenSPCoop2MessageSoapStreamReader soapReader;
@@ -93,6 +97,9 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	private int requestReadTimeout;
 	private SogliaDimensioneMessaggio requestLimitSize;
 	
+	private boolean useDiagnosticInputStream;
+	private MsgDiagnostico msgDiagnostico;
+	
 	public HttpServletConnectorInMessage(RequestInfo requestInfo, HttpServletRequest req,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
 		try{
@@ -108,11 +115,20 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;
 			
-			if(IDService.PORTA_APPLICATIVA.equals(idModuloAsIDService)){
+			if(IDService.PORTA_APPLICATIVA.equals(idModuloAsIDService) || IDService.PORTA_APPLICATIVA_NIO.equals(idModuloAsIDService)){
 				this.requestMessageType = this.getRequestInfo().getProtocolRequestMessageType();
 			}
 			else{
 				this.requestMessageType = this.getRequestInfo().getIntegrationRequestMessageType();
+			}
+			
+			if(this.openspcoopProperties!=null) {
+				if(IDService.PORTA_APPLICATIVA.equals(idModuloAsIDService) || IDService.PORTA_APPLICATIVA_NIO.equals(idModuloAsIDService)){
+					this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_ricezioneBuste();
+				}
+				else {
+					this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi();
+				}
 			}
 			
 		}catch(Exception e){
@@ -175,6 +191,13 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			this._limitedIS.disableCheck();
 		}
 	}
+	@Override
+	public void setDiagnosticProducer(Context context, MsgDiagnostico msgDiag) {
+		if(this.context==null) {
+			this.context = context;
+		}
+		this.msgDiagnostico = msgDiag;
+	}
 	private InputStream buildInputStream() throws IOException {
 		
 		if(this.buffered) {
@@ -201,6 +224,15 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 					CostantiPdD.PREFIX_TIMEOUT_REQUEST,
 					this.context);
 			this.is = this._timeoutIS;
+		}
+		if(this.is!=null && this.useDiagnosticInputStream && this.msgDiagnostico!=null) {
+			String idModuloFunzionale = 
+					IDService.PORTA_APPLICATIVA.equals(this.idModuloAsIDService) ? 
+							MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE : MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI;
+			this._diagnosticIS = new DiagnosticInputStream(this.is, idModuloFunzionale, "letturaPayloadRichiesta", true, this.msgDiagnostico, 
+					(this.log!=null) ? this.log : OpenSPCoop2Logger.getLoggerOpenSPCoopCore(),
+					this.context);
+			this.is = this._diagnosticIS;
 		}
 		return this.is;
 	}

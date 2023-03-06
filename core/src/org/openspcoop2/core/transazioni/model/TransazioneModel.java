@@ -53,10 +53,14 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.CODICE_RISPOSTA_USCITA = new Field("codice-risposta-uscita",java.lang.String.class,"transazione",Transazione.class);
 		this.DATA_ACCETTAZIONE_RICHIESTA = new Field("data-accettazione-richiesta",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_INGRESSO_RICHIESTA = new Field("data-ingresso-richiesta",java.util.Date.class,"transazione",Transazione.class);
+		this.DATA_INGRESSO_RICHIESTA_STREAM = new Field("data-ingresso-richiesta-stream",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_USCITA_RICHIESTA = new Field("data-uscita-richiesta",java.util.Date.class,"transazione",Transazione.class);
+		this.DATA_USCITA_RICHIESTA_STREAM = new Field("data-uscita-richiesta-stream",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_ACCETTAZIONE_RISPOSTA = new Field("data-accettazione-risposta",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_INGRESSO_RISPOSTA = new Field("data-ingresso-risposta",java.util.Date.class,"transazione",Transazione.class);
+		this.DATA_INGRESSO_RISPOSTA_STREAM = new Field("data-ingresso-risposta-stream",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_USCITA_RISPOSTA = new Field("data-uscita-risposta",java.util.Date.class,"transazione",Transazione.class);
+		this.DATA_USCITA_RISPOSTA_STREAM = new Field("data-uscita-risposta-stream",java.util.Date.class,"transazione",Transazione.class);
 		this.RICHIESTA_INGRESSO_BYTES = new Field("richiesta-ingresso-bytes",java.lang.Long.class,"transazione",Transazione.class);
 		this.RICHIESTA_USCITA_BYTES = new Field("richiesta-uscita-bytes",java.lang.Long.class,"transazione",Transazione.class);
 		this.RISPOSTA_INGRESSO_BYTES = new Field("risposta-ingresso-bytes",java.lang.Long.class,"transazione",Transazione.class);
@@ -159,10 +163,14 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.CODICE_RISPOSTA_USCITA = new ComplexField(father,"codice-risposta-uscita",java.lang.String.class,"transazione",Transazione.class);
 		this.DATA_ACCETTAZIONE_RICHIESTA = new ComplexField(father,"data-accettazione-richiesta",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_INGRESSO_RICHIESTA = new ComplexField(father,"data-ingresso-richiesta",java.util.Date.class,"transazione",Transazione.class);
+		this.DATA_INGRESSO_RICHIESTA_STREAM = new ComplexField(father,"data-ingresso-richiesta-stream",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_USCITA_RICHIESTA = new ComplexField(father,"data-uscita-richiesta",java.util.Date.class,"transazione",Transazione.class);
+		this.DATA_USCITA_RICHIESTA_STREAM = new ComplexField(father,"data-uscita-richiesta-stream",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_ACCETTAZIONE_RISPOSTA = new ComplexField(father,"data-accettazione-risposta",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_INGRESSO_RISPOSTA = new ComplexField(father,"data-ingresso-risposta",java.util.Date.class,"transazione",Transazione.class);
+		this.DATA_INGRESSO_RISPOSTA_STREAM = new ComplexField(father,"data-ingresso-risposta-stream",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_USCITA_RISPOSTA = new ComplexField(father,"data-uscita-risposta",java.util.Date.class,"transazione",Transazione.class);
+		this.DATA_USCITA_RISPOSTA_STREAM = new ComplexField(father,"data-uscita-risposta-stream",java.util.Date.class,"transazione",Transazione.class);
 		this.RICHIESTA_INGRESSO_BYTES = new ComplexField(father,"richiesta-ingresso-bytes",java.lang.Long.class,"transazione",Transazione.class);
 		this.RICHIESTA_USCITA_BYTES = new ComplexField(father,"richiesta-uscita-bytes",java.lang.Long.class,"transazione",Transazione.class);
 		this.RISPOSTA_INGRESSO_BYTES = new ComplexField(father,"risposta-ingresso-bytes",java.lang.Long.class,"transazione",Transazione.class);
@@ -276,13 +284,21 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	 
 	public IField DATA_INGRESSO_RICHIESTA = null;
 	 
+	public IField DATA_INGRESSO_RICHIESTA_STREAM = null;
+	 
 	public IField DATA_USCITA_RICHIESTA = null;
+	 
+	public IField DATA_USCITA_RICHIESTA_STREAM = null;
 	 
 	public IField DATA_ACCETTAZIONE_RISPOSTA = null;
 	 
 	public IField DATA_INGRESSO_RISPOSTA = null;
 	 
+	public IField DATA_INGRESSO_RISPOSTA_STREAM = null;
+	 
 	public IField DATA_USCITA_RISPOSTA = null;
+	 
+	public IField DATA_USCITA_RISPOSTA_STREAM = null;
 	 
 	public IField RICHIESTA_INGRESSO_BYTES = null;
 	 

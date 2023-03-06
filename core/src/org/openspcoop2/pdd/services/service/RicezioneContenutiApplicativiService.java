@@ -333,6 +333,12 @@ public class RicezioneContenutiApplicativiService {
 			logCore.error("Errore generazione diagnostico di ingresso",e);
 		}
 		
+		try{
+			req.setDiagnosticProducer(context!=null ? context.getPddContext(): null, msgDiag);
+		}catch(Throwable e){
+			logCore.error("Errore registrazione diagnostico sulla richiesta",e);
+		}
+		
 		// emitDiagnostic preAccept handler
 		GestoreHandlers.emitDiagnostic(msgDiag, preInAcceptRequestContext, context!=null ? context.getPddContext() : null, 
 				logCore, logCore);
@@ -1131,6 +1137,7 @@ public class RicezioneContenutiApplicativiService {
 		// Imposto risposta
 
 		Date dataPrimaSpedizioneRisposta = DateManager.getDate();
+		Date dataRispostaSpedita = null; 
 		
 		if(context.getMsgDiagnostico()!=null){
 			msgDiag = context.getMsgDiagnostico();
@@ -1569,6 +1576,8 @@ public class RicezioneContenutiApplicativiService {
 				res.flush(true);
 				res.close(true);
 				
+				dataRispostaSpedita = DateManager.getDate();
+				
 				// Emetto diagnostico
 				if(erroreConsegnaRisposta!=null){
 					
@@ -1614,6 +1623,10 @@ public class RicezioneContenutiApplicativiService {
 					// non dovrebbe mai essere null
 				}
 				
+			} finally {
+				if(dataRispostaSpedita==null) {
+					dataRispostaSpedita = DateManager.getDate();
+				}
 			}
 			
 			if(dumpRaw!=null && dumpRaw.isActiveDumpRisposta()){
@@ -1684,6 +1697,7 @@ public class RicezioneContenutiApplicativiService {
 				}
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				postOutResponseContext.setDataPrimaSpedizioneRisposta(dataPrimaSpedizioneRisposta);
+				postOutResponseContext.setDataRispostaSpedita(dataRispostaSpedita);
 				postOutResponseContext.setEsito(esito);
 				postOutResponseContext.setReturnCode(statoServletResponse);
 				postOutResponseContext.setResponseHeaders(context.getResponseHeaders());
