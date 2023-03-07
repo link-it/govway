@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
@@ -71,7 +72,7 @@ public class ValidazioneSemanticaMainProcessor {
 					LoggerWrapperFactory.setLogConfiguration(url);
 				}
 				else{
-					File logFile = File.createTempFile("testValidazioneSemanticaConfigurazione_", ".log");
+					File logFile = FileSystemUtilities.createTempFile("testValidazioneSemanticaConfigurazione_", ".log");
 					System.out.println("LogMessages write in "+logFile.getAbsolutePath());
 					LoggerWrapperFactory.setDefaultLogConfiguration(Level.ALL, false, null, logFile, "%p <%d{dd-MM-yyyy HH:mm:ss}> %C.%M(%L): %m %n %n");
 				}

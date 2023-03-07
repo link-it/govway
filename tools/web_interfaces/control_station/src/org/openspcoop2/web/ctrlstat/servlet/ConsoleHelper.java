@@ -245,6 +245,7 @@ import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.XPathExpressionEngine;
@@ -503,7 +504,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public static synchronized void initTmpDir() throws Exception {
 		if(tmpDirectory == null){
-			File file = File.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+			File file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
 			tmpDirectory = FilenameUtils.getFullPath(file.getAbsolutePath());
 			if(file.exists()) {
 				if(!file.delete()) {
@@ -1138,7 +1139,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			//salvataggio nuovo contenuto
 			filename = this.getFileNameParameter(parameterName);
-			file = File.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+			file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
 			fileId = file.getName().substring(0, file.getName().indexOf(CostantiControlStation.TEMP_FILE_SUFFIX));
 			fileId = fileId.substring(fileId.indexOf(CostantiControlStation.TEMP_FILE_PREFIX) + CostantiControlStation.TEMP_FILE_PREFIX.length());
 			
@@ -1291,7 +1292,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (int i = 0; i < bpContents.size() ; i++ ) {
 				bpContent = bpContents.get(i);
 				filename = fileNamesParameter.get(i);
-				file = File.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+				file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
 				fileId = file.getName().substring(0, file.getName().indexOf(CostantiControlStation.TEMP_FILE_SUFFIX));
 				fileId = fileId.substring(fileId.indexOf(CostantiControlStation.TEMP_FILE_PREFIX) + CostantiControlStation.TEMP_FILE_PREFIX.length());
 				

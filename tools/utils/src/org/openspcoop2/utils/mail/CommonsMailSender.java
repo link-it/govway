@@ -101,12 +101,12 @@ public class CommonsMailSender extends Sender {
 					File fTmp = null;
 					if(mailAttach instanceof MailTextAttach){
 						 MailTextAttach text = (MailTextAttach) mailAttach;
-						 fTmp = File.createTempFile("mailTextAttach", ".txt");
+						 fTmp = FileSystemUtilities.createTempFile("mailTextAttach", ".txt");
 						 FileSystemUtilities.writeFile(fTmp, text.getContent().getBytes());
 					 }
 					 else{
 						 MailBinaryAttach bin = (MailBinaryAttach) mailAttach;
-						 fTmp = File.createTempFile("mailTextAttach", ".bin");
+						 fTmp = FileSystemUtilities.createTempFile("mailTextAttach", ".bin");
 						 FileSystemUtilities.writeFile(fTmp, bin.getContent());
 					 }
 					 attachment.setPath(fTmp.getAbsolutePath());

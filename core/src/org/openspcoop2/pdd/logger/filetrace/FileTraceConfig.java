@@ -38,6 +38,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 /**     
  * LogTraceConfig
@@ -203,7 +204,7 @@ public class FileTraceConfig {
 				}
 				scanner.close();
 				
-				File fTmp = File.createTempFile("test", ".properties");
+				File fTmp = FileSystemUtilities.createTempFile("test", ".properties");
 				try {
 					try(FileOutputStream fout = new FileOutputStream(fTmp)){
 						p.store(fout, "test");

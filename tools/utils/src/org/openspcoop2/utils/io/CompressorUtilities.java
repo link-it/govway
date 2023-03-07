@@ -309,7 +309,7 @@ public class CompressorUtilities {
  	                baos.write(buffer, 0, len);
  				break;
  			case ZIP:
- 				File f = File.createTempFile("unzip", "zip");
+ 				File f = FileSystemUtilities.createTempFile("unzip", "zip");
  				ZipFile zf = null;
  				try{
  					FileSystemUtilities.writeFile(f, bytes);

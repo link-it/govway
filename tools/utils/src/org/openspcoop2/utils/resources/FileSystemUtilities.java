@@ -29,6 +29,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
 
 
 /**
@@ -40,6 +46,34 @@ import java.nio.charset.Charset;
  */
 public class FileSystemUtilities {
 
+	public static File createTempFile(String prefix, String suffix) throws IOException{
+		Path p = createTempPath(prefix, suffix);
+		if(p==null) {
+			throw new IOException("Creation failed");
+		}
+		return p.toFile();
+	}
+	public static Path createTempPath(String prefix, String suffix) throws IOException{
+		// Make sure publicly writable directories are used safely here.
+		// Using publicly writable directories is security-sensitivejava:S5443
+		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+		return Files.createTempFile("op2_log", ".properties",attr);
+	}
+	
+	public static File createTempFile(File dir, String prefix, String suffix) throws IOException{
+		Path p = createTempPath(dir.toPath(), prefix, suffix);
+		if(p==null) {
+			throw new IOException("Creation failed");
+		}
+		return p.toFile();
+	}
+	public static Path createTempPath(Path dir, String prefix, String suffix) throws IOException{
+		// Make sure publicly writable directories are used safely here.
+		// Using publicly writable directories is security-sensitivejava:S5443
+		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+		return Files.createTempFile(dir, "op2_log", ".properties",attr);
+	}
+	
 	public static void copy(File in, File out) throws IOException {
 		FileSystemUtilities.copy(in.getAbsolutePath(),out.getAbsolutePath());
 	}

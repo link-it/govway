@@ -1860,7 +1860,7 @@ public class ConsoleProperties {
 						byte [] zipContent = Utilities.getAsByteArray(is);
 						is.close();
 						is = null;
-						File fTmp = File.createTempFile("propertiesSourceConfiguration", ".zip");
+						File fTmp = FileSystemUtilities.createTempFile("propertiesSourceConfiguration", ".zip");
 						//System.out.println("TMP: "+fTmp.getAbsolutePath());
 						try {
 							FileSystemUtilities.writeFile(fTmp, zipContent);

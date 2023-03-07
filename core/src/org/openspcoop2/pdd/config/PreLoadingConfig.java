@@ -109,7 +109,7 @@ public class PreLoadingConfig  {
 		
 		HashMap<String, Document> contentList = new HashMap<>();
 		
-		File fTmp = File.createTempFile("preLoadConfiguration", ".zip");
+		File fTmp = FileSystemUtilities.createTempFile("preLoadConfiguration", ".zip");
 		//System.out.println("TMP: "+fTmp.getAbsolutePath());
 		try {
 			FileSystemUtilities.writeFile(fTmp, zipContent);

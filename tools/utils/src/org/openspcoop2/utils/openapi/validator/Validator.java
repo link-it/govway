@@ -636,7 +636,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 								}
 								else {
 		
-									File tmp = File.createTempFile("validator", "."+ apiSchema.getType().name().toLowerCase());
+									File tmp = FileSystemUtilities.createTempFile("validator", "."+ apiSchema.getType().name().toLowerCase());
 									this.fileSchema.put(apiSchema.getName(), tmp);
 									tmpNode.put(apiSchema.getName(), schemaNode);
 									tmpByteArraySchema.put(apiSchema.getName(), schema);

@@ -108,7 +108,6 @@
 				<var name="govway.falsePositive" value="${govway.falsePositive},${utils.enum.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/utils/security_hotspots.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${utils.sec.falsePositives}"/>
-				<var name="govway.falsePositive" value="${govway.falsePositive},${utils.tmp.falsePositives}"/>
 				
 				<antcall target="-prepare">
 					<param name="analyzeType" value="${projectAnalyze}"/>
@@ -233,7 +232,6 @@
 				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.core.enum.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/runtime/core/security_hotspots.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.core.sec.falsePositives}"/>
-				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.core.tmp.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="runtime-core"/>
@@ -275,8 +273,6 @@
 				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.protocol.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/runtime/protocol/enum.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.protocol.enum.falsePositives}"/>
-				<property file="${sonar.falsePositivesDir}/runtime/protocol/security_hotspots.properties"/>
-				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.protocol.tmp.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="runtime-protocol"/>
@@ -318,8 +314,6 @@
 				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.monitor.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/runtime/monitor/enum.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.monitor.enum.falsePositives}"/>
-				<property file="${sonar.falsePositivesDir}/runtime/monitor/security_hotspots.properties"/>
-				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.monitor.tmp.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="runtime-monitor"/>
@@ -398,7 +392,6 @@
 				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.pdd.enum.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/runtime/pdd/security_hotspots.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.pdd.sec.falsePositives}"/>
-				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.pdd.tmp.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="runtime-pdd"/>
@@ -439,8 +432,6 @@
 				<!-- Falsi positivi -->
 				<property file="${sonar.falsePositivesDir}/protocol/as4/enum.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${protocol.as4.enum.falsePositives}"/>
-				<property file="${sonar.falsePositivesDir}/protocol/as4/security_hotspots.properties"/>
-				<var name="govway.falsePositive" value="${govway.falsePositive},${protocol.as4.tmp.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="protocol-as4"/>
@@ -510,8 +501,6 @@
 				<!-- Falsi positivi -->
 				<property file="${sonar.falsePositivesDir}/protocol/sdi/enum.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${protocol.sdi.enum.falsePositives}"/>
-				<property file="${sonar.falsePositivesDir}/protocol/sdi/security_hotspots.properties"/>
-				<var name="govway.falsePositive" value="${govway.falsePositive},${protocol.sdi.tmp.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="protocol-sdi"/>
@@ -550,7 +539,6 @@
 				<var name="govway.falsePositive" value="${govway.falsePositive},${protocol.spcoop.enum.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/protocol/spcoop/security_hotspots.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${protocol.spcoop.sec.falsePositives}"/>
-				<var name="govway.falsePositive" value="${govway.falsePositive},${protocol.spcoop.tmp.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="protocol-sdi"/>
@@ -885,7 +873,6 @@
 				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.control_station.enum.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/control_station/security_hotspots.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.control_station.sec.falsePositives}"/>
-				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.control_station.tmp.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="web-govwayConsole"/>

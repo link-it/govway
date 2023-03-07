@@ -668,7 +668,7 @@ public class GeneralInstanceProperties {
 					if(entryBytes!=null){
 						File tmp = null;
 						try{							
-							tmp = File.createTempFile("PddInterceptor", "PddInterceptor");
+							tmp = FileSystemUtilities.createTempFile("PddInterceptor", "PddInterceptor");
 							FileSystemUtilities.writeFile(tmp, entryBytes);
 							if(JarUtilities.isJar(tmp, false)){
 								if(checkFile(tmp)){
@@ -697,7 +697,7 @@ public class GeneralInstanceProperties {
 			if(loader==null){
 				File tmp = null;
 				try{			
-					tmp = File.createTempFile("PddInterceptor", "PddInterceptor");
+					tmp = FileSystemUtilities.createTempFile("PddInterceptor", "PddInterceptor");
 					if(!tmp.delete()) {
 						// ignore
 					}
@@ -1076,7 +1076,7 @@ public class GeneralInstanceProperties {
 					if(entriesBytes.get(k)!=null){
 						File tmp = null;
 						try{
-							tmp = File.createTempFile("PddInterceptor", "PddInterceptor");
+							tmp = FileSystemUtilities.createTempFile("PddInterceptor", "PddInterceptor");
 							FileSystemUtilities.writeFile(tmp, entriesBytes.get(k));
 							if(JarUtilities.isJar(tmp, false)){
 								if(checkFile(tmp)){

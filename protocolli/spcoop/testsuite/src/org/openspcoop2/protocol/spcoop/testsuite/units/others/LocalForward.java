@@ -102,6 +102,7 @@ public class LocalForward extends GestioneViaJmx {
 	private static boolean use_axis14_engine = Utilities.testSuiteProperties.isSoapEngineAxis14();
 	private static boolean use_cxf_engine = Utilities.testSuiteProperties.isSoapEngineCxf();
 
+	private static boolean ignoreMsgDiagnosticiDump = true;
 
 	private Date dataAvvioGruppoTest = null;
 	private boolean doTestStateful = true;
@@ -228,9 +229,9 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATEFUL, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATEFUL, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007012") || 
-					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012", "001005") ||
-					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","001005", "007012"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","001005","007011","007012") || 
+					msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","007012", "001005") ||
+					msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","001005", "007012"));
 
 		}catch(Exception e){
 			throw e;
@@ -299,7 +300,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATELESS , "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATELESS, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -366,7 +367,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATELESS_PA_STATEFUL, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATELESS_PA_STATEFUL, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -433,7 +434,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testSINCRONO, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testSINCRONO, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -581,7 +582,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_INTEGRATION_MANAGER, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_INTEGRATION_MANAGER, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007001","007001","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007001","007001","001005"));
 
 			// IntegrationManager
 			org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop1_axis14 = null;
@@ -962,7 +963,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_REQUEST, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_REQUEST, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id,"003039", "003040", "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump,"003039", "003040", "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1038,7 +1039,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_REQUEST, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_REQUEST, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062", "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "003039", "003040", "004061", "004062", "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1179,7 +1180,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_RESPONSE, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_RESPONSE, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062","001034","007011","007012","004065","004066","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "003039", "003040", "004061", "004062","001034","007011","007012","004065","004066","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1254,7 +1255,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_RESPONSE, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_RESPONSE, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062", "001034","007011","007012", "004065", "004066", "003043", "003044", "001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "003039", "003040", "004061", "004062", "001034","007011","007012", "004065", "004066", "003043", "003044", "001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1345,7 +1346,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_REQUEST, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_REQUEST, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "003039", "003040", "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1430,7 +1431,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_REQUEST, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_REQUEST, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062", "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "003039", "003040", "004061", "004062", "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1579,7 +1580,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_RESPONSE, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_RESPONSE, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062", "001034","007011","007012","004065","004066","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "003039", "003040", "004061", "004062", "001034","007011","007012","004065","004066","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1666,7 +1667,7 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_RESPONSE, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_RESPONSE, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062", "001034","007011","007012", "004065", "004066", "003043", "003044", "001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "003039", "003040", "004061", "004062", "001034","007011","007012", "004065", "004066", "003043", "003044", "001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1757,9 +1758,9 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_CONNETTORE_ERRATO_STATEFUL, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_CONNETTORE_ERRATO_STATEFUL, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007013") ||
-					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","001005", "007013") || 
-					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007013", "001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","001005","007011","007013") ||
+					msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","001005", "007013") || 
+					msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","007013", "001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1858,7 +1859,7 @@ public class LocalForward extends GestioneViaJmx {
 				Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 				Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_CONNETTORE_ERRATO_STATELESS, "001039"));
 				Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_CONNETTORE_ERRATO_STATELESS, "001057"));
-				Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007013","001006"));
+				Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","007013","001006"));
 			}
 
 		}catch(Exception e){
@@ -1957,10 +1958,10 @@ public class LocalForward extends GestioneViaJmx {
 			Reporter.log("Controllo msg diag local forward solo codici attesi (tra cui quello che segnala il fault): " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testPA_CONNETTORE_ERRATO_STATEFUL, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testPA_CONNETTORE_ERRATO_STATEFUL, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007012","007014") ||
-					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","001005","007012","007014") ||
-					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005","007014") || 
-					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","007014","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","001005","007011","007012","007014") ||
+					msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","001005","007012","007014") ||
+					msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","007012","001005","007014") || 
+					msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","007012","007014","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -2060,7 +2061,7 @@ public class LocalForward extends GestioneViaJmx {
 				Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 				Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_SOAP_FAULT_STATELESS, "001039"));
 				Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_SOAP_FAULT_STATELESS, "001057"));
-				Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","007014","001006"));
+				Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, ignoreMsgDiagnosticiDump, "001034","007011","007012","007014","001006"));
 			}
 
 		}catch(Exception e){

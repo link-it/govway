@@ -34,6 +34,7 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
@@ -87,7 +88,7 @@ public class XMLDataConverterMainProcessor {
 					LoggerWrapperFactory.setLogConfiguration(url);
 				}
 				else{
-					File logFile = File.createTempFile("testXMLDataConverterRegistro_", ".log");
+					File logFile = FileSystemUtilities.createTempFile("testXMLDataConverterRegistro_", ".log");
 					System.out.println("LogMessages write in "+logFile.getAbsolutePath());
 					LoggerWrapperFactory.setDefaultLogConfiguration(Level.ALL, false, null, logFile, "%p <%d{dd-MM-yyyy HH:mm:ss}> %C.%M(%L): %m %n %n");
 				}

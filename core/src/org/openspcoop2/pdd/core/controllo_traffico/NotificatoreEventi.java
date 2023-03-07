@@ -999,7 +999,7 @@ public class NotificatoreEventi {
 			if(bytesIn==null || bytesIn.length<=0){
 				return;
 			}
-			f = File.createTempFile("controlloTraffico", ".tmp");
+			f = FileSystemUtilities.createTempFile("controlloTraffico", ".tmp");
 			FileSystemUtilities.writeFile(f, bytesIn);
 			
 			// Leggo Struttura ZIP

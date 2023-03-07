@@ -1418,7 +1418,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		// zip
 		File tmpZipFile = null;
 		try{
-			tmpZipFile = File.createTempFile("AttestazioneTrasmissione", ".zip");
+			tmpZipFile = FileSystemUtilities.createTempFile("AttestazioneTrasmissione", ".zip");
 			FileSystemUtilities.writeFile(tmpZipFile, zip);
 		}catch(Exception e){
 			this.sdiValidazioneSemantica.getProtocolFactory().getLogger().error("Operazione di unzip non riuscita: "+e.getMessage(),e);

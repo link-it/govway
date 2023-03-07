@@ -464,14 +464,31 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 			if(this.isDumpBinarioRisposta()){
 				if(this.responseMsg!=null){
 					// Registro Debug.
-					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
-							TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
+					DumpByteArrayOutputStream bout = null;
 					try {
-						this.emitDiagnosticStartDumpBinarioRispostaIngresso();
-						
-						this.responseMsg.writeTo(bout, false);
-						bout.flush();
-						bout.close();
+						try {
+							bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+									TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
+							
+							this.emitDiagnosticStartDumpBinarioRispostaIngresso();
+							
+							this.responseMsg.writeTo(bout, false);
+						}finally {
+							try {
+								if(bout!=null) {
+									bout.flush();
+								}
+							}catch(Throwable t) {
+								// ignore
+							}
+							try {
+								if(bout!=null) {
+									bout.close();
+								}
+							}catch(Throwable t) {
+								// ignore
+							}
+						}
 						if(this.debug) {
 							this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") :\n"+bout.toString(),false);
 						}
@@ -484,7 +501,9 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 						
 					}finally {
 						try {
-							bout.clearResources();
+							if(bout!=null) {
+								bout.clearResources();
+							}
 						}catch(Throwable t) {
 							this.logger.error("Release resources failed: "+t.getMessage(),t);
 						}

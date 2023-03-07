@@ -114,6 +114,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.slf4j.Logger;
 
 
@@ -229,7 +230,7 @@ public class ZIPReadUtils  {
 		File tmp = null;
 		FileOutputStream fout = null; 
 		try{
-			tmp = File.createTempFile("openspcoop", "."+org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_EXT);
+			tmp = FileSystemUtilities.createTempFile("openspcoop", "."+org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_EXT);
 			
 			fout = new FileOutputStream(tmp);
 			fout.write(zip);

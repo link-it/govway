@@ -295,7 +295,7 @@ public class XSDSchemaCollection {
 			if(dirCreate)
 				f = File.createTempFile("root_"+uniqueID+"_", ".xsd",dir);
 			else
-				f =	File.createTempFile("root_"+uniqueID+"_", ".xsd");
+				f =	FileSystemUtilities.createTempFile("root_"+uniqueID+"_", ".xsd");
 			FileSystemUtilities.writeFile(f, schemaPerValidazione);
 			
 			// Provo a registrare gli schemi utilizzati
@@ -307,7 +307,7 @@ public class XSDSchemaCollection {
 					if(dirCreate)
 						schemaTmpLog = File.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd", dir);
 					else
-						schemaTmpLog = File.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd");
+						schemaTmpLog = FileSystemUtilities.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd");
 					FileSystemUtilities.writeFile(schemaTmpLog, contenuto);
 				}
 			}

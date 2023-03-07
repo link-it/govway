@@ -274,7 +274,7 @@ public class WADLUtilities {
 		try{
 			if (wadl == null) 
 				throw new Exception("Bytes non definiti");
-			File tmp = File.createTempFile("wadl", ".tmp");
+			File tmp = FileSystemUtilities.createTempFile("wadl", ".tmp");
 			try {
 				FileSystemUtilities.writeFile(tmp, wadl);
 				return this.readWADLFromFile(log, tmp, verbose, processInclude, processInlineSchema, xsdSchemas);

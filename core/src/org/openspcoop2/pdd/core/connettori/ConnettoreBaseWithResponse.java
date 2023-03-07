@@ -184,6 +184,41 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	}
 	
 	
+	private DumpByteArrayOutputStream readResponseForDump() throws Exception{
+		DumpByteArrayOutputStream bout = null;
+		try {
+			bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
+			
+			this.emitDiagnosticStartDumpBinarioRispostaIngresso();
+			
+//				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+//				int readByte = 0;
+//				while((readByte = this.isResponse.read(readB))!= -1){
+//					bout.write(readB,0,readByte);
+//				}
+			//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] ...");
+			CopyStream.copy(this.isResponse, bout);
+			//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] complete");
+			this.isResponse.close();
+		}finally {
+			try {
+				if(bout!=null) {
+					bout.flush();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+			try {
+				if(bout!=null) {
+					bout.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+		}
+		return bout;
+	}
 	
 	private boolean _dumpResponse(Map<String, List<String>> trasporto) throws Exception{
 		if(this.isResponse!=null){
@@ -191,22 +226,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			this.emitDiagnosticResponseRead(this.isResponse);
 			
 			// Registro Debug.
-			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
-					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
+			DumpByteArrayOutputStream bout = null;
 			try {
-				this.emitDiagnosticStartDumpBinarioRispostaIngresso();
-				
-//				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-//				int readByte = 0;
-//				while((readByte = this.isResponse.read(readB))!= -1){
-//					bout.write(readB,0,readByte);
-//				}
-				//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] ...");
-				CopyStream.copy(this.isResponse, bout);
-				//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] complete");
-				this.isResponse.close();
-				bout.flush();
-				bout.close();
+				bout = readResponseForDump();
 				if(this.debug) {
 					this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") :\n"+bout.toString(),false);
 				}
@@ -221,7 +243,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				this.dumpBinarioRispostaIngresso(bout, this.messageTypeResponse, trasporto);
 			}finally {
 				try {
-					bout.clearResources();
+					if(bout!=null) {
+						bout.clearResources();
+					}
 				}catch(Throwable t) {
 					this.logger.error("Release resources failed: "+t.getMessage(),t);
 				}

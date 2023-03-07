@@ -37,6 +37,7 @@ import javax.activation.FileDataSource;
 import org.slf4j.Logger;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
 import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 import it.gov.spcoop.sica.dao.AccordoCooperazione;
 import it.gov.spcoop.sica.dao.AccordoServizioComposto;
@@ -93,7 +94,7 @@ public class XMLUtils  {
 		File tmp = null;
 		FileOutputStream fout = null; 
 		try{
-			tmp = File.createTempFile("sica", Costanti.ESTENSIONE_ACCORDO_SERVIZIO_PARTE_COMUNE);
+			tmp = FileSystemUtilities.createTempFile("sica", Costanti.ESTENSIONE_ACCORDO_SERVIZIO_PARTE_COMUNE);
 			
 			fout = new FileOutputStream(tmp);
 			fout.write(zip);
@@ -624,7 +625,7 @@ public class XMLUtils  {
 		File tmp = null;
 		FileOutputStream fout = null; 
 		try{
-			tmp = File.createTempFile("sica", Costanti.ESTENSIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA);
+			tmp = FileSystemUtilities.createTempFile("sica", Costanti.ESTENSIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA);
 			
 			fout = new FileOutputStream(tmp);
 			fout.write(zip);
@@ -1137,7 +1138,7 @@ public class XMLUtils  {
 		File tmp = null;
 		FileOutputStream fout = null; 
 		try{
-			tmp = File.createTempFile("sica", Costanti.ESTENSIONE_ACCORDO_COOPERAZIONE);
+			tmp = FileSystemUtilities.createTempFile("sica", Costanti.ESTENSIONE_ACCORDO_COOPERAZIONE);
 			
 			fout = new FileOutputStream(tmp);
 			fout.write(zip);
@@ -1496,7 +1497,7 @@ public class XMLUtils  {
 		File tmp = null;
 		FileOutputStream fout = null; 
 		try{
-			tmp = File.createTempFile("sica", Costanti.ESTENSIONE_ACCORDO_SERVIZIO_COMPOSTO);
+			tmp = FileSystemUtilities.createTempFile("sica", Costanti.ESTENSIONE_ACCORDO_SERVIZIO_COMPOSTO);
 			
 			fout = new FileOutputStream(tmp);
 			fout.write(zip);
