@@ -1,5 +1,11 @@
 2023-03-07  Andrea Poli <apoli@link.it>
 
+	* [ProtocolloModIPA]	
+	Risolto Bug OP-1554
+	L'autorizzazione puntuale ModI non veniva attuata se la lista degli applicativi autorizzati veniva lasciata vuota.
+	
+2023-03-07  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Aggiunta diagnostica per la negoziazione dei token
 

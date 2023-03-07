@@ -304,9 +304,14 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 								
 				/** Tipi di Autorizzazione definiti */
 				boolean autorizzazionePerRichiedente = false;
-				if(pa.getServiziApplicativiAutorizzati()!=null) {
+				if(pa.getAutorizzazioneToken()!=null) {
+					autorizzazionePerRichiedente = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi());
+				}
+				if(!autorizzazionePerRichiedente && pa.getServiziApplicativiAutorizzati()!=null) {
+					// backward compatibility
 					autorizzazionePerRichiedente = pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0;
 				}
+				
 				boolean autorizzazionePerRuolo = false;
 				boolean checkRuoloRegistro = false;
 				boolean checkRuoloEsterno = false;

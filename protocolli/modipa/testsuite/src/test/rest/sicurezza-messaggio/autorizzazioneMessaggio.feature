@@ -91,6 +91,26 @@ Examples:
 | esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2 | authorization-deny-ApplicativoBlockingIDA01ExampleExternalClient2SoloCertificato.json |
 
 
+@autorizzazioneSicurezzaMessaggioPuntualeVuotoKo
+Scenario Outline: Test autorizzazione sicurezza messaggio puntuale caso ko (applicativo dominio <tipo-test>); nell'erogazione non è censito alcun applicativo
+
+Given url govway_base_path + "/rest/out/<fruitore>/DemoSoggettoErogatore/DemoAutorizzazioneModIRest/v1"
+And path 'puntualeVuoto'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+When method post
+Then status 403
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test | fruitore | username | password | response |
+| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 | authorization-deny-ApplicativoBlockingIDA01ExampleClient2.json |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2 | authorization-deny-ApplicativoBlockingIDA01ExampleExternalClient2SoloCertificato.json |
+
+
+
 @autorizzazioneSicurezzaMessaggioRuoliAllOk
 Scenario Outline: Test autorizzazione sicurezza messaggio ruolo caso ok (applicativo dominio <tipo-test>)
 
