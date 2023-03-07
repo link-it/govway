@@ -272,6 +272,9 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			if(this.isDumpBinarioRichiesta()) {
 				this.requestBout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 						"NullEcho-"+TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
+				
+				this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+				
 				if(this.isSoap && this.sbustamentoSoap){
 					this.logger.debug("Sbustamento...");
 					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,this.requestBout);

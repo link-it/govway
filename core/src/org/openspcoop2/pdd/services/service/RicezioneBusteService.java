@@ -434,7 +434,8 @@ public class RicezioneBusteService  {
 			if(dumpRaw.isActiveDumpRisposta()) {
 				res = new DumpRawConnectorOutMessage(logCore, res, 
 						(context!=null ? context.getPddContext(): null), 
-						openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+						openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository(),
+						dumpRaw);
 			}
 		}catch(Throwable e){
 			String msg = "Inizializzazione di GovWay non correttamente effettuata: DumpRaw";

@@ -265,7 +265,9 @@ public class Dump {
 
 
 	/** ----------------- METODI DI LOGGING  ---------------- */
-
+	public void emitDiagnosticStartDumpBinarioRichiestaIngresso() {
+		emitDiagnosticDumpStart(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO);
+	}
 	public void dumpBinarioRichiestaIngresso(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			URLProtocolContext protocolContext) throws DumpException {
@@ -318,7 +320,9 @@ public class Dump {
 		}
 	}
 	
-
+	public void emitDiagnosticStartDumpBinarioRichiestaUscita() {
+		emitDiagnosticDumpStart(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
+	}
 	public void dumpBinarioRichiestaUscita(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			InfoConnettoreUscita infoConnettore) throws DumpException {
@@ -354,7 +358,9 @@ public class Dump {
 		}
 	}
 
-	
+	public void emitDiagnosticStartDumpBinarioRispostaIngresso() {
+		emitDiagnosticDumpStart(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
+	}
 	public void dumpBinarioRispostaIngresso(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			InfoConnettoreUscita infoConnettore, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
@@ -390,7 +396,9 @@ public class Dump {
 	}
 	
 
-	
+	public void emitDiagnosticStartDumpBinarioRispostaUscita() {
+		emitDiagnosticDumpStart(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);
+	}
 	public void dumpBinarioRispostaUscita(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			URLProtocolContext protocolContext, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
@@ -612,8 +620,39 @@ public class Dump {
 			}
 		}
 		boolean dumpMultipartHeaders = dumpHeaders;
+		if(dumpNormale) {
+			emitDiagnosticDumpStart(tipoMessaggio, location);
+		}
 		
+		String identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio);
 		
+		try {
+			dumpEngine(onlyLogFileTrace_headers, onlyLogFileTrace_body, 
+					tipoMessaggio, msg, msgBytes, messageType,
+					location, transportHeaderParam,
+					dumpHeaders, dumpBody, dumpAttachments, dumpMultipartHeaders, 
+					dumpIntegrationManager,
+					dumpBinario, dumpBinarioAttivatoTramiteRegolaConfigurazione);
+		}finally {
+			if(identificativoDiagnostico!=null && this.emitDiagnosticDump) {
+				try {
+					if(this.transazioneApplicativoServer!=null && this.idPortaApplicativa!=null) {
+						this.msgDiagErroreDump.setTransazioneApplicativoServer(this.transazioneApplicativoServer, this.idPortaApplicativa);
+					}
+					this.msgDiagErroreDump.logPersonalizzato(identificativoDiagnostico+"completato");
+				}catch(Throwable t) {
+					if(this.loggerDump!=null) {
+						this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
+								") con identificativo di transazione ["+this.idTransazione+"]:"+t.getMessage(),t);
+					}
+				}finally {
+					this.msgDiagErroreDump.setTransazioneApplicativoServer(null, null);
+				}
+			}
+		}
+	}
+	
+	private String getIdentificativoDiagnostico(TipoMessaggio tipoMessaggio) {
 		String identificativoDiagnostico = null;
 		if(tipoMessaggio!=null) {
 			switch (tipoMessaggio) {
@@ -637,34 +676,27 @@ public class Dump {
 				break;
 			}
 		}
+		return identificativoDiagnostico;
+	}
+	
+	private void emitDiagnosticDumpStart(TipoMessaggio tipoMessaggio) {
+		String identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio);
+		emitDiagnosticDumpStart(tipoMessaggio, identificativoDiagnostico);
+	}
+	private void emitDiagnosticDumpStart(TipoMessaggio tipoMessaggio, String identificativoDiagnostico) {
 		if(identificativoDiagnostico!=null && this.emitDiagnosticDump) {
 			try {
+				if(this.transazioneApplicativoServer!=null && this.idPortaApplicativa!=null) {
+					this.msgDiagErroreDump.setTransazioneApplicativoServer(this.transazioneApplicativoServer, this.idPortaApplicativa);
+				}
 				this.msgDiagErroreDump.logPersonalizzato(identificativoDiagnostico+"inCorso");
 			}catch(Throwable t) {
 				if(this.loggerDump!=null) {
 					this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
 							") con identificativo di transazione ["+this.idTransazione+"]:"+t.getMessage(),t);
 				}
-			}
-		}
-		
-		try {
-			dumpEngine(onlyLogFileTrace_headers, onlyLogFileTrace_body, 
-					tipoMessaggio, msg, msgBytes, messageType,
-					location, transportHeaderParam,
-					dumpHeaders, dumpBody, dumpAttachments, dumpMultipartHeaders, 
-					dumpIntegrationManager,
-					dumpBinario, dumpBinarioAttivatoTramiteRegolaConfigurazione);
-		}finally {
-			if(identificativoDiagnostico!=null && this.emitDiagnosticDump) {
-				try {
-					this.msgDiagErroreDump.logPersonalizzato(identificativoDiagnostico+"completato");
-				}catch(Throwable t) {
-					if(this.loggerDump!=null) {
-						this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
-								") con identificativo di transazione ["+this.idTransazione+"]:"+t.getMessage(),t);
-					}
-				}
+			}finally {
+				this.msgDiagErroreDump.setTransazioneApplicativoServer(null, null);
 			}
 		}
 	}

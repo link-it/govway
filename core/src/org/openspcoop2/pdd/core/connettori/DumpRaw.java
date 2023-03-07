@@ -218,7 +218,15 @@ public class DumpRaw {
 		}	
 	}
 		
-
+	public void emitDiagnosticStartDumpBinarioRichiestaUscita() {
+		if(!isActiveDumpDatabaseRichiesta()) {
+			return;
+		}
+		
+		if(this.dump!=null) {
+			this.dump.emitDiagnosticStartDumpBinarioRichiestaUscita();
+		}
+	}
 	public void dumpRequest(DumpByteArrayOutputStream content, MessageType messageType, InfoConnettoreUscita infoConnettoreUscita) throws DumpException {
 		
 		if(!isActiveDumpDatabaseRichiesta()) {
@@ -234,6 +242,15 @@ public class DumpRaw {
 		}
 	}
 	
+	public void emitDiagnosticStartDumpBinarioRispostaIngresso() {
+		if(!isActiveDumpDatabaseRisposta()) {
+			return;
+		}
+		
+		if(this.dump!=null) {
+			this.dump.emitDiagnosticStartDumpBinarioRispostaIngresso();
+		}
+	}
 	public void dumpResponse(DumpByteArrayOutputStream content, MessageType messageType, InfoConnettoreUscita infoConnettoreUscita, Map<String, List<String>> trasportoRisposta) throws DumpException {
 		
 		if(!isActiveDumpDatabaseRisposta()) {

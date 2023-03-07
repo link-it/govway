@@ -558,6 +558,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
+						this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+						
 						if(this.isSoap && this.sbustamentoSoap){
 							if(this.debug)
 								this.logger.debug("Sbustamento...");
@@ -609,6 +611,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			else {
 				if(this.isDumpBinarioRichiesta()) {
 					// devo registrare almeno gli header HTTP
+					this.emitDiagnosticStartDumpBinarioRichiestaUscita();
 					this.dumpBinarioRichiestaUscita(null, null, null, this.location, propertiesTrasportoDebug);
 				}
 			}

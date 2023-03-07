@@ -186,6 +186,9 @@ public class ConnettoreNULL extends ConnettoreBase {
 				try {
 					bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
+					
+					this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+					
 					if(this.isSoap && this.sbustamentoSoap){
 						this.logger.debug("Sbustamento...");
 						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);

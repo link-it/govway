@@ -1190,6 +1190,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     private InfoConnettoreUscita infoConnettoreUscita = null;
+    protected void emitDiagnosticStartDumpBinarioRichiestaUscita() {
+    	if(this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRichiesta()) {
+			this.dumpRaw.emitDiagnosticStartDumpBinarioRichiestaUscita();
+    	}
+    }
     protected void dumpBinarioRichiestaUscita(DumpByteArrayOutputStream bout, MessageType messageType, String contentTypeRichiesta,String location, Map<String, List<String>> trasporto) throws DumpException {
     	if(this.debug){
     		String content = null;
@@ -1206,6 +1211,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			this.infoConnettoreUscita.setLocation(location);
 			this.infoConnettoreUscita.setHeaders(trasporto);
 	    	this.dumpRaw.dumpRequest(bout, messageType, this.infoConnettoreUscita);
+    	}
+    }
+    protected void emitDiagnosticStartDumpBinarioRispostaIngresso() {
+    	if(this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRisposta()) {
+			this.dumpRaw.emitDiagnosticStartDumpBinarioRispostaIngresso();
     	}
     }
     protected void dumpBinarioRispostaIngresso(DumpByteArrayOutputStream raw, MessageType messageType, Map<String, List<String>> trasportoRisposta) throws DumpException {

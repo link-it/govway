@@ -194,6 +194,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
 			try {
+				this.emitDiagnosticStartDumpBinarioRispostaIngresso();
+				
 //				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
 //				int readByte = 0;
 //				while((readByte = this.isResponse.read(readB))!= -1){
@@ -236,6 +238,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			}
 			
 			// devo registrare almeno gli header HTTP
+			this.emitDiagnosticStartDumpBinarioRispostaIngresso();
 			this.dumpBinarioRispostaIngresso(null, null, trasporto);
 		}
 		

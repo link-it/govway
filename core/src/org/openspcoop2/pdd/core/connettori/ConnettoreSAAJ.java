@@ -358,6 +358,8 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
+						this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+						
 						this.requestMsg.writeTo(bout, false);
 						bout.flush();
 						bout.close();
@@ -465,6 +467,8 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
 					try {
+						this.emitDiagnosticStartDumpBinarioRispostaIngresso();
+						
 						this.responseMsg.writeTo(bout, false);
 						bout.flush();
 						bout.close();
@@ -497,6 +501,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 					}
 					
 					// devo registrare almeno gli header HTTP
+					this.emitDiagnosticStartDumpBinarioRispostaIngresso();
 					this.dumpBinarioRispostaIngresso(null, null, this.propertiesTrasportoRisposta);
 				}
 			}

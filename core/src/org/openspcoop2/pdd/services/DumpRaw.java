@@ -351,6 +351,10 @@ public class DumpRaw {
 			this.log.error("Request.getURLProtocolContext error: "+t.getMessage(),t);
 		}
 		
+		if(this.dump!=null && (this.isRegistrazioneDatabaseRichiesta() || this.onlyLogFileTraceRichiesta())) {
+			this.dump.emitDiagnosticStartDumpBinarioRichiestaIngresso();
+		}
+		
 		try{
 			// forzo la scrittura nel buffer dell'oggetto DumpRawConnectorInMessage
 			if(buildOpenSPCoopMessage){
@@ -580,6 +584,12 @@ public class DumpRaw {
 		this.logDump.info(this.bfRequest.toString());
 				
 	}
+	
+	public void emitDiagnosticStartDumpBinarioRispostaUscita() {
+		if(this.dump!=null && (this.isRegistrazioneDatabaseRisposta() || this.onlyLogFileTraceRisposta())) {
+			this.dump.emitDiagnosticStartDumpBinarioRispostaUscita();
+		}
+	} 
 	
 	public void serializeResponse(DumpRawConnectorOutMessage res) {
 		

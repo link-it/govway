@@ -204,6 +204,8 @@ public class ConnettoreJMS extends ConnettoreBase {
 			}
 			if(this.isDumpBinarioRichiesta()) {
 				try{
+					this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+					
 					MessageType requestMessageType = this.requestMsg.getMessageType();
 					String contentTypeRichiesta = this.requestMsg.getContentType();
 					DumpByteArrayOutputStream bout = DumpByteArrayOutputStream.newInstance(consegna);
