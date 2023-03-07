@@ -43,13 +43,13 @@ public class HttpBodyParameters {
 		
 			case OPTIONS:
 				// If the OPTIONS request includes an entity-body then the media type MUST be indicated by a Content-Type field. 
-				if(contentType!=null && !"".equals(contentType)){
-					//this.doOutput = true; // non supportato da HttpUrlConnection, throw 'HTTP method OPTIONS doesn't support output'
-					this.doOutput = false;
+				// non supportato da HttpUrlConnection, throw 'HTTP method OPTIONS doesn't support output'
+				/*if(contentType!=null && !"".equals(contentType)){
+					this.doOutput = true;
 				}
-				else{
-					this.doOutput = false;
-				}
+				else{*/
+				this.doOutput = false;
+				//}
 				// body is not defined by this specification, but might be defined by future extensions to HTTP.
 				this.doInput = true;
 				break;

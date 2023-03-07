@@ -288,7 +288,31 @@ public class DriverUsersDB {
 	}
 	
 	
-	
+	private Connection getConnection() throws Exception {
+		Connection connectionDB = null;
+		if(this.connection!=null)
+			connectionDB = this.connection;
+		else{
+			connectionDB = this.datasource.getConnection();
+		}
+		checkConnection(connectionDB);
+		return connectionDB;
+	}
+	private void checkConnection(Connection connectionDB) throws Exception {
+		if(connectionDB==null)
+			throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+	}
+	private void releaseConnection(Connection connectionDB) {
+		try{
+			if(this.connection==null) {
+				if(connectionDB!=null) {
+					connectionDB.close();
+				}
+			}
+		}catch(Exception eClose){
+			// close
+		}
+	}
 
 
 	/**
@@ -305,13 +329,7 @@ public class DriverUsersDB {
 		Connection connectionDB = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			return getUser(connectionDB, login);
 			
@@ -320,12 +338,7 @@ public class DriverUsersDB {
 		} catch (Exception ex) {
 			throw new DriverUsersDBException("[DriverUsersDB::getUser] Exception: " + ex.getMessage(),ex);
 		} finally {
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
 		}
 	}
 	
@@ -557,13 +570,7 @@ public class DriverUsersDB {
 
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
@@ -589,17 +596,21 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::getUser] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				rs.close();
-				stm.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
 			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -626,13 +637,7 @@ public class DriverUsersDB {
 
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			if (!search.equals("")) {
 				//query con search
@@ -695,19 +700,21 @@ public class DriverUsersDB {
 
 			//Chiudo statement and resultset
 			try {
-				if (risultato != null)
+				if(risultato!=null) {
 					risultato.close();
-				if (stmt != null)
-					stmt.close();
+				}
 			} catch (Exception e) {
-				//ignore
+				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
+			try {
+				if(stmt!=null) {
+					stmt.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
 			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 
@@ -720,13 +727,7 @@ public class DriverUsersDB {
 
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 						
 			boolean esiste = false;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
@@ -749,20 +750,22 @@ public class DriverUsersDB {
 
 			//Chiudo statement and resultset
 			try {
-				if (rs != null)
+				if(rs!=null) {
 					rs.close();
-				if (stm != null)
-					stm.close();
+				}
 			} catch (Exception e) {
-				//ignore
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
 			}
 			
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 
@@ -775,13 +778,7 @@ public class DriverUsersDB {
 
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			List<String> userWithType = new ArrayList<String>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
@@ -804,20 +801,22 @@ public class DriverUsersDB {
 
 			//Chiudo statement and resultset
 			try {
-				if (rs != null)
+				if(rs!=null) {
 					rs.close();
-				if (stm != null)
-					stm.close();
+				}
 			} catch (Exception e) {
-				//ignore
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
 			}
 			
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -834,13 +833,7 @@ public class DriverUsersDB {
 
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			List<String> userWithType = new ArrayList<String>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
@@ -875,20 +868,22 @@ public class DriverUsersDB {
 
 			//Chiudo statement and resultset
 			try {
-				if (rs != null)
+				if(rs!=null) {
 					rs.close();
-				if (stm != null)
-					stm.close();
+				}
 			} catch (Exception e) {
-				//ignore
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
 			}
 			
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 
@@ -908,13 +903,7 @@ public class DriverUsersDB {
 
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addInsertTable(CostantiDB.USERS);
@@ -1009,13 +998,7 @@ public class DriverUsersDB {
 
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
@@ -1083,12 +1066,8 @@ public class DriverUsersDB {
 				//ignore
 			}
 			
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -1096,7 +1075,6 @@ public class DriverUsersDB {
 		
 		Connection connectionDB = null;
 		PreparedStatement stm = null;
-		ResultSet rs = null;
 		String sqlQuery = "";
 
 		if (user == null)
@@ -1108,13 +1086,7 @@ public class DriverUsersDB {
 
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			long idUser = this._getIdUser(connectionDB, user);
 			
@@ -1134,24 +1106,14 @@ public class DriverUsersDB {
 
 			//Chiudo statement and resultset
 			try {
-				if (rs != null)
-					rs.close();
-			} catch (Exception e) {
-				//ignore
-			}
-			try {
 				if (stm != null)
 					stm.close();
 			} catch (Exception e) {
 				//ignore
 			}
 			
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 
@@ -1421,13 +1383,7 @@ public class DriverUsersDB {
 
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			ISQLQueryObject sqlQueryObjectSoggetti = null;
 			if (!search.equals("")) {
@@ -1593,20 +1549,22 @@ public class DriverUsersDB {
 
 			//Chiudo statement and resultset
 			try {
-				if (risultato != null)
+				if(risultato!=null) {
 					risultato.close();
-				if (stmt != null)
-					stmt.close();
+				}
 			} catch (Exception e) {
-				//ignore
+				// ignore exception
+			}
+			try {
+				if(stmt!=null) {
+					stmt.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
 			}
 			
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -1651,13 +1609,7 @@ public class DriverUsersDB {
 		try {
 			
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			ISQLQueryObject sqlQueryObjectPdd = null;
 			if(pddTipologia!=null && PddTipologia.ESTERNO.equals(pddTipologia)) {
@@ -1784,20 +1736,22 @@ public class DriverUsersDB {
 
 			//Chiudo statement and resultset
 			try {
-				if (risultato != null)
+				if(risultato!=null) {
 					risultato.close();
-				if (stmt != null)
-					stmt.close();
+				}
 			} catch (Exception e) {
-				//ignore
+				// ignore exception
+			}
+			try {
+				if(stmt!=null) {
+					stmt.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
 			}
 			
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -1819,13 +1773,7 @@ public class DriverUsersDB {
 		Stato statoObject = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
@@ -1858,21 +1806,21 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::getStato] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
 			try {
-				stm.close();
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -1891,13 +1839,7 @@ public class DriverUsersDB {
 		PreparedStatement stm = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
@@ -1917,16 +1859,14 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::saveProtocolloUtilizzatoPddConsole] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				stm.close();
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -1945,13 +1885,7 @@ public class DriverUsersDB {
 		PreparedStatement stm = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
@@ -1971,16 +1905,14 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::saveProtocolloUtilizzatoPddMonitor] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				stm.close();
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -1998,13 +1930,7 @@ public class DriverUsersDB {
 		Connection connectionDB = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			saveSoggettoUtilizzatoPddConsole(connectionDB, login, soggetto);
 
@@ -2013,12 +1939,8 @@ public class DriverUsersDB {
 		} catch (Exception ex) {
 			throw new DriverUsersDBException("[DriverUsersDB::saveSoggettoUtilizzatoPddConsole] Exception: " + ex.getMessage(),ex);
 		} finally {
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -2046,7 +1968,9 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::saveSoggettoUtilizzatoPddConsole] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				stm.close();
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
@@ -2067,13 +1991,7 @@ public class DriverUsersDB {
 		Connection connectionDB = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			saveSoggettoUtilizzatoPddMonitor(connectionDB, login, soggetto);
 
@@ -2082,12 +2000,8 @@ public class DriverUsersDB {
 		} catch (Exception ex) {
 			throw new DriverUsersDBException("[DriverUsersDB::saveSoggettoUtilizzatoPddMonitor] Exception: " + ex.getMessage(),ex);
 		} finally {
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -2115,7 +2029,9 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::saveSoggettoUtilizzatoPddMonitor] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				stm.close();
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
@@ -2138,13 +2054,7 @@ public class DriverUsersDB {
 		ResultSet rs = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			List<String> users = new ArrayList<>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
@@ -2195,21 +2105,21 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::saveSoggettoUtilizzatoPddMonitor] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
 			try {
-				stm.close();
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -2230,13 +2140,7 @@ public class DriverUsersDB {
 		ResultSet rs = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addSelectField("id");
@@ -2290,21 +2194,21 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::saveStato] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
 			try {
-				stm.close();
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -2321,13 +2225,7 @@ public class DriverUsersDB {
 		PreparedStatement stm = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
@@ -2416,16 +2314,14 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::savePassword] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				stm.close();
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -2444,13 +2340,7 @@ public class DriverUsersDB {
 		ResultSet rs = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			List<String> tables = new ArrayList<String>();
 			if(cooperazione) {
@@ -2533,21 +2423,21 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::countUser] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
 			try {
-				stm.close();
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 	
@@ -2565,13 +2455,7 @@ public class DriverUsersDB {
 		PreparedStatement stm = null;
 		try {
 			// Get Connection
-			if(this.connection!=null)
-				connectionDB = this.connection;
-			else{
-				connectionDB = this.datasource.getConnection();
-				if(connectionDB==null)
-					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+			connectionDB = getConnection();
 			
 			List<String> tables = new ArrayList<String>();
 			if(cooperazione) {
@@ -2653,16 +2537,13 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::updateUser] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
-				stm.close();
+				if(stm!=null) {
+					stm.close();
+				}
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){
-				// close
-			}
+			releaseConnection(connectionDB);
 		}
 	}
 }

@@ -96,7 +96,13 @@
 				<xsd:element minOccurs="0" name="data-ingresso-richiesta" type="xsd:dateTime">
 					
 				</xsd:element>
+				<xsd:element minOccurs="0" name="data-ingresso-richiesta-stream" type="xsd:dateTime">
+					
+				</xsd:element>
 				<xsd:element minOccurs="0" name="data-uscita-richiesta" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-uscita-richiesta-stream" type="xsd:dateTime">
 					
 				</xsd:element>
 				<xsd:element minOccurs="0" name="data-accettazione-risposta" type="xsd:dateTime">
@@ -105,7 +111,13 @@
 				<xsd:element minOccurs="0" name="data-ingresso-risposta" type="xsd:dateTime">
 					
 				</xsd:element>
+				<xsd:element minOccurs="0" name="data-ingresso-risposta-stream" type="xsd:dateTime">
+					
+				</xsd:element>
 				<xsd:element minOccurs="0" name="data-uscita-risposta" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-uscita-risposta-stream" type="xsd:dateTime">
 					
 				</xsd:element>
 			    
@@ -468,10 +480,16 @@
 				<xsd:element minOccurs="0" name="data-uscita-richiesta" type="xsd:dateTime">
 					
 				</xsd:element>
+				<xsd:element minOccurs="0" name="data-uscita-richiesta-stream" type="xsd:dateTime">
+					
+				</xsd:element>
 				<xsd:element minOccurs="0" name="data-accettazione-risposta" type="xsd:dateTime">
 					
 				</xsd:element>
 				<xsd:element minOccurs="0" name="data-ingresso-risposta" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-ingresso-risposta-stream" type="xsd:dateTime">
 					
 				</xsd:element>
 				

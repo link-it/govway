@@ -27,14 +27,17 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
@@ -123,7 +126,7 @@ public class AttributeAuthorityProvider implements IProvider {
 		String url = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_URL);
 		InputValidationUtils.validateTextAreaInput(url, "Endpoint - URL");
 		try{
-			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
+			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url, true);
 		}catch(Exception e){
 			throw new ProviderValidationException("La URL fornita non è valida: "+e.getMessage());
 		}	
@@ -247,10 +250,32 @@ public class AttributeAuthorityProvider implements IProvider {
 				InputValidationUtils.validateTextAreaInput(crl, "Risposta - TrustStore - CRL File(s)");
 			}
 		}
+		
+		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_RESPONSE_TYPE_VALUE_CUSTOM.equals(mode) ) {
+			String pluginType = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_RESPONSE_PARSER_PLUGIN_TYPE);
+			if(pluginType!=null && StringUtils.isNotEmpty(pluginType) && CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginType)) {
+				String className = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_RESPONSE_PARSER_CLASS_NAME);
+				if(CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+					throw new ProviderValidationException("Deve essere selezionato un plugin per la risposta");	
+				}
+				else {
+					if(className==null || "".equals(className)) {
+						throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims della risposta");
+					}
+					if(className.contains(" ")) {
+						throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims della risposta");
+					}
+				}
+			}
+		}
 	}
 
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
+		return this.getValues(id, null);
+	}
+	@Override
+	public List<String> getValues(String id, ExternalResources externalResources) throws ProviderException{
 		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_SIGNATURE_ALGORITHM.equals(id)) {
 			List<String> l = new ArrayList<>();
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.values();
@@ -285,11 +310,18 @@ public class AttributeAuthorityProvider implements IProvider {
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getValues();
 		}
+		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.ATTRIBUTE_AUTHORITY);
+		}
 		return null;
 	}
 
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
+		return this.getLabels(id, null);
+	}
+	@Override
+	public List<String> getLabels(String id, ExternalResources externalResources) throws ProviderException{
 		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_SIGNATURE_ALGORITHM.equals(id)) {
 			List<String> l = this.getValues(id);
 			List<String> labels = new ArrayList<>();
@@ -319,12 +351,22 @@ public class AttributeAuthorityProvider implements IProvider {
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getLabels();
 		}
+		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.ATTRIBUTE_AUTHORITY);
+		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
+	}
+
+	private static boolean secret = false;
+	public static boolean isSecret() {
+		return secret;
+	}
+	public static void setSecret(boolean secret) {
+		AttributeAuthorityProvider.secret = secret;
 	}
 
 	private List<String> getStoreType(String id,boolean value){
 		boolean trustStore = true;
-		boolean secret = false;
 		List<String> l = new ArrayList<String>();
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_JKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JKS_LABEL);
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE : SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL);
@@ -382,6 +424,10 @@ public class AttributeAuthorityProvider implements IProvider {
 	
 	@Override
 	public String getDefault(String id) throws ProviderException {
+		return getDefault(id, null);
+	}
+	@Override
+	public String getDefault(String id, ExternalResources externalResources) throws ProviderException {
 		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_SIGNATURE_ALGORITHM.equals(id)) {
 			return org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.RS256.name();
 		}
@@ -398,7 +444,8 @@ public class AttributeAuthorityProvider implements IProvider {
 	public ProviderInfo getProviderInfo(String id) throws ProviderException{
 		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_ENDPOINT_URL.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_USERNAME.equals(id) ||
-				//org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_AUTENTICAZIONE_ENDPOINT_BEARER_TOKEN.equals(id) ||
+				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_PASSWORD.equals(id) ||
+				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_AUTENTICAZIONE_ENDPOINT_BEARER_TOKEN.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_ISSUER.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_SUBJECT.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_AUDIENCE.equals(id) ||
@@ -440,7 +487,13 @@ public class AttributeAuthorityProvider implements IProvider {
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_OBJECT_VALORI);
 			return pInfo;
 		}
-		
+		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CLASSNAME.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA);
+			pInfo.setListBody(new ArrayList<>());
+			pInfo.getListBody().add(IRetrieveAttributeAuthorityResponseParser.class.getName());
+			return pInfo;
+		}
 		
 		
 		return null;
@@ -448,6 +501,10 @@ public class AttributeAuthorityProvider implements IProvider {
 	
 	@Override
 	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		return dynamicUpdate(items, mapNameValue, item, actualValue, null);
+	}
+	@Override
+	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
 	
 		if(Costanti.ID_AA_JWS_TRUSTSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_AA_JWS_KEYSTORE_FILE.equals(item.getName()) ||
@@ -500,6 +557,14 @@ public class AttributeAuthorityProvider implements IProvider {
 				item.setValue("");
 				item.setType(ItemType.HIDDEN);
 			}
+		}
+		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE.equals(item.getName())) {
+			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.ATTRIBUTE_AUTHORITY, item, actualValue);
+		}
+		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CLASSNAME.equals(item.getName())) {
+			return TokenUtilities.dynamicUpdateTokenPluginClassName(externalResources, TipoPlugin.ATTRIBUTE_AUTHORITY, 
+					items, mapNameValue, item, 
+					org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE, actualValue);			
 		}
 		
 		return actualValue;

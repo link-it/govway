@@ -44,6 +44,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -204,12 +205,24 @@ public class EncryptPartialMessageProcessor implements Processor {
 	            	blockSize = 8;
 	            }
 	            //System.out.println("cipher (Algoritmo["+cipher.getAlgorithm()+"]) blksize: " + blockSize);
-				cipher.init(Cipher.WRAP_MODE, secConfigOpenSPCoop.getSymmetricKey(encReq.getCertAlias()), new IvParameterSpec(new byte[blockSize]));
+					            
+	            SecureRandom randomSecureRandom = SecureRandom.getInstance("SHA1PRNG");
+	            byte[] iv = new byte[blockSize];
+	            randomSecureRandom.nextBytes(iv);
+	            IvParameterSpec ivParams = new IvParameterSpec(iv);
+	            
+	            //cipher.init(Cipher.WRAP_MODE, secConfigOpenSPCoop.getSymmetricKey(encReq.getCertAlias()), new IvParameterSpec(new byte[blockSize]));
+	            cipher.init(Cipher.WRAP_MODE, secConfigOpenSPCoop.getSymmetricKey(encReq.getCertAlias()), ivParams);
+	            
 				cipherValue = Base64Utilities.encodeAsString(cipher.wrap(encKeyObject));
 			}
 			else{
 
 				cipher.init(Cipher.ENCRYPT_MODE, secConfig.getTrustedCertificatesByAlias(encReq.getCertAlias())[0]);
+				
+				if(encKey==null) {
+					throw new SecurityFailureException("EncKey is null");
+				}
 				
 				if (cipher.getBlockSize() > 0 && cipher.getBlockSize() < encKey.length) {
 					throw new SecurityFailureException("Public key algorithm too weak to encrypt symmetric key " +
@@ -220,7 +233,7 @@ public class EncryptPartialMessageProcessor implements Processor {
 			}
 
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new SecurityFailureException("Error preparing cipher for encryption : " + encReq.getEncryptionAlgoURI());
 		} catch (Exception e) {
 			throw new SecurityFailureException("Failed to encrypt session key", e);

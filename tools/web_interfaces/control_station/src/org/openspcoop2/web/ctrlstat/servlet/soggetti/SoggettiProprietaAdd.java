@@ -76,7 +76,7 @@ public final class SoggettiProprietaAdd extends Action {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
 			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
-			int idSogg = Integer.parseInt(id);
+			long idSoggettoLong = Long.valueOf(id);
 			String nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 			String tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
 			
@@ -95,12 +95,14 @@ public final class SoggettiProprietaAdd extends Action {
 			Soggetto soggettoRegistry = null;
 			org.openspcoop2.core.config.Soggetto soggettoConfig = null;
 			
-			if(soggettiCore.isRegistroServiziLocale()){
-				soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);// core.getSoggettoRegistro(new
-				// IDSoggetto(tipoprov,nomeprov));
+			//if(soggettiCore.isRegistroServiziLocale()){
+			soggettoRegistry = soggettiCore.getSoggettoRegistro(idSoggettoLong);// core.getSoggettoRegistro(new
+			// IDSoggetto(tipoprov,nomeprov));
+			if(soggettoRegistry==null) {
+				throw new Exception("Soggetto non trovato con id '"+idSoggettoLong+"'");
 			}
-
-			soggettoConfig = soggettiCore.getSoggetto(idSogg);// core.getSoggetto(new
+			
+			soggettoConfig = soggettiCore.getSoggetto(idSoggettoLong);// core.getSoggetto(new
 			// IDSoggetto(tipoprov,nomeprov));
 			
 			if(soggettiCore.isRegistroServiziLocale()){

@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.utils.service.beans;
 
+import org.joda.time.DateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,7 +30,7 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtDettaglioRichiesta", propOrder =
-    { "contenutiIngresso", "contenutiUscita", "duplicatiMessaggio", "traccia"
+    { "contenutiIngresso", "contenutiUscita", "duplicatiMessaggio", "traccia", "dataRicezioneAcquisita", "dataConsegnaEffettuata"
 })
 
 
@@ -50,6 +51,14 @@ public class TransazioneExtDettaglioRichiesta extends TransazioneExtDettaglioRic
   
   @Schema(description = "")
   private String traccia = null;
+  @XmlElement(name="data_ricezione_acquisita")
+  
+  @Schema(description = "")
+  private DateTime dataRicezioneAcquisita = null;
+  @XmlElement(name="data_consegna_effettuata")
+  
+  @Schema(description = "")
+  private DateTime dataConsegnaEffettuata = null;
  /**
    * Get contenutiIngresso
    * @return contenutiIngresso
@@ -126,6 +135,44 @@ public class TransazioneExtDettaglioRichiesta extends TransazioneExtDettaglioRic
     return this;
   }
 
+ /**
+   * Get dataRicezioneAcquisita
+   * @return dataRicezioneAcquisita
+  **/
+  @JsonProperty("data_ricezione_acquisita")
+  @Valid
+  public DateTime getDataRicezioneAcquisita() {
+    return this.dataRicezioneAcquisita;
+  }
+
+  public void setDataRicezioneAcquisita(DateTime dataRicezioneAcquisita) {
+    this.dataRicezioneAcquisita = dataRicezioneAcquisita;
+  }
+
+  public TransazioneExtDettaglioRichiesta dataRicezioneAcquisita(DateTime dataRicezioneAcquisita) {
+    this.dataRicezioneAcquisita = dataRicezioneAcquisita;
+    return this;
+  }
+
+ /**
+   * Get dataConsegnaEffettuata
+   * @return dataConsegnaEffettuata
+  **/
+  @JsonProperty("data_consegna_effettuata")
+  @Valid
+  public DateTime getDataConsegnaEffettuata() {
+    return this.dataConsegnaEffettuata;
+  }
+
+  public void setDataConsegnaEffettuata(DateTime dataConsegnaEffettuata) {
+    this.dataConsegnaEffettuata = dataConsegnaEffettuata;
+  }
+
+  public TransazioneExtDettaglioRichiesta dataConsegnaEffettuata(DateTime dataConsegnaEffettuata) {
+    this.dataConsegnaEffettuata = dataConsegnaEffettuata;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -136,6 +183,8 @@ public class TransazioneExtDettaglioRichiesta extends TransazioneExtDettaglioRic
     sb.append("    contenutiUscita: ").append(TransazioneExtDettaglioRichiesta.toIndentedString(this.contenutiUscita)).append("\n");
     sb.append("    duplicatiMessaggio: ").append(TransazioneExtDettaglioRichiesta.toIndentedString(this.duplicatiMessaggio)).append("\n");
     sb.append("    traccia: ").append(TransazioneExtDettaglioRichiesta.toIndentedString(this.traccia)).append("\n");
+    sb.append("    dataRicezioneAcquisita: ").append(TransazioneExtDettaglioRichiesta.toIndentedString(this.dataRicezioneAcquisita)).append("\n");
+    sb.append("    dataConsegnaEffettuata: ").append(TransazioneExtDettaglioRichiesta.toIndentedString(this.dataConsegnaEffettuata)).append("\n");
     sb.append("}");
     return sb.toString();
   }

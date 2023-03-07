@@ -103,7 +103,9 @@
 	</path>
 	<property name="src_testsuite" location="src" />
 	<property name="build_testsuite" location="build" />
+	<property name="build_plugin" location="build_plugin" />
 	<property name="log_testsuite" location="log" />
+	<property name="dist_testsuite" location="dist" />
 
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean">
@@ -115,12 +117,35 @@
 	<target name="init">
 		<mkdir dir="${build_testsuite}"/>
 	</target>
+	<target name="clean_plugin">
+		<delete dir="${build_plugin}"/>
+		<delete dir="${dist_testsuite}"/>
+	</target>
+	<target name="init_plugin">
+		<mkdir dir="${build_plugin}"/>
+		<mkdir dir="${dist_testsuite}"/>
+	</target>
+
+	<!-- Compilazione del plugin -->
+	<target name="plugin" depends="clean_plugin,init_plugin" description="produce l'archivio jar per i plugin">
+		<!-- Compile the java code  -->
+		<javac includeantruntime="false" destdir="${build_plugin}" debug="${debug}">
+			<src path="${src_testsuite}/org/openspcoop2/core/protocolli/trasparente/testsuite/plugin/classes"/>
+			<classpath>
+				<path refid="karate_testsuite"/>
+			</classpath>
+		</javac>
+		<jar jarfile="${dist_testsuite}/govway_testsuite_plugins.jar">
+			<zipfileset dir="${build_plugin}" />
+		</jar>
+	</target>
 
 	<!-- Compilazione del Client -->
 	<target name="build" depends="clean,init" description="compila">
 		<!-- Compile the java code  -->
 		<javac includeantruntime="false" destdir="${build_testsuite}" debug="${debug}">
 			<src path="${src_testsuite}"/>
+			<exclude name="org/openspcoop2/core/protocolli/trasparente/testsuite/plugin/classes/*" />
 			<classpath>
 				<path refid="karate_testsuite"/>
 			</classpath>

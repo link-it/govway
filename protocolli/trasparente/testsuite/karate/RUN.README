@@ -101,6 +101,7 @@
 	Impostare in <.../distrib/properties/config_loader.cli.properties>
 
 		policy.enable=true
+		plugin.enable=true
 		configurazioneGenerale.enable=true
 
 - Per variare il ritardo con cui vengono scritti gli eventi sul database:
@@ -439,12 +440,16 @@ eseguire lo script in pkcs11
 - 'x509', verifica l'utilizzo di chiavi private e certificati presenti in HSM
    ant run_test -Ddelete=false -Dload=false -Dpackage=pkcs11.x509
 
+Di seguito vengono descritti i test del package 'plugin':
+
+- 'test', verifica l'utilizzo dei plugins su tutti i componenti "pluggabili"
+   ant run_test -Ddelete=false -Dload=false -Dpackage=plugin.test
+
 Di seguito vengono descritti i test del package 'other':
 
 - 'api_grandi', verifica l'utilizzo di API REST con un numero elevato di risorse
-   ant run_test -Ddelete=false -Dload=false -Dpackage=other.api_grandi -Dtest=RestTest
+   ant run_test -Ddelete=false -Dload=false -Dpackage=other.api_grandi
 
 - 'ocsp', verifica l'utilizzo del servizio OCSP
    ant run_test -Ddelete=false -Dload=false -Dpackage=other.ocsp
-
 

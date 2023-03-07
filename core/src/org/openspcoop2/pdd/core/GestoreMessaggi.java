@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.core;
 
 import java.io.ByteArrayOutputStream;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -187,7 +188,7 @@ public class GestoreMessaggi  {
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {
@@ -1813,14 +1814,15 @@ public class GestoreMessaggi  {
 			pstmt.execute();
 		}catch (Exception e){		
 			String errorMsg = "GESTORE_MESSAGGI, Errore di aggiornamento errore processamento messaggio "+this.tipo+"/"+this.idBusta+" "+e.getMessage();		
+			this.log.error(errorMsg,e);
+			throw new GestoreMessaggiException(errorMsg,e);
+		}finally {
 			try{
 				if(pstmt != null)
 					pstmt.close();
 			} catch(Exception er) { 
 				// close
 			}
-			this.log.error(errorMsg,e);
-			throw new GestoreMessaggiException(errorMsg,e);
 		}
 	}
 
@@ -7868,7 +7870,8 @@ public class GestoreMessaggi  {
 			try{
 				GestoreMessaggi.acquireLock(semaphoreDB, connectionDB, timerLock, 
 						this.msgDiag, causa, attesaAttivaLock, checkIntervalLock);
-			}catch(Exception e){
+			}
+			catch(Exception e){
 				throw new GestoreMessaggiException(e.getMessage(),e);
 			}
 
@@ -8405,12 +8408,12 @@ public class GestoreMessaggi  {
 	private static final boolean LOCK_FAIR_FIFO = true;
 	private static java.util.concurrent.Semaphore LOCK_SEMAPHORE = new java.util.concurrent.Semaphore(LOCK_NUMBER_OF_PERMITS, LOCK_FAIR_FIFO);
 	public static void acquireLock(GestoreMessaggi gestoreMessaggi, TimerLock timerLock,
-			MsgDiagnostico msgDiag,String causa,long attesaAttivaLock,int checkIntervalLock) throws InterruptedException, UtilsException, TimerLockNotAvailableException{
+			MsgDiagnostico msgDiag,String causa,long attesaAttivaLock,int checkIntervalLock) throws UtilsException, TimerLockNotAvailableException{
 		acquireLock(gestoreMessaggi.getSemaphoreByInstance(timerLock.getIdLock()), gestoreMessaggi.getConnectionByInstance(), timerLock, 
 				msgDiag, causa, attesaAttivaLock, checkIntervalLock);
 	}
 	public static void acquireLock(Semaphore semaphoreDB, Connection connectionDB, TimerLock timerLock,
-			MsgDiagnostico msgDiag,String causa,long attesaAttivaLock,int checkIntervalLock) throws InterruptedException, UtilsException, TimerLockNotAvailableException{
+			MsgDiagnostico msgDiag,String causa,long attesaAttivaLock,int checkIntervalLock) throws UtilsException, TimerLockNotAvailableException{
 
 		msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, causa);
 		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneLock.inCorso");
@@ -8483,9 +8486,15 @@ public class GestoreMessaggi  {
 		
 					If the specified waiting time elapses then the value false is returned. If the time is less than or equal to zero, the method will not wait at all. 
 				 */
-				boolean lockAcquired = LOCK_SEMAPHORE.tryAcquire(attesaAttivaLock, TimeUnit.MILLISECONDS);
+				boolean lockAcquired = false;
+				try {
+					lockAcquired = LOCK_SEMAPHORE.tryAcquire(attesaAttivaLock, TimeUnit.MILLISECONDS);
+				}catch(InterruptedException ie) {
+				    Thread.currentThread().interrupt();
+				    throw new UtilsException("Timeout: lock non disponibile dopo una attesa di "+attesaAttivaLock+"ms (attuale modulo proprietario: "+GestoreMessaggi.LOCK_MODULO+", causa: "+GestoreMessaggi.LOCK.toString()+"): "+ie.getMessage(),ie);
+				}
 				if(lockAcquired==false){
-					throw new InterruptedException("Timeout: lock non disponibile dopo una attesa di "+attesaAttivaLock+"ms (attuale modulo proprietario: "+GestoreMessaggi.LOCK_MODULO+", causa: "+GestoreMessaggi.LOCK.toString()+")");
+					throw new UtilsException("Timeout: lock non disponibile dopo una attesa di "+attesaAttivaLock+"ms (attuale modulo proprietario: "+GestoreMessaggi.LOCK_MODULO+", causa: "+GestoreMessaggi.LOCK.toString()+")");
 				}
 		
 				GestoreMessaggi.LOCK.append(causa);
@@ -8500,11 +8509,11 @@ public class GestoreMessaggi  {
 	}
 
 	public static void updateLock(GestoreMessaggi gestoreMessaggi, TimerLock timerLock,
-			MsgDiagnostico msgDiag,String causa) throws InterruptedException, UtilsException{
+			MsgDiagnostico msgDiag,String causa) throws UtilsException{
 		updateLock(gestoreMessaggi.getSemaphoreByInstance(timerLock.getIdLock()), gestoreMessaggi.getConnectionByInstance(), timerLock, msgDiag, causa);
 	}
 	public static void updateLock(Semaphore semaphoreDB,  Connection connectionDB, TimerLock timerLock,
-			MsgDiagnostico msgDiag,String causa) throws InterruptedException, UtilsException{
+			MsgDiagnostico msgDiag,String causa) throws UtilsException{
 		
 		msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, causa);
 		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "updateLock.inCorso");
@@ -8525,7 +8534,7 @@ public class GestoreMessaggi  {
 			boolean unlock = semaphoreDB.updateLock(connectionDB, causa);
 			if(!unlock) {
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "updateLock.ko");
-				throw new InterruptedException(msgDiag.getMessaggio_replaceKeywords("all", "updateLock.ko"));
+				throw new UtilsException(msgDiag.getMessaggio_replaceKeywords("all", "updateLock.ko"));
 			}
 		}
 		else {
@@ -8539,11 +8548,11 @@ public class GestoreMessaggi  {
 	}
 	
 	public static void releaseLock(GestoreMessaggi gestoreMessaggi, TimerLock timerLock,
-			MsgDiagnostico msgDiag,String causa) throws InterruptedException, UtilsException{
+			MsgDiagnostico msgDiag,String causa) throws UtilsException{
 		releaseLock(gestoreMessaggi.getSemaphoreByInstance(timerLock.getIdLock()), gestoreMessaggi.getConnectionByInstance(), timerLock, msgDiag, causa);
 	}
 	public static void releaseLock(Semaphore semaphoreDB,  Connection connectionDB, TimerLock timerLock,
-			MsgDiagnostico msgDiag,String causa) throws InterruptedException, UtilsException{
+			MsgDiagnostico msgDiag,String causa) throws UtilsException{
 
 		msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, causa);
 		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneUnlock.inCorso");
@@ -8564,7 +8573,7 @@ public class GestoreMessaggi  {
 			boolean unlock = semaphoreDB.releaseLock(connectionDB, causa);
 			if(!unlock) {
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneUnlock.ko");
-				throw new InterruptedException(msgDiag.getMessaggio_replaceKeywords("all", "acquisizioneUnlock.ko"));
+				throw new UtilsException(msgDiag.getMessaggio_replaceKeywords("all", "acquisizioneUnlock.ko"));
 			}
 		}
 		else {
@@ -8576,7 +8585,7 @@ public class GestoreMessaggi  {
 				
 				if( ! (GestoreMessaggi.LOCK.length()>0) ){
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneUnlock.ko");
-					throw new InterruptedException(msgDiag.getMessaggio_replaceKeywords("all", "acquisizioneUnlock.ko"));
+					throw new UtilsException(msgDiag.getMessaggio_replaceKeywords("all", "acquisizioneUnlock.ko"));
 				}
 		
 				synchronized (GestoreMessaggi.LOCK) {	

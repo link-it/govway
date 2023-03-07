@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -3975,6 +3976,12 @@ public class ImporterArchiveUtils {
 	}
 	public void _importGenericProperties(String oggetto, AbstractArchiveGenericProperties archiveGenericProperties,ArchiveEsitoImportDetail detail){
 		
+		if(archiveGenericProperties==null) {
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(new Exception("archiveGenericProperties is null"));
+			return;
+		}
+		
 		String nomePolicy = archiveGenericProperties.getNomePolicy();
 		String tipologiaPolicy = archiveGenericProperties.getTipologiaPolicy();
 		try{
@@ -3999,7 +4006,46 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- compatibilita' elementi riferiti ---
-			// non esistenti
+
+			// plugin
+			if(this.checkExistsPluginConfigurazione) {
+				
+				boolean tokenValidazione = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION.equals(archiveGenericProperties.getTipologiaPolicy());
+				boolean tokenNegoziazione = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(archiveGenericProperties.getTipologiaPolicy());
+				boolean attributeAuthority = CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(archiveGenericProperties.getTipologiaPolicy());
+				List<String> tokenName = new ArrayList<>();
+				TipoPlugin tipoPlugin = null;
+				if(tokenValidazione) {
+					tokenName.add(CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE);
+					tokenName.add(CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE);
+					tokenName.add(CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE);
+					tipoPlugin = TipoPlugin.TOKEN_VALIDAZIONE;
+				}
+				else if(tokenNegoziazione) {
+					tokenName.add(CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE);
+					tipoPlugin = TipoPlugin.TOKEN_NEGOZIAZIONE;
+				}
+				else if(attributeAuthority) {
+					tokenName.add(CostantiConfigurazione.AA_RESPONSE_PARSER_PLUGIN_TYPE);
+					tipoPlugin = TipoPlugin.ATTRIBUTE_AUTHORITY;
+				}
+				if(!tokenName.isEmpty()) {
+					if(archiveGenericProperties!=null && archiveGenericProperties.getPolicy()!=null && archiveGenericProperties.getPolicy().sizePropertyList()>0) {
+						for (int i = 0; i < archiveGenericProperties.getPolicy().sizePropertyList(); i++) {
+							Property p = archiveGenericProperties.getPolicy().getProperty(i);
+							if(tokenName.contains(p.getNome())) {
+								String gpName = p.getValore();
+								if(gpName!=null && StringUtils.isNotEmpty(gpName) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(gpName)) {
+									if(this.importerEngine.existsPluginClasse(tipoPlugin.getValue(), gpName) == false ){
+										throw new Exception("Plugin '"+tipoPlugin.getValue()+"' ["+p.getValore()+"] non esistente nel registro");
+									}	
+								}
+							}
+						}
+					}
+				}
+				
+			}
 			
 			
 			// ---- visibilita' oggetto riferiti ---

@@ -244,7 +244,7 @@ public class Startup implements ServletContextListener {
 				String ocspConfig = serverProperties.getOCSPConfigurazione();
 				if(StringUtils.isNotEmpty(ocspConfig)) {
 					File f = new File(ocspConfig);
-					OCSPManager.init(f, serverProperties.isOCSPRequired(), log);
+					OCSPManager.init(f, serverProperties.isOCSPRequired(), serverProperties.isOCSPLoadDefault(), log);
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();

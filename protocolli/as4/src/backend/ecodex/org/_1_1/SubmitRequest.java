@@ -58,6 +58,7 @@ import java.util.List;
 
 public class SubmitRequest extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SubmitRequest() {
+    super();
   }
 
   public void addPayload(LargePayloadType payload) {

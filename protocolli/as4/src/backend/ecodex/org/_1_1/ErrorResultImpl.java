@@ -68,6 +68,7 @@ import java.io.Serializable;
 
 public class ErrorResultImpl extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ErrorResultImpl() {
+    super();
   }
 
   public void set_value_errorCode(String value) {

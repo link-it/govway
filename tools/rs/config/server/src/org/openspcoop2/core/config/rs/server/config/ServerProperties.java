@@ -265,6 +265,13 @@ public class ServerProperties  {
 	public boolean isOCSPRequired() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "ocsp.required"));
 	}	
+	public boolean isOCSPLoadDefault() throws UtilsException {
+		String p = this.readProperty(false, "ocsp.loadDefault");
+		if(p!=null && StringUtils.isNotEmpty(p)) {
+			return Boolean.parseBoolean(p);
+		}
+		return true;
+	}	
 
 	
 	

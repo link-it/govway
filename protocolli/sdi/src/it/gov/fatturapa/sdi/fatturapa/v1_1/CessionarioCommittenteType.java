@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class CessionarioCommittenteType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public CessionarioCommittenteType() {
+    super();
   }
 
   public DatiAnagraficiCessionarioType getDatiAnagrafici() {

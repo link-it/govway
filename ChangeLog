@@ -1,3 +1,98 @@
+2023-03-07  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]	
+	Risolto Bug OP-1554
+	L'autorizzazione puntuale ModI non veniva attuata se la lista degli applicativi autorizzati veniva lasciata vuota.
+	
+2023-03-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta diagnostica per la negoziazione dei token
+
+2023-03-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1552
+	La traccia è stata arricchita di ulteriori date che consentono di registrare la data di acquisizione completata degli stream in ingresso e di avvenuta spedizione dei messaggi in uscita.
+	Le informazioni sui messaggi di richiesta e di risposta visualizzate nel dettaglio di una transazione, tramite la console 'govwayMonitor', sono state riorganizzate per una migliore comprensione.
+	La latenza totale di una transazione viene adesso calcolata in base all'avvenuta spedizione dei messaggi in uscita verso il client.
+	Nell'intervento è stato risolto un bug che non consentiva più di visualizzare la scheda dei messaggi duplicati nel dettaglio di una transazione.
+	Il termine 'latenza servizio' è stato rinominato in 'tempo di risposta servizio' in tutti i report statistici.
+
+2023-02-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2022-45688: aggiornata libreria 'org.json:json' alla versione 20230227
+
+2023-02-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-24998: aggiornata libreria 'commons-fileupload' alla versione 1.5
+
+2023-02-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1548
+	Aggiunta la gestione di plugins dinamici per Token e AttributeAuthority
+
+2023-02-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1546
+	La validazione di un token che presentava date (exp,iat,nbf) serializzate in un formato numerico esponenziale falliva generando un errore simile al seguente: 
+	'Token non valido: For input string: "1.67"'
+
+2023-02-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1544
+	È adesso possibile effettuare ricerche nelle erogazioni e fruizioni rispetto al tipo di configurazione: 
+	stato dell'API, autenticazione token, autenticazione trasporto, rate limiting, validazione, response caching, trasformazioni, correlazione applicativa,
+	sicurezza messaggio, gestione mtom, registrazione dei messaggi e gestione CORS.
+	Inoltre per i soggetti e gli applicativi è stata aggiunta la possibilità di effettuare ricerche rispetto all'Issuer del certificato associato.
+
+2023-02-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1540
+	In una token policy di negoziazione la personalizzare della chiamata http attuata verso l'authorization server consente adesso:
+	- di definire credenziali http-basic, http-bearer e l'invio di un certificato tls client;
+	- di utilizzare qualsiasi metodo http senza necessariamente dover inviare un payload (es. richieste HTTP POST senza payload);
+	- di inviare payload su metodi http che normalmente non lo prevedono (es. HTTP DELETE).
+	Nell'intervento è stato migliorato il tooltip visualizzato nel connettore di una erogazione.
+
+2023-02-09  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1542
+	Le API di configurazione consentono:	
+	- attuare il nuovo scenario ModI di fruizione in cui il keystore utilizzato per la firma viene associato direttamente sulla fruizione;
+	- configurare nella fruizione i parametri richiesti da una token policy di negoziazione con tipo di keystore 'Definito nella fruizione'.
+
+2023-02-06  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1542
+	Viene adesso supportato anche un nuovo scenario ModI di fruizione in cui il keystore utilizzato per la firma viene associato direttamente sulla fruizione.
+	Lo scenario è configurabile in alternativa alla modalità già presente in cui il keystore viene associato all'applicativo mittente.
+	È stata inoltre aggiunta la possibilità di definire una token policy di negoziazione in cui i dati relativi al keystore, il KID e il clientId sono prelevabili da una fruizione.
+	All'interno della fruizione è adesso possibile definire i parametri richiesti dalla token policy di negoziazione se nel connettore viene associata una policy con tale caratteristica.	
+	È infine stata rivista la label 'Contemporaneità Token Authorization e Agid-JWT-Signature' in 'Coesistenza Token Authorization e Agid-JWT-Signature'.
+
+2023-02-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1540
+	In una token policy di negoziazione è adesso possibile personalizzare la chiamata attuata verso l'authorization server nei seguenti parametri:
+	- metodo http
+	- eventuale content-type e payload
+	- aggiungere header http
+	- personalizzare il parsing della risposta
+	Inoltre anche nelle modalità di negoziazione standard già esistenti è stata aggiunta la possibilità di aggiungere header http nella richiesta.
+	Nell'intervento è stato anche risolto il bug presente nel controllo dei certificati di una token policy di negoziazione quando la modalità scelta era 'Definito nell'applicativo ModI'.
+
 2023-01-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
@@ -2331,7 +2426,7 @@
 	Aggiunta funzionalità OP-1150
 	Il generatore delle statistiche effettuava una prima select con group by per calcolare i dati statistici relativi alle transazioni, comprese il numero di richieste e la dimensione.
 	Poi per ogni gruppo ritornato dalla group by calcolava le latenze effettuando una nuova query escludendo le transazioni in cui tutte le date ingresso/uscita della richiesta/risposta non erano disponibili.
-	Questo algoritmo generava 1+N query che rendevano la generazione delle statistiche inefficente in presenza di grandi mole di dati.
+	Questo algoritmo generava 1+N query che rendevano la generazione delle statistiche inefficiente in presenza di grandi mole di dati.
 	È stato rivisto l'algoritmo al fine di calcolare anche le latenze tramite una unica query.
 
 2021-03-01  Andrea Poli <apoli@link.it>
@@ -2374,7 +2469,7 @@
 	* [GovWayCore, BatchStatistiche, GovWayMonitor]
 	Aggiunta funzionalità di ricerca per identificativo del cluster e canale.
 	Sono inoltre stati migliorati i criteri di generazione dei report statistici che utilizzano adesso una identificazione dell'intervallo temporale inclusivo al giorno di interesse del report (es. >=2021-02-10 00:00:00.000).
-	Precedentemente al fix la data utilizzata era quelle precedente al giorno di interesse (es. >2021-02-10 23:59:59.999) e questa soluzione risultava meno efficente in presenza di partizionamento giornaliero delle transazioni.
+	Precedentemente al fix la data utilizzata era quelle precedente al giorno di interesse (es. >2021-02-10 23:59:59.999) e questa soluzione risultava meno efficiente in presenza di partizionamento giornaliero delle transazioni.
 	Gli indici 'full' generabili utilizzando l'installer in modalità avanzata vengono adesso generati anche per i tipi di database hsql e sqlserver.
 	Infine è stato migliorato l'algoritmo di generazione delle statistiche in modo che l'aggiornamento dell'intervallo corrente non produca informazioni parziali temporaneamente scorrette 
 	fino al completamento dell'aggiornamento come poteva avvenire precedentemente al fix.
@@ -3088,7 +3183,7 @@
 	* [GovWayCore]
 	Aggiunta funzionalità #58
 	(https://github.com/link-it/govway/issues/58)
-	Le patch SQL che modificano il tipo di una colonna da VARCHAR a CLOB, tramite il comando ALTER, sono state riviste al fine di utilizzare una versione più efficente per i tipi di database che lo consentono.
+	Le patch SQL che modificano il tipo di una colonna da VARCHAR a CLOB, tramite il comando ALTER, sono state riviste al fine di utilizzare una versione più efficiente per i tipi di database che lo consentono.
 
 2020-08-07  Andrea Poli <apoli@link.it>
 
@@ -3672,7 +3767,7 @@
 	commons-compress-1.19.jar -> commons-compress-1.20.jar
 	commons-csv-1.5.jar -> commons-csv-1.8.jar
 	commons-dbcp2-2.5.0.jar -> commons-dbcp2-2.7.0.jar
-	commons-fileupload-1.3.3.jar -> commons-fileupload-1.4.jar
+	commons-fileupload-1.3.3.jar -> commons-fileupload-1.5.jar
 	commons-lang3-3.8.jar -> commons-lang3-3.9.jar
 	commons-pool2-2.6.0.jar -> commons-pool2-2.8.0.jar
 	-- cxf

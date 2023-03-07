@@ -50,6 +50,7 @@ import java.io.Serializable;
 
 public class RequisitoProtocollo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RequisitoProtocollo() {
+    super();
   }
 
   public java.lang.String getNome() {

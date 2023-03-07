@@ -129,7 +129,7 @@ public class Costanti {
 	public final static String LABEL_LOGIN_DATI_INCOMPLETI_LOGIN = "Dati incompleti. E' necessario indicare un utente";
 	public final static String LABEL_LOGIN_DATI_INCOMPLETI_PASSWORD = "Dati incompleti. E' necessario indicare una Password";
 	public final static String LABEL_LOGIN_ERRATO = "L'utente fornito non esiste";
-	public final static String LABEL_LOGIN_CON_PASSWORD_ERRATO = "Le credenziali fornite non sono corrette";
+	public final static String LABEL_LOGIN_CON_PW_ERRATO = "Le credenziali fornite non sono corrette";
 	public final static String LABEL_LOGIN_PERMESSI_NON_SUFFICENTI = "L'utente non possiede i diritti per creare configurazioni";
 	public final static String LABEL_CONSOLE_RIPRISTINATA = "Console ripristinata con successo.";
 	

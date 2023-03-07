@@ -242,7 +242,7 @@ public class JsonUtils {
 				tipo = "jks";
 			}
 			
-			fTmp = File.createTempFile("keystore", "."+tipo);
+			fTmp = FileSystemUtilities.createTempFile("keystore", "."+tipo);
 			FileSystemUtilities.writeFile(fTmp, content);
 			props.remove(propertyKeystoreName);
 			props.put(propertyKeystoreName, fTmp.getAbsolutePath());
@@ -324,7 +324,7 @@ public class JsonUtils {
 					try {
 						if(is!=null) {
 							byte[] f = Utilities.getAsByteArray(is);
-							fTmp = File.createTempFile("keystore", ".tmp");
+							fTmp = FileSystemUtilities.createTempFile("keystore", ".tmp");
 							FileSystemUtilities.writeFile(fTmp, f);
 							return new KeyStore(fTmp.getAbsolutePath(), type, password);
 						}
@@ -336,7 +336,9 @@ public class JsonUtils {
 						}catch(Exception e) {}
 						try {
 							if(fTmp!=null) {
-								fTmp.delete();
+								if(!fTmp.delete()) {
+									// ignore
+								}
 							}
 						}catch(Exception e) {
 							// delete
@@ -420,7 +422,7 @@ public class JsonUtils {
 						try {
 							if(is!=null) {
 								byte[] f = Utilities.getAsByteArray(is);
-								fTmp = File.createTempFile("keystore", ".jceks");
+								fTmp = FileSystemUtilities.createTempFile("keystore", ".jceks");
 								FileSystemUtilities.writeFile(fTmp, f);
 								keystoreJCEKS = new KeyStore(fTmp.getAbsolutePath(), "JCEKS", password);
 							}
@@ -432,7 +434,9 @@ public class JsonUtils {
 							}catch(Exception e) {}
 							try {
 								if(fTmp!=null) {
-									fTmp.delete();
+									if(!fTmp.delete()) {
+										// ignore
+									}
 								}
 							}catch(Exception e) {
 								// delete

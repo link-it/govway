@@ -132,8 +132,8 @@ public class JDBCPortaDominioServiceSearchImpl implements IJDBCServiceSearchWith
 
 		List<IdPortaDominio> list = new ArrayList<IdPortaDominio>();
 
-		// TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+		// TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari a create l'ID logico
 		// 2. Usare metodo getPortaDominioFetch() sul risultato della select per ottenere un oggetto PortaDominio
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
@@ -156,8 +156,8 @@ public class JDBCPortaDominioServiceSearchImpl implements IJDBCServiceSearchWith
 
         List<PortaDominio> list = new ArrayList<PortaDominio>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+        // TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
 		// 2. Usare metodo getPortaDominioFetch() sul risultato della select per ottenere un oggetto PortaDominio
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 

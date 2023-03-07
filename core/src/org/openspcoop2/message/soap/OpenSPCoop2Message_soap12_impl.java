@@ -150,7 +150,7 @@ public class OpenSPCoop2Message_soap12_impl extends AbstractOpenSPCoop2Message_s
 				return ct;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			return ct;
 		}
 	}

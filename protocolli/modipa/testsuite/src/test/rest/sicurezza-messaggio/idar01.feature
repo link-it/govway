@@ -619,3 +619,162 @@ And match header Authorization == '#notpresent'
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia_sub_iss_client_notpresent ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient2, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
 * call check_traccia_sub_iss_client_notpresent ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
+
+
+
+@keystore-default-fruizione
+Scenario: Test connettività base in cui il keystore è definito nella fruizione, come keystore di base
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01KeystoreDefaultFruizione/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'keystore-default-fruizione'
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+
+
+@keystore-ridefinito-fruizione
+Scenario: Test connettività base in cui il keystore è definito nella fruizione, come keystore ridefinito. L'applicativo identificato contiene un keystore modi, ma non verrà utilizzato.
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01KeystoreRidefinitoFruizione/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'keystore-ridefinito-fruizione'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+
+@keystore-ridefinito-fruizione-applicativo-no-keystore
+Scenario: Test connettività base in cui il keystore è definito nella fruizione, come keystore ridefinito. L'applicativo identificato non contiene un keystore modi
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01KeystoreRidefinitoFruizione/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'keystore-ridefinito-fruizione-applicativo-no-keystore'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClientToken1', password: 'ApplicativoBlockingIDA01ExampleClientToken1' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+
+
+@keystore-ridefinito-fruizione-archivio
+Scenario: Test connettività base in cui il keystore è definito nella fruizione, come keystore ridefinito tramite archivio. L'applicativo identificato contiene un keystore modi, ma non verrà utilizzato.
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01KeystoreRidefinitoFruizioneArchivio/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'keystore-ridefinito-fruizione-archivio'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient4, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient4, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+
+
+@keystore-ridefinito-fruizione-x5u
+Scenario: Test connettività base in cui il keystore è definito nella fruizione, come keystore ridefinito. Il certificato viene inviato come informazione x5u
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01KeystoreRidefinitoFruizioneX5U/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'keystore-ridefinito-fruizione-x5u'
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+
+@keystore-definito-applicativo
+Scenario: Test connettività base in cui il keystore è definito nell'applicativo. A differenza delle altre configurazioni, in questa è stata salvata la proprietà che imposta il kestore definito nell'applicativo, mentre nelle altre funziona in ugual maniera per retrocompatibilita'
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01KeystoreApplicativo/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'keystore-definito-applicativo'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'bloccante' })
+

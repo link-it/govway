@@ -258,23 +258,32 @@ public class PddMonitorProperties {
 	
 	public Properties getExternalForceIndexRepository() throws Exception{
 		InputStream is = null;
-		String s = this.appProperties.getProperty("forceIndex.repository", false, true);
-		if(s!=null){
-			File f = new File(s);
-			if(f.exists()){
-				is = new FileInputStream(f);
+		try {
+			String s = this.appProperties.getProperty("forceIndex.repository", false, true);
+			if(s!=null){
+				File f = new File(s);
+				if(f.exists()){
+					is = new FileInputStream(f);
+				}
+				else{
+					// provo a cercarlo nel classpath
+					is = PddMonitorProperties.class.getResourceAsStream(s);
+				}
 			}
-			else{
-				// provo a cercarlo nel classpath
-				is = PddMonitorProperties.class.getResourceAsStream(s);
+			if(is!=null){
+				Properties p = new Properties();
+				p.load(is);
+				return p;
+	 		}
+		}finally {
+			try {
+				if(is!=null) {
+					is.close();
+				}
+			}catch(Throwable t) {
+				// ignore
 			}
 		}
-		if(is!=null){
-			Properties p = new Properties();
-			p.load(is);
-			is.close();
-			return p;
- 		}
 		return null;
 	}
 	
@@ -645,6 +654,10 @@ public class PddMonitorProperties {
 		String timeoutS = this.appProperties.getProperty("statistiche.timeoutRicercaStatistiche", false, true);
 		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
 	}
+	
+	public boolean isStatisticheLatenzaPortaEnabled() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.latenzaPorta.enabled", true, true));
+	}
 
 
 	
@@ -981,6 +994,14 @@ public class PddMonitorProperties {
 	
 	public int getTransazioniDettaglioAnalisiMultipartThreshold() throws Exception{
 		return Integer.valueOf(this.appProperties.getProperty("transazioni.dettaglio.analisiMultipart.threshold", true, true));
+	}
+	
+	public boolean isDataUscitaRispostaUseDateAfterResponseSent() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dataUscitaRisposta.useDateAfterResponseSent", true, true));
+	}
+	
+	public boolean isTransazioniLatenzaPortaEnabled() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.latenzaPorta.enabled", true, true));
 	}
 	
 	public boolean escludiRichiesteScartateDefaultValue() throws Exception{

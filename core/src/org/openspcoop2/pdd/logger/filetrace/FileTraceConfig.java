@@ -38,6 +38,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 /**     
  * LogTraceConfig
@@ -51,7 +52,7 @@ public class FileTraceConfig {
 	private static HashMap<String, FileTraceConfig> staticInstanceMap = new HashMap<String, FileTraceConfig>();
 	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("FileTraceConfig");
 
-	protected static void init(InputStream is, String fileNamePath, boolean globale) throws CoreException {
+	public static void init(InputStream is, String fileNamePath, boolean globale) throws CoreException {
 		//synchronized(staticInstanceMap) {
 		semaphore.acquireThrowRuntime("init_InputStream");
 		try {
@@ -155,13 +156,19 @@ public class FileTraceConfig {
 	public FileTraceConfig(InputStream is, boolean globale) throws CoreException {
 		_init(is, globale);
 	}
+	
+	private static boolean escapeInFile = true;
+	public static boolean isEscapeInFile() {
+		return escapeInFile;
+	}
+	public static void setEscapeInFile(boolean escapeInFile) {
+		FileTraceConfig.escapeInFile = escapeInFile;
+	}
 	private void _init(InputStream is, boolean globale) throws CoreException {
 		try {
 			this.globale = false;
 			
 			Properties p = new Properties();
-			
-			boolean escapeInFile = true;
 			
 			if(escapeInFile) {
 				p.load(is); // non tratta bene i caratteri speciali
@@ -197,7 +204,7 @@ public class FileTraceConfig {
 				}
 				scanner.close();
 				
-				File fTmp = File.createTempFile("test", ".properties");
+				File fTmp = FileSystemUtilities.createTempFile("test", ".properties");
 				try {
 					try(FileOutputStream fout = new FileOutputStream(fTmp)){
 						p.store(fout, "test");
@@ -207,7 +214,9 @@ public class FileTraceConfig {
 						 p.load(finNewP);
 					}
 				}finally {
-					fTmp.delete();
+					if(!fTmp.delete()) {
+						// ignore
+					}
 				}
 			}
 			

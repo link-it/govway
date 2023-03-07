@@ -65,6 +65,7 @@ import java.io.Serializable;
 
 public class DatiTrasmissioneType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiTrasmissioneType() {
+    super();
   }
 
   public IdFiscaleType getIdTrasmittente() {

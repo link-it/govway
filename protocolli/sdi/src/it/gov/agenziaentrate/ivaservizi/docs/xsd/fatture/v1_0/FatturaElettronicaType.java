@@ -64,6 +64,7 @@ import java.util.List;
 
 public class FatturaElettronicaType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public FatturaElettronicaType() {
+    super();
   }
 
   public FatturaElettronicaHeaderType getFatturaElettronicaHeader() {

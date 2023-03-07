@@ -77,15 +77,15 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 
 	public DistribuzionePerSoggettoBean() {
 		super();
-		this.init();
+		this.initDpSB();
 	}
 	public DistribuzionePerSoggettoBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
 			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB) {
 		super(serviceManager, pluginsServiceManager,
 				driverRegistroServiziDB, driverConfigurazioneDB);
-		this.init();
+		this.initDpSB();
 	}
-	private void init() {
+	private void initDpSB() {
 		this.setChartId("distribuzioneSoggetto");
 		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}

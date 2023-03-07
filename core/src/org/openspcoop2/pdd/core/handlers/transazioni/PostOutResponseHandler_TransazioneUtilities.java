@@ -71,6 +71,7 @@ import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.logger.DiagnosticInputStream;
 import org.openspcoop2.pdd.logger.DumpUtility;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -421,9 +422,27 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 			}
 			
+			// data_ingresso_richiesta_stream
+			if(context.getPddContext()!=null) {
+				Object o = context.getPddContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_REQUEST_COMPLETE_DATE);
+				if(o==null) {
+					o = context.getPddContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_REQUEST_ERROR_DATE);
+				}
+				if(o!=null && o instanceof Date) {
+					Date d = (Date) o;
+					transactionDTO.setDataIngressoRichiestaStream(d);
+				}
+			}
+			
 			// data_uscita_richiesta si imposta se e' diversa da null
-			if (transaction.getDataUscitaRichiesta()!=null)
+			if (transaction.getDataUscitaRichiesta()!=null) {
 				transactionDTO.setDataUscitaRichiesta(transaction.getDataUscitaRichiesta());
+			}
+			
+			// data_uscita_richiesta_stream
+			if(transaction.getDataRichiestaInoltrata()!=null) {
+				transactionDTO.setDataUscitaRichiestaStream(transaction.getDataRichiestaInoltrata());
+			}
 
 			// data_accettazione_risposta
 			// La porta di dominio mi passa sempre questa informazione.
@@ -447,9 +466,25 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					transactionDTO.setDataIngressoRisposta(transaction.getDataIngressoRisposta());
 				}
 			}
+			
+			// data_ingresso_risposta_stream
+			if(context.getPddContext()!=null) {
+				Object o = context.getPddContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_COMPLETE_DATE);
+				if(o==null) {
+					o = context.getPddContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_ERROR_DATE);
+				}
+				if(o!=null && o instanceof Date) {
+					Date d = (Date) o;
+					transactionDTO.setDataIngressoRispostaStream(d);
+				}
+			}
 
 			// data_uscita_risposta
-			if(context.getDataPrimaSpedizioneRisposta()!=null) {
+			boolean calcolaDataUscitaRispostaConDateAfterResponseSent = op2Properties.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent();
+			if(calcolaDataUscitaRispostaConDateAfterResponseSent && context.getDataRispostaSpedita()!=null) {
+				transactionDTO.setDataUscitaRisposta(context.getDataRispostaSpedita());
+			}
+			else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && context.getDataPrimaSpedizioneRisposta()!=null) {
 				transactionDTO.setDataUscitaRisposta(context.getDataPrimaSpedizioneRisposta());
 			}
 			else if (transaction.getDataUscitaRisposta()!=null){
@@ -464,6 +499,18 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					transactionDTO.setDataUscitaRisposta(DateManager.getDate());
 				}
 			}
+			
+			// data_uscita_risposta_stream
+			if(calcolaDataUscitaRispostaConDateAfterResponseSent && context.getDataPrimaSpedizioneRisposta()!=null) {
+				transactionDTO.setDataUscitaRispostaStream(context.getDataPrimaSpedizioneRisposta());
+			}
+			else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && context.getDataRispostaSpedita()!=null) {
+				transactionDTO.setDataUscitaRispostaStream(context.getDataRispostaSpedita());
+			}
+			
+			if(calcolaDataUscitaRispostaConDateAfterResponseSent && transactionDTO.getDataUscitaRispostaStream()==null) {
+				transactionDTO.setDataUscitaRispostaStream(transactionDTO.getDataUscitaRisposta()); // uso la stessa
+			}
 
 
 			// ** Dimensione messaggi gestiti **
@@ -471,26 +518,26 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			// dimensione_ingresso_richiesta
 			if (context.getInputRequestMessageSize()!=null && context.getInputRequestMessageSize()>0){
-				transactionDTO.setRichiestaIngressoBytes(context.getInputRequestMessageSize().longValue());
+				transactionDTO.setRichiestaIngressoBytes(context.getInputRequestMessageSize());
 			}
 
 			// dimensione_uscita_richiesta
 			if (context.getOutputRequestMessageSize()!=null && context.getOutputRequestMessageSize()>0){
 				if(transactionDTO.getDataUscitaRichiesta()!=null) { // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
-					transactionDTO.setRichiestaUscitaBytes(context.getOutputRequestMessageSize().longValue());
+					transactionDTO.setRichiestaUscitaBytes(context.getOutputRequestMessageSize());
 				}
 			}
 
 			// dimensione_ingresso_risposta
 			if (context.getInputResponseMessageSize()!=null && context.getInputResponseMessageSize()>0){
 				if(transactionDTO.getDataIngressoRisposta()!=null) { // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
-					transactionDTO.setRispostaIngressoBytes(context.getInputResponseMessageSize().longValue());
+					transactionDTO.setRispostaIngressoBytes(context.getInputResponseMessageSize());
 				}
 			}
 
 			// dimensione_uscita_risposta
 			if (context.getOutputResponseMessageSize()!=null && context.getOutputResponseMessageSize()>0){
-				transactionDTO.setRispostaUscitaBytes(context.getOutputResponseMessageSize().longValue());
+				transactionDTO.setRispostaUscitaBytes(context.getOutputResponseMessageSize());
 			}
 
 
@@ -1549,63 +1596,64 @@ public class PostOutResponseHandler_TransazioneUtilities {
 						messaggiInConsegna = (EJBUtilsMessaggioInConsegna) oConnettoreConfig;
 					}
 					if(messaggiInConsegna==null) {
-						throw new Exception("configurazione non disponibile");
-					}
-					
-					openspcoopState = new OpenSPCoopStateful();
-					openspcoopState.initResource(idDominio, context.getIdModulo(), idTransazione);
-					
-					if(times!=null) {
-						long timeEnd =  DateManager.getTimeMillis();
-						long timeProcess = timeEnd-timeStart;
-						times.fillTransaction_details.add("async-send-getConnection:"+timeProcess);
-						
-						timeStart = DateManager.getTimeMillis();
-					}
-					
-					GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopState,true, messaggiInConsegna.getBusta().getID(),
-							org.openspcoop2.protocol.engine.constants.Costanti.INBOX,msgDiag,context.getPddContext());
-					
-					if(schedulaNotificheDopoConsegnaSincrona) {
-						
-						RepositoryBuste repositoryBuste = null;
-						boolean spedizioneConsegnaContenuti = false; // sarà il timer a far partire effettivamente la spedizione
-						/*
-							RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true, context.getProtocolFactory());
-						 */
-							
-						// Devo rilasciare l'attendi esito
-						Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSql(op2Properties.isTransazioniDebug());
-						msgRequest.releaseAttesaEsiti(op2Properties.isTransazioniDebug(), log);
-						
-						EJBUtils.sendMessages(this.logger, msgDiag, openspcoopState, idTransazione, 
-								repositoryBuste, msgRequest, null, 
-								context.getProtocolFactory(), idDominio, nomePorta, messaggiInConsegna,
-								spedizioneConsegnaContenuti,
-								context.getPddContext(),
-								ConfigurazionePdDManager.getInstance());
-						
-						if(times!=null) {
-							long timeEnd =  DateManager.getTimeMillis();
-							long timeProcess = timeEnd-timeStart;
-							times.fillTransaction_details.add("async-send:"+timeProcess);
-							
-							timeStart = DateManager.getTimeMillis();
-						}
-						
+						this.logger.error("Non è stato possibile gestire lo scheduling delle notifiche (connettori multipli): configurazione non disponibile");
 					}
 					else {
+						openspcoopState = new OpenSPCoopStateful();
+						openspcoopState.initResource(idDominio, context.getIdModulo(), idTransazione);
 						
-						for (String servizioApplicativo : messaggiInConsegna.getServiziApplicativi()) {
-							msgRequest.eliminaDestinatarioMessaggio(servizioApplicativo, null, messaggiInConsegna.getOraRegistrazioneMessaggio());
-						}
-					
 						if(times!=null) {
 							long timeEnd =  DateManager.getTimeMillis();
 							long timeProcess = timeEnd-timeStart;
-							times.fillTransaction_details.add("async-send-del:"+timeProcess);
+							times.fillTransaction_details.add("async-send-getConnection:"+timeProcess);
 							
 							timeStart = DateManager.getTimeMillis();
+						}
+						
+						GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopState,true, messaggiInConsegna.getBusta().getID(),
+								org.openspcoop2.protocol.engine.constants.Costanti.INBOX,msgDiag,context.getPddContext());
+						
+						if(schedulaNotificheDopoConsegnaSincrona) {
+							
+							RepositoryBuste repositoryBuste = null;
+							boolean spedizioneConsegnaContenuti = false; // sarà il timer a far partire effettivamente la spedizione
+							/*
+								RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true, context.getProtocolFactory());
+							 */
+								
+							// Devo rilasciare l'attendi esito
+							Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSql(op2Properties.isTransazioniDebug());
+							msgRequest.releaseAttesaEsiti(op2Properties.isTransazioniDebug(), log);
+							
+							EJBUtils.sendMessages(this.logger, msgDiag, openspcoopState, idTransazione, 
+									repositoryBuste, msgRequest, null, 
+									context.getProtocolFactory(), idDominio, nomePorta, messaggiInConsegna,
+									spedizioneConsegnaContenuti,
+									context.getPddContext(),
+									ConfigurazionePdDManager.getInstance());
+							
+							if(times!=null) {
+								long timeEnd =  DateManager.getTimeMillis();
+								long timeProcess = timeEnd-timeStart;
+								times.fillTransaction_details.add("async-send:"+timeProcess);
+								
+								timeStart = DateManager.getTimeMillis();
+							}
+							
+						}
+						else {
+							
+							for (String servizioApplicativo : messaggiInConsegna.getServiziApplicativi()) {
+								msgRequest.eliminaDestinatarioMessaggio(servizioApplicativo, null, messaggiInConsegna.getOraRegistrazioneMessaggio());
+							}
+						
+							if(times!=null) {
+								long timeEnd =  DateManager.getTimeMillis();
+								long timeProcess = timeEnd-timeStart;
+								times.fillTransaction_details.add("async-send-del:"+timeProcess);
+								
+								timeStart = DateManager.getTimeMillis();
+							}
 						}
 					}
 					

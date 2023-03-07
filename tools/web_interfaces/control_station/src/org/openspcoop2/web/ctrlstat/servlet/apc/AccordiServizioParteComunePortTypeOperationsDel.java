@@ -78,7 +78,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idInt = Integer.parseInt(id);
+			long idAccordoLong = Long.valueOf(id);
 			String nomept = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
@@ -97,7 +97,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
 			ArrayList<String> optsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 
 			// Prendo il port-type
 			PortType pt = null;
@@ -105,6 +105,10 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 				pt = as.getPortType(i);
 				if (nomept.equals(pt.getNome()))
 					break;
+			}
+			
+			if(pt==null) {
+				throw new Exception("PortType con nome '"+nomept+"' non trovato nell'accordo con id '"+idAccordoLong+"'");
 			}
 			
 			StringBuilder inUsoMessage = new StringBuilder();

@@ -50,6 +50,7 @@ import java.io.Serializable;
 
 public class RestCollaborationProfile extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RestCollaborationProfile() {
+    super();
   }
 
   public boolean isOneway() {

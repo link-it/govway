@@ -45,7 +45,7 @@ public class TimerGestoreRepositoryBusteThread extends BaseThread{
 	/**
 	 * Timeout che definisce la scadenza di un messaggio
 	 */
-	private long scadenzaMessaggio = 60 * 24 * 5; // cablato a 5 giorni (60m * 24h * 5giorni).
+	private long scadenzaMessaggio = 60l * 24l * 5l; // cablato a 5 giorni (60m * 24h * 5giorni).
 	/** Properties Reader */
 	private OpenSPCoop2Properties propertiesReader;
 	/** MsgDiagnostico */

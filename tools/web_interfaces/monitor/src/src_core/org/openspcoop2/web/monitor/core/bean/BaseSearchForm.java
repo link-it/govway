@@ -1064,44 +1064,46 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 
 	public boolean isShowRichiesteScartate() {
-		if(EsitoUtils.ALL_VALUE == this.esitoGruppo ||
-				EsitoUtils.ALL_ERROR_VALUE == this.esitoGruppo ||
-				EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo 
-				//||
-				//EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.esitoGruppo
-				){
-			return true;
+		if(this.esitoGruppo!=null) {
+			if( (EsitoUtils.ALL_VALUE.intValue() == this.esitoGruppo.intValue()) ||
+					(EsitoUtils.ALL_ERROR_VALUE.intValue() == this.esitoGruppo.intValue()) ||
+					(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE.intValue() == this.esitoGruppo.intValue())
+					//||
+					//(EsitoUtils.ALL_PERSONALIZZATO_VALUE.intValue() == this.esitoGruppo.intValue())
+					){
+				return true;
+			}
 		}
 		return false;
 	}	
 	
 	private void checkDettaglio(){
-		if(EsitoUtils.ALL_VALUE != this.esitoDettaglio){
+		if(this.esitoDettaglio!=null && (EsitoUtils.ALL_VALUE.intValue() != this.esitoDettaglio.intValue())){
 			// devo verificare il dettaglio che sia compatibile con il nuovo esito
-			if(EsitoUtils.ALL_VALUE != this.esitoGruppo){
+			if(this.esitoGruppo!=null && (EsitoUtils.ALL_VALUE.intValue() != this.esitoGruppo.intValue())){
 				try{
 					EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
 					List<Integer> codes = null;
-					if(EsitoUtils.ALL_ERROR_VALUE == this.esitoGruppo){
+					if(EsitoUtils.ALL_ERROR_VALUE.intValue() == this.esitoGruppo.intValue()){
 						codes = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 					}
-					else if(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE == this.esitoGruppo){
+					else if(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE.intValue() == this.esitoGruppo.intValue()){
 						codes = esitiProperties.getEsitiCodeFaultApplicativo();
 					}
-					else if(EsitoUtils.ALL_OK_VALUE == this.esitoGruppo){
+					else if(EsitoUtils.ALL_OK_VALUE.intValue() == this.esitoGruppo.intValue()){
 						codes = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 					}
-					else if(EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.esitoGruppo){
+					else if(EsitoUtils.ALL_PERSONALIZZATO_VALUE.intValue() == this.esitoGruppo.intValue()){
 						this.esitoDettaglio = EsitoUtils.ALL_VALUE;
 					}
-					else if(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo){
+					else if(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE.intValue() == this.esitoGruppo.intValue()){
 						codes = esitiProperties.getEsitiCodeKo();
 						codes.addAll(esitiProperties.getEsitiCodeFaultApplicativo());
 					}
-					else if(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE == this.esitoGruppo){
+					else if(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE.intValue() == this.esitoGruppo.intValue()){
 						codes = esitiProperties.getEsitiCodeErroriConsegna();
 					}
-					else if(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE == this.esitoGruppo){
+					else if(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE.intValue() == this.esitoGruppo.intValue()){
 						codes = esitiProperties.getEsitiCodeRichiestaScartate();
 					}
 					
@@ -1277,7 +1279,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				return false;
 		}
 
-		if(this.esitoGruppo!=null && (EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.esitoGruppo)){
+		if(this.esitoGruppo!=null && (EsitoUtils.ALL_PERSONALIZZATO_VALUE.intValue() == this.esitoGruppo.intValue())){
 			if(this.esitoDettaglioPersonalizzato==null || this.esitoDettaglioPersonalizzato.length<=0){
 				MessageUtils.addErrorMsg("Selezionare almeno un esito di dettaglio");
 				return false;
@@ -1487,10 +1489,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 
 	public boolean isShowDettaglioPersonalizzato(){
-		return this.esitoGruppo!=null &&  (EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.esitoGruppo);
+		return this.esitoGruppo!=null &&  (EsitoUtils.ALL_PERSONALIZZATO_VALUE.intValue() == this.esitoGruppo.intValue());
 	}
 	public boolean isShowDettaglio(){
-		return this.esitoGruppo!=null &&  (EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE != this.esitoGruppo) && !this.isShowDettaglioPersonalizzato();
+		return this.esitoGruppo!=null &&  (EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE.intValue() != this.esitoGruppo.intValue()) && !this.isShowDettaglioPersonalizzato();
 	}
 
 	public List<SelectItem> getEsitiDettaglio(boolean statistiche) {
@@ -1506,25 +1508,27 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel();
 
 			List<Integer> esitiFiltro = null;
-			if(EsitoUtils.ALL_OK_VALUE == this.esitoGruppo){
-				esitiFiltro = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
-			}
-			else if(EsitoUtils.ALL_ERROR_VALUE == this.esitoGruppo){
-				esitiFiltro = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
-			}
-			else if(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo){
-				esitiFiltro = esitiProperties.getEsitiCodeKo();
-			}
-			else if(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE == this.esitoGruppo){
-				esitiFiltro = esitiProperties.getEsitiCodeErroriConsegna();
-			}
-			else if(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE == this.esitoGruppo){
-				esitiFiltro = esitiProperties.getEsitiCodeRichiestaScartate();
+			if(this.esitoGruppo!=null) {
+				if(EsitoUtils.ALL_OK_VALUE.intValue() == this.esitoGruppo.intValue()){
+					esitiFiltro = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+				}
+				else if(EsitoUtils.ALL_ERROR_VALUE.intValue() == this.esitoGruppo.intValue()){
+					esitiFiltro = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+				}
+				else if(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE.intValue() == this.esitoGruppo.intValue()){
+					esitiFiltro = esitiProperties.getEsitiCodeKo();
+				}
+				else if(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE.intValue() == this.esitoGruppo.intValue()){
+					esitiFiltro = esitiProperties.getEsitiCodeErroriConsegna();
+				}
+				else if(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE.intValue() == this.esitoGruppo.intValue()){
+					esitiFiltro = esitiProperties.getEsitiCodeRichiestaScartate();
+				}
 			}
 			
 			List<Integer> escludiEsiti = null;
 			
-			if(this.escludiRichiesteScartate && (EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE != this.esitoGruppo)){
+			if(this.escludiRichiesteScartate && this.esitoGruppo!=null && (EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE.intValue() != this.esitoGruppo.intValue())){
 				List<Integer> escludiEsiti_tmp = esitiProperties.getEsitiCodeRichiestaScartate();
 				if(escludiEsiti_tmp!=null && !escludiEsiti_tmp.isEmpty()) {
 					escludiEsiti = new ArrayList<Integer>();

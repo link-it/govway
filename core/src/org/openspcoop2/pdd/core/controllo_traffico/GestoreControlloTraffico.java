@@ -155,58 +155,64 @@ public class GestoreControlloTraffico {
 				//System.out.println("@@@addThread (dopo): "+this.activeThreads);
 			}finally {
 				this.lock.release("addThread", idTransazione);
-				
-				HandlerException he = null;
-				if(errorSync) {
-					emettiDiagnosticoMaxThreadRaggiunto = true;
-					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, activeThreadsSyncBeforeIncrement+"");
+			}
+			
+			HandlerException he = null;
+			if(errorSync) {
+				emettiDiagnosticoMaxThreadRaggiunto = true;
+				msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, activeThreadsSyncBeforeIncrement+"");
+				if(pddContext!=null) {
 					pddContext.addObject(GeneratoreMessaggiErrore.PDD_CONTEXT_ACTIVE_THREADS, activeThreadsSyncBeforeIncrement);
-					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_MAX_THREADS_THRESHOLD, maxThreadsPrimitive+"");
-					
-					//System.out.println("@@@addThread ERR");
-					emettiEventoMaxThreadsViolated = true;
-					descriptionEventoMaxThreadsViolated = "Superato il numero di richieste complessive ("+maxThreadsPrimitive+") gestibili dalla PdD";
-					dataEventoMaxThreadsViolated = DateManager.getDate();
-					
+				}
+				msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_MAX_THREADS_THRESHOLD, maxThreadsPrimitive+"");
+				
+				//System.out.println("@@@addThread ERR");
+				emettiEventoMaxThreadsViolated = true;
+				descriptionEventoMaxThreadsViolated = "Superato il numero di richieste complessive ("+maxThreadsPrimitive+") gestibili dalla PdD";
+				dataEventoMaxThreadsViolated = DateManager.getDate();
+				
+				if(pddContext!=null) {
 					GeneratoreMessaggiErrore.addPddContextInfo_ControlloTrafficoMaxThreadsViolated(pddContext,warningOnly);
-					
-					String msgDiagnostico = null;
-					if(warningOnly) {
-						msgDiag.getMessaggio_replaceKeywords(GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED_WARNING_ONLY);
-					}
-					else {
-						msgDiag.getMessaggio_replaceKeywords(GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED);
-					}
-					he = GeneratoreMessaggiErrore.getMaxThreadsViolated(
-							msgDiagnostico,
-							this.erroreGenerico, pddContext
-							);
-					he.setEmettiDiagnostico(false);
-					GeneratoreMessaggiErrore.configureHandlerExceptionByTipoErrore(serviceBinding, he, tipoErrore, includiDescrizioneErrore,log);
-					if(warningOnly == false) {
-						throw he;
-					}
 				}
 				
-				long activeThreadsSyncAfterIncrement = activeThreadsSyncBeforeIncrement+1;
-				msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, activeThreadsSyncAfterIncrement+""); // per policy applicabilità
-				
-				if(thresholdObj!=null){
-					// Aggiungo l'informazione se la pdd risulta congestionata nel pddContext.
-					pddContext.addObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA, pddCongestionataSync);
-					
-					if(emettiEventoPddCongestionata) {
-						descriptionEventoPddCongestionata = this._buildDescription(maxThreadsPrimitive, thresholdPrimitive, msgDiag);
-					}
-					
-					// Il timer dovra' vedere se esiste un evento di controllo del traffico.
-					// Se non esiste utilizzera' il metodo 'isControlloTrafficoAttivo' per vedere che il controllo del traffico e' rientrato.
+				String msgDiagnostico = null;
+				if(warningOnly) {
+					msgDiag.getMessaggio_replaceKeywords(GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED_WARNING_ONLY);
 				}
-				
-				if(he!=null) {
-					// caso di warning only
+				else {
+					msgDiag.getMessaggio_replaceKeywords(GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED);
+				}
+				he = GeneratoreMessaggiErrore.getMaxThreadsViolated(
+						msgDiagnostico,
+						this.erroreGenerico, pddContext
+						);
+				he.setEmettiDiagnostico(false);
+				GeneratoreMessaggiErrore.configureHandlerExceptionByTipoErrore(serviceBinding, he, tipoErrore, includiDescrizioneErrore,log);
+				if(warningOnly == false) {
 					throw he;
 				}
+			}
+			
+			long activeThreadsSyncAfterIncrement = activeThreadsSyncBeforeIncrement+1;
+			msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, activeThreadsSyncAfterIncrement+""); // per policy applicabilità
+			
+			if(thresholdObj!=null){
+				// Aggiungo l'informazione se la pdd risulta congestionata nel pddContext.
+				if(pddContext!=null) {
+					pddContext.addObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA, pddCongestionataSync);
+				}
+				
+				if(emettiEventoPddCongestionata) {
+					descriptionEventoPddCongestionata = this._buildDescription(maxThreadsPrimitive, thresholdPrimitive, msgDiag);
+				}
+				
+				// Il timer dovra' vedere se esiste un evento di controllo del traffico.
+				// Se non esiste utilizzera' il metodo 'isControlloTrafficoAttivo' per vedere che il controllo del traffico e' rientrato.
+			}
+		
+			if(he!=null) {
+				// caso di warning only
+				throw he;
 			}
 		}
 		finally{

@@ -178,8 +178,8 @@ import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthori
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.constants.ModalitaIdentificazioneAzione;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
-import org.openspcoop2.protocol.engine.mapping.ModalitaIdentificazioneAzione;
 import org.openspcoop2.protocol.engine.mapping.OperationFinder;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.registry.CertificateCheck;
@@ -906,7 +906,7 @@ public class ConfigurazionePdDReader {
 							Object o = ConfigurazionePdDReader.getRawObjectCache(key);
 							if(o!=null && o instanceof ServizioApplicativo) {
 								ServizioApplicativo sa = (ServizioApplicativo) o;
-								if(idApplicativo.getNome().equals(idApplicativo.getNome()) &&
+								if(idApplicativo.getNome().equals(sa.getNome()) &&
 										idApplicativo.getIdSoggettoProprietario().getTipo().equals(sa.getTipoSoggettoProprietario()) &&
 										idApplicativo.getIdSoggettoProprietario().getNome().equals(sa.getNomeSoggettoProprietario())) {
 									keyForClean.add(key);
@@ -3616,7 +3616,9 @@ public class ConfigurazionePdDReader {
 						throw new DriverConfigurazioneException("HttpServletRequest non disponibile; risorsa richiesta dall'autorizzazione");
 					}
 				}
-				httpServletRequest = infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest();
+				if(infoConnettoreIngresso!=null && infoConnettoreIngresso.getUrlProtocolContext()!=null) {
+					httpServletRequest = infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest();
+				}
 			}
 		}
 
@@ -4991,7 +4993,7 @@ public class ConfigurazionePdDReader {
 		
 		ServizioApplicativo sa = null;
 		if(useCache) {
-			this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
+			sa = this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
 		}
 		else {
 			sa = this.configurazionePdD.getDriverConfigurazionePdD().getServizioApplicativo(idSA);
@@ -5064,7 +5066,7 @@ public class ConfigurazionePdDReader {
 		
 		ServizioApplicativo sa = null;
 		if(useCache) {
-			this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
+			sa = this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
 		}
 		else {
 			sa = this.configurazionePdD.getDriverConfigurazionePdD().getServizioApplicativo(idSA);
@@ -5698,6 +5700,12 @@ public class ConfigurazionePdDReader {
 			try {
 				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
 					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
+				}
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza la modalità '"+Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL+"'; la validazione dei certificati verrà effettuata su ogni singolo applicativo");
+				}
+				if(Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza la modalità '"+Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_LABEL+"'; la validazione dei certificati verrà effettuata sulla fruizione");
 				}
 				
 				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
@@ -8285,6 +8293,10 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	protected Template getTemplatePolicyNegoziazioneRequest(Connection connectionPdD, String policyName, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplatePolicyNegoziazioneRequest(connectionPdD, policyName, template, requestInfo);
+	}
+	
 	protected Template getTemplateAttributeAuthorityRequest(Connection connectionPdD, String attributeAuthorityName, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getTemplateAttributeAuthorityRequest(connectionPdD, attributeAuthorityName, template, requestInfo);
 	}

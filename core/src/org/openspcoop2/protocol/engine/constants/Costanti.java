@@ -129,7 +129,7 @@ public class Costanti {
 	    
 	
     /** Attesa attiva di default effettuata per la gestione del livello serializable nel DB, in millisecondi */
-    public final static long GESTIONE_SERIALIZABLE_ATTESA_ATTIVA = 60 * 1000; // 1 minut0
+    public final static long GESTIONE_SERIALIZABLE_ATTESA_ATTIVA = 60l * 1000l; // 1 minuto
     /** Intervallo maggiore per frequenza di check nell'attesa attiva effettuata per la gestione del livello serializable nel DB, in millisecondi */
     public final static int GESTIONE_SERIALIZABLE_CHECK_INTERVAL = 100; 
 	
@@ -197,6 +197,12 @@ public class Costanti {
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = "erogazione";
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = "fruizione";
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = "completa";
+	
+	public final static String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO = "connettore_token_policy_stat";
+	public final static String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY = "connettore_token_policy";
+	public final static String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_VIA_API = "connettore_token_policy_via_api";
+	
+	public static final String CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO = "-";
 }
 
 

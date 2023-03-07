@@ -143,6 +143,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private Boolean hasDumpBinarioMultipartRispostaIngresso = null;
 	private Boolean hasDumpBinarioMultipartRispostaUscita = null;
 	
+	private boolean dataUscitaRispostaValorizzataDopoSpedizioneRisposta = false;
+	
 	private TipoMessaggio exportContenuto;
 	
 	private Integer multipartThreshold=null;
@@ -192,6 +194,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			this.visualizzaDataAccettazione = govwayMonitorProperties.isAttivoTransazioniDataAccettazione();
 			
 			this.multipartThreshold = govwayMonitorProperties.getTransazioniDettaglioAnalisiMultipartThreshold();
+			
+			this.dataUscitaRispostaValorizzataDopoSpedizioneRisposta = govwayMonitorProperties.isDataUscitaRispostaUseDateAfterResponseSent();
 			
 
 		} catch (Exception e) {
@@ -913,8 +917,9 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		if(tr!=null && tr.getBustaAsString()!=null)
 			toRet = Utils.prettifyXml(tr.getBustaAsString());
 		
-		if(toRet == null)
+		if(toRet == null && tr!=null) {
 			toRet = tr.getBustaAsString() != null ? tr.getBustaAsString() : "";
+		}
 			
 		return toRet;
 	}
@@ -929,6 +934,14 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	public void setVisualizzaDataAccettazione(boolean visualizzaDataAccettazione) {
 		this.visualizzaDataAccettazione = visualizzaDataAccettazione;
+	}
+	
+	public boolean isDataUscitaRispostaValorizzataDopoSpedizioneRisposta() {
+		return this.dataUscitaRispostaValorizzataDopoSpedizioneRisposta;
+	}
+	public void setDataUscitaRispostaValorizzataDopoSpedizioneRisposta(
+			boolean isDataUscitaRispostaValorizzataDopoSpedizioneRisposta) {
+		this.dataUscitaRispostaValorizzataDopoSpedizioneRisposta = isDataUscitaRispostaValorizzataDopoSpedizioneRisposta;
 	}
 	
 	public String getTextCredenziali() {
@@ -1216,10 +1229,10 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			String dirPath = null; // per non far produrre la directory contenuti
 			String fileName = SingleFileExporter.getDirName(this.exportContenuto);
 									
-			if (this.isRisposta)
+			//if (this.isRisposta)
 				fileName = fileName+".zip";
-			else
-				fileName = fileName+".zip";
+			//else
+			//	fileName = fileName+".zip";
 
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);

@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class ConceptualBehavior extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ConceptualBehavior() {
+    super();
   }
 
   public java.lang.String getName() {

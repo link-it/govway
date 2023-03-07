@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openspcoop2</groupId>
+	<version>${revision}</version>
+	<artifactId>org.openspcoop2.static_analysis.sonarqube</artifactId>
+	<packaging>pom</packaging>
+	<name>static_analysis.sonarqube</name>
+
+	<parent>
+		<groupId>org.openspcoop2</groupId>
+		<artifactId>org.openspcoop2</artifactId>
+		<version>${revision}</version>
+		<relativePath>../../../pom.xml</relativePath>
+	</parent>
+
+	<properties>	
+	</properties>	
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin}</version>
+				<executions>
+					<execution>
+						<phase>${sonarqube}</phase>
+						<configuration>
+							<target>
+
+								<property name="openspcoop2" location="../../../" />
+								<property name="sonar.build" location="../build" />
+								<property name="sonar.falsePositivesDir" location="../falsePositives" />
+								<ant antfile="../build.xml" />
+
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant</artifactId>
+						<version>${ant.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant-apache-regexp</artifactId>
+						<version>${ant.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant-launcher</artifactId>
+						<version>${ant.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

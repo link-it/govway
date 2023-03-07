@@ -874,6 +874,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						break;
 					}
 				}
+				
+				if(oa==null) {
+					throw new Exception("Appender non trovato");
+				}
+				
 				Property oap = null;
 				for (int i = 0; i < oa.sizePropertyList(); i++) {
 					oap = oa.getProperty(i);
@@ -999,6 +1004,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						break;
 					}
 				}
+				
+				if(od==null) {
+					throw new Exception("Datasource non trovato");
+				}
+				
 				List<Property> lista1 = od.getPropertyList();
 				Property odp = null;
 				for (int i = 0; i < od.sizePropertyList(); i++) {
@@ -1371,6 +1381,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						break;
 					}
 				}
+				
+				if(oa==null) {
+					throw new Exception("Appender non trovato");
+				}
+				
 				Property oap = null;
 				for (int i = 0; i < oa.sizePropertyList(); i++) {
 					oap = oa.getProperty(i);
@@ -1898,8 +1913,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String location = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOCATION);
 			String tipo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
 			String utente = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTENTE);
-			String password = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PASSWORD);
-			String confpw = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONFERMA_PASSWORD);
+			String password = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PW);
+			String confpw = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONFERMA_PW);
 
 			// Campi obbligatori
 			if (nome.equals("") || location.equals("") || tipo.equals("")) {
@@ -1949,7 +1964,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			if(password!=null && !"".equals(password)) {
-				if(this.checkLength255(password, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PASSWORD)==false) {
+				if(this.checkLength255(password, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PW)==false) {
 					return false;
 				}
 			}
@@ -2897,6 +2912,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						break;
 					}
 				}
+				
+				if(oa==null) {
+					throw new Exception("Appender non trovato");
+				}
+				
 				Property oap = null;
 				for (int i = 0; i < oa.sizePropertyList(); i++) {
 					oap = oa.getProperty(i);
@@ -3147,6 +3167,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						break;
 					}
 				}
+				
+				if(od==null) {
+					throw new Exception("Datasource non trovato");
+				}
+				
 				List<Property> lista1 = od.getPropertyList();
 				Property odp = null;
 				for (int i = 0; i < od.sizePropertyList(); i++) {
@@ -3479,18 +3504,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PASSWORD);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PW);
 			de.setValue(password);
 			de.setType(DataElementType.CRYPT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PASSWORD);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PW);
 			de.setSize( getSize());
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONFERMA_PASSWORD);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONFERMA_PW);
 			de.setValue(confpw);
 			de.setType(DataElementType.CRYPT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONFERMA_PASSWORD);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONFERMA_PW);
 			de.setSize( getSize());
 			dati.addElement(de);
 		}
@@ -4342,7 +4367,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT);
 					de.setType(DataElementType.SELECT);
 					
-					List<String> canaliListValues = canaleList.stream().map(CanaleConfigurazione::getNome).collect(Collectors.toList());
+					List<String> canaliListValues = canaleList!=null ? canaleList.stream().map(CanaleConfigurazione::getNome).collect(Collectors.toList()) : new ArrayList<>();
 					de.setValues(canaliListValues);
 					de.setLabels(canaliListValues);
 					de.setSelected(canaliDefault);
@@ -13307,13 +13332,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_ID_UNICO);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_ID_UNICO);
-			if(!jmx){
+			//if(!jmx){
 				//de.setType(DataElementType.TEXT);
 				de.setType(DataElementType.HIDDEN);
-			}
-			else{
-				de.setType(DataElementType.HIDDEN);
-			}
+			//}
+			//else{
+			//	de.setType(DataElementType.HIDDEN);
+			//}
 			de.setValue(policy.getIdActivePolicy());
 			dati.addElement(de);
 		}
@@ -17443,7 +17468,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				try{
-					org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(baseUrl);
+					org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(baseUrl, true);
 				}catch(Exception e){
 					this.pd.setMessage(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL + " non correttamente formata: "+e.getMessage());
 					return false;
@@ -18860,7 +18885,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME);
 		de.setValue(className);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(2);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME);
 		de.setSize(this.getSize());
 		de.setRequired(true);
@@ -19264,15 +19290,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.CHECKBOX);
 		if(allarme.getEnabled() == 1){
 			if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
-				if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+				if(allarme.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK.intValue())) {
 					de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
 					de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
 					de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
-				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+				} else if(allarme.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR.intValue())) {
 					de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
 					de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
 					de.setSelected(CheckboxStatusType.CONFIG_ERROR);
-				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+				} else if(allarme.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING.intValue())) {
 					de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 					de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 					de.setSelected(CheckboxStatusType.CONFIG_WARNING);
@@ -19413,13 +19439,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.CHECKBOX);
 		if(allarme.getEnabled() == 1){
 			if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
-				if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+				if(allarme.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK.intValue())) {
 					de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
 					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+				} else if(allarme.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR.intValue())) {
 					de.setStatusType(CheckboxStatusType.CONFIG_ERROR);
 					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+				} else if(allarme.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING.intValue())) {
 					de.setStatusType(CheckboxStatusType.CONFIG_WARNING);
 					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 				}
@@ -23560,13 +23586,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					
 					if(entry.getEnabled() == 1) {
-						if(entry.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+						if(entry.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK.intValue())) {
 							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-						} else if(entry.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+						} else if(entry.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR.intValue())) {
 							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-						} else if(entry.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+						} else if(entry.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING.intValue())) {
 							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 						}

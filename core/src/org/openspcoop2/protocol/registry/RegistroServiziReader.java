@@ -2369,7 +2369,7 @@ public class RegistroServiziReader {
 			if(ptAz!=null){
 				azionePT = ptAz.getNome();
 				correlazione = ptAz.getCorrelata();
-			}else{
+			}else if(az!=null) {
 				azionePT = az.getNome();
 				correlazione = az.getCorrelata();
 			}
@@ -2903,14 +2903,14 @@ public class RegistroServiziReader {
 
 		try{
 			PortaDominio pdd = this.getPortaDominio(connectionPdD, idSoggetto, nomeRegistro, "getImplementazionePdD");
-			if(pdd!=null){
-				if(pdd.getImplementazione()!=null)
-					return pdd.getImplementazione();
-				else
-					return CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD;
-			}else{
+			//if(pdd!=null){
+			if(pdd.getImplementazione()!=null)
+				return pdd.getImplementazione();
+			else
 				return CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD;
-			}
+			//}else{
+			//	return CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD;
+			//}
 		}catch(DriverRegistroServiziNotFound e){
 			return CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD;
 		}
@@ -2922,11 +2922,11 @@ public class RegistroServiziReader {
 
 		try{
 			PortaDominio pdd = this.getPortaDominio(connectionPdD, idSoggetto, nomeRegistro, "getImplementazionePdD");
-			if(pdd!=null){
-				return pdd.getNome();
-			}else{
-				return null; // significa che non è associato alcuna porta di dominio al soggetto
-			}
+			//if(pdd!=null){
+			return pdd.getNome();
+			//}else{
+			//	return null; // significa che non è associato alcuna porta di dominio al soggetto
+			//}
 		}catch(DriverRegistroServiziNotFound e){
 			return null; // significa che non è associato alcuna porta di dominio al soggetto
 		}
@@ -2936,6 +2936,8 @@ public class RegistroServiziReader {
 	private PortaDominio getPortaDominio(Connection connectionPdD,IDSoggetto idSoggetto,String nomeRegistro,String nomeMetodo) 
 			throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 
+		// NOTA: non ritornare mai oggetto null!
+		
 		if(idSoggetto == null)
 			throw new DriverRegistroServiziException(nomeMetodo+" error: soggetto non definito");
 
@@ -3696,7 +3698,7 @@ public class RegistroServiziReader {
 			if(truststoreSslParams!=null) {
 				try {
 					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreSslParams.getPath(), classpathSupported, truststoreSslParams.getType(), 
-							truststoreSslParams.getPassword(), truststoreSslParams.getCrls(), truststoreParams.getOcspPolicy(),
+							truststoreSslParams.getPassword(), truststoreSslParams.getCrls(), truststoreSslParams.getOcspPolicy(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
 							separator, newLine,

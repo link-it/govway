@@ -184,8 +184,12 @@ public class PropertiesUtils {
 		}
 		finally {
 			try {
-				fin.close();
-			}catch(Exception eClose) {}
+				if(fin!=null) {
+					fin.close();
+				}
+			}catch(Exception eClose) {
+				// ignore
+			}
 		}
 		return p;
 	}

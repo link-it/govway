@@ -106,14 +106,19 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
 		return idCredenzialeMittente;
 	}
 	
+	private static boolean efficiente = true;
+	public static boolean isEfficiente() {
+		return efficiente;
+	}
+	public static void setEfficiente(boolean efficiente) {
+		JDBCCredenzialeMittenteServiceSearchImpl.efficiente = efficiente;
+	}
 	@Override
 	public CredenzialeMittente get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdCredenzialeMittente id, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
 		
-		boolean efficente = true;
-        
 		long id_long = (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : -1;
 		
-        if(id_long<=0 && efficente){
+        if(id_long<=0 && efficiente){
 		
         	if(id==null) {
     			throw new ServiceException("Id undefined");
@@ -129,7 +134,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
         	pagExpr.equals(CredenzialeMittente.model().TIPO, id.getTipo());
 			pagExpr.and();
 			pagExpr.equals(CredenzialeMittente.model().CREDENZIALE, id.getCredenziale());
-			//pagExpr.limit(2); Inefficente, per implementare il multipleresult che poi non può succedere
+			//pagExpr.limit(2); Inefficiente, per implementare il multipleresult che poi non può succedere
 			pagExpr.limit(1);
         	
         	List<CredenzialeMittente> list = findAll(jdbcProperties, log, connection, sqlQueryObject, pagExpr, idMappingResolutionBehaviour);
@@ -166,9 +171,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
 
 		List<IdCredenzialeMittente> list = new ArrayList<IdCredenzialeMittente>();
 
-		boolean efficente = true;
-	        
-        if(efficente) {
+		if(efficiente) {
         
         	List<IField> fields = new ArrayList<IField>();
         	fields.add(CredenzialeMittente.model().TIPO);
@@ -179,7 +182,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
         	List<Map<String, Object>> returnMap = null;
     		try{
     			 // Il distinct serve solo se ci sono le ricerche con contenuto.
-    	        // NOTA: il distinct rende le ricerce inefficenti (ed inoltre non e' utilizzabile con campi clob in oracle)
+    	        // NOTA: il distinct rende le ricerce inefficienti (ed inoltre non e' utilizzabile con campi clob in oracle)
     	        boolean distinct = false;
     	        ISQLQueryObject sqlQueryObjectCheckJoin = sqlQueryObject.newSQLQueryObject();
     	        _join(expression, sqlQueryObjectCheckJoin);
@@ -188,7 +191,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
     	        // BUG FIX: Siccome tra le colonne lette ci sono dei CLOB, in oracle non e' consentito utilizzare il DISTINCT.
     	        // Per questo motivo se c'e' da usare il distinct viene utilizzato il vecchio metodo
     	        if(distinct) {
-    	        	//System.out.println("NON EFFICENTE");
+    	        	//System.out.println("NON EFFICIENTE");
     	        	
     		        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
     		        
@@ -201,7 +204,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
     	        }
     	        else {
     	        
-    	        	//System.out.println("EFFICENTE");
+    	        	//System.out.println("EFFICIENTE");
     	        	
 		    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
 		
@@ -218,8 +221,8 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
         }
         else {
 		
-			// TODO: implementazione non efficente. 
-			// Per ottenere una implementazione efficente:
+			// TODO: implementazione non efficiente. 
+			// Per ottenere una implementazione efficiente:
 			// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari a create l'ID logico
 			// 2. Usare metodo getCredenzialeMittenteFetch() sul risultato della select per ottenere un oggetto CredenzialeMittente
 			//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
@@ -244,9 +247,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
 
         List<CredenzialeMittente> list = new ArrayList<CredenzialeMittente>();
         
-        boolean efficente = true;
-        
-        if(efficente) {
+        if(efficiente) {
         
         	List<IField> fields = new ArrayList<IField>();
         	fields.add(CredenzialeMittente.model().TIPO);
@@ -257,7 +258,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
         	List<Map<String, Object>> returnMap = null;
     		try{
     			 // Il distinct serve solo se ci sono le ricerche con contenuto.
-    	        // NOTA: il distinct rende le ricerce inefficenti (ed inoltre non e' utilizzabile con campi clob in oracle)
+    	        // NOTA: il distinct rende le ricerce inefficienti (ed inoltre non e' utilizzabile con campi clob in oracle)
     	        boolean distinct = false;
     	        ISQLQueryObject sqlQueryObjectCheckJoin = sqlQueryObject.newSQLQueryObject();
     	        _join(expression, sqlQueryObjectCheckJoin);
@@ -266,7 +267,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
     	        // BUG FIX: Siccome tra le colonne lette ci sono dei CLOB, in oracle non e' consentito utilizzare il DISTINCT.
     	        // Per questo motivo se c'e' da usare il distinct viene utilizzato il vecchio metodo
     	        if(distinct) {
-    	        	//System.out.println("NON EFFICENTE");
+    	        	//System.out.println("NON EFFICIENTE");
     	        	
     	        	List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
     		        
@@ -277,7 +278,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
     	        }
     	        else {
     	        
-    	        	//System.out.println("EFFICENTE");
+    	        	//System.out.println("EFFICIENTE");
     	        	
 		    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
 		
@@ -291,8 +292,8 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
         	
         }
         else {
-	        // TODO: implementazione non efficente. 
-			// Per ottenere una implementazione efficente:
+	        // TODO: implementazione non efficiente. 
+			// Per ottenere una implementazione efficiente:
 			// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
 			// 2. Usare metodo getCredenzialeMittenteFetch() sul risultato della select per ottenere un oggetto CredenzialeMittente
 			//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
@@ -312,9 +313,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
 	public CredenzialeMittente find(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) 
 		throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
 
-		boolean efficente = true;
-		
-		if(efficente) {
+		if(efficiente) {
 			JDBCPaginatedExpression pagExpr = this.toPaginatedExpression(expression, log);
 			pagExpr.limit(2);// dovrebbe esisterne uno solo
 			List<CredenzialeMittente>  list = this.findAll(jdbcProperties, log, connection, sqlQueryObject, pagExpr, idMappingResolutionBehaviour);

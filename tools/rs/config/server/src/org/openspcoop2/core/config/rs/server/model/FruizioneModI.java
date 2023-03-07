@@ -30,6 +30,7 @@ public class FruizioneModI  {
   @Schema(required = true, description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "protocollo", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FruizioneModIOAuth.class, name = "oauth"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FruizioneModISoap.class, name = "soap"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FruizioneModIRest.class, name = "rest")  })
   private OneOfFruizioneModIModi modi = null;

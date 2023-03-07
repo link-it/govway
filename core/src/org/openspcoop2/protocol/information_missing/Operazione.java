@@ -76,6 +76,7 @@ import java.util.List;
 
 public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Operazione() {
+    super();
   }
 
   public void addSoggetto(Soggetto soggetto) {

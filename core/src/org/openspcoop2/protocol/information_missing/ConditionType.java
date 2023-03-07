@@ -52,6 +52,7 @@ import java.io.Serializable;
 
 public class ConditionType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ConditionType() {
+    super();
   }
 
   public boolean isNot() {

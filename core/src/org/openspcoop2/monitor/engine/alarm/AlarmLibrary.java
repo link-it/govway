@@ -125,6 +125,11 @@ public class AlarmLibrary {
 	
 	/* Utiltiies per start threads */
 		
+	private boolean stopLibrary = false;
+	public void setStopLibrary(boolean stopLibrary) {
+		this.stopLibrary = stopLibrary;
+	}
+
 	public void executeAlarms(boolean exitAfterExecution) throws AlarmException{
 		try{
 			this.activeThreads = this.getActiveAlarmThreads(this.allarmeSearchDAO, this.log);
@@ -135,7 +140,7 @@ public class AlarmLibrary {
 				}
 				
 				if(exitAfterExecution==false){
-					while (true){
+					while (!this.stopLibrary){
 						// non deve morire mai
 						this.sleep();
 					}

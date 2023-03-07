@@ -23,6 +23,7 @@ package org.openspcoop2.utils.crypt;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import org.openspcoop2.utils.random.RandomGenerator;
 
@@ -59,7 +60,7 @@ public class MD5Crypt {
         
         for (int i = 0; i<2; i++) {
             c = arrByte[i] >> 6;  // div(64)
-            c = (arrByte[i] - (c<<6));
+            c = ((arrByte[i] & 0xff) - (c<<6));
             if ( c <= 11 ) // 46-57 ./0..9
                 c+=46;
             if ( c >= 12 && c <= 37 ) // 65-90 a..z
@@ -107,10 +108,10 @@ public class MD5Crypt {
 		return inp & 0xff;
 	}
 
-	private static java.util.Random _rnd = null;
+	private static SecureRandom _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	private static java.util.Random getRandom() {
@@ -176,8 +177,8 @@ public class MD5Crypt {
 		MessageDigest ctx, ctx1;
 
 		try {
-			ctx = MessageDigest.getInstance("md5");
-			ctx1 = MessageDigest.getInstance("md5");
+			ctx = MessageDigest.getInstance("MD5");
+			ctx1 = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException ex) {
 			System.err.println(ex);
 			return null;
@@ -247,7 +248,7 @@ public class MD5Crypt {
 
 		for (int i = 0; i < 1000; i++) {
 			try {
-				ctx1 = MessageDigest.getInstance("md5");
+				ctx1 = MessageDigest.getInstance("MD5");
 			} catch (NoSuchAlgorithmException e0) {
 				return null;
 			}

@@ -216,7 +216,9 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 					}
 					sb.append(" [isDuplicata]");
 					sb.append(" ").append(idBusta);
-					sb.append(" ").append(times.toString());
+					if(times!=null) {
+						sb.append(" ").append(times.toString());
+					}
 					OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSlowLog().info(sb.toString());
 				}
 			}
@@ -256,7 +258,9 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 					}
 					sb.append(" [incrementaNumeroDuplicati]");
 					sb.append(" ").append(idBusta);
-					sb.append(" ").append(times.toString());
+					if(times!=null) {
+						sb.append(" ").append(times.toString());
+					}
 					OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSlowLog().info(sb.toString());
 				}
 			}
@@ -682,14 +686,14 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 						dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm");
 					}
 					if(idBustaRichiesta!=null){
-						if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
+						if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory) && dateformat!=null){
 							sql = sql.replaceFirst("\\?", "'"+dateformat.format(t)+"'");
 						}
 						sql = sql.replaceFirst("\\?", "'"+idBustaRichiesta+"'");
 						sql = sql.replaceFirst("\\?", "'"+TipoPdD.APPLICATIVA.getTipo()+"'");
 					}
 					if(idBustaRisposta!=null){
-						if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
+						if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory) && dateformat!=null){
 							sql = sql.replaceFirst("\\?", "'"+dateformat.format(t)+"'");
 						}
 						sql = sql.replaceFirst("\\?", "'"+idBustaRisposta+"'");

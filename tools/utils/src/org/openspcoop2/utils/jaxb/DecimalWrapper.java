@@ -114,22 +114,22 @@ public class DecimalWrapper implements Serializable {
 		}
 		else if(this.object instanceof BigInteger){
 			BigInteger bigInteger = (BigInteger) this.object;
-			if(c.getName().equals(BigInteger.class.getName())){
+			if(c.isAssignableFrom(BigInteger.class)){
 				return bigInteger;
 			}
-			else if(c.getName().equals(Float.class.getName())){
+			else if(c.isAssignableFrom(Float.class)){
 				fValue = bigInteger.floatValue();
 			}
-			else if(c.getName().equals(Double.class.getName())){
+			else if(c.isAssignableFrom(Double.class)){
 				dValue = bigInteger.doubleValue();
 			}
-			else if(c.getName().equals(Long.class.getName())){
+			else if(c.isAssignableFrom(Long.class)){
 				lValue = bigInteger.longValue();
 			}
-			else if(c.getName().equals(Integer.class.getName())){
+			else if(c.isAssignableFrom(Integer.class)){
 				iValue = bigInteger.intValue();
 			}
-			else if(c.getName().equals(Short.class.getName())){
+			else if(c.isAssignableFrom(Short.class)){
 				sValue = bigInteger.shortValue();
 			}
 			else {
@@ -138,22 +138,22 @@ public class DecimalWrapper implements Serializable {
 		}
 		else if(this.object instanceof BigDecimal){
 			BigDecimal bigDecimal = (BigDecimal) this.object;
-			if(c.getName().equals(BigInteger.class.getName())){
+			if(c.isAssignableFrom(BigInteger.class)){
 				return bigDecimal;
 			}
-			else if(c.getName().equals(Float.class.getName())){
+			else if(c.isAssignableFrom(Float.class)){
 				fValue = bigDecimal.floatValue();
 			}
-			else if(c.getName().equals(Double.class.getName())){
+			else if(c.isAssignableFrom(Double.class)){
 				dValue = bigDecimal.doubleValue();
 			}
-			else if(c.getName().equals(Long.class.getName())){
+			else if(c.isAssignableFrom(Long.class)){
 				lValue = bigDecimal.longValue();
 			}
-			else if(c.getName().equals(Integer.class.getName())){
+			else if(c.isAssignableFrom(Integer.class)){
 				iValue = bigDecimal.intValue();
 			}
-			else if(c.getName().equals(Short.class.getName())){
+			else if(c.isAssignableFrom(Short.class)){
 				sValue = bigDecimal.shortValue();
 			}
 			else {
@@ -165,7 +165,7 @@ public class DecimalWrapper implements Serializable {
 		}
 		
 		
-		if(c.getName().equals(Float.class.getName())){
+		if(c.isAssignableFrom(Float.class)){
 			if(fValue!=null){
 				return (Float) fValue;
 			}
@@ -182,7 +182,7 @@ public class DecimalWrapper implements Serializable {
 				return  sValue.floatValue();
 			}
 		}
-		else if(c.getName().equals(Double.class.getName())){
+		else if(c.isAssignableFrom(Double.class)){
 			if(fValue!=null){
 				return fValue.doubleValue();
 			}
@@ -199,7 +199,7 @@ public class DecimalWrapper implements Serializable {
 				return sValue.doubleValue();
 			}
 		} 
-		else if(c.getName().equals(Long.class.getName())){
+		else if(c.isAssignableFrom(Long.class)){
 			if(fValue!=null){
 				return fValue.longValue();
 			}
@@ -216,7 +216,7 @@ public class DecimalWrapper implements Serializable {
 				return sValue.longValue();
 			}
 		} 
-		else if(c.getName().equals(Integer.class.getName())){
+		else if(c.isAssignableFrom(Integer.class)){
 			if(fValue!=null){
 				return fValue.intValue();
 			}
@@ -233,7 +233,7 @@ public class DecimalWrapper implements Serializable {
 				return sValue.intValue();
 			}
 		}
-		else if(c.getName().equals(Short.class.getName())){
+		else if(c.isAssignableFrom(Short.class)){
 			if(fValue!=null){
 				return fValue.shortValue();
 			}

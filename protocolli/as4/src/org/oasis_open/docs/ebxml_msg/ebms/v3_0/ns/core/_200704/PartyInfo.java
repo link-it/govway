@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class PartyInfo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public PartyInfo() {
+    super();
   }
 
   public From getFrom() {

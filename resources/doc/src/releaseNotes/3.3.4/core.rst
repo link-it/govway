@@ -28,11 +28,11 @@ Sono stati introdotti significativi miglioramenti prestazionali:
 
 È stata migliorata la generazione delle informazioni statistiche:
 
-- i criteri di generazione dei report statistici utilizzano adesso un'identificazione dell'intervallo temporale inclusivo del giorno di interesse del report (es. >=2021-02-10 00:00:00.000), soluzione che risulta maggiormente efficente in presenza di partizionamento giornaliero delle transazioni; 
+- i criteri di generazione dei report statistici utilizzano adesso un'identificazione dell'intervallo temporale inclusivo del giorno di interesse del report (es. >=2021-02-10 00:00:00.000), soluzione che risulta maggiormente efficiente in presenza di partizionamento giornaliero delle transazioni; 
 
 - l'algoritmo di generazione delle statistiche è stato completamente rivisto:
 
-	- le informazioni statistiche, comprensive di latenze, vengono adesso calcolate tramite un'unica query SQL in modo da essere maggiormente efficente in presenza di grande mole di dati;
+	- le informazioni statistiche, comprensive di latenze, vengono adesso calcolate tramite un'unica query SQL in modo da essere maggiormente efficiente in presenza di grande mole di dati;
 
 	- l'aggiornamento dell'intervallo corrente è adesso transazionale;
 

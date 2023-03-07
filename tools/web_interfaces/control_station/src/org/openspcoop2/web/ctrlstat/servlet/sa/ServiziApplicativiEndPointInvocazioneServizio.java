@@ -338,6 +338,10 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo()) && !erogazioneServizioApplicativoServerEnabled) {
 						// 1. leggo SA di default
 						
+						if(pa==null) {
+							throw new Exception("Porta is null");
+						}
+						
 						IDServizioApplicativo idSA = new IDServizioApplicativo();
 						idSA.setNome(pa.getServizioApplicativoDefault());
 						IDSoggetto idSoggettoProprietario = new IDSoggetto();

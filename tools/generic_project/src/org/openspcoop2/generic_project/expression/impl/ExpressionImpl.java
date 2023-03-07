@@ -822,11 +822,13 @@ public class ExpressionImpl implements IExpression {
 							ComplexField c = (ComplexField) field;
 							inUseModel = c.getFather().equals(model.getBaseField());
 						}else{
-							inUseModel = model.getModeledClass().getName().equals(field.getClassType().getName());
+							String modeClassName = model.getModeledClass().getName() + "";
+							inUseModel = modeClassName.equals(field.getClassType().getName());
 						}
 					}
 					else{
-						inUseModel = model.getModeledClass().getName().equals(field.getClassType().getName());
+						String modeClassName = model.getModeledClass().getName() + "";
+						inUseModel = modeClassName.equals(field.getClassType().getName());
 					}
 					if(inUseModel){
 						return true;
@@ -843,11 +845,13 @@ public class ExpressionImpl implements IExpression {
 							ComplexField c = (ComplexField) field;
 							inUseModel = c.getFather().equals(model.getBaseField());
 						}else{
-							inUseModel = model.getModeledClass().getName().equals(field.getClassType().getName());
+							String modeClassName = model.getModeledClass().getName() + "";
+							inUseModel = modeClassName.equals(field.getClassType().getName());
 						}
 					}
 					else{
-						inUseModel = model.getModeledClass().getName().equals(field.getClassType().getName());
+						String modeClassName = model.getModeledClass().getName() + "";
+						inUseModel = modeClassName.equals(field.getClassType().getName());
 					}
 					if(inUseModel){
 						return true;

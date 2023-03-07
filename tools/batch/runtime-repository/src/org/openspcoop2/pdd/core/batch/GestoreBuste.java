@@ -98,18 +98,16 @@ public class GestoreBuste extends AbstractGestore {
 					rightInterval = maxDate;
 				}
 				
-				if(rightInterval!=null) {
-					while(rightInterval.before(maxDate)) {
-						
-						cleanBusteInutili(leftInterval, rightInterval);
-						
-						leftInterval = rightInterval;
-						rightInterval = new Date(leftInterval.getTime()+(this.finestraSecondi*1000));
-						if(rightInterval.after(maxDate)) {
-							rightInterval = maxDate;
-						}
-						
+				while(rightInterval!=null && rightInterval.before(maxDate)) {
+					
+					cleanBusteInutili(leftInterval, rightInterval);
+					
+					leftInterval = rightInterval;
+					rightInterval = new Date(leftInterval.getTime()+(this.finestraSecondi*1000));
+					if(rightInterval.after(maxDate)) {
+						rightInterval = maxDate;
 					}
+					
 				}
 				
 				// ultimo intervallo

@@ -522,7 +522,7 @@ public class Traccia implements java.io.Serializable {
 		Traccia clone = new Traccia();
 		
 		// id
-		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()) : null);
+		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()+"") : null);
 		
     	// data
 		clone.setGdo(this.getGdo()!=null ? new Date(this.getGdo().getTime()) : null);
@@ -548,7 +548,7 @@ public class Traccia implements java.io.Serializable {
 			}
 			clone.setBustaAsByteArray(bout.toByteArray());
 		}
-		clone.setBustaAsRawContent(this.getBustaAsRawContent()); // non clonato, vedere se si trova un modo efficente se serve
+		clone.setBustaAsRawContent(this.getBustaAsRawContent()); // non clonato, vedere se si trova un modo efficiente se serve
 		clone.setBustaAsString(this.getBustaAsString()!=null ? new String(this.getBustaAsString()) : null);
 		
     	// correlazione

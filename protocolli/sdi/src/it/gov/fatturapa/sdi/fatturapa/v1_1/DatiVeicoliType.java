@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class DatiVeicoliType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiVeicoliType() {
+    super();
   }
 
   public java.util.Date getData() {

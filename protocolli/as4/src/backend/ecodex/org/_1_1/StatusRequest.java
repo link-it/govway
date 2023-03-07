@@ -56,6 +56,7 @@ import java.io.Serializable;
 
 public class StatusRequest extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public StatusRequest() {
+    super();
   }
 
   public java.lang.String getMessageID() {

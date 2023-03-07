@@ -91,6 +91,7 @@ import java.util.List;
 
 public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DettaglioLineeType() {
+    super();
   }
 
   public java.math.BigInteger getNumeroLinea() {

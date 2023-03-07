@@ -179,6 +179,10 @@ public abstract class AbstractXMLUtils {
 	public synchronized void initTransformerFactory() throws XMLException {
 		if(this.transformerFactory==null){
 			this.transformerFactory = newTransformerFactory();
+			/*if(DISABLE_DTDs) {
+				this.transformerFactory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
+				this.transformerFactory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+			}*/
 		}
 	}
 	

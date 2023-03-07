@@ -514,7 +514,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public int countAllAndamentoTemporale() throws ServiceException {
 		try {
-			return Long.valueOf(countAndamentoTemporale().longValue()).intValue();
+			return (int) countAndamentoTemporale().longValue();
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
@@ -740,6 +740,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				break;
 			}
 			
+			if(model==null) {
+				throw new Exception("Model sconosciuta");
+			}
+			
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
@@ -907,6 +911,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(gByExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
 						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						Thread.currentThread().interrupt();
 					} catch (ExecutionException e) {
 						if(e.getCause() instanceof NotFoundException) {
 							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
@@ -945,6 +950,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
 						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						Thread.currentThread().interrupt();
 					} catch (ExecutionException e) {
 						if(e.getCause() instanceof NotFoundException) {
 							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
@@ -1156,6 +1162,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 									).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 							} catch (InterruptedException e) {
 								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+								Thread.currentThread().interrupt();
 							} catch (ExecutionException e) {
 								if(e.getCause() instanceof NotFoundException) {
 									StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
@@ -1307,6 +1314,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 									).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 							} catch (InterruptedException e) {
 								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+								Thread.currentThread().interrupt();
 							} catch (ExecutionException e) {
 								if(e.getCause() instanceof NotFoundException) {
 									StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
@@ -1456,6 +1464,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 									).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 							} catch (InterruptedException e) {
 								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+								Thread.currentThread().interrupt();
 							} catch (ExecutionException e) {
 								if(e.getCause() instanceof NotFoundException) {
 									StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
@@ -1662,6 +1671,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		} catch (ExpressionException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		} catch (Exception e) {
+			if(e!=null && e instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
 
@@ -2363,7 +2375,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			NonNegativeNumber nnn = dao.count(gByExpr);
 
-			return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+			return nnn != null ? ((int)nnn.longValue()) : 0;
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw e;
@@ -2883,6 +2895,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
 						throw (NotFoundException) e.getCause();
@@ -2906,6 +2919,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					esitiProperties = EsitiProperties.getInstanceFromProtocolName(StatisticheGiornaliereService.log, this.distribErroriSearch.getProtocollo());
 				}catch(Throwable t) {
 					StatisticheGiornaliereService.log.error("EsitiProperties reader non disponibile: "+t.getMessage(), t);
+				}
+				if(esitiProperties==null) {
+					throw new ServiceException("EsitiProperties unavailable");
 				}
 								
 				// List<Object[]> list = q.getResultList();
@@ -4226,6 +4242,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> dao.union(union, erogazione_portaApplicativa_UnionExpr, fruizione_portaDelegata_UnionExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
 						throw (NotFoundException) e.getCause();
@@ -4541,6 +4558,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> dao.union(union, erogazione_portaApplicativa_UnionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
 						throw (NotFoundException) e.getCause();
@@ -4857,6 +4875,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> dao.union(union, fruizione_portaDelegata_UnionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
 						throw (NotFoundException) e.getCause();
@@ -4960,7 +4979,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			NonNegativeNumber nnn = dao.count(gByExpr);
 
-			return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+			return nnn != null ? ((int) nnn.longValue()) : 0;
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw e;
@@ -5213,6 +5232,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
 						throw (NotFoundException) e.getCause();
@@ -5660,7 +5680,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			NonNegativeNumber nnn = dao.count(gByExpr);
 
-			return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+			return nnn != null ? ((int) nnn.longValue()) : 0;
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw e;
@@ -6208,6 +6228,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
 						throw (NotFoundException) e.getCause();
@@ -6310,6 +6331,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				break;
 			}
 			
+			if(dao==null) {
+				throw new ServiceException("Dao sconosciuto");
+			}
+			
 			// Fix introdotto per gestire il soggetto proprietario
 			boolean forceErogazione = false;
 			boolean forceFruizione = false;
@@ -6344,7 +6369,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					
 					NonNegativeNumber nnn = dao.count(expr);
-					int valoreLetto = nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+					int valoreLetto = nnn != null ? ((int)nnn.longValue()) : 0;
 					count = count + valoreLetto;
 				}
 				if(forceFruizione){
@@ -6357,7 +6382,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					
 					NonNegativeNumber nnn = dao.count(expr);
-					int valoreLetto = nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+					int valoreLetto = nnn != null ? ((int) nnn.longValue()) : 0;
 					count = count + valoreLetto;
 				}
 				return count;
@@ -6374,7 +6399,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				NonNegativeNumber nnn = dao.count(expr);
-				return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+				return nnn != null ? ((int) nnn.longValue()) : 0;
 			}
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -6836,6 +6861,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, uExpressions)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
 						throw (NotFoundException) e.getCause();
@@ -7313,7 +7339,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try {
 			NonNegativeNumber nnn = executeDistribuzionePersonalizzataCount();
 
-			return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+			return nnn != null ? ((int) nnn.longValue()) : 0;
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw e;
@@ -7540,6 +7566,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
 						throw (NotFoundException) e.getCause();
@@ -7925,6 +7952,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(expr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
 						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						Thread.currentThread().interrupt();
 					} catch (ExecutionException e) {
 						if(e.getCause() instanceof NotFoundException) {
 							throw (NotFoundException) e.getCause();
@@ -7952,6 +7980,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
 						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						Thread.currentThread().interrupt();
 					} catch (ExecutionException e) {
 						if(e.getCause() instanceof NotFoundException) {
 							throw (NotFoundException) e.getCause();

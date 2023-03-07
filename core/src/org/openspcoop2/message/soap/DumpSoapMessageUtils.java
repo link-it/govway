@@ -445,9 +445,10 @@ public class DumpSoapMessageUtils {
 	
 	public static String dumpAttachment(OpenSPCoop2SoapMessage msg,AttachmentPart ap) throws MessageException{
 		Object o = _dumpAttachment(msg, ap, false);
-		if(o == null){
+		// Metodo sopra non torna mai null, segnalato da sonarqube
+		/*if(o == null){
 			throw new MessageException("Dump error (return null reference)");
-		}
+		}*/
 		if(o instanceof String){
 			return (String) o;
 		}
@@ -472,9 +473,10 @@ public class DumpSoapMessageUtils {
 	}
 	public static byte[] dumpAttachmentAsByteArray(OpenSPCoop2SoapMessage msg,AttachmentPart ap) throws MessageException{
 		Object o = _dumpAttachment(msg, ap, false);
-		if(o == null){
+		// Metodo sopra non torna mai null, segnalato da sonarqube
+		/*if(o == null){
 			throw new MessageException("Dump error (return null reference)");
-		}
+		}*/
 		if(o instanceof String){
 			return ((String) o).getBytes();
 		}

@@ -82,7 +82,7 @@ public class ConfigurazioniExporter extends HttpServlet{
 		this.processRequest(req,resp);		
 	}
 
-	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
+	private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 			if(context==null) {
@@ -146,7 +146,6 @@ public class ConfigurazioniExporter extends HttpServlet{
 			
 		}catch(Throwable e){
 			log.error(e.getMessage(),e);
-			throw new ServletException(e.getMessage(),e);
 		}
 		
 	}
@@ -236,21 +235,23 @@ public class ConfigurazioniExporter extends HttpServlet{
 		}
 
 		// numero di id ricevuti non coincidente.
-		if(ids.length != idsFromSession.length)
+		if(ids!=null && idsFromSession!=null && ids.length != idsFromSession.length)
 			return false;
 
-		for (String id : ids) {
-			boolean found = false;
-			for (String idFromSession : idsFromSession) {
-				if(id.equals(idFromSession)){
-					found = true;
-					break;
-				}
-			}	
-
-			// Se l'id ricevuto dalla richiesta non e' tra quelli consentiti allora non puoi accedere alla risorsa
-			if(!found)
-				return false;
+		if(ids!=null) {
+			for (String id : ids) {
+				boolean found = false;
+				for (String idFromSession : idsFromSession) {
+					if(id.equals(idFromSession)){
+						found = true;
+						break;
+					}
+				}	
+	
+				// Se l'id ricevuto dalla richiesta non e' tra quelli consentiti allora non puoi accedere alla risorsa
+				if(!found)
+					return false;
+			}
 		}
 		
 		if(StringUtils.isEmpty(ruoloS) || StringUtils.isEmpty(ruoloSFromSession))

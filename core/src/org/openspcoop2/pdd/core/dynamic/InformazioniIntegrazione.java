@@ -65,6 +65,13 @@ public class InformazioniIntegrazione extends org.openspcoop2.utils.beans.BaseBe
 				log, null, transportResponseContext);
 	}
 	
+	private static boolean logError = true;
+	public static boolean isLogError() {
+		return logError;
+	}
+	public static void setLogError(boolean logError) {
+		InformazioniIntegrazione.logError = logError;
+	}
 	private void init(InformazioniIntegrazioneSorgente sourceType,  String sourceName, InformazioniIntegrazioneCodifica sourceEncodeType, boolean sourceRequired,
 			Logger log, TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext) throws Exception {
 		
@@ -167,9 +174,7 @@ public class InformazioniIntegrazione extends org.openspcoop2.utils.beans.BaseBe
 		}
 
 		//System.out.println("JSON ["+new String(this.rawDecoded)+"]");
-		
-		boolean logError = true;
-		
+				
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		
 		JsonNode root = null;

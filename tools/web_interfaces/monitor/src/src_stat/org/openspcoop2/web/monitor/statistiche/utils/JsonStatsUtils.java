@@ -116,7 +116,9 @@ public class JsonStatsUtils {
 
 				long v = altri_sum;
 				if(altri_sum_numeroItem>1 && (occupazioneBanda || tempoMedio)){
-					v = v / altri_sum_numeroItem;
+					if(altri_sum_numeroItem>0) {
+						v = v / altri_sum_numeroItem;
+					}
 				}
 
 				String toolText = StatsUtils.getToolText(search,v); 
@@ -299,7 +301,7 @@ public class JsonStatsUtils {
 									if(showSeries){
 										JSONObject categoria = new JSONObject();
 										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
-										categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue());
+										categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
 										categorie.add(i,categoria);
 									}
@@ -453,15 +455,21 @@ public class JsonStatsUtils {
 					} else{
 
 						if(j==0){
-							altri_sum_serie1+=sum.longValue();
+							if(sum!=null) {
+								altri_sum_serie1+=sum.longValue();
+							}
 							altri_sum_serie1_numeroItem++;
 						}
 						else if(j==1){
-							altri_sum_serie2+=sum.longValue();
+							if(sum!=null) {
+								altri_sum_serie2+=sum.longValue();
+							}
 							altri_sum_serie2_numeroItem++;
 						}
 						else if(j==2){
-							altri_sum_serie3+=sum.longValue();
+							if(sum!=null) {
+								altri_sum_serie3+=sum.longValue();
+							}
 							altri_sum_serie3_numeroItem++;
 						}
 					}
@@ -649,7 +657,7 @@ public class JsonStatsUtils {
 								if(showSeries){
 									JSONObject categoria = new JSONObject();
 									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue());
+									categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
 									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
 									categorie.add(i,categoria);
 								}
@@ -929,7 +937,9 @@ public class JsonStatsUtils {
 
 				long v = altri_sum;
 				if(altri_sum_numeroItem>1 && (occupazioneBanda || tempoMedio)){
-					v = v / altri_sum_numeroItem;
+					if(altri_sum_numeroItem>0) {
+						v = v / altri_sum_numeroItem;
+					}
 				}
 
 				String toolText = StatsUtils.getToolText(search,v); 

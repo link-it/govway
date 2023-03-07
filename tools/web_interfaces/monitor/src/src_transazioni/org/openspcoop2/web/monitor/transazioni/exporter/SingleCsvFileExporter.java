@@ -61,6 +61,7 @@ import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.converter.DurataConverter;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.report.Templates;
@@ -99,6 +100,8 @@ public class SingleCsvFileExporter implements IExporter{
 	private List<String> colonneSelezionate = null;
 	private boolean useCount = true;
 
+	private boolean dataUscitaRispostaValorizzataDopoSpedizioneRisposta = false;
+	
 	private ITransazioniService transazioniService;
 	private ITracciaDriver tracciamentoService;
 	private IDiagnosticDriver diagnosticiService;
@@ -123,7 +126,10 @@ public class SingleCsvFileExporter implements IExporter{
 		this.formato = properties.getFormato();
 		this.colonneSelezionate = properties.getColonneSelezionate();
 		this.useCount = properties.isUseCount();
-
+		
+		PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(SingleCsvFileExporter.log);
+		this.dataUscitaRispostaValorizzataDopoSpedizioneRisposta = govwayMonitorProperties.isDataUscitaRispostaUseDateAfterResponseSent();
+		
 		this.tracciamentoService = tracciamentoService;
 		this.transazioniService = transazioniService;
 		this.diagnosticiService = diagnosticiService;
@@ -394,6 +400,12 @@ public class SingleCsvFileExporter implements IExporter{
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_INGRESSO_RICHIESTA_STREAM)){
+					if(t.getDataIngressoRichiestaStream() != null){
+						oneLine.add(this.formatDate(t.getDataIngressoRichiestaStream())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ACCETTAZIONE_RISPOSTA)){
 					if(t.getDataAccettazioneRisposta() != null){
 						oneLine.add(this.formatDate(t.getDataAccettazioneRisposta())); 
@@ -406,17 +418,53 @@ public class SingleCsvFileExporter implements IExporter{
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_INGRESSO_RISPOSTA_STREAM)){
+					if(t.getDataIngressoRispostaStream() != null){
+						oneLine.add(this.formatDate(t.getDataIngressoRispostaStream())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RICHIESTA)){
 					if(t.getDataUscitaRichiesta() != null){
 						oneLine.add(this.formatDate(t.getDataUscitaRichiesta())); 
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
-				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RISPOSTA)){
-					if(t.getDataUscitaRisposta() != null){
-						oneLine.add(this.formatDate(t.getDataUscitaRisposta())); 
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RICHIESTA_STREAM)){
+					if(t.getDataUscitaRichiestaStream() != null){
+						oneLine.add(this.formatDate(t.getDataUscitaRichiestaStream())); 
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RISPOSTA)){
+					if(this.dataUscitaRispostaValorizzataDopoSpedizioneRisposta) {
+						if(t.getDataUscitaRispostaStream() != null){
+							oneLine.add(this.formatDate(t.getDataUscitaRispostaStream())); 
+						} else {
+							oneLine.add(CostantiExport.EMPTY_STRING);
+						}
+					}
+					else {
+						if(t.getDataUscitaRisposta() != null){
+							oneLine.add(this.formatDate(t.getDataUscitaRisposta())); 
+						} else {
+							oneLine.add(CostantiExport.EMPTY_STRING);
+						}
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RISPOSTA_STREAM)){
+					if(this.dataUscitaRispostaValorizzataDopoSpedizioneRisposta) {
+						if(t.getDataUscitaRisposta() != null){
+							oneLine.add(this.formatDate(t.getDataUscitaRisposta())); 
+						} else {
+							oneLine.add(CostantiExport.EMPTY_STRING);
+						}
+					}
+					else {
+						if(t.getDataUscitaRispostaStream() != null){
+							oneLine.add(this.formatDate(t.getDataUscitaRispostaStream())); 
+						} else {
+							oneLine.add(CostantiExport.EMPTY_STRING);
+						}
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DIAGNOSTICI)){
 					if(this.exportDiagnostici){
@@ -967,7 +1015,7 @@ public class SingleCsvFileExporter implements IExporter{
 
 			Date dataFine = Calendar.getInstance().getTime();
 
-			if(this.abilitaMarcamentoTemporale){
+			if(this.abilitaMarcamentoTemporale && te!=null){
 				te.setExportState(ExportState.COMPLETED);
 				te.setExportTimeEnd(dataFine);
 				this.transazioniExporterService.store(te);
@@ -979,7 +1027,7 @@ public class SingleCsvFileExporter implements IExporter{
 		}catch(ExportException e){
 			SingleCsvFileExporter.log.error("Errore durante esportazione su file",e);
 
-			if(this.abilitaMarcamentoTemporale){
+			if(this.abilitaMarcamentoTemporale && te!=null){
 				try{
 					te.setExportState(ExportState.ERROR);
 					StringWriter sw = new StringWriter();

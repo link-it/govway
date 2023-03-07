@@ -46,7 +46,6 @@ import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
-import org.openspcoop2.web.monitor.core.core.InitServlet;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCache;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCacheJmxDatiConfigurazione;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCacheJmxRicercheConfigurazione;
@@ -269,7 +268,7 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			// leggo properties
 			//System.out.println("SET FILE CONF ["+fileConf+"]");
 			//System.out.println("INIT ["+getLocalDefaultLoggerName()+"]");
-			InputStream is = InitServlet.class
+			InputStream is = AbstractConsoleStartupListener.class
 					.getResourceAsStream(getLoggerProperties());
 			Properties loggerProperties = new Properties();
 			loggerProperties.load(is);

@@ -135,6 +135,11 @@ public final class ConfigurazioneTracciamentoDatasourcePropertiesDel extends Act
 					break;
 				}
 			}
+			
+			if(od==null) {
+				throw new Exception("Datasource non trovato");
+			}
+			
 			List<Property> lista1 = od.getPropertyList();
 
 			confHelper.prepareTracciamentoDatasourcePropList(od, lista1);

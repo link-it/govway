@@ -29,7 +29,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.openapi.validator.MultipartUtilities;
-import org.openspcoop2.utils.openapi.validator.TestOpenApi3Extended;
+import org.openspcoop2.utils.openapi.validator.test.OpenApi3ExtendedTest;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -61,7 +61,7 @@ public class OpenAPI30_MultipartRequestArrayTest extends ConfigLoader {
 	}
 	private void request_ok_array_binary(TipoServizio tipo, String subtype) throws Exception {
 		
-		byte [] pdf = Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 		List<byte[]> l = new ArrayList<byte[]>();
 		l.add(pdf);
 		l.add(pdf);

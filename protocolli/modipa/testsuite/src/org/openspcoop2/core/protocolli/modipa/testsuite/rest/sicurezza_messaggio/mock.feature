@@ -53,7 +53,12 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato') ||
 	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato-richiesta') ||
 	isTest('doppi-header-token-date-differenti-richiesta') ||
-	isTest('connettivita-base-truststore-ca-ocsp')
+	isTest('connettivita-base-truststore-ca-ocsp') ||
+	isTest('keystore-default-fruizione') ||
+	isTest('keystore-ridefinito-fruizione') || isTest('keystore-ridefinito-fruizione-applicativo-no-keystore') || 
+	isTest('keystore-ridefinito-fruizione-archivio') ||
+	isTest('keystore-ridefinito-fruizione-x5u') ||
+	isTest('keystore-definito-applicativo')
     
     # Controllo che al server non siano arrivate le informazioni di sicurezza
     * match requestHeaders['Authorization'] == '#notpresent'
@@ -476,7 +481,7 @@ Scenario: isTest('connettivita-base-idar0302') || isTest('manomissione-header-ht
 
 
 Scenario: isTest('assenza-header-digest-risposta-idar0302') || isTest('riutilizzo-token-idar0302') || 
-		isTest('pkcs11') || isTest('pkcs11-certificate')
+		isTest('pkcs11') || isTest('pkcs11-certificate') || isTest('pkcs11-keystore-fruizione')
     
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')

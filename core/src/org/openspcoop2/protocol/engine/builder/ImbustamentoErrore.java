@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.engine.builder;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,7 +104,7 @@ public class ImbustamentoErrore  {
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {

@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class RestMediaTypeDefaultMapping extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RestMediaTypeDefaultMapping() {
+    super();
   }
 
   public void set_value_messageType(String value) {

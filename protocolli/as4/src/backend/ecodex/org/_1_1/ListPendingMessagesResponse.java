@@ -58,6 +58,7 @@ import java.util.List;
 
 public class ListPendingMessagesResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ListPendingMessagesResponse() {
+    super();
   }
 
   public void addMessageID(java.lang.String messageID) {

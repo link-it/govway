@@ -19,8 +19,8 @@
  */
 package org.openspcoop2.utils.id;
 
+import java.security.SecureRandom;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.utils.Utilities;
@@ -69,7 +69,7 @@ public class IDUtilities {
 	      tmp.append(ch);
 	    symbols = tmp.toString().toCharArray();
 	}   
-	private static final Random random = new Random();
+	private static final SecureRandom random = new SecureRandom();
 	private static final Map<String, char[]> mapRandom = new ConcurrentHashMap<String, char[]>();
 	private static synchronized char[] getBufferForRandom(int length){
 		String key = length+"";

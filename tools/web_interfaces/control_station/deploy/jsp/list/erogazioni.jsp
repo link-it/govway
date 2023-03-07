@@ -102,7 +102,7 @@ for (int j = 0; j < riga.size(); j++) {
 	<td class="tdText<%=cssClassStato %>">
 		<div id="stato_<%=numeroEntryS %>">
  			<span class="statoErogazioneIcon" id="iconConfigurazione_<%=numeroEntryS %>">
-				<img src="images/tema_link/<%= image %>" <%= statusTooltipTitleAttribute %>/>
+				<img src="images/tema_link/<%= image %>" <%= statusTooltipTitleAttribute %> alt="Stato"/>
 			</span>
 			<% if(de.getWidth() != null){ %>
 				<style type="text/css" nonce="<%= randomNonce %>">

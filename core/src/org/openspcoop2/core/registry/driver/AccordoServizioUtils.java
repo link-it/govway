@@ -241,7 +241,9 @@ public class AccordoServizioUtils {
 
 			Map<String, String> declarationNamespacesWSDL = null;
 			try{
-				declarationNamespacesWSDL = this.xmlUtils.getNamespaceDeclaration(dWsdlFruitore.getDocumentElement());
+				if(dWsdlFruitore!=null) {
+					declarationNamespacesWSDL = this.xmlUtils.getNamespaceDeclaration(dWsdlFruitore.getDocumentElement());
+				}
 			}catch(Exception e){
 				throw new DriverRegistroServiziException("L'accordo di servizio parte comune contiene un wsdl corrotto (Analisi namespace declarations): "+e.getMessage(),e);
 			}

@@ -38,7 +38,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 
 /**
@@ -80,7 +79,9 @@ public class AuthenticationProvider implements org.springframework.security.auth
 				u = loginService.loadUserByUsername(username, false); // il controllo e' fatto nella acl
 			}
 			catch(NotFoundException e) {
-				throw new UsernameNotFoundException("Username '"+username+"' not found", e);
+				//throw new UsernameNotFoundException("Username '"+username+"' not found", e);
+				// Fix security: Make sure allowing user enumeration is safe here.
+				throw new BadCredentialsException("Bad credentials");
 			}
 			catch(Exception e) {
 				LoggerProperties.getLoggerCore().error(e.getMessage(),e);

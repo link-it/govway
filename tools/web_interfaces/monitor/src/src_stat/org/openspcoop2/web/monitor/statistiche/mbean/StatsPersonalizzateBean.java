@@ -82,15 +82,15 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 
 	public StatsPersonalizzateBean() {
 		super();
-		this.init();
+		this.initSPB();
 	}
 	public StatsPersonalizzateBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
 			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB) {
 		super(serviceManager, pluginsServiceManager,
 				driverRegistroServiziDB, driverConfigurazioneDB);
-		this.init();
+		this.initSPB();
 	}
-	private void init() {
+	private void initSPB() {
 		this.setChartId("statistichePersonalizzate");
 		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}

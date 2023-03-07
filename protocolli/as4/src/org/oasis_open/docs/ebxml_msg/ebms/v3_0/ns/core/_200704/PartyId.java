@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class PartyId extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public PartyId() {
+    super();
   }
 
   public String getBase() {

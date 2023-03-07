@@ -58,6 +58,7 @@ import java.util.List;
 
 public class ElencoPartecipanti extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ElencoPartecipanti() {
+    super();
   }
 
   public void addPartecipante(java.net.URI partecipante) {

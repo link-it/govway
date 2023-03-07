@@ -30,6 +30,7 @@ import org.apache.cxf.io.CachedOutputStreamCallback;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.slf4j.Logger;
 
 /**	
@@ -73,7 +74,7 @@ class LoggingCallback implements CachedOutputStreamCallback {
 	public void onClose(CachedOutputStream cos) {
        	File f = null;
 		try {
-			f = File.createTempFile("SendMessage", ".dump");
+			f = FileSystemUtilities.createTempFile("SendMessage", ".dump");
 			FileOutputStream fos =new FileOutputStream(f);
 			cos.writeCacheTo(fos);
 			fos.flush();

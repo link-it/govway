@@ -261,7 +261,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 						if(certificatoCheck!=null) {
 							//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
 							if(certificatoCheck instanceof java.security.cert.X509Certificate) {
-								if(certificate.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
+								if(certificate!=null && certificate.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
 									idServizioApplicativo = idServizioApplicativoSubjectIssuerCheck;
 									break;
 								}

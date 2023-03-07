@@ -600,6 +600,62 @@ public class Info {
 		return this.correctDate(this.transazione.getDataIngressoRichiesta(), format, timeZone, defaultValue, replace, with);
 	}
 	
+	public java.lang.String getInRequestStartTime() {
+		return this.getInRequestStartTime(DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
+	}
+	public java.lang.String getInRequestStartTime(String format) {
+		return getInRequestStartTime(format, null, null, null);
+	}
+	public java.lang.String getInRequestStartTime(String format, String defaultValue) {
+		return getInRequestStartTime(format, defaultValue, null, null);
+	}
+	public java.lang.String getInRequestStartTime(String format, String replace, String with) {
+		return getInRequestStartTime(format, null, replace, with);
+	}
+	public java.lang.String getInRequestStartTime(String format, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataIngressoRichiesta(), format, null, defaultValue, replace, with);
+	}
+	public java.lang.String getInRequestStartTimeZ(String format, String timeZone) {
+		return getInRequestStartTimeZ(format, timeZone, null, null, null);
+	}
+	public java.lang.String getInRequestStartTimeZ(String format, String timeZone, String defaultValue) {
+		return getInRequestStartTimeZ(format, timeZone, defaultValue, null, null);
+	}
+	public java.lang.String getInRequestStartTimeZ(String format, String timeZone, String replace, String with) {
+		return getInRequestStartTimeZ(format, timeZone, null, replace, with);
+	}
+	public java.lang.String getInRequestStartTimeZ(String format, String timeZone, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataIngressoRichiesta(), format, timeZone, defaultValue, replace, with);
+	}
+	
+	public java.lang.String getInRequestEndTime() {
+		return this.getInRequestEndTime(DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
+	}
+	public java.lang.String getInRequestEndTime(String format) {
+		return getInRequestEndTime(format, null, null, null);
+	}
+	public java.lang.String getInRequestEndTime(String format, String defaultValue) {
+		return getInRequestEndTime(format, defaultValue, null, null);
+	}
+	public java.lang.String getInRequestEndTime(String format, String replace, String with) {
+		return getInRequestEndTime(format, null, replace, with);
+	}
+	public java.lang.String getInRequestEndTime(String format, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataIngressoRichiestaStream(), format, null, defaultValue, replace, with);
+	}
+	public java.lang.String getInRequestEndTimeZ(String format, String timeZone) {
+		return getInRequestEndTimeZ(format, timeZone, null, null, null);
+	}
+	public java.lang.String getInRequestEndTimeZ(String format, String timeZone, String defaultValue) {
+		return getInRequestEndTimeZ(format, timeZone, defaultValue, null, null);
+	}
+	public java.lang.String getInRequestEndTimeZ(String format, String timeZone, String replace, String with) {
+		return getInRequestEndTimeZ(format, timeZone, null, replace, with);
+	}
+	public java.lang.String getInRequestEndTimeZ(String format, String timeZone, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataIngressoRichiestaStream(), format, timeZone, defaultValue, replace, with);
+	}
+	
 	public java.lang.String getOutRequestDate() {
 		return this.getOutRequestDate(DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
 	}
@@ -626,6 +682,62 @@ public class Info {
 	}
 	public java.lang.String getOutRequestDateZ(String format, String timeZone, String defaultValue, String replace, String with) {
 		return this.correctDate(this.transazione.getDataUscitaRichiesta(), format, timeZone, defaultValue, replace, with);
+	}
+	
+	public java.lang.String getOutRequestStartTime() {
+		return this.getOutRequestStartTime(DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
+	}
+	public java.lang.String getOutRequestStartTime(String format) {
+		return getOutRequestStartTime(format, null, null, null);
+	}
+	public java.lang.String getOutRequestStartTime(String format, String defaultValue) {
+		return getOutRequestStartTime(format, defaultValue, null, null);
+	}
+	public java.lang.String getOutRequestStartTime(String format, String replace, String with) {
+		return getOutRequestStartTime(format, null, replace, with);
+	}
+	public java.lang.String getOutRequestStartTime(String format, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataUscitaRichiesta(), format, null, defaultValue, replace, with);
+	}
+	public java.lang.String getOutRequestStartTimeZ(String format, String timeZone) {
+		return getOutRequestStartTimeZ(format, timeZone, null, null, null);
+	}
+	public java.lang.String getOutRequestStartTimeZ(String format, String timeZone, String defaultValue) {
+		return getOutRequestStartTimeZ(format, timeZone, defaultValue, null, null);
+	}
+	public java.lang.String getOutRequestStartTimeZ(String format, String timeZone, String replace, String with) {
+		return getOutRequestStartTimeZ(format, timeZone, null, replace, with);
+	}
+	public java.lang.String getOutRequestStartTimeZ(String format, String timeZone, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataUscitaRichiesta(), format, timeZone, defaultValue, replace, with);
+	}
+	
+	public java.lang.String getOutRequestEndTime() {
+		return this.getOutRequestEndTime(DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
+	}
+	public java.lang.String getOutRequestEndTime(String format) {
+		return getOutRequestEndTime(format, null, null, null);
+	}
+	public java.lang.String getOutRequestEndTime(String format, String defaultValue) {
+		return getOutRequestEndTime(format, defaultValue, null, null);
+	}
+	public java.lang.String getOutRequestEndTime(String format, String replace, String with) {
+		return getOutRequestEndTime(format, null, replace, with);
+	}
+	public java.lang.String getOutRequestEndTime(String format, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataUscitaRichiestaStream(), format, null, defaultValue, replace, with);
+	}
+	public java.lang.String getOutRequestEndTimeZ(String format, String timeZone) {
+		return getOutRequestEndTimeZ(format, timeZone, null, null, null);
+	}
+	public java.lang.String getOutRequestEndTimeZ(String format, String timeZone, String defaultValue) {
+		return getOutRequestEndTimeZ(format, timeZone, defaultValue, null, null);
+	}
+	public java.lang.String getOutRequestEndTimeZ(String format, String timeZone, String replace, String with) {
+		return getOutRequestEndTimeZ(format, timeZone, null, replace, with);
+	}
+	public java.lang.String getOutRequestEndTimeZ(String format, String timeZone, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataUscitaRichiestaStream(), format, timeZone, defaultValue, replace, with);
 	}
 	
 	public java.lang.String getAcceptedResponseDate() {
@@ -684,6 +796,62 @@ public class Info {
 		return this.correctDate(this.transazione.getDataIngressoRisposta(), format, timeZone, defaultValue, replace, with);
 	}
 	
+	public java.lang.String getInResponseStartTime() {
+		return this.getInResponseStartTime(DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
+	}
+	public java.lang.String getInResponseStartTime(String format) {
+		return getInResponseStartTime(format, null, null, null);
+	}
+	public java.lang.String getInResponseStartTime(String format, String defaultValue) {
+		return getInResponseStartTime(format, defaultValue, null, null);
+	}
+	public java.lang.String getInResponseStartTime(String format, String replace, String with) {
+		return getInResponseStartTime(format, null, replace, with);
+	}
+	public java.lang.String getInResponseStartTime(String format, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataIngressoRisposta(), format, null, defaultValue, replace, with);
+	}
+	public java.lang.String getInResponseStartTimeZ(String format, String timeZone) {
+		return getInResponseStartTimeZ(format, timeZone, null, null, null);
+	}
+	public java.lang.String getInResponseStartTimeZ(String format, String timeZone, String defaultValue) {
+		return getInResponseStartTimeZ(format, timeZone, defaultValue, null, null);
+	}
+	public java.lang.String getInResponseStartTimeZ(String format, String timeZone, String replace, String with) {
+		return getInResponseStartTimeZ(format, timeZone, null, replace, with);
+	}
+	public java.lang.String getInResponseStartTimeZ(String format, String timeZone, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataIngressoRisposta(), format, timeZone, defaultValue, replace, with);
+	}
+	
+	public java.lang.String getInResponseEndTime() {
+		return this.getInResponseEndTime(DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
+	}
+	public java.lang.String getInResponseEndTime(String format) {
+		return getInResponseEndTime(format, null, null, null);
+	}
+	public java.lang.String getInResponseEndTime(String format, String defaultValue) {
+		return getInResponseEndTime(format, defaultValue, null, null);
+	}
+	public java.lang.String getInResponseEndTime(String format, String replace, String with) {
+		return getInResponseEndTime(format, null, replace, with);
+	}
+	public java.lang.String getInResponseEndTime(String format, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataIngressoRispostaStream(), format, null, defaultValue, replace, with);
+	}
+	public java.lang.String getInResponseEndTimeZ(String format, String timeZone) {
+		return getInResponseEndTimeZ(format, timeZone, null, null, null);
+	}
+	public java.lang.String getInResponseEndTimeZ(String format, String timeZone, String defaultValue) {
+		return getInResponseEndTimeZ(format, timeZone, defaultValue, null, null);
+	}
+	public java.lang.String getInResponseEndTimeZ(String format, String timeZone, String replace, String with) {
+		return getInResponseEndTimeZ(format, timeZone, null, replace, with);
+	}
+	public java.lang.String getInResponseEndTimeZ(String format, String timeZone, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataIngressoRispostaStream(), format, timeZone, defaultValue, replace, with);
+	}
+	
 	public java.lang.String getOutResponseDate() {
 		return this.getOutResponseDate(DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
 	}
@@ -711,6 +879,63 @@ public class Info {
 	public java.lang.String getOutResponseDateZ(String format, String timeZone, String defaultValue, String replace, String with) {
 		return this.correctDate(this.transazione.getDataUscitaRisposta(), format, timeZone, defaultValue, replace, with);
 	}
+	
+	public java.lang.String getOutResponseStartTime() {
+		return this.getOutResponseStartTime(DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
+	}
+	public java.lang.String getOutResponseStartTime(String format) {
+		return getOutResponseStartTime(format, null, null, null);
+	}
+	public java.lang.String getOutResponseStartTime(String format, String defaultValue) {
+		return getOutResponseStartTime(format, defaultValue, null, null);
+	}
+	public java.lang.String getOutResponseStartTime(String format, String replace, String with) {
+		return getOutResponseStartTime(format, null, replace, with);
+	}
+	public java.lang.String getOutResponseStartTime(String format, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataUscitaRispostaStream(), format, null, defaultValue, replace, with);
+	}
+	public java.lang.String getOutResponseStartTimeZ(String format, String timeZone) {
+		return getOutResponseStartTimeZ(format, timeZone, null, null, null);
+	}
+	public java.lang.String getOutResponseStartTimeZ(String format, String timeZone, String defaultValue) {
+		return getOutResponseStartTimeZ(format, timeZone, defaultValue, null, null);
+	}
+	public java.lang.String getOutResponseStartTimeZ(String format, String timeZone, String replace, String with) {
+		return getOutResponseStartTimeZ(format, timeZone, null, replace, with);
+	}
+	public java.lang.String getOutResponseStartTimeZ(String format, String timeZone, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataUscitaRispostaStream(), format, timeZone, defaultValue, replace, with);
+	}
+	
+	public java.lang.String getOutResponseEndTime() {
+		return this.getOutResponseEndTime(DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
+	}
+	public java.lang.String getOutResponseEndTime(String format) {
+		return getOutResponseEndTime(format, null, null, null);
+	}
+	public java.lang.String getOutResponseEndTime(String format, String defaultValue) {
+		return getOutResponseEndTime(format, defaultValue, null, null);
+	}
+	public java.lang.String getOutResponseEndTime(String format, String replace, String with) {
+		return getOutResponseEndTime(format, null, replace, with);
+	}
+	public java.lang.String getOutResponseEndTime(String format, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataUscitaRisposta(), format, null, defaultValue, replace, with);
+	}
+	public java.lang.String getOutResponseEndTimeZ(String format, String timeZone) {
+		return getOutResponseEndTimeZ(format, timeZone, null, null, null);
+	}
+	public java.lang.String getOutResponseEndTimeZ(String format, String timeZone, String defaultValue) {
+		return getOutResponseEndTimeZ(format, timeZone, defaultValue, null, null);
+	}
+	public java.lang.String getOutResponseEndTimeZ(String format, String timeZone, String replace, String with) {
+		return getOutResponseEndTimeZ(format, timeZone, null, replace, with);
+	}
+	public java.lang.String getOutResponseEndTimeZ(String format, String timeZone, String defaultValue, String replace, String with) {
+		return this.correctDate(this.transazione.getDataUscitaRisposta(), format, timeZone, defaultValue, replace, with);
+	}
+	
 	
 	
 	// latenza

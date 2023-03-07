@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.services;
 
 import java.io.ByteArrayOutputStream;
+import java.security.SecureRandom;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -125,7 +126,7 @@ public class ServicesUtils {
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {
@@ -493,7 +494,7 @@ public class ServicesUtils {
 	}
 	
 	
-	public static void setGovWayHeaderResponse(OpenSPCoop2Message msg, OpenSPCoop2Properties openspcoopProperties,
+	public static void setGovWayHeaderResponse(ServiceBinding serviceBindingRequest, OpenSPCoop2Message msg, OpenSPCoop2Properties openspcoopProperties,
 			Map<String, List<String>> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, RequestInfo requestInfo) {
 				
 		UtilitiesIntegrazione utilitiesIntegrazione = null;
@@ -547,7 +548,8 @@ public class ServicesUtils {
 			
 			try {
 				if(utilitiesIntegrazione!=null) {
-					utilitiesIntegrazione.setSecurityHeaders(msg.getServiceBinding(), requestInfo, propertiesTrasporto, forwardHeader);
+					ServiceBinding sb = msg!=null ? msg.getServiceBinding() : serviceBindingRequest;
+					utilitiesIntegrazione.setSecurityHeaders(sb, requestInfo, propertiesTrasporto, forwardHeader);
 				}
 			}catch(Exception e){
 				logCore.error("Set security headers fallito: "+e.getMessage(),e);

@@ -48,6 +48,7 @@ import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.report.Templates;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
+import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.slf4j.Logger;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
@@ -231,19 +232,19 @@ public class ExportUtils {
 					switch (tipoLatenza) {
 					case LATENZA_PORTA:
 						headerValueCategory = "latenzaMediaPorta";
-						headerValueLabel = "Latenza Media Porta [ms]";
+						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_PORTA_MS;
 						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
 						break;
 					case LATENZA_SERVIZIO:
 						headerValueCategory = "latenzaMediaServizio";
-						headerValueLabel = "Latenza Media Servizio [ms]";
+						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_SERVIZIO_MS;
 						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
 						break;
 
 					case LATENZA_TOTALE:
 					default:
 						headerValueCategory = "latenzaMediaTotale";
-						headerValueLabel = "Latenza Media Totale [ms]";
+						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE_MS;
 						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
 						break;
 					}
@@ -393,19 +394,19 @@ public class ExportUtils {
 					switch (tipoLatenza) {
 					case LATENZA_PORTA:
 						headerValueCategory = "latenzaMediaPorta";
-						headerValueLabel = "Latenza Media Porta";
+						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_PORTA;
 						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
 						break;
 					case LATENZA_SERVIZIO:
 						headerValueCategory = "latenzaMediaServizio";
-						headerValueLabel = "Latenza Media Servizio";
+						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_SERVIZIO;
 						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
 						break;
 
 					case LATENZA_TOTALE:
 					default:
 						headerValueCategory = "latenzaMediaTotale";
-						headerValueLabel = "Latenza Media Totale";
+						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE;
 						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
 						break;
 					}
@@ -443,8 +444,14 @@ public class ExportUtils {
 			//.setTextAdjust(net.sf.dynamicreports.report.constant.TextAdjust.STRETCH_HEIGHT)
 			.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true");
 	}
+	private static boolean useDeprecatedMethod = false;
+	public static boolean isUseDeprecatedMethod() {
+		return useDeprecatedMethod;
+	}
+	public static void setUseDeprecatedMethod(boolean useDeprecatedMethod) {
+		ExportUtils.useDeprecatedMethod = useDeprecatedMethod;
+	}
 	private static TextColumnBuilder<String> buildColumn(String label, String category){
-		boolean useDeprecatedMethod = false;
 		if(useDeprecatedMethod) {
 			return buildColumnDeprecated(label, category);
 		}
@@ -575,19 +582,19 @@ public class ExportUtils {
 					switch (tipoLatenza) {
 					case LATENZA_PORTA:
 						headerValueCategory = "latenzaMediaPorta";
-						headerValueLabel = "Latenza Media Porta [ms]";
+						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_PORTA_MS;
 						colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 						break;
 					case LATENZA_SERVIZIO:
 						headerValueCategory = "latenzaMediaServizio";
-						headerValueLabel = "Latenza Media Servizio [ms]";
+						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_SERVIZIO_MS;
 						colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 						break;
 
 					case LATENZA_TOTALE:
 					default:
 						headerValueCategory = "latenzaMediaTotale";
-						headerValueLabel = "Latenza Media Totale [ms]";
+						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE_MS;
 						colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 						break;
 					}
@@ -725,6 +732,9 @@ public class ExportUtils {
 				c.setTime((Date)risultato.getRisultato());
 				c.add(Calendar.WEEK_OF_MONTH, 1);
 				c.add(Calendar.DAY_OF_WEEK, -1);
+				if(sdf_last_hour==null) {
+					throw new Exception("sdf_last_hour undefined");
+				}
 				label = sdf.format(risultato.getRisultato())+"-"+sdf_last_hour.format(c.getTime());
 				break;
 
@@ -1155,6 +1165,11 @@ public class ExportUtils {
 						c.setTime((Date)risultato.getRisultato());
 						c.add(Calendar.WEEK_OF_MONTH, 1);
 						c.add(Calendar.DAY_OF_WEEK, -1);
+						
+						if(sdf_last_hour==null) {
+							throw new Exception("sdf_last_hour is null");
+						}
+						
 						label = sdf.format(risultato.getRisultato())+"-"+sdf_last_hour.format(c.getTime());
 						break;
 

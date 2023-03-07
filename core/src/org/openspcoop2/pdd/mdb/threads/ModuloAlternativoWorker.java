@@ -106,7 +106,7 @@ public abstract class ModuloAlternativoWorker implements IWorker {
 				init();
 			} catch (Exception e) {
 				this.log.error(this.ID_MODULO+"Worker init abortito a causa di: "+e);
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				return;
 			}
 			
@@ -201,8 +201,18 @@ public abstract class ModuloAlternativoWorker implements IWorker {
 				System.out.println(e);
 				connectionDB.rollback();
 			}finally{
-				if (rs!=null) rs.close();
-				if (ps!=null) ps.close();
+				try {
+					if (rs!=null) 
+						rs.close();
+				}catch (Exception e) {
+					// ignore
+				}
+				try {
+					if (ps!=null) 
+						ps.close();
+				}catch (Exception e) {
+					// ignore
+				}
 				releaseResource(resourceDB);
 				if(!connectionDB.isClosed())
 					this.log.error(this.ID_MODULO+": gestisciOK: db non ha rilasciato il db");

@@ -63,6 +63,7 @@ import java.util.List;
 
 public class Subsection extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Subsection() {
+    super();
   }
 
   public Conditions getConditions() {

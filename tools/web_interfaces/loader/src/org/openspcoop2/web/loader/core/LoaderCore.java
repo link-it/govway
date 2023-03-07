@@ -381,7 +381,9 @@ public class LoaderCore{
 						}
 						finally {
 							try{
-								con.close();
+								if(con!=null) {
+									con.close();
+								}
 							}catch(Exception eClose){
 								// close
 							}
@@ -428,7 +430,9 @@ public class LoaderCore{
 			throw new DriverUsersDBException("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			try{
-				con.close();
+				if(con!=null) {
+					con.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -455,7 +459,9 @@ public class LoaderCore{
 			throw new DriverUsersDBException("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			try{
-				con.close();
+				if(con!=null) {
+					con.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -482,7 +488,9 @@ public class LoaderCore{
 			throw new DriverUsersDBException("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			try{
-				con.close();
+				if(con!=null) {
+					con.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -509,7 +517,9 @@ public class LoaderCore{
 			throw new DriverUsersDBException("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			try{
-				con.close();
+				if(con!=null) {
+					con.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}
@@ -555,17 +565,23 @@ public class LoaderCore{
 			throw new Exception("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			try{
-				risultato.close();
+				if(risultato!=null) {
+					risultato.close();
+				}
 			}catch(Throwable eClose){
 				// close
 			}
 			try{
-				stmt.close();
+				if(stmt!=null) {
+					stmt.close();
+				}
 			}catch(Throwable eClose){
 				// close
 			}
 			try{
-				con.close();
+				if(con!=null) {
+					con.close();
+				}
 			}catch(Throwable eClose){
 				// close
 			}

@@ -2851,6 +2851,7 @@ public class InoltroBuste extends GenericLib{
 					inResponseContext.setConnettore(outRequestContext.getConnettore());
 					inResponseContext.setDataPrimaInvocazioneConnettore(dataPrimaInvocazioneConnettore);
 					inResponseContext.setDataTerminataInvocazioneConnettore(dataTerminataInvocazioneConnettore);
+					inResponseContext.setDataRichiestaInoltrata(connectorSender.getDataRichiestaInoltrata());
 					inResponseContext.setDataAccettazioneRisposta(connectorSender.getDataAccettazioneRisposta());
 					inResponseContext.setDataElaborazioneMessaggio(ejbUtils.getRicezioneMsgRisposta());
 					inResponseContext.setProtocollo(outRequestContext.getProtocollo());

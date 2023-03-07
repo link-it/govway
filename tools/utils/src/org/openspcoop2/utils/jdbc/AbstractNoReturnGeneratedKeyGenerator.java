@@ -88,10 +88,14 @@ public abstract class AbstractNoReturnGeneratedKeyGenerator implements IKeyGener
 			throw new KeyGeneratorException("Errore durante la generazione della chiave: "+e.getMessage(),e);
 		}finally{
 			try{
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			}catch(Exception eClose){}
 			try{
-				stmt.close();
+				if(stmt!=null) {
+					stmt.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}

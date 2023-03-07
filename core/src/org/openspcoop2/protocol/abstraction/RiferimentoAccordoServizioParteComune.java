@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class RiferimentoAccordoServizioParteComune extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RiferimentoAccordoServizioParteComune() {
+    super();
   }
 
   public java.lang.String getUri() {

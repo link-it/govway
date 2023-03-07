@@ -68,6 +68,9 @@ public class InResponseContext extends BaseContext {
 	/** Proprieta' di trasporto della risposta */
 	private Map<String, List<String>> responseHeaders;
 	
+	/** Data richiesta inoltrata (dopo aver inviato la richiesta) */
+	private Date dataRichiestaInoltrata;
+	
 	/** Data accettazione Risposta (prima della lettura della risposta) */
 	private Date dataAccettazioneRisposta;
 	
@@ -94,6 +97,14 @@ public class InResponseContext extends BaseContext {
 
 	public void setDataAccettazioneRisposta(Date dataAccettazioneRisposta) {
 		this.dataAccettazioneRisposta = dataAccettazioneRisposta;
+	}
+	
+	public Date getDataRichiestaInoltrata() {
+		return this.dataRichiestaInoltrata;
+	}
+
+	public void setDataRichiestaInoltrata(Date dataRichiestaInoltrata) {
+		this.dataRichiestaInoltrata = dataRichiestaInoltrata;
 	}
 	
 	public Date getDataPrimaInvocazioneConnettore() {

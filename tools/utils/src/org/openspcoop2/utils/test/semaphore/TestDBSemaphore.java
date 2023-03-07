@@ -41,7 +41,7 @@ public class TestDBSemaphore {
 	public void testDBSemaphore(String tipoDatabase, String connectionUrl, String username, String password, String driverJdbc, String testIdle) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.semaphore.ClientTest.test(new String[] {tipoDatabase,  connectionUrl, username, password, driverJdbc, testIdle},
+		org.openspcoop2.utils.semaphore.test.ClientTest.test(new String[] {tipoDatabase,  connectionUrl, username, password, driverJdbc, testIdle},
 				false); // con test ng non vengono prodotti i log
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 	

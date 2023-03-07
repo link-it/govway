@@ -65,11 +65,11 @@ public class TransazioniCsvExporter extends HttpServlet{
 
 	private static Boolean enableHeaderInfo = false;
 	private static Boolean mimeThrowExceptionIfNotFound = false;
-	private boolean headersAsProperties = true;
-	private boolean contenutiAsProperties = false;
-	private transient ITracciaDriver tracciamentoService = null;
-	private transient IDiagnosticDriver diagnosticiService = null; 
-	private boolean exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = false;
+	private static boolean headersAsProperties = true;
+	private static boolean contenutiAsProperties = false;
+	private static ITracciaDriver tracciamentoService = null;
+	private static IDiagnosticDriver diagnosticiService = null; 
+	private static boolean exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = false;
 
 	@Override
 	public void init() throws ServletException {
@@ -78,11 +78,11 @@ public class TransazioniCsvExporter extends HttpServlet{
 
 			TransazioniCsvExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
 			TransazioniCsvExporter.mimeThrowExceptionIfNotFound=govwayMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound();
-			this.headersAsProperties = govwayMonitorProperties.isAttivoTransazioniExportHeaderAsProperties();
-			this.contenutiAsProperties = govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties();
-			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
-			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
-			this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = govwayMonitorProperties.isExportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti();
+			headersAsProperties = govwayMonitorProperties.isAttivoTransazioniExportHeaderAsProperties();
+			contenutiAsProperties = govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties();
+			tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
+			diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
+			exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = govwayMonitorProperties.isExportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti();
 		}catch(Exception e){
 			TransazioniCsvExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
@@ -103,7 +103,7 @@ public class TransazioniCsvExporter extends HttpServlet{
 
 
 	@SuppressWarnings("unchecked")
-	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
+	private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 			if(context==null) {
@@ -144,7 +144,7 @@ public class TransazioniCsvExporter extends HttpServlet{
 			boolean exportDiagnostici = false;
 			boolean exportContenuti = false;
 
-			if(this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti && ex!=null){
+			if(exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti && ex!=null){
 				for (String val : ex) {
 					if(CostantiExport.ESPORTAZIONI_VALUE_TRACCE.equals(val))
 						exportTracce=true;
@@ -226,12 +226,12 @@ public class TransazioniCsvExporter extends HttpServlet{
 			prop.setMimeThrowExceptionIfNotFound(TransazioniCsvExporter.mimeThrowExceptionIfNotFound);
 			prop.setFormato(formato);
 			prop.setColonneSelezionate(colonneSelezionateFromSession);
-			prop.setHeadersAsProperties(this.headersAsProperties);
-			prop.setContenutiAsProperties(this.contenutiAsProperties);
+			prop.setHeadersAsProperties(headersAsProperties);
+			prop.setContenutiAsProperties(contenutiAsProperties);
 			prop.setUseCount(searchForm.isUseCount());
 
 			SingleCsvFileExporter sfe = new SingleCsvFileExporter(response.getOutputStream(), prop, service,
-					this.tracciamentoService, this.diagnosticiService,null);
+					tracciamentoService, diagnosticiService,null);
 
 			if(isAll){
 				//transazioni = service.findAll(start, limit);
@@ -246,7 +246,7 @@ public class TransazioniCsvExporter extends HttpServlet{
 
 		}catch(Throwable e){
 			TransazioniCsvExporter.log.error(e.getMessage(),e);
-			throw new ServletException(e.getMessage(),e);
+			//throw new ServletException(e.getMessage(),e);
 		} finally {
 			// reset login bean statico
 			Utility.setLoginMBean(null);

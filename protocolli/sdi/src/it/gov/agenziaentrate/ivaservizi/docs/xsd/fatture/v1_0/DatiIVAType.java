@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class DatiIVAType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiIVAType() {
+    super();
   }
 
   public java.math.BigDecimal getImposta() {

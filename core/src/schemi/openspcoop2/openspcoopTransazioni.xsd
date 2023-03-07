@@ -169,11 +169,11 @@
 							Si pensava questo poichè anche se si utilizzava indici composti (cioè con più di una colonna), le successive colonne
 							erano tutte disordinate rispetto alla prima colonna.
 							Si è invece ravvisato che è utile usare gli indici composti, anche perchè scorrere un indice (anche scorrerlo tutto) 
-							è comunque molto più efficente che usare una tabella.
-							Inoltre si è constatato che il doppio accesso indice-tabella è inefficente, a volte è più performante fare uno scan sulla tabella.
+							è comunque molto più efficiente che usare una tabella.
+							Inoltre si è constatato che il doppio accesso indice-tabella è inefficiente, a volte è più performante fare uno scan sulla tabella.
 							Per risolvere tutte le problematiche di performance bisogna usare indici che contengono tutte le colonne, anche quelle usate nelle select list,
 							in modo da non dover proprio accedere alla tabella (su cui si accede solo per l'eventuale dettaglio della singola transazione), 
-							e in modo da poter effettuare una 'full index scan' che risulta efficente.
+							e in modo da poter effettuare una 'full index scan' che risulta efficiente.
 							Inoltre su Oracle, è stato rilevato che è utile forzare l'utilizzo di un indice, poichè a volte oracle sembra non effettuare la scelta di indice corretta.
 							
 							Quanto premesso sopra, la soluzione ideale sarebbe creare due indici ad hoc per la ricerca (INDEX_TR_SEARCH) e per le statistiche (INDEX_TR_STATS).
@@ -572,12 +572,34 @@ integrationManager (7)]]></linkit:sql-ddl-column-comment>
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="data-ingresso-richiesta-stream" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta è stata ricevuta completatamente dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="data-uscita-richiesta" type="xsd:dateTime" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta è stato inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta inizia ad essere inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-uscita-richiesta-stream" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta è stato completamente inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
 							</linkit:generator>
 						</xsd:appinfo>
@@ -605,12 +627,34 @@ integrationManager (7)]]></linkit:sql-ddl-column-comment>
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="data-ingresso-risposta-stream" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di risposta è stato completamente ricevuto dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="data-uscita-risposta" type="xsd:dateTime" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di risposta è stato inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-uscita-risposta-stream" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di risposta viene iniziato ad essere inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
 							</linkit:generator>
 						</xsd:appinfo>
@@ -1832,7 +1876,18 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta è stato inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta inizia ad essere spedito]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-uscita-richiesta-stream" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta è stato consegnato]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
 							</linkit:generator>
 						</xsd:appinfo>
@@ -1854,7 +1909,18 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di risposta è ricevuto dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di risposta inizia ad essere ricevuto]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-ingresso-risposta-stream" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di risposta è ricevuto]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
 							</linkit:generator>
 						</xsd:appinfo>

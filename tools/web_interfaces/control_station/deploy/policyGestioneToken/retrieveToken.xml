@@ -7,14 +7,15 @@
 		<collection name="endpointConfig"/>
 		<collection name="sslConfig"/>
 		<collection name="sslClientConfig"/>
+		<collection name="retrieveTokenParserPropRefId"/>
 	</properties>
 	
 	<section label="Token Endpoint">
-		
+
 		<item type="hidden" name="tokenParserType" value="OAUTH2_RFC_6749">
 			<property name="policy.retrieveToken.claimsParser" />
 		</item>
-
+		
 		<item type="hidden" name="saveErrorInCache" value="false">
 			<property name="policy.retrieveToken.saveErrorInCache"/>
 		</item>
@@ -70,6 +71,7 @@
 				<condition and="false">
 					<equals name="retrieveTokenMethod" value="usernamePassword"/>
 					<equals name="retrieveTokenMethod" value="clientCredentials"/>
+					<equals name="retrieveTokenMethod" value="custom"/>
 				</condition>
 			</conditions>
 			<item type="checkbox" name="autenticazioneEndpointBasic" label="Basic" defaultSelected="false" reloadOnChange="true">
@@ -95,6 +97,16 @@
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom" not="true"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.endpoint.basic.username" />
+			</item>
+			<item type="text" name="autenticazioneEndpointBasicUsernameCustom" label="Username" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.username" />
@@ -103,6 +115,16 @@
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom" not="true"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.endpoint.basic.password" />
+			</item>
+			<item type="text" name="autenticazioneEndpointBasicPasswordCustom" label="Password" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.password" />
@@ -113,6 +135,16 @@
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom" not="true"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.endpoint.basic.asAuthorizationHeader" />
+			</item>
+			<item type="hidden" name="autenticazioneEndpointBasicAuthorizationHeaderCustom" value="true">
+				<conditions>
+					<condition and="true">
+						<selected name="autenticazioneEndpointBasic"/>
+						<equals name="retrieveTokenMethod" value="custom" />
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.asAuthorizationHeader" />
@@ -223,8 +255,9 @@
 					<condition>
 						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
 					</condition>
-					<condition not="true">
+					<condition not="true" and="false">
 						<equals name="jwtKeystoreType" value="applicativoModi"/>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
 					</condition>
 				</conditions>
 				<values>
@@ -253,6 +286,24 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
 			</item>
+			<item type="select" name="jwtAsymmetricSignatureKidConFruizioneModi" label="Key Id (kid)" reloadOnChange="true" default="fruizioneModi">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="false" label="-"/>
+					<value value="fruizioneModi" label="Definito nella fruizione ModI"/>
+					<value value="true" label="Alias Chiave Privata"/>
+					<value value="client_id" label="Client ID"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
+			</item>
 			<item type="text" name="jwtSignatureKidValue" label="" required="true">
 				<conditions and="false">
 					<condition and="true">
@@ -266,6 +317,10 @@
 					<condition and="true">
 						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
 						<equals name="jwtAsymmetricSignatureKidConApplicativoModi" value="custom"/>
+					</condition>
+					<condition and="true">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+						<equals name="jwtAsymmetricSignatureKidConFruizioneModi" value="custom"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.signature.include.key.id.value" />
@@ -367,6 +422,21 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.clientId.mode"/>
 			</item>
+			<item type="select" name="jwtClientIdFruizioneModiChoice" label="Client ID" default="fruizioneModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="fruizioneModi" label="Definito nella fruizione ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.clientId.mode"/>
+			</item>
 			<item type="text" name="jwtClientIdApplicativoModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
@@ -376,10 +446,20 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.clientId" />
 			</item>
-			<item type="text" name="jwtClientId" label="Client ID" required="true">
+			<item type="text" name="jwtClientIdFruizioneModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
+						<defined name="jwtClientIdFruizioneModiChoice"/>
+						<equals name="jwtClientIdFruizioneModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.clientId" />
+			</item>
+			<item type="text" name="jwtClientId" label="Client ID" required="true">
+			      	<conditions and="true">
+					<condition>
 						<defined name="jwtClientIdApplicativoModiChoice" not="true"/>
+						<defined name="jwtClientIdFruizioneModiChoice" not="true"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.clientId" />
@@ -400,6 +480,21 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.issuer.mode"/>
 			</item>
+			<item type="select" name="jwtIssuerFruizioneModiChoice" label="Issuer" default="fruizioneModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="fruizioneModi" label="ClientID della fruizione ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.issuer.mode"/>
+			</item>
 			<item type="text" name="jwtIssuerApplicativoModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
@@ -409,10 +504,20 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.issuer" />
 			</item>
-			<item type="text" name="jwtIssuer" label="Issuer" required="false">
+			<item type="text" name="jwtIssuerFruizioneModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
+						<defined name="jwtIssuerFruizioneModiChoice"/>
+						<equals name="jwtIssuerFruizioneModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.issuer" />
+			</item>
+			<item type="text" name="jwtIssuer" label="Issuer" required="false">
+			      	<conditions and="true">
+					<condition>
 						<defined name="jwtIssuerApplicativoModiChoice" not="true"/>
+						<defined name="jwtIssuerFruizioneModiChoice" not="true"/>
 					</condition>
 				</conditions>
 			    	<property name="policy.retrieveToken.jwt.issuer" />
@@ -433,6 +538,21 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.subject.mode"/>
 			</item>
+			<item type="select" name="jwtSubjectFruizioneModiChoice" label="Subject" default="fruizioneModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="fruizioneModi" label="ClientID della fruizione ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.subject.mode"/>
+			</item>
 			<item type="text" name="jwtSubjectApplicativoModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
@@ -442,10 +562,20 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.subject" />
 			</item>
-			<item type="text" name="jwtSubject" label="Subject" required="false">
+			<item type="text" name="jwtSubjectFruizioneModiChoiceInput" label="" required="true">
 			      	<conditions and="false">
 					<condition>
+						<defined name="jwtSubjectFruizioneModiChoice"/>
+						<equals name="jwtSubjectFruizioneModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.subject" />
+			</item>
+			<item type="text" name="jwtSubject" label="Subject" required="false">
+			      	<conditions and="true">
+					<condition>
 						<defined name="jwtSubjectApplicativoModiChoice" not="true"/>
+						<defined name="jwtSubjectFruizioneModiChoice" not="true"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.subject" />
@@ -492,11 +622,21 @@
 		<subsection label="Dati Richiesta">
 
 			<item type="text" name="scope" label="Scope" required="false" note="Elencare più scope separandoli con la virgola">
-			    <property name="policy.retrieveToken.scope" />
+				<conditions>
+					<condition not="true">
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.scope" />
 			</item>
 
 			<item type="text" name="audience" label="Audience" required="false">
-			    <property name="policy.retrieveToken.audience" />
+				<conditions>
+					<condition not="true">
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.audience" />
 			</item>
 
 			<item type="select" name="formClientIdApplicativoModiChoice" label="Client ID" default="applicativoModi" reloadOnChange="true">
@@ -517,6 +657,24 @@
 				</values>
 			      	<property name="policy.retrieveToken.formClientId.mode"/>
 			</item>
+			<item type="select" name="formClientIdFruizioneModiChoice" label="Client ID" default="fruizioneModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="fruizioneModi" label="ClientID della fruizione ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.formClientId.mode"/>
+			</item>
 			<item type="text" name="formClientIdApplicativoModiChoiceInput" label="" required="true">
 			      	<conditions and="true">
 					<condition and="false">
@@ -529,13 +687,26 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.formClientId" />
 			</item>
-			<item type="text" name="formClientId" label="Client ID" required="false">
+			<item type="text" name="formClientIdFruizioneModiChoiceInput" label="" required="true">
 			      	<conditions and="true">
 					<condition and="false">
 						<selected name="jwtPDND"/>
 					</condition>
 					<condition>
+						<defined name="formClientIdFruizioneModiChoice"/>
+						<equals name="formClientIdFruizioneModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.formClientId" />
+			</item>
+			<item type="text" name="formClientId" label="Client ID" required="false">
+			      	<conditions and="true">
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>
+					<condition and="true">
 						<defined name="formClientIdApplicativoModiChoice" not="true"/>
+						<defined name="formClientIdFruizioneModiChoice" not="true"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.formClientId" />
@@ -552,9 +723,239 @@
 
 			<item type="textarea" name="formParameters" label="Parametri" required="false"
 				note="Indicare per riga gli ulteriori parametri (nome=valore)">
+				<conditions>
+					<condition not="true">
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+				</conditions>
 				<property name="policy.retrieveToken.formParameters" />
 			</item>
+
+			<item type="select" name="httpMethod" label="Metodo HTTP" reloadOnChange="true">
+				<conditions>
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpMethod" />
+			</item>
+
+			<item type="checkbox" name="httpMethodPayloadDefinedDefaultTrue" label="Payload" defaultSelected="true" reloadOnChange="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+                                        <condition and="false">
+						<equals name="httpMethod" value="POST"/>
+						<equals name="httpMethod" value="PUT"/>
+						<equals name="httpMethod" value="PATCH"/>
+						<equals name="httpMethod" value="LINK"/>
+						<equals name="httpMethod" value="UNLINK"/>
+                                        </condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpMethod.payloadDefined" />
+			</item>
+			<item type="checkbox" name="httpMethodPayloadDefinedDefaultFalse" label="Payload" defaultSelected="false" reloadOnChange="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+                                        <condition not="true" and="false">
+						<equals name="httpMethod" value="POST"/>
+						<equals name="httpMethod" value="PUT"/>
+						<equals name="httpMethod" value="PATCH"/>
+						<equals name="httpMethod" value="LINK"/>
+						<equals name="httpMethod" value="UNLINK"/>
+                                        </condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpMethod.payloadDefined" />
+			</item>
+
+			<item type="textarea" name="httpContentType" label="Content-Type" required="true" max="1">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition and="false">
+						<selected name="httpMethodPayloadDefinedDefaultTrue"/>
+						<selected name="httpMethodPayloadDefinedDefaultFalse"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpContentType" />
+			</item>
+
+			<item type="textarea" name="httpHeaders" label="Header HTTP" required="false"
+				note="Indicare per riga gli eventuali header (nome=valore)">
+				<property name="policy.retrieveToken.httpHeaders" />
+			</item>
+
+			<item type="select" name="httpPayloadTemplateType" label="Tipo Template Payload" default="template" reloadOnChange="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition and="false">
+						<selected name="httpMethodPayloadDefinedDefaultTrue"/>
+						<selected name="httpMethodPayloadDefinedDefaultFalse"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="template" label="Template"/>
+					<value value="freemarker-template" label="Freemarker Template"/>
+					<value value="velocity-template" label="Velocity Template"/>
+				</values>
+				<property name="policy.retrieveToken.httpPayloadTemplateType" />
+			</item>
+			<item type="textarea" name="httpTemplatePayload" label="Payload HTTP" required="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition and="false">
+						<selected name="httpMethodPayloadDefinedDefaultTrue"/>
+						<selected name="httpMethodPayloadDefinedDefaultFalse"/>
+					</condition>
+					<condition>
+						<equals name="httpPayloadTemplateType" value="template"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpPayload" />
+			</item>
+			<item type="textarea" name="httpFreemarkerPayload" label="Payload HTTP" required="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition and="false">
+						<selected name="httpMethodPayloadDefinedDefaultTrue"/>
+						<selected name="httpMethodPayloadDefinedDefaultFalse"/>
+					</condition>
+					<condition>
+						<equals name="httpPayloadTemplateType" value="freemarker-template"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpPayload" />
+			</item>
+			<item type="textarea" name="httpVelocityPayload" label="Payload HTTP" required="true">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition and="false">
+						<selected name="httpMethodPayloadDefinedDefaultTrue"/>
+						<selected name="httpMethodPayloadDefinedDefaultFalse"/>
+					</condition>
+					<condition>
+						<equals name="httpPayloadTemplateType" value="velocity-template"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.httpPayload" />
+			</item>
 			
+		</subsection>
+
+		<subsection label="Formato Risposta">
+			<conditions and="true">
+				<condition>
+					<equals name="retrieveTokenMethod" value="custom"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="customTokenParserType" label="Tipo" default="OAUTH2_RFC_6749" reloadOnChange="true">
+				<values>
+					<value value="OAUTH2_RFC_6749" label="RFC 6749 - OAuth2"/> 
+					<value value="MAPPING" label="Personalizzato"/>
+					<value value="CUSTOM" label="Plugin"/>
+				</values>
+				<property name="policy.retrieveToken.claimsParser.custom" />
+			</item>
+			<item type="select" name="customTokenParserCustomPluginChoice" label="" reloadOnChange="true" >
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="CUSTOM"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.claimsParser.pluginType" />
+			</item>
+			<item type="text" name="customTokenParserCustomPlugin" label="ClassName" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="CUSTOM"/>
+					</condition>
+				</conditions>
+			   	<property name="policy.retrieveToken.claimsParser.className" />
+			</item>
+
+
+			<item type="text" name="customTokenParserTokenType" label="Token Type" required="true" default="token_type">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.token_type" properties="retrieveTokenParserPropRefId" />
+			</item>
+			<item type="text" name="customTokenParserAccessToken" label="Access Token" required="true" default="access_token">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.access_token" properties="retrieveTokenParserPropRefId" />
+			</item>
+
+			<item type="text" name="customTokenParserRefreshToken" label="Refresh Token" required="true" default="refresh_token">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.refresh_token" properties="retrieveTokenParserPropRefId" />
+			</item>
+
+			<item type="text" name="customTokenParserScope" label="Scope" required="true" default="scope">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.scope" properties="retrieveTokenParserPropRefId" />
+			</item>
+
+			<item type="text" name="customTokenParserExpiresIn" label="Expires in" required="true" default="expires_in" note="The lifetime in seconds of the access token">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.expires_in" properties="retrieveTokenParserPropRefId" />
+			</item>
+			<item type="text" name="customTokenParserExpiresOn" label="Expires on" required="true" default="expires_on" note="The expiration time; number of seconds from '1970-01-01T00:00:00Z UTC'">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.expires_on" properties="retrieveTokenParserPropRefId" />
+			</item>
+
+			<item type="text" name="customTokenParserRefreshExpiresIn" label="Refresh expires in" required="true" default="refresh_expires_in" note="The lifetime in seconds of the refresh token">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.refresh_expires_in" properties="retrieveTokenParserPropRefId" />
+			</item>
+			<item type="text" name="customTokenParserRefreshExpiresOn" label="Refresh expires on" required="true" default="refresh_expires_on" note="The expiration time; number of seconds from '1970-01-01T00:00:00Z UTC'">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.refresh_expires_on" properties="retrieveTokenParserPropRefId" />
+			</item>
+
 		</subsection>
 
 	</section>

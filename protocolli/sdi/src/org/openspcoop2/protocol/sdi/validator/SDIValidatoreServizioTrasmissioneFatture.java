@@ -1418,7 +1418,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		// zip
 		File tmpZipFile = null;
 		try{
-			tmpZipFile = File.createTempFile("AttestazioneTrasmissione", ".zip");
+			tmpZipFile = FileSystemUtilities.createTempFile("AttestazioneTrasmissione", ".zip");
 			FileSystemUtilities.writeFile(tmpZipFile, zip);
 		}catch(Exception e){
 			this.sdiValidazioneSemantica.getProtocolFactory().getLogger().error("Operazione di unzip non riuscita: "+e.getMessage(),e);
@@ -1428,7 +1428,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 							+" non valido; è avvenuto un erorre durante il salvataggio dell'archivio zip: "+e.getMessage(),e,forceEccezioneLivelloInfo));
 			try{
 				if(tmpZipFile!=null){
-					tmpZipFile.delete();
+					if(!tmpZipFile.delete()) {
+						// ignore
+					}
 				}
 			}catch(Exception eClose){
 				// ignore
@@ -1482,7 +1484,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}finally{
 			try{
 				if(tmpZipFile!=null){
-					tmpZipFile.delete();
+					if(!tmpZipFile.delete()) {
+						// ignore
+					}
 				}
 			}catch(Exception e){
 				// ignore

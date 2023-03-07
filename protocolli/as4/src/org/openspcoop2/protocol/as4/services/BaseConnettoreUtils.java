@@ -28,6 +28,7 @@ import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.threads.RunnableLogger;
 
 /**
@@ -61,11 +62,11 @@ public class BaseConnettoreUtils {
 					else {
 						byte[] bytes = map.getBytes(key);
 						if(bytes!=null) {
-							File f = File.createTempFile("content", ".bin");
-							FileOutputStream fos =new FileOutputStream(f);
-							fos.write(bytes);
-							fos.flush();
-							fos.close();
+							File f = FileSystemUtilities.createTempFile("content", ".bin");
+							try(FileOutputStream fos =new FileOutputStream(f)){
+								fos.write(bytes);
+								fos.flush();
+							}
 							this.log.debug("\t-Map["+key+"] scritto in "+f.getAbsolutePath());
 						}
 						else {

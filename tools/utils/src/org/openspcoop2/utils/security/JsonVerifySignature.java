@@ -139,7 +139,9 @@ public class JsonVerifySignature {
 		}finally {
 			try {
 				if(fTmp!=null) {
-					fTmp.delete();
+					if(!fTmp.delete()) {
+						// ignore
+					}
 				}
 			}catch(Throwable t) {}
 		}

@@ -113,7 +113,9 @@ public final class SoggettiCredenzialiDel extends Action {
 			for (int i = idsToRemove.size() -1; i >=0; i--) {
 				int idEliminare = Integer.parseInt(idsToRemove.get(i)); 
 				if(idEliminare != 0) {
-					soggettoRegistry.removeCredenziali(Integer.parseInt(idsToRemove.get(i)));
+					if(soggettoRegistry!=null) {
+						soggettoRegistry.removeCredenziali(Integer.parseInt(idsToRemove.get(i)));
+					}
 				}
 				else {
 					isPrincipale = true;

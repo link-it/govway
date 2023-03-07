@@ -133,8 +133,8 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 
 		List<IdFruitore> list = new ArrayList<IdFruitore>();
 
-		// TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+		// TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari a create l'ID logico
 		// 2. Usare metodo getFruitoreFetch() sul risultato della select per ottenere un oggetto Fruitore
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
@@ -152,14 +152,14 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 		
 	}
 	
-	@Override
+	private static boolean efficiente = true;
+    
+    @Override
 	public List<Fruitore> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
 
         List<Fruitore> list = new ArrayList<Fruitore>();
         
-        boolean efficente = true;
-        
-        if(efficente){
+        if(efficiente){
         	
         	List<IField> fields = new ArrayList<IField>();
     		String aliasAccordoTipo = "accordoTipo";
@@ -236,8 +236,8 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 
         else{
         
-	        // TODO: implementazione non efficente. 
-			// Per ottenere una implementazione efficente:
+	        // TODO: implementazione non efficiente. 
+			// Per ottenere una implementazione efficiente:
 			// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
 			// 2. Usare metodo getFruitoreFetch() sul risultato della select per ottenere un oggetto Fruitore
 			//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 

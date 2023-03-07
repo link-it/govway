@@ -40,12 +40,30 @@ public class RegExpUtilities {
 	private static final String domainIdentifier = "((\\p{Alnum})([-]|(\\p{Alnum}))*(\\p{Alnum}))|(\\p{Alnum})";
 	private static final String domainNameRule = "(" + RegExpUtilities.domainIdentifier + ")((\\.)(" + RegExpUtilities.domainIdentifier + "))*";
 	
+	public static boolean isDefinedByVariable(String value) throws java.net.MalformedURLException{
+		boolean definedByVariable = value!=null && value.contains("${") && value.contains("}");
+		return definedByVariable;
+	}
+	
+	public static boolean isUrlDefinedByVariable(String url) throws java.net.MalformedURLException{
+		return isDefinedByVariable(url);
+	}
 	public static void validateUrl(String url) throws java.net.MalformedURLException{
-		java.net.URL testUrl = new java.net.URL(url);
-		testUrl.toString();
+		validateUrl(url, false);
+	}
+	public static void validateUrl(String url, boolean skipCheckUrlDefinedByVariable) throws java.net.MalformedURLException{
+		boolean urlDefinedByVariable = isUrlDefinedByVariable(url);
+		if( (!urlDefinedByVariable) || (!skipCheckUrlDefinedByVariable) ) {
+			// se sono presenti le { } la url può essere costruita dinamicamente
+			java.net.URL testUrl = new java.net.URL(url);
+			testUrl.toString();
+		}
 	}
 	
 	public static void validateUri(String uri) throws UtilsException,java.net.MalformedURLException{
+		validateUri(uri, false);
+	}
+	public static void validateUri(String uri, boolean skipCheckUrlDefinedByVariable) throws UtilsException,java.net.MalformedURLException{
 		if (uri.startsWith("http://")
 				|| uri.startsWith("file://")) {
 

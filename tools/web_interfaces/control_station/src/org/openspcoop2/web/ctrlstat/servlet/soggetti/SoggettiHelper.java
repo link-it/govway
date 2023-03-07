@@ -1254,6 +1254,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			String filterCredenziale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CREDENZIALE);
 			this.addFilterCredenziale(filterTipoCredenziali, filterCredenziale);
+			
+			String filterCredenzialeIssuer = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CREDENZIALE_ISSUER);
+			this.addFilterCredenzialeIssuer(filterTipoCredenziali, filterCredenzialeIssuer);
 						
 			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
 			addFilterRuolo(filterRuolo, false);
@@ -1676,13 +1679,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_SENZA_PROFILO, dominioLabel));
 				}
 			} else {
-				if(showProtocolli) {
-					String labelProtocollo =this.getLabelProtocollo(protocollo); 
-					de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_SOLO_PROFILO, labelProtocollo));
-				} else {
-					de.setValue(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_VUOTI);
-					addMetadati = false;
-				}
+				//if(showProtocolli) {
+				String labelProtocollo =this.getLabelProtocollo(protocollo); 
+				de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_SOLO_PROFILO, labelProtocollo));
+				//} else {
+				//	de.setValue(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_VUOTI);
+				//	addMetadati = false;
+				//}
 			}
 			
 			de.setType(DataElementType.SUBTITLE);

@@ -84,14 +84,34 @@ public class EsitoUtils {
 	public void setExpression(IExpression expr,Integer esitoGruppo, Integer esitoDettaglio, Integer[] esitoDettaglioPersonalizzato, boolean escludiRichiesteScartate,
 			IField fieldEsito, IExpression newExpression) throws ProtocolException,ExpressionException, ExpressionNotImplementedException, ServiceException, NotImplementedException{
 			
-		boolean senzaFiltro = (EsitoUtils.ALL_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
-		boolean soloOk = (EsitoUtils.ALL_OK_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
-		boolean faultApplicativo = (EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE == esitoGruppo);
-		boolean soloErrori = (EsitoUtils.ALL_ERROR_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
-		boolean personalizzato = (EsitoUtils.ALL_PERSONALIZZATO_VALUE == esitoGruppo);
-		boolean soloErroriPiuFaultApplicativi = (EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
-		boolean soloErroriConsegna = (EsitoUtils.ALL_ERROR_CONSEGNA_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
-		boolean soloRichiesteScartate = (EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
+		boolean senzaFiltro = 
+				(esitoGruppo!=null && EsitoUtils.ALL_VALUE.intValue() == esitoGruppo.intValue()) 
+				&& 
+				(esitoDettaglio!=null && EsitoUtils.ALL_VALUE.intValue() == esitoDettaglio.intValue());
+		boolean soloOk = 
+				(esitoGruppo!=null && EsitoUtils.ALL_OK_VALUE.intValue() == esitoGruppo.intValue()) 
+				&& 
+				(esitoDettaglio!=null && EsitoUtils.ALL_VALUE.intValue() == esitoDettaglio.intValue());
+		boolean faultApplicativo = 
+				(esitoGruppo!=null && EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE.intValue() == esitoGruppo.intValue());
+		boolean soloErrori = 
+				(esitoGruppo!=null && EsitoUtils.ALL_ERROR_VALUE.intValue() == esitoGruppo.intValue()) 
+				&& 
+				(esitoDettaglio!=null && EsitoUtils.ALL_VALUE.intValue() == esitoDettaglio.intValue());
+		boolean personalizzato = 
+				(esitoGruppo!=null && EsitoUtils.ALL_PERSONALIZZATO_VALUE.intValue() == esitoGruppo.intValue());
+		boolean soloErroriPiuFaultApplicativi = 
+				(esitoGruppo!=null && EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE.intValue() == esitoGruppo.intValue()) 
+				&& 
+				(esitoDettaglio!=null && EsitoUtils.ALL_VALUE.intValue() == esitoDettaglio.intValue());
+		boolean soloErroriConsegna = 
+				(esitoGruppo!=null && EsitoUtils.ALL_ERROR_CONSEGNA_VALUE.intValue() == esitoGruppo.intValue()) 
+				&& 
+				(esitoDettaglio!=null && EsitoUtils.ALL_VALUE.intValue() == esitoDettaglio.intValue());
+		boolean soloRichiesteScartate = 
+				(esitoGruppo!=null && EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE.intValue() == esitoGruppo.intValue()) 
+				&& 
+				(esitoDettaglio!=null && EsitoUtils.ALL_VALUE.intValue() == esitoDettaglio.intValue());
 		
 		if(senzaFiltro && escludiRichiesteScartate) {
 			senzaFiltro = false;
@@ -145,13 +165,13 @@ public class EsitoUtils {
 				expr.and().in(fieldEsito, esitiRichiesteMalformate);
 			}
 			else{
-				if(esitoDettaglio == ALL_FAULT_APPLICATIVO_VALUE){
+				if(esitoDettaglio!=null && (esitoDettaglio.intValue() == ALL_FAULT_APPLICATIVO_VALUE.intValue())){
 					// si tratta del fault, devo trasformarlo nel codice ufficiale
 					// Questo caso avviene quando si seleziona qualsiasi esito, e poi come dettaglio il fault
 					int codeFaultApplicativo = this.esitiProperties.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
 					expr.and().equals(fieldEsito, codeFaultApplicativo);
 				}
-				else if(esitoDettaglio>=0){
+				else if(esitoDettaglio!=null && esitoDettaglio>=0){
 					expr.and().equals(fieldEsito, esitoDettaglio);
 				}
 				else if(escludiRichiesteScartate) {
@@ -215,30 +235,30 @@ public class EsitoUtils {
 	}
 	
 	public String getEsitoLabelFromValue(Object value, boolean consegnaMultiplaSenzaVariStati){
-		if(value instanceof Integer){
+		if(value!=null && value instanceof Integer){
 			
-			if(ALL_VALUE == ((Integer)value)){
+			if(ALL_VALUE.intValue() == ((Integer)value).intValue()){
 				return ALL_LABEL;
 			}
-			else if(ALL_ERROR_VALUE == ((Integer)value)){
+			else if(ALL_ERROR_VALUE.intValue() == ((Integer)value).intValue()){
 				return ALL_ERROR_LABEL;
 			}
-			else if(ALL_OK_VALUE == ((Integer)value)){
+			else if(ALL_OK_VALUE.intValue() == ((Integer)value).intValue()){
 				return ALL_OK_LABEL;
 			}
-			else if(ALL_FAULT_APPLICATIVO_VALUE == ((Integer)value)){
+			else if(ALL_FAULT_APPLICATIVO_VALUE.intValue() == ((Integer)value).intValue()){
 				return ALL_FAULT_APPLICATIVO_LABEL;
 			}
-			else if(ALL_PERSONALIZZATO_VALUE == ((Integer)value)){
+			else if(ALL_PERSONALIZZATO_VALUE.intValue() == ((Integer)value).intValue()){
 				return ALL_PERSONALIZZATO_LABEL;
 			}
-			else if(ALL_ERROR_FAULT_APPLICATIVO_VALUE == ((Integer)value)){
+			else if(ALL_ERROR_FAULT_APPLICATIVO_VALUE.intValue() == ((Integer)value).intValue()){
 				return ALL_ERROR_FAULT_APPLICATIVO_LABEL;
 			}
-			else if(ALL_ERROR_CONSEGNA_VALUE == ((Integer)value)){
+			else if(ALL_ERROR_CONSEGNA_VALUE.intValue() == ((Integer)value).intValue()){
 				return ALL_ERROR_CONSEGNA_LABEL;
 			}
-			else if(ALL_ERROR_RICHIESTE_SCARTATE_VALUE == ((Integer)value)){
+			else if(ALL_ERROR_RICHIESTE_SCARTATE_VALUE.intValue() == ((Integer)value).intValue()){
 				return ALL_ERROR_RICHIESTE_SCARTATE_LABEL;
 			}
 			
@@ -258,7 +278,7 @@ public class EsitoUtils {
 			}
 		}
 		else{
-			this.logger.error("Conversione non riuscita: tipo ["+value.getClass().getName()+"] non supportato");
+			this.logger.error("Conversione non riuscita: tipo ["+(value!=null ? value.getClass().getName() : "value is null")+"] non supportato");
 			return "Conversione non riuscita";
 		}
 	}

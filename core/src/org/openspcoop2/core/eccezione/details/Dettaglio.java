@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Dettaglio() {
+    super();
   }
 
   public String getBase() {

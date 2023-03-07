@@ -74,6 +74,7 @@ import java.io.Serializable;
 
 public class AttestazioneTrasmissioneFatturaType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public AttestazioneTrasmissioneFatturaType() {
+    super();
   }
 
   public java.lang.String getIdentificativoSdI() {

@@ -72,12 +72,12 @@ public class CommonsMailSender extends Sender {
 				email.setAuthenticator(new DefaultAuthenticator(mail.getUsername(), mail.getPassword()));
 			}
 			if(mail.getSslConfig()!=null){
+				email.setSSLCheckServerIdentity(mail.getSslConfig().isHostnameVerifier());
 				email.setSSLOnConnect(true);
 				StringBuilder bf = new StringBuilder();
 				SSLUtilities.setSSLContextIntoJavaProperties(mail.getSslConfig(), bf);
 				if(debug)
 					this.log.debug(bf.toString());
-				email.setSSLCheckServerIdentity(false);
 				email.setStartTLSEnabled(mail.isStartTls());
 			}
 			
@@ -101,12 +101,12 @@ public class CommonsMailSender extends Sender {
 					File fTmp = null;
 					if(mailAttach instanceof MailTextAttach){
 						 MailTextAttach text = (MailTextAttach) mailAttach;
-						 fTmp = File.createTempFile("mailTextAttach", ".txt");
+						 fTmp = FileSystemUtilities.createTempFile("mailTextAttach", ".txt");
 						 FileSystemUtilities.writeFile(fTmp, text.getContent().getBytes());
 					 }
 					 else{
 						 MailBinaryAttach bin = (MailBinaryAttach) mailAttach;
-						 fTmp = File.createTempFile("mailTextAttach", ".bin");
+						 fTmp = FileSystemUtilities.createTempFile("mailTextAttach", ".bin");
 						 FileSystemUtilities.writeFile(fTmp, bin.getContent());
 					 }
 					 attachment.setPath(fTmp.getAbsolutePath());
@@ -146,7 +146,9 @@ public class CommonsMailSender extends Sender {
 		finally{
 			for (File file : filesAllegati) {
 				try{
-					file.delete();
+					if(!file.delete()) {
+						// ignore
+					}
 				}catch(Throwable e){
 					// ignore
 				}

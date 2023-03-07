@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class MessageInfo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public MessageInfo() {
+    super();
   }
 
   public java.util.Date getTimestamp() {

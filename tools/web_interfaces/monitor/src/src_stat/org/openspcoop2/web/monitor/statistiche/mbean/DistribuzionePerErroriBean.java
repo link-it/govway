@@ -76,15 +76,15 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 
 	public DistribuzionePerErroriBean() {
 		super();
-		this.init();
+		this.initDpEB();
 	}
 	public DistribuzionePerErroriBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
 			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB) {
 		super(serviceManager, pluginsServiceManager,
 				driverRegistroServiziDB, driverConfigurazioneDB);
-		this.init();
+		this.initDpEB();
 	}
-	private void init() {
+	private void initDpEB() {
 		this.setChartId("distribuzioneErrori");
 		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}

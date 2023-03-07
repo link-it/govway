@@ -4,9 +4,14 @@ Background:
 
 * call read('classpath:crud_commons.feature')
 
+* def api_petstore_oauth = read('api_modi_oauth.json')
+* eval randomize(api_petstore_oauth, ["nome"])
+* eval api_petstore_oauth.referente = soggettoDefault
+
 * def api_petstore_soap = read('api_modi_soap.json')
 * eval randomize(api_petstore_soap, ["nome"])
 * eval api_petstore_soap.referente = soggettoDefault
+
 * def query_param_profilo_modi = {'profilo': 'ModI'}
 
 * def api_petstore_rest = read('api_modi_rest.json')
@@ -18,6 +23,17 @@ Background:
 * eval api_petstore_rest_contemporaneita.referente = soggettoDefault
 
 * def header_firmare_default = read('api_modi_header_firmare_default.json')
+
+* def getExpectedOAUTH =
+"""
+function(modi) {
+var expected = modi;
+
+expected.keystore = expected.keystore != null ? expected.keystore : { "modalita" : "default" }
+
+return expected;
+} 
+"""
 
 * def getExpectedSOAP =
 """
@@ -54,6 +70,46 @@ expected.risposta.sicurezza_messaggio.verifica_audience = expected.risposta.sicu
 return expected;
 } 
 """
+
+
+@UpdatePetstore_modi_OAUTH_fruizioni
+Scenario Outline: Fruizioni Aggiornamento Petstore OAUTH <nome>
+
+		* def erogatore = read('soggetto_erogatore.json')
+		* eval randomize (erogatore, ["nome", "credenziali.username"])
+		
+		* def fruizione_petstore = read('fruizione_modi_oauth.json')
+		* eval fruizione_petstore.api_nome = api_petstore_oauth.nome
+		* eval fruizione_petstore.fruizione_nome = api_petstore_oauth.nome
+		* eval fruizione_petstore.api_versione = api_petstore_oauth.versione
+		* eval fruizione_petstore.erogatore = erogatore.nome
+		* eval fruizione_petstore.api_referente = api_petstore_oauth.referente
+		
+		* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
+		* def api_petstore_path = 'api/' + api_petstore_oauth.nome + '/' + api_petstore_oauth.versione
+
+		* def fruizione_petstore_update = read('<nome>')
+
+    * call create ({ resourcePath: 'api', body: api_petstore_oauth, query_params: query_param_profilo_modi })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+    * call put ( { resourcePath: 'fruizioni/'+petstore_key+'/modi', body: {modi: fruizione_petstore_update.modi}, query_params: query_param_profilo_modi } )
+		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+		* def expected = getExpectedOAUTH(fruizione_petstore_update.modi)
+    * match response.modi == expected
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+Examples:
+|nome|
+|fruizione_modi_oauth.json|
+|fruizione_modi_oauth_keystore_default.json|
+|fruizione_modi_oauth_keystore_ridefinito.json|
+|fruizione_modi_oauth_keystore_ridefinito_archivio.json|
+|fruizione_modi_oauth_keystore_ridefinito_hsm.json|
+
+
 
 @UpdatePetstore_modi_SOAP_fruizioni
 Scenario Outline: Fruizioni Aggiornamento Petstore SOAP <nome>
@@ -114,6 +170,47 @@ Examples:
 |fruizione_modi_soap_ttl_risposta.json|
 |fruizione_modi_soap_wsato_verifica_risposta.json|
 |fruizione_modi_soap_wsato_verifica_risposta_disabilitata.json|
+|fruizione_modi_soap_keystore_fruizione_default.json|
+|fruizione_modi_soap_keystore_fruizione_ridefinito.json|
+|fruizione_modi_soap_keystore_fruizione_ridefinito_archivio.json|
+|fruizione_modi_soap_keystore_fruizione_ridefinito_hsm.json|
+
+
+
+@UpdatePetstore_modi_SOAP_fruizioni_datiOAUTH
+Scenario Outline: Fruizioni Aggiornamento Petstore SOAP con dati Oauth <nome>
+
+		* def erogatore = read('soggetto_erogatore.json')
+		* eval randomize (erogatore, ["nome", "credenziali.username"])
+		
+		* def fruizione_petstore = read('fruizione_modi_soap_token_policy_negoziazione.json')
+		* eval fruizione_petstore.api_nome = api_petstore_soap.nome
+		* eval fruizione_petstore.fruizione_nome = api_petstore_soap.nome
+		* eval fruizione_petstore.api_versione = api_petstore_soap.versione
+		* eval fruizione_petstore.erogatore = erogatore.nome
+		* eval fruizione_petstore.api_referente = api_petstore_soap.referente
+		
+		* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
+		* def api_petstore_path = 'api/' + api_petstore_soap.nome + '/' + api_petstore_soap.versione
+
+		* def fruizione_petstore_update = read('<nome>')
+
+    * call create ({ resourcePath: 'api', body: api_petstore_soap, query_params: query_param_profilo_modi })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+    * call put ( { resourcePath: 'fruizioni/'+petstore_key+'/modi', body: {modi: fruizione_petstore_update.modi}, query_params: query_param_profilo_modi } )
+		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+		* def expected = getExpectedSOAP(fruizione_petstore_update.modi)
+    * match response.modi == expected
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+Examples:
+|nome|
+|fruizione_modi_soap_keystore_fruizione_dati_oauth.json|
+
+
 
 @UpdatePetstore_modi_REST_fruizioni
 Scenario Outline: Fruizioni Aggiornamento Petstore REST <nome>
@@ -167,6 +264,45 @@ Examples:
 |fruizione_modi_rest_risposta_truststore_ridefinito_ocsp.json|
 |fruizione_modi_rest_audience_verifica_risposta.json|
 |fruizione_modi_rest_audience_verifica_risposta_disabilitata.json|
+|fruizione_modi_rest_keystore_fruizione_default.json|
+|fruizione_modi_rest_keystore_fruizione_ridefinito.json|
+|fruizione_modi_rest_keystore_fruizione_ridefinito_archivio.json|
+|fruizione_modi_rest_keystore_fruizione_ridefinito_hsm.json|
+
+
+@UpdatePetstore_modi_REST_fruizioni_datiOAUTH
+Scenario Outline: Fruizioni Aggiornamento Petstore REST con dati Oauth <nome>
+
+		* def erogatore = read('soggetto_erogatore.json')
+		* eval randomize (erogatore, ["nome", "credenziali.username"])
+		
+		* def fruizione_petstore = read('fruizione_modi_rest_token_policy_negoziazione.json')
+		* eval fruizione_petstore.api_nome = api_petstore_rest.nome
+		* eval fruizione_petstore.fruizione_nome = api_petstore_rest.nome
+		* eval fruizione_petstore.api_versione = api_petstore_rest.versione
+		* eval fruizione_petstore.erogatore = erogatore.nome
+		* eval fruizione_petstore.api_referente = api_petstore_rest.referente
+
+		* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
+		* def api_petstore_path = 'api/' + api_petstore_rest.nome + '/' + api_petstore_rest.versione
+
+		* def fruizione_petstore_update = read('<nome>')
+
+		* call create ({ resourcePath: 'api', body: api_petstore_rest, query_params: query_param_profilo_modi })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+    * call put ( { resourcePath: 'fruizioni/'+petstore_key+'/modi', body: {modi: fruizione_petstore_update.modi}, query_params: query_param_profilo_modi } )
+		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+		* def expected = getExpectedRest(fruizione_petstore_update.modi, header_firmare_default)
+    * match response.modi == expected
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+
+Examples:
+|nome|
+|fruizione_modi_rest_keystore_fruizione_dati_oauth.json|
 
 
 @UpdatePetstore_modi_REST_fruizioni_contemporaneita

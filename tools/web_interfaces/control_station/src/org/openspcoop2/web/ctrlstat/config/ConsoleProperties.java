@@ -664,6 +664,10 @@ public class ConsoleProperties {
 		BooleanNullable b = this.readBooleanProperty(false, "ocsp.required");
 		return (b!=null && b.getValue()!=null) ? b.getValue() : false;
 	}
+	public boolean isOCSPLoadDefault() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "ocsp.loadDefault");
+		return (b!=null && b.getValue()!=null) ? b.getValue() : true;
+	}
 	public boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "ocsp.https.verificaServerDisabilitata.policyChoice");
 		return (b!=null && b.getValue()!=null) ? b.getValue() : false;
@@ -1856,7 +1860,7 @@ public class ConsoleProperties {
 						byte [] zipContent = Utilities.getAsByteArray(is);
 						is.close();
 						is = null;
-						File fTmp = File.createTempFile("propertiesSourceConfiguration", ".zip");
+						File fTmp = FileSystemUtilities.createTempFile("propertiesSourceConfiguration", ".zip");
 						//System.out.println("TMP: "+fTmp.getAbsolutePath());
 						try {
 							FileSystemUtilities.writeFile(fTmp, zipContent);
@@ -1884,7 +1888,9 @@ public class ConsoleProperties {
 							}
 							config.setBuiltIn(builtIdList);
 						}finally {
-							fTmp.delete();
+							if(!fTmp.delete()) {
+								// ignore
+							}
 						}
 					}
 				}finally {

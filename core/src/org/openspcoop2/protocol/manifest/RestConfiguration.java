@@ -71,6 +71,7 @@ import java.io.Serializable;
 
 public class RestConfiguration extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RestConfiguration() {
+    super();
   }
 
   public Integration getIntegration() {

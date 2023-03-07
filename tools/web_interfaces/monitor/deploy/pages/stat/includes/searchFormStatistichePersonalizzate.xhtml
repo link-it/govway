@@ -429,10 +429,18 @@
 		 		<a4j:outputPanel id="tipoLatenzaCtr" layout="block" rendered="#{sf_bean._value_tipoVisualizzazione == 'tempoMedioRisposta'}">
 					<link:prop label="Tipo Latenza">
 						<rich:comboBox id="tipoLatenzaCombo" value="#{sf_bean._value_tipoLatenza}" defaultLabel="Seleziona Tipo di Latenza"
-							required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Latenza" width="416" enableManualInput="false">
+							required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Latenza" width="416" enableManualInput="false"
+							rendered="#{search.statisticheLatenzaPortaEnabled}">
 							<f:selectItem itemLabel="Latenza Totale" itemValue="Latenza Totale"/>
-			 				<f:selectItem itemLabel="Latenza Servizio" itemValue="Latenza Servizio"/>
+			 				<f:selectItem itemLabel="Tempo Risposta Servizio" itemValue="Latenza Servizio"/>
 			 				<f:selectItem itemLabel="Latenza Gateway" itemValue="Latenza Gateway"/>
+							<a4j:support event="onselect" actionListener="#{sf_bean.tipoLatenzaListener}"/>
+						</rich:comboBox>
+						<rich:comboBox id="tipoLatenzaComboNoLatenzaGateway" value="#{sf_bean._value_tipoLatenza}" defaultLabel="Seleziona Tipo di Latenza"
+							required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Latenza" width="416" enableManualInput="false"
+							rendered="#{not search.statisticheLatenzaPortaEnabled}">
+							<f:selectItem itemLabel="Latenza Totale" itemValue="Latenza Totale"/>
+			 				<f:selectItem itemLabel="Tempo Risposta Servizio" itemValue="Latenza Servizio"/>
 							<a4j:support event="onselect" actionListener="#{sf_bean.tipoLatenzaListener}"/>
 						</rich:comboBox>
 					</link:prop>

@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class DocumentoSicurezza extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DocumentoSicurezza() {
+    super();
   }
 
   public String getBase() {

@@ -73,10 +73,17 @@ public class Field implements IField {
 				throw new RuntimeException("Expected type ["+Field.class.getName()+"] different from the type found ["+o.getClass().getName()+"]");
 		}
 		Field f = (Field) o;
+		
+		String thisClassTypeName = this.classType.getName() + "";
+		String fClassTypeName = f.getClassType().getName() + "";
+		
+		String thisFieldTypeName = this.fieldType.getName() + "";
+		String fFieldTypeName = f.getFieldType().getName() + "";
+		
 		return this.className.equals(f.getClassName()) && 
-			this.classType.getName().equals(f.getClassType().getName()) &&
+				thisClassTypeName.equals(fClassTypeName) &&
 			this.fieldName.equals(f.getFieldName()) &&
-			this.fieldType.getName().equals(f.getFieldType().getName());
+			thisFieldTypeName.equals(fFieldTypeName);
 	}	
 	
 	@Override 

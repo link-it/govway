@@ -29,6 +29,9 @@ public class FruizioneModIRestRichiesta  {
   
   @Schema(required = true, description = "")
   private FruizioneModIRestRichiestaSicurezzaMessaggio sicurezzaMessaggio = null;
+  
+  @Schema(description = "")
+  private BaseFruizioneModIOAuth oauth = null;
  /**
    * Get sicurezzaMessaggio
    * @return sicurezzaMessaggio
@@ -49,6 +52,25 @@ public class FruizioneModIRestRichiesta  {
     return this;
   }
 
+ /**
+   * Get oauth
+   * @return oauth
+  **/
+  @JsonProperty("oauth")
+  @Valid
+  public BaseFruizioneModIOAuth getOauth() {
+    return this.oauth;
+  }
+
+  public void setOauth(BaseFruizioneModIOAuth oauth) {
+    this.oauth = oauth;
+  }
+
+  public FruizioneModIRestRichiesta oauth(BaseFruizioneModIOAuth oauth) {
+    this.oauth = oauth;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -56,6 +78,7 @@ public class FruizioneModIRestRichiesta  {
     sb.append("class FruizioneModIRestRichiesta {\n");
     
     sb.append("    sicurezzaMessaggio: ").append(FruizioneModIRestRichiesta.toIndentedString(this.sicurezzaMessaggio)).append("\n");
+    sb.append("    oauth: ").append(FruizioneModIRestRichiesta.toIndentedString(this.oauth)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -55,6 +55,7 @@ import java.io.Serializable;
 
 public class DocumentoConversazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DocumentoConversazione() {
+    super();
   }
 
   public String getBase() {

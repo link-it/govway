@@ -58,6 +58,7 @@ import java.util.List;
 
 public class OrganizationTypes extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public OrganizationTypes() {
+    super();
   }
 
   public void addType(OrganizationType type) {

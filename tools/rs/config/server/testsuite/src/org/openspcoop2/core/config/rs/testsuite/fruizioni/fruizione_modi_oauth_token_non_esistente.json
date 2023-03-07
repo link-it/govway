@@ -1,0 +1,20 @@
+{
+	"connettore": {
+		"endpoint": "https://ginovadifretta.it/petstore",
+		"token_policy": "api-config-test-jwtNONESISTENTE"
+	},
+	"autenticazione": {
+		"tipo": "https",
+		"opzionale": false
+	},
+	"api_nome": "ServizioSOAPConPiuAzione",
+	"fruizione_nome": "ServizioSOAPConPiuAzione",
+	"api_versione": 1,
+	"api_soap_servizio": "EsempioServizioComposto",
+	"modi": {
+		"protocollo": "oauth",
+		"identificativo": "clientId",
+		"kid": "KIDvalue"
+	}
+	
+}

@@ -56,6 +56,7 @@ import java.io.Serializable;
 
 public class DatiSALType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiSALType() {
+    super();
   }
 
   public java.math.BigInteger getRiferimentoFase() {

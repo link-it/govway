@@ -66,6 +66,7 @@ import java.io.Serializable;
 
 public class UserMessage extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public UserMessage() {
+    super();
   }
 
   public MessageInfo getMessageInfo() {

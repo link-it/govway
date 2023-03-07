@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class DatiApplicativiErogazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiApplicativiErogazione() {
+    super();
   }
 
   public java.lang.String getEndpoint() {

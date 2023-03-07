@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.transazioni;
 
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +146,7 @@ public class GestoreConsegnaMultipla {
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {
@@ -487,10 +488,13 @@ public class GestoreConsegnaMultipla {
 					else if(dbConsegnePreseInCaricoManager!=null) {
 						dbResource = dbConsegnePreseInCaricoManager.getResource(idDominio, ID_MODULO, richiedenteConnessione);
 					}
-					else {
+					else if(dbConsegneMessageBoxManager!=null){
 						dbResource = dbConsegneMessageBoxManager.getResource(idDominio, ID_MODULO, richiedenteConnessione);
 					}
-					con = (Connection) dbResource.getResource();	
+					
+					if(dbResource!=null) {
+						con = (Connection) dbResource.getResource();
+					}
 				}
 				
 			}finally {	
@@ -502,7 +506,9 @@ public class GestoreConsegnaMultipla {
 			}
 				
 			boolean autoCommit = false;
-			con.setAutoCommit(autoCommit);
+			if(con!=null) {
+				con.setAutoCommit(autoCommit);
+			}
 
 			if(o instanceof TransazioneApplicativoServer) {
 				int conflict = 0;
@@ -588,7 +594,9 @@ public class GestoreConsegnaMultipla {
 							if(timeDetails!=null) {
 								timeStartCommit = DateManager.getTimeMillis();
 							}
-							con.commit();
+							if(con!=null) {
+								con.commit();
+							}
 							if(timeDetails!=null) {
 								long timeEnd =  DateManager.getTimeMillis();
 								long timeProcess = timeEnd-timeStartCommit;
@@ -615,7 +623,9 @@ public class GestoreConsegnaMultipla {
 							}
 							//System.out.println("Serializable error:"+e.getMessage());
 							try{
-								con.rollback();
+								if(con!=null) {
+									con.rollback();
+								}
 							} catch(Exception er) {}
 						}finally {
 							if(timeDetails!=null && !timeDetails.isEmpty()) {
@@ -638,7 +648,9 @@ public class GestoreConsegnaMultipla {
 					// Ripristino Transazione
 					if(!useSelectForUpdate) {
 						try{
-							con.setTransactionIsolation(oldTransactionIsolation);
+							if(con!=null) {
+								con.setTransactionIsolation(oldTransactionIsolation);
+							}
 							// già effettuato fuori dal metodo connectionDB.setAutoCommit(true);
 						} catch(Exception er) {
 							throw new CoreException("(ripristinoIsolation) "+er.getMessage(),er);
@@ -677,7 +689,9 @@ public class GestoreConsegnaMultipla {
 					
 					this.msgDiagnosticiOpenSPCoopAppender.log(con, (org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico)o);
 					
-					con.commit();
+					if(con!=null) {
+						con.commit();
+					}
 				}finally {	
 					if(times!=null) {
 						long timeEnd =  DateManager.getTimeMillis();
@@ -694,7 +708,9 @@ public class GestoreConsegnaMultipla {
 					
 					this.dumpOpenSPCoopAppender.dump(con, (Messaggio)o, this.transazioniRegistrazioneDumpHeadersCompactEnabled);
 					
-					con.commit();
+					if(con!=null) {
+						con.commit();
+					}
 				}finally {	
 					if(times!=null) {
 						long timeEnd =  DateManager.getTimeMillis();
@@ -706,8 +722,12 @@ public class GestoreConsegnaMultipla {
 
 		}catch(Throwable e){
 			try{
-				con.rollback();
-			}catch(Exception eRollback){}
+				if(con!=null) {
+					con.rollback();
+				}
+			}catch(Exception eRollback){
+				// ignore
+			}
 
 			if(o instanceof TransazioneApplicativoServer) {
 				
@@ -809,8 +829,12 @@ public class GestoreConsegnaMultipla {
 			}
 			
 			try{
-				con.setAutoCommit(true);
-			}catch(Exception eRollback){}
+				if(con!=null) {
+					con.setAutoCommit(true);
+				}
+			}catch(Exception eRollback){
+				// ignore
+			}
 			try {
 				if(useConnectionRuntime==false) {
 					if(dbManager_transazioni!=null) {
@@ -819,11 +843,13 @@ public class GestoreConsegnaMultipla {
 					else if(dbConsegnePreseInCaricoManager!=null) {
 						dbConsegnePreseInCaricoManager.releaseResource(idDominio, ID_MODULO, dbResource);
 					}
-					else {
+					else if(dbConsegneMessageBoxManager!=null){
 						dbConsegneMessageBoxManager.releaseResource(idDominio, ID_MODULO, dbResource);
 					}
 				}
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				// ignore
+			}
 		}
 
 
@@ -897,12 +923,19 @@ public class GestoreConsegnaMultipla {
 		
 	}
 
+	private static boolean _debug = true;
+	public static boolean is_debug() {
+		return _debug;
+	}
+	public static void set_debug(boolean _debug) {
+		GestoreConsegnaMultipla._debug = _debug;
+	}
 	private boolean _safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties,
 			 boolean possibileTerminazioneSingleIntegrationManagerMessage,boolean consegnaInErrore,
 			 List<String> timeDetails) {
 		
 		//boolean debug = this.debug;
-		boolean debug = true; // un eventuale errore deve essere sempre registrato
+		boolean debug = _debug; // un eventuale errore deve essere sempre registrato
 		
 		DAOFactory daoF = debug ? daoFactory : daoFactoryDevNull;
 		Logger logFactory = debug ? daoFactoryLoggerTransazioniSql : daoFactoryLoggerTransazioniDevNull;

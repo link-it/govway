@@ -110,7 +110,7 @@ public class OCSPTest {
 				f = File.createTempFile("test", ".properties");
 				FileSystemUtilities.writeFile(f, content);
 			
-				OCSPManager.init(f.getAbsoluteFile(), true, log);
+				OCSPManager.init(f.getAbsoluteFile(), true, false, log);
 			}
 			finally {
 				if(f!=null) {

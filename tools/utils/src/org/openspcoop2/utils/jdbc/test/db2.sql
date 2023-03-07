@@ -1,0 +1,11 @@
+CREATE TABLE prova_bytes (
+     descrizione VARCHAR(255) NOT NULL,
+	 contenuto BLOB NOT NULL,
+	 contenuto_vuoto BLOB
+);
+		 
+CREATE TABLE prova (
+     descrizione VARCHAR(255) NOT NULL,
+	 id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
+     CONSTRAINT pk_prova PRIMARY KEY (id)
+);

@@ -58,6 +58,7 @@ import java.util.List;
 
 public class PayloadInfo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public PayloadInfo() {
+    super();
   }
 
   public void addPartInfo(PartInfo partInfo) {

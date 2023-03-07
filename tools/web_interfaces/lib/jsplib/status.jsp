@@ -22,6 +22,6 @@
 <div id="ajax_status_div">
 	<span class="rich-mpnl-mask-div mainStatusStartStyle"></span>
 	<span class="mainStatusStartStyleInner">
-		<img src="images/tema_link/ajax_status.gif">
+		<img src="images/tema_link/ajax_status.gif" alt="loading">
 	</span>
 </div>

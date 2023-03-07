@@ -560,3 +560,145 @@ When method post
 Then status 500
 And match response == read("error-bodies/certificato-server-revocato.xml")
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+@keystore-default-fruizione
+Scenario: Test connettività base in cui il keystore è definito nella fruizione, come keystore di base
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS01KeystoreDefaultFruizione/v1'
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'keystore-default-fruizione'
+When method post
+Then status 200
+And match response == read("response.xml")
+
+* def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
+* xml client_request = karateCache.get("Client-Request")
+* xml server_response = karateCache.get("Server-Response")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+
+@keystore-ridefinito-fruizione
+Scenario: Test connettività base in cui il keystore è definito nella fruizione, come keystore ridefinito. L'applicativo identificato contiene un keystore modi, ma non verrà utilizzato.
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS01KeystoreRidefinitoFruizione/v1'
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'keystore-ridefinito-fruizione'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read("response.xml")
+
+* def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
+* xml client_request = karateCache.get("Client-Request")
+* xml server_response = karateCache.get("Server-Response")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+
+@keystore-ridefinito-fruizione-applicativo-no-keystore
+Scenario: Test connettività base in cui il keystore è definito nella fruizione, come keystore ridefinito. L'applicativo identificato non contiene un keystore modi
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS01KeystoreRidefinitoFruizione/v1'
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'keystore-ridefinito-fruizione'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClientToken1', password: 'ApplicativoBlockingIDA01ExampleClientToken1' })
+When method post
+Then status 200
+And match response == read("response.xml")
+
+* def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
+* xml client_request = karateCache.get("Client-Request")
+* xml server_response = karateCache.get("Server-Response")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+
+@keystore-ridefinito-fruizione-archivio
+Scenario: Test connettività base in cui il keystore è definito nella fruizione, come keystore ridefinito tramite archivio. L'applicativo identificato contiene un keystore modi, ma non verrà utilizzato.
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS01KeystoreRidefinitoFruizioneArchivio/v1'
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'keystore-ridefinito-fruizione-archivio'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read("response.xml")
+
+* def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
+* xml client_request = karateCache.get("Client-Request")
+* xml server_response = karateCache.get("Server-Response")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient4, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient4, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+
+
+@keystore-definito-applicativo
+Scenario: Test connettività base in cui il keystore è definito nell'applicativo. A differenza delle altre configurazioni, in questa è stata salvata la proprietà che imposta il kestore definito nell'applicativo, mentre nelle altre funziona in ugual maniera per retrocompatibilita'
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS01KeystoreApplicativo/v1'
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'keystore-definito-applicativo'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read("response.xml")
+
+* def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
+* xml client_request = karateCache.get("Client-Request")
+* xml server_response = karateCache.get("Server-Response")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+

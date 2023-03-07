@@ -167,7 +167,7 @@ public class ModuloAlternativoProducer implements IProducer {
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			}
 	
 			return ps;
@@ -326,8 +326,14 @@ public class ModuloAlternativoProducer implements IProducer {
 		
 		finally {
 			try {
-				if (rs!=null) rs.close();
-				if (ps!=null) ps.close();
+				if (rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				this.log.error(this.ID_MODULO +": non riesco a rilasciare la connessione "+ e.getMessage());
+			}
+			try {
+				if (ps!=null) 
+					ps.close();
 			}catch (Exception e) {
 				this.log.error(this.ID_MODULO +": non riesco a rilasciare la connessione "+ e.getMessage());
 			}
@@ -393,12 +399,24 @@ public class ModuloAlternativoProducer implements IProducer {
 				byte [] data = rs.getBytes("msg_bytes"); if ( data!=null) ide.setMsg_bytes(data);
 				id_messaggi.add(ide);
 			}
-			rs.close();
-			ps.close();
 		}catch (SQLException e){
 			this.log.error(this.ID_MODULO +":" + e.getMessage());
 			releaseResource(resourceDB);
 			return null;
+		}		
+		finally {
+			try {
+				if (rs!=null) 
+					rs.close();
+			}catch (Exception e) {
+				// ignore
+			}
+			try {
+				if (ps!=null) 
+					ps.close();
+			}catch (Exception e) {
+				// ignore
+			}
 		}
 
 		try {
@@ -406,19 +424,28 @@ public class ModuloAlternativoProducer implements IProducer {
 			if (id_messaggi != null && id_messaggi.size() > 0) {
 				String preparedUpdate = "UPDATE "+GestoreMessaggi.MESSAGGI+ 
 				" set scheduling=1 where id_messaggio = ? and tipo = ? ";
-				PreparedStatement ps3 = connectionDB.prepareStatement(preparedUpdate);
-				for (int i=0; i< id_messaggi.size(); i++) {
-					try{
-						ps3.setString(1, id_messaggi.get(i).getIdMessaggio());
-						ps3.setString(2, id_messaggi.get(i).getTipo());
-						ps3.executeUpdate();
-						System.out.print(this.ID_MODULO + "set sched=1 al msg: " + id_messaggi.get(i).getIdMessaggio() + " - " + id_messaggi.get(i).getTipo() + ".......");
-					}catch (SQLException e1) {
-						this.log.error(this.ID_MODULO +": SqlExecption, eseguo rollback " + e1);
-						connectionDB.rollback();
+				PreparedStatement ps3 = null;
+				try {
+					ps3 = connectionDB.prepareStatement(preparedUpdate);
+					for (int i=0; i< id_messaggi.size(); i++) {
+						try{
+							ps3.setString(1, id_messaggi.get(i).getIdMessaggio());
+							ps3.setString(2, id_messaggi.get(i).getTipo());
+							ps3.executeUpdate();
+							System.out.print(this.ID_MODULO + "set sched=1 al msg: " + id_messaggi.get(i).getIdMessaggio() + " - " + id_messaggi.get(i).getTipo() + ".......");
+						}catch (SQLException e1) {
+							this.log.error(this.ID_MODULO +": SqlExecption, eseguo rollback " + e1);
+							connectionDB.rollback();
+						}
 					}
-				}
-				ps3.close();			
+				}finally {
+					try {
+						if (ps3!=null) 
+							ps3.close();
+					}catch (Exception e) {
+						// ignore
+					}
+				}		
 				connectionDB.commit();
 				System.out.println(this.ID_MODULO + ".................................................... COMMIT ESEGUITO");
 			}

@@ -126,7 +126,7 @@ public class DocumentoExporter extends HttpServlet {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void processRequest(HttpServletRequest request, HttpServletResponse response) {
 
 		HttpSession session = request.getSession(true);
 
@@ -134,6 +134,10 @@ public class DocumentoExporter extends HttpServlet {
 		PageData pd = new PageData();
 
 		ArchiviHelper archiviHelper = null;
+		
+		byte[] docBytes = null;
+		String fileName = null;
+		
 		try {
 			archiviHelper = new ArchiviHelper(request, pd, session);
 
@@ -146,14 +150,7 @@ public class DocumentoExporter extends HttpServlet {
 				ControlStationCore.logDebug(param + " = " + value);
 			}
 			ControlStationCore.logDebug("-----------------");
-		}catch(Exception e){
-			throw new ServletException(e.getMessage(),e);
-		}
 
-		byte[] docBytes = null;
-		String fileName = null;
-
-		try {
 			String idAllegato = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ALLEGATO);
 			String idAccordo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ACCORDO);
 			String tipoDocumento = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO);
@@ -1075,7 +1072,6 @@ public class DocumentoExporter extends HttpServlet {
 
 		} catch (Exception e) {
 			ControlStationCore.logError("Errore durante il download dei documenti "+e.getMessage(), e);
-			throw new ServletException(e);
 		} 
 	}
 

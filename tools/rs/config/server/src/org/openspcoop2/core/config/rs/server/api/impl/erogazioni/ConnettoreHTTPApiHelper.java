@@ -90,14 +90,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 	  	
 		final boolean httpsstato = httpsClient != null;	// Questo è per l'autenticazione client.
 	  	 
-		String httpskeystore = null;
-		if ( httpsClient != null ) {
-			if ( httpsClient.getKeystorePath() != null || httpsClient.getKeystoreTipo() != null ) {
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;  
-			}
-			else
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-		}
+		String httpskeystore = ErogazioniCheckNotNull.getHttpskeystore(httpsClient);
         			    
 		return env.saHelper.endPointCheckData(
 				env.tipo_protocollo,
@@ -192,14 +185,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 	  	
 		final boolean httpsstato = httpsClient != null;	// Questo è per l'autenticazione client.
 	  	 
-		String httpskeystore = null;
-		if ( httpsClient != null ) {
-			if ( httpsClient.getKeystorePath() != null || httpsClient.getKeystoreTipo() != null ) {
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;  
-			}
-			else
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-		}
+		String httpskeystore = ErogazioniCheckNotNull.getHttpskeystore(httpsClient);
         			    
 	     
 		env.apsHelper.fillConnettore(
@@ -297,14 +283,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 	  	
 		final boolean httpsstato = httpsClient != null;	// Questo è per l'autenticazione client.
 	  	 
-		String httpskeystore = null;
-		if ( httpsClient != null ) {
-			if ( httpsClient.getKeystorePath() != null || httpsClient.getKeystoreTipo() != null ) {
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;  
-			}
-			else
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-		}
+		String httpskeystore = ErogazioniCheckNotNull.getHttpskeystore(httpsClient);
         			    
 	    	     
 		env.apsHelper.fillConnettore(

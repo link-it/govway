@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.tracciamento.Proprieta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -699,4 +702,35 @@ public class ProtocolPropertiesUtils {
 		}
 	}
 	
+	public static List<ProtocolProperty> getProtocolProperties(boolean fruizione, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException {
+		List<ProtocolProperty> listProtocolProperties = null;
+		Fruitore fruitore = null;
+		if(fruizione) {
+			fruitore = getFruitore(soggettoFruitore, asps);
+			listProtocolProperties = fruitore.getProtocolPropertyList();
+		}
+		else {
+			listProtocolProperties = asps.getProtocolPropertyList();
+		}
+		return listProtocolProperties;
+	}
+	
+	public static Fruitore getFruitore(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException {
+		if(soggettoFruitore==null) {
+			throw new ProtocolException("Fruitore non fornito");
+		}
+		Fruitore fruitore = null;
+		boolean find = false;
+		for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+			if(fruitoreCheck.getTipo().equals(soggettoFruitore.getTipo()) && fruitoreCheck.getNome().equals(soggettoFruitore.getNome())) {
+				fruitore = fruitoreCheck;
+				find = true;
+				break;
+			}
+		}
+		if(!find) {
+			throw new ProtocolException("Fruitore '"+soggettoFruitore+"' non registrato come fruitore dell'accordo parte specifica");
+		}
+		return fruitore;
+	}
 }

@@ -58,6 +58,7 @@ import java.util.List;
 
 public class InterfacesConfiguration extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public InterfacesConfiguration() {
+    super();
   }
 
   public void addSpecification(InterfaceConfiguration specification) {

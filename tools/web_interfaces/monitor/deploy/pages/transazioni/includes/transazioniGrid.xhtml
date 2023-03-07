@@ -110,6 +110,19 @@
 						</h:outputText>
 					</rich:toolTip>
 				</rich:column>
+				<rich:column id="colDataIngressoRichStream" sortable="false" label="Data Ingresso Richiesta Acquisita" width="190px" visible="false">
+					<f:facet name="header">
+						<h:outputText id="colDataAccettazioneRich1Stream" value="Data Ingresso Richiesta Acquisita" />
+					</f:facet>
+					<h:outputText id="colDataAccettazioneRich2Stream" value="#{item.dataAccettazioneRichiestaStream}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
+					</h:outputText>
+					<rich:toolTip for="colDataAccettazioneRich2Stream">
+						<h:outputText value="#{item.dataAccettazioneRichiestaStream}">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
+						</h:outputText>
+					</rich:toolTip>
+				</rich:column>
 				<rich:column id="colDataUscitaRich" sortable="false" label="Data Uscita Richiesta" width="190px" visible="false">
 					<f:facet name="header">
 						<h:outputText id="colDataUscitaRich1" value="Data Uscita Richiesta" />
@@ -119,6 +132,19 @@
 					</h:outputText>
 					<rich:toolTip for="colDataUscitaRich2">
 						<h:outputText value="#{item.dataUscitaRichiesta}">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
+						</h:outputText>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colDataUscitaRichStream" sortable="false" label="Data Uscita Richiesta Consegnata" width="190px" visible="false">
+					<f:facet name="header">
+						<h:outputText id="colDataUscitaRich1Stream" value="Data Uscita Richiesta Consegnata" />
+					</f:facet>
+					<h:outputText id="colDataUscitaRich2Stream" value="#{item.dataUscitaRichiestaStream}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
+					</h:outputText>
+					<rich:toolTip for="colDataUscitaRich2Stream">
+						<h:outputText value="#{item.dataUscitaRichiestaStream}">
 							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 						</h:outputText>
 					</rich:toolTip>
@@ -150,15 +176,41 @@
 						</h:outputText>
 					</rich:toolTip>
 				</rich:column>
-				<rich:column id="colDataOutRisposta" sortable="false" label="Data Uscita Risposta" width="190px" visible="false">
+				<rich:column id="colDataInRispostaStream" sortable="false" label="Data Ingresso Risposta Acquisita" width="190px" visible="false">
 					<f:facet name="header">
-						<h:outputText id="colDataOutRisposta1" value="Data Uscita Risposta" />
+						<h:outputText id="colDataInRisposta1Stream" value="Data Ingresso Risposta Acquisita" />
+					</f:facet>
+					<h:outputText id="colDataInRisposta2Stream" value="#{item.dataIngressoRispostaStream}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
+					</h:outputText>
+					<rich:toolTip for="colDataInRisposta2Stream">
+						<h:outputText value="#{item.dataIngressoRispostaStream}">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
+						</h:outputText>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colDataOutRisposta" sortable="false" label="Data Uscita Risposta Consegnata" width="190px" visible="false">
+					<f:facet name="header">
+						<h:outputText id="colDataOutRisposta1" value="Data Uscita Risposta Consegnata" />
 					</f:facet>
 					<h:outputText id="colDataOutRisposta2" value="#{item.dataUscitaRisposta}">
 						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<rich:toolTip for="colDataOutRisposta2">
 						<h:outputText  value="#{item.dataUscitaRisposta}">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
+						</h:outputText>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colDataOutRispostaStream" sortable="false" label="Data Uscita Risposta" width="190px" visible="false">
+					<f:facet name="header">
+						<h:outputText id="colDataOutRisposta1Stream" value="Data Uscita Risposta" />
+					</f:facet>
+					<h:outputText id="colDataOutRisposta2Stream" value="#{item.dataUscitaRispostaStream}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
+					</h:outputText>
+					<rich:toolTip for="colDataOutRisposta2Stream">
+						<h:outputText  value="#{item.dataUscitaRispostaStream}">
 							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 						</h:outputText>
 					</rich:toolTip>
@@ -270,9 +322,9 @@
 						<h:outputText value="#{item.latenzaTotale}" converter="latenzaConverter"/>
 					</rich:toolTip>
 				</rich:column>
-				<rich:column id="colLatenzaServizio" sortable="true" sortBy="#{item.latenzaServizio}" sortOrder="#{value.sortOrders['latenzaServizio']}" label="Latenza Servizio" width="130px">
+				<rich:column id="colLatenzaServizio" sortable="true" sortBy="#{item.latenzaServizio}" sortOrder="#{value.sortOrders['latenzaServizio']}" label="Tempo Risposta Servizio" width="130px">
 					<f:facet name="header">
-						<h:outputText id="outLatenzaServizio1" value="Latenza Servizio" />
+						<h:outputText id="outLatenzaServizio1" value="Tempo Risposta Servizio" />
 					</f:facet>
 					<h:outputText id="outLatenzaServizio2" value="#{item.latenzaServizio}" converter="latenzaConverter"/>
 					<rich:toolTip for="outLatenzaServizio2">

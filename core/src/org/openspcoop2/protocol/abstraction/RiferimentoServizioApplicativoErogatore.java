@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class RiferimentoServizioApplicativoErogatore extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RiferimentoServizioApplicativoErogatore() {
+    super();
   }
 
   public java.lang.String getNome() {

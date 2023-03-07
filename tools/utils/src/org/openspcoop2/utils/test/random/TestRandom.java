@@ -54,7 +54,7 @@ public class TestRandom {
 	public void testRandomGenerator(boolean useSecureRandom, String secureRandomAlgorithm) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.random.Test.test(useSecureRandom, secureRandomAlgorithm);
+		org.openspcoop2.utils.random.test.RandomGeneratorTest.test(useSecureRandom, secureRandomAlgorithm);
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

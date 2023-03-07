@@ -86,8 +86,10 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().LOCATION_CONNETTORE,false),"?");
@@ -129,8 +131,10 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getIdentificativoMessaggio(),TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataAccettazioneRichiesta(),TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataUscitaRichiesta(),TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataUscitaRichiestaStream(),TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataAccettazioneRisposta(),TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataIngressoRisposta(),TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataIngressoRispostaStream(),TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getRichiestaUscitaBytes(),TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getRispostaIngressoBytes(),TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getLocationConnettore(),TransazioneApplicativoServer.model().LOCATION_CONNETTORE.getFieldType()),
@@ -161,12 +165,17 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		
 	}
 
+	private static boolean efficiente = true;
+	public static boolean isEfficiente() {
+		return efficiente;
+	}
+	public static void setEfficiente(boolean efficiente) {
+		JDBCTransazioneApplicativoServerServiceImpl.efficiente = efficiente;
+	}
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdTransazioneApplicativoServer oldId, TransazioneApplicativoServer transazioneApplicativoServer, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		boolean efficente = true;
-		
-		if(efficente) {
+		if(efficiente) {
 		
 			long tableId = -1;
 			if(oldId!=null && oldId.getId()!=null && oldId.getId().longValue()>0) {
@@ -252,10 +261,14 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataAccettazioneRichiesta(), TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataUscitaRichiesta(), TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataUscitaRichiestaStream(), TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataAccettazioneRisposta(), TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataIngressoRisposta(), TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataIngressoRispostaStream(), TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getRichiestaUscitaBytes(), TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES,false), "?");

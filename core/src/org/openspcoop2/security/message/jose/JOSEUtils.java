@@ -511,7 +511,7 @@ public class JOSEUtils {
 	public static HashMap<String, String> readJwtX509Cert_mapAliasPassword(Properties properties) throws SecurityException, UtilsException {
 		try {
 			HashMap<String, String> map = new HashMap<String, String>();
-			Properties pMap = Utilities.readProperties(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD, properties);
+			Properties pMap = Utilities.readProperties(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW, properties);
 			if(pMap!=null && pMap.size()>0) {
 				Enumeration<?> names = pMap.propertyNames();
 				while (names.hasMoreElements()) {
@@ -520,13 +520,13 @@ public class JOSEUtils {
 						String name = (String) oName;
 						if(name!=null) {
 							name = name.trim();
-							if(name.endsWith(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD_SUFFIX_ALIAS)) {
+							if(name.endsWith(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_ALIAS)) {
 								String alias = pMap.getProperty(name);
-								String confName = name.substring(0, name.indexOf(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD_SUFFIX_ALIAS));
-								String namePassword = confName+SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD_SUFFIX_PASSWORD;
+								String confName = name.substring(0, name.indexOf(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_ALIAS));
+								String namePassword = confName+SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_PW;
 								String password = pMap.getProperty(namePassword);
 								if(password==null) {
-									throw new SecurityException("Property '"+SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD+namePassword+"' not found");
+									throw new SecurityException("Property '"+SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW+namePassword+"' not found");
 								}
 								map.put(alias, password);
 							}

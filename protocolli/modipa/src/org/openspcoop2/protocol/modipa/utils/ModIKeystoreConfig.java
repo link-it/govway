@@ -27,14 +27,11 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
-import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.utils.ModIKeystoreUtils;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.certificate.hsm.HSMUtils;
-import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
  * ModIKeystoreConfig
@@ -45,114 +42,87 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  */
 public class ModIKeystoreConfig extends ModIKeystoreUtils {
 
+	public static boolean isKeystoreDefinitoInFruizione(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException, UtilsException {
+		boolean fruizione = true;
+		List<ProtocolProperty> listProtocolProperties = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, asps);
+		String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, 
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE);
+		if(mode!=null && ModICostanti.MODIPA_KEYSTORE_FRUIZIONE.equals(mode)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public ModIKeystoreConfig(ServizioApplicativo sa, String securityMessageProfile) throws ProtocolException, UtilsException {
 		super(sa, securityMessageProfile);
 	}
 	
 	public ModIKeystoreConfig(boolean fruizione, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps, String securityMessageProfile) throws ProtocolException, UtilsException {
-		
-		super();
-		
-		try {
-			List<ProtocolProperty> listProtocolProperties = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, asps);
-			
-			String prefix = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL;
-			
-			String mode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
-					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE);
-			boolean ridefinisci = ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(mode);
-			
-			if(ridefinisci) {
-			
-				this.securityMessageKeystoreMode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEYSTORE_MODE);
-				if(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(this.securityMessageKeystoreMode)) {
-					this.securityMessageKeystoreHSM = true;
-				}
-				else if(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
-					this.securityMessageKeystoreArchive = ProtocolPropertiesUtils.getRequiredBinaryValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEYSTORE_ARCHIVE);
-				}
-				else {
-					this.securityMessageKeystorePath = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEYSTORE_PATH);
-					
-					try {
-						HttpUtilities.validateUri(this.securityMessageKeystorePath, true);
-					}catch(Exception e) {
-						throw new ProtocolException("["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
-					}
-				}
-				
-				this.securityMessageKeystoreType = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEYSTORE_TYPE);
-				
-				if(this.securityMessageKeystoreHSM) {
-					this.securityMessageKeystorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageKeystoreType;
-				}
-				
-				if(!this.securityMessageKeystoreHSM) {
-					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEYSTORE_PASSWORD);
-				}
-				else {
-					this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
-				}
-				
-				this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEY_ALIAS);
-				
-				if(!this.securityMessageKeystoreHSM || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
-					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEY_PASSWORD);
-				}
-				else {
-					this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
-				}
-				
-			}
-			else {
-				
-				ModIProperties modIproperties = ModIProperties.getInstance();
-				this.securityMessageKeystoreType = modIproperties.getSicurezzaMessaggio_certificati_keyStore_tipo();
-				if(this.securityMessageKeystoreType!=null) {
-					
-					this.securityMessageKeystoreHSM = HSMUtils.isKeystoreHSM(this.securityMessageKeystoreType);
-					
-					if(this.securityMessageKeystoreHSM) {
-						this.securityMessageKeystorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageKeystoreType;
-					}
-					else {
-					
-						this.securityMessageKeystorePath = modIproperties.getSicurezzaMessaggio_certificati_keyStore_path();
-						try {
-							HttpUtilities.validateUri(this.securityMessageKeystorePath, true);
-						}catch(Exception e) {
-							throw new ProtocolException(prefix+" ["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
-						}
-						
-					}
-					
-					if(!this.securityMessageKeystoreHSM) {
-						this.securityMessageKeystorePassword = modIproperties.getSicurezzaMessaggio_certificati_keyStore_password();
-					}
-					else {
-						this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
-					}
-					
-					this.securityMessageKeyAlias = modIproperties.getSicurezzaMessaggio_certificati_key_alias();
-					
-					if(!this.securityMessageKeystoreHSM || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
-						this.securityMessageKeyPassword = modIproperties.getSicurezzaMessaggio_certificati_key_password();
-					}
-					else {
-						this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
-					}
-				}
-				
-			}
-			
-			if(this.securityMessageKeystoreArchive==null && this.securityMessageKeystorePath==null) {
-				throw new ProtocolException(prefix+" non definito");
-			}
-			
-		}catch(Exception e) {
-			throw new ProtocolException(e);
-		}
-		
+		super(fruizione, soggettoFruitore, asps, securityMessageProfile,
+				getSicurezzaMessaggio_certificati_keyStore_tipo(),
+				getSicurezzaMessaggio_certificati_keyStore_path(),
+				getSicurezzaMessaggio_certificati_keyStore_password(),
+				getSicurezzaMessaggio_certificati_key_alias(),
+				getSicurezzaMessaggio_certificati_key_password());
 	}
 	
+	private static ModIProperties modIProperties = null;
+	private static synchronized void initModiProperties() throws ProtocolException {
+		if(modIProperties==null) {
+			modIProperties = ModIProperties.getInstance();
+		}
+	}
+	private static ModIProperties getModiProperties() throws ProtocolException {
+		if(modIProperties==null) {
+			initModiProperties();
+		}
+		return modIProperties;
+	}
+	private static String getSicurezzaMessaggio_certificati_keyStore_tipo() throws ProtocolException {
+		try {
+			return getModiProperties().getSicurezzaMessaggio_certificati_keyStore_tipo();
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	private static String getSicurezzaMessaggio_certificati_keyStore_path() throws ProtocolException {
+		try {
+			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+				return getModiProperties().getSicurezzaMessaggio_certificati_keyStore_path();
+			}
+			return null;
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	private static String getSicurezzaMessaggio_certificati_keyStore_password() throws ProtocolException {
+		try {
+			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+				return getModiProperties().getSicurezzaMessaggio_certificati_keyStore_password();
+			}
+			return null;
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	private static String getSicurezzaMessaggio_certificati_key_alias() throws ProtocolException {
+		try {
+			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+				return getModiProperties().getSicurezzaMessaggio_certificati_key_alias();
+			}
+			return null;
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	private static String getSicurezzaMessaggio_certificati_key_password() throws ProtocolException {
+		try {
+			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+				return getModiProperties().getSicurezzaMessaggio_certificati_key_password();
+			}
+			return null;
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
 }

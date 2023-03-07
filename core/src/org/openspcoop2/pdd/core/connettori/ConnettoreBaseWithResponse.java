@@ -37,6 +37,9 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
+import org.openspcoop2.pdd.logger.DiagnosticInputStream;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LimitedInputStream;
@@ -107,6 +110,14 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						this.getPddContext());
 			}
 		}
+		if(this.isResponse!=null && this.useDiagnosticInputStream && this.msgDiagnostico!=null) {
+			String idModuloFunzionale = 
+					ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? 
+							MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI : MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE;
+			this.isResponse = new DiagnosticInputStream(this.isResponse, idModuloFunzionale, "letturaPayloadRisposta", false, this.msgDiagnostico, 
+					(this.logger!=null && this.logger.getLogger()!=null) ? this.logger.getLogger() : OpenSPCoop2Logger.getLoggerOpenSPCoopCore(),
+					this.getPddContext());
+		}
 	}
 	
 	protected void initCheckContentTypeConfiguration(){		
@@ -172,23 +183,52 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 
 	}
 	
-	private boolean _dumpResponse(Map<String, List<String>> trasporto) throws Exception{
-		if(this.isResponse!=null){
-			// Registro Debug.
-			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+	
+	private DumpByteArrayOutputStream readResponseForDump() throws Exception{
+		DumpByteArrayOutputStream bout = null;
+		try {
+			bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
-			try {
+			
+			this.emitDiagnosticStartDumpBinarioRispostaIngresso();
+			
 //				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
 //				int readByte = 0;
 //				while((readByte = this.isResponse.read(readB))!= -1){
 //					bout.write(readB,0,readByte);
 //				}
-				//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] ...");
-				CopyStream.copy(this.isResponse, bout);
-				//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] complete");
-				this.isResponse.close();
-				bout.flush();
-				bout.close();
+			//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] ...");
+			CopyStream.copy(this.isResponse, bout);
+			//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] complete");
+			this.isResponse.close();
+		}finally {
+			try {
+				if(bout!=null) {
+					bout.flush();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+			try {
+				if(bout!=null) {
+					bout.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
+		}
+		return bout;
+	}
+	
+	private boolean _dumpResponse(Map<String, List<String>> trasporto) throws Exception{
+		if(this.isResponse!=null){
+			
+			this.emitDiagnosticResponseRead(this.isResponse);
+			
+			// Registro Debug.
+			DumpByteArrayOutputStream bout = null;
+			try {
+				bout = readResponseForDump();
 				if(this.debug) {
 					this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") :\n"+bout.toString(),false);
 				}
@@ -203,7 +243,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				this.dumpBinarioRispostaIngresso(bout, this.messageTypeResponse, trasporto);
 			}finally {
 				try {
-					bout.clearResources();
+					if(bout!=null) {
+						bout.clearResources();
+					}
 				}catch(Throwable t) {
 					this.logger.error("Release resources failed: "+t.getMessage(),t);
 				}
@@ -220,6 +262,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			}
 			
 			// devo registrare almeno gli header HTTP
+			this.emitDiagnosticStartDumpBinarioRispostaIngresso();
 			this.dumpBinarioRispostaIngresso(null, null, trasporto);
 		}
 		
@@ -273,12 +316,12 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		
 		if(msgErrore!=null){
 			if(this.checkContentType){
-				if(exErrore!=null){
-					this.logger.error(msgErrore,exErrore);
-				}
-				else{
-					this.logger.error(msgErrore);
-				}
+				//if(exErrore!=null){
+				this.logger.error(msgErrore,exErrore);
+				//}
+				//else{
+				//	this.logger.error(msgErrore);
+				//}
 				Exception e = new Exception(msgErrore);
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION,
@@ -286,12 +329,12 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				throw e;
 			}else{
 				msgErrore = msgErrore+"; viene utilizzata forzatamente la tipologia "+MessageType.BINARY.name() +" come modalità di gestione del messaggio";
-				if(exErrore!=null){
-					this.logger.warn(msgErrore,exErrore);
-				}
-				else{
-					this.logger.warn(msgErrore);
-				}
+				//if(exErrore!=null){
+				this.logger.warn(msgErrore,exErrore);
+				//}
+				//else{
+				//	this.logger.warn(msgErrore);
+				//}
 				this.messageTypeResponse = MessageType.BINARY;
 			}
 		}
@@ -319,6 +362,10 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		responseContext.setCodiceTrasporto(this.codice+"");
 		responseContext.setContentLength(this.contentLength);
 		responseContext.setHeaders(this.propertiesTrasportoRisposta);
+		
+		if(isParam!=null) {
+			this.emitDiagnosticResponseRead(isParam);
+		}
 		
 		OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
 				createMessage(this.messageTypeResponse,responseContext,
@@ -479,6 +526,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			responseContext.setCodiceTrasporto(this.codice+"");
 			responseContext.setContentLength(this.contentLength);
 			responseContext.setHeaders(this.propertiesTrasportoRisposta);
+			
+			this.emitDiagnosticResponseRead(this.isResponse);
 			
 			try{
 				

@@ -325,7 +325,7 @@ public class ArchiviCore extends ControlStationCore {
 		}
 	}
 	
-	public void finalize(Archive archive,ArchiveModeType type,ArchiveMode mode,String protocol,boolean validateDocuments,
+	public void finalizeArchive(Archive archive,ArchiveModeType type,ArchiveMode mode,String protocol,boolean validateDocuments,
 			MapPlaceholder importInformationMissing_globalPlaceholder) throws Exception {
 		Connection con = null;
 		DriverControlStationDB driver = null;

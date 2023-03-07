@@ -58,6 +58,7 @@ import java.util.List;
 
 public class ResponderParties extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ResponderParties() {
+    super();
   }
 
   public void addResponderParty(ResponderParty responderParty) {

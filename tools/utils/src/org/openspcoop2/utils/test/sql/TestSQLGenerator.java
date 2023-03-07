@@ -41,7 +41,7 @@ public class TestSQLGenerator {
 	public void testSQLGenerator(String tipoDatabase, String connectionUrl, String username, String password, String driverJdbc) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.sql.ClientTest.main(new String[] {tipoDatabase,  connectionUrl, username, password, driverJdbc});
+		org.openspcoop2.utils.sql.test.ClientTest.main(new String[] {tipoDatabase,  connectionUrl, username, password, driverJdbc});
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 	
 	}

@@ -61,7 +61,7 @@ public class TestOpenApiValidator {
 	public void testOpenApiValidator(String tipoInterfaccia, OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
-		org.openspcoop2.utils.openapi.validator.TestOpenApi3.main(new String[] {tipoInterfaccia, openAPILibrary.toString(), mergeSpec+""});
+		org.openspcoop2.utils.openapi.validator.test.OpenApi3Test.main(new String[] {tipoInterfaccia, openAPILibrary.toString(), mergeSpec+""});
 		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
 		
 	}
@@ -85,7 +85,7 @@ public class TestOpenApiValidator {
 	public void testOpenApi3ExtendedValidator(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
-		org.openspcoop2.utils.openapi.validator.TestOpenApi3Extended.main(new String[] {openAPILibrary.toString(), mergeSpec+""});
+		org.openspcoop2.utils.openapi.validator.test.OpenApi3ExtendedTest.main(new String[] {openAPILibrary.toString(), mergeSpec+""});
 		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
 		
 	}
@@ -106,7 +106,7 @@ public class TestOpenApiValidator {
 		boolean allTestExecution = true;
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
-		org.openspcoop2.utils.openapi.validator.TestInterfaceBigger.main(new String[] {openAPILibrary.toString(), mergeSpec+"", allTestExecution+""});
+		org.openspcoop2.utils.openapi.validator.test.InterfaceBiggerTest.main(new String[] {openAPILibrary.toString(), mergeSpec+"", allTestExecution+""});
 		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
 		
 	}
@@ -119,7 +119,7 @@ public class TestOpenApiValidator {
 		boolean allTestExecution = false;
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
-		org.openspcoop2.utils.openapi.validator.TestInterfaceBigger.main(new String[] {openAPILibrary.toString(), mergeSpec+"", allTestExecution+""});
+		org.openspcoop2.utils.openapi.validator.test.InterfaceBiggerTest.main(new String[] {openAPILibrary.toString(), mergeSpec+"", allTestExecution+""});
 		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
 		
 	}

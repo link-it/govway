@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class DocumentoCoordinamento extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DocumentoCoordinamento() {
+    super();
   }
 
   public String getBase() {

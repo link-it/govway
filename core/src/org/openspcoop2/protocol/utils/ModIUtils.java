@@ -89,12 +89,17 @@ public class ModIUtils {
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_AUDIENCE = "audience";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_VERIFICA_AUDIENCE = "audience-verify";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_INTEGRITY_AUDIENCE = "integrity-audience";
+	public static final String API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE = "fruizione-keystore-mode";
+	public static final String API_IMPL_SICUREZZA_MESSAGGIO_X5U_CERTIFICATE_URL = "x5u-certificate-url";
 	
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_STORE_TYPE = "type";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_STORE_PATH = "path";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_STORE_CRLS = "crls";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_STORE_OCSP_POLICY = "ocsp";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_KEY_ALIAS = "key-alias";
+	
+	public static final String API_IMPL_SICUREZZA_OAUTH_IDENTIFICATIVO = "oauth-id";
+	public static final String API_IMPL_SICUREZZA_OAUTH_KID = "oauth-kid";
 	
 	// COSTANTI SERVIZIO
 	public static final String HSM = "hsm";
@@ -307,6 +312,25 @@ public class ModIUtils {
 					rest, gestioneFruitori, !request, 
 					digest, corniceSicurezza, headerDuplicati,
 					urlInvocazione, urlConnettoreFruitoreModI);
+		}
+		else {
+			
+			// Sicurezza OAuth
+			
+			if( gestioneFruitori ) {
+				
+				v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO);
+				if(v!=null && StringUtils.isNotEmpty(v)) {
+					map.put(API_IMPL_SICUREZZA_OAUTH_IDENTIFICATIVO, v);
+				}
+				v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_OAUTH_KID);
+				if(v!=null && StringUtils.isNotEmpty(v)) {
+					map.put(API_IMPL_SICUREZZA_OAUTH_KID, v);
+				}
+				
+				addStore(map, protocolPropertyList, "", false, false);
+			}
+			
 		}
 		
 		return map;
@@ -589,6 +613,23 @@ public class ModIUtils {
 			}
 		}
 		
+		// X5U URL
+		if(x5u) {
+			String id = null;
+			if(request && fruizione) {
+				id = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_X509_VALUE_X5URL;
+			}
+			if(!request && !fruizione) {
+				id = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_X509_VALUE_X5URL;
+			}
+			if(id!=null) {
+				String v = getStringValue(protocolPropertyList, id);
+				if(v!=null && StringUtils.isNotEmpty(v)) {
+					map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_X5U_CERTIFICATE_URL, v);
+				}
+			}
+		}
+		
 		// Header Duplicati
 		if(rest && headerDuplicati && 
 				( 
@@ -615,6 +656,19 @@ public class ModIUtils {
 		}
 		
 		
+		// Sicurezza OAuth
+		
+		if( fruizione && request ) {
+			String v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO);
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				map.put(prefixKey+ API_IMPL_SICUREZZA_OAUTH_IDENTIFICATIVO, v);
+			}
+			v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_OAUTH_KID);
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				map.put(prefixKey+ API_IMPL_SICUREZZA_OAUTH_KID, v);
+			}
+		}
+		
 		// TrustStore
 		if( (fruizione && !request) || (!fruizione && request) ) {
 			
@@ -631,6 +685,27 @@ public class ModIUtils {
 		// KeyStore
 		if(!fruizione && !request) {
 			addStore(map, protocolPropertyList, prefixKey, false, false);
+		}
+		
+		if(fruizione && request) {
+			
+			boolean keystoreDefinitoInFruizione = false;
+			String idFruizioneKeystoreFruizioneMode = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE;
+			String v = getStringValue(protocolPropertyList, idFruizioneKeystoreFruizioneMode);
+			if(CostantiDB.MODIPA_KEYSTORE_FRUIZIONE.equals(v)) {
+				keystoreDefinitoInFruizione = true;
+				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, 
+						CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_FRUIZIONE);
+			}
+			else {
+				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, 
+						CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_APPLICATIVO);
+			}
+			
+			if(keystoreDefinitoInFruizione) {
+				addStore(map, protocolPropertyList, prefixKey, false, false);
+			}
+			
 		}
 	}
 	
@@ -862,8 +937,8 @@ public class ModIUtils {
 				vStore = getBinaryValue_config(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
 			}
 			
-			String password = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
-			String vPassword = getStringValue_config(protocolPropertyList, password);
+			String pw = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
+			String vPassword = getStringValue_config(protocolPropertyList, pw);
 			
 			String aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
 			String vAliasKey = getStringValue_config(protocolPropertyList, aliasKey);
@@ -931,7 +1006,7 @@ public class ModIUtils {
 			String type = null;
 			String path = null;
 			String archive = null;
-			String password = null;
+			String pw = null;
 			String crl = null;
 			String ocsp = null;
 			String aliasKey = null;
@@ -942,20 +1017,20 @@ public class ModIUtils {
 			if(ssl) {
 				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE;
 				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH;
-				password = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD;
+				pw = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD;
 				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS;
 				ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY;
 			}
 			else if(truststore) {
 				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE;
 				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH;
-				password = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD;
+				pw = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD;
 				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS;
 				ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY;
 			}
 			else {
 				type = CostantiDB.MODIPA_KEYSTORE_TYPE;
-				password = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
+				pw = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
 				aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
 				String mode = getStringValue(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_MODE);
 				if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
@@ -977,8 +1052,8 @@ public class ModIUtils {
 			}
 			
 			String vPassword = null;
-			if(password!=null) {
-				vPassword = getStringValue(protocolPropertyList, password);
+			if(pw!=null) {
+				vPassword = getStringValue(protocolPropertyList, pw);
 			}
 			
 			boolean hsm = false;

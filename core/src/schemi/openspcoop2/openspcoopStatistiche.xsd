@@ -11,7 +11,7 @@
 		I dati delle statistiche  sono inizialmente scremati grazie alla data di ingresso.
 		Inizialmente si pensava che bastava quindi un indice con la sola data di ingresso per avere prestazioni accettabili.
 		Si è invece ravvisato che è utile usare gli indici composti, anche perchè scorrere un indice (anche scorrerlo tutto) 
-		è comunque molto più efficente che usare una tabella. per ulteriori dettagli sulla motivazione vedere
+		è comunque molto più efficiente che usare una tabella. per ulteriori dettagli sulla motivazione vedere
 		i commenti riportati in Transazioni.xsd per quanto riguarda gli indici sulle transazioni.
 		
 		Vengono forniti tre possibili indici 

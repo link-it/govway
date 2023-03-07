@@ -588,7 +588,8 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			}	
 			
 			// Token per Modi insieme al certificato
-			if(!CredenzialiSoggetto.class.getName().equals(credClass.getName())) {
+			String credenzialiSoggettoClassName = CredenzialiSoggetto.class.getName()+"";
+			if(!credenzialiSoggettoClassName.equals(credClass.getName())) {
 				String identificativo = BeanUtils.getProperty(govwayCreds, "user");
 				String tokenPolicy = BeanUtils.getProperty(govwayCreds, "tokenPolicy");
 				if(tokenPolicy!=null && identificativo!=null) {

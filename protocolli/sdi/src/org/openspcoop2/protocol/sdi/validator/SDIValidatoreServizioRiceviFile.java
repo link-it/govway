@@ -128,7 +128,7 @@ public class SDIValidatoreServizioRiceviFile {
 		
 		String identificativoSdI = null;
 		String data = null;
-		String errore = null;
+		StringBuilder erroreSB = new StringBuilder();
 		for (int i = 0; i < elementChilds.size(); i++) {
 			SOAPElement child = elementChilds.get(i);
 	
@@ -161,7 +161,7 @@ public class SDIValidatoreServizioRiceviFile {
 				data = child.getTextContent();
 			}
 			else if(SDICostantiServizioRiceviFile.RICEVI_FILE_RISPOSTA_ELEMENT_ERRORE.equals(child.getLocalName())){
-				if(errore!=null){
+				if(erroreSB!=null && erroreSB.length()>0){
 					this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
 							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 							"Elemento ["+SDICostantiServizioRiceviFile.RICEVI_FILE_RISPOSTA_ELEMENT_ERRORE+"] presente piu' volte"));
@@ -173,7 +173,10 @@ public class SDIValidatoreServizioRiceviFile {
 							"Elemento ["+SDICostantiServizioRiceviFile.RICEVI_FILE_RISPOSTA_ELEMENT_ERRORE+"] non valorizzato"));
 					return;	
 				}
-				errore = child.getTextContent();
+				String errore = child.getTextContent();
+				if(errore!=null) {
+					erroreSB.append(errore);
+				}
 			}
 			else{
 				this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
@@ -206,6 +209,7 @@ public class SDIValidatoreServizioRiceviFile {
 		}
 		
 		// errore
+		String errore = (erroreSB.length()>0) ? erroreSB.toString() : null;
 		if(errore!=null){
 			try{
 				if(!ErroreInvioType.EI01.name().equals(errore) && 

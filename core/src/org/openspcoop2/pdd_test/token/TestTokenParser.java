@@ -53,7 +53,7 @@ public class TestTokenParser {
 	public void testTokenParser(String tipo) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.pdd.core.token.parser.TestBasicTokenParser.main(new String[] {tipo});
+		org.openspcoop2.pdd.core.token.parser.test.BasicTokenParserTest.main(new String[] {tipo});
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

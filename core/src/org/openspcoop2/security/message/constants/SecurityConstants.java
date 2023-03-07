@@ -315,9 +315,9 @@ public class SecurityConstants {
     public static final String JOSE_USE_HEADERS_KEYSTORE_TYPE = "joseUseHeaders.keystore.type";
     public static final String JOSE_USE_HEADERS_KEYSTORE_FILE = "joseUseHeaders.keystore.file";
     public static final String JOSE_USE_HEADERS_KEYSTORE_PASSWORD = "joseUseHeaders.keystore.password";
-    public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD = "joseUseHeaders.key.";
-    public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD_SUFFIX_ALIAS = ".alias";
-    public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD_SUFFIX_PASSWORD = ".password";
+    public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW = "joseUseHeaders.key.";
+    public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_ALIAS = ".alias";
+    public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_PW = ".password";
     
     public static final String TIMESTAMP_ACTION = ConfigurationConstants.TIMESTAMP;
     public static final String TIMESTAMP_TTL = ConfigurationConstants.TTL_TIMESTAMP;

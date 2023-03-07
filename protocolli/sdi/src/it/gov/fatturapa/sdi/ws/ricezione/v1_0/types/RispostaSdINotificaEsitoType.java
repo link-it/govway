@@ -59,6 +59,7 @@ import java.io.Serializable;
 
 public class RispostaSdINotificaEsitoType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RispostaSdINotificaEsitoType() {
+    super();
   }
 
   public void set_value_esito(String value) {

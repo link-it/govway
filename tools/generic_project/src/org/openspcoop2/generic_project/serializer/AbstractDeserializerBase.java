@@ -80,8 +80,12 @@ public abstract class AbstractDeserializerBase {
 			throw new DeserializerException(e);
 		}finally{
 			try{
-				bin.close();
-			}catch(Exception e){}
+				if(bin!=null) {
+					bin.close();
+				}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	public <T> T xmlToObjByString(String xml,Class<T> c) throws DeserializerException {

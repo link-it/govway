@@ -150,6 +150,13 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return "data_uscita_richiesta";
 			}
 		}
+		if(field.equals(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_uscita_richiesta_stream";
+			}else{
+				return "data_uscita_richiesta_stream";
+			}
+		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".data_accettazione_risposta";
@@ -162,6 +169,13 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return this.toAliasTable(field)+".data_ingresso_risposta";
 			}else{
 				return "data_ingresso_risposta";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_ingresso_risposta_stream";
+			}else{
+				return "data_ingresso_risposta_stream";
 			}
 		}
 		if(field.equals(TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES)){
@@ -381,10 +395,16 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 		if(field.equals(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
+		if(field.equals(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES)){

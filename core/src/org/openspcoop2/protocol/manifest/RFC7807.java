@@ -57,6 +57,7 @@ import java.io.Serializable;
 
 public class RFC7807 extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RFC7807() {
+    super();
   }
 
   public boolean isUseAcceptHeader() {

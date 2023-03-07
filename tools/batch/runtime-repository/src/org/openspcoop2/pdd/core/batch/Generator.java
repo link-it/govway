@@ -80,10 +80,11 @@ public class Generator {
 		
 		try{
 			Properties props = new Properties();
-			FileInputStream fis = new FileInputStream(Generator.class.getResource("/batch-runtime-repository.log4j2.properties").getFile());
-			props.load(fis);
-			LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
-			LoggerWrapperFactory.setLogConfiguration(props);
+			try(FileInputStream fis = new FileInputStream(Generator.class.getResource("/batch-runtime-repository.log4j2.properties").getFile())){
+				props.load(fis);
+				LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
+				LoggerWrapperFactory.setLogConfiguration(props);
+			}
 		}catch(Exception e) {
 			throw new Exception("Impostazione logging fallita: "+e.getMessage());
 		}

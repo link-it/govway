@@ -52,6 +52,7 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.slf4j.Logger;
 
 /**
@@ -107,6 +108,16 @@ public class StatsSearchForm extends BaseSearchForm{
 	
 	private boolean distribuzionePerImplementazioneApi = true;
 	
+	private boolean statisticheLatenzaPortaEnabled = false;
+	
+	public boolean isStatisticheLatenzaPortaEnabled() {
+		return this.statisticheLatenzaPortaEnabled;
+	}
+
+	public void setStatisticheLatenzaPortaEnabled(boolean statisticheLatenzaPortaEnabled) {
+		this.statisticheLatenzaPortaEnabled = statisticheLatenzaPortaEnabled;
+	}
+
 	public boolean isDistribuzionePerImplementazioneApi() {
 		return this.distribuzionePerImplementazioneApi;
 	}
@@ -151,6 +162,9 @@ public class StatsSearchForm extends BaseSearchForm{
 			if(!this.isMostraUnitaTempoDistribuzioneNonTemporale) {
 				this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato = govwayMonitorProperties.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato();
 			}
+			
+			this.statisticheLatenzaPortaEnabled = govwayMonitorProperties.isStatisticheLatenzaPortaEnabled();
+			
 		} catch (Exception e) {
 			StatsSearchForm.log.error("Errore il calcolo della proprieta' 'useDistribuzioneStatisticaGiornalieraPerElaborazioneSettimanaleMensile': " + e.getMessage(),e);
 		}
@@ -202,8 +216,11 @@ public class StatsSearchForm extends BaseSearchForm{
 	
 	public List<SelectItem> getEsitiDettaglio() {
 		if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_ERRORI)) {
-			if(EsitoUtils.ALL_VALUE == this.getEsitoGruppo() || EsitoUtils.ALL_OK_VALUE == this.getEsitoGruppo()){
-				this.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
+			Integer esitoGruppo = this.getEsitoGruppo();
+			if(esitoGruppo!=null) {
+				if((EsitoUtils.ALL_VALUE.intValue() == this.getEsitoGruppo().intValue()) || (EsitoUtils.ALL_OK_VALUE.intValue() == this.getEsitoGruppo().intValue())){
+					this.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
+				}
 			}
 		}
 		
@@ -683,11 +700,11 @@ public class StatsSearchForm extends BaseSearchForm{
 			for (String tipoLat : this.getTipiLatenza()) {
 				if(tipoLat != null){
 					if(tipoLat.equals("0"))
-						map.put(""+i,TipoLatenza.LATENZA_TOTALE.getValue());
+						map.put(""+i, CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE ); //TipoLatenza.LATENZA_TOTALE.getValue());
 					if(tipoLat.equals("1"))
-						map.put(""+i,TipoLatenza.LATENZA_SERVIZIO.getValue());
+						map.put(""+i, CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_SERVIZIO ); // TipoLatenza.LATENZA_SERVIZIO.getValue());
 					if(tipoLat.equals("2"))
-						map.put(""+i,TipoLatenza.LATENZA_PORTA.getValue());
+						map.put(""+i, CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_PORTA );//TipoLatenza.LATENZA_PORTA.getValue());
 
 					i++;
 				}

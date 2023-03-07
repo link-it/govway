@@ -52,6 +52,7 @@ import java.io.Serializable;
 
 public class Description extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Description() {
+    super();
   }
 
   public String getBase() {

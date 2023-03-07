@@ -58,6 +58,7 @@ import java.util.List;
 
 public class ServiceTypes extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ServiceTypes() {
+    super();
   }
 
   public void addType(ServiceType type) {

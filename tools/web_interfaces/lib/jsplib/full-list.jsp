@@ -117,7 +117,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 													//Bottone Previous
 													if (pd.getIndex() != 0) {
 														%>							
-														<img id="ds_prev_top" src="images/tema_link/go_prev.png" title="Precedente"  class="dsImg" />
+														<img id="ds_prev_top" src="images/tema_link/go_prev.png" title="Precedente" alt="Precedente" class="dsImg" />
 														<script type="text/javascript" nonce="<%= randomNonce %>">
 															$(document).ready(function(){
 																$('#ds_prev_top').click(function() {
@@ -128,7 +128,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 														<%
 													} else{
 														%>
-														<img id="ds_prev_disabled_top" src="images/tema_link/go_prev_disabilitato.png">
+														<img id="ds_prev_disabled_top" src="images/tema_link/go_prev_disabilitato.png" alt="Precedente">
 														<%
 													}
 													%> 
@@ -145,7 +145,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 													  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 														  nextTopDisabled = false;
 													   			%>
-													   			<img id="ds_next_top" src="images/tema_link/go_next.png" title="Successiva" class="dsImg"/>
+													   			<img id="ds_next_top" src="images/tema_link/go_next.png" title="Successiva" alt="Successiva" class="dsImg"/>
 													   			<script type="text/javascript" nonce="<%= randomNonce %>">
 																	$(document).ready(function(){
 																		$('#ds_next_top').click(function() {
@@ -159,7 +159,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 													
 													if (nextTopDisabled) {
 														%>
-															<img id="ds_next_disabled_top" src="images/tema_link/go_next_disabilitato.png" />
+															<img id="ds_next_disabled_top" src="images/tema_link/go_next_disabilitato.png" alt="Successiva" />
 														<%
 													}
 													 %>
@@ -470,6 +470,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 												 		image = "verified_grey.png";
 													}
 									  				String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
+									  				String altImg = !de.getToolTip().equals("") ? de.getToolTip() : "-"; 
 									  				 
 									  				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									  				String id = "tabella-checkbox-link_" + i;
@@ -483,7 +484,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 												  		} 
 												  		%><div class="text-align-center">
 												  			<a id="<%=id %>" class="<%= classLink %>" <%=deTarget %> href="<%= de.getUrl() %>">
-												  				<img src="images/tema_link/<%= image %>" <%= tooltip %>/>
+												  				<img src="images/tema_link/<%= image %>" <%= tooltip %> alt="<%= altImg %>"/>
 															</a>
 															<script type="text/javascript" nonce="<%= randomNonce %>">
 															      $(document).ready(function(){
@@ -495,7 +496,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 														</div><%
 										      			
 										      		}else {
-									  				 	%><div class="text-align-center"><img src="images/tema_link/<%= image %>" <%= tooltip %>/>&nbsp;</div><%
+									  				 	%><div class="text-align-center"><img src="images/tema_link/<%= image %>" <%= tooltip %> alt="<%= altImg %>"/>&nbsp;</div><%
 										      		}
 									  			 } else {
 									  				 if (de.getType().equals("button")) {
@@ -628,7 +629,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										//Bottone Previous
 										if (pd.getIndex() != 0) {
 											%>							
-											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" title="Precedente"  class="dsImg" />
+											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" title="Precedente" alt="Precedente" class="dsImg" />
 											<script type="text/javascript" nonce="<%= randomNonce %>">
 												$(document).ready(function(){
 													$('#ds_prev_bottom').click(function() {
@@ -639,7 +640,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 											<%
 										} else{
 											%>
-											<img id="ds_prev_disabled_bottom" src="images/tema_link/go_prev_disabilitato.png">
+											<img id="ds_prev_disabled_bottom" src="images/tema_link/go_prev_disabilitato.png" alt="Precedente">
 											<%
 										}
 	
@@ -728,7 +729,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 											  nextBottomDisabled = false;
 										   			%>
-										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" title="Successiva" class="dsImg"/>
+										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" title="Successiva" alt="Successiva" class="dsImg"/>
 										   			<script type="text/javascript" nonce="<%= randomNonce %>">
 														$(document).ready(function(){
 															$('#ds_next_bottom').click(function() {
@@ -742,7 +743,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										
 										if (nextBottomDisabled) {
 											%>
-												<img id="ds_next_disabled_bottom" src="images/tema_link/go_next_disabilitato.png" />
+												<img id="ds_next_disabled_bottom" src="images/tema_link/go_next_disabilitato.png" alt="Successiva" />
 											<%
 										}
 										 %>

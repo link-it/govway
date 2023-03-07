@@ -390,7 +390,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 				lstObjects_allarmeParametro.add(new JDBCObject(allarme_allarmeParametro.getValore(), Allarme.model().ALLARME_PARAMETRO.VALORE.getFieldType()));
 				sqlQueryObjectUpdate_allarmeParametro.addWhereCondition("chk_param_id=?");
 				ids_allarmeParametro_da_non_eliminare.add(allarme_allarmeParametro.getId());
-				lstObjects_allarmeParametro.add(new JDBCObject(Long.valueOf(allarme_allarmeParametro.getId()),Long.class));
+				lstObjects_allarmeParametro.add(new JDBCObject(allarme_allarmeParametro.getId(),Long.class));
 
 				if(isUpdate_allarmeParametro) {
 					// Update allarme_allarmeParametro
@@ -553,7 +553,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		sqlQueryObjectDelete_allarmeParametro_getToDelete.addFromTable(this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO));
 		sqlQueryObjectDelete_allarmeParametro_getToDelete.addWhereCondition("id_allarme=?");
 		java.util.List<Object> allarme_allarmeParametro_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_allarmeParametro_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Allarme.model().ALLARME_PARAMETRO, this.getAllarmeFetch(),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for allarme_allarmeParametro
 		for (Object allarme_allarmeParametro_object : allarme_allarmeParametro_toDelete_list) {
@@ -568,7 +568,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 			// Delete allarme_allarmeParametro
 			if(allarme_allarmeParametro != null){
 				jdbcUtilities.execute(sqlQueryObjectDelete_allarmeParametro.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(allarme_allarmeParametro.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme_allarmeParametro.getId(),Long.class));
 			}
 		} // fine for allarme_allarmeParametro
 
@@ -588,7 +588,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		sqlQueryObjectDelete_allarmeHistory_delete.addDeleteTable(dbHistoryServiceUtilities.getFieldConverter().toTable(AllarmeHistory.model()));
 		sqlQueryObjectDelete_allarmeHistory_delete.addWhereCondition("id_allarme=?");
 		jdbcUtilities.execute(sqlQueryObjectDelete_allarmeHistory_delete.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 				
 
 		
@@ -601,7 +601,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		sqlQueryObjectDelete_allarmeNotifica_delete.addDeleteTable(dbNotificaServiceUtilities.getFieldConverter().toTable(AllarmeNotifica.model()));
 		sqlQueryObjectDelete_allarmeNotifica_delete.addWhereCondition("id_allarme=?");
 		jdbcUtilities.execute(sqlQueryObjectDelete_allarmeNotifica_delete.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 		
 		
 		

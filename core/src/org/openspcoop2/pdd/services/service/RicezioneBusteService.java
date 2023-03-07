@@ -328,6 +328,12 @@ public class RicezioneBusteService  {
 			logCore.error("Errore generazione diagnostico di ingresso",e);
 		}
 		
+		try{
+			req.setDiagnosticProducer(context!=null ? context.getPddContext(): null, msgDiag);
+		}catch(Throwable e){
+			logCore.error("Errore registrazione diagnostico sulla richiesta",e);
+		}
+		
 		// emitDiagnostic preAccept handler
 		GestoreHandlers.emitDiagnostic(msgDiag, preInAcceptRequestContext, context!=null ? context.getPddContext() : null, 
 				logCore, logCore);
@@ -428,7 +434,8 @@ public class RicezioneBusteService  {
 			if(dumpRaw.isActiveDumpRisposta()) {
 				res = new DumpRawConnectorOutMessage(logCore, res, 
 						(context!=null ? context.getPddContext(): null), 
-						openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+						openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository(),
+						dumpRaw);
 			}
 		}catch(Throwable e){
 			String msg = "Inizializzazione di GovWay non correttamente effettuata: DumpRaw";
@@ -1141,6 +1148,7 @@ public class RicezioneBusteService  {
 		// Imposto risposta
 
 		Date dataPrimaSpedizioneRisposta = DateManager.getDate();
+		Date dataRispostaSpedita = null; 
 
 		if(context.getMsgDiagnostico()!=null){
 			msgDiag = context.getMsgDiagnostico();
@@ -1148,7 +1156,8 @@ public class RicezioneBusteService  {
 		if(context.getResponseHeaders()==null) {
 			context.setResponseHeaders(new HashMap<String,List<String>>());
 		}
-		ServicesUtils.setGovWayHeaderResponse(responseMessage, openSPCoopProperties,
+		ServicesUtils.setGovWayHeaderResponse(requestMessage!=null ? requestMessage.getServiceBinding() : requestInfo.getProtocolServiceBinding(),
+				responseMessage, openSPCoopProperties,
 				context.getResponseHeaders(), logCore, false, context.getPddContext(), requestInfo);
 		if(context.getResponseHeaders()!=null){
 			Iterator<String> keys = context.getResponseHeaders().keySet().iterator();
@@ -1504,12 +1513,12 @@ public class RicezioneBusteService  {
 					// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 					// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
 					// e cambiare quindi il content length effettivo.
-					if(TransferLengthModes.CONTENT_LENGTH.equals(openSPCoopProperties.getTransferLengthModes_ricezioneBuste())){
-						res.sendResponse(responseMessageError, false);
-					} else {
+					//if(TransferLengthModes.CONTENT_LENGTH.equals(openSPCoopProperties.getTransferLengthModes_ricezioneBuste())){
+					//	res.sendResponse(responseMessageError, false);
+					//} else {
 						//res.sendResponse(responseMessageError, true);
 						res.sendResponse(responseMessageError, false); // può essere usato nel post out response handler
-					}
+					//}
 				}
 							
 			}catch(Throwable error){
@@ -1581,6 +1590,8 @@ public class RicezioneBusteService  {
 				res.flush(true);
 				res.close(true);
 				
+				dataRispostaSpedita = DateManager.getDate();
+				
 				// Emetto diagnostico
 				if(erroreConsegnaRisposta!=null){
 					
@@ -1626,6 +1637,10 @@ public class RicezioneBusteService  {
 					// non dovrebbe mai essere null
 				}
 				
+			} finally {
+				if(dataRispostaSpedita==null) {
+					dataRispostaSpedita = DateManager.getDate();
+				}
 			}
 			
 			if(dumpRaw!=null && dumpRaw.isActiveDumpRisposta()){
@@ -1698,6 +1713,7 @@ public class RicezioneBusteService  {
 				}
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				postOutResponseContext.setDataPrimaSpedizioneRisposta(dataPrimaSpedizioneRisposta);
+				postOutResponseContext.setDataRispostaSpedita(dataRispostaSpedita);
 				postOutResponseContext.setEsito(esito);
 				postOutResponseContext.setReturnCode(statoServletResponse);
 				postOutResponseContext.setResponseHeaders(context.getResponseHeaders());

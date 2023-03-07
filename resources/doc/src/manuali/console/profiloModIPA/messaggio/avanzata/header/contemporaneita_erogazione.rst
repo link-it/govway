@@ -1,6 +1,6 @@
 .. _modipa_sicurezza_avanzate_header_contemporaneita_erogazione:
 
-Configurazione contemporaneità degli header in una Erogazione
+Configurazione coesistenza degli header in una Erogazione
 --------------------------------------------------------------------------------------------------
 
 La configurazione differisce a seconda se il token di sicurezza deve essere validato (Richiesta) o generato (Risposta). Di seguito vengono descritte le opzioni di configurazione possibili per le due fasi.

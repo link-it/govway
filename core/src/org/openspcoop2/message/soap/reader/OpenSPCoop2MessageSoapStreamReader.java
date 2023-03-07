@@ -1021,6 +1021,9 @@ public class OpenSPCoop2MessageSoapStreamReader {
 	private static SAXParser getParser() {
 		return saxParserThreadLocal.get();
 	}
+	public static void removeParser() {
+		saxParserThreadLocal.remove();
+	}
     		
     private static void returnParser(SAXParser saxParser) {
         saxParser.reset();

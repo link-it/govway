@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -87,7 +88,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {

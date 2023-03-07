@@ -515,8 +515,12 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
             
+			String idSearch = null;
 			if(id==null) {
 				FaultCode.RICHIESTA_NON_VALIDA.throwException("Id undefined");
+			}
+			else {
+				idSearch = id.toString();
 			}
 			
 			DBManager dbManager = DBManager.getInstance();
@@ -525,7 +529,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 				connection = dbManager.getConnectionTracce();
 				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesTracce();
 				TransazioniService transazioniService = new TransazioniService(connection, true, smp, LoggerProperties.getLoggerDAO());
-				TransazioneBean transazioneDB = transazioniService.findByIdTransazione(id.toString());
+				TransazioneBean transazioneDB = transazioniService.findByIdTransazione(idSearch);
 				if(transazioneDB==null) {
 					FaultCode.NOT_FOUND.throwException("Traccia con id '"+id+"' non esistente");
 				}

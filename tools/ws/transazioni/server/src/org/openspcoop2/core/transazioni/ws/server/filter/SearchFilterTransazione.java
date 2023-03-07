@@ -41,14 +41,22 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="data-accettazione-richiesta-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="data-ingresso-richiesta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="data-ingresso-richiesta-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="data-ingresso-richiesta-stream-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="data-ingresso-richiesta-stream-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="data-uscita-richiesta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="data-uscita-richiesta-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="data-uscita-richiesta-stream-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="data-uscita-richiesta-stream-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="data-accettazione-risposta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="data-accettazione-risposta-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="data-ingresso-risposta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="data-ingresso-risposta-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="data-ingresso-risposta-stream-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="data-ingresso-risposta-stream-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="data-uscita-risposta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="data-uscita-risposta-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="data-uscita-risposta-stream-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="data-uscita-risposta-stream-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="richiesta-ingresso-bytes-min" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="richiesta-ingresso-bytes-max" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="richiesta-uscita-bytes-min" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1" /&gt;
@@ -146,14 +154,22 @@ import java.util.Date;
     "dataAccettazioneRichiestaMax",
     "dataIngressoRichiestaMin",
     "dataIngressoRichiestaMax",
+    "dataIngressoRichiestaStreamMin",
+    "dataIngressoRichiestaStreamMax",
     "dataUscitaRichiestaMin",
     "dataUscitaRichiestaMax",
+    "dataUscitaRichiestaStreamMin",
+    "dataUscitaRichiestaStreamMax",
     "dataAccettazioneRispostaMin",
     "dataAccettazioneRispostaMax",
     "dataIngressoRispostaMin",
     "dataIngressoRispostaMax",
+    "dataIngressoRispostaStreamMin",
+    "dataIngressoRispostaStreamMax",
     "dataUscitaRispostaMin",
     "dataUscitaRispostaMax",
+    "dataUscitaRispostaStreamMin",
+    "dataUscitaRispostaStreamMax",
     "richiestaIngressoBytesMin",
     "richiestaIngressoBytesMax",
     "richiestaUscitaBytesMin",
@@ -408,6 +424,34 @@ public class SearchFilterTransazione extends org.openspcoop2.utils.beans.BaseBea
 	
 	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-ingresso-richiesta-stream-min",required=false,nillable=false)
+	private Date dataIngressoRichiestaStreamMin;
+	
+	public void setDataIngressoRichiestaStreamMin(Date dataIngressoRichiestaStreamMin){
+		this.dataIngressoRichiestaStreamMin = dataIngressoRichiestaStreamMin;
+	}
+	
+	public Date getDataIngressoRichiestaStreamMin(){
+		return this.dataIngressoRichiestaStreamMin;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-ingresso-richiesta-stream-max",required=false,nillable=false)
+	private Date dataIngressoRichiestaStreamMax;
+	
+	public void setDataIngressoRichiestaStreamMax(Date dataIngressoRichiestaStreamMax){
+		this.dataIngressoRichiestaStreamMax = dataIngressoRichiestaStreamMax;
+	}
+	
+	public Date getDataIngressoRichiestaStreamMax(){
+		return this.dataIngressoRichiestaStreamMax;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-uscita-richiesta-min",required=false,nillable=false)
 	private Date dataUscitaRichiestaMin;
 	
@@ -431,6 +475,34 @@ public class SearchFilterTransazione extends org.openspcoop2.utils.beans.BaseBea
 	
 	public Date getDataUscitaRichiestaMax(){
 		return this.dataUscitaRichiestaMax;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-uscita-richiesta-stream-min",required=false,nillable=false)
+	private Date dataUscitaRichiestaStreamMin;
+	
+	public void setDataUscitaRichiestaStreamMin(Date dataUscitaRichiestaStreamMin){
+		this.dataUscitaRichiestaStreamMin = dataUscitaRichiestaStreamMin;
+	}
+	
+	public Date getDataUscitaRichiestaStreamMin(){
+		return this.dataUscitaRichiestaStreamMin;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-uscita-richiesta-stream-max",required=false,nillable=false)
+	private Date dataUscitaRichiestaStreamMax;
+	
+	public void setDataUscitaRichiestaStreamMax(Date dataUscitaRichiestaStreamMax){
+		this.dataUscitaRichiestaStreamMax = dataUscitaRichiestaStreamMax;
+	}
+	
+	public Date getDataUscitaRichiestaStreamMax(){
+		return this.dataUscitaRichiestaStreamMax;
 	}
 	
 	
@@ -492,6 +564,34 @@ public class SearchFilterTransazione extends org.openspcoop2.utils.beans.BaseBea
 	
 	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-ingresso-risposta-stream-min",required=false,nillable=false)
+	private Date dataIngressoRispostaStreamMin;
+	
+	public void setDataIngressoRispostaStreamMin(Date dataIngressoRispostaStreamMin){
+		this.dataIngressoRispostaStreamMin = dataIngressoRispostaStreamMin;
+	}
+	
+	public Date getDataIngressoRispostaStreamMin(){
+		return this.dataIngressoRispostaStreamMin;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-ingresso-risposta-stream-max",required=false,nillable=false)
+	private Date dataIngressoRispostaStreamMax;
+	
+	public void setDataIngressoRispostaStreamMax(Date dataIngressoRispostaStreamMax){
+		this.dataIngressoRispostaStreamMax = dataIngressoRispostaStreamMax;
+	}
+	
+	public Date getDataIngressoRispostaStreamMax(){
+		return this.dataIngressoRispostaStreamMax;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-uscita-risposta-min",required=false,nillable=false)
 	private Date dataUscitaRispostaMin;
 	
@@ -515,6 +615,34 @@ public class SearchFilterTransazione extends org.openspcoop2.utils.beans.BaseBea
 	
 	public Date getDataUscitaRispostaMax(){
 		return this.dataUscitaRispostaMax;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-uscita-risposta-stream-min",required=false,nillable=false)
+	private Date dataUscitaRispostaStreamMin;
+	
+	public void setDataUscitaRispostaStreamMin(Date dataUscitaRispostaStreamMin){
+		this.dataUscitaRispostaStreamMin = dataUscitaRispostaStreamMin;
+	}
+	
+	public Date getDataUscitaRispostaStreamMin(){
+		return this.dataUscitaRispostaStreamMin;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-uscita-risposta-stream-max",required=false,nillable=false)
+	private Date dataUscitaRispostaStreamMax;
+	
+	public void setDataUscitaRispostaStreamMax(Date dataUscitaRispostaStreamMax){
+		this.dataUscitaRispostaStreamMax = dataUscitaRispostaStreamMax;
+	}
+	
+	public Date getDataUscitaRispostaStreamMax(){
+		return this.dataUscitaRispostaStreamMax;
 	}
 	
 	

@@ -123,7 +123,7 @@ public class JDBCStatisticaGiornalieraServiceSearchImpl implements IJDBCServiceS
     	        // BUG FIX: Siccome tra le colonne lette ci sono dei CLOB, in oracle non e' consentito utilizzare il DISTINCT.
     	        // Per questo motivo se c'e' da usare il distinct viene utilizzato il vecchio metodo
     	        if(distinct) {
-    	        	//System.out.println("NON EFFICENTE");
+    	        	//System.out.println("NON EFFICIENTE");
     	        	
     	        	List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
     		        
@@ -134,7 +134,7 @@ public class JDBCStatisticaGiornalieraServiceSearchImpl implements IJDBCServiceS
     	        }
     	        else {
     	        
-    	        	//System.out.println("EFFICENTE");
+    	        	//System.out.println("EFFICIENTE");
     	        	
 		    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
 		
@@ -148,8 +148,8 @@ public class JDBCStatisticaGiornalieraServiceSearchImpl implements IJDBCServiceS
         }
         else {
         
-	        // TODO: implementazione non efficente. 
-			// Per ottenere una implementazione efficente:
+	        // TODO: implementazione non efficiente. 
+			// Per ottenere una implementazione efficiente:
 			// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
 			// 2. Usare metodo getStatisticaGiornalieraFetch() sul risultato della select per ottenere un oggetto StatisticaGiornaliera
 			//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 

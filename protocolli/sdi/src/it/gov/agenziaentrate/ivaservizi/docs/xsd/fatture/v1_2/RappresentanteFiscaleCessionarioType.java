@@ -62,6 +62,7 @@ import java.io.Serializable;
 
 public class RappresentanteFiscaleCessionarioType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RappresentanteFiscaleCessionarioType() {
+    super();
   }
 
   public IdFiscaleType getIdFiscaleIVA() {

@@ -636,7 +636,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.protocol.engine.driver.repository.TestGestoreRepository" fork="true">
+		<java classname="org.openspcoop2.protocol.engine.driver.repository.test.GestoreRepositoryTest" fork="true">
 		        <arg value="${tipoDatabase}" />
 			<arg value="${url}" /> <!-- opzionale -->
 			<arg value="${username}" /> <!-- opzionale -->
@@ -657,7 +657,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.core.registry.driver.utils.SerializationClientTest" fork="true">
+		<java classname="org.openspcoop2.core.registry.driver.test.SerializationClientTest" fork="true">
 		        <arg value="${DirOutput}" />
 		        <classpath>
 		        		<path refid="classpath_run_dist" />
@@ -703,7 +703,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.core.config.driver.utils.TestValidazioneSemantica" fork="true">
+		<java classname="org.openspcoop2.core.config.driver.utils.ValidazioneSemanticaMainProcessor" fork="true">
 				<arg value="${proprietaComuni}" />
 		        <arg value="${tipoConfigurazione}" />
 			 	<arg value="${proprietaConfigurazione}" />
@@ -752,7 +752,7 @@
 			</then>
 		</if>
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.core.registry.driver.utils.TestValidazioneSemantica" fork="true">
+		<java classname="org.openspcoop2.core.registry.driver.utils.ValidazioneSemanticaMainProcessor" fork="true">
 				<arg value="${proprietaComuni}" />
 		        <arg value="${tipoRegistro}" />
 			 	<arg value="${proprietaRegistro}" />
@@ -778,7 +778,7 @@
                     <fail message="Parametro configDaoFactoryDir non fornito, la proprietà deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo" />
             </then>
         </if>
-		<java classname="org.openspcoop2.monitor.engine.condition.TestConditions" fork="true">
+		<java classname="org.openspcoop2.monitor.engine.condition.test.TestConditions" fork="true">
 	        <classpath>
 				<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
 				<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->

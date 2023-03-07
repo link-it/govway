@@ -27,21 +27,27 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
+import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**     
@@ -95,7 +101,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		String url = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_URL);
 		InputValidationUtils.validateTextAreaInput(url, "Token Endpoint - URL");
 		try{
-			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
+			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url, true);
 		}catch(Exception e){
 			throw new ProviderValidationException("La URL fornita non è valida: "+e.getMessage());
 		}	
@@ -373,6 +379,36 @@ public class NegoziazioneTokenProvider implements IProvider {
 			TokenUtilities.checkClaims("parametro", convertTextToProperties, "Parametri", deny, false);
 		}
 		
+		String headers = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_HEADERS);
+		if(headers!=null && !"".equals(headers)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(headers);
+			List<String> deny = new ArrayList<String>();
+			deny.add(HttpConstants.AUTHORIZATION);
+			deny.add(HttpConstants.CONTENT_TYPE);
+			TokenUtilities.checkClaims("header http", convertTextToProperties, "Header HTTP", deny, false);
+		}
+		
+		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM.equals(retMode)) {
+			String parser = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM);
+			if(parser!=null && Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM.equals(parser)) {
+				String pluginType = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE);
+				if(pluginType!=null && StringUtils.isNotEmpty(pluginType) && CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginType)) {
+					String className = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME);
+					if(CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+						throw new ProviderValidationException("Deve essere selezionato un plugin per il 'Formato Risposta'");	
+					}
+					else {
+						if(className==null || "".equals(className)) {
+							throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims della risposta");
+						}
+						if(className.contains(" ")) {
+							throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims della risposta");
+						}
+					}
+				}
+			}
+		}
+		
 		String mode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE);
 		if(mode==null) {
 			throw new ProviderValidationException("Nessuna modalità di forward indicata");
@@ -404,17 +440,21 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		
 	}
-	
-	
+
 
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
+		return this.getValues(id, null);
+	}
+	@Override
+	public List<String> getValues(String id, ExternalResources externalResources) throws ProviderException{
 		if(Costanti.ID_RETRIEVE_TOKEN_METHOD.equals(id)) {
 			List<String> methodsList = new ArrayList<>();
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET);
+			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM);
 			return methodsList;
 		}
 		else if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
@@ -452,17 +492,33 @@ public class NegoziazioneTokenProvider implements IProvider {
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			return getStoreType(id,true);
 		}
+		else if(Costanti.ID_RETRIEVE_HTTP_METHOD.equals(id)) {
+			List<String> methodsList = new ArrayList<>();
+			HttpRequestMethod [] methods = HttpRequestMethod.values();
+			for (int i = 0; i < methods.length; i++) {
+				methodsList.add(methods[i].name());
+			}
+			return methodsList;
+		}
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE);
+		}
 		return null;
 	}
 
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
+		return this.getLabels(id, null);
+	}
+	@Override
+	public List<String> getLabels(String id, ExternalResources externalResources) throws ProviderException{
 		if(Costanti.ID_RETRIEVE_TOKEN_METHOD.equals(id)) {
 			List<String> methodsList = new ArrayList<>();
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509_LABEL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL);
+			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM_LABEL);
 			return methodsList;
 		}
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
@@ -488,12 +544,22 @@ public class NegoziazioneTokenProvider implements IProvider {
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			return getStoreType(id,false);
 		}
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE);
+		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
 	
+	private static boolean secret = false;
+	public static boolean isSecret() {
+		return secret;
+	}
+	public static void setSecret(boolean secret) {
+		NegoziazioneTokenProvider.secret = secret;
+	}
+
 	private List<String> getStoreType(String id,boolean value){
 		boolean trustStore = true;
-		boolean secret = false;
 		List<String> l = new ArrayList<String>();
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_JKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JKS_LABEL);
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE : SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL);
@@ -507,6 +573,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id)) {
 			l.add(value ? Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE: Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL);
+			l.add(value ? Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE: Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_LABEL);
 		}
 		
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
@@ -533,6 +600,10 @@ public class NegoziazioneTokenProvider implements IProvider {
 
 	@Override
 	public String getDefault(String id) throws ProviderException {
+		return getDefault(id, null);
+	}
+	@Override
+	public String getDefault(String id, ExternalResources externalResources) throws ProviderException {
 		if(Costanti.ID_RETRIEVE_TOKEN_METHOD.equals(id)) {
 			return Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL;
 		}
@@ -548,6 +619,9 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
 			return org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.RS256.name();
 		}
+		else if(Costanti.ID_RETRIEVE_HTTP_METHOD.equals(id)) {
+			return HttpRequestMethod.GET.name();
+		}
 		return null;
 	}
 
@@ -555,13 +629,20 @@ public class NegoziazioneTokenProvider implements IProvider {
 	public ProviderInfo getProviderInfo(String id) throws ProviderException{
 		if(Costanti.ID_RETRIEVE_ENDPOINT_URL.equals(id) ||
 				Costanti.ID_RETRIEVE_AUTENTICAZIONE_USERNAME.equals(id) ||
+				Costanti.ID_RETRIEVE_AUTENTICAZIONE_PASSWORD.equals(id) ||
 				Costanti.ID_RETRIEVE_CLIENT_ID.equals(id) ||
+				Costanti.ID_RETRIEVE_CLIENT_ID_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_CLIENT_SECRET.equals(id) ||
+				Costanti.ID_RETRIEVE_CLIENT_SECRET_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_BEARER_TOKEN.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_X5U.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_KID_VALUE.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id) ||
 				Costanti.ID_RETRIEVE_SCOPE.equals(id) ||
 				Costanti.ID_RETRIEVE_AUDIENCE.equals(id) ||
-				Costanti.ID_RETRIEVE_FORM_PARAMETERS.equals(id)
+				Costanti.ID_RETRIEVE_FORM_PARAMETERS.equals(id) ||
+				Costanti.ID_RETRIEVE_HTTP_CONTENT_TYPE.equals(id) ||
+				Costanti.ID_RETRIEVE_HTTP_HEADERS.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
@@ -623,12 +704,41 @@ public class NegoziazioneTokenProvider implements IProvider {
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
 			return pInfo;
 		}
+		else if(Costanti.ID_RETRIEVE_HTTP_TEMPLATE_PAYLOAD.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_HTTP_FREEMARKER_PAYLOAD.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_OBJECT_VALORI);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_HTTP_VELOCITY_PAYLOAD.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_OBJECT_VALORI);
+			return pInfo;
+		}
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA);
+			pInfo.setListBody(new ArrayList<>());
+			pInfo.getListBody().add(INegoziazioneTokenParser.class.getName());
+			return pInfo;
+		}
 		
 		return null;
 	}
 	
 	@Override
 	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		return dynamicUpdate(items, mapNameValue, item, actualValue, null);
+	}
+	@Override
+	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
 	
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName()) ||
@@ -644,7 +754,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
 				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 					item.setValue(typeValue);
 					item.setType(ItemType.HIDDEN);
 					return item.getValue();
@@ -667,7 +777,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
 				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 					item.setValue("-");
 					item.setType(ItemType.HIDDEN);
 					return item.getValue();
@@ -686,7 +796,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
 				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 					item.setValue("-");
 					item.setType(ItemType.HIDDEN);
 					return item.getValue();
@@ -699,21 +809,29 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
 			
-			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
-				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
-					item.setValue("-");
-					item.setType(ItemType.HIDDEN);
-					return item.getValue();
-				}
-				else {
-					item.setType(ItemType.TEXT);
-				}
+			//if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
+				item.setValue("-");
+				item.setType(ItemType.HIDDEN);
+				return item.getValue();
 			}
 			else {
 				item.setType(ItemType.TEXT);
 			}
+			//}
+			//else {
+			//	item.setType(ItemType.TEXT);
+			//}
 			
+		}		
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())) {
+			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE, item, actualValue);
+		}
+		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())) {
+			return TokenUtilities.dynamicUpdateTokenPluginClassName(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE, 
+					items, mapNameValue, item, 
+					Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE, actualValue);			
 		}
 		
 		return actualValue;

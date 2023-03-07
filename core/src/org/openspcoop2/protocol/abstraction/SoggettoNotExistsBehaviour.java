@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class SoggettoNotExistsBehaviour extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SoggettoNotExistsBehaviour() {
+    super();
   }
 
   public java.lang.String getEndpoint() {

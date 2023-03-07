@@ -3478,14 +3478,14 @@ public class RepositoryBuste  {
 			if(scadenzaMsg) {
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY_COLUMN_SCADENZA+" < ?");
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
-				// Inefficente. Si usa il nuovo metodo dell'interfaccia
+				// Inefficiente. Si usa il nuovo metodo dell'interfaccia
 				//sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 				//sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_PdD(false));
 				sqlQueryObject.addWhereCondition(repository.createSQLCondition_enableOnlyHistory());
 			}
 			else {
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
-			// Inefficente. Si usa il nuovo metodo dell'interfaccia
+			// Inefficiente. Si usa il nuovo metodo dell'interfaccia
 	//			sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_History(false));
 	//			sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 	//			sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_PdD(false));
@@ -3637,14 +3637,14 @@ public class RepositoryBuste  {
 			if(scadenzaMsg) {
 				sqlQueryObjectRepositoryBusteJoin.addWhereCondition(Costanti.REPOSITORY_COLUMN_SCADENZA+" < ?");
 				sqlQueryObjectRepositoryBusteJoin.addWhereCondition(Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
-				// Inefficente. Si usa il nuovo metodo dell'interfaccia
+				// Inefficiente. Si usa il nuovo metodo dell'interfaccia
 				//sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 				//sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_PdD(false));
 				sqlQueryObjectRepositoryBusteJoin.addWhereCondition(repository.createSQLCondition_enableOnlyHistory());
 			}
 			else {
 				sqlQueryObjectRepositoryBusteJoin.addWhereCondition(Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
-			// Inefficente. Si usa il nuovo metodo dell'interfaccia
+			// Inefficiente. Si usa il nuovo metodo dell'interfaccia
 	//			sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_History(false));
 	//			sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 	//			sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_PdD(false));
@@ -3717,14 +3717,14 @@ public class RepositoryBuste  {
 			if(scadenzaMsg) {
 				sqlQueryObjectRepositoryBuste.addWhereCondition(Costanti.REPOSITORY_COLUMN_SCADENZA+" < ?");
 				sqlQueryObjectRepositoryBuste.addWhereCondition(Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
-				// Inefficente. Si usa il nuovo metodo dell'interfaccia
+				// Inefficiente. Si usa il nuovo metodo dell'interfaccia
 				//sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 				//sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_PdD(false));
 				sqlQueryObjectRepositoryBuste.addWhereCondition(repository.createSQLCondition_enableOnlyHistory());
 			}
 			else {
 				sqlQueryObjectRepositoryBuste.addWhereCondition(Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
-			// Inefficente. Si usa il nuovo metodo dell'interfaccia
+			// Inefficiente. Si usa il nuovo metodo dell'interfaccia
 	//			sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_History(false));
 	//			sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 	//			sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_PdD(false));
@@ -3964,7 +3964,7 @@ public class RepositoryBuste  {
 						query.append(" ID_MESSAGGIO FROM ");
 						query.append(Costanti.REPOSITORY);
 						query.append(" WHERE SCADENZA_BUSTA < ? AND TIPO=? AND ");
-						// Inefficente. Si usa il nuovo metodo dell'interfaccia
+						// Inefficiente. Si usa il nuovo metodo dell'interfaccia
 						//query.append(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 						//query.append(" AND ");
 						//query.append(gestorerepositoryBuste.createSQLCondition_PdD(false));
@@ -3986,7 +3986,7 @@ public class RepositoryBuste  {
 						sqlQueryObject.addFromTable(Costanti.REPOSITORY);
 						sqlQueryObject.addWhereCondition("SCADENZA_BUSTA < ?");
 						sqlQueryObject.addWhereCondition("TIPO=?");
-						// Inefficente. Si usa il nuovo metodo dell'interfaccia
+						// Inefficiente. Si usa il nuovo metodo dell'interfaccia
 						//sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 						//sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_PdD(false));
 						sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_enableOnlyHistory());
@@ -4045,7 +4045,7 @@ public class RepositoryBuste  {
 					query.append(" ID_MESSAGGIO FROM ");
 					query.append(Costanti.REPOSITORY);
 					query.append(" WHERE TIPO=? AND ");
-					// Inefficente. Si usa il nuovo metodo dell'interfaccia
+					// Inefficiente. Si usa il nuovo metodo dell'interfaccia
 //					query.append(gestorerepositoryBuste.createSQLCondition_History(false));
 //					query.append(" AND ");
 //					query.append(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
@@ -4067,7 +4067,7 @@ public class RepositoryBuste  {
 					sqlQueryObject.addSelectField(gestorerepositoryBuste.createSQLFields());
 					sqlQueryObject.addFromTable(Costanti.REPOSITORY);
 					sqlQueryObject.addWhereCondition("TIPO=?");
-					// Inefficente. Si usa il nuovo metodo dell'interfaccia
+					// Inefficiente. Si usa il nuovo metodo dell'interfaccia
 //					sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_History(false));
 //					sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 //					sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_PdD(false));

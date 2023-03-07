@@ -21,6 +21,7 @@ package org.openspcoop2.utils.semaphore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,10 +51,10 @@ import org.slf4j.Logger;
  */
 public class SemaphoreEngine {
 
-	private static java.util.Random _rnd = null;
+	private static SecureRandom _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	private static java.util.Random getRandom() {

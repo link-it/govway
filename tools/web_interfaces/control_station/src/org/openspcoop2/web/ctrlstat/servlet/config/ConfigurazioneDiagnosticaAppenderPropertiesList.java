@@ -81,11 +81,14 @@ public final class ConfigurazioneDiagnosticaAppenderPropertiesList extends Actio
 				}
 			}
 
+			if(oa==null) {
+				throw new Exception("Appender non trovato");
+			}
+			
 			// Preparo il menu
 			confHelper.makeMenu();
 
 			// Preparo la lista
-
 			confHelper.prepareDiagnosticaAppenderPropList(oa, oa.getPropertyList());
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

@@ -22,6 +22,7 @@
 
 package org.openspcoop2.utils.sql;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,10 +42,10 @@ import org.openspcoop2.utils.TipiDatabase;
  */
 public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
-	private static java.util.Random _rnd = null;
+	private static SecureRandom _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	protected static java.util.Random getRandom() {

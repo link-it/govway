@@ -112,7 +112,9 @@ public class StatsUtils {
 
 				long v = altri_sum;
 				if(altri_sum_numeroItem>1 && (occupazioneBanda || tempoMedio)){
-					v = v / altri_sum_numeroItem;
+					if(altri_sum_numeroItem>0) {
+						v = v / altri_sum_numeroItem;
+					}
 				}
 
 				String toolText = getToolText(search,v); 
@@ -268,7 +270,7 @@ public class StatsUtils {
 								}
 								else if(tipoLat.equals("1")){
 									if(showSeries){
-										series[i] = TipoLatenza.LATENZA_SERVIZIO.getValue();
+										series[i] = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO; // TipoLatenza.LATENZA_SERVIZIO.getValue();
 									}
 									if(color!=null){
 										color = color + ",";
@@ -436,15 +438,21 @@ public class StatsUtils {
 					} else{
 
 						if(j==0){
-							altri_sum_serie1+=sum.longValue();
+							if(sum!=null) {
+								altri_sum_serie1+=sum.longValue();
+							}
 							altri_sum_serie1_numeroItem++;
 						}
 						else if(j==1){
-							altri_sum_serie2+=sum.longValue();
+							if(sum!=null) {
+								altri_sum_serie2+=sum.longValue();
+							}
 							altri_sum_serie2_numeroItem++;
 						}
 						else if(j==2){
-							altri_sum_serie3+=sum.longValue();
+							if(sum!=null) {
+								altri_sum_serie3+=sum.longValue();
+							}
 							altri_sum_serie3_numeroItem++;
 						}
 					}
@@ -754,7 +762,7 @@ public class StatsUtils {
 							}
 							else if(tipoLat.equals("1")){
 								if(visualizzaSeriesName){
-									series[i] = TipoLatenza.LATENZA_SERVIZIO.getValue();
+									series[i] = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO; //TipoLatenza.LATENZA_SERVIZIO.getValue();
 								}
 								if(color!=null){
 									color = color + ",";
@@ -1009,7 +1017,9 @@ public class StatsUtils {
 
 				long v = altri_sum;
 				if(altri_sum_numeroItem>1 && (occupazioneBanda || tempoMedio)){
-					v = v / altri_sum_numeroItem;
+					if(altri_sum_numeroItem>0) {
+						v = v / altri_sum_numeroItem;
+					}
 				}
 
 				String toolText = StatsUtils.getToolText(search,v); 
@@ -1232,7 +1242,6 @@ public class StatsUtils {
 				tipoLatenzaLabel = CostantiGrafici.WHITE_SPACE + CostantiGrafici.PORTA_LABEL;
 				break;
 			case LATENZA_SERVIZIO:
-				// TODO Parlare con Poli
 				tipoLatenzaLabel = CostantiGrafici.WHITE_SPACE + "Servizio";
 				break;
 			case LATENZA_TOTALE:
@@ -1274,234 +1283,262 @@ public class StatsUtils {
 	}
 	
 	public static String getValue(StatsSearchForm form,Number value){
-		TipoVisualizzazione tipoVisualizzazione = form.getTipoVisualizzazione();
+		TipoVisualizzazione tipoVisualizzazione = null;
+		if(form!=null) {
+			tipoVisualizzazione = form.getTipoVisualizzazione();
+		}
+		
+		if(tipoVisualizzazione!=null && value!=null) {
 
-		switch (tipoVisualizzazione) {
-
-		case NUMERO_TRANSAZIONI:
-			return "" + value;
-		case TEMPO_MEDIO_RISPOSTA:
-			return  "" + value;
-		case DIMENSIONE_TRANSAZIONI:
-		default:
-			double d = value.doubleValue();
-			double dRes = d/1024; 
-			return dRes + "";
+			switch (tipoVisualizzazione) {
+	
+			case NUMERO_TRANSAZIONI:
+				return "" + value;
+			case TEMPO_MEDIO_RISPOSTA:
+				return  "" + value;
+			case DIMENSIONE_TRANSAZIONI:
+			default:
+				double d = value.doubleValue();
+				double dRes = d/1024; 
+				return dRes + "";
+			}
+			
+		}
+		else {
+			return value!=null ? "" + value : null;
 		}
 
 	}
 
 	public static String getToolText(StatsSearchForm form,Number value){
-		TipoVisualizzazione tipoVisualizzazione = form.getTipoVisualizzazione();
-
-		switch (tipoVisualizzazione) {
-
-		case NUMERO_TRANSAZIONI:
-			return Utility.numberConverter(value);
-		case TEMPO_MEDIO_RISPOSTA:
-			return  Utilities.convertSystemTimeIntoString_millisecondi(value.longValue(), true);
-		case DIMENSIONE_TRANSAZIONI:
-		default:
-			return Utility.fileSizeConverter(value);
+		TipoVisualizzazione tipoVisualizzazione = null;
+		if(form!=null) {
+			tipoVisualizzazione = form.getTipoVisualizzazione();
+		}
+		
+		if(tipoVisualizzazione!=null && value!=null) {
+			
+			switch (tipoVisualizzazione) {
+	
+			case NUMERO_TRANSAZIONI:
+				return Utility.numberConverter(value);
+			case TEMPO_MEDIO_RISPOSTA:
+				return  Utilities.convertSystemTimeIntoString_millisecondi(value.longValue(), true);
+			case DIMENSIONE_TRANSAZIONI:
+			default:
+				return Utility.fileSizeConverter(value);
+			}
+		}
+		else {
+			return value!=null ? "" + value : null;
 		}
 
 	}
 
 	public static String getToolTextConParent(StatsSearchForm form,String risultato,Map<String, String> parent,Number value){
-		TipoVisualizzazione tipoVisualizzazione = form.getTipoVisualizzazione();
-
-		StringBuilder sb = new StringBuilder();
-		String valore = null;
-		String labelValore = null;
-		switch (tipoVisualizzazione) {
-		case NUMERO_TRANSAZIONI:
-			valore =  Utility.numberConverter(value); 
-			labelValore = CostantiGrafici.NUMERO_TRANSAZIONI_LABEL;
-			break;
-		case TEMPO_MEDIO_RISPOSTA:
-			valore = Utilities.convertSystemTimeIntoString_millisecondi(value.longValue(), true);
-			String tipoLatenzaLabel = getTipoLatenzaServizioLabel(form);
-			labelValore = CostantiGrafici.TEMPO_MEDIO_RISPOSTA_LABEL+tipoLatenzaLabel;
-			break;
-		case DIMENSIONE_TRANSAZIONI:
-		default:
-			valore = Utility.fileSizeConverter(value);
-			String tipoBandaLabel = getTipoBandaLabel(form);
-			labelValore = CostantiGrafici.OCCUPAZIONE_BANDA_LABEL+tipoBandaLabel;
-			break;
+		TipoVisualizzazione tipoVisualizzazione = null;
+		if(form!=null) {
+			tipoVisualizzazione = form.getTipoVisualizzazione();
 		}
-
-		TipoStatistica tipoStatistica = form.getTipoStatistica();
-
 		
-		
-		switch (tipoStatistica) {
-		case DISTRIBUZIONE_ERRORI:
-			if(form.isUseGraficiSVG()) {
-				String labelTooltipDistribuzioneErroriSvgPattern = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ERRORI_TOOLTIP_SVG_PATTERN_KEY);
-				sb.append(MessageFormat.format(labelTooltipDistribuzioneErroriSvgPattern, labelValore,valore,risultato,JsonStatsUtils.escapeJsonLabel(parent.get("0"))));
-			} else {
-				String tooltipSectionErrori = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_ERRORI_PATTERN_KEY);
-				String tooltipSectionErroriDescrizione = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_ERRORI_DESCRIZIONE_PATTERN_KEY);
-				sb.append(labelValore).append(": ").append(valore).append(tooltipSectionErrori).append(risultato).append(tooltipSectionErroriDescrizione).append(parent.get("0"));
+		if(tipoVisualizzazione!=null && value!=null) {
+
+			StringBuilder sb = new StringBuilder();
+			String valore = null;
+			String labelValore = null;
+			switch (tipoVisualizzazione) {
+			case NUMERO_TRANSAZIONI:
+				valore =  Utility.numberConverter(value); 
+				labelValore = CostantiGrafici.NUMERO_TRANSAZIONI_LABEL;
+				break;
+			case TEMPO_MEDIO_RISPOSTA:
+				valore = Utilities.convertSystemTimeIntoString_millisecondi(value.longValue(), true);
+				String tipoLatenzaLabel = getTipoLatenzaServizioLabel(form);
+				labelValore = CostantiGrafici.TEMPO_MEDIO_RISPOSTA_LABEL+tipoLatenzaLabel;
+				break;
+			case DIMENSIONE_TRANSAZIONI:
+			default:
+				valore = Utility.fileSizeConverter(value);
+				String tipoBandaLabel = getTipoBandaLabel(form);
+				labelValore = CostantiGrafici.OCCUPAZIONE_BANDA_LABEL+tipoBandaLabel;
+				break;
 			}
+	
+			TipoStatistica tipoStatistica = form.getTipoStatistica();
+	
 			
-			break;
-		case DISTRIBUZIONE_SERVIZIO:
-			if(form.isUseGraficiSVG()) {
-				String labelTooltipDistribuzioneServizioSvgPattern = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_TOOLTIP_SVG_PATTERN_KEY);
-				sb.append(MessageFormat.format(labelTooltipDistribuzioneServizioSvgPattern, labelValore,valore,risultato,parent.get("0")));
-			} else {
-				String tooltipSectionErogatore =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_EROGATORE_PATTERN_KEY);
-				String tooltipSectionServizio = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_SERVIZIO_PATTERN_KEY);
-				sb.append(labelValore).append(": ").append(valore).append(tooltipSectionServizio).append(risultato).append(tooltipSectionErogatore).append(parent.get("0"));
-			}
-			break;
-		case DISTRIBUZIONE_AZIONE:
-			if(form.isUseGraficiSVG()) {
-				String labelTooltipDistribuzioneAzioneSvgPattern = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_AZIONE_TOOLTIP_SVG_PATTERN_KEY);
-				sb.append(MessageFormat.format(labelTooltipDistribuzioneAzioneSvgPattern, labelValore,valore,risultato,parent.get("0"),parent.get("1")));
-			} else {
-				String tooltipSectionErogatore =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_EROGATORE_PATTERN_KEY);
-				String tooltipSectionServizio = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_SERVIZIO_PATTERN_KEY);
-				String tooltipSectionAzione = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_AZIONE_PATTERN_KEY);
-				sb.append(labelValore).append(": ").append(valore).append(tooltipSectionAzione).append(risultato).append(tooltipSectionServizio).append(parent.get("0")).append(tooltipSectionErogatore).append(parent.get("1"));
-			}
 			
-			break;
-		case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
-			if(form.isUseGraficiSVG()) {
-				if(StringUtils.isNotEmpty(form.getRiconoscimento())) {
-					if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-						boolean add = true;
-						if (StringUtils.isNotBlank(form.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(form.getIdentificazione())) {
-							if(parent.get("1")!=null) {
-								String labelTooltipDistribuzioneClientIdSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_CLIENT_ID_TOOLTIP_SVG_PATTERN_KEY);
-								sb.append(MessageFormat.format(labelTooltipDistribuzioneClientIdSvgPattern, labelValore,valore,risultato,parent.get("0"),parent.get("1")));
-								add=false;
-							}
-						}
-						if(add) {
-							String labelTooltipDistribuzioneSaSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_TOOLTIP_SVG_PATTERN_KEY);
-							sb.append(MessageFormat.format(labelTooltipDistribuzioneSaSvgPattern, labelValore,valore,risultato,parent.get("0")));
-						}
-					} else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
-						String labelTooltipDistribuzioneIdentificativoAutenticatoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_TOOLTIP_SVG_PATTERN_KEY);
-						sb.append(MessageFormat.format(labelTooltipDistribuzioneIdentificativoAutenticatoSvgPattern, labelValore,valore,risultato));
-					} else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
-						String labelTooltipDistribuzioneIndirizzoIPSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_INDIRIZZO_IP_TOOLTIP_SVG_PATTERN_KEY);
-						sb.append(MessageFormat.format(labelTooltipDistribuzioneIndirizzoIPSvgPattern, labelValore,valore,risultato));
-					} else { // token
-						if (StringUtils.isNotEmpty(form.getTokenClaim())) {
-							org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(form.getTokenClaim());
-							String labelTooltipDistribuzioneTokenInfoSvgPattern = null;
-							boolean append = true;
-							switch (tcm) {
-							case token_clientId:
-								labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_CLIENTID_TOOLTIP_SVG_PATTERN_KEY);
-								if(parent.get("0")!=null && parent.get("1")!=null) {
-									labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_CLIENTID_APPLICATIVO_TOOLTIP_SVG_PATTERN_KEY);
-									sb.append(MessageFormat.format(labelTooltipDistribuzioneTokenInfoSvgPattern, labelValore,valore,risultato, parent.get("0"), parent.get("1")));
-									append = false;
+			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+				if(form.isUseGraficiSVG()) {
+					String labelTooltipDistribuzioneErroriSvgPattern = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ERRORI_TOOLTIP_SVG_PATTERN_KEY);
+					sb.append(MessageFormat.format(labelTooltipDistribuzioneErroriSvgPattern, labelValore,valore,risultato,JsonStatsUtils.escapeJsonLabel(parent.get("0"))));
+				} else {
+					String tooltipSectionErrori = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_ERRORI_PATTERN_KEY);
+					String tooltipSectionErroriDescrizione = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_ERRORI_DESCRIZIONE_PATTERN_KEY);
+					sb.append(labelValore).append(": ").append(valore).append(tooltipSectionErrori).append(risultato).append(tooltipSectionErroriDescrizione).append(parent.get("0"));
+				}
+				
+				break;
+			case DISTRIBUZIONE_SERVIZIO:
+				if(form.isUseGraficiSVG()) {
+					String labelTooltipDistribuzioneServizioSvgPattern = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_TOOLTIP_SVG_PATTERN_KEY);
+					sb.append(MessageFormat.format(labelTooltipDistribuzioneServizioSvgPattern, labelValore,valore,risultato,parent.get("0")));
+				} else {
+					String tooltipSectionErogatore =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_EROGATORE_PATTERN_KEY);
+					String tooltipSectionServizio = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_SERVIZIO_PATTERN_KEY);
+					sb.append(labelValore).append(": ").append(valore).append(tooltipSectionServizio).append(risultato).append(tooltipSectionErogatore).append(parent.get("0"));
+				}
+				break;
+			case DISTRIBUZIONE_AZIONE:
+				if(form.isUseGraficiSVG()) {
+					String labelTooltipDistribuzioneAzioneSvgPattern = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_AZIONE_TOOLTIP_SVG_PATTERN_KEY);
+					sb.append(MessageFormat.format(labelTooltipDistribuzioneAzioneSvgPattern, labelValore,valore,risultato,parent.get("0"),parent.get("1")));
+				} else {
+					String tooltipSectionErogatore =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_EROGATORE_PATTERN_KEY);
+					String tooltipSectionServizio = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_SERVIZIO_PATTERN_KEY);
+					String tooltipSectionAzione = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_AZIONE_PATTERN_KEY);
+					sb.append(labelValore).append(": ").append(valore).append(tooltipSectionAzione).append(risultato).append(tooltipSectionServizio).append(parent.get("0")).append(tooltipSectionErogatore).append(parent.get("1"));
+				}
+				
+				break;
+			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
+				if(form.isUseGraficiSVG()) {
+					if(StringUtils.isNotEmpty(form.getRiconoscimento())) {
+						if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+							boolean add = true;
+							if (StringUtils.isNotBlank(form.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(form.getIdentificazione())) {
+								if(parent.get("1")!=null) {
+									String labelTooltipDistribuzioneClientIdSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_CLIENT_ID_TOOLTIP_SVG_PATTERN_KEY);
+									sb.append(MessageFormat.format(labelTooltipDistribuzioneClientIdSvgPattern, labelValore,valore,risultato,parent.get("0"),parent.get("1")));
+									add=false;
 								}
-								break;
-							case token_eMail:
-								labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_EMAIL_TOOLTIP_SVG_PATTERN_KEY);
-								break;
-							case token_issuer:
-								labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_ISSUER_TOOLTIP_SVG_PATTERN_KEY);
-								break;
-							case token_subject:
-								labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_SUBJECT_TOOLTIP_SVG_PATTERN_KEY);
-								break;
-							case token_username:
-								labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_USERNAME_TOOLTIP_SVG_PATTERN_KEY);
-								break;
-							case trasporto:
-							default:
-								// caso impossibile
-								break; 
 							}
-							
-							if(append) {
-								sb.append(MessageFormat.format(labelTooltipDistribuzioneTokenInfoSvgPattern, labelValore,valore,risultato));
+							if(add) {
+								String labelTooltipDistribuzioneSaSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_TOOLTIP_SVG_PATTERN_KEY);
+								sb.append(MessageFormat.format(labelTooltipDistribuzioneSaSvgPattern, labelValore,valore,risultato,parent.get("0")));
 							}
-						} 
+						} else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+							String labelTooltipDistribuzioneIdentificativoAutenticatoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_TOOLTIP_SVG_PATTERN_KEY);
+							sb.append(MessageFormat.format(labelTooltipDistribuzioneIdentificativoAutenticatoSvgPattern, labelValore,valore,risultato));
+						} else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
+							String labelTooltipDistribuzioneIndirizzoIPSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_INDIRIZZO_IP_TOOLTIP_SVG_PATTERN_KEY);
+							sb.append(MessageFormat.format(labelTooltipDistribuzioneIndirizzoIPSvgPattern, labelValore,valore,risultato));
+						} else { // token
+							if (StringUtils.isNotEmpty(form.getTokenClaim())) {
+								org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(form.getTokenClaim());
+								String labelTooltipDistribuzioneTokenInfoSvgPattern = null;
+								boolean append = true;
+								switch (tcm) {
+								case token_clientId:
+									labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_CLIENTID_TOOLTIP_SVG_PATTERN_KEY);
+									if(parent.get("0")!=null && parent.get("1")!=null) {
+										labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_CLIENTID_APPLICATIVO_TOOLTIP_SVG_PATTERN_KEY);
+										sb.append(MessageFormat.format(labelTooltipDistribuzioneTokenInfoSvgPattern, labelValore,valore,risultato, parent.get("0"), parent.get("1")));
+										append = false;
+									}
+									break;
+								case token_eMail:
+									labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_EMAIL_TOOLTIP_SVG_PATTERN_KEY);
+									break;
+								case token_issuer:
+									labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_ISSUER_TOOLTIP_SVG_PATTERN_KEY);
+									break;
+								case token_subject:
+									labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_SUBJECT_TOOLTIP_SVG_PATTERN_KEY);
+									break;
+								case token_username:
+									labelTooltipDistribuzioneTokenInfoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_USERNAME_TOOLTIP_SVG_PATTERN_KEY);
+									break;
+								case trasporto:
+								default:
+									// caso impossibile
+									break; 
+								}
+								
+								if(append) {
+									sb.append(MessageFormat.format(labelTooltipDistribuzioneTokenInfoSvgPattern, labelValore,valore,risultato));
+								}
+							} 
+						}
+					}
+				} else {
+					if(StringUtils.isNotEmpty(form.getRiconoscimento())) {
+						if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+							String tooltipSectionApplicativo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_APPLICATIVO_PATTERN_KEY);
+							String tooltipSectionSoggetto = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_SOGGETTO_PATTERN_KEY);
+							sb.append(labelValore).append(": ").append(valore).append(tooltipSectionApplicativo).append(risultato).append(tooltipSectionSoggetto).append(parent.get("0"));
+							if (StringUtils.isNotBlank(form.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(form.getIdentificazione())) {
+								if(parent.get("1")!=null) {
+									String tooltipClientId = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_CLIENTID_PATTERN_KEY);
+									sb.append(tooltipClientId).append(parent.get("1"));
+								}
+							}
+						}  else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+							String tooltipSectionIdentificativoAutenticato =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_IDENTIFICATIVO_AUTENTICATO_PATTERN_KEY);
+							sb.append(labelValore).append(": ").append(valore).append(tooltipSectionIdentificativoAutenticato).append(risultato);
+						} else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
+							String tooltipSectionIndirizzoIP =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_INDIRIZZO_IP_PATTERN_KEY);
+							sb.append(labelValore).append(": ").append(valore).append(tooltipSectionIndirizzoIP).append(risultato);
+						} else { // token
+							if (StringUtils.isNotEmpty(form.getTokenClaim())) {
+								org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(form.getTokenClaim());
+								String tooltipSectionTokenInfo = null;
+								
+								boolean append = true;
+								switch (tcm) {
+								case token_clientId:
+									tooltipSectionTokenInfo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_CLIENTID_PATTERN_KEY);
+									if(parent.get("0")!=null && parent.get("1")!=null) {
+										String tooltipSectionApplicativo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_APPLICATIVO_PATTERN_KEY);
+										String tooltipSectionSoggetto = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_SOGGETTO_PATTERN_KEY);
+										sb.append(labelValore).append(": ").append(valore).append(tooltipSectionTokenInfo).append(risultato).
+											append(tooltipSectionApplicativo).append(parent.get("0")).
+											append(tooltipSectionSoggetto).append(parent.get("1"));
+										append = false;
+									}
+									break;
+								case token_eMail:
+									tooltipSectionTokenInfo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_EMAIL_PATTERN_KEY);
+									break;
+								case token_issuer:
+									tooltipSectionTokenInfo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_ISSUER_PATTERN_KEY);
+									break;
+								case token_subject:
+									tooltipSectionTokenInfo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_SUBJECT_PATTERN_KEY);
+									break;
+								case token_username:
+									tooltipSectionTokenInfo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_USERNAME_PATTERN_KEY);
+									break;
+								case trasporto:
+								default:
+									// caso impossibile
+									break; 
+								}
+								
+								if(append) {
+									sb.append(labelValore).append(": ").append(valore).append(tooltipSectionTokenInfo).append(risultato);
+								}
+							} 
+						}
 					}
 				}
-			} else {
-				if(StringUtils.isNotEmpty(form.getRiconoscimento())) {
-					if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-						String tooltipSectionApplicativo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_APPLICATIVO_PATTERN_KEY);
-						String tooltipSectionSoggetto = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_SOGGETTO_PATTERN_KEY);
-						sb.append(labelValore).append(": ").append(valore).append(tooltipSectionApplicativo).append(risultato).append(tooltipSectionSoggetto).append(parent.get("0"));
-						if (StringUtils.isNotBlank(form.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(form.getIdentificazione())) {
-							if(parent.get("1")!=null) {
-								String tooltipClientId = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_CLIENTID_PATTERN_KEY);
-								sb.append(tooltipClientId).append(parent.get("1"));
-							}
-						}
-					}  else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
-						String tooltipSectionIdentificativoAutenticato =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_IDENTIFICATIVO_AUTENTICATO_PATTERN_KEY);
-						sb.append(labelValore).append(": ").append(valore).append(tooltipSectionIdentificativoAutenticato).append(risultato);
-					} else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
-						String tooltipSectionIndirizzoIP =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_INDIRIZZO_IP_PATTERN_KEY);
-						sb.append(labelValore).append(": ").append(valore).append(tooltipSectionIndirizzoIP).append(risultato);
-					} else { // token
-						if (StringUtils.isNotEmpty(form.getTokenClaim())) {
-							org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(form.getTokenClaim());
-							String tooltipSectionTokenInfo = null;
-							
-							boolean append = true;
-							switch (tcm) {
-							case token_clientId:
-								tooltipSectionTokenInfo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_CLIENTID_PATTERN_KEY);
-								if(parent.get("0")!=null && parent.get("1")!=null) {
-									String tooltipSectionApplicativo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_APPLICATIVO_PATTERN_KEY);
-									String tooltipSectionSoggetto = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_SOGGETTO_PATTERN_KEY);
-									sb.append(labelValore).append(": ").append(valore).append(tooltipSectionTokenInfo).append(risultato).
-										append(tooltipSectionApplicativo).append(parent.get("0")).
-										append(tooltipSectionSoggetto).append(parent.get("1"));
-									append = false;
-								}
-								break;
-							case token_eMail:
-								tooltipSectionTokenInfo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_EMAIL_PATTERN_KEY);
-								break;
-							case token_issuer:
-								tooltipSectionTokenInfo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_ISSUER_PATTERN_KEY);
-								break;
-							case token_subject:
-								tooltipSectionTokenInfo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_SUBJECT_PATTERN_KEY);
-								break;
-							case token_username:
-								tooltipSectionTokenInfo =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_USERNAME_PATTERN_KEY);
-								break;
-							case trasporto:
-							default:
-								// caso impossibile
-								break; 
-							}
-							
-							if(append) {
-								sb.append(labelValore).append(": ").append(valore).append(tooltipSectionTokenInfo).append(risultato);
-							}
-						} 
-					}
-				}
+				
+				break;
+			case DISTRIBUZIONE_SOGGETTO:
+			case STATISTICA_PERSONALIZZATA:
+			case ANDAMENTO_TEMPORALE:
+			default:
+				// default restituisco il valore;
+				sb.append(valore);
+				break;
 			}
-			
-			break;
-		case DISTRIBUZIONE_SOGGETTO:
-		case STATISTICA_PERSONALIZZATA:
-		case ANDAMENTO_TEMPORALE:
-		default:
-			// default restituisco il valore;
-			sb.append(valore);
-			break;
+	
+			return sb.toString();
 		}
-
-		return sb.toString();
+		else {
+			return value!=null ? "" + value : null;
+		}
 	}
 
 	public static String sommaColumnHeader(StatsSearchForm form,String suffix){

@@ -50,6 +50,7 @@ import java.io.Serializable;
 
 public class InitiatorParty extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public InitiatorParty() {
+    super();
   }
 
   public java.lang.String getName() {

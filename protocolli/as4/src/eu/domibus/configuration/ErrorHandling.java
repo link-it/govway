@@ -54,6 +54,7 @@ import java.io.Serializable;
 
 public class ErrorHandling extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ErrorHandling() {
+    super();
   }
 
   public java.lang.String getName() {

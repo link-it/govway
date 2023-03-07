@@ -85,13 +85,13 @@ public class ReportExporter extends HttpServlet{
 	private static final long serialVersionUID = 1272767433184676700L;
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 
-	private boolean serviceEnabled = false;
+	private static boolean serviceEnabled = false;
 
 	@Override
 	public void init() throws ServletException {
 		try{
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(ReportExporter.log);
-			this.serviceEnabled = govwayMonitorProperties.isStatisticheAttivoServizioEsportazioneReport();
+			serviceEnabled = govwayMonitorProperties.isStatisticheAttivoServizioEsportazioneReport();
 		}catch(Exception e){
 			ReportExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
@@ -111,12 +111,12 @@ public class ReportExporter extends HttpServlet{
 	}
 
 
-	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
+	private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
 		
 		StringBuilder bfSource = new StringBuilder("");
 		try{
 
-			if(this.serviceEnabled==false){
+			if(serviceEnabled==false){
 				resp.sendError(CostantiExporter.ERRORE_SERVER, "Servizio non attivo");
 				return;
 			}
@@ -192,17 +192,29 @@ public class ReportExporter extends HttpServlet{
 		catch(ParameterUncorrectException e){
 			ReportExporter.log.error("[mittente: "+bfSource.toString()+"] "+e.getMessage(),e);
 			//throw new ServletException(e.getMessage(),e);
-			resp.sendError(CostantiExporter.DATI_NON_CORRETTI, e.getMessage());
+			try {
+				resp.sendError(CostantiExporter.DATI_NON_CORRETTI, e.getMessage());
+			}catch(Throwable t) {
+				ReportExporter.log.error("[mittente: "+bfSource.toString()+"] sendError '"+CostantiExporter.DATI_NON_CORRETTI+"' "+e.getMessage(),e);
+			}
 		}
 		catch(NotFoundException e){
 			ReportExporter.log.error("[mittente: "+bfSource.toString()+"] "+e.getMessage(),e);
 			//throw new ServletException(e.getMessage(),e);
-			resp.sendError(CostantiExporter.DATI_NON_TROVATI, e.getMessage());
+			try {
+				resp.sendError(CostantiExporter.DATI_NON_TROVATI, e.getMessage());
+			}catch(Throwable t) {
+				ReportExporter.log.error("[mittente: "+bfSource.toString()+"] sendError '"+CostantiExporter.DATI_NON_TROVATI+"' "+e.getMessage(),e);
+			}
 		}
 		catch(Throwable e){
 			ReportExporter.log.error("[mittente: "+bfSource.toString()+"] "+e.getMessage(),e);
 			//throw new ServletException(e.getMessage(),e);
-			resp.sendError(CostantiExporter.ERRORE_SERVER, e.getMessage());
+			try {
+				resp.sendError(CostantiExporter.ERRORE_SERVER, e.getMessage());
+			}catch(Throwable t) {
+				ReportExporter.log.error("[mittente: "+bfSource.toString()+"] sendError '"+CostantiExporter.ERRORE_SERVER+"' "+e.getMessage(),e);
+			}
 		}
 			
 	}

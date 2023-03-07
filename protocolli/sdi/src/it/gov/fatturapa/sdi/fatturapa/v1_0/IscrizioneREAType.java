@@ -66,6 +66,7 @@ import java.io.Serializable;
 
 public class IscrizioneREAType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IscrizioneREAType() {
+    super();
   }
 
   public java.lang.String getUfficio() {

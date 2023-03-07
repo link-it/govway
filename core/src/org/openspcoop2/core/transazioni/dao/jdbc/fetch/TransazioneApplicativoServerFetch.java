@@ -77,10 +77,14 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "data_accettazione_richiesta", TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType()));
 				setParameter(object, "setDataUscitaRichiesta", TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_uscita_richiesta", TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA.getFieldType()));
+				setParameter(object, "setDataUscitaRichiestaStream", TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_uscita_richiesta_stream", TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM.getFieldType()));
 				setParameter(object, "setDataAccettazioneRisposta", TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_accettazione_risposta", TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA.getFieldType()));
 				setParameter(object, "setDataIngressoRisposta", TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_ingresso_risposta", TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA.getFieldType()));
+				setParameter(object, "setDataIngressoRispostaStream", TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_ingresso_risposta_stream", TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM.getFieldType()));
 				setParameter(object, "setRichiestaUscitaBytes", TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "richiesta_uscita_bytes", TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES.getFieldType()));
 				setParameter(object, "setRispostaIngressoBytes", TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES.getFieldType(),
@@ -175,10 +179,14 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"data-accettazione-richiesta"));
 				setParameter(object, "setDataUscitaRichiesta", TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA.getFieldType(),
 					this.getObjectFromMap(map,"data-uscita-richiesta"));
+				setParameter(object, "setDataUscitaRichiestaStream", TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM.getFieldType(),
+					this.getObjectFromMap(map,"data-uscita-richiesta-stream"));
 				setParameter(object, "setDataAccettazioneRisposta", TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA.getFieldType(),
 					this.getObjectFromMap(map,"data-accettazione-risposta"));
 				setParameter(object, "setDataIngressoRisposta", TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA.getFieldType(),
 					this.getObjectFromMap(map,"data-ingresso-risposta"));
+				setParameter(object, "setDataIngressoRispostaStream", TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM.getFieldType(),
+					this.getObjectFromMap(map,"data-ingresso-risposta-stream"));
 				setParameter(object, "setRichiestaUscitaBytes", TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES.getFieldType(),
 					this.getObjectFromMap(map,"richiesta-uscita-bytes"));
 				setParameter(object, "setRispostaIngressoBytes", TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES.getFieldType(),

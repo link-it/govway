@@ -710,7 +710,7 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	@Override
 	public AttachmentPart getAttachment(SOAPElement element) throws MessageException, MessageNotSupportedException {
 		if(this.isContentBuilded()){
-			return this.getContent().getAttachment(element);
+			return this.content.getAttachment(element);
 		}
 		else {
 			return this.getContent().getAttachment(element);

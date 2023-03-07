@@ -110,16 +110,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * 
  */
 public final class ServiziApplicativiAdd extends Action {
-	
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
-	private IConfigIntegrationReader configRegistryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
-	
+		
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -133,8 +124,17 @@ public final class ServiziApplicativiAdd extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
+		// Protocol Properties
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+		ConsoleConfiguration consoleConfiguration =null;
+		ProtocolProperties protocolProperties = null;
+		IProtocolFactory<?> protocolFactory= null;
+		IRegistryReader registryReader = null; 
+		IConfigIntegrationReader configRegistryReader = null; 
+		ConsoleOperationType consoleOperationType = null;
+		
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
-		this.consoleOperationType = ConsoleOperationType.ADD;
+		consoleOperationType = ConsoleOperationType.ADD;
 
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
@@ -769,13 +769,13 @@ public final class ServiziApplicativiAdd extends Action {
 			idSA.setNome(nome);
 			idSA.setIdSoggettoProprietario(idSoggetto);
 			
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = saCore.getRegistryReader(this.protocolFactory); 
-			this.configRegistryReader = saCore.getConfigIntegrationReader(this.protocolFactory);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigServizioApplicativo(this.consoleOperationType, saHelper, 
-					this.registryReader, this.configRegistryReader, idSA);
-			this.protocolProperties = saHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+			consoleDynamicConfiguration =  protocolFactory.createDynamicConfigurationConsole();
+			registryReader = saCore.getRegistryReader(protocolFactory); 
+			configRegistryReader = saCore.getConfigIntegrationReader(protocolFactory);
+			consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigServizioApplicativo(consoleOperationType, saHelper, 
+					registryReader, configRegistryReader, idSA);
+			protocolProperties = saHelper.estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType);
 			
 			boolean tokenWithHttsSupportato = false;
 			if(tipoProtocollo!=null) {
@@ -882,8 +882,8 @@ public final class ServiziApplicativiAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idSA); 
+				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
+						registryReader, configRegistryReader, idSA); 
 				
 				dati = saHelper.addServizioApplicativoToDati(dati, null, (nome != null ? nome : ""), null, (fault != null ? fault : ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP), 
 						TipoOperazione.ADD, 0, contaListe,soggettiList,soggettiListLabel,provider,dominio,
@@ -923,7 +923,7 @@ public final class ServiziApplicativiAdd extends Action {
 						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
 
 				// aggiunta campi custom
-				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration,consoleOperationType, protocolProperties);
 				
 				dominioEsterno = false;
 				if(isSupportatoAutenticazioneApplicativiEsterni) {
@@ -948,14 +948,14 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			// updateDynamic
 			if(isOk) {
-				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idSA); 
+				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
+						registryReader, configRegistryReader, idSA); 
 			}
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					saHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
+					saHelper.validaProtocolProperties(consoleConfiguration, consoleOperationType, protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -967,8 +967,8 @@ public final class ServiziApplicativiAdd extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idSA);   
+					consoleDynamicConfiguration.validateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
+							registryReader, configRegistryReader, idSA);   
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -996,8 +996,8 @@ public final class ServiziApplicativiAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idSA); 
+				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
+						registryReader, configRegistryReader, idSA); 
 				
 				dati = saHelper.addServizioApplicativoToDati(dati, null, (nome != null ? nome : ""), null, (fault != null ? fault : ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP),
 						TipoOperazione.ADD, 0, contaListe,soggettiList,soggettiListLabel,provider,dominio,
@@ -1037,7 +1037,7 @@ public final class ServiziApplicativiAdd extends Action {
 						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
 
 				// aggiunta campi custom
-				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration,consoleOperationType, protocolProperties);
 								
 				pd.setDati(dati);
 
@@ -1336,7 +1336,7 @@ public final class ServiziApplicativiAdd extends Action {
 				sa.setInvocazionePorta(invocazionePorta);
 				
 				//imposto properties custom
-				sa.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesConfig(this.protocolProperties, this.consoleOperationType,null)); 
+				sa.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesConfig(protocolProperties, consoleOperationType,null)); 
 				
 				saCore.performCreateOperation(superUser, saHelper.smista(), sa);
 

@@ -88,7 +88,13 @@ public class TimerEventiThread extends BaseThread{
 	/** Immagine */
 	private boolean forceCheckPrimoAvvio = false;
 	
-	
+	private static boolean inizializzazioneAttiva = false;
+	public static boolean isInizializzazioneAttiva() {
+		return inizializzazioneAttiva;
+	}
+	public static void setInizializzazioneAttiva(boolean inizializzazioneAttiva) {
+		TimerEventiThread.inizializzazioneAttiva = inizializzazioneAttiva;
+	}
 	
 	/** Costruttore */
 	@SuppressWarnings("deprecation")
@@ -103,7 +109,6 @@ public class TimerEventiThread extends BaseThread{
 		if(this.properties.isControlloTrafficoEnabled()){
 			this.notificatoreEventi = NotificatoreEventi.getInstance();
 			
-			boolean inizializzazioneAttiva = false;
 			// Il meccanismo di ripristino dell'immagine degli eventi non sembra funzionare
 			// Lascio comunque il codice se in futuro si desidera approfindire la questione
 			if(inizializzazioneAttiva) {
@@ -135,7 +140,9 @@ public class TimerEventiThread extends BaseThread{
 								if(fDati.exists() && fDati.canRead() && fDati.length()>0){
 									FileInputStream fin = new FileInputStream(fDati);
 									this.notificatoreEventi.initialize(fin);
-									fDati.delete();
+									if(!fDati.delete()) {
+										// ignore
+									}
 									this.forceCheckPrimoAvvio = true;
 								}
 							}

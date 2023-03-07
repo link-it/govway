@@ -95,7 +95,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 //			FileUploadForm fileUpload = (FileUploadForm) form;
 
 			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idAccordoInt = Integer.parseInt(idAccordo);
+			long idAccordoLong = Long.valueOf(idAccordo);
 			String ruolo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO);
 			String tipoFile = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_TIPO_FILE);
 			
@@ -113,7 +113,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idAccordoInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
 			String[] ruoli = null;
@@ -260,7 +260,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
-			List<Documento> lista = apcCore.accordiAllegatiList(idAccordoInt, ricerca);
+			List<Documento> lista = apcCore.accordiAllegatiList(idAccordoLong, ricerca);
 
 			apcHelper.prepareAccordiAllegatiList(as, ricerca, lista, tipoAccordo);
 

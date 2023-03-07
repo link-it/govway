@@ -39,7 +39,7 @@ public class TestDynamicReplace {
 	public void testDynamicReplace() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.pdd.core.dynamic.Test.test();
+		org.openspcoop2.pdd.core.dynamic.test.DynamicTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

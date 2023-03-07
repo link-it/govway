@@ -483,12 +483,18 @@ public class UtilitiesMappingFruizioneErogazione  {
 			}finally{
 				try{
 					if(this.driverRegistroServizi.isAtomica()) {
-						con.commit();
+						if(con!=null) {
+							con.commit();
+						}
 					}
-				}catch(Throwable t){}
+				}catch(Throwable t){
+					// ignore
+				}
 				try{
 					this.driverRegistroServizi.releaseConnection(con);
-				}catch(Throwable t){}
+				}catch(Throwable t){
+					// ignore
+				}
 			}
 			this.log.debug("Creazione Mapping Erogazione (default:"+isDefault+" nome:"+nomeMapping+") soggetto:"+idSoggetto+" servizio:"+
 					idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pa:"+idPortaApplicativa.getNome()+" effettuata con successo");
@@ -640,7 +646,9 @@ public class UtilitiesMappingFruizioneErogazione  {
 			}finally{
 				try{
 					if(this.driverRegistroServizi.isAtomica()) {
-						con.commit();
+						if(con!=null) {
+							con.commit();
+						}
 					}
 				}catch(Throwable t){}
 				try{

@@ -122,13 +122,13 @@ public class IDAccordoDB extends IDAccordo implements Serializable {
 			idAccordo.setNome(new String(this.getNome()));
 		}
 		if(this.getVersione()!=null){
-			idAccordo.setVersione(Integer.valueOf(this.getVersione().intValue()));
+			idAccordo.setVersione(Integer.valueOf(this.getVersione().intValue()+""));
 		}
 		if(this.getSoggettoReferente()!=null){
 			idAccordo.setSoggettoReferente((IDSoggettoDB)this.getSoggettoReferente().clone());
 		}
 		if(this.id!=null){
-			idAccordo.setId(Long.valueOf(this.id));
+			idAccordo.setId(Long.valueOf(this.id+""));
 		}
 		return idAccordo;
 	}

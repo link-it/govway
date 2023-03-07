@@ -317,7 +317,6 @@ public class ConsegnaInOrdine  {
 						//	Esecuzione comando SQL
 						rs = pstmt.executeQuery();		
 						if(rs == null) {
-							pstmt.close();
 							throw new ProtocolException("RS NULL?");
 						}	
 						if(rs.next()){
@@ -328,8 +327,6 @@ public class ConsegnaInOrdine  {
 							String tipoServizio = rs.getString("TIPO_SERVIZIO");
 							String servizio = rs.getString("SERVIZIO");
 							String azione = rs.getString("AZIONE");
-							rs.close();
-							pstmt.close();
 
 							//	Check di coerenza
 							if( tipoMittente.equals(busta.getTipoMittente())==false){
@@ -370,6 +367,9 @@ public class ConsegnaInOrdine  {
 
 				} catch(Exception e) {
 					this.log.error("ERROR validazioneDatiConsegnaInOrdine ["+e.getMessage()+"]",e);
+					throw new ProtocolException("ERROR validazioneDatiConsegnaInOrdine ["+e.getMessage()+"]",e);
+				}
+				finally {
 					try{
 						if( rs != null )
 							rs.close();
@@ -382,7 +382,6 @@ public class ConsegnaInOrdine  {
 					} catch(Exception er) {
 						// close
 					}
-					throw new ProtocolException("ERROR validazioneDatiConsegnaInOrdine ["+e.getMessage()+"]",e);
 				}
 
 			}

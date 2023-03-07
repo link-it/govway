@@ -85,10 +85,17 @@ public class ComplexField implements IField {
 				throw new RuntimeException("Expected type ["+ComplexField.class.getName()+"] different from the type found ["+o.getClass().getName()+"]");
 		}
 		ComplexField f = (ComplexField) o;
+		
+		String thisClassTypeName = this.getClassType().getName() + "";
+		String fClassTypeName = f.getClassType().getName() + "";
+		
+		String thisFieldTypeName = this.getFieldType().getName() + "";
+		String fFieldTypeName = f.getFieldType().getName() + "";
+		
 		return this.getClassName().equals(f.getClassName()) && 
-			this.getClassType().getName().equals(f.getClassType().getName()) &&
+				thisClassTypeName.equals(fClassTypeName) &&
 			this.getFieldName().equals(f.getFieldName()) &&
-			this.getFieldType().getName().equals(f.getFieldType().getName()) && 
+			thisFieldTypeName.equals(fFieldTypeName) && 
 			this.father.equals(f.getFather());
 	}
 	

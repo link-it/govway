@@ -243,6 +243,9 @@ public class PluginsDriverUtils {
 				case RICERCA:
 				case STATISTICA:
 				case TRANSAZIONE:
+				case TOKEN_VALIDAZIONE:
+				case TOKEN_NEGOZIAZIONE:
+				case ATTRIBUTE_AUTHORITY:
 					break;
 				}
 			}

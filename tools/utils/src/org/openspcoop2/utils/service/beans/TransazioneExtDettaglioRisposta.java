@@ -20,6 +20,7 @@
 package org.openspcoop2.utils.service.beans;
 
 import java.util.List;
+import org.joda.time.DateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,7 +31,7 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtDettaglioRisposta", propOrder =
-    { "contenutiIngresso", "contenutiUscita", "duplicatiMessaggio", "traccia", "faultRicezione", "faultConsegna", "dettagliErrore", "faultRicezioneFormato", "faultConsegnaFormato"
+    { "contenutiIngresso", "contenutiUscita", "duplicatiMessaggio", "traccia", "faultRicezione", "faultConsegna", "dettagliErrore", "dataRicezioneAcquisita", "dataConsegnaEffettuata", "faultRicezioneFormato", "faultConsegnaFormato"
 })
 
 
@@ -63,6 +64,14 @@ public class TransazioneExtDettaglioRisposta extends TransazioneExtDettaglioRisp
   
   @Schema(description = "")
   private List<String> dettagliErrore = null;
+  @XmlElement(name="data_ricezione_acquisita")
+  
+  @Schema(description = "")
+  private DateTime dataRicezioneAcquisita = null;
+  @XmlElement(name="data_consegna_effettuata")
+  
+  @Schema(description = "")
+  private DateTime dataConsegnaEffettuata = null;
   @XmlElement(name="fault_ricezione_formato")
   
   @Schema(description = "")
@@ -210,6 +219,44 @@ public class TransazioneExtDettaglioRisposta extends TransazioneExtDettaglioRisp
   }
 
  /**
+   * Get dataRicezioneAcquisita
+   * @return dataRicezioneAcquisita
+  **/
+  @JsonProperty("data_ricezione_acquisita")
+  @Valid
+  public DateTime getDataRicezioneAcquisita() {
+    return this.dataRicezioneAcquisita;
+  }
+
+  public void setDataRicezioneAcquisita(DateTime dataRicezioneAcquisita) {
+    this.dataRicezioneAcquisita = dataRicezioneAcquisita;
+  }
+
+  public TransazioneExtDettaglioRisposta dataRicezioneAcquisita(DateTime dataRicezioneAcquisita) {
+    this.dataRicezioneAcquisita = dataRicezioneAcquisita;
+    return this;
+  }
+
+ /**
+   * Get dataConsegnaEffettuata
+   * @return dataConsegnaEffettuata
+  **/
+  @JsonProperty("data_consegna_effettuata")
+  @Valid
+  public DateTime getDataConsegnaEffettuata() {
+    return this.dataConsegnaEffettuata;
+  }
+
+  public void setDataConsegnaEffettuata(DateTime dataConsegnaEffettuata) {
+    this.dataConsegnaEffettuata = dataConsegnaEffettuata;
+  }
+
+  public TransazioneExtDettaglioRisposta dataConsegnaEffettuata(DateTime dataConsegnaEffettuata) {
+    this.dataConsegnaEffettuata = dataConsegnaEffettuata;
+    return this;
+  }
+
+ /**
    * Get faultRicezioneFormato
    * @return faultRicezioneFormato
   **/
@@ -260,6 +307,8 @@ public class TransazioneExtDettaglioRisposta extends TransazioneExtDettaglioRisp
     sb.append("    faultRicezione: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultRicezione)).append("\n");
     sb.append("    faultConsegna: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultConsegna)).append("\n");
     sb.append("    dettagliErrore: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.dettagliErrore)).append("\n");
+    sb.append("    dataRicezioneAcquisita: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.dataRicezioneAcquisita)).append("\n");
+    sb.append("    dataConsegnaEffettuata: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.dataConsegnaEffettuata)).append("\n");
     sb.append("    faultRicezioneFormato: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultRicezioneFormato)).append("\n");
     sb.append("    faultConsegnaFormato: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultConsegnaFormato)).append("\n");
     sb.append("}");

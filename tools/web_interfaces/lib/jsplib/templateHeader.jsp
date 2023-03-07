@@ -162,7 +162,7 @@ if(!tabSessionKey.equals("")){
 																						</script>
 																          			<%
 																					}else if("new".equals(l.getTarget())){
-																					%><a id="<%=id %>" class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
+																					%><a id="<%=id %>" class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>" <%= toolTip %> rel="noopener"><%= l.getLabel() %></a><%
 																					}else {
 																          			%><a id="<%=id %>" class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a>
 																          				<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -335,7 +335,7 @@ if(!tabSessionKey.equals("")){
 																							</script>
 																          			<%
 																					}else if("new".equals(l.getTarget())){
-																					%><a id="<%=id %>" class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																					%><a id="<%=id %>" class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>" rel="noopener"><%= l.getLabel() %></a><%
 																					}else {
 																          			%><a id="<%=id %>" class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
 																          				<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -444,7 +444,7 @@ if(!tabSessionKey.equals("")){
 																					</script>
 															          			<%
 																				}else if("new".equals(l.getTarget())){
-																				%><a id="<%=id %>" class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																				%><a id="<%=id %>" class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>" rel="noopener"><%= l.getLabel() %></a><%
 																				}else {
 															          			%><a id="<%=id %>" class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
 															          				<script type="text/javascript" nonce="<%= randomNonce %>">

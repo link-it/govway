@@ -60,6 +60,7 @@ import java.util.List;
 
 public class Default extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Default() {
+    super();
   }
 
   public void addProprieta(ProprietaDefault proprieta) {

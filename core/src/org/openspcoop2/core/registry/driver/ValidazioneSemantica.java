@@ -462,7 +462,7 @@ public class ValidazioneSemantica {
 				// Check azione associata al servizio
 				if(asscsc.getAzione()!=null){
 					AccordoServizioParteSpecifica serv = this.getAccordoServizioParteSpecifica(asscsc.getTipo(), asscsc.getNome(), asscsc.getVersione(), asscsc.getTipoSoggetto(), asscsc.getNomeSoggetto());
-					if(this.existsAccordoServizioParteComune(serv.getAccordoServizioParteComune())){
+					if(serv!=null && this.existsAccordoServizioParteComune(serv.getAccordoServizioParteComune())){
 						AccordoServizioParteComune asServizioComposto = this.getAccordoServizioParteComune(serv.getAccordoServizioParteComune());
 						if(serv.getPortType()!=null){
 							if(this.existsPortType_AccordoServizioParteComune(asServizioComposto, serv.getPortType()) ){
@@ -483,8 +483,14 @@ public class ValidazioneSemantica {
 							}
 						}
 					}else{
-						this.errori.add("Il servizio componente ["+asscsc.getTipo()+"/"+asscsc.getNome()+"] erogato dal soggetto ["+asscsc.getTipoSoggetto()+"/"+asscsc.getNomeSoggetto()+
+						if(serv==null) {
+							this.errori.add("Il servizio componente ["+asscsc.getTipo()+"/"+asscsc.getNome()+"] erogato dal soggetto ["+asscsc.getTipoSoggetto()+"/"+asscsc.getNomeSoggetto()+
+									"], referenziato nel "+uriAS+" non risulta registrato");
+						}
+						else {
+							this.errori.add("Il servizio componente ["+asscsc.getTipo()+"/"+asscsc.getNome()+"] erogato dal soggetto ["+asscsc.getTipoSoggetto()+"/"+asscsc.getNomeSoggetto()+
 								"], referenziato nel "+uriAS+", implementa un accordo di servizio ["+serv.getAccordoServizioParteComune()+"] che non risulta registrato");
+						}
 					}
 				}
 			}
@@ -1150,7 +1156,7 @@ public class ValidazioneSemantica {
 					// L'azione deve esistere nell'accordo implementato dal servizio
 					if(this.existsAccordoServizioParteComune(asps.getAccordoServizioParteComune())){
 						AccordoServizioParteComune as = this.getAccordoServizioParteComune(asps.getAccordoServizioParteComune());
-						if(ServiceBinding.SOAP.equals(as.getServiceBinding())) {
+						if(as!=null && ServiceBinding.SOAP.equals(as.getServiceBinding())) {
 							if(asps.getPortType()!=null){
 								if(this.existsPortType_AccordoServizioParteComune(as, asps.getPortType()) ){
 									PortType pt = this.getPortType_AccordoServizioParteComune(as, asps.getPortType());
@@ -1170,9 +1176,14 @@ public class ValidazioneSemantica {
 							}
 						}
 						else {
-							if(this.existsResource_AccordoServizioParteComune(as, azione)==false){
-								this.errori.add("Il servizio ["+uriServizio+
+							if(as==null) {
+								this.errori.add("API '"+asps.getAccordoServizioParteComune()+"' non trovata");
+							}
+							else {
+								if(this.existsResource_AccordoServizioParteComune(as, azione)==false){
+									this.errori.add("Il servizio ["+uriServizio+
 										"], utilizza una risorsa ["+azione+"] che non risulta definita nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"] implementato dal servizio");
+								}
 							}
 						}
 					}else{

@@ -97,6 +97,7 @@ import java.io.Serializable;
 
 public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DettaglioPagamentoType() {
+    super();
   }
 
   public java.lang.String getBeneficiario() {

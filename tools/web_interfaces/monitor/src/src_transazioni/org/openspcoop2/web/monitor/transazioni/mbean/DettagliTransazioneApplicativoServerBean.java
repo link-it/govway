@@ -770,14 +770,13 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 			// I use the same name as it is stored in the file system of the
 			// server.
 
-			@SuppressWarnings("unused")
 			String dirPath = null; // per non far produrre la directory contenuti
 			String fileName = this.exportContenuto.name().toLowerCase();
 						
-			if (this.isRisposta)
+			//if (this.isRisposta)
 				fileName = fileName+".zip";
-			else
-				fileName = fileName+".zip";
+			//else
+			//	fileName = fileName+".zip";
 
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);

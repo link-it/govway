@@ -72,6 +72,7 @@ import java.io.Serializable;
 
 public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiRiepilogoType() {
+    super();
   }
 
   public java.math.BigDecimal getAliquotaIVA() {

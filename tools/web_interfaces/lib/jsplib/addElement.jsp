@@ -21,7 +21,7 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page session="true" import="org.openspcoop2.web.lib.mvc.*" %>
 
-<html>
+<html lang="it">
 <%
 String iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);

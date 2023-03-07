@@ -70,6 +70,7 @@ import java.util.List;
 
 public class WebEmptyContext extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public WebEmptyContext() {
+    super();
   }
 
   public void addSubContext(SubContextMapping subContext) {

@@ -50,6 +50,7 @@ import java.io.Serializable;
 
 public class Version extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Version() {
+    super();
   }
 
   public java.lang.String getName() {

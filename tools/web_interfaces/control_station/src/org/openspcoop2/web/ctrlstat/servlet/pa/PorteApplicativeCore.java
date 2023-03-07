@@ -1180,6 +1180,15 @@ public class PorteApplicativeCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
+	private static boolean showGroup = true;
+	public static boolean isShowGroup() {
+		return showGroup;
+	}
+	public static void setShowGroup(boolean showGroup) {
+		PorteApplicativeCore.showGroup = showGroup;
+	}
+	
 	public String getLabelRegolaMappingErogazionePortaApplicativa(String functionDi, String function, PortaApplicativa pa) throws DriverConfigurazioneException {
 		return getLabelRegolaMappingErogazionePortaApplicativa(functionDi, function, pa, 50, false);
 	}
@@ -1190,8 +1199,6 @@ public class PorteApplicativeCore extends ControlStationCore {
 		return getLabelRegolaMappingErogazionePortaApplicativa(functionDi, function, pa, sizeSubstring, false);
 	}
 	public String getLabelRegolaMappingErogazionePortaApplicativa(String functionDi, String function, PortaApplicativa pa, int sizeSubstring, boolean forceGroupName) throws DriverConfigurazioneException {
-		
-		boolean showGroup = true;
 		
 		String prefix = "";
 		if(functionDi!=null) {

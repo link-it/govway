@@ -61,6 +61,7 @@ import java.util.List;
 
 public class Compatibility extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Compatibility() {
+    super();
   }
 
   public void addTags(Tags tags) {

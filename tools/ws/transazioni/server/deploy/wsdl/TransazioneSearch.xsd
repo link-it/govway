@@ -27,14 +27,22 @@
  			<xsd:element name="data-accettazione-richiesta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-ingresso-richiesta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-ingresso-richiesta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-ingresso-richiesta-stream-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-ingresso-richiesta-stream-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-uscita-richiesta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-uscita-richiesta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-uscita-richiesta-stream-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-uscita-richiesta-stream-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-accettazione-risposta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-accettazione-risposta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-ingresso-risposta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-ingresso-risposta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-ingresso-risposta-stream-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-ingresso-risposta-stream-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-uscita-risposta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-uscita-risposta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-uscita-risposta-stream-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-uscita-risposta-stream-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="richiesta-ingresso-bytes-min" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="richiesta-ingresso-bytes-max" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="richiesta-uscita-bytes-min" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />

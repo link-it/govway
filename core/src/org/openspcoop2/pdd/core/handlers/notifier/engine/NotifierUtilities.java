@@ -38,7 +38,11 @@ import org.openspcoop2.pdd.core.handlers.notifier.NotifierType;
 public class NotifierUtilities {
 
 	public static String getIdTransazione(NotifierType notifierType, Object context){
-		return (String) getPddContext(notifierType, context).getObject(Costanti.ID_TRANSAZIONE);
+		PdDContext pddContext = getPddContext(notifierType, context);
+		if(pddContext!=null) {
+			return (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);
+		}
+		return null;
 	}
 	
 	public static PdDContext getPddContext(NotifierType notifierType, Object context){

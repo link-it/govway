@@ -1018,12 +1018,13 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id)
 			throws ProtocolException {
 		
-		boolean operazioneGestita = _validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, 
+		//boolean operazioneGestita = 
+		_validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, 
 				registryReader, configIntegrationReader, id,false);
-		if(!operazioneGestita) {
-			super.validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader, configIntegrationReader, id);
-			return;
-		}
+		//if(!operazioneGestita) {
+		//	super.validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader, configIntegrationReader, id);
+		//	return;
+		//}
 		
 	}
 	
@@ -1061,12 +1062,13 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id)
 			throws ProtocolException {
 	
-		boolean operazioneGestita = _validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, 
+		//boolean operazioneGestita = 
+		_validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, 
 				registryReader, configIntegrationReader, id.getIdServizio(), true);
-		if(!operazioneGestita) {
-			super.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType,
-					consoleHelper, properties, registryReader, configIntegrationReader, id);
-		}
+		//if(!operazioneGestita) {
+		//	super.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType,
+		//			consoleHelper, properties, registryReader, configIntegrationReader, id);
+		//}
 		
 	}
 	

@@ -20,10 +20,6 @@
 
 package org.openspcoop2.utils.crypt;
 
-import java.security.Provider;
-
-import org.jasypt.digest.config.DigesterConfig;
-import org.jasypt.salt.SaltGenerator;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.random.RandomGenerator;
 import org.slf4j.Logger;
@@ -41,7 +37,7 @@ public class JasyptCrypt implements ICrypt {
 	private JasyptType type;
 	private CryptConfig config;
 	private RandomGenerator randomGenerator;
-	private CustomSaltGenerator customSaltGenerator;
+	private JasyptCustomSaltGenerator customSaltGenerator;
 	
 	public JasyptCrypt(JasyptType type){
 		this.type = type;
@@ -64,11 +60,11 @@ public class JasyptCrypt implements ICrypt {
 			}
 			
 			this.randomGenerator = new RandomGenerator(this.config.isUseSecureRandom(), this.config.getAlgorithmSecureRandom());
-			this.customSaltGenerator = new CustomSaltGenerator(this.randomGenerator);
+			this.customSaltGenerator = new JasyptCustomSaltGenerator(this.randomGenerator);
 		}
 	}
 	
-	public CustomSaltGenerator getCustomSaltGenerator() {
+	public JasyptCustomSaltGenerator getCustomSaltGenerator() {
 		return this.customSaltGenerator;
 	}
 	
@@ -157,111 +153,10 @@ public class JasyptCrypt implements ICrypt {
 
 	private org.jasypt.util.password.ConfigurablePasswordEncryptor _getConfigurablePasswordEncryptor() {
 		org.jasypt.util.password.ConfigurablePasswordEncryptor configurablePasswordEncryptor = new org.jasypt.util.password.ConfigurablePasswordEncryptor();	
-		CustomDigesterConfig config = new CustomDigesterConfig(this.config, this.customSaltGenerator);
+		JasyptCustomDigesterConfig config = new JasyptCustomDigesterConfig(this.config, this.customSaltGenerator);
 		configurablePasswordEncryptor.setConfig(config);
 		configurablePasswordEncryptor.setStringOutputType(this.config.isUseBase64Encoding() ? "BASE64" : "hexadecimal");
 		configurablePasswordEncryptor.setAlgorithm(config.getAlgorithm());
 		return configurablePasswordEncryptor;
 	}
-}
-
-class CustomSaltGenerator implements SaltGenerator  {
-	
-	private RandomGenerator randomGenerator;
-	private int lastSizeGenerated;
-	
-	public int getLastSizeGenerated() {
-		return this.lastSizeGenerated;
-	}
-
-	public CustomSaltGenerator(RandomGenerator randomGenerator){
-		this.randomGenerator = randomGenerator;
-	} 
-	
-	@Override
-	public boolean includePlainSaltInEncryptionResults() {
-		return true;
-	}
-	
-	@Override
-	public byte[] generateSalt(int size) {
-		try {
-			//System.out.println("GENERA ["+size+"]");
-			return this.randomGenerator.nextRandomBytes(size);
-		}finally {
-			this.lastSizeGenerated = size;
-		}
-	}
-}
-
-class CustomDigesterConfig implements DigesterConfig {
-
-	private CryptConfig config;
-	private CustomSaltGenerator customSaltGenerator;
-	
-	public CustomDigesterConfig(CryptConfig config, CustomSaltGenerator customSaltGenerator) {
-		this.config = config;
-		this.customSaltGenerator = customSaltGenerator;
-	}
-	
-	@Override
-	public String getAlgorithm() {
-		String digestAlgorithm = this.config.getDigestAlgorithm();
-		if(digestAlgorithm==null) {
-			digestAlgorithm = "SHA-256"; // default
-		}
-		return digestAlgorithm;
-	}
-
-	@Override
-	public Boolean getInvertPositionOfPlainSaltInEncryptionResults() {
-		return false;
-	}
-
-	@Override
-	public Boolean getInvertPositionOfSaltInMessageBeforeDigesting() {
-		return false;
-	}
-
-	@Override
-	public Integer getIterations() {
-		if(this.config.getIteration()!=null && this.config.getIteration()>0) {
-			return this.config.getIteration().intValue();
-		}
-		return null;
-	}
-
-	@Override
-	public Integer getPoolSize() {
-		return null;
-	}
-
-	@Override
-	public Provider getProvider() {
-		return null;
-	}
-
-	@Override
-	public String getProviderName() {
-		return null;
-	}
-
-	@Override
-	public SaltGenerator getSaltGenerator() {
-		return this.customSaltGenerator;
-	}
-
-	@Override
-	public Integer getSaltSizeBytes() {
-		if(this.config.getSaltLength()!=null && this.config.getSaltLength()>0) {
-			return this.config.getSaltLength().intValue();
-		}
-		return null;
-	}
-
-	@Override
-	public Boolean getUseLenientSaltSizeCheck() {
-		return false;
-	}
-	
 }

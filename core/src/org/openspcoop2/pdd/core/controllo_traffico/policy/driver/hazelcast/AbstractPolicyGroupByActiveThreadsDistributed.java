@@ -110,7 +110,9 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 		}
 		
 		// dummy get per inizializzare la map
-		this.distributedMap.get(new IDUnivocoGroupByPolicy());
+		if(this.distributedMap.get(new IDUnivocoGroupByPolicy())!=null) {
+			// ignore
+		}
 
 	}
 	

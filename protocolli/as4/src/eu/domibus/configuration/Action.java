@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class Action extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Action() {
+    super();
   }
 
   public java.lang.String getName() {

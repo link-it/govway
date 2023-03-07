@@ -56,7 +56,7 @@ public class JDBCParameterUtilities {
 		
 		//System.out.println("SET PARAMETER VALUE["+value+"] TYPE["+type.getName()+"]");
 		
-		if(type.getName().equals(String.class.getName())){
+		if(type.isAssignableFrom(String.class)){
 			String valueWrapped = null;
 			if(value!=null && value instanceof String){
 				valueWrapped = (String) value;
@@ -74,7 +74,7 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.getName().equals(Character.class.getName())){
+		else if(type.isAssignableFrom(Character.class)){
 			Character valueWrapped = null;
 			String charValue = null;
 			if(value!=null){
@@ -93,7 +93,7 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.VARCHAR);
 			}
 		}
-		else if(type.getName().equals(char.class.getName())){
+		else if(type.isAssignableFrom(char.class)){
 			Character valueWrapped = null;
 			String charValue = null;
 			if(value!=null){
@@ -113,7 +113,7 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.getName().equals(Boolean.class.getName())){
+		else if(type.isAssignableFrom(Boolean.class)){
 			if(value!=null){
 				Boolean valueWrapped = (Boolean) value;
 				pstmt.setBoolean(index, valueWrapped);
@@ -128,7 +128,7 @@ public class JDBCParameterUtilities {
 				}
 			}
 		}
-		else if(type.getName().equals(boolean.class.getName())){
+		else if(type.isAssignableFrom(boolean.class)){
 			if(value!=null){
 				Boolean valueWrapped = (Boolean) value;
 				pstmt.setBoolean(index, valueWrapped); 
@@ -144,7 +144,7 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.getName().equals(Byte.class.getName())){
+		else if(type.isAssignableFrom(Byte.class)){
 			if(value!=null){
 				Byte valueWrapped = (Byte) value;
 				//pstmt.setByte(index, valueWrapped); tradotto come INT nel database
@@ -155,7 +155,7 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.INTEGER);
 			}
 		}
-		else if(type.getName().equals(byte.class.getName())){
+		else if(type.isAssignableFrom(byte.class)){
 			if(value!=null){
 				Byte valueWrapped = (Byte) value;
 				//pstmt.setByte(index, valueWrapped); tradotto come INT nel database
@@ -167,7 +167,7 @@ public class JDBCParameterUtilities {
 			}		
 		}
 		
-		else if(type.getName().equals(Short.class.getName())){
+		else if(type.isAssignableFrom(Short.class)){
 			if(value!=null){
 				Short valueWrapped = (Short) value;
 				pstmt.setShort(index, valueWrapped);
@@ -176,7 +176,7 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.INTEGER);
 			}
 		}
-		else if(type.getName().equals(short.class.getName())){
+		else if(type.isAssignableFrom(short.class)){
 			if(value!=null){
 				Short valueWrapped = (Short) value;
 				pstmt.setShort(index, valueWrapped);
@@ -186,7 +186,7 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.getName().equals(Integer.class.getName())){
+		else if(type.isAssignableFrom(Integer.class)){
 			if(value!=null){
 				Integer valueWrapped = (Integer) value;
 				pstmt.setInt(index, valueWrapped);
@@ -195,7 +195,7 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.INTEGER);
 			}
 		}
-		else if(type.getName().equals(int.class.getName())){
+		else if(type.isAssignableFrom(int.class)){
 			if(value!=null){
 				Integer valueWrapped = (Integer) value;
 				pstmt.setInt(index, valueWrapped);
@@ -205,7 +205,7 @@ public class JDBCParameterUtilities {
 			}
 		}
 						
-		else if(type.getName().equals(Long.class.getName())){
+		else if(type.isAssignableFrom(Long.class)){
 			if(value!=null){
 				Long valueWrapped = (Long) value;
 				pstmt.setLong(index, valueWrapped);
@@ -214,7 +214,7 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.BIGINT);
 			}
 		}
-		else if(type.getName().equals(long.class.getName())){
+		else if(type.isAssignableFrom(long.class)){
 			if(value!=null){
 				Long valueWrapped = (Long) value;
 				pstmt.setLong(index, valueWrapped);
@@ -224,7 +224,7 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.getName().equals(Double.class.getName())){
+		else if(type.isAssignableFrom(Double.class)){
 			if(value!=null){
 				Double valueWrapped = (Double) value;
 				pstmt.setDouble(index, valueWrapped);
@@ -233,7 +233,7 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.DOUBLE);
 			}
 		}
-		else if(type.getName().equals(double.class.getName())){
+		else if(type.isAssignableFrom(double.class)){
 			if(value!=null){
 				Double valueWrapped = (Double) value;
 				pstmt.setDouble(index, valueWrapped);
@@ -243,7 +243,7 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.getName().equals(Float.class.getName())){
+		else if(type.isAssignableFrom(Float.class)){
 			if(value!=null){
 				Float valueWrapped = (Float) value;
 				pstmt.setFloat(index, valueWrapped);
@@ -252,7 +252,7 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.FLOAT);
 			}
 		}
-		else if(type.getName().equals(float.class.getName())){
+		else if(type.isAssignableFrom(float.class)){
 			if(value!=null){
 				Float valueWrapped = (Float) value;
 				pstmt.setFloat(index, valueWrapped);
@@ -262,7 +262,7 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.getName().equals(Date.class.getName())){
+		else if(type.isAssignableFrom(Date.class)){
 			Date valueWrapped = null;
 			if(value!=null){
 				valueWrapped = (Date) value;
@@ -273,7 +273,7 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.TIMESTAMP);
 			}
 		}
-		else if(type.getName().equals(java.sql.Date.class.getName())){
+		else if(type.isAssignableFrom(java.sql.Date.class)){
 			java.sql.Date valueWrapped = null;
 			if(value!=null){
 				valueWrapped = (java.sql.Date) value;
@@ -284,7 +284,7 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.TIMESTAMP);
 			}
 		}
-		else if(type.getName().equals(Timestamp.class.getName())){
+		else if(type.isAssignableFrom(Timestamp.class)){
 			if(value!=null){
 				Timestamp valueWrapped = (Timestamp) value;
 				pstmt.setTimestamp(index,valueWrapped);
@@ -293,7 +293,7 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.TIMESTAMP);
 			}
 		}
-		else if(type.getName().equals(Calendar.class.getName())){
+		else if(type.isAssignableFrom(Calendar.class)){
 			Calendar valueWrapped = null;
 			if(value!=null){
 				valueWrapped = (Calendar) value;
@@ -305,7 +305,7 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.getName().equals(byte[].class.getName())){
+		else if(type.isAssignableFrom(byte[].class)){
 			byte[] valueWrapped = null;
 			if(value!=null){
 				valueWrapped = (byte[]) value;
@@ -313,7 +313,7 @@ public class JDBCParameterUtilities {
 			this.jdbcAdapter.setBinaryData(pstmt, index, valueWrapped);
 		}
 		
-		else if(type.getName().equals(URI.class.getName())){
+		else if(type.isAssignableFrom(URI.class)){
 			if(value!=null){
 				URI valueWrapped = (URI) value;
 				pstmt.setString(index,valueWrapped.toString());
@@ -631,7 +631,7 @@ public class JDBCParameterUtilities {
 				return null;
 			}
 		}
-		else if(type.getName().equals(byte[].class.getName())){
+		else if(type.isAssignableFrom(byte[].class)){
 //			if(name!=null){
 //				return this.jdbcAdapter.getBinaryData(rs, name);
 //			}
@@ -657,7 +657,7 @@ public class JDBCParameterUtilities {
             	}
             }
 		}
-		else if(type.getName().equals(URI.class.getName())){
+		else if(type.isAssignableFrom(URI.class)){
 			String uri = null;
 			if(name!=null){
 				uri = rs.getString(name);

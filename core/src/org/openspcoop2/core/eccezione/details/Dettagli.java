@@ -58,6 +58,7 @@ import java.util.List;
 
 public class Dettagli extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Dettagli() {
+    super();
   }
 
   public void addDetail(Dettaglio detail) {

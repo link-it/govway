@@ -23,11 +23,11 @@ package org.openspcoop2.utils.crypt;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -201,6 +201,9 @@ public class PasswordGenerator extends PasswordVerifier implements Serializable 
 		throw new UtilsException("La generazione non è riuscita a produrre una password che soddisfi tutti i vincoli"); 
 	}
 	
+	//private Random random = new Random();
+	private SecureRandom random = new SecureRandom(); 
+	
 	private String _generate(int length) throws UtilsException{
 		
 		if(!this.includeLowerCaseLetter && !this.includeUpperCaseLetter && !this.includeNumber) {
@@ -208,7 +211,7 @@ public class PasswordGenerator extends PasswordVerifier implements Serializable 
 		}
 		
 		List<String> password = new ArrayList<>();
-		Random random = new Random();
+
 		
 		String tmpDictionaryCharsLowerCase = new String(this.dictionaryChars);
 		String tmpDictionaryCharsUpperCase = new String(this.dictionaryChars);
@@ -217,7 +220,7 @@ public class PasswordGenerator extends PasswordVerifier implements Serializable 
 		
 		int i = 0;
 		if(this.includeNotAlphanumericSymbol){
-			int randomOffset = random.nextInt(tmpDictionaryAlpha.length());
+			int randomOffset = this.random.nextInt(tmpDictionaryAlpha.length());
 			String s = tmpDictionaryAlpha.charAt(randomOffset)+"";
 			password.add(s);
 			i++;
@@ -229,7 +232,7 @@ public class PasswordGenerator extends PasswordVerifier implements Serializable 
 			boolean addChar = false;
 			if(this.includeLowerCaseLetter){
 				if(tmpDictionaryCharsLowerCase.length()>0) {
-					int randomOffset = random.nextInt(tmpDictionaryCharsLowerCase.length());
+					int randomOffset = this.random.nextInt(tmpDictionaryCharsLowerCase.length());
 					String s = tmpDictionaryCharsLowerCase.charAt(randomOffset)+"";
 					password.add(s);
 					addChar = true;
@@ -244,7 +247,7 @@ public class PasswordGenerator extends PasswordVerifier implements Serializable 
 			}
 			if(this.includeUpperCaseLetter){
 				if(tmpDictionaryCharsUpperCase.length()>0) {
-					int randomOffset = random.nextInt(tmpDictionaryCharsUpperCase.length());
+					int randomOffset = this.random.nextInt(tmpDictionaryCharsUpperCase.length());
 					String s = tmpDictionaryCharsUpperCase.charAt(randomOffset)+"";
 					password.add(s.toUpperCase());
 					addChar = true;
@@ -259,7 +262,7 @@ public class PasswordGenerator extends PasswordVerifier implements Serializable 
 			}
 			if(this.includeNumber){
 				if(tmpDictionaryNumbers.length()>0) {
-					int randomOffset = random.nextInt(tmpDictionaryNumbers.length());
+					int randomOffset = this.random.nextInt(tmpDictionaryNumbers.length());
 					String s = tmpDictionaryNumbers.charAt(randomOffset)+"";
 					password.add(s);
 					addChar = true;

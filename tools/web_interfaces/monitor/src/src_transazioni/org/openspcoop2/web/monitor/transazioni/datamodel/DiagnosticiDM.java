@@ -184,7 +184,7 @@ public class DiagnosticiDM extends
 									
 					BeanUtils.copy(msgDiagnosticoBean, msgDiagnostico, metodiEsclusi);
 					
-					Integer k = Long.valueOf(msgDiagnostico.getId()).intValue();
+					Integer k = msgDiagnostico.getId().intValue();
 					this.wrappedData.put(k, msgDiagnosticoBean);
 					this.wrappedKeys.add(k);
 					visitor.process(context, k, argument);

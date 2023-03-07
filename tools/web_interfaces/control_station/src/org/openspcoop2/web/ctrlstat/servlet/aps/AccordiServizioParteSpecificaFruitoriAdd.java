@@ -67,19 +67,13 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ProtocolSubscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
-import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
-import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
-import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
-import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
@@ -119,71 +113,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
-	private String connettoreDebug;
-	private String    id, idSoggettoFruitore, endpointtype, tipoconn, url, nome, tipo, user,
-	password, initcont, urlpgk, provurl, connfact, sendas, 
-	httpsurl, httpstipologia, httpspath,
-	httpstipo, httpspwd, httpsalgoritmo,
-	httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-	httpstipokey, httpspwdkey, httpspwdprivatekey,
-	httpsalgoritmokey,
-	httpsKeyAlias,
-	httpsTrustStoreCRLs,
-	httpsTrustStoreOCSPPolicy;
-	private String httpshostverifyS, httpsstatoS;
-	private boolean httpshostverify, httpsstato, httpsTrustVerifyCert;
-	private String statoPackage;
-	private boolean validazioneDocumenti = true;
-	private boolean decodeRequestValidazioneDocumenti = false;
-	private String editMode = null;
-	private String correlato = null;
-	private String autenticazioneHttp;
-	private String controlloAccessiStato;
-	private String fruizioneServizioApplicativo;
-	private String fruizioneRuolo;
-	private String fruizioneAutenticazione;
-	private String fruizioneAutenticazioneOpzionale;
-	private TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal;
-	private List<String> fruizioneAutenticazioneParametroList;
-	private String fruizioneAutorizzazione;
-	private String fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch;
-	//private Properties parametersPOST = null;
-
-	private boolean autenticazioneToken = false;
-	private String token_policy = null;
-	
-	private String proxy_enabled, proxy_hostname,proxy_port,proxy_username,proxy_password;
-	
-	private String tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta;
-
-	private String transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, opzioniAvanzate;
-	
-	// file
-	private String requestOutputFileName = null;
-	private String requestOutputFileName_permissions = null;
-	private String requestOutputFileNameHeaders = null;
-	private String requestOutputFileNameHeaders_permissions = null;
-	private String requestOutputParentDirCreateIfNotExists = null;
-	private String requestOutputOverwriteIfExists = null;
-	private String responseInputMode = null;
-	private String responseInputFileName = null;
-	private String responseInputFileNameHeaders = null;
-	private String responseInputDeleteAfterRead = null;
-	private String responseInputWaitTime = null;
-	
-
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
-	private IConfigIntegrationReader configRegistryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
-	
-	private BinaryParameter wsdlimpler, wsdlimplfru;
-
-
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -199,8 +128,10 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 		String superUser =  ServletUtils.getUserLoginFromSession(session);
 
+		AccordiServizioParteSpecificaFruitoriAddStrutsBean strutsBean = new AccordiServizioParteSpecificaFruitoriAddStrutsBean();
+		
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
-		this.consoleOperationType = ConsoleOperationType.ADD;
+		strutsBean.consoleOperationType = ConsoleOperationType.ADD;
 		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD;
@@ -208,27 +139,27 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			
-			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			strutsBean.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
-			this.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
-			this.idSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
-			this.correlato = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
-			//			this.endpointtype = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
+			strutsBean.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			strutsBean.idSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
+			strutsBean.correlato = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
+			//			strutsBean.endpointtype = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
 
-			this.controlloAccessiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
+			strutsBean.controlloAccessiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
 			
-			this.fruizioneServizioApplicativo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUIZIONE_NOME_SA);
-			this.fruizioneRuolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
-			this.fruizioneAutenticazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
-			this.fruizioneAutenticazioneOpzionale = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
+			strutsBean.fruizioneServizioApplicativo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUIZIONE_NOME_SA);
+			strutsBean.fruizioneRuolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
+			strutsBean.fruizioneAutenticazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
+			strutsBean.fruizioneAutenticazioneOpzionale = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
 			String fruizioneAutenticazionePrincipalTipo = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
-			this.fruizioneAutenticazionePrincipal = TipoAutenticazionePrincipal.toEnumConstant(fruizioneAutenticazionePrincipalTipo, false);
-			this.fruizioneAutenticazioneParametroList = apsHelper.convertFromDataElementValue_parametroAutenticazioneList(this.fruizioneAutenticazione, this.fruizioneAutenticazionePrincipal);
-			this.fruizioneAutorizzazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE);
-			this.fruizioneAutorizzazioneAutenticati = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE);
-			this.fruizioneAutorizzazioneRuoli = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
-			this.fruizioneAutorizzazioneRuoliTipologia = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA);
-			this.fruizioneAutorizzazioneRuoliMatch = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
+			strutsBean.fruizioneAutenticazionePrincipal = TipoAutenticazionePrincipal.toEnumConstant(fruizioneAutenticazionePrincipalTipo, false);
+			strutsBean.fruizioneAutenticazioneParametroList = apsHelper.convertFromDataElementValue_parametroAutenticazioneList(strutsBean.fruizioneAutenticazione, strutsBean.fruizioneAutenticazionePrincipal);
+			strutsBean.fruizioneAutorizzazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE);
+			strutsBean.fruizioneAutorizzazioneAutenticati = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE);
+			strutsBean.fruizioneAutorizzazioneRuoli = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
+			strutsBean.fruizioneAutorizzazioneRuoliTipologia = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA);
+			strutsBean.fruizioneAutorizzazioneRuoliMatch = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
 			
 			String gestioneToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 			String gestioneTokenPolicy = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
@@ -261,110 +192,110 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String [] attributeAuthoritySelezionate = apsHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
 			String attributeAuthorityAttributi = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
 			
-			this.endpointtype = apsHelper.readEndPointType();
-			this.tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
-			this.autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+			strutsBean.endpointtype = apsHelper.readEndPointType();
+			strutsBean.tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
+			strutsBean.autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 
-			this.connettoreDebug = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			strutsBean.connettoreDebug = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 			
 			// token policy
 			String autenticazioneTokenS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
-			this.autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
-			this.token_policy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			strutsBean.autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
+			strutsBean.token_policy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			
 			// proxy
-			this.proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-			this.proxy_hostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-			this.proxy_port = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-			this.proxy_username = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			this.proxy_password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			strutsBean.proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			strutsBean.proxy_hostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			strutsBean.proxy_port = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			strutsBean.proxy_username = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			strutsBean.proxy_password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 
 			// tempi risposta
-			this.tempiRisposta_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-			this.tempiRisposta_connectionTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
-			this.tempiRisposta_readTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
-			this.tempiRisposta_tempoMedioRisposta = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+			strutsBean.tempiRisposta_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			strutsBean.tempiRisposta_connectionTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			strutsBean.tempiRisposta_readTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			strutsBean.tempiRisposta_tempoMedioRisposta = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 			
 			// opzioni avanzate
-			this.transfer_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-			this.transfer_mode_chunk_size = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-			this.redirect_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-			this.redirect_max_hop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			this.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, this.transfer_mode, this.redirect_mode);
+			strutsBean.transfer_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			strutsBean.transfer_mode_chunk_size = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			strutsBean.redirect_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			strutsBean.redirect_max_hop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			strutsBean.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, strutsBean.transfer_mode, strutsBean.redirect_mode);
 
 			// http
-			this.url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
-			if(TipiConnettore.HTTP.toString().equals(this.endpointtype)){
-				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			strutsBean.url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
+			if(TipiConnettore.HTTP.toString().equals(strutsBean.endpointtype)){
+				strutsBean.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				strutsBean.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 
 			// jms
-			this.nome = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
-			this.tipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
-			this.initcont = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
-			this.urlpgk = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
-			this.provurl = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
-			this.connfact = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
-			this.sendas = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
-			if(TipiConnettore.JMS.toString().equals(this.endpointtype)){
-				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+			strutsBean.nome = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
+			strutsBean.tipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
+			strutsBean.initcont = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
+			strutsBean.urlpgk = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
+			strutsBean.provurl = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
+			strutsBean.connfact = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
+			strutsBean.sendas = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
+			if(TipiConnettore.JMS.toString().equals(strutsBean.endpointtype)){
+				strutsBean.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
+				strutsBean.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
 
 			// https
-			this.httpsurl = this.url;
-			this.httpstipologia = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
-			this.httpshostverifyS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			strutsBean.httpsurl = strutsBean.url;
+			strutsBean.httpstipologia = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
+			strutsBean.httpshostverifyS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			String httpsTrustVerifyCertS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
-			this.httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
-			this.httpspath = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
-			this.httpstipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-			this.httpspwd = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
-			this.httpsalgoritmo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-			this.httpsstatoS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
-			this.httpskeystore = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
-			this.httpspwdprivatekeytrust = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
-			this.httpspathkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
-			this.httpstipokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-			this.httpspwdkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-			this.httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
-			this.httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
-			this.httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
-			this.httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
-			this.httpsTrustStoreOCSPPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
-			if(TipiConnettore.HTTPS.toString().equals(this.endpointtype)){
-				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			strutsBean.httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
+			strutsBean.httpspath = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
+			strutsBean.httpstipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+			strutsBean.httpspwd = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			strutsBean.httpsalgoritmo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
+			strutsBean.httpsstatoS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
+			strutsBean.httpskeystore = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
+			strutsBean.httpspwdprivatekeytrust = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
+			strutsBean.httpspathkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+			strutsBean.httpstipokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
+			strutsBean.httpspwdkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+			strutsBean.httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
+			strutsBean.httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			strutsBean.httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			strutsBean.httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
+			strutsBean.httpsTrustStoreOCSPPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			if(TipiConnettore.HTTPS.toString().equals(strutsBean.endpointtype)){
+				strutsBean.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				strutsBean.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file
-			this.requestOutputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
-			this.requestOutputFileName_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
-			this.requestOutputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
-			this.requestOutputFileNameHeaders_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
-			this.requestOutputParentDirCreateIfNotExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
-			this.requestOutputOverwriteIfExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
-			this.responseInputMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
-			this.responseInputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
-			this.responseInputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
-			this.responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
-			this.responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			strutsBean.requestOutputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			strutsBean.requestOutputFileName_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+			strutsBean.requestOutputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			strutsBean.requestOutputFileNameHeaders_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+			strutsBean.requestOutputParentDirCreateIfNotExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+			strutsBean.requestOutputOverwriteIfExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
+			strutsBean.responseInputMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+			strutsBean.responseInputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+			strutsBean.responseInputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+			strutsBean.responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
+			strutsBean.responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
 
-			this.statoPackage = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
+			strutsBean.statoPackage = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
 
-			this.wsdlimpler = apsHelper.getBinaryParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
-			this.wsdlimplfru = apsHelper.getBinaryParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
+			strutsBean.wsdlimpler = apsHelper.getBinaryParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
+			strutsBean.wsdlimplfru = apsHelper.getBinaryParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
 
 			if(apsHelper.isMultipart()){
-				this.decodeRequestValidazioneDocumenti = true;
+				strutsBean.decodeRequestValidazioneDocumenti = true;
 			}
 			//			
 			//			String ct = request.getContentType();
 			//			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
 			//				// decodeReq = true;
-			//				this.decodeRequestValidazioneDocumenti = false; // init
+			//				strutsBean.decodeRequestValidazioneDocumenti = false; // init
 			//				this.decodeRequest(request,apsHelper);
 			//			}
 
@@ -377,38 +308,38 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 
-			if(ServletUtils.isEditModeInProgress(this.editMode)){
+			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){
 				// primo accesso alla servlet
-				this.validazioneDocumenti = true;
+				strutsBean.validazioneDocumenti = true;
 				if (apsHelper.isModalitaAvanzata()) {
 					String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 					if(tmpValidazioneDocumenti!=null){
 						if(Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(tmpValidazioneDocumenti) || Costanti.CHECK_BOX_ENABLED.equalsIgnoreCase(tmpValidazioneDocumenti)){
-							this.validazioneDocumenti = true;
+							strutsBean.validazioneDocumenti = true;
 						}else{
-							this.validazioneDocumenti = false;
+							strutsBean.validazioneDocumenti = false;
 						}
 					}
 				}
 			}else{
-				if(!this.decodeRequestValidazioneDocumenti){
+				if(!strutsBean.decodeRequestValidazioneDocumenti){
 					String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 					if(Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(tmpValidazioneDocumenti) || Costanti.CHECK_BOX_ENABLED.equalsIgnoreCase(tmpValidazioneDocumenti)){
-						this.validazioneDocumenti = true;
+						strutsBean.validazioneDocumenti = true;
 					}else{
-						this.validazioneDocumenti = false;
+						strutsBean.validazioneDocumenti = false;
 					}
 				}
 			}
 
-			this.httpshostverify = false;
-			if (this.httpshostverifyS != null && this.httpshostverifyS.equals(Costanti.CHECK_BOX_ENABLED))
-				this.httpshostverify = true;
-			this.httpsstato = false;
-			if (this.httpsstatoS != null && this.httpsstatoS.equals(Costanti.CHECK_BOX_ENABLED))
-				this.httpsstato = true;
+			strutsBean.httpshostverify = false;
+			if (strutsBean.httpshostverifyS != null && strutsBean.httpshostverifyS.equals(Costanti.CHECK_BOX_ENABLED))
+				strutsBean.httpshostverify = true;
+			strutsBean.httpsstato = false;
+			if (strutsBean.httpsstatoS != null && strutsBean.httpsstatoS.equals(Costanti.CHECK_BOX_ENABLED))
+				strutsBean.httpsstato = true;
 
-			int idInt = Integer.parseInt(this.id);
+			long idServizioLong = Long.valueOf(strutsBean.id);
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
 
@@ -416,7 +347,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			List<ExtendedConnettore> listExtendedConnettore = 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.FRUIZIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsHelper, 
 							null, //this.parametersPOST, 
-							(this.endpointtype==null), this.endpointtype); // uso endpointtype per capire se è la prima volta che entro
+							(strutsBean.endpointtype==null), strutsBean.endpointtype); // uso endpointtype per capire se è la prima volta che entro
 
 			// prendo l'id del soggetto erogatore lo propago
 			// lo metto nel pd come campo hidden
@@ -430,7 +361,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			// Prendo nome e tipo dal db
 
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.valueOf(idInt));
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizioLong);
 			String nomeservizio = asps.getNome();
 			String tiposervizio = asps.getTipo();
 			Integer versioneservizio = asps.getVersione();
@@ -443,8 +374,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			idFruizione.setIdServizio(idServizioObject);
 			
 			
-			if(this.correlato == null){
-				this.correlato = ((TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
+			if(strutsBean.correlato == null){
+				strutsBean.correlato = ((TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
 						AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
 							AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
 			}
@@ -471,7 +402,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			// tranne quelli già registrati come fruitori
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
-			List<Fruitore> fruList1 = apsCore.getSoggettiWithServizioNotFruitori(idInt,true,null);
+			List<Fruitore> fruList1 = apsCore.getSoggettiWithServizioNotFruitori(idServizioLong,true,null);
 			Map<String, Fruitore> mapFruitori = new HashMap<String, Fruitore>();
 			List<String> keyFruitori = new ArrayList<>();
 			if(fruList1!=null && fruList1.size()>0){
@@ -500,8 +431,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					if(idSoggettoFirst==null) {
 						idSoggettoFirst = new IDSoggetto(fru.getTipo(), fru.getNome());
 					}
-					if(this.idSoggettoFruitore!=null && !"".equals(this.idSoggettoFruitore)){
-						long idProvider = Long.parseLong(this.idSoggettoFruitore);
+					if(strutsBean.idSoggettoFruitore!=null && !"".equals(strutsBean.idSoggettoFruitore)){
+						long idProvider = Long.parseLong(strutsBean.idSoggettoFruitore);
 						if(fru.getId()==idProvider){
 							idSoggettoSelected = new IDSoggetto(fru.getTipo(), fru.getNome());
 						}
@@ -542,7 +473,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			saList.add("-");
 			if(idSoggettoSelected!=null){
 				try{
-					String auth = this.fruizioneAutenticazione;
+					String auth = strutsBean.fruizioneAutenticazione;
 					if(auth==null || "".equals(auth)){
 						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 					}
@@ -576,15 +507,15 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			}
 
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
-			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
+			strutsBean.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			strutsBean.consoleDynamicConfiguration =  strutsBean.protocolFactory.createDynamicConfigurationConsole();
+			strutsBean.registryReader = soggettiCore.getRegistryReader(strutsBean.protocolFactory); 
+			strutsBean.configRegistryReader = soggettiCore.getConfigIntegrationReader(strutsBean.protocolFactory);
 			
 			// ID Accordo Null per default
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleOperationType, apsHelper, 
-					this.registryReader, this.configRegistryReader, idFruizione  );
-			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			strutsBean.consoleConfiguration = strutsBean.consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleOperationType, apsHelper, 
+					strutsBean.registryReader, strutsBean.configRegistryReader, idFruizione  );
+			strutsBean.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(strutsBean.consoleConfiguration, strutsBean.consoleOperationType);
 
 			AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 			
@@ -621,14 +552,14 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if(ServletUtils.isEditModeInProgress(this.editMode)){
+			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
-						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ this.id),
+						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ strutsBean.id),
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggErogatore)
 						));
 				lstParm.add(ServletUtils.getParameterAggiungi());
@@ -649,76 +580,76 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				}
 
 				else{
-					dati = apsHelper.addHiddenFieldsToDati(tipoOp, this.id, null, null, dati);
+					dati = apsHelper.addHiddenFieldsToDati(tipoOp, strutsBean.id, null, null, dati);
 
-					if (this.idSoggettoFruitore == null) {
-						this.idSoggettoFruitore = "";
-//						if(this.wsdlimpler.getValue() == null)
-//							this.wsdlimpler.setValue(new byte[1]);
-//						if(this.wsdlimplfru.getValue() == null)
-//							this.wsdlimplfru.setValue(new byte[1]); 
-						this.endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
-						this.tipoconn = "";
-						this.url = "";
-						this.nome = "";
-						this.tipo = ConnettoriCostanti.TIPI_CODE_JMS[0];
-						this.user = "";
-						this.password = "";
-						this.initcont = "";
-						this.urlpgk = "";
-						this.provurl = "";
-						this.connfact = "";
-						this.sendas = ConnettoriCostanti.TIPO_SEND_AS[0];
-						this.httpsurl = "";
-						this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
-						this.httpshostverify = true;
-						this.httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
-						this.httpspath = "";
-						this.httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
-						this.httpspwd = "";
-						this.httpsalgoritmo = "";
-						this.httpsstato = false;
-						this.httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-						this.httpspwdprivatekeytrust = "";
-						this.httpspathkey = "";
-						this.httpstipokey = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
-						this.httpspwdkey = "";
-						this.httpspwdprivatekey = "";
-						this.httpsalgoritmokey = "";
+					if (strutsBean.idSoggettoFruitore == null) {
+						strutsBean.idSoggettoFruitore = "";
+//						if(strutsBean.wsdlimpler.getValue() == null)
+//							strutsBean.wsdlimpler.setValue(new byte[1]);
+//						if(strutsBean.wsdlimplfru.getValue() == null)
+//							strutsBean.wsdlimplfru.setValue(new byte[1]); 
+						strutsBean.endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
+						strutsBean.tipoconn = "";
+						strutsBean.url = "";
+						strutsBean.nome = "";
+						strutsBean.tipo = ConnettoriCostanti.TIPI_CODE_JMS[0];
+						strutsBean.user = "";
+						strutsBean.password = "";
+						strutsBean.initcont = "";
+						strutsBean.urlpgk = "";
+						strutsBean.provurl = "";
+						strutsBean.connfact = "";
+						strutsBean.sendas = ConnettoriCostanti.TIPO_SEND_AS[0];
+						strutsBean.httpsurl = "";
+						strutsBean.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
+						strutsBean.httpshostverify = true;
+						strutsBean.httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+						strutsBean.httpspath = "";
+						strutsBean.httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
+						strutsBean.httpspwd = "";
+						strutsBean.httpsalgoritmo = "";
+						strutsBean.httpsstato = false;
+						strutsBean.httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
+						strutsBean.httpspwdprivatekeytrust = "";
+						strutsBean.httpspathkey = "";
+						strutsBean.httpstipokey = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
+						strutsBean.httpspwdkey = "";
+						strutsBean.httpspwdprivatekey = "";
+						strutsBean.httpsalgoritmokey = "";
 
 						if(apsHelper.isShowGestioneWorkflowStatoDocumenti()){
-							if(this.statoPackage==null || "".equals(this.statoPackage)){
+							if(strutsBean.statoPackage==null || "".equals(strutsBean.statoPackage)){
 								//if(serviziFruitoriAdd.generazioneAutomaticaPorteDelegate){
-								this.statoPackage=StatiAccordo.bozza.toString();
+								strutsBean.statoPackage=StatiAccordo.bozza.toString();
 								/*}else{
-									this.statoPackage=servizio.getStatoPackage();
+									strutsBean.statoPackage=servizio.getStatoPackage();
 								}*/
 							}
 
 							//Se l'ASPS riferito e' in stato operativo o finale allora setto la fruizione come operativa.
 							if(asps.getStatoPackage().equals(StatiAccordo.operativo.toString()) || asps.getStatoPackage().equals(StatiAccordo.finale.toString())){
-								this.statoPackage=StatiAccordo.operativo.toString();
+								strutsBean.statoPackage=StatiAccordo.operativo.toString();
 							}
 
 						}else{
-							this.statoPackage=StatiAccordo.finale.toString();
+							strutsBean.statoPackage=StatiAccordo.finale.toString();
 						}
 					}
 					
-					if(this.fruizioneServizioApplicativo==null || "".equals(this.fruizioneServizioApplicativo))
-						this.fruizioneServizioApplicativo = "-";
-					if(this.fruizioneRuolo==null || "".equals(this.fruizioneRuolo))
-						this.fruizioneRuolo = "-";
-					if(this.fruizioneAutenticazione==null || "".equals(this.fruizioneAutenticazione))
-						this.fruizioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
-					if(this.fruizioneAutorizzazione==null || "".equals(this.fruizioneAutorizzazione)){
+					if(strutsBean.fruizioneServizioApplicativo==null || "".equals(strutsBean.fruizioneServizioApplicativo))
+						strutsBean.fruizioneServizioApplicativo = "-";
+					if(strutsBean.fruizioneRuolo==null || "".equals(strutsBean.fruizioneRuolo))
+						strutsBean.fruizioneRuolo = "-";
+					if(strutsBean.fruizioneAutenticazione==null || "".equals(strutsBean.fruizioneAutenticazione))
+						strutsBean.fruizioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+					if(strutsBean.fruizioneAutorizzazione==null || "".equals(strutsBean.fruizioneAutorizzazione)){
 						String tipoAutorizzazione = apsCore.getAutorizzazione_generazioneAutomaticaPorteDelegate();
-						this.fruizioneAutorizzazione = AutorizzazioneUtilities.convertToStato(tipoAutorizzazione);
+						strutsBean.fruizioneAutorizzazione = AutorizzazioneUtilities.convertToStato(tipoAutorizzazione);
 						if(TipoAutorizzazione.isAuthenticationRequired(tipoAutorizzazione))
-							this.fruizioneAutorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+							strutsBean.fruizioneAutorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
 						if(TipoAutorizzazione.isRolesRequired(tipoAutorizzazione))
-							this.fruizioneAutorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
-						this.fruizioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
+							strutsBean.fruizioneAutorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+						strutsBean.fruizioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
 					}
 					if(gestioneToken == null) {
 						gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
@@ -744,57 +675,57 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					}
 					
 					// default
-					if(this.httpsalgoritmo==null || "".equals(this.httpsalgoritmo)){
-						this.httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
+					if(strutsBean.httpsalgoritmo==null || "".equals(strutsBean.httpsalgoritmo)){
+						strutsBean.httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
 					}
-					if(this.httpsalgoritmokey==null || "".equals(this.httpsalgoritmokey)){
-						this.httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
+					if(strutsBean.httpsalgoritmokey==null || "".equals(strutsBean.httpsalgoritmokey)){
+						strutsBean.httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
 					}
-					if(this.httpstipologia==null || "".equals(this.httpstipologia)){
-						this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
+					if(strutsBean.httpstipologia==null || "".equals(strutsBean.httpstipologia)){
+						strutsBean.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 					}
-					if(this.httpshostverifyS==null || "".equals(this.httpshostverifyS)){
-						this.httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
-						this.httpshostverify = true;
+					if(strutsBean.httpshostverifyS==null || "".equals(strutsBean.httpshostverifyS)){
+						strutsBean.httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+						strutsBean.httpshostverify = true;
 					}
 					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
 						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-						this.httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+						strutsBean.httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 					}
 
-					this.autenticazioneHttp = apsHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
+					strutsBean.autenticazioneHttp = apsHelper.getAutenticazioneHttp(strutsBean.autenticazioneHttp, strutsBean.endpointtype, strutsBean.user);
 
-					if(this.tempiRisposta_connectionTimeout==null || "".equals(this.tempiRisposta_connectionTimeout) 
+					if(strutsBean.tempiRisposta_connectionTimeout==null || "".equals(strutsBean.tempiRisposta_connectionTimeout) 
 							|| 
-							this.tempiRisposta_readTimeout==null || "".equals(this.tempiRisposta_readTimeout) 
+							strutsBean.tempiRisposta_readTimeout==null || "".equals(strutsBean.tempiRisposta_readTimeout) 
 							|| 
-							this.tempiRisposta_tempoMedioRisposta==null || "".equals(this.tempiRisposta_tempoMedioRisposta) ){
+							strutsBean.tempiRisposta_tempoMedioRisposta==null || "".equals(strutsBean.tempiRisposta_tempoMedioRisposta) ){
 						
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
 						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 						
-						if(this.tempiRisposta_connectionTimeout==null || "".equals(this.tempiRisposta_connectionTimeout) ) {
-							this.tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+						if(strutsBean.tempiRisposta_connectionTimeout==null || "".equals(strutsBean.tempiRisposta_connectionTimeout) ) {
+							strutsBean.tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
 						}
-						if(this.tempiRisposta_readTimeout==null || "".equals(this.tempiRisposta_readTimeout) ) {
-							this.tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+						if(strutsBean.tempiRisposta_readTimeout==null || "".equals(strutsBean.tempiRisposta_readTimeout) ) {
+							strutsBean.tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
 						}
-						if(this.tempiRisposta_tempoMedioRisposta==null || "".equals(this.tempiRisposta_tempoMedioRisposta) ) {
-							this.tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
+						if(strutsBean.tempiRisposta_tempoMedioRisposta==null || "".equals(strutsBean.tempiRisposta_tempoMedioRisposta) ) {
+							strutsBean.tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
 						}
 						
 					}
 					
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idFruizione);
+					strutsBean.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
+							strutsBean.registryReader, strutsBean.configRegistryReader, idFruizione);
 
 
-					dati = apsHelper.addServiziFruitoriToDati(dati, this.idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList,
-							soggettiListLabel, "0", this.id, tipoOp, "", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(), null,this.validazioneDocumenti,
-							this.controlloAccessiStato,
-							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
-							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+					dati = apsHelper.addServiziFruitoriToDati(dati, strutsBean.idSoggettoFruitore, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, soggettiList,
+							soggettiListLabel, "0", strutsBean.id, tipoOp, "", "", "", nomeservizio, tiposervizio, versioneservizio, strutsBean.correlato, strutsBean.statoPackage, strutsBean.statoPackage,asps.getStatoPackage(), null,strutsBean.validazioneDocumenti,
+							strutsBean.controlloAccessiStato,
+							strutsBean.fruizioneServizioApplicativo,strutsBean.fruizioneRuolo,strutsBean.fruizioneAutenticazione,strutsBean.fruizioneAutenticazioneOpzionale,strutsBean.fruizioneAutenticazionePrincipal, strutsBean.fruizioneAutenticazioneParametroList, strutsBean.fruizioneAutorizzazione,
+							strutsBean.fruizioneAutorizzazioneAutenticati, strutsBean.fruizioneAutorizzazioneRuoli, strutsBean.fruizioneAutorizzazioneRuoliTipologia, strutsBean.fruizioneAutorizzazioneRuoliMatch,
 							saList,apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 							null, null, null, null,
 							gestioneToken, policyLabels, policyValues, 
@@ -813,29 +744,29 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 					String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 					if (apsHelper.isModalitaAvanzata()) {
-						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
-								this.url, this.nome,
-								tipoJms, this.user,
-								this.password, this.initcont, this.urlpgk,
-								this.provurl, this.connfact, tipoSendas,
+						dati = apsHelper.addEndPointToDati(dati, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null, 
+								strutsBean.url, strutsBean.nome,
+								tipoJms, strutsBean.user,
+								strutsBean.password, strutsBean.initcont, strutsBean.urlpgk,
+								strutsBean.provurl, strutsBean.connfact, tipoSendas,
 								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
-								this.httpsurl, this.httpstipologia,	this.httpshostverify, 
-								this.httpsTrustVerifyCert, this.httpspath, this.httpstipo, this.httpspwd,
-								this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
-								this.httpspwdprivatekeytrust, this.httpspathkey,
-								this.httpstipokey, this.httpspwdkey, 
-								this.httpspwdprivatekey, this.httpsalgoritmokey,
-								this.httpsKeyAlias, this.httpsTrustStoreCRLs, this.httpsTrustStoreOCSPPolicy,
-								this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
+								strutsBean.httpsurl, strutsBean.httpstipologia,	strutsBean.httpshostverify, 
+								strutsBean.httpsTrustVerifyCert, strutsBean.httpspath, strutsBean.httpstipo, strutsBean.httpspwd,
+								strutsBean.httpsalgoritmo, strutsBean.httpsstato, strutsBean.httpskeystore,
+								strutsBean.httpspwdprivatekeytrust, strutsBean.httpspathkey,
+								strutsBean.httpstipokey, strutsBean.httpspwdkey, 
+								strutsBean.httpspwdprivatekey, strutsBean.httpsalgoritmokey,
+								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+								strutsBean.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
 								null, null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
-								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-								this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-								this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
-								this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-								this.autenticazioneToken,this.token_policy,
+								strutsBean.proxy_enabled, strutsBean.proxy_hostname, strutsBean.proxy_port, strutsBean.proxy_username, strutsBean.proxy_password,
+								strutsBean.tempiRisposta_enabled, strutsBean.tempiRisposta_connectionTimeout, strutsBean.tempiRisposta_readTimeout, strutsBean.tempiRisposta_tempoMedioRisposta,
+								strutsBean.opzioniAvanzate, strutsBean.transfer_mode, strutsBean.transfer_mode_chunk_size, strutsBean.redirect_mode, strutsBean.redirect_max_hop,
+								strutsBean.requestOutputFileName, strutsBean.requestOutputFileName_permissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeaders_permissions,
+								strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
+								strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
+								strutsBean.autenticazioneToken,strutsBean.token_policy,
 								listExtendedConnettore, false,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}else{
@@ -844,7 +775,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				}
 
 				// aggiunta campi custom
-				dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -856,42 +787,42 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.serviziFruitoriCheckData(TipoOperazione.ADD, soggettiList,
-					this.id, "", "", null, "", "", this.idSoggettoFruitore,
-					this.endpointtype, this.url, this.nome, this.tipo,
-					this.user, this.password, this.initcont, this.urlpgk,
-					this.provurl, this.connfact, this.sendas,
-					this.wsdlimpler, this.wsdlimplfru, "0",
-					this.httpsurl, this.httpstipologia, this.httpshostverify, 
-					this.httpsTrustVerifyCert, this.httpspath, this.httpstipo,
-					this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-					this.httpskeystore, this.httpspwdprivatekeytrust,
-					this.httpspathkey, this.httpstipokey,
-					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey, 
-					this.httpsKeyAlias, this.httpsTrustStoreCRLs, this.httpsTrustStoreOCSPPolicy,
-					this.tipoconn,this.validazioneDocumenti,null,this.autenticazioneHttp,
-					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-					this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-					this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
-					this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
-					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+					strutsBean.id, "", "", null, "", "", strutsBean.idSoggettoFruitore,
+					strutsBean.endpointtype, strutsBean.url, strutsBean.nome, strutsBean.tipo,
+					strutsBean.user, strutsBean.password, strutsBean.initcont, strutsBean.urlpgk,
+					strutsBean.provurl, strutsBean.connfact, strutsBean.sendas,
+					strutsBean.wsdlimpler, strutsBean.wsdlimplfru, "0",
+					strutsBean.httpsurl, strutsBean.httpstipologia, strutsBean.httpshostverify, 
+					strutsBean.httpsTrustVerifyCert, strutsBean.httpspath, strutsBean.httpstipo,
+					strutsBean.httpspwd, strutsBean.httpsalgoritmo, strutsBean.httpsstato,
+					strutsBean.httpskeystore, strutsBean.httpspwdprivatekeytrust,
+					strutsBean.httpspathkey, strutsBean.httpstipokey,
+					strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
+					strutsBean.httpsalgoritmokey, 
+					strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+					strutsBean.tipoconn,strutsBean.validazioneDocumenti,null,strutsBean.autenticazioneHttp,
+					strutsBean.proxy_enabled, strutsBean.proxy_hostname, strutsBean.proxy_port, strutsBean.proxy_username, strutsBean.proxy_password,
+					strutsBean.tempiRisposta_enabled, strutsBean.tempiRisposta_connectionTimeout, strutsBean.tempiRisposta_readTimeout, strutsBean.tempiRisposta_tempoMedioRisposta,
+					strutsBean.opzioniAvanzate, strutsBean.transfer_mode, strutsBean.transfer_mode_chunk_size, strutsBean.redirect_mode, strutsBean.redirect_max_hop,
+					strutsBean.requestOutputFileName, strutsBean.requestOutputFileName_permissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeaders_permissions,
+					strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
+					strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
+					strutsBean.fruizioneServizioApplicativo,strutsBean.fruizioneRuolo,strutsBean.fruizioneAutenticazione,strutsBean.fruizioneAutenticazioneOpzionale,strutsBean.fruizioneAutenticazionePrincipal, strutsBean.fruizioneAutenticazioneParametroList, strutsBean.fruizioneAutorizzazione,
+					strutsBean.fruizioneAutorizzazioneAutenticati, strutsBean.fruizioneAutorizzazioneRuoli, strutsBean.fruizioneAutorizzazioneRuoliTipologia, strutsBean.fruizioneAutorizzazioneRuoliMatch,
 					allegatoXacmlPolicy,
-					this.autenticazioneToken,this.token_policy,
+					strutsBean.autenticazioneToken,strutsBean.token_policy,
 					listExtendedConnettore);
 
 			// updateDynamic
 			if(isOk) {
-				this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idFruizione);		
+				strutsBean.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
+						strutsBean.registryReader, strutsBean.configRegistryReader, idFruizione);		
 			}
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
+					apsHelper.validaProtocolProperties(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, strutsBean.protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -903,8 +834,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idFruizione);
+					strutsBean.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
+							strutsBean.registryReader, strutsBean.configRegistryReader, idFruizione);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -920,7 +851,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
-						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ this.id)
+						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ strutsBean.id)
 						//				,
 						//						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggErogatore)
 						));
@@ -935,16 +866,16 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idFruizione);
+				strutsBean.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
+						strutsBean.registryReader, strutsBean.configRegistryReader, idFruizione);
 
-				dati = apsHelper.addHiddenFieldsToDati(tipoOp, this.id, null, null, dati);
+				dati = apsHelper.addHiddenFieldsToDati(tipoOp, strutsBean.id, null, null, dati);
 
-				dati = apsHelper.addServiziFruitoriToDati(dati, this.idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, "0", this.id, tipoOp,
-						"", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
-						this.controlloAccessiStato,
-						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
-						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+				dati = apsHelper.addServiziFruitoriToDati(dati, strutsBean.idSoggettoFruitore, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, soggettiList, soggettiListLabel, "0", strutsBean.id, tipoOp,
+						"", "", "", nomeservizio, tiposervizio, versioneservizio, strutsBean.correlato, strutsBean.statoPackage, strutsBean.statoPackage,asps.getStatoPackage(),null,strutsBean.validazioneDocumenti,
+						strutsBean.controlloAccessiStato,
+						strutsBean.fruizioneServizioApplicativo,strutsBean.fruizioneRuolo,strutsBean.fruizioneAutenticazione,strutsBean.fruizioneAutenticazioneOpzionale,strutsBean.fruizioneAutenticazionePrincipal, strutsBean.fruizioneAutenticazioneParametroList, strutsBean.fruizioneAutorizzazione,
+						strutsBean.fruizioneAutorizzazioneAutenticati, strutsBean.fruizioneAutorizzazioneRuoli, strutsBean.fruizioneAutorizzazioneRuoliTipologia, strutsBean.fruizioneAutorizzazioneRuoliMatch,
 						saList,apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 						null, null, null, null,gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale,
@@ -961,29 +892,29 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						,null,null,null,null,null,null,null,null,null);
 
 				if (apsHelper.isModalitaAvanzata()) {
-					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
-							this.url, this.nome, this.tipo, this.user,
-							this.password, this.initcont, this.urlpgk,
-							this.provurl, this.connfact, this.sendas,
+					dati = apsHelper.addEndPointToDati(dati, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null,
+							strutsBean.url, strutsBean.nome, strutsBean.tipo, strutsBean.user,
+							strutsBean.password, strutsBean.initcont, strutsBean.urlpgk,
+							strutsBean.provurl, strutsBean.connfact, strutsBean.sendas,
 							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
-							this.httpsurl, this.httpstipologia,	this.httpshostverify, 
-							this.httpsTrustVerifyCert, this.httpspath, this.httpstipo,
-							this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-							this.httpskeystore, this.httpspwdprivatekeytrust,
-							this.httpspathkey, this.httpstipokey,
-							this.httpspwdkey, this.httpspwdprivatekey,
-							this.httpsalgoritmokey, 
-							this.httpsKeyAlias, this.httpsTrustStoreCRLs, this.httpsTrustStoreOCSPPolicy,
-							this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
+							strutsBean.httpsurl, strutsBean.httpstipologia,	strutsBean.httpshostverify, 
+							strutsBean.httpsTrustVerifyCert, strutsBean.httpspath, strutsBean.httpstipo,
+							strutsBean.httpspwd, strutsBean.httpsalgoritmo, strutsBean.httpsstato,
+							strutsBean.httpskeystore, strutsBean.httpspwdprivatekeytrust,
+							strutsBean.httpspathkey, strutsBean.httpstipokey,
+							strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
+							strutsBean.httpsalgoritmokey, 
+							strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+							strutsBean.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
 							null, null, null, null, null, null, null, true,
 							isConnettoreCustomUltimaImmagineSalvata, 
-							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-							this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-							this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
-							this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-							this.autenticazioneToken,this.token_policy,
+							strutsBean.proxy_enabled, strutsBean.proxy_hostname, strutsBean.proxy_port, strutsBean.proxy_username, strutsBean.proxy_password,
+							strutsBean.tempiRisposta_enabled, strutsBean.tempiRisposta_connectionTimeout, strutsBean.tempiRisposta_readTimeout, strutsBean.tempiRisposta_tempoMedioRisposta,
+							strutsBean.opzioniAvanzate, strutsBean.transfer_mode, strutsBean.transfer_mode_chunk_size, strutsBean.redirect_mode, strutsBean.redirect_max_hop,
+							strutsBean.requestOutputFileName, strutsBean.requestOutputFileName_permissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeaders_permissions,
+							strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
+							strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
+							strutsBean.autenticazioneToken,strutsBean.token_policy,
 							listExtendedConnettore, false,
 							protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 				}else{
@@ -991,7 +922,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				}
 
 				// aggiunta campi custom
-				dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -1002,7 +933,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			}
 
 			// Inserisco il fruitore nel db
-			int idProv = Integer.parseInt(this.idSoggettoFruitore);
+			int idProv = Integer.parseInt(strutsBean.idSoggettoFruitore);
 
 			// prendo il nome e il tipo del soggetto proprietario della
 			// porta delegata
@@ -1022,24 +953,24 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			if (apsHelper.isModalitaAvanzata()) {
 				connettore = new Connettore();
 				
-				apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
-						this.nome, this.tipo, this.user, this.password,
-						this.initcont, this.urlpgk, this.provurl, this.connfact,
-						this.sendas, this.httpsurl, this.httpstipologia, this.httpshostverify, 
-						this.httpsTrustVerifyCert, this.httpspath, this.httpstipo,
-						this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-						this.httpskeystore, this.httpspwdprivatekeytrust,
-						this.httpspathkey, this.httpstipokey,
-						this.httpspwdkey, this.httpspwdprivatekey,
-						this.httpsalgoritmokey,
-						this.httpsKeyAlias, this.httpsTrustStoreCRLs, this.httpsTrustStoreOCSPPolicy,
-						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-						this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-						this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
-						this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-						this.token_policy,
+				apsHelper.fillConnettore(connettore, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.endpointtype, strutsBean.tipoconn, strutsBean.url,
+						strutsBean.nome, strutsBean.tipo, strutsBean.user, strutsBean.password,
+						strutsBean.initcont, strutsBean.urlpgk, strutsBean.provurl, strutsBean.connfact,
+						strutsBean.sendas, strutsBean.httpsurl, strutsBean.httpstipologia, strutsBean.httpshostverify, 
+						strutsBean.httpsTrustVerifyCert, strutsBean.httpspath, strutsBean.httpstipo,
+						strutsBean.httpspwd, strutsBean.httpsalgoritmo, strutsBean.httpsstato,
+						strutsBean.httpskeystore, strutsBean.httpspwdprivatekeytrust,
+						strutsBean.httpspathkey, strutsBean.httpstipokey,
+						strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
+						strutsBean.httpsalgoritmokey,
+						strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+						strutsBean.proxy_enabled, strutsBean.proxy_hostname, strutsBean.proxy_port, strutsBean.proxy_username, strutsBean.proxy_password,
+						strutsBean.tempiRisposta_enabled, strutsBean.tempiRisposta_connectionTimeout, strutsBean.tempiRisposta_readTimeout, strutsBean.tempiRisposta_tempoMedioRisposta,
+						strutsBean.opzioniAvanzate, strutsBean.transfer_mode, strutsBean.transfer_mode_chunk_size, strutsBean.redirect_mode, strutsBean.redirect_max_hop,
+						strutsBean.requestOutputFileName, strutsBean.requestOutputFileName_permissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeaders_permissions,
+						strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
+						strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
+						strutsBean.token_policy,
 						listExtendedConnettore);
 			}
 
@@ -1053,15 +984,15 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			if(as!=null) {
 				formato = as.getFormatoSpecifica();
 			}
-			String wsdlimplerS = this.wsdlimpler.getValue() != null ? new String(this.wsdlimpler.getValue()) : null; 
+			String wsdlimplerS = strutsBean.wsdlimpler.getValue() != null ? new String(strutsBean.wsdlimpler.getValue()) : null; 
 			fruitore.setByteWsdlImplementativoErogatore(apsCore.getInterfaceAsByteArray(formato, wsdlimplerS));
-			String wsdlimplfruS = this.wsdlimplfru.getValue() != null ? new String(this.wsdlimplfru.getValue()) : null; 
+			String wsdlimplfruS = strutsBean.wsdlimplfru.getValue() != null ? new String(strutsBean.wsdlimplfru.getValue()) : null; 
 			fruitore.setByteWsdlImplementativoFruitore(apsCore.getInterfaceAsByteArray(formato, wsdlimplfruS));
 
-			AccordoServizioParteSpecifica servsp = apsCore.getAccordoServizioParteSpecifica(idInt);
+			AccordoServizioParteSpecifica servsp = apsCore.getAccordoServizioParteSpecifica(idServizioLong);
 
 			// stato
-			fruitore.setStatoPackage(this.statoPackage);
+			fruitore.setStatoPackage(strutsBean.statoPackage);
 
 			//			Spostato sopra a livello di edit in progress			
 			//			//Se l'ASPS riferito e' in stato operativo o finale allora setto la fruizione come operativa.
@@ -1085,7 +1016,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
-							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ this.id)
+							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ strutsBean.id)
 							//					,
 							//							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggErogatore)
 							));
@@ -1100,17 +1031,17 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idFruizione);
+					strutsBean.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
+							strutsBean.registryReader, strutsBean.configRegistryReader, idFruizione);
 
-					dati = apsHelper.addHiddenFieldsToDati(tipoOp, this.id, null, null, dati);
+					dati = apsHelper.addHiddenFieldsToDati(tipoOp, strutsBean.id, null, null, dati);
 
-					dati = apsHelper.addServiziFruitoriToDati(dati, this.idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, 
-							soggettiList, soggettiListLabel, "0", this.id, tipoOp, "", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, 
-							this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
-							this.controlloAccessiStato,
-							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
-							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+					dati = apsHelper.addServiziFruitoriToDati(dati, strutsBean.idSoggettoFruitore, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, 
+							soggettiList, soggettiListLabel, "0", strutsBean.id, tipoOp, "", "", "", nomeservizio, tiposervizio, versioneservizio, strutsBean.correlato, 
+							strutsBean.statoPackage, strutsBean.statoPackage,asps.getStatoPackage(),null,strutsBean.validazioneDocumenti,
+							strutsBean.controlloAccessiStato,
+							strutsBean.fruizioneServizioApplicativo,strutsBean.fruizioneRuolo,strutsBean.fruizioneAutenticazione,strutsBean.fruizioneAutenticazioneOpzionale,strutsBean.fruizioneAutenticazionePrincipal, strutsBean.fruizioneAutenticazioneParametroList, strutsBean.fruizioneAutorizzazione,
+							strutsBean.fruizioneAutorizzazioneAutenticati, strutsBean.fruizioneAutorizzazioneRuoli, strutsBean.fruizioneAutorizzazioneRuoliTipologia, strutsBean.fruizioneAutorizzazioneRuoliMatch,
 							saList,apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 							null, null, null, null,gestioneToken, policyLabels, policyValues, 
 							gestioneTokenPolicy, gestioneTokenOpzionale,
@@ -1126,30 +1057,30 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							,null,null,null,null,null,null,null,null,null);
 
 					if (apsHelper.isModalitaAvanzata()) {
-						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
-								this.url, this.nome, this.tipo, this.user,
-								this.password, this.initcont, this.urlpgk,
-								this.provurl, this.connfact, this.sendas,
+						dati = apsHelper.addEndPointToDati(dati, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null,
+								strutsBean.url, strutsBean.nome, strutsBean.tipo, strutsBean.user,
+								strutsBean.password, strutsBean.initcont, strutsBean.urlpgk,
+								strutsBean.provurl, strutsBean.connfact, strutsBean.sendas,
 								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
-								this.httpsurl, this.httpstipologia, this.httpshostverify, 
-								this.httpsTrustVerifyCert, this.httpspath, this.httpstipo,
-								this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-								this.httpskeystore, this.httpspwdprivatekeytrust,
-								this.httpspathkey, this.httpstipokey,
-								this.httpspwdkey, this.httpspwdprivatekey,
-								this.httpsalgoritmokey, 
-								this.httpsKeyAlias, this.httpsTrustStoreCRLs, this.httpsTrustStoreOCSPPolicy,
-								this.tipoconn, 
+								strutsBean.httpsurl, strutsBean.httpstipologia, strutsBean.httpshostverify, 
+								strutsBean.httpsTrustVerifyCert, strutsBean.httpspath, strutsBean.httpstipo,
+								strutsBean.httpspwd, strutsBean.httpsalgoritmo, strutsBean.httpsstato,
+								strutsBean.httpskeystore, strutsBean.httpspwdprivatekeytrust,
+								strutsBean.httpspathkey, strutsBean.httpstipokey,
+								strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
+								strutsBean.httpsalgoritmokey, 
+								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+								strutsBean.tipoconn, 
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
 								null, null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
-								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-								this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-								this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
-								this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-								this.autenticazioneToken,this.token_policy,
+								strutsBean.proxy_enabled, strutsBean.proxy_hostname, strutsBean.proxy_port, strutsBean.proxy_username, strutsBean.proxy_password,
+								strutsBean.tempiRisposta_enabled, strutsBean.tempiRisposta_connectionTimeout, strutsBean.tempiRisposta_readTimeout, strutsBean.tempiRisposta_tempoMedioRisposta,
+								strutsBean.opzioniAvanzate, strutsBean.transfer_mode, strutsBean.transfer_mode_chunk_size, strutsBean.redirect_mode, strutsBean.redirect_max_hop,
+								strutsBean.requestOutputFileName, strutsBean.requestOutputFileName_permissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeaders_permissions,
+								strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
+								strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
+								strutsBean.autenticazioneToken,strutsBean.token_policy,
 								listExtendedConnettore, false,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}else{
@@ -1157,7 +1088,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					}
 
 					// aggiunta campi custom
-					dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+					dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties);
 
 					pd.setDati(dati);
 
@@ -1169,7 +1100,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			}
 
 			//imposto properties custom
-			fruitore.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType,null));
+			fruitore.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(strutsBean.protocolProperties, strutsBean.consoleOperationType,null));
 
 			servsp.addFruitore(fruitore);
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), servsp);
@@ -1203,32 +1134,32 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, mytipoprov, mynomeprov, versioneservizio);
 				ServiceBinding serviceBinding = org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding()) ?
 						ServiceBinding.REST : ServiceBinding.SOAP;
-				ProtocolSubscription subscriptionDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
+				ProtocolSubscription subscriptionDefault = strutsBean.protocolFactory.createProtocolIntegrationConfiguration().
 						createDefaultSubscription(serviceBinding, idFruitore, idServizio);
 				
 				PortaDelegata portaDelegata = subscriptionDefault.getPortaDelegata();
 				MappingFruizionePortaDelegata mappingFruizione = subscriptionDefault.getMapping();
 				portaDelegata.setIdSoggetto((long) idProv);
 
-				if(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO_PUBBLICO.equals(this.controlloAccessiStato)) {
-					this.fruizioneAutenticazione = TipoAutenticazione.DISABILITATO.getValue();
-					this.fruizioneAutenticazioneOpzionale = null;
-					this.fruizioneAutenticazionePrincipal = null;
-					this.fruizioneAutenticazioneParametroList = null;
+				if(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO_PUBBLICO.equals(strutsBean.controlloAccessiStato)) {
+					strutsBean.fruizioneAutenticazione = TipoAutenticazione.DISABILITATO.getValue();
+					strutsBean.fruizioneAutenticazioneOpzionale = null;
+					strutsBean.fruizioneAutenticazionePrincipal = null;
+					strutsBean.fruizioneAutenticazioneParametroList = null;
 				}
 				
-				if(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO_PUBBLICO.equals(this.controlloAccessiStato)) {
-					this.fruizioneAutorizzazione = TipoAutorizzazione.DISABILITATO.getValue();
-					this.fruizioneAutorizzazioneAutenticati = null;
-					this.fruizioneAutorizzazioneRuoli = null;
-					this.fruizioneAutorizzazioneRuoliTipologia = null;
-					this.fruizioneAutorizzazioneRuoliMatch = null;
+				if(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO_PUBBLICO.equals(strutsBean.controlloAccessiStato)) {
+					strutsBean.fruizioneAutorizzazione = TipoAutorizzazione.DISABILITATO.getValue();
+					strutsBean.fruizioneAutorizzazioneAutenticati = null;
+					strutsBean.fruizioneAutorizzazioneRuoli = null;
+					strutsBean.fruizioneAutorizzazioneRuoliTipologia = null;
+					strutsBean.fruizioneAutorizzazioneRuoliMatch = null;
 				}
 				
 				porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
-						this.fruizioneAutenticazione, this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList,
-						this.fruizioneAutorizzazione, this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-						this.fruizioneServizioApplicativo, this.fruizioneRuolo,
+						strutsBean.fruizioneAutenticazione, strutsBean.fruizioneAutenticazioneOpzionale,strutsBean.fruizioneAutenticazionePrincipal, strutsBean.fruizioneAutenticazioneParametroList,
+						strutsBean.fruizioneAutorizzazione, strutsBean.fruizioneAutorizzazioneAutenticati, strutsBean.fruizioneAutorizzazioneRuoli, strutsBean.fruizioneAutorizzazioneRuoliTipologia, strutsBean.fruizioneAutorizzazioneRuoliMatch,
+						strutsBean.fruizioneServizioApplicativo, strutsBean.fruizioneRuolo,
 						autorizzazioneAutenticatiToken, 
 						autorizzazioneRuoliToken,  autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						autorizzazione_tokenOptions,
@@ -1253,8 +1184,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 
 			// cancello i file temporanei
-			apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
-			apsHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
+			apsHelper.deleteBinaryParameters(strutsBean.wsdlimpler,strutsBean.wsdlimplfru);
+			apsHelper.deleteBinaryProtocolPropertiesTmpFiles(strutsBean.protocolProperties);
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -1263,9 +1194,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 
-			List<Fruitore> lista = apsCore.serviziFruitoriList(Integer.parseInt(this.id), ricerca);
+			List<Fruitore> lista = apsCore.serviziFruitoriList(Integer.parseInt(strutsBean.id), ricerca);
 
-			apsHelper.prepareServiziFruitoriList(lista, this.id, ricerca);
+			apsHelper.prepareServiziFruitoriList(lista, strutsBean.id, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 

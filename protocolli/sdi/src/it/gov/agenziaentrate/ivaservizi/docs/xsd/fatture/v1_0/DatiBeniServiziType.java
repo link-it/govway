@@ -64,6 +64,7 @@ import java.io.Serializable;
 
 public class DatiBeniServiziType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiBeniServiziType() {
+    super();
   }
 
   public java.lang.String getDescrizione() {

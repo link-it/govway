@@ -71,6 +71,7 @@ import java.io.Serializable;
 
 public class NotificaDecorrenzaTerminiType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public NotificaDecorrenzaTerminiType() {
+    super();
   }
 
   public java.lang.String getIdentificativoSdI() {

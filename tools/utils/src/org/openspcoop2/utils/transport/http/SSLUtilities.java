@@ -99,10 +99,21 @@ public class SSLUtilities {
 			List<String> p = new ArrayList<String>();
 			SSLContext context = SSLContext.getInstance(sslType);
 			context.init(null,null,null);
-			SSLSocket socket = (SSLSocket)context.getSocketFactory().createSocket();
-			String[] protocols = socket.getEnabledProtocols();
-			for (int i = 0; i < protocols.length; i++) {
-				p.add(protocols[i]);
+			SSLSocket socket = null;
+			try {
+				socket = (SSLSocket)context.getSocketFactory().createSocket();
+				String[] protocols = socket.getEnabledProtocols();
+				for (int i = 0; i < protocols.length; i++) {
+					p.add(protocols[i]);
+				}
+			}finally {
+				try {
+					if(socket!=null) {
+						socket.close();
+					}
+				}catch(Throwable t) {
+					// ignore
+				}
 			}
 			return p;
 		}catch(Exception e){
@@ -113,10 +124,21 @@ public class SSLUtilities {
 		try{
 			List<String> p = new ArrayList<String>();
 			SSLContext defaultContext = SSLContext.getDefault();
-			SSLSocket socket = (SSLSocket)defaultContext.getSocketFactory().createSocket();
-			String[] protocols = socket.getSupportedProtocols();
-			for (int i = 0; i < protocols.length; i++) {
-				p.add(protocols[i]);
+			SSLSocket socket = null;
+			try {
+				socket = (SSLSocket)defaultContext.getSocketFactory().createSocket();
+				String[] protocols = socket.getSupportedProtocols();
+				for (int i = 0; i < protocols.length; i++) {
+					p.add(protocols[i]);
+				}
+			}finally {
+				try {
+					if(socket!=null) {
+						socket.close();
+					}
+				}catch(Throwable t) {
+					// ignore
+				}
 			}
 			return p;
 		}catch(Exception e){
@@ -192,10 +214,21 @@ public class SSLUtilities {
 			List<String> l = new ArrayList<String>();
 			SSLContext context = SSLContext.getInstance(sslType);
 			context.init(null,null,null);
-			SSLSocket socket = (SSLSocket)context.getSocketFactory().createSocket();
-			String[] cs = socket.getEnabledCipherSuites();
-			for (int i = 0; i < cs.length; i++) {
-				l.add(cs[i]);
+			SSLSocket socket = null;
+			try {
+				socket = (SSLSocket)context.getSocketFactory().createSocket();
+				String[] cs = socket.getEnabledCipherSuites();
+				for (int i = 0; i < cs.length; i++) {
+					l.add(cs[i]);
+				}
+			}finally {
+				try {
+					if(socket!=null) {
+						socket.close();
+					}
+				}catch(Throwable t) {
+					// ignore
+				}
 			}
 			return l;
 		}catch(Exception e){
@@ -206,10 +239,21 @@ public class SSLUtilities {
 		try{
 			List<String> l = new ArrayList<String>();
 			SSLContext defaultContext = SSLContext.getDefault();
-			SSLSocket socket = (SSLSocket)defaultContext.getSocketFactory().createSocket();
-			String[] cs = socket.getSupportedCipherSuites();
-			for (int i = 0; i < cs.length; i++) {
-				l.add(cs[i]);
+			SSLSocket socket = null;
+			try {
+				socket = (SSLSocket)defaultContext.getSocketFactory().createSocket();
+				String[] cs = socket.getSupportedCipherSuites();
+				for (int i = 0; i < cs.length; i++) {
+					l.add(cs[i]);
+				}
+			}finally {
+				try {
+					if(socket!=null) {
+						socket.close();
+					}
+				}catch(Throwable t) {
+					// ignore
+				}
 			}
 			return l;
 		}catch(Exception e){
@@ -791,15 +835,25 @@ public class SSLUtilities {
 			
             SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
             
-            SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(host, port);
-    		sslSocket.setSoTimeout(10000);
-    		sslSocket.setWantClientAuth(false);
-    		try {
-    			sslSocket.startHandshake();
-    			sslSocket.close();
-    		}catch(Throwable t) {
-    			// ignore
-    		}
+            SSLSocket sslSocket = null;
+			try {
+				sslSocket = (SSLSocket) sslSocketFactory.createSocket(host, port);
+	    		sslSocket.setSoTimeout(10000);
+	    		sslSocket.setWantClientAuth(false);
+	    		try {
+	    			sslSocket.startHandshake();
+	    		}catch(Throwable t) {
+	    			// ignore
+	    		}
+			}finally {
+				try {
+					if(sslSocket!=null) {
+						sslSocket.close();
+					}
+				}catch(Throwable t) {
+					// ignore
+				}
+			}
     		//Certificate [] certs = sslSocket.getSession().getPeerCertificates();
     		Certificate [] certs = tm.getPeerCertificates();
     		if(certs == null || certs.length<=0) {
@@ -834,7 +888,11 @@ public class SSLUtilities {
 				req = ((WrappedHttpServletRequest)reqParam).httpServletRequest;
 			}
 			
-			if("io.undertow.servlet.spec.HttpServletRequestImpl".equals(req.getClass().getName())) {
+			String undertow = "io.undertow.servlet.spec.HttpServletRequestImpl";
+			String actual = req.getClass().getName() + "";
+			boolean isUndertow = undertow.equals(actual);
+			
+			if(isUndertow) {
 				
 				// io/undertow/server/HttpServerExchange.java
 				Method mExchange = req.getClass().getMethod("getExchange");

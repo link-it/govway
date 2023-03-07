@@ -59,6 +59,14 @@ components:
       allOf:
         - $ref: '#/components/schemas/TransazioneExtDettaglioRichiestaBase'
         - $ref: '#/components/schemas/TransazioneExtDettaglioMessaggio'
+        - type: object
+          properties:
+             data_ricezione_acquisita:
+                type: string
+                format: date-time
+             data_consegna_effettuata:
+                type: string
+                format: date-time
 
     # La versione Base viene utilizzata come 'item' nell'interfaccia govwayMonitor rs
     TransazioneExtDettaglioRispostaBase:
@@ -75,6 +83,12 @@ components:
         - $ref: 'govway_trace.yaml#/components/schemas/TransazioneDettaglioRispostaErrore'
         - type: object
           properties:
+            data_ricezione_acquisita:
+                type: string
+                format: date-time
+            data_consegna_effettuata:
+                type: string
+                format: date-time
             fault_ricezione_formato:
               $ref: '#/components/schemas/TransazioneMessaggioFormatoEnum'
             fault_consegna_formato:

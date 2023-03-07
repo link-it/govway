@@ -66,7 +66,7 @@ public class Resource {
 		}
 		return identificativoPorta.getCodicePorta()+"_"+moduloFunzionale+"_"+
 				UUIDUtilsGenerator.newUUID();
-				// Inefficente: UniqueIDGenerator.getUniqueID();
+				// Inefficiente: UniqueIDGenerator.getUniqueID();
 	}
 	
 	/**

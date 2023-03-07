@@ -337,10 +337,14 @@ public class WSDLUtilities {
 				writeWsdlTo(wsdl, fout, prettyPrint);
 			}finally{
 				try{
-					fout.flush();
+					if(fout!=null) {
+						fout.flush();
+					}
 				}catch(Exception eClose){}
 				try{
-					fout.close();
+					if(fout!=null) {
+						fout.close();
+					}
 				}catch(Exception eClose){
 					// close
 				}

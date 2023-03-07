@@ -63,7 +63,10 @@ public class StickyCookieConfig  {
 						throw new BehaviourException("Formato cookie fornito non valido (cookie:'"+cookie+"' part:'"+v+"' error:'= non trovato'); il formato atteso è '"+formato+"'");
 					}
 					String [] internalSplit = v.split("=");
-					if(internalSplit==null || internalSplit.length!=2) {
+					if(internalSplit==null) {
+						throw new BehaviourException("Formato cookie fornito non valido (cookie:'"+cookie+"' part:'"+v+"' error:'struttura non valida (split null)'); il formato atteso è '"+formato+"'");
+					}
+					if(internalSplit.length!=2) {
 						throw new BehaviourException("Formato cookie fornito non valido (cookie:'"+cookie+"' part:'"+v+"' error:'struttura non valida (split:"+internalSplit.length+")'); il formato atteso è '"+formato+"'");
 					}
 					if("domain".equals(internalSplit[0].trim())) {

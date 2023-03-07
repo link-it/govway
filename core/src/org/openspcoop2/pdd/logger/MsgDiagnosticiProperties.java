@@ -606,7 +606,9 @@ public class MsgDiagnosticiProperties {
 						String valore = msgDiagnostici.getProperty(key);
 						try{
 							Integer v = Integer.parseInt(valore);
-							v.toString();
+							if(v.toString()!=null) {
+								// ignore
+							}
 							//tmp_livelliMsgDiagnosticiPersonalizzati.put(chiave, v);
 							tmp_livelliMsgDiagnosticiPersonalizzati.put(chiave, valore);
 							//System.out.println("ADD LIVELLO ["+chiave+"] ["+v+"]");
@@ -897,6 +899,8 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"autenticazioneApplicativoTokenEffettuata.identificazioneFallita",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"autenticazioneApplicativoTokenFallita",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"protocolli.tipoSoggetto.applicativoToken.unsupported",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"letturaPayloadRichiesta.completata",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"letturaPayloadRichiesta.fallita",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioFallita",
@@ -975,6 +979,12 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneRestProblem",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"headerIntegrazione.creazioneFallita",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneRisposta.firstAccessRequestStream",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"letturaPayloadRisposta.completata",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"letturaPayloadRisposta.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"negoziazioneToken.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"negoziazioneToken.completata",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"negoziazioneToken.inCache",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"ricezioneMessaggio",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"ricezioneMessaggioErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"autorizzazioneBusteInCorso",
@@ -1127,6 +1137,8 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"autenticazioneApplicativoTokenEffettuata.identificazioneFallita",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"autenticazioneApplicativoTokenFallita",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"protocolli.tipoSoggetto.applicativoToken.unsupported",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"letturaPayloadRichiesta.completata",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"letturaPayloadRichiesta.fallita",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBustaErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBusta.eccezioniNonGravi",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneNonRiuscita",
@@ -1238,6 +1250,12 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"trasformazione.processamentoNotificaInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"trasformazione.processamentoNotificaEffettuato",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"trasformazione.processamentoNotificaInErrore",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"ricezioneRisposta.firstAccessRequestStream",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"letturaPayloadRisposta.completata",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"letturaPayloadRisposta.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"negoziazioneToken.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"negoziazioneToken.completata",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"negoziazioneToken.inCache",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"logInvocazioneOperazione",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"autenticazioneNonImpostata",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"servizioApplicativo.identificazioneTramiteCredenziali",
@@ -1263,6 +1281,14 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.registrazioneNonRiuscita.openspcoopAppender",
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"errore.bloccoServizi",
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.errore.bloccoServizi",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.richiestaIngresso.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.richiestaIngresso.completato",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.richiestaUscita.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.richiestaUscita.completato",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.rispostaIngresso.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.rispostaIngresso.completato",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.rispostaUscita.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.rispostaUscita.completato",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"avvioInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"avvioEffettuato",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"timerGiaAvviato",

@@ -35,6 +35,13 @@ function lineWrap(){
    whenReady();
 };
 
+function secureRandomShCore(){
+	const crypto = window.crypto || window.msCrypto;
+	var array = new Uint32Array(1);
+	crypto.getRandomValues(array); // Compliant for security-sensitive use cases
+	return array[0];
+};
+
 function checkWidth(xmlPnl,bodyWrapperPanel)
 {
 	
@@ -583,7 +590,7 @@ function indexOf(array, searchElement, fromIndex)
  */
 function guid(prefix)
 {
-	return (prefix || '') + Math.round(Math.random() * 1000000).toString();
+	return (prefix || '') + Math.round(secureRandomShCore() * 1000000).toString();
 };
 
 /**
@@ -756,7 +763,10 @@ function eachLine(str, callback)
  */
 function trimFirstAndLastLines(str)
 {
-	return str.replace(/^[ ]*[\n]+|[\n]*[ ]*$/g, '');
+	//return str.replace(/^[ ]*[\n]+|[\n]*[ ]*$/g, '');
+	var tmp = str.replace(/^[ ]*[\n]+/g, '');
+	tmp = tmp.replace(/[\n]*[ ]*$/g, '');
+	return tmp;
 };
 
 /**
@@ -794,9 +804,11 @@ function parseParams(str)
 
 	while ((match = regex.exec(str)) != null) 
 	{
-		var value = match.value
-			.replace(/^['"]|['"]$/g, '') // strip quotes from end of strings
-			;
+		//var value = match.value
+		//	.replace(/^['"]|['"]$/g, '') // strip quotes from end of strings
+		//	;
+		var value = match.value.replace(/^['"]/g, '');
+		value = value.replace(/['"]$/g, '');
 		
 		// try to parse array value
 		if (value != null && arrayRegex.test(value))
@@ -971,7 +983,10 @@ function fixInputString(str)
  */
 function trim(str)
 {
-	return str.replace(/^\s+|\s+$/g, '');
+	//return str.replace(/^\s+|\s+$/g, '');
+	var tmp = str.replace(/^\s+/g, '');
+	tmp = tmp.replace(/\s+$/g, '');
+	return tmp;
 };
 
 /**
@@ -1356,7 +1371,7 @@ sh.Highlighter.prototype = {
 		
 		if (regexList != null)
 			for (var i = 0; i < regexList.length; i++) 
-				// BUG: length returns len+1 for array if methods added to prototype chain (oising@gmail.com)
+				// length returns len+1 for array if methods added to prototype chain (oising@gmail.com)
 				if (typeof (regexList[i]) == "object")
 					result = result.concat(getMatches(code, regexList[i]));
 		
@@ -1728,10 +1743,13 @@ sh.Highlighter.prototype = {
 	 */
 	getKeywords: function(str)
 	{
-		str = str
-			.replace(/^\s+|\s+$/g, '')
-			.replace(/\s+/g, '|')
-			;
+		//str = str
+		//	.replace(/^\s+|\s+$/g, '')
+		//	.replace(/\s+/g, '|')
+		//	;
+		str = str.replace(/^\s+/g, '');
+	    str = str.replace(/\s+$/g, '');
+	    str = str.replace(/\s+/g, '|');
 		
 		return '\\b(?:' + str + ')\\b';
 	},
@@ -1759,4 +1777,6 @@ return sh;
 }(); // end of anonymous function
 
 // CommonJS
-typeof(exports) != 'undefined' ? exports.SyntaxHighlighter = SyntaxHighlighter : null;
+if( typeof(exports) != 'undefined' ){
+   exports.SyntaxHighlighter = SyntaxHighlighter;
+}

@@ -58,6 +58,7 @@ import java.util.List;
 
 public class SpecificaSicurezza extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SpecificaSicurezza() {
+    super();
   }
 
   public void addDocumentoSicurezza(DocumentoSicurezza documentoSicurezza) {

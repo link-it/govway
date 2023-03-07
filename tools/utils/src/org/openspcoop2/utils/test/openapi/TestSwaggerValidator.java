@@ -57,7 +57,7 @@ public class TestSwaggerValidator {
 	public void testSwaggerValidator(String tipoInterfaccia, OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
-		org.openspcoop2.utils.openapi.validator.TestSwagger2.main(new String[] {tipoInterfaccia, openAPILibrary.toString(), mergeSpec+""});
+		org.openspcoop2.utils.openapi.validator.test.Swagger2Test.main(new String[] {tipoInterfaccia, openAPILibrary.toString(), mergeSpec+""});
 		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
 		
 	}

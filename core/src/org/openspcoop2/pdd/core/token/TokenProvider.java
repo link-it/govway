@@ -27,13 +27,19 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.jose.JOSECostanti;
@@ -169,12 +175,20 @@ public class TokenProvider implements IProvider {
 				throw new ProviderValidationException("È stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione JWT, sconosciuto");
 			}
 			if(TipologiaClaims.CUSTOM.name().equals(parserType)) {
-				String parserTypeCustomClass = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME);
-				if(parserTypeCustomClass==null || "".equals(parserTypeCustomClass)) {
-					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims da utilizzare dopo la validazione JWT");
-				}
-				if(parserTypeCustomClass.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione JWT");
+				String pluginType = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE);
+				if(pluginType!=null && StringUtils.isNotEmpty(pluginType) && CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginType)) {
+					String className = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME);
+					if(CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+						throw new ProviderValidationException("Deve essere selezionato un plugin per il parser dei claims del token JWT");
+					}
+					else {
+						if(className==null || "".equals(className)) {
+							throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims da utilizzare dopo la validazione JWT");
+						}
+						if(className.contains(" ")) {
+							throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione JWT");
+						}
+					}
 				}
 			}
 		}
@@ -290,9 +304,9 @@ public class TokenProvider implements IProvider {
 					if(contentType==null || "".equals(contentType)) {
 						throw new ProviderValidationException("Non è stato indicato il ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di Introspection");
 					}
-					if(contentType.contains(" ")) {
-						throw new ProviderValidationException("Non indicare spazi nel ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di Introspection");
-					}
+//					if(contentType.contains(" ")) {
+//						throw new ProviderValidationException("Non indicare spazi nel ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di Introspection");
+//					}
 				}
 			}
 			
@@ -310,12 +324,20 @@ public class TokenProvider implements IProvider {
 				throw new ProviderValidationException("È stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione del servizio di Introspection, sconosciuto");
 			}
 			if(TipologiaClaims.CUSTOM.name().equals(parserType)) {
-				String parserTypeCustomClass = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME);
-				if(parserTypeCustomClass==null || "".equals(parserTypeCustomClass)) {
-					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims da utilizzare dopo la validazione del servizio di Introspection");
-				}
-				if(parserTypeCustomClass.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione del servizio di Introspection");
+				String pluginType = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE);
+				if(pluginType!=null && StringUtils.isNotEmpty(pluginType) && CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginType)) {
+					String className = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME);
+					if(CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+						throw new ProviderValidationException("Deve essere selezionato un plugin per il parser dei claims della risposta del servizio Introspection");
+					}
+					else {
+						if(className==null || "".equals(className)) {
+							throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims da utilizzare dopo la validazione del servizio di Introspection");
+						}
+						if(className.contains(" ")) {
+							throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione del servizio di Introspection");
+						}
+					}
 				}
 			}
 			
@@ -443,9 +465,9 @@ public class TokenProvider implements IProvider {
 					if(contentType==null || "".equals(contentType)) {
 						throw new ProviderValidationException("Non è stato indicato il ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di UserInfo");
 					}
-					if(contentType.contains(" ")) {
-						throw new ProviderValidationException("Non indicare spazi nel ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di UserInfo");
-					}
+//					if(contentType.contains(" ")) {
+//						throw new ProviderValidationException("Non indicare spazi nel ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di UserInfo");
+//					}
 				}
 			}
 			
@@ -463,12 +485,20 @@ public class TokenProvider implements IProvider {
 				throw new ProviderValidationException("È stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione del servizio di UserInfo, sconosciuto");
 			}
 			if(TipologiaClaims.CUSTOM.name().equals(parserType)) {
-				String parserTypeCustomClass = pDefault.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME);
-				if(parserTypeCustomClass==null || "".equals(parserTypeCustomClass)) {
-					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims da utilizzare dopo la validazione del servizio di UserInfo");
-				}
-				if(parserTypeCustomClass.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione del servizio di UserInfo");
+				String pluginType = pDefault.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE);
+				if(pluginType!=null && StringUtils.isNotEmpty(pluginType) && CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginType)) {
+					String className = pDefault.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME);
+					if(CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+						throw new ProviderValidationException("Deve essere selezionato un plugin per il parser dei claims della risposta del servizio UserInfo");
+					}
+					else {
+						if(className==null || "".equals(className)) {
+							throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims da utilizzare dopo la validazione del servizio di UserInfo");
+						}
+						if(className.contains(" ")) {
+							throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione del servizio di UserInfo");
+						}
+					}
 				}
 			}
 			
@@ -718,6 +748,10 @@ public class TokenProvider implements IProvider {
 
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
+		return this.getValues(id, null);
+	}
+	@Override
+	public List<String> getValues(String id, ExternalResources externalResources) throws ProviderException{
 		if(Costanti.ID_INTROSPECTION_HTTP_METHOD.equals(id) ||
 				Costanti.ID_USER_INFO_HTTP_METHOD.equals(id)) {
 			List<String> methodsList = new ArrayList<>();
@@ -766,11 +800,22 @@ public class TokenProvider implements IProvider {
 		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getValues();
 		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)
+				||
+				Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)
+				||
+				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.TOKEN_VALIDAZIONE);
+		}
 		return null;
 	}
 
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
+		return this.getLabels(id, null);
+	}
+	@Override
+	public List<String> getLabels(String id, ExternalResources externalResources) throws ProviderException{
 		if(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id) ||
 				JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id) ||
 				Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
@@ -800,6 +845,13 @@ public class TokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getLabels();
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)
+				||
+				Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)
+				||
+				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.TOKEN_VALIDAZIONE);
 		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
@@ -869,6 +921,10 @@ public class TokenProvider implements IProvider {
 	
 	@Override
 	public String getDefault(String id) throws ProviderException {
+		return getDefault(id, null);
+	}
+	@Override
+	public String getDefault(String id, ExternalResources externalResources) throws ProviderException {
 		if(Costanti.ID_INTROSPECTION_HTTP_METHOD.equals(id) ||
 				Costanti.ID_USER_INFO_HTTP_METHOD.equals(id)) {
 			return HttpRequestMethod.GET.name();
@@ -897,6 +953,10 @@ public class TokenProvider implements IProvider {
 
 	@Override
 	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		return dynamicUpdate(items, mapNameValue, item, actualValue, null);
+	}
+	@Override
+	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
 	
 		if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_FILE.equals(item.getName()) ||
@@ -974,9 +1034,47 @@ public class TokenProvider implements IProvider {
 				item.setType(ItemType.HIDDEN);
 			}
 		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())
+				||
+				Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())
+				||
+				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())) {
+			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.TOKEN_VALIDAZIONE, item, actualValue);
+		}
+		if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName()) ||
+				Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName()) ||
+				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())) {
+			String idChoice = null;
+			if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())){
+				idChoice = Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE;
+			}
+			else if(Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())){
+				idChoice = Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CHOICE;
+			}
+			else {
+				idChoice = Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE;
+			}
+			return TokenUtilities.dynamicUpdateTokenPluginClassName(externalResources, TipoPlugin.TOKEN_VALIDAZIONE, 
+					items, mapNameValue, item, 
+					idChoice, actualValue);		
+		}
 		
 		return actualValue;
 	}
 	
-	
+
+	@Override
+	public ProviderInfo getProviderInfo(String id) throws ProviderException{
+		if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(id) ||
+				Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(id) ||
+				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA);
+			pInfo.setListBody(new ArrayList<>());
+			pInfo.getListBody().add(ITokenParser.class.getName());
+			return pInfo;
+		}
+		
+		return null;
+	}
 }

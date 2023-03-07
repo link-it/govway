@@ -51,6 +51,7 @@ import java.io.Serializable;
 
 public class EccezioneBusta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public EccezioneBusta() {
+    super();
   }
 
   public java.lang.String getCodiceEccezione() {

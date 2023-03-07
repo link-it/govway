@@ -36,6 +36,7 @@ import org.openspcoop2.monitor.sdk.constants.SearchType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.web.monitor.allarmi.dao.AllarmiRuntimeException;
 import org.openspcoop2.web.monitor.allarmi.mbean.AllarmiBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -187,7 +188,7 @@ public class AllarmiContext implements org.openspcoop2.monitor.sdk.condition.Ala
 	public Map<String, Parameter<?>> getParameters() {
 
 		List<Parameter<?>> parameters = this.allarmiBean.getParameters();
-		Map<String, Parameter<?>> map  =  new HashMap<String, Parameter<?>>();
+		Map<String, Parameter<?>> map  =  new HashMap<>();
 		if(parameters != null){
 			for (Parameter<?> param : parameters) {
 				map.put(param.getId(), param);
@@ -200,10 +201,10 @@ public class AllarmiContext implements org.openspcoop2.monitor.sdk.condition.Ala
 
 	@Override
 	public TipiDatabase getDatabaseType() {
-		return _getTipoDatabase(ProjectInfo.getInstance());
+		return getTipoDatabase(ProjectInfo.getInstance());
 	}
 
-	public TipiDatabase _getTipoDatabase(IProjectInfo projectInfo) {
+	public TipiDatabase getTipoDatabase(IProjectInfo projectInfo) {
 		if(this.tipoDatabase == null){
 			try {
 				PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(getLogger());
@@ -225,7 +226,7 @@ public class AllarmiContext implements org.openspcoop2.monitor.sdk.condition.Ala
 		try{
 			return DAOFactory.getInstance(LoggerManager.getPddMonitorSqlLogger());
 		}catch(Exception e){
-			throw new RuntimeException(e.getMessage(), e);
+			throw new AllarmiRuntimeException(e.getMessage(), e);
 		}
 	}
 	

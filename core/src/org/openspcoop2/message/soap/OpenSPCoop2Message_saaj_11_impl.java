@@ -115,7 +115,7 @@ public class OpenSPCoop2Message_saaj_11_impl extends AbstractOpenSPCoop2Message_
 				return cType.toString();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			try{
 				String ct = getMessage1_1_FIX_Impl().getContentType();
 				if(includeContentTypeParameters) {

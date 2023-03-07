@@ -48,7 +48,7 @@ public class TestOpenApiReader {
 	public void testOpenApiReader(String tipoInterfaccia) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+") ...");
-		org.openspcoop2.utils.openapi.TestOpenApi3.main(new String[] {tipoInterfaccia});
+		org.openspcoop2.utils.openapi.test.TestOpenApi3.main(new String[] {tipoInterfaccia});
 		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+") ok");
 		
 	}
@@ -57,7 +57,7 @@ public class TestOpenApiReader {
 	public void testOpenApiReaderIndentazione() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (verificaIndentazione) ...");
-		org.openspcoop2.utils.openapi.TestIndentazione.test();
+		org.openspcoop2.utils.openapi.test.TestIndentazione.test();
 		TestLogger.info("Run test '"+ID_TEST+"' (verificaIndentazione) ok");
 		
 	}

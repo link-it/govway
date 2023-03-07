@@ -82,7 +82,7 @@ String randomNonce = UUID.randomUUID().toString().replace("-", "");
 request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, randomNonce);
 response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(generalHelper.getCore().getCspHeaderValue(), randomNonce, randomNonce));
 %>
-<html>
+<html lang="it">
 <head>
 <meta charset="UTF-8">
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
@@ -289,14 +289,14 @@ $(document).ready(function(){
 			<tr class="trPageFooter">
 				<td colspan="2" class="tdPageFooter">
 					<div>
-						<a href="<%= gd.getLinkFoot() %>" target="_blank">
-							<img src="../images/tema_link/logo_link_footer.png" />
+						<a href="<%= gd.getLinkFoot() %>" target="_blank" rel="noopener">
+							<img src="../images/tema_link/logo_link_footer.png" alt="link.it" />
 						</a>
 					</div>
 					<div id="ajax_status_div">
 						<span class="rich-mpnl-mask-div mainStatusStartStyle"></span>
 						<span class="mainStatusStartStyleInner">
-							<img src="../images/tema_link/ajax_status.gif">
+							<img src="../images/tema_link/ajax_status.gif" alt="loading" />
 						</span>
 					</div>
 				</td>

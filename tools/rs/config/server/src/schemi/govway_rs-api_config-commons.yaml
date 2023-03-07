@@ -1951,14 +1951,48 @@ components:
       properties:
         modi:
           oneOf:
+          - $ref: '#/components/schemas/FruizioneModIOAuth'
           - $ref: '#/components/schemas/FruizioneModISoap'
           - $ref: '#/components/schemas/FruizioneModIRest'
           discriminator:
             propertyName: protocollo
             mapping:
+              'oauth': '#/components/schemas/FruizioneModIOAuth'
               'soap': '#/components/schemas/FruizioneModISoap'
               'rest': '#/components/schemas/FruizioneModIRest' 
       
+    # ModI Fruizione OAUTH
+    BaseFruizioneModIOAuth:
+      type: object
+      properties:
+        identificativo:
+          type: string
+          maxLength: 2800
+        kid:
+          type: string
+          maxLength: 4000
+
+    FruizioneModIOAuth:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/BaseFruizioneModIOAuth'
+          - type: object
+            required:
+              - protocollo
+            properties:
+              protocollo:
+                 $ref: '#/components/schemas/TipoConfigurazioneFruizioneEnum'
+              keystore:
+                type: object
+                oneOf:
+                  - $ref: '#/components/schemas/ModIKeyStoreDefault'
+                  - $ref: '#/components/schemas/ModIKeyStoreRidefinito'
+                discriminator:
+                  propertyName: modalita
+                  mapping:
+                    'default': '#/components/schemas/ModIKeyStoreDefault'
+                    'ridefinito': '#/components/schemas/ModIKeyStoreRidefinito'
+
     # ModI Fruizione SOAP
     FruizioneModISoap:
       type: object      
@@ -1968,7 +2002,7 @@ components:
         - risposta
       properties:
         protocollo:
-           $ref: '#/components/schemas/TipoApiEnum'
+           $ref: '#/components/schemas/TipoConfigurazioneFruizioneEnum'
         richiesta:
            $ref: '#/components/schemas/FruizioneModISoapRichiesta'
         risposta:
@@ -1980,6 +2014,8 @@ components:
       properties:
         sicurezza_messaggio:
            $ref: '#/components/schemas/FruizioneModISoapRichiestaSicurezzaMessaggio'
+        oauth:
+           $ref: '#/components/schemas/BaseFruizioneModIOAuth'
     FruizioneModISoapRichiestaSicurezzaMessaggio:
       type: object      
       properties:
@@ -1996,6 +2032,16 @@ components:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapRiferimentoX509'
         certificate_chain:
           type: boolean
+        keystore:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModIKeyStoreDefault'
+            - $ref: '#/components/schemas/ModIKeyStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModIKeyStoreDefault'
+              'ridefinito': '#/components/schemas/ModIKeyStoreRidefinito'
         includi_signature_token:
           type: boolean
         time_to_live:
@@ -2062,7 +2108,7 @@ components:
         - risposta
       properties:
         protocollo:
-           $ref: '#/components/schemas/TipoApiEnum'
+           $ref: '#/components/schemas/TipoConfigurazioneFruizioneEnum'
         richiesta:
            $ref: '#/components/schemas/FruizioneModIRestRichiesta'
         risposta:
@@ -2074,6 +2120,8 @@ components:
       properties:
         sicurezza_messaggio:
            $ref: '#/components/schemas/FruizioneModIRestRichiestaSicurezzaMessaggio'
+        oauth:
+           $ref: '#/components/schemas/BaseFruizioneModIOAuth'
     FruizioneModIRestRichiestaSicurezzaMessaggio:
       type: object      
       required:
@@ -2094,6 +2142,16 @@ components:
           maxItems: 3
         certificate_chain:
           type: boolean
+        keystore:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModIKeyStoreDefault'
+            - $ref: '#/components/schemas/ModIKeyStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModIKeyStoreDefault'
+              'ridefinito': '#/components/schemas/ModIKeyStoreRidefinito'
         time_to_live:
           type: integer
           format: int32
@@ -3311,6 +3369,10 @@ components:
     TipoApiEnum:
       type: string
       enum: ['soap', 'rest']
+      example: 'rest'
+    TipoConfigurazioneFruizioneEnum:
+      type: string
+      enum: ['oauth', 'soap', 'rest']
       example: 'rest'
     StatoApiEnum:
       type: string

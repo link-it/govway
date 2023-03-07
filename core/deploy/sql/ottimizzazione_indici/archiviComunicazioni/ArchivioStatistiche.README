@@ -1,6 +1,6 @@
 I dati delle statistiche  sono inizialmente scremati grazie alla data di ingresso.
 Inizialmente si pensava che bastava quindi un indice con la sola data di ingresso per avere prestazioni accettabili.
-Si è invece ravvisato che è utile usare gli indici composti, anche perchè scorrere un indice (anche scorrerlo tutto) è comunque molto più efficente che usare una tabella. per ulteriori dettagli sulla motivazione vedere i commenti per quanto riguarda gli indici sulle transazioni.
+Si è invece ravvisato che è utile usare gli indici composti, anche perchè scorrere un indice (anche scorrerlo tutto) è comunque molto più efficiente che usare una tabella. per ulteriori dettagli sulla motivazione vedere i commenti per quanto riguarda gli indici sulle transazioni.
 		
 Per le statistiche vengono forniti tre possibili indici 
 (scegliere solamente uno delle tre possibilità a seconda di quanto il DBA o il DB stesso permette di avere lungo un indice)

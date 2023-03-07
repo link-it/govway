@@ -21,6 +21,7 @@
 package org.openspcoop2.protocol.basic.builder;
 
 import java.io.ByteArrayInputStream;
+import java.security.SecureRandom;
 import java.util.Date;
 
 import javax.xml.namespace.QName;
@@ -100,7 +101,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {
@@ -1213,7 +1214,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 						new org.openspcoop2.protocol.sdk.Eccezione(erroreCooperazione,true,erroreApplicativo.getDomain().getRole().getValue(),this.protocolFactory);
 				if(erroreApplicativo.getException().getCode().getSubtype()!=null){
 					SubCodiceErrore sub = new SubCodiceErrore();
-					sub.setSubCodice(erroreApplicativo.getException().getCode().getSubtype().intValue());
+					sub.setSubCodice(erroreApplicativo.getException().getCode().getSubtype());
 					eccezioneProtocollo.setSubCodiceEccezione(sub);
 				}
 				((EccezioneProtocolloBuilderParameters)eccezione).setEccezioneProtocollo(eccezioneProtocollo);

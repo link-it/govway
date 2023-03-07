@@ -58,6 +58,7 @@ import java.util.List;
 
 public class Legs extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Legs() {
+    super();
   }
 
   public void addLeg(Leg leg) {

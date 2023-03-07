@@ -50,6 +50,7 @@ import java.io.Serializable;
 
 public class StateTypeNormal extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public StateTypeNormal() {
+    super();
   }
 
   public java.lang.String getName() {

@@ -663,14 +663,15 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 							idTransazione); // anche qua vi e' un try catch con Throwable
 				}
 				
-				if(he!=null) {
-					throw he;
-				}
-				else if(exitTransactionAfterRateLimitingRemoveThread){
-					// La risorsa viene rilasciata nel finally
-					//this.releaseResources(transaction, idTransazione, context);
-					return;
-				}
+			}
+			
+			if(he!=null) {
+				throw he;
+			}
+			else if(exitTransactionAfterRateLimitingRemoveThread){
+				// La risorsa viene rilasciata nel finally
+				//this.releaseResources(transaction, idTransazione, context);
+				return;
 			}
 			
 			
@@ -1078,8 +1079,11 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			} catch (SQLException sqlEx) {
 				errore = true;
 				try{
-					if(autoCommit==false)
-						connection.rollback();
+					if(autoCommit==false) {
+						if(connection!=null) {
+							connection.rollback();
+						}
+					}
 				}catch(Exception eRollback){}
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura della transazione sul database (sql): " + sqlEx.getLocalizedMessage();
@@ -1088,8 +1092,11 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			}  catch (Throwable e) {
 				errore = true;
 				try{
-					if(autoCommit==false)
-						connection.rollback();
+					if(autoCommit==false) {
+						if(connection!=null) {
+							connection.rollback();
+						}
+					}
 				}catch(Exception eRollback){}
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura della transazione sul database: " + e.getLocalizedMessage();
@@ -1099,8 +1106,11 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				
 				// Ripristino Autocomit
 				try {
-					if(autoCommit==false)
-						connection.setAutoCommit(true);
+					if(autoCommit==false) {
+						if(connection!=null) {
+							connection.setAutoCommit(true);
+						}
+					}
 				} catch (Exception e) {}
 									
 				// Chiusura della connessione al database

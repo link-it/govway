@@ -39,7 +39,7 @@ public class TestNegoziazioneTokenParser {
 	public void testNegoziazioneTokenParser() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.pdd.core.token.parser.TestBasicNegoziazioneTokenParser.test();
+		org.openspcoop2.pdd.core.token.parser.test.BasicNegoziazioneTokenParserTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

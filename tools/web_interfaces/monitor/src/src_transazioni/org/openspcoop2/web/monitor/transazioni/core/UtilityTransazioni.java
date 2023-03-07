@@ -322,9 +322,11 @@ public class UtilityTransazioni {
 	public static void writeManifestTransazione(TransazioneBean t, OutputStream out)
 			throws Exception {
 		PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(LoggerManager.getPddMonitorCoreLogger());
-		UtilityTransazioni.writeManifestTransazione(t, out, monitorProperties.isAttivoTransazioniDataAccettazione());
+		UtilityTransazioni.writeManifestTransazione(t, out, monitorProperties.isAttivoTransazioniDataAccettazione(), monitorProperties.isDataUscitaRispostaUseDateAfterResponseSent(),
+				monitorProperties.isTransazioniLatenzaPortaEnabled());
 	}
-	public static void writeManifestTransazione(TransazioneBean t, OutputStream out, boolean isAttivoTransazioniDataAccettazione)
+	public static void writeManifestTransazione(TransazioneBean t, OutputStream out, boolean isAttivoTransazioniDataAccettazione, boolean dataUscitaRispostaValorizzataDopoSpedizioneRisposta,
+			boolean isTransazioniLatenzaPortaEnabled)
 			throws Exception {
 		/*
 		 * <transazione xmlns="http://www.spcoopit.it/PdS/Transaction/Manifest">
@@ -462,9 +464,17 @@ public class UtilityTransazioni {
 				if (t.getDataIngressoRichiesta() != null) {
 					tempi.setRichiestaIngresso(XMLUtils.getInstance().toGregorianCalendar(t.getDataIngressoRichiesta()));
 				}
+				
+				if (t.getDataIngressoRichiestaStream() != null) {
+					tempi.setRichiestaIngressoAcquisita(XMLUtils.getInstance().toGregorianCalendar(t.getDataIngressoRichiestaStream()));
+				}
 	
 				if (t.getDataUscitaRichiesta() != null) {
 					tempi.setRichiestaUscita(XMLUtils.getInstance().toGregorianCalendar(t.getDataUscitaRichiesta()));
+				}
+				
+				if (t.getDataUscitaRichiestaStream() != null) {
+					tempi.setRichiestaUscitaConsegnata(XMLUtils.getInstance().toGregorianCalendar(t.getDataUscitaRichiestaStream()));
 				}
 	
 				if(isAttivoTransazioniDataAccettazione){
@@ -476,9 +486,28 @@ public class UtilityTransazioni {
 				if (t.getDataIngressoRisposta() != null) {
 					tempi.setRispostaIngresso(XMLUtils.getInstance().toGregorianCalendar(t.getDataIngressoRisposta()));
 				}
+				
+				if (t.getDataIngressoRispostaStream() != null) {
+					tempi.setRispostaIngressoAcquisita(XMLUtils.getInstance().toGregorianCalendar(t.getDataIngressoRispostaStream()));
+				}
 	
-				if (t.getDataUscitaRisposta() != null) {
-					tempi.setRispostaUscita(XMLUtils.getInstance().toGregorianCalendar(t.getDataUscitaRisposta()));
+				if(dataUscitaRispostaValorizzataDopoSpedizioneRisposta) {
+					if (t.getDataUscitaRispostaStream() != null) {
+						tempi.setRispostaUscita(XMLUtils.getInstance().toGregorianCalendar(t.getDataUscitaRispostaStream()));
+					}
+					
+					if (t.getDataUscitaRisposta() != null) {
+						tempi.setRispostaUscitaConsegnata(XMLUtils.getInstance().toGregorianCalendar(t.getDataUscitaRisposta()));
+					}
+				}
+				else {
+					if (t.getDataUscitaRisposta() != null) {
+						tempi.setRispostaUscita(XMLUtils.getInstance().toGregorianCalendar(t.getDataUscitaRisposta()));
+					}
+					
+					if (t.getDataUscitaRispostaStream() != null) {
+						tempi.setRispostaUscitaConsegnata(XMLUtils.getInstance().toGregorianCalendar(t.getDataUscitaRispostaStream()));
+					}
 				}
 				
 				if(t.getDataUscitaRisposta()!=null && t.getDataIngressoRichiesta()!=null){
@@ -492,7 +521,7 @@ public class UtilityTransazioni {
 						tempi.setLatenzaServizio(latenza);
 				}
 				
-				if(tempi.getLatenzaTotale()!=null && tempi.getLatenzaServizio()!=null){
+				if(isTransazioniLatenzaPortaEnabled && tempi.getLatenzaTotale()!=null && tempi.getLatenzaServizio()!=null){
 					long latenza = tempi.getLatenzaTotale()-tempi.getLatenzaServizio();
 					if(latenza>=0)
 						tempi.setLatenzaPorta(latenza);
@@ -1260,6 +1289,10 @@ public class UtilityTransazioni {
 				if (tAS.getDataUscitaRichiesta() != null) {
 					tempi.setRichiestaUscita(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataUscitaRichiesta()));
 				}
+				
+				if (tAS.getDataUscitaRichiestaStream() != null) {
+					tempi.setRichiestaUscitaConsegnata(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataUscitaRichiestaStream()));
+				}
 	
 				if(isAttivoTransazioniDataAccettazione){
 					if (tAS.getDataAccettazioneRisposta() != null) {
@@ -1269,6 +1302,10 @@ public class UtilityTransazioni {
 				
 				if (tAS.getDataIngressoRisposta() != null) {
 					tempi.setRispostaIngresso(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataIngressoRisposta()));
+				}
+				
+				if (tAS.getDataIngressoRispostaStream() != null) {
+					tempi.setRispostaIngressoAcquisita(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataIngressoRispostaStream()));
 				}
 	
 				if(tAS.getDataUscitaRichiesta()!=null && tAS.getDataIngressoRisposta()!=null){
@@ -1557,7 +1594,7 @@ public class UtilityTransazioni {
 		
 		org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Esito esito = new org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Esito();
 		Integer esitoNumber = null;
-		if(EsitoUtils.ALL_VALUE!=searchForm.getEsitoDettaglio()){
+		if(searchForm.getEsitoDettaglio()!=null && EsitoUtils.ALL_VALUE.intValue()!=searchForm.getEsitoDettaglio().intValue()){
 			esitoNumber = searchForm.getEsitoDettaglio();
 		}
 		else{

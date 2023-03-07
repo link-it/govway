@@ -4,9 +4,14 @@ Background:
 
 * call read('classpath:crud_commons.feature')
 
+* def api_petstore_oauth = read('api_modi_oauth.json')
+* eval randomize(api_petstore_oauth, ["nome"])
+* eval api_petstore_oauth.referente = soggettoDefault
+
 * def api_petstore_soap = read('api_modi_soap.json')
 * eval randomize(api_petstore_soap, ["nome"])
 * eval api_petstore_soap.referente = soggettoDefault
+
 * def query_param_profilo_modi = {'profilo': 'ModI'}
 
 * def api_petstore_rest = read('api_modi_rest.json')
@@ -18,6 +23,17 @@ Background:
 * eval api_petstore_rest_contemporaneita.referente = soggettoDefault
 
 * def header_firmare_default = read('api_modi_header_firmare_default.json')
+
+* def getExpectedOAUTH =
+"""
+function(modi) {
+var expected = modi;
+
+expected.keystore = expected.keystore != null ? expected.keystore : { "modalita" : "default" }
+
+return expected;
+} 
+"""
 
 * def getExpectedSOAP =
 """
@@ -54,6 +70,44 @@ expected.risposta.sicurezza_messaggio.verifica_audience = expected.risposta.sicu
 return expected;
 } 
 """
+
+
+@CreateFruizione_204_modi_OAUTH
+Scenario Outline: Fruizioni Creazione 204 OAUTH <nome>
+
+		* def erogatore = read('soggetto_erogatore.json')
+		* eval randomize (erogatore, ["nome", "credenziali.username"])
+		
+		* def fruizione_petstore = read('<nome>')
+		* eval fruizione_petstore.api_nome = api_petstore_oauth.nome
+		* eval fruizione_petstore.fruizione_nome = api_petstore_oauth.nome
+		* eval fruizione_petstore.api_versione = api_petstore_oauth.versione
+		* eval fruizione_petstore.erogatore = erogatore.nome
+		* eval fruizione_petstore.api_referente = api_petstore_oauth.referente
+		
+		* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
+		* def api_petstore_path = 'api/' + api_petstore_oauth.nome + '/' + api_petstore_oauth.versione
+
+    * call create ({ resourcePath: 'api', body: api_petstore_oauth, query_params: query_param_profilo_modi })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+		* def expected = getExpectedOAUTH(fruizione_petstore.modi)
+    * match response.modi == expected
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+
+Examples:
+|nome|
+|fruizione_modi_oauth.json|
+|fruizione_modi_oauth_keystore_default.json|
+|fruizione_modi_oauth_keystore_ridefinito.json|
+|fruizione_modi_oauth_keystore_ridefinito_archivio.json|
+|fruizione_modi_oauth_keystore_ridefinito_hsm.json|
+
+
 
 @CreateFruizione_204_modi_SOAP
 Scenario Outline: Fruizioni Creazione 204 SOAP <nome>
@@ -113,7 +167,11 @@ Examples:
 |fruizione_modi_soap_ttl_risposta.json|
 |fruizione_modi_soap_wsato_verifica_risposta.json|
 |fruizione_modi_soap_wsato_verifica_risposta_disabilitata.json|
-
+|fruizione_modi_soap_keystore_fruizione_default.json|
+|fruizione_modi_soap_keystore_fruizione_ridefinito.json|
+|fruizione_modi_soap_keystore_fruizione_ridefinito_archivio.json|
+|fruizione_modi_soap_keystore_fruizione_ridefinito_hsm.json|
+|fruizione_modi_soap_keystore_fruizione_dati_oauth.json|
 
 @CreateFruizione_204_modi_REST
 Scenario Outline: Fruizioni Creazione 204 REST <nome>
@@ -164,6 +222,11 @@ Examples:
 |fruizione_modi_rest_risposta_truststore_ridefinito_ocsp.json|
 |fruizione_modi_rest_audience_verifica_risposta.json|
 |fruizione_modi_rest_audience_verifica_risposta_disabilitata.json|
+|fruizione_modi_rest_keystore_fruizione_default.json|
+|fruizione_modi_rest_keystore_fruizione_ridefinito.json|
+|fruizione_modi_rest_keystore_fruizione_ridefinito_archivio.json|
+|fruizione_modi_rest_keystore_fruizione_ridefinito_hsm.json|
+|fruizione_modi_rest_keystore_fruizione_dati_oauth.json|
 
 
 @CreateFruizione_204_modi_REST_contemporaneita
@@ -227,6 +290,7 @@ Scenario Outline: Fruizioni Creazione 400 <nome>
 
 Examples:
 |nome|api|errore
+|fruizione_modi_oauth_token_non_esistente.json|api_modi_oauth.json|Policy indicata per l\'autenticazione basata su token, non esiste|
 |fruizione_modi_rest.json|api_modi_rest_no_sicurezza.json|Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata|
 |fruizione_modi_soap.json|api_modi_soap_no_sicurezza.json|Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata|
 |fruizione_modi_soap_iu_codice_ente.json|api_modi_soap_no_info_utente.json|Impossibile settare info utente|

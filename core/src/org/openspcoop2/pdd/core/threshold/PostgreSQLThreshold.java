@@ -122,27 +122,14 @@ public class PostgreSQLThreshold implements IThreshold {
 		Connection connection =null;
 		try{
 			if(datasource==null) {
-				try{
-					resource = dbManager.getResource(PostgreSQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), PostgreSQLThreshold.ID_MODULO,null);
-				}catch(Exception e){
-					throw new Exception("Impossibile ottenere una Risorsa dal DBManager",e);
-				}
-				if(resource==null)
-					throw new Exception("Risorsa is null");
-				if(resource.getResource() == null)
-					throw new Exception("Connessione is null");
+				resource = getConnection(datasource, dbManager);
 				connection = (Connection) resource.getResource();
 			}
 			else
 			{
-                Context c = new InitialContext();
-                DataSource ds= (DataSource)c.lookup(datasource);
-                c.close();	
-                connection = ds.getConnection();
+                connection = getConnection(datasource);
 			}
 
-			
-			
 			// controllo validita parametro
 			Threshold=Long.parseLong(valore.toString())*factor;
 			if(Threshold<0L)
@@ -171,16 +158,28 @@ public class PostgreSQLThreshold implements IThreshold {
 			throw new ThresholdException("PostgreSQLThreshold error: "+e.getMessage(),e);
 		}finally{
 			try {
-					if(rs!=null) rs.close();
-					if(s!=null) s.close();
-					rs=null;s=null;
-					if(datasource==null)
-						dbManager.releaseResource(PostgreSQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), PostgreSQLThreshold.ID_MODULO, resource);
-					else {
-						if ((connection != null) && (connection.isClosed()==false))
-							connection.close();
-					}
-			}catch(SQLException ex){}		
+				if(rs!=null) 
+					rs.close();
+			}catch(SQLException ex){
+				// ignore
+			}
+			try {
+				if(s!=null) 
+					s.close();
+			}catch(SQLException ex){
+				// ignore
+			}
+			rs=null;s=null;
+			try {
+				if(datasource==null)
+					dbManager.releaseResource(PostgreSQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), PostgreSQLThreshold.ID_MODULO, resource);
+				else {
+					if ((connection != null) && (connection.isClosed()==false))
+						connection.close();
+				}
+			}catch(SQLException ex){
+				// ignore
+			}		
 		}
 		
 		String prefix = "";
@@ -195,6 +194,26 @@ public class PostgreSQLThreshold implements IThreshold {
 		
 		return result;
 		
+	}
+	
+	private Resource getConnection(String datasource, DBManager dbManager) throws Exception {
+		Resource resource = null;
+		try{
+			resource = dbManager.getResource(PostgreSQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), PostgreSQLThreshold.ID_MODULO,null);
+		}catch(Exception e){
+			throw new Exception("Impossibile ottenere una Risorsa dal DBManager",e);
+		}
+		if(resource==null)
+			throw new Exception("Risorsa is null");
+		if(resource.getResource() == null)
+			throw new Exception("Connessione is null");
+		return resource;
+	}
+	private Connection getConnection(String datasource) throws Exception {
+		Context c = new InitialContext();
+        DataSource ds= (DataSource)c.lookup(datasource);
+        c.close();	
+        return ds.getConnection();
 	}
 
 }

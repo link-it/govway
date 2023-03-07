@@ -25,8 +25,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.text.SimpleDateFormat;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -277,9 +282,9 @@ public class XSDSchemaCollection {
 	
 	private void debugPrintXSDSchemi(byte[]schemaPerValidazione,XSDResourceResolver resourceResolver,Logger logger, boolean success){
 		try{
-			File dir = File.createTempFile("xsd_dir_", "");
-			dir.delete();
-			boolean dirCreate = dir.mkdir();
+			FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+			File dir = Files.createTempDirectory("xsd_dir_", attr).toFile();
+			boolean dirCreate = dir.exists();
 			//System.out.println("FILE?["+dir.getAbsolutePath()+"] ["+dirCreate+"] ["+dir.isDirectory()+"]");
 			dirCreate = dirCreate && dir.isDirectory();
 			//System.out.println("DIR CREATE ["+dirCreate+"]");
@@ -290,7 +295,7 @@ public class XSDSchemaCollection {
 			if(dirCreate)
 				f = File.createTempFile("root_"+uniqueID+"_", ".xsd",dir);
 			else
-				f =	File.createTempFile("root_"+uniqueID+"_", ".xsd");
+				f =	FileSystemUtilities.createTempFile("root_"+uniqueID+"_", ".xsd");
 			FileSystemUtilities.writeFile(f, schemaPerValidazione);
 			
 			// Provo a registrare gli schemi utilizzati
@@ -302,7 +307,7 @@ public class XSDSchemaCollection {
 					if(dirCreate)
 						schemaTmpLog = File.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd", dir);
 					else
-						schemaTmpLog = File.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd");
+						schemaTmpLog = FileSystemUtilities.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd");
 					FileSystemUtilities.writeFile(schemaTmpLog, contenuto);
 				}
 			}

@@ -74,7 +74,7 @@ public class TestFileTrace {
 	public void testFileTrace(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.pdd.logger.filetrace.Test.test(tipoPdD, log4j, esito, requestWithPayload);
+		org.openspcoop2.pdd.logger.filetrace.test.FileTraceTest.test(tipoPdD, log4j, esito, requestWithPayload);
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

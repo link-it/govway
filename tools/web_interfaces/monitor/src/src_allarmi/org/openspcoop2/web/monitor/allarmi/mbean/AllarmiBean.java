@@ -998,11 +998,11 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	
 	public boolean isVisualizzaRuoloFruitoreFiltro() {
 		if(this.allarme.getFiltro() != null) {
-			boolean configurazione = this.allarme.isAllarmeConfigurazione();
+			//boolean configurazione = this.allarme.isAllarmeConfigurazione();
 			boolean showRuoloRichiedente = false;
-			if(configurazione) {
-				showRuoloRichiedente = true;
-			}
+			//if(configurazione) {
+			//	showRuoloRichiedente = true;
+			//}
 //			else {
 //				if(serviziApplicativiFruitoreValue!=null && serviziApplicativiFruitoreValue.size()>1){
 //					showRuoloRichiedente = true;
@@ -1011,9 +1011,9 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 //					showRuoloRichiedente = true;
 //				}
 //			}
-			else {
+			//else {
 				showRuoloRichiedente = true; // comunque viene visualizzato solo se definito
-			}
+			//}
 			
 			if((this.allarme.getFiltro().getTipoFruitore()!=null && this.allarme.getFiltro().getNomeFruitore()!=null) ||
 					this.allarme.getFiltro().getServizioApplicativoFruitore() != null || !showRuoloRichiedente) {
@@ -1088,11 +1088,13 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 							}
 						}
 						if(uris.size()==1) {
-							IDSoggetto idSoggetto = new IDSoggetto(aspsRiferimento.getIdErogatore().getTipo(), aspsRiferimento.getIdErogatore().getNome()); 
-							AccordoServizioParteComune accordoServizio = this.dynamicUtilsService.getAccordoServizio(this.allarme.getFiltro().getProtocollo(), idSoggetto , 
-									aspsRiferimento.getTipo(), 
-									aspsRiferimento.getNome(), aspsRiferimento.getVersione());
-							serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
+							if(aspsRiferimento!=null) {
+								IDSoggetto idSoggetto = new IDSoggetto(aspsRiferimento.getIdErogatore().getTipo(), aspsRiferimento.getIdErogatore().getNome()); 
+								AccordoServizioParteComune accordoServizio = this.dynamicUtilsService.getAccordoServizio(this.allarme.getFiltro().getProtocollo(), idSoggetto , 
+										aspsRiferimento.getTipo(), 
+										aspsRiferimento.getNome(), aspsRiferimento.getVersione());
+								serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
+							}
 						}
 					}
 				}

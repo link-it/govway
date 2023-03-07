@@ -145,11 +145,13 @@ public class BetweenExpressionImpl extends AbstractBaseExpressionImpl {
 				ComplexField c = (ComplexField) this.field;
 				return c.getFather().equals(model.getBaseField());
 			}else{
-				return model.getModeledClass().getName().equals(this.field.getClassType().getName());
+				String modeClassName = model.getModeledClass().getName() + "";
+				return modeClassName.equals(this.field.getClassType().getName());
 			}
 		}
 		else{
-			return model.getModeledClass().getName().equals(this.field.getClassType().getName());
+			String modeClassName = model.getModeledClass().getName() + "";
+			return modeClassName.equals(this.field.getClassType().getName());
 		}
 	}
 

@@ -274,8 +274,7 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 		Resource risorsa = new Resource();
 		try {
 			Connection con = this.qcf.createConnection();
-			if(con == null)
-				throw new OpenSPCoop2ConfigurationException("ConnessioneNonDisponibile");
+			checkConnection(con);
 
 			// Sessione
 			Session s = con.createSession(false,QueueManager.openspcoopProperties.getAcknowledgeModeSessioneConnectionFactory());
@@ -312,7 +311,10 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 			throw new OpenSPCoop2ConfigurationException("getJMSObject: "+e.getMessage());
 		}
 	}
-
+	private static void checkConnection(Connection con) throws OpenSPCoop2ConfigurationException {
+		if(con == null)
+			throw new OpenSPCoop2ConfigurationException("ConnessioneNonDisponibile");
+	}
 	/**
 	 * Restituisce un JMSObject al pool
 	 *

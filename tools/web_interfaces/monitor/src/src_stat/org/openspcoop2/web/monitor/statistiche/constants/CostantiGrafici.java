@@ -292,5 +292,16 @@ public class CostantiGrafici {
 	public static final String TIPO_REPORT_PIE_CHART = "Pie chart";
 	public static final String TIPO_REPORT_TABELLA = "Tabella";
 	public static final String TIPO_REPORT_ANDAMENTO_TEMPORALE = "Andamento Temporale";
+	
+	public static final String LABEL_TIPO_LATENZA_LATENZA_SERVIZIO = "Tempo Risposta Servizio";
+	
+	public static final String LABEL_TIPO_LATENZA_LATENZA_MEDIA_PORTA_MS = "Latenza Media Porta [ms]";
+	public static final String LABEL_TIPO_LATENZA_LATENZA_MEDIA_PORTA = "Latenza Media Porta";
+	
+	public static final String LABEL_TIPO_LATENZA_LATENZA_MEDIA_SERVIZIO_MS = "Tempo Medio Risposta Servizio [ms]";
+	public static final String LABEL_TIPO_LATENZA_LATENZA_MEDIA_SERVIZIO = "Tempo Medio Risposta Servizio";
+	
+	public static final String LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE_MS = "Latenza Media Totale [ms]";
+	public static final String LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE = "Latenza Media Totale";
 
 }

@@ -44,6 +44,15 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
             Token Policy di Negoziazione PDND (Keystore definito nell'applicativo ModI)
 
+	- 'Definito nella fruizione ModI': il keystore utilizzato per firmare l'asserzione JWT inviata alla PDND sarà quello definito nella fruizione ModI come descritto nella sezione ':ref:`modipa_sicurezza_avanzate_fruizione_pdnd`';
+
+          .. figure:: ../../_figure_console/TokenPDNDNegoziazioneKeystoreFruizioneModI.png
+            :scale: 60%
+            :align: center
+            :name: TokenPDNDNegoziazioneKeystoreFruizioneModI
+
+            Token Policy di Negoziazione PDND (Keystore definito nella fruizione ModI)
+
 	- Tipi PKCS11: gli altri tipi disponibili sono quelli corrispondenti ai tipi di keystore PKCS11 registrati (':ref:`pkcs11`').
 
 - JWT Signature: algoritmo di firma
@@ -88,6 +97,17 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
                     Dati Autorizzazione OAuth relativi ad un applicativo interno
 
+		- 'Definito nella fruizione ModI': nel caso in cui è stato indicato un keystore definito nella fruizione ModI, è possibile selezionare una modalità analoga anche per il KID (:numref:`TokenPDNDNegoziazioneKIDfruizione`).
+
+                  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneKIDfruizione.png
+                    :scale: 60%
+                    :align: center
+                    :name: TokenPDNDNegoziazioneKIDfruizione
+
+                    Token Policy di Negoziazione PDND (KID definito nella fruizione ModI)
+
+                  Questa modalità richiede che oltre al keystore, nella fruizione ModI venga abilitata anche la sezione 'Authorization PDND' e venga indicato il KID nel campo 'Key Id del Certificato' come descritto nella sezione ':ref:`modipa_sicurezza_avanzate_fruizione_pdnd`'.
+
 - JWT Payload:
 
   l'identificativo univoco dell'applicativo client ('*client_id*' o '*sub*') ottenuto al termine della registrazione dell'applicativo sulla PDND deve essere indicato nei seguenti campi:
@@ -122,6 +142,17 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
     :name: ApplicativoInternoAutorizzazioneOAuth2
 
     Dati Autorizzazione OAuth relativi ad un applicativo interno
+
+  In alternativa nel caso in cui sia stato indicato un keystore definito nella fruizione ModI, è possibile selezionare una modalità analoga anche per la tripla clientId/issuer/subject (:numref:`TokenPDNDNegoziazioneClientIdFruizioneModI`).
+
+  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneClientIdFruizioneModI.png
+    :scale: 60%
+    :align: center
+    :name: TokenPDNDNegoziazioneClientIdFruizioneModI
+
+    Token Policy di Negoziazione PDND (ClientId definito nella fruizione ModI)
+
+  Questa modalità richiede che oltre al keystore, nella fruizione ModI venga abilitata anche la sezione 'Authorization PDND' e venga indicato il clientId nel campo 'Identificativo' come descritto nella sezione ':ref:`modipa_sicurezza_avanzate_fruizione_pdnd`'.
 
   Gli altri campi presenti nella sezione 'JWT Payload' rappresentano (:numref:`TokenPDNDNegoziazioneJWTPayload`):
 
@@ -163,4 +194,13 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
     :name: TokenPDNDNegoziazioneDatiRichiestaApplicativoModI
 
     Token Policy di Negoziazione PDND (DatiRichiesta, ClientId definito nell'applicativo ModI)
+
+  Nel caso invece in cui sia stato indicato un keystore definito nella fruizione ModI, è possibile selezionare una modalità analoga anche per il campo 'Client ID' (:numref:`TokenPDNDNegoziazioneDatiRichiestaFruizioneModI`).
+
+  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneDatiRichiestaFruizioneModI.png
+    :scale: 60%
+    :align: center
+    :name: TokenPDNDNegoziazioneDatiRichiestaFruizioneModI
+
+    Token Policy di Negoziazione PDND (DatiRichiesta, ClientId definito nella fruizione ModI)
 

@@ -447,6 +447,10 @@ public class DiagnosticDriverUtilities {
 				if(rs!=null){
 					rs.close();
 				}
+			}catch(Exception eClose){
+				// close
+			}
+			try{
 				if(stmt!=null){
 					stmt.close();
 				}

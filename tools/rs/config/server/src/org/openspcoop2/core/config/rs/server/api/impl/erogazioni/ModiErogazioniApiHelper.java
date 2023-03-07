@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.rs.server.api.impl.ProtocolPropertiesHelper;
+import org.openspcoop2.core.config.rs.server.model.BaseFruizioneModIOAuth;
 import org.openspcoop2.core.config.rs.server.model.Erogazione;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModI;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRest;
@@ -42,6 +43,7 @@ import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoapRisposta;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoapRispostaSicurezzaMessaggio;
 import org.openspcoop2.core.config.rs.server.model.Fruizione;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModI;
+import org.openspcoop2.core.config.rs.server.model.FruizioneModIOAuth;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModIRest;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModIRestRichiesta;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModIRestRichiestaSicurezzaMessaggio;
@@ -79,6 +81,7 @@ import org.openspcoop2.core.config.rs.server.model.OneOfFruizioneModIModi;
 import org.openspcoop2.core.config.rs.server.model.OneOfFruizioneModi;
 import org.openspcoop2.core.config.rs.server.model.StatoDefaultRidefinitoEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
+import org.openspcoop2.core.config.rs.server.model.TipoConfigurazioneFruizioneEnum;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Operation;
@@ -116,10 +119,16 @@ public class ModiErogazioniApiHelper {
 		FruizioneModI fruizionemodi = new FruizioneModI();
 		if(p!= null) {
 
-			if(protocollo.equals(TipoApiEnum.SOAP)) {
-				fruizionemodi.setModi(getFruizioneModISoap(p));
-			} else {
-				fruizionemodi.setModi(getFruizioneModIRest(p));
+			FruizioneModIOAuth oauth = getFruizioneModIOAuth(p, protocollo);
+			if(oauth!=null) {
+				fruizionemodi.setModi(oauth);
+			}
+			else {
+				if(protocollo.equals(TipoApiEnum.SOAP)) {
+					fruizionemodi.setModi(getFruizioneModISoap(p));
+				} else {
+					fruizionemodi.setModi(getFruizioneModIRest(p));
+				}
 			}
 		}
 		
@@ -402,61 +411,7 @@ public class ModiErogazioniApiHelper {
 			sicurezzaMessaggio.setKeystore(ks);
 		} else {
 			
-			ModIKeyStoreRidefinito ks = new ModIKeyStoreRidefinito().modalita(StatoDefaultRidefinitoEnum.RIDEFINITO);
-			
-			String keystoreModeString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_MODE, true);
-
-			if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM)) {
-				ModIKeyStoreHSM datiKeystore = new ModIKeyStoreHSM().tipologia(ModIKeystoreTipologiaEnum.HSM);
-
-				String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_TYPE, true);
-				datiKeystore.setPcks11Tipo(keystoreTipoString);
-				datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				
-				ks.setDatiKeystore(datiKeystore);
-			}
-			else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH)) {
-				ModIKeyStoreFile datiKeystore = new ModIKeyStoreFile().tipologia(ModIKeystoreTipologiaEnum.FILESYSTEM);
-
-				ModIKeystoreEnum keystoreTipo = null;
-
-				String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_TYPE, true);
-
-				if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
-					keystoreTipo = ModIKeystoreEnum.JKS;
-				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
-					keystoreTipo = ModIKeystoreEnum.PKCS12;
-				}
-
-				datiKeystore.setKeystoreTipo(keystoreTipo);
-				datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
-				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
-				datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH, true));
-
-				ks.setDatiKeystore(datiKeystore);
-			} else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE)) {
-				ModIKeyStoreArchive datiKeystore = new ModIKeyStoreArchive().tipologia(ModIKeystoreTipologiaEnum.ARCHIVIO);
-
-				ModIKeystoreEnum keystoreTipo = null;
-
-				String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_TYPE, true);
-
-				if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
-					keystoreTipo = ModIKeystoreEnum.JKS;
-				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
-					keystoreTipo = ModIKeystoreEnum.PKCS12;
-				}
-
-				datiKeystore.setKeystoreTipo(keystoreTipo);
-				datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
-				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
-				datiKeystore.setKeystoreArchivio(ProtocolPropertiesHelper.getByteArrayProperty(p, ModICostanti.MODIPA_KEYSTORE_ARCHIVE, true));
-
-				ks.setDatiKeystore(datiKeystore);
-			}
-			
+			ModIKeyStoreRidefinito ks = readKeystoreRidefinito(p);
 			sicurezzaMessaggio.setKeystore(ks);
 		}
 		
@@ -466,6 +421,67 @@ public class ModiErogazioniApiHelper {
 		
 		
 		return modi;
+	}
+	
+	private static ModIKeyStoreRidefinito readKeystoreRidefinito(Map<String, AbstractProperty<?>> p) throws Exception {
+		
+		ModIKeyStoreRidefinito ks = new ModIKeyStoreRidefinito().modalita(StatoDefaultRidefinitoEnum.RIDEFINITO);
+		
+		String keystoreModeString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_MODE, true);
+
+		if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM)) {
+			ModIKeyStoreHSM datiKeystore = new ModIKeyStoreHSM().tipologia(ModIKeystoreTipologiaEnum.HSM);
+
+			String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_TYPE, true);
+			datiKeystore.setPcks11Tipo(keystoreTipoString);
+			datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
+			
+			ks.setDatiKeystore(datiKeystore);
+		}
+		else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH)) {
+			ModIKeyStoreFile datiKeystore = new ModIKeyStoreFile().tipologia(ModIKeystoreTipologiaEnum.FILESYSTEM);
+
+			ModIKeystoreEnum keystoreTipo = null;
+
+			String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_TYPE, true);
+
+			if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
+				keystoreTipo = ModIKeystoreEnum.JKS;
+			} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
+				keystoreTipo = ModIKeystoreEnum.PKCS12;
+			}
+
+			datiKeystore.setKeystoreTipo(keystoreTipo);
+			datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
+			datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
+			datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
+			datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH, true));
+
+			ks.setDatiKeystore(datiKeystore);
+		} else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE)) {
+			ModIKeyStoreArchive datiKeystore = new ModIKeyStoreArchive().tipologia(ModIKeystoreTipologiaEnum.ARCHIVIO);
+
+			ModIKeystoreEnum keystoreTipo = null;
+
+			String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_TYPE, true);
+
+			if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
+				keystoreTipo = ModIKeystoreEnum.JKS;
+			} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
+				keystoreTipo = ModIKeystoreEnum.PKCS12;
+			}
+
+			datiKeystore.setKeystoreTipo(keystoreTipo);
+			datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
+			datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
+			datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
+			datiKeystore.setKeystoreArchivio(ProtocolPropertiesHelper.getByteArrayProperty(p, ModICostanti.MODIPA_KEYSTORE_ARCHIVE, true));
+
+			ks.setDatiKeystore(datiKeystore);
+		}
+		
+		return ks;
+		
 	}
 
 	private static ErogazioneModIRest getRestProperties(Map<String, AbstractProperty<?>> p) throws Exception {
@@ -770,14 +786,63 @@ public class ModiErogazioniApiHelper {
 		return modi;
 	}
 
+	private static FruizioneModIOAuth getFruizioneModIOAuth(Map<String, AbstractProperty<?>> p, TipoApiEnum protocollo) throws Exception {
+		
+		if(protocollo.equals(TipoApiEnum.SOAP)) {
+			String algoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_ALG, false);
+			// è obbligatoria in soap
+			if( (algoString!=null && StringUtils.isNotEmpty(algoString)) ) {
+				return null;
+			}
+		}
+		else {
+			String algoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_ALG, false);
+			// è obbligatoria in rest
+			if( (algoString!=null && StringUtils.isNotEmpty(algoString)) ) {
+				return null;
+			}
+		}
+		
+		String id = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO, false);
+		String kid = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID, false);
+		String modeKeystore = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE, false);
+		if( (id!=null && StringUtils.isNotEmpty(id)) 
+				||
+				(kid!=null && StringUtils.isNotEmpty(kid)) 
+				||
+				(modeKeystore!=null && StringUtils.isNotEmpty(modeKeystore)) ) {
+			FruizioneModIOAuth oauth = new FruizioneModIOAuth();
+			oauth.setProtocollo(TipoConfigurazioneFruizioneEnum.OAUTH);
+			oauth.setIdentificativo(id);
+			oauth.setKid(kid);
+			
+			if(modeKeystore!=null && StringUtils.isNotEmpty(modeKeystore) && modeKeystore.equals(ModICostanti.MODIPA_PROFILO_RIDEFINISCI)) {
+				
+				ModIKeyStoreRidefinito ks = readKeystoreRidefinito(p);
+				oauth.setKeystore(ks);
+
+			} else {
+				
+				ModIKeyStoreDefault ks = new ModIKeyStoreDefault().modalita(StatoDefaultRidefinitoEnum.DEFAULT);
+				oauth.setKeystore(ks);
+				
+			}
+			
+			return oauth;
+			
+		}
+		return null;
+	}
+	
 	private static FruizioneModISoap getFruizioneModISoap(Map<String, AbstractProperty<?>> p) throws Exception {
 
 		FruizioneModISoap modi = new FruizioneModISoap();
-		modi.setProtocollo(TipoApiEnum.SOAP);
+		modi.setProtocollo(TipoConfigurazioneFruizioneEnum.SOAP);
 		
 		// *** richiesta ***
 		
 		FruizioneModISoapRichiesta richiesta = new FruizioneModISoapRichiesta();
+		
 		FruizioneModISoapRichiestaSicurezzaMessaggio sicurezzaMessaggioRichiesta = new FruizioneModISoapRichiestaSicurezzaMessaggio();
 		
 		ModISicurezzaMessaggioSoapAlgoritmoFirma algo = null;
@@ -846,6 +911,25 @@ public class ModiErogazioniApiHelper {
 		}
 		
 		
+		// keystore
+		String keystoreMode = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, false);
+		if(ModICostanti.MODIPA_KEYSTORE_FRUIZIONE.equals(keystoreMode)) {
+			String modeKeystore = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE, false);
+			if(modeKeystore!=null && StringUtils.isNotEmpty(modeKeystore) && modeKeystore.equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
+				
+				ModIKeyStoreDefault ks = new ModIKeyStoreDefault().modalita(StatoDefaultRidefinitoEnum.DEFAULT);
+				sicurezzaMessaggioRichiesta.setKeystore(ks);
+			} else {
+				
+				ModIKeyStoreRidefinito ks = readKeystoreRidefinito(p);
+				sicurezzaMessaggioRichiesta.setKeystore(ks);
+			}
+		}
+		else {
+			// nop: definito sull'applicativo
+		}
+		
+		
 		// info utente
 		
 		sicurezzaMessaggioRichiesta.setInformazioniUtenteCodiceEnte(getInformazioniUtenteCodiceEnte(p));
@@ -853,8 +937,22 @@ public class ModiErogazioniApiHelper {
 		sicurezzaMessaggioRichiesta.setInformazioniUtenteIndirizzoIp(getInformazioniUtenteIndirizzoIp(p));
 		
 		richiesta.setSicurezzaMessaggio(sicurezzaMessaggioRichiesta);
-		modi.setRichiesta(richiesta);
 		
+		// oauth
+		
+		String id = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO, false);
+		String kid = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID, false);
+		if( (id!=null && StringUtils.isNotEmpty(id)) 
+				||
+				(kid!=null && StringUtils.isNotEmpty(kid)) 
+				) {
+			BaseFruizioneModIOAuth oauth = new BaseFruizioneModIOAuth();
+			oauth.setIdentificativo(id);
+			oauth.setKid(kid);
+			richiesta.setOauth(oauth);
+		}
+
+		modi.setRichiesta(richiesta);
 		
 		
 		// *** risposta ***
@@ -910,7 +1008,7 @@ public class ModiErogazioniApiHelper {
 	private static FruizioneModIRest getFruizioneModIRest(Map<String, AbstractProperty<?>> p) throws Exception {
 
 		FruizioneModIRest modi = new FruizioneModIRest();
-		modi.setProtocollo(TipoApiEnum.REST);
+		modi.setProtocollo(TipoConfigurazioneFruizioneEnum.REST);
 		
 		// *** richiesta ***
 		
@@ -960,6 +1058,24 @@ public class ModiErogazioniApiHelper {
 				proprieta.add(pr);
 			}
 			sicurezzaMessaggioRichiesta.setClaims(proprieta);
+		}
+		
+		// keystore
+		String keystoreMode = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, false);
+		if(ModICostanti.MODIPA_KEYSTORE_FRUIZIONE.equals(keystoreMode)) {
+			String modeKeystore = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE, false);
+			if(modeKeystore!=null && StringUtils.isNotEmpty(modeKeystore) && modeKeystore.equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
+				
+				ModIKeyStoreDefault ks = new ModIKeyStoreDefault().modalita(StatoDefaultRidefinitoEnum.DEFAULT);
+				sicurezzaMessaggioRichiesta.setKeystore(ks);
+			} else {
+				
+				ModIKeyStoreRidefinito ks = readKeystoreRidefinito(p);
+				sicurezzaMessaggioRichiesta.setKeystore(ks);
+			}
+		}
+		else {
+			// nop: definito sull'applicativo
 		}
 		
 		// info utente
@@ -1041,6 +1157,21 @@ public class ModiErogazioniApiHelper {
 		}
 		
 		richiesta.setSicurezzaMessaggio(sicurezzaMessaggioRichiesta);
+		
+		// oauth
+		
+		String id = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO, false);
+		String kid = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID, false);
+		if( (id!=null && StringUtils.isNotEmpty(id)) 
+				||
+				(kid!=null && StringUtils.isNotEmpty(kid)) 
+				) {
+			BaseFruizioneModIOAuth oauth = new BaseFruizioneModIOAuth();
+			oauth.setIdentificativo(id);
+			oauth.setKid(kid);
+			richiesta.setOauth(oauth);
+		}		
+		
 		modi.setRichiesta(richiesta);
 		
 		
@@ -1272,7 +1403,10 @@ public class ModiErogazioniApiHelper {
 
 		ProtocolProperties p = new ProtocolProperties();
 
-		if(protocollo.equals(TipoApiEnum.SOAP)) {
+		if(TipoConfigurazioneFruizioneEnum.OAUTH.equals(modi.getProtocollo())) {
+			getOAUTHProperties((FruizioneModIOAuth)modi, p, fruizioneConf);
+		}
+		else if(protocollo.equals(TipoApiEnum.SOAP)) {
 			getSOAPProperties((FruizioneModISoap)modi, p, fruizioneConf);
 		} else if(protocollo.equals(TipoApiEnum.REST)) {
 			getRESTProperties((FruizioneModIRest)modi, p, fruizioneConf);
@@ -1296,7 +1430,10 @@ public class ModiErogazioniApiHelper {
 
 		ProtocolProperties p = new ProtocolProperties();
 
-		if(protocollo.equals(TipoApiEnum.SOAP)) {
+		if(TipoConfigurazioneFruizioneEnum.OAUTH.equals(modi.getProtocollo())) {
+			getOAUTHProperties((FruizioneModIOAuth)modi, p, fruizioneConf);
+		}
+		else if(protocollo.equals(TipoApiEnum.SOAP)) {
 			getSOAPProperties((FruizioneModISoap)modi, p, fruizioneConf);
 		} else if(protocollo.equals(TipoApiEnum.REST)) {
 			getRESTProperties((FruizioneModIRest)modi, p, fruizioneConf);
@@ -1727,6 +1864,30 @@ public class ModiErogazioniApiHelper {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_JWT_CLAIMS, String.join("\n", sicurezzaMessaggioRichiesta.getClaims()));
 		}
 		
+		
+		// keystore
+		
+		if(sicurezzaMessaggioRichiesta.getKeystore()!=null) {
+			
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_FRUIZIONE);
+			
+			if(sicurezzaMessaggioRichiesta.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
+				
+				setKeystoreDefaultProperties(p);
+				
+			} else {
+
+				ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)sicurezzaMessaggioRichiesta.getKeystore();
+				setKeystoreRidefinitoProperties(p, keystoreRidefinito);
+				
+			}
+		}
+		else {
+			
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO);
+			
+		}
+		
 
 		// informazione utente
 		
@@ -1796,7 +1957,17 @@ public class ModiErogazioniApiHelper {
 						String.join("\n", sicurezzaMessaggioRichiesta.getContemporaneita().getClaimsAgid()));
 			}
 		}
-				
+		
+		// oauth
+		
+		if(modi.getRichiesta().getOauth()!=null) {
+			if(modi.getRichiesta().getOauth().getIdentificativo()!=null && StringUtils.isNotEmpty(modi.getRichiesta().getOauth().getIdentificativo())) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO, modi.getRichiesta().getOauth().getIdentificativo());
+			}
+			if(modi.getRichiesta().getOauth().getKid()!=null && StringUtils.isNotEmpty(modi.getRichiesta().getOauth().getKid())) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID, modi.getRichiesta().getOauth().getKid());
+			}
+		}
 		
 		// **** risposta ****
 		
@@ -2121,76 +2292,105 @@ public class ModiErogazioniApiHelper {
 		
 		if(sicurezzaMessaggioRisposta.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
 			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
-			p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
-			p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS);
-			p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, "");
-			p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, "");
-			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, "");
-			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, "");
+			setKeystoreDefaultProperties(p);
 			
 		} else {
 
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
-
 			ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)sicurezzaMessaggioRisposta.getKeystore();
-			
-			if(keystoreRidefinito.getDatiKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.HSM)) {
-				ModIKeyStoreHSM hsmKeystore = (ModIKeyStoreHSM)keystoreRidefinito.getDatiKeystore();
-				p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM);
-
-				p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, hsmKeystore.getPcks11Tipo());
-				p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, hsmKeystore.getKeyAlias());
-
-			}
-			else if(keystoreRidefinito.getDatiKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.FILESYSTEM)) {
-				ModIKeyStoreFile fsKeystore = (ModIKeyStoreFile)keystoreRidefinito.getDatiKeystore();
-				p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH);
-
-				
-				String tipo = null;
-				switch(fsKeystore.getKeystoreTipo()) {
-				case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
-					break;
-				case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
-					break;
-				default:
-					break;
-				}
-				
-				p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
-				p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, fsKeystore.getKeyAlias());
-				p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, fsKeystore.getKeyPassword());
-				p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
-				p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, fsKeystore.getKeystorePath());
-			} else {
-				ModIKeyStoreArchive archiveKeystore = (ModIKeyStoreArchive)keystoreRidefinito.getDatiKeystore();
-				p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
-
-				
-				String tipo = null;
-				String filename = null;
-				
-				switch(archiveKeystore.getKeystoreTipo()) {
-				case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS; filename = "Keystore.jks";
-					break;
-				case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12; filename = "Keystore.p12";
-					break;
-				default:
-					break;
-				}
-				
-				p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
-				p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, archiveKeystore.getKeyAlias());
-				p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, archiveKeystore.getKeyPassword());
-				p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, archiveKeystore.getKeystorePassword());
-				p.addProperty(ModICostanti.MODIPA_KEYSTORE_ARCHIVE, archiveKeystore.getKeystoreArchivio(), filename, filename);
-			}
+			setKeystoreRidefinitoProperties(p, keystoreRidefinito);
 			
 		}
 
 	}
+	
+	private static void setKeystoreDefaultProperties(ProtocolProperties p) {
+		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
+		p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
+		p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS);
+		p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, "");
+		p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, "");
+		p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, "");
+		p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, "");
+	}
+	private static void setKeystoreRidefinitoProperties(ProtocolProperties p, ModIKeyStoreRidefinito keystoreRidefinito) {
+		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
 
+		if(keystoreRidefinito.getDatiKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.HSM)) {
+			ModIKeyStoreHSM hsmKeystore = (ModIKeyStoreHSM)keystoreRidefinito.getDatiKeystore();
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM);
+
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, hsmKeystore.getPcks11Tipo());
+			p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, hsmKeystore.getKeyAlias());
+
+		}
+		else if(keystoreRidefinito.getDatiKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.FILESYSTEM)) {
+			ModIKeyStoreFile fsKeystore = (ModIKeyStoreFile)keystoreRidefinito.getDatiKeystore();
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH);
+
+			
+			String tipo = null;
+			switch(fsKeystore.getKeystoreTipo()) {
+			case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
+				break;
+			case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
+				break;
+			default:
+				break;
+			}
+			
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
+			p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, fsKeystore.getKeyAlias());
+			p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, fsKeystore.getKeyPassword());
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, fsKeystore.getKeystorePath());
+		} else {
+			ModIKeyStoreArchive archiveKeystore = (ModIKeyStoreArchive)keystoreRidefinito.getDatiKeystore();
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
+
+			
+			String tipo = null;
+			String filename = null;
+			
+			switch(archiveKeystore.getKeystoreTipo()) {
+			case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS; filename = "Keystore.jks";
+				break;
+			case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12; filename = "Keystore.p12";
+				break;
+			default:
+				break;
+			}
+			
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
+			p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, archiveKeystore.getKeyAlias());
+			p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, archiveKeystore.getKeyPassword());
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, archiveKeystore.getKeystorePassword());
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_ARCHIVE, archiveKeystore.getKeystoreArchivio(), filename, filename);
+		}
+	}
+
+	private static void getOAUTHProperties(FruizioneModIOAuth modi, ProtocolProperties p, FruizioneConf fruizioneConf) {
+		if(modi!=null) {
+			if(modi.getIdentificativo()!=null && StringUtils.isNotEmpty(modi.getIdentificativo())) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO, modi.getIdentificativo());
+			}
+			if(modi.getKid()!=null && StringUtils.isNotEmpty(modi.getKid())) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID, modi.getKid());
+			}
+			if(modi.getKeystore()!=null) {
+				if(modi.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
+					
+					setKeystoreDefaultProperties(p);
+					
+				} else {
+	
+					ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)modi.getKeystore();
+					setKeystoreRidefinitoProperties(p, keystoreRidefinito);
+					
+				}
+			}
+		}
+	}
+	
 	private static void getSOAPProperties(FruizioneModISoap modi, ProtocolProperties p, FruizioneConf fruizioneConf) {
 
 		if(!fruizioneConf.sicurezzaMessaggioAPIAbilitata) {
@@ -2279,11 +2479,45 @@ public class ModiErogazioniApiHelper {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE, "");
 		}
 
+		// keystore
+		
+		if(sicurezzaMessaggioRichiesta.getKeystore()!=null) {
+			
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_FRUIZIONE);
+			
+			if(sicurezzaMessaggioRichiesta.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
+				
+				setKeystoreDefaultProperties(p);
+				
+			} else {
+
+				ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)sicurezzaMessaggioRichiesta.getKeystore();
+				setKeystoreRidefinitoProperties(p, keystoreRidefinito);
+				
+			}
+		}
+		else {
+			
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO);
+			
+		}
+		
 		// informazione utente
 
 		addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteCodiceEnte(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE); 
 		addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteUserid(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER); 
 		addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteIndirizzoIp(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER);
+		
+		// oauth
+		
+		if(modi.getRichiesta().getOauth()!=null) {
+			if(modi.getRichiesta().getOauth().getIdentificativo()!=null && StringUtils.isNotEmpty(modi.getRichiesta().getOauth().getIdentificativo())) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO, modi.getRichiesta().getOauth().getIdentificativo());
+			}
+			if(modi.getRichiesta().getOauth().getKid()!=null && StringUtils.isNotEmpty(modi.getRichiesta().getOauth().getKid())) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID, modi.getRichiesta().getOauth().getKid());
+			}
+		}
 		
 		
 		// **** risposta ****

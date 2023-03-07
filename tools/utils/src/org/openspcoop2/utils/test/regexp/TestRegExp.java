@@ -39,7 +39,7 @@ public class TestRegExp {
 	public void testRegExp() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.regexp.Test.test();
+		org.openspcoop2.utils.regexp.test.RegexpTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

@@ -214,6 +214,11 @@ public final class ConfigurazioneHandlersRichiestaDel extends Action {
 				}
 			}
 			if(!idRemove.isEmpty()) {
+				
+				if(listaDaAggiornare==null) {
+					throw new Exception("Lista da aggiornare non trovata");
+				}
+				
 				for (String id : idRemove) {
 					for (int i = 0; i < listaDaAggiornare.size(); i++) {
 						if(id.equals(listaDaAggiornare.get(i).getTipo())) {

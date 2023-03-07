@@ -122,8 +122,9 @@ public class Dump {
 	/** OpenSPCoopProperties */
 	private OpenSPCoop2Properties properties = null;
 
-	/** MsgDiagnostico per eventuali errori di tracciamento */
+	/** MsgDiagnostico per eventuali errori di tracciamento (viene usato anche per registrare il dump in corso e completato) */
 	private MsgDiagnostico msgDiagErroreDump = null;
+	private boolean emitDiagnosticDump = false;
 	
 	/** Appender personalizzati per i dump applicativi di OpenSPCoop */
 	private List<IDumpProducer> loggerDumpOpenSPCoopAppender = null; 
@@ -210,6 +211,7 @@ public class Dump {
 		
 		this.msgDiagErroreDump = MsgDiagnostico.newInstance(this.tipoPdD,dominio,modulo,nomePorta,this.requestInfo,this.statoRichiesta,this.statoRisposta);
 		this.msgDiagErroreDump.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
+		this.emitDiagnosticDump = op2Properties.isDumpEmitDiagnostic();
 		
 		if(this.pddContext!=null) {
 			this.idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
@@ -263,7 +265,9 @@ public class Dump {
 
 
 	/** ----------------- METODI DI LOGGING  ---------------- */
-
+	public void emitDiagnosticStartDumpBinarioRichiestaIngresso() {
+		emitDiagnosticDumpStart(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO);
+	}
 	public void dumpBinarioRichiestaIngresso(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			URLProtocolContext protocolContext) throws DumpException {
@@ -316,7 +320,9 @@ public class Dump {
 		}
 	}
 	
-
+	public void emitDiagnosticStartDumpBinarioRichiestaUscita() {
+		emitDiagnosticDumpStart(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
+	}
 	public void dumpBinarioRichiestaUscita(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			InfoConnettoreUscita infoConnettore) throws DumpException {
@@ -352,7 +358,9 @@ public class Dump {
 		}
 	}
 
-	
+	public void emitDiagnosticStartDumpBinarioRispostaIngresso() {
+		emitDiagnosticDumpStart(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
+	}
 	public void dumpBinarioRispostaIngresso(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			InfoConnettoreUscita infoConnettore, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
@@ -388,7 +396,9 @@ public class Dump {
 	}
 	
 
-	
+	public void emitDiagnosticStartDumpBinarioRispostaUscita() {
+		emitDiagnosticDumpStart(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);
+	}
 	public void dumpBinarioRispostaUscita(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			URLProtocolContext protocolContext, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
@@ -610,9 +620,94 @@ public class Dump {
 			}
 		}
 		boolean dumpMultipartHeaders = dumpHeaders;
+		if(dumpNormale) {
+			emitDiagnosticDumpStart(tipoMessaggio, location);
+		}
 		
+		String identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio);
 		
-		
+		try {
+			dumpEngine(onlyLogFileTrace_headers, onlyLogFileTrace_body, 
+					tipoMessaggio, msg, msgBytes, messageType,
+					location, transportHeaderParam,
+					dumpHeaders, dumpBody, dumpAttachments, dumpMultipartHeaders, 
+					dumpIntegrationManager,
+					dumpBinario, dumpBinarioAttivatoTramiteRegolaConfigurazione);
+		}finally {
+			if(identificativoDiagnostico!=null && this.emitDiagnosticDump) {
+				try {
+					if(this.transazioneApplicativoServer!=null && this.idPortaApplicativa!=null) {
+						this.msgDiagErroreDump.setTransazioneApplicativoServer(this.transazioneApplicativoServer, this.idPortaApplicativa);
+					}
+					this.msgDiagErroreDump.logPersonalizzato(identificativoDiagnostico+"completato");
+				}catch(Throwable t) {
+					if(this.loggerDump!=null) {
+						this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
+								") con identificativo di transazione ["+this.idTransazione+"]:"+t.getMessage(),t);
+					}
+				}finally {
+					this.msgDiagErroreDump.setTransazioneApplicativoServer(null, null);
+				}
+			}
+		}
+	}
+	
+	private String getIdentificativoDiagnostico(TipoMessaggio tipoMessaggio) {
+		String identificativoDiagnostico = null;
+		if(tipoMessaggio!=null) {
+			switch (tipoMessaggio) {
+			case RICHIESTA_INGRESSO:
+			case RICHIESTA_INGRESSO_DUMP_BINARIO:
+				identificativoDiagnostico = "dumpContenutiApplicativi.richiestaIngresso.";
+				break;
+			case RICHIESTA_USCITA:
+			case RICHIESTA_USCITA_DUMP_BINARIO:
+				identificativoDiagnostico = "dumpContenutiApplicativi.richiestaUscita.";
+				break;
+			case RISPOSTA_INGRESSO:
+			case RISPOSTA_INGRESSO_DUMP_BINARIO:
+				identificativoDiagnostico = "dumpContenutiApplicativi.rispostaIngresso.";
+				break;
+			case RISPOSTA_USCITA:
+			case RISPOSTA_USCITA_DUMP_BINARIO:
+				identificativoDiagnostico = "dumpContenutiApplicativi.rispostaUscita.";
+				break;
+			default:
+				break;
+			}
+		}
+		return identificativoDiagnostico;
+	}
+	
+	private void emitDiagnosticDumpStart(TipoMessaggio tipoMessaggio) {
+		String identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio);
+		emitDiagnosticDumpStart(tipoMessaggio, identificativoDiagnostico);
+	}
+	private void emitDiagnosticDumpStart(TipoMessaggio tipoMessaggio, String identificativoDiagnostico) {
+		if(identificativoDiagnostico!=null && this.emitDiagnosticDump) {
+			try {
+				if(this.transazioneApplicativoServer!=null && this.idPortaApplicativa!=null) {
+					this.msgDiagErroreDump.setTransazioneApplicativoServer(this.transazioneApplicativoServer, this.idPortaApplicativa);
+				}
+				this.msgDiagErroreDump.logPersonalizzato(identificativoDiagnostico+"inCorso");
+			}catch(Throwable t) {
+				if(this.loggerDump!=null) {
+					this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
+							") con identificativo di transazione ["+this.idTransazione+"]:"+t.getMessage(),t);
+				}
+			}finally {
+				this.msgDiagErroreDump.setTransazioneApplicativoServer(null, null);
+			}
+		}
+	}
+	
+	
+	private void dumpEngine(boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+			TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,DumpByteArrayOutputStream msgBytes, MessageType messageType,
+			String location,Map<String, List<String>> transportHeaderParam,
+			boolean dumpHeaders, boolean dumpBody, boolean dumpAttachments, boolean dumpMultipartHeaders, 
+			boolean dumpIntegrationManager,
+			boolean dumpBinario, boolean dumpBinarioAttivatoTramiteRegolaConfigurazione) throws DumpException {
 		
 		
 		Messaggio messaggio = new Messaggio();

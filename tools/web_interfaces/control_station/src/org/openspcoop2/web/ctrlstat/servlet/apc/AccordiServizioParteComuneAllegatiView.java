@@ -78,8 +78,8 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 			String idAllegato = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ALLEGATO);
 			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO);
 			
-			int idAllegatoInt = Integer.parseInt(idAllegato);
-			int idAccordoInt = Integer.parseInt(idAccordo);
+			long idAllegatoLong = Long.valueOf(idAllegato);
+			long idAccordoLong = Long.valueOf(idAccordo);
 			
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
@@ -92,10 +92,10 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idAccordoInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
-			Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
+			Documento doc = archiviCore.getDocumento(idAllegatoLong,true);
 
 			StringBuilder contenutoAllegato = new StringBuilder();
 			String errore = Utilities.getTestoVisualizzabile(doc.getByteContenuto(),contenutoAllegato);

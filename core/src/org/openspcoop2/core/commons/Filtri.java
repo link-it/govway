@@ -66,6 +66,7 @@ public final class Filtri
 	
 	public final static String FILTRO_TIPO_CREDENZIALI = "filtroTipoCredenziali";
 	public final static String FILTRO_CREDENZIALE = "filtroCredenziale";
+	public final static String FILTRO_CREDENZIALE_ISSUER = "filtroCredenzialeIssuer";
 	public final static String FILTRO_CREDENZIALE_TOKEN_POLICY = "filtroCredenzialeTokenPolicy";
 	
 	public final static String FILTRO_RUOLO_TIPOLOGIA = "filtroRuoloTipologia";
@@ -130,12 +131,86 @@ public final class Filtri
 	
 	public final static String FILTRO_PROP_PLUGIN_CLASSI = "filtroPropPluginClassi";
 	
+	public final static String FILTRO_AUTENTICAZIONE_TOKEN_TIPO = "filtroAutenticazioneTokenTipo";
+	
+	public final static String FILTRO_AUTENTICAZIONE_TRASPORTO_TIPO = "filtroAutenticazioneTrasportoTipo";
+	public final static String FILTRO_AUTENTICAZIONE_TRASPORTO_TIPO_PLUGIN = "filtroAutenticazioneTrasportoTipoPlugin";
+	
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO = "filtroConfigurazioneDumpTipo";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_DEFAULT = "Default";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO = "Ridefinito (abilitato)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER = "Ridefinito (solo header)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_RICHIESTA = "Ridefinito (abilitato sulla richiesta)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER_RICHIESTA = "Ridefinito (solo header della richiesta)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_RISPOSTA = "Ridefinito (abilitato sulla risposta)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER_RISPOSTA = "Ridefinito (solo header della risposta)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_RICHIESTA_USCITA = "Ridefinito (abilitato sulla richiesta in uscita)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER_RICHIESTA_USCITA = "Ridefinito (solo header della richiesta in uscita)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_RISPOSTA_USCITA = "Ridefinito (abilitato sulla risposta in uscita)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER_RISPOSTA_USCITA = "Ridefinito (solo header della risposta in uscita)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_RICHIESTA_INGRESSO = "Ridefinito (abilitato sulla richiesta in ingresso)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER_RICHIESTA_INGRESSO = "Ridefinito (solo header della richiesta in ingresso)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_RISPOSTA_INGRESSO = "Ridefinito (abilitato sulla risposta in ingresso)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER_RISPOSTA_INGRESSO = "Ridefinito (solo header della risposta in ingresso)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_DISABILITATO = "Ridefinito (disabilitato)"; // and su richiesta e risposta
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_DISABILITATO_RICHIESTA = "Ridefinito (disabilitato sulla richiesta)";
+	public final static String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_DISABILITATO_RISPOSTA = "Ridefinito (disabilitato sulla risposta)";
+	
+	public final static String FILTRO_CONFIGURAZIONE_STATO = "filtroConfigurazioneStato";
+	public final static String FILTRO_CONFIGURAZIONE_STATO_VALORE_ABILITATO = "Abilitato";
+	public final static String FILTRO_CONFIGURAZIONE_STATO_VALORE_DISABILITATO = "Disabilitato";
+		
+	public final static String FILTRO_CONFIGURAZIONE_RATE_LIMITING_STATO = "filtroConfigurazioneRateLimitingStato";
+	public final static String FILTRO_CONFIGURAZIONE_RATE_LIMITING_STATO_VALORE_ABILITATO = "Abilitato";
+	public final static String FILTRO_CONFIGURAZIONE_RATE_LIMITING_STATO_VALORE_DISABILITATO = "Disabilitato";
+	
+	public final static String FILTRO_CONFIGURAZIONE_VALIDAZIONE_STATO = "filtroConfigurazioneValidazioneStato";
+	public final static String FILTRO_CONFIGURAZIONE_VALIDAZIONE_STATO_VALORE_ABILITATO = "Abilitato";
+	public final static String FILTRO_CONFIGURAZIONE_VALIDAZIONE_STATO_VALORE_DISABILITATO = "Disabilitato";
+	
+	public final static String FILTRO_CONFIGURAZIONE_CACHE_RISPOSTA_STATO = "filtroConfigurazioneCacheRispostaStato";
+	public final static String FILTRO_CONFIGURAZIONE_CACHE_RISPOSTA_STATO_VALORE_ABILITATO = "Abilitato";
+	public final static String FILTRO_CONFIGURAZIONE_CACHE_RISPOSTA_STATO_VALORE_DISABILITATO = "Disabilitato";
+	
+	public final static String FILTRO_CONFIGURAZIONE_MESSAGE_SECURITY_STATO = "filtroConfigurazioneMessageSecurityStato";
+	public final static String FILTRO_CONFIGURAZIONE_MESSAGE_SECURITY_VALORE_ABILITATO = "Abilitato";
+	public final static String FILTRO_CONFIGURAZIONE_MESSAGE_SECURITY_STATO_VALORE_ABILITATO_RICHIESTA = "Abilitato sulla richiesta";
+	public final static String FILTRO_CONFIGURAZIONE_MESSAGE_SECURITY_STATO_VALORE_ABILITATO_RISPOSTA = "Abilitato sulla risposta";
+	public final static String FILTRO_CONFIGURAZIONE_MESSAGE_SECURITY_VALORE_DISABILITATO = "Disabilitato";
+	
+	public final static String FILTRO_CONFIGURAZIONE_MTOM_STATO = "filtroConfigurazioneMTOMStato";
+	public final static String FILTRO_CONFIGURAZIONE_MTOM_VALORE_ABILITATO = "Abilitato";
+	public final static String FILTRO_CONFIGURAZIONE_MTOM_STATO_VALORE_ABILITATO_RICHIESTA = "Abilitato sulla richiesta";
+	public final static String FILTRO_CONFIGURAZIONE_MTOM_STATO_VALORE_ABILITATO_RISPOSTA = "Abilitato sulla risposta";
+	public final static String FILTRO_CONFIGURAZIONE_MTOM_VALORE_DISABILITATO = "Disabilitato";
+	
+	public final static String FILTRO_CONFIGURAZIONE_TRASFORMAZIONE_STATO = "filtroConfigurazioneTrasformazione";
+	public final static String FILTRO_CONFIGURAZIONE_TRASFORMAZIONE_STATO_VALORE_ABILITATO = "Abilitato";
+	public final static String FILTRO_CONFIGURAZIONE_TRASFORMAZIONE_STATO_VALORE_DISABILITATO = "Disabilitato";
+	
+	public final static String FILTRO_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_STATO = "filtroConfigurazioneCorrelazioneApplicativaStato";
+	public final static String FILTRO_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_VALORE_ABILITATO = "Abilitato";
+	public final static String FILTRO_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_STATO_VALORE_ABILITATO_RICHIESTA = "Abilitato sulla richiesta";
+	public final static String FILTRO_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_STATO_VALORE_ABILITATO_RISPOSTA = "Abilitato sulla risposta";
+	public final static String FILTRO_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_VALORE_DISABILITATO = "Disabilitato";
+	
+	public final static String FILTRO_CONFIGURAZIONE_CORS_TIPO = "filtroConfigurazioneCorsTipo";
+	public final static String FILTRO_CONFIGURAZIONE_CORS_TIPO_VALORE_DEFAULT = "Default";
+	public final static String FILTRO_CONFIGURAZIONE_CORS_TIPO_VALORE_RIDEFINITO_ABILITATO = "Ridefinito (abilitato)";
+	public final static String FILTRO_CONFIGURAZIONE_CORS_TIPO_VALORE_RIDEFINITO_DISABILITATO = "Ridefinito (disabilitato)"; 
+	
+	public final static String FILTRO_CONFIGURAZIONE_CORS_ORIGIN = "filtroConfigurazioneCorsOrigin";
+	
 	public final static String FILTRO_CONNETTORE_TIPO = "filtroConnettoreTipo";
 	public final static String FILTRO_CONNETTORE_TIPO_VALORE_IM = "IM";
 	public final static String FILTRO_CONNETTORE_TIPO_PLUGIN = "filtroConnettoreTipoPlugin";
 	public final static String FILTRO_CONNETTORE_TOKEN_POLICY = "filtroConnettoreTokenPolicy";
 	public final static String FILTRO_CONNETTORE_ENDPOINT = "filtroConnettoreEndpoint";
 	public final static String FILTRO_CONNETTORE_KEYSTORE = "filtroConnettoreKeystore";
+	
+	public final static String FILTRO_CONNETTORE_DEBUG = "filtroConnettoreDebug";
+	public final static String FILTRO_CONNETTORE_DEBUG_VALORE_ABILITATO = "Abilitato";
+	public final static String FILTRO_CONNETTORE_DEBUG_VALORE_DISABILITATO = "Disabilitato";
 	
 	public final static String FILTRO_CONNETTORE_MULTIPLO_NOME = "filtroConnettoreMulNome";
 	public final static String FILTRO_CONNETTORE_MULTIPLO_FILTRO = "filtroConnettoreMulFiltro";
@@ -144,6 +219,7 @@ public final class Filtri
 	public final static String FILTRO_MODI_SICUREZZA_MESSAGGIO = "filtroModiSicMessaggio";
 	public final static String FILTRO_MODI_KEYSTORE_PATH = "filtroModiKeystorePath";
 	public final static String FILTRO_MODI_KEYSTORE_SUBJECT = "filtroModiKeystoreSubject";
+	public final static String FILTRO_MODI_KEYSTORE_ISSUER = "filtroModiKeystoreIssuer";
 	public final static String FILTRO_MODI_SICUREZZA_TOKEN = "filtroModiTokenStato";
 	public final static String FILTRO_MODI_SICUREZZA_TOKEN_POLICY = "filtroModiTokenPolicy";
 	public final static String FILTRO_MODI_SICUREZZA_TOKEN_CLIENT_ID = "filtroModiTokenClientId";

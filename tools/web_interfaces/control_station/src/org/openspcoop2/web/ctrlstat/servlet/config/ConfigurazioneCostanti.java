@@ -43,6 +43,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -624,6 +625,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_SERVICE_HANDLER = "Service Handler";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_STATISTICA = "Statistica";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TRANSAZIONE = "Transazione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_VALIDAZIONE = "Token Validazione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_NEGOZIAZIONE = "Token Negoziazione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_ATTRIBUTE_AUTHORITY = "Attribute Authority";
 
 	
 	public final static String LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE = "Inoltro Buste non Riscontrate";
@@ -841,8 +845,8 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA = "registrorotta";
 	public final static String PARAMETRO_CONFIGURAZIONE_ROTTA_ENABLED = "rottaenabled";
 	public final static String PARAMETRO_CONFIGURAZIONE_UTENTE = "utente";
-	public final static String PARAMETRO_CONFIGURAZIONE_PASSWORD = "password";
-	public final static String PARAMETRO_CONFIGURAZIONE_CONFERMA_PASSWORD = "confpw";
+	public final static String PARAMETRO_CONFIGURAZIONE_PW = "password";
+	public final static String PARAMETRO_CONFIGURAZIONE_CONFERMA_PW = "confpw";
 	public final static String PARAMETRO_CONFIGURAZIONE_LOCATION = "location";
 	public final static String PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN = "inoltromin";
 	public final static String PARAMETRO_CONFIGURAZIONE_STATO = "stato";
@@ -1437,8 +1441,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY = "gateway";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA_ALL = "all";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_UTENTE = "Utente";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PASSWORD = "Password";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONFERMA_PASSWORD = "Conferma Password";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PW = "Password";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONFERMA_PW = "Conferma Password";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOCATION = "Location";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN = "Cadenza (minuti)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO = "Stato";
@@ -1898,7 +1902,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_APPLICABILITA = "Applicabilit&agrave;";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME = "ClassName";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME = DynamicHelperCostanti.PLUGIN_CLASSNAME;
 	
 	public final static String LABEL_CONFIGURAZIONE_PLUGINS_CLASSI_PLUGIN = "Plugin";
 	

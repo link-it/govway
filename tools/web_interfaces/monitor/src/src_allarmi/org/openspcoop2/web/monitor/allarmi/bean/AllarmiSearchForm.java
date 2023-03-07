@@ -44,15 +44,17 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AllarmiSearchForm extends BaseSearchForm implements Cloneable {
+public class AllarmiSearchForm extends BaseSearchForm 
+	//implements Cloneable 
+	{
 	
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 
 	private String nomeAllarme;
 	private String statoSelezionato;
 	
-	private static final String statoDefaultPaginaStatoAllarmi = "Non Disabilitato";
-	private static final String statoDefaultPaginaConfAllarmi = "All";
+	private static final String STATO_DEFAULT_PAGINA_STATO_ALLARMI = "Non Disabilitato";
+	private static final String STATO_DEFAULT_PAGINA_CONF_ALLARMI = "All";
 	
 	public static final String TIPOLOGIA_CONFIGURAZIONE = CostantiConfigurazione.ALLARMI_TIPOLOGIA_CONFIGURAZIONE;
 	public static final String TIPOLOGIA_DELEGATA = CostantiConfigurazione.ALLARMI_TIPOLOGIA_DELEGATA;
@@ -92,9 +94,9 @@ public class AllarmiSearchForm extends BaseSearchForm implements Cloneable {
 		UIComponent component = ae.getComponent();
 		String id = component.getId();
 		
-		this.statoDefault = statoDefaultPaginaStatoAllarmi;
+		this.statoDefault = STATO_DEFAULT_PAGINA_STATO_ALLARMI;
 		if(id!= null && id.equals("confAllarmiLnk"))
-			this.statoDefault = statoDefaultPaginaConfAllarmi;
+			this.statoDefault = STATO_DEFAULT_PAGINA_CONF_ALLARMI;
 		
 		this.initSearchListener(ae);
 	}
@@ -120,8 +122,7 @@ public class AllarmiSearchForm extends BaseSearchForm implements Cloneable {
 			this.statoSelezionato = null;
 	}
 	
-	@Override
-	public Object clone() throws CloneNotSupportedException {
+	public Object cloneSearchForm() throws CloneNotSupportedException {
 		return super.clone();
 	}
 	
@@ -132,7 +133,7 @@ public class AllarmiSearchForm extends BaseSearchForm implements Cloneable {
 	}
 	
 	public void nomeAllarmeSelected(ActionEvent ae) {
-		
+		// lasciato per retrocompatibilita'
 	}
 	
 	@Override
@@ -150,7 +151,7 @@ public class AllarmiSearchForm extends BaseSearchForm implements Cloneable {
 	
 	@Override
 	public List<SelectItem> getTipologieRicerca() throws Exception {
-		List<SelectItem> listaTipologie = new ArrayList<SelectItem>();
+		List<SelectItem> listaTipologie = new ArrayList<>();
 		
 		if(Utility.isAmministratore())
 			listaTipologie.add(new SelectItem(TIPOLOGIA_CONFIGURAZIONE, MessageManager.getInstance().getMessage(AllarmiCostanti.SEARCH_TIPOLOGIA_CONFIGURAZIONE_LABEL_KEY)));
@@ -160,5 +161,7 @@ public class AllarmiSearchForm extends BaseSearchForm implements Cloneable {
 		return listaTipologie;
 	}
 	
-	public void tipologiaAllarmeListener(ActionEvent ae){}
+	public void tipologiaAllarmeListener(ActionEvent ae){
+		// lasciato per retrocompatibilita'
+	}
 }

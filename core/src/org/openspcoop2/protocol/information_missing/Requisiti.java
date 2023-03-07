@@ -60,6 +60,7 @@ import java.util.List;
 
 public class Requisiti extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Requisiti() {
+    super();
   }
 
   public void addProtocollo(RequisitoProtocollo protocollo) {

@@ -227,6 +227,11 @@ public final class ConfigurazioneDiagnosticaDatasourcePropertiesChange extends A
 					break;
 				}
 			}
+			
+			if(od==null) {
+				throw new Exception("Datasource non trovato");
+			}
+			
 			lista1 = od.getPropertyList();
 
 			confHelper.prepareDiagnosticaDatasourcePropList(od, lista1);

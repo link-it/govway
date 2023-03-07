@@ -302,7 +302,7 @@ public abstract class AbstractCacheImpl implements ICacheImpl {
     	catch ( Exception e )
     	{
     		System.err.println( "Problem getting byte count (Modified by GovWay).  Likley cause is a non serilizable object." + e.getMessage() );
-    		e.printStackTrace();   
+    		e.printStackTrace(System.err);   
     	}
     	
     	return size;

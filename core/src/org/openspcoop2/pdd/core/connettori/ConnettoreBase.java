@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.File;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -196,6 +197,12 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	/** Policy Token */
 	private PolicyNegoziazioneToken policyNegoziazioneToken;
 	
+	protected Date dataRichiestaInoltrata;
+	@Override
+	public Date getDataRichiestaInoltrata() {
+		return this.dataRichiestaInoltrata;
+	}
+	
 	protected Date dataAccettazioneRisposta;
     @Override
 	public Date getDataAccettazioneRisposta(){
@@ -225,6 +232,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	protected boolean useLimitedInputStream = false;
 	protected SogliaDimensioneMessaggio limitBytes = null;
+	
+	protected boolean useDiagnosticInputStream = false;
 	
 	protected List<Proprieta> proprietaPorta;
 	
@@ -263,7 +272,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			this.idMessaggio=this.busta.getID();
 		
 		// - Debug mode
-		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
+		if(this.properties!=null && this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
 			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
 				this.debug = true;
 		}
@@ -320,11 +329,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						this.useLimitedInputStream = true;
 						this.limitBytes = soglia;
 					}
-				}catch(Throwable t) {}
+				}catch(Throwable t) {
+					// ignore
+				}
 			}
 		}
 		
-		// Timeout e Dump
+		// Timeout, Dump
 		this.useTimeoutInputStream = this.openspcoopProperties.isConnettoriUseTimeoutInputStream();
 		boolean dumpBinario = this.debug;
 		DumpConfigurazione dumpConfigurazione = null;
@@ -420,6 +431,16 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				this.logger.error("Errore durante l'inizializzazione del dump binario: "+this.readExceptionMessageFromException(e),e);
 				this.errore = "Errore durante l'inizializzazione del dump binario: "+this.readExceptionMessageFromException(e);
 				return false;
+			}
+		}
+		
+		// Diagnostic Input Stream
+		if(this.idModulo!=null && this.msgDiagnostico!=null) {
+			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi();
+			}
+			else {
+				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_inoltroBuste();
 			}
 		}
 		
@@ -611,6 +632,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				if(this.debug) {
 					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' ...");
 				}
+				if(this.msgDiagnostico!=null) {
+					try {
+						this.msgDiagnostico.logPersonalizzato("negoziazioneToken.inCorso");
+					}catch(Throwable t) {
+						this.logger.error("Emissione diagnostica 'negoziazioneToken.inCorso' fallita: "+t.getMessage(),t);
+					}
+				}
 				EsitoNegoziazioneToken esitoNegoziazione = GestoreToken.endpointToken(this.debug, this.logger.getLogger(), this.policyNegoziazioneToken, 
 						this.busta, this.requestInfo, 
 						ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA,
@@ -634,6 +662,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					else {
 						this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; no expire");
 					}
+					if(this.msgDiagnostico!=null) {
+						try {
+							this.msgDiagnostico.logPersonalizzato("negoziazioneToken.inCache");
+						}catch(Throwable t) {
+							this.logger.error("Emissione diagnostica 'negoziazioneToken.inCache' fallita: "+t.getMessage(),t);
+						}
+					}
 				}
 				else {
 					if(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
@@ -641,6 +676,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					}
 					else {
 						this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; no expire");
+					}
+					if(this.msgDiagnostico!=null) {
+						try {
+							this.msgDiagnostico.logPersonalizzato("negoziazioneToken.completata");
+						}catch(Throwable t) {
+							this.logger.error("Emissione diagnostica 'negoziazioneToken.completata' fallita: "+t.getMessage(),t);
+						}
 					}
 				}
 				
@@ -1169,6 +1211,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     private InfoConnettoreUscita infoConnettoreUscita = null;
+    protected void emitDiagnosticStartDumpBinarioRichiestaUscita() {
+    	if(this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRichiesta()) {
+			this.dumpRaw.emitDiagnosticStartDumpBinarioRichiestaUscita();
+    	}
+    }
     protected void dumpBinarioRichiestaUscita(DumpByteArrayOutputStream bout, MessageType messageType, String contentTypeRichiesta,String location, Map<String, List<String>> trasporto) throws DumpException {
     	if(this.debug){
     		String content = null;
@@ -1185,6 +1232,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			this.infoConnettoreUscita.setLocation(location);
 			this.infoConnettoreUscita.setHeaders(trasporto);
 	    	this.dumpRaw.dumpRequest(bout, messageType, this.infoConnettoreUscita);
+    	}
+    }
+    protected void emitDiagnosticStartDumpBinarioRispostaIngresso() {
+    	if(this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRisposta()) {
+			this.dumpRaw.emitDiagnosticStartDumpBinarioRispostaIngresso();
     	}
     }
     protected void dumpBinarioRispostaIngresso(DumpByteArrayOutputStream raw, MessageType messageType, Map<String, List<String>> trasportoRisposta) throws DumpException {
@@ -1343,5 +1395,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     			this.messaggioDumpUscita.getHeaders().put(key, this.headersImpostati.get(key));
     		}
     	}
+    }
+    
+    private boolean emitDiagnosticResponseRead = false;
+    protected void emitDiagnosticResponseRead(InputStream is) {
+		if(is!=null && this.msgDiagnostico!=null && !this.emitDiagnosticResponseRead) {
+			this.msgDiagnostico.logPersonalizzato("ricezioneRisposta.firstAccessRequestStream");
+			this.emitDiagnosticResponseRead = true;
+		}
     }
 }

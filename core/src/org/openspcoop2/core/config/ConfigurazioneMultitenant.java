@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
 import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
@@ -54,22 +53,9 @@ import java.io.Serializable;
 
 @XmlRootElement(name = "configurazione-multitenant")
 
-public class ConfigurazioneMultitenant extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class ConfigurazioneMultitenant extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public ConfigurazioneMultitenant() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+    super();
   }
 
   public void set_value_stato(String value) {
@@ -133,9 +119,6 @@ public class ConfigurazioneMultitenant extends org.openspcoop2.utils.beans.BaseB
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
 
 

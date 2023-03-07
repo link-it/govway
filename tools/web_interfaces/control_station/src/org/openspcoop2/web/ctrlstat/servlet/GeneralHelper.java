@@ -265,7 +265,7 @@ public class GeneralHelper {
 		DataElement pwd = new DataElement();
 		pwd.setLabel(UtentiCostanti.LABEL_PASSWORD);
 		pwd.setType(DataElementType.CRYPT);
-		pwd.setName(UtentiCostanti.PARAMETRO_UTENTE_PASSWORD);
+		pwd.setName(UtentiCostanti.PARAMETRO_UTENTE_PW);
 		pwd.setStyleClass(Costanti.INPUT_CSS_CLASS);
 
 		dati.addElement(titoloSezione);

@@ -60,6 +60,7 @@ import java.util.List;
 
 public class RequisitoInput extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RequisitoInput() {
+    super();
   }
 
   public void addProprieta(ProprietaRequisitoInput proprieta) {

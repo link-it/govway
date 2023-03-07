@@ -64,6 +64,7 @@ import java.io.Serializable;
 
 public class DatiCooperazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiCooperazione() {
+    super();
   }
 
   public Soggetto getSender() {

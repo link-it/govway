@@ -362,6 +362,10 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 				}
 			}
 
+			if(paSA==null) {
+				throw new Exception("Connettore '"+nomeSAConnettore+"' non trovato");
+			}
+			
 			PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
 
 			if(datiConnettore == null) { // succede solo se e' la prima volta che modifico la configurazione di default

@@ -615,6 +615,14 @@ public class ModIImbustamentoSoap {
 		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX+localName, namespace);
 	}
 	
+	private static boolean senderVouche = true;	
+	public static boolean isSenderVouche() {
+		return senderVouche;
+	}
+	public static void setSenderVouche(boolean senderVouche) {
+		ModIImbustamentoSoap.senderVouche = senderVouche;
+	}
+
 	private void addCorniceSicurezza(Map<String,Object> secProperties, 
 			OpenSPCoop2Message msg, Context context, Busta busta,
 			ModISecurityConfig securityConfig,
@@ -674,7 +682,6 @@ public class ModIImbustamentoSoap {
 		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_NAMEID_FORMAT, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_NAMEID_FORMAT_VALUE_UNSPECIFIED);
 		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, codiceEnte);
 		
-		boolean senderVouche = true;
 		if(senderVouche) {
 			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_VALUE_SENDER_VOUCHES);
 		}

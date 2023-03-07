@@ -39,7 +39,7 @@ public class TestMTOM {
 	public void testMTOM() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.message.soap.mtom.Client.test();
+		org.openspcoop2.message.soap.mtom.test.MTOMTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

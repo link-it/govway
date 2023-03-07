@@ -54,7 +54,7 @@ public class NumberConsoleItem extends AbstractConsoleItem<Long> {
 	@Override
 	protected Long cloneValue(Long value) throws ProtocolException {
 		try {
-			return Long.valueOf(value.longValue());
+			return Long.valueOf(value.longValue()+"");
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}

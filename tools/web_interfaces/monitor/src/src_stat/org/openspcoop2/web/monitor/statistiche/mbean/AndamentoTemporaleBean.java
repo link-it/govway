@@ -80,15 +80,15 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 
 	public AndamentoTemporaleBean() {
 		super();
-		this.init();
+		this.initATB();
 	}
 	public AndamentoTemporaleBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
 			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB) {
 		super(serviceManager, pluginsServiceManager,
 				driverRegistroServiziDB, driverConfigurazioneDB);
-		this.init();
+		this.initATB();
 	}
-	private void init() {
+	private void initATB() {
 		this.setSlice(this.getNumeroLabelAsseXDistribuzioneTemporale());
 		this.setMaxCategorie(Integer.MAX_VALUE);
 		this.setMinCategorie(2);

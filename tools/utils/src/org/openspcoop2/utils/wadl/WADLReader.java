@@ -85,7 +85,7 @@ public class WADLReader {
 				byte[]wadl = FileSystemUtilities.readBytesFromFile(file);
 				Document d = this.xmlUtils.newDocument(wadl);
 				this.wadlUtilities.removeIncludes(d);
-				fTpm = File.createTempFile("wadl", "tmp");
+				fTpm = FileSystemUtilities.createTempFile("wadl", "tmp");
 				this.xmlUtils.writeTo(d, fTpm);
 				return this.wadlBuilder.buildAst(fTpm.toURI());
 			}
@@ -97,8 +97,11 @@ public class WADLReader {
 		}catch(Exception e){
 			throw new IOException(e.getMessage(),e); 
 		}finally{
-			if(fTpm!=null)
-				fTpm.delete();
+			if(fTpm!=null) {
+				if(!fTpm.delete()) {
+					// ignore
+				}
+			}
 		}
 	}
 	

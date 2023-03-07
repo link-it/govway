@@ -114,18 +114,26 @@ public class ServiceLogger {
 		if(params!=null && params.length>0) {
 			String msg = String.format(msgWithPrefix,params);
 			if(t!=null) {
-				if(error) this.log.error(msg,t); else this.log.debug(msg,t);
+				if(error) 
+					this.log.error(msg,t); else this.log.debug(msg,t);
 			}
 			else {
-				if(error) this.log.error(msg); else this.log.debug(msg);
+				// e' per forza un errore 
+				//if(error) 
+				this.log.error(msg); 
+				//else this.log.debug(msg);
 			}
 		}
 		else {
 			if(t!=null) {
-				if(error) this.log.error(msgWithPrefix,t); else this.log.debug(msgWithPrefix,t);
+				if(error) 
+					this.log.error(msgWithPrefix,t); else this.log.debug(msgWithPrefix,t);
 			}
 			else {
-				if(error) this.log.error(msgWithPrefix); else this.log.debug(msgWithPrefix,t);
+				// e' per forza un errore 
+				//if(error) 
+				this.log.error(msgWithPrefix); 
+				//else this.log.debug(msgWithPrefix,t);
 			}
 		}
 	}

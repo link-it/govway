@@ -101,7 +101,7 @@ public class IDSoggettoDB extends IDSoggetto implements Serializable {
 			idSoggetto.setCodicePorta(new String(this.getCodicePorta()));
 		}
 		if(this.id!=null){
-			idSoggetto.setId(Long.valueOf(this.id));
+			idSoggetto.setId(Long.valueOf(this.id+""));
 		}
 		return idSoggetto;
 	}

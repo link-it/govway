@@ -622,8 +622,8 @@ public class XMLDataConverter {
 					iStream = httpConn.getInputStream();
 				}catch(Exception e) {
 					try{  
-						if(iStream!=null)
-							iStream.close();
+//						if(iStream!=null)
+//							iStream.close();
 						if(httpConn !=null)
 							httpConn.disconnect();
 					} catch(Exception ef) {
@@ -697,12 +697,12 @@ public class XMLDataConverter {
 			try{  
 				iStream = new ByteArrayInputStream(sorgente);
 			}catch(Exception e) {
-				try{  
-					if(iStream!=null)
-						iStream.close();
-				} catch(java.io.IOException ef) {
-					// close
-				}
+//				try{  
+//					if(iStream!=null)
+//						iStream.close();
+//				} catch(java.io.IOException ef) {
+//					// close
+//				}
 				throw new DriverRegistroServiziException("Riscontrato errore durante la creazione dell'inputStreamReader del registro dei servizi : \n\n"+e.getMessage());
 			}
 
@@ -759,7 +759,7 @@ public class XMLDataConverter {
 				this.gestoreCRUD.reset();
 				this.log.info("RegistroServizi, reset effettuato.");
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				throw new DriverRegistroServiziException("Reset del RegistroServizi non riuscita: "+e.getMessage(),e);
 			}
 		}
@@ -796,7 +796,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante la conversione XML delle porte di dominio: "+e.getMessage(),e);
 		}
 		
@@ -832,7 +832,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante la conversione XML dei gruppi: "+e.getMessage(),e);
 		}
 		
@@ -867,7 +867,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante la conversione XML dei ruoli: "+e.getMessage(),e);
 		}
 		
@@ -903,7 +903,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante la conversione XML degli scope: "+e.getMessage(),e);
 		}
 				
@@ -920,7 +920,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante la conversione XML dei soggetti: "+e.getMessage(),e);
 		}
 		
@@ -939,7 +939,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante la conversione XML degli accordi di cooperazione: "+e.getMessage(),e);
 		}
 		
@@ -967,7 +967,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante la conversione XML degli accordi: "+e.getMessage(),e);
 		}
 		
@@ -1006,7 +1006,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante la conversione XML dei servizi: "+e.getMessage(),e);
 		}
 		
@@ -1017,7 +1017,7 @@ public class XMLDataConverter {
 				this.gestioneAccordoServizioParteComune(as, reset, updateEnabled);
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante la conversione XML degli accordi di servizio composti: "+e.getMessage(),e);
 		}
 		
@@ -1029,7 +1029,7 @@ public class XMLDataConverter {
 				this.gestioneServizio(servizio, soggetto, reset, mantieniFruitoriEsistenti,statoAccordo, updateEnabled);
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante la conversione XML dei servizi degli accordi di servizio composti: "+e.getMessage(),e);
 		}
 		
@@ -1126,7 +1126,9 @@ public class XMLDataConverter {
 						}finally {
 							try {
 								if(driver.isAtomica()) {
-									con.commit();
+									if(con!=null) {
+										con.commit();
+									}
 								}
 							}catch(Throwable t) {
 								// ignore
@@ -1144,7 +1146,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante l'eliminazione dei servizi: "+e.getMessage(),e);
 		}
 		
@@ -1178,7 +1180,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante l'eliminazione degli accordi: "+e.getMessage(),e);
 		}
 		
@@ -1197,7 +1199,7 @@ public class XMLDataConverter {
 			}
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new DriverRegistroServiziException("Errore durante l'eliminazione degli accordi di cooperazione: "+e.getMessage(),e);
 		}
 		
@@ -1218,7 +1220,7 @@ public class XMLDataConverter {
 				}
 				
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				throw new DriverRegistroServiziException("Errore durante l'eliminazione dei soggetti: "+e.getMessage(),e);
 			}
 			
@@ -1236,7 +1238,7 @@ public class XMLDataConverter {
 				}
 				
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 				throw new DriverRegistroServiziException("Errore durante l'eliminazione delle porte di dominio: "+e.getMessage(),e);
 			}
 			

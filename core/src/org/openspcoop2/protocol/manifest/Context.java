@@ -70,6 +70,7 @@ import java.util.List;
 
 public class Context extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Context() {
+    super();
   }
 
   public void addSubContext(SubContextMapping subContext) {

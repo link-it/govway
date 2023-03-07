@@ -92,7 +92,9 @@ public abstract class AbstractReturnGeneratedKeyGenerator implements IKeyGenerat
 			throw new KeyGeneratorException("Errore durante la generazione della chiave via JDBC3.0: "+e.getMessage(),e);
 		}finally{
 			try{
-				rs.close();
+				if(rs!=null) {
+					rs.close();
+				}
 			}catch(Exception eClose){
 				// close
 			}

@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -59,22 +58,9 @@ import java.util.List;
 
 @XmlRootElement(name = "statistica-settimanale")
 
-public class StatisticaSettimanale extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class StatisticaSettimanale extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public StatisticaSettimanale() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+    super();
   }
 
   public Statistica getStatisticaBase() {
@@ -110,9 +96,6 @@ public class StatisticaSettimanale extends org.openspcoop2.utils.beans.BaseBean 
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
   private static org.openspcoop2.core.statistiche.model.StatisticaSettimanaleModel modelStaticInstance = null;
   private static synchronized void initModelStaticInstance(){

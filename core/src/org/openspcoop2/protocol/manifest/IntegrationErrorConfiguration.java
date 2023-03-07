@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class IntegrationErrorConfiguration extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IntegrationErrorConfiguration() {
+    super();
   }
 
   public IntegrationErrorCollection getInternal() {

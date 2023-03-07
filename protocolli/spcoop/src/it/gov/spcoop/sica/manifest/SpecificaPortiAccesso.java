@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class SpecificaPortiAccesso extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SpecificaPortiAccesso() {
+    super();
   }
 
   public DocumentoInterfaccia getPortiAccessoFruitore() {

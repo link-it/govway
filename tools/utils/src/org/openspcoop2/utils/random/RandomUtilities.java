@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.utils.random;
 
+import java.security.SecureRandom;
+
 /**
  * RandomUtilities
  *
@@ -28,10 +30,10 @@ package org.openspcoop2.utils.random;
  */
 public class RandomUtilities {
 
-	private static java.util.Random _rnd = null;
+	private static SecureRandom _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {

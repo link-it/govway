@@ -29,9 +29,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
+import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.id.UUIDUtilsGenerator;
+import org.slf4j.Logger;
 
 
 /**
@@ -43,6 +46,8 @@ import org.openspcoop2.utils.id.UUIDUtilsGenerator;
  */
 public class ExampleService extends HttpServlet {
 
+	private static Logger log = LoggerWrapperFactory.getLogger(ExampleService.class);
+	
 	/**
 	 * 
 	 */
@@ -51,7 +56,15 @@ public class ExampleService extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
-		doGet(req,res);
+		try {
+			doGet(req,res);
+		}catch(Exception e) {
+			try {
+				res.sendError(500, e.getMessage());
+			}catch(Exception eSendError) {
+				log.error(eSendError.getMessage(),eSendError);
+			}
+		}
 	}
 
 	@Override
@@ -59,7 +72,12 @@ public class ExampleService extends HttpServlet {
 	throws ServletException, IOException {
 		
 		if(ExampleServletInitListener.isInitialized()==false){
-			throw new ServletException("Applicazione non inizializzata");
+			try {
+				res.sendError(500, "Applicazione non inizializzata");
+				return;
+			}catch(Exception eSendError) {
+				log.error(eSendError.getMessage(),eSendError);
+			}
 		}
 		
 		String prefix = "";
@@ -127,7 +145,7 @@ public class ExampleService extends HttpServlet {
 				
 				conConfig1 = dsConfig.getWrappedConnection(idTransazione);
 				
-				conConfig2 = dsConfig.getWrappedConnection(idTransazione, "AccettazioneRichiesta");
+				conConfig2 = dsConfig.getWrappedConnection(idTransazione, IDUtilities.generateAlphaNumericRandomString(10));
 				
 				// simulo attivita con sleep
 				System.out.println(prefix+"Recuperate connessioni dalla configurazione, sleep 10s ...");
@@ -137,9 +155,9 @@ public class ExampleService extends HttpServlet {
 				// NOTA: utilizzabile solo se il ds è stato creato con setWrapOriginalMethods(true)
 				conRuntime1 = dsRuntime.getConnection();
 				
-				// metodo equivalente a getWrappedConnection(idTransazione, "AccettazioneRichiesta"), 
+				// metodo equivalente a getWrappedConnection(idTransazione, "password"), 
 				// NOTA: utilizzabile solo se il ds è stato creato con setWrapOriginalMethods(true)
-				conRuntime2 = dsRuntime.getConnection(idTransazione, "AccettazioneRichiesta");
+				conRuntime2 = dsRuntime.getConnection(idTransazione, IDUtilities.generateAlphaNumericRandomString(10));
 				
 				// simulo altra attivita con sleep
 				System.out.println(prefix+"Recuperate connessioni dalla runtime, sleep 20s ...");

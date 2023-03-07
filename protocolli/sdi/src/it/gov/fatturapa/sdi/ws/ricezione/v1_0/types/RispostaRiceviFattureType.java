@@ -57,6 +57,7 @@ import java.io.Serializable;
 
 public class RispostaRiceviFattureType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RispostaRiceviFattureType() {
+    super();
   }
 
   public void set_value_esito(String value) {

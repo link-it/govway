@@ -78,14 +78,22 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "data_accettazione_richiesta", Transazione.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType()));
 				setParameter(object, "setDataIngressoRichiesta", Transazione.model().DATA_INGRESSO_RICHIESTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_ingresso_richiesta", Transazione.model().DATA_INGRESSO_RICHIESTA.getFieldType()));
+				setParameter(object, "setDataIngressoRichiestaStream", Transazione.model().DATA_INGRESSO_RICHIESTA_STREAM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_ingresso_richiesta_stream", Transazione.model().DATA_INGRESSO_RICHIESTA_STREAM.getFieldType()));
 				setParameter(object, "setDataUscitaRichiesta", Transazione.model().DATA_USCITA_RICHIESTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_uscita_richiesta", Transazione.model().DATA_USCITA_RICHIESTA.getFieldType()));
+				setParameter(object, "setDataUscitaRichiestaStream", Transazione.model().DATA_USCITA_RICHIESTA_STREAM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_uscita_richiesta_stream", Transazione.model().DATA_USCITA_RICHIESTA_STREAM.getFieldType()));
 				setParameter(object, "setDataAccettazioneRisposta", Transazione.model().DATA_ACCETTAZIONE_RISPOSTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_accettazione_risposta", Transazione.model().DATA_ACCETTAZIONE_RISPOSTA.getFieldType()));
 				setParameter(object, "setDataIngressoRisposta", Transazione.model().DATA_INGRESSO_RISPOSTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_ingresso_risposta", Transazione.model().DATA_INGRESSO_RISPOSTA.getFieldType()));
+				setParameter(object, "setDataIngressoRispostaStream", Transazione.model().DATA_INGRESSO_RISPOSTA_STREAM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_ingresso_risposta_stream", Transazione.model().DATA_INGRESSO_RISPOSTA_STREAM.getFieldType()));
 				setParameter(object, "setDataUscitaRisposta", Transazione.model().DATA_USCITA_RISPOSTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_uscita_risposta", Transazione.model().DATA_USCITA_RISPOSTA.getFieldType()));
+				setParameter(object, "setDataUscitaRispostaStream", Transazione.model().DATA_USCITA_RISPOSTA_STREAM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_uscita_risposta_stream", Transazione.model().DATA_USCITA_RISPOSTA_STREAM.getFieldType()));
 				setParameter(object, "setRichiestaIngressoBytes", Transazione.model().RICHIESTA_INGRESSO_BYTES.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "richiesta_ingresso_bytes", Transazione.model().RICHIESTA_INGRESSO_BYTES.getFieldType()));
 				setParameter(object, "setRichiestaUscitaBytes", Transazione.model().RICHIESTA_USCITA_BYTES.getFieldType(),
@@ -300,14 +308,22 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"data-accettazione-richiesta"));
 				setParameter(object, "setDataIngressoRichiesta", Transazione.model().DATA_INGRESSO_RICHIESTA.getFieldType(),
 					this.getObjectFromMap(map,"data-ingresso-richiesta"));
+				setParameter(object, "setDataIngressoRichiestaStream", Transazione.model().DATA_INGRESSO_RICHIESTA_STREAM.getFieldType(),
+					this.getObjectFromMap(map,"data-ingresso-richiesta-stream"));
 				setParameter(object, "setDataUscitaRichiesta", Transazione.model().DATA_USCITA_RICHIESTA.getFieldType(),
 					this.getObjectFromMap(map,"data-uscita-richiesta"));
+				setParameter(object, "setDataUscitaRichiestaStream", Transazione.model().DATA_USCITA_RICHIESTA_STREAM.getFieldType(),
+					this.getObjectFromMap(map,"data-uscita-richiesta-stream"));
 				setParameter(object, "setDataAccettazioneRisposta", Transazione.model().DATA_ACCETTAZIONE_RISPOSTA.getFieldType(),
 					this.getObjectFromMap(map,"data-accettazione-risposta"));
 				setParameter(object, "setDataIngressoRisposta", Transazione.model().DATA_INGRESSO_RISPOSTA.getFieldType(),
 					this.getObjectFromMap(map,"data-ingresso-risposta"));
+				setParameter(object, "setDataIngressoRispostaStream", Transazione.model().DATA_INGRESSO_RISPOSTA_STREAM.getFieldType(),
+					this.getObjectFromMap(map,"data-ingresso-risposta-stream"));
 				setParameter(object, "setDataUscitaRisposta", Transazione.model().DATA_USCITA_RISPOSTA.getFieldType(),
 					this.getObjectFromMap(map,"data-uscita-risposta"));
+				setParameter(object, "setDataUscitaRispostaStream", Transazione.model().DATA_USCITA_RISPOSTA_STREAM.getFieldType(),
+					this.getObjectFromMap(map,"data-uscita-risposta-stream"));
 				setParameter(object, "setRichiestaIngressoBytes", Transazione.model().RICHIESTA_INGRESSO_BYTES.getFieldType(),
 					this.getObjectFromMap(map,"richiesta-ingresso-bytes"));
 				setParameter(object, "setRichiestaUscitaBytes", Transazione.model().RICHIESTA_USCITA_BYTES.getFieldType(),

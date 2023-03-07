@@ -54,6 +54,7 @@ public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop
 	private String audience;
 	private String resource;
 	private Map<String,String> parameters = null;
+	private Map<String,String> httpHeaders = null;
 
 	private String endpoint;
 	
@@ -134,6 +135,12 @@ public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop
 	}
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
+	}
+	public Map<String, String> getHttpHeaders() {
+		return this.httpHeaders;
+	}
+	public void setHttpHeaders(Map<String, String> httpHeaders) {
+		this.httpHeaders = httpHeaders;
 	}
 	
 	public String getEndpoint() {

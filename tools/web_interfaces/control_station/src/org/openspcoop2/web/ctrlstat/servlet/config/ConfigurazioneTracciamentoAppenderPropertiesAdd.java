@@ -200,6 +200,10 @@ public final class ConfigurazioneTracciamentoAppenderPropertiesAdd extends Actio
 				}
 			}
 
+			if(oa==null) {
+				throw new Exception("Appender non trovato");
+			}
+			
 			confHelper.prepareTracciamentoAppenderPropList(oa, oa.getPropertyList());
 
 			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);

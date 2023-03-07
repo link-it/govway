@@ -135,8 +135,8 @@ public class JDBCConfigurazioneStatisticaServiceSearchImpl implements IJDBCServi
 
 		List<IdConfigurazioneStatistica> list = new ArrayList<IdConfigurazioneStatistica>();
 
-		// TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+		// TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari a create l'ID logico
 		// 2. Usare metodo getConfigurazioneStatisticaFetch() sul risultato della select per ottenere un oggetto ConfigurazioneStatistica
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
@@ -159,8 +159,8 @@ public class JDBCConfigurazioneStatisticaServiceSearchImpl implements IJDBCServi
 
         List<ConfigurazioneStatistica> list = new ArrayList<ConfigurazioneStatistica>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+        // TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
 		// 2. Usare metodo getConfigurazioneStatisticaFetch() sul risultato della select per ottenere un oggetto ConfigurazioneStatistica
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 

@@ -840,7 +840,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try {
 				if(this.driverRegistroServizi.isAtomica()) {
-					con.commit();
+					if(con!=null) {
+						con.commit();
+					}
 				}
 			}catch(Throwable t) {}
 			try{
@@ -917,7 +919,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try {
 				if(this.driverRegistroServizi.isAtomica()) {
-					con.commit();
+					if(con!=null) {
+						con.commit();
+					}
 				}
 			}catch(Throwable t) {}
 			try{
@@ -940,7 +944,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try {
 				if(this.driverRegistroServizi.isAtomica()) {
-					con.commit();
+					if(con!=null) {
+						con.commit();
+					}
 				}
 			}catch(Throwable t) {}
 			try{
@@ -1041,7 +1047,7 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
-	// Inefficente
+	// Inefficiente
 	@Deprecated 
 	public void initMappingErogazione(Logger log) throws DriverRegistroServiziException {
 		try{
@@ -1089,7 +1095,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try {
 				if(this.driverRegistroServizi.isAtomica()) {
-					con.commit();
+					if(con!=null) {
+						con.commit();
+					}
 				}
 			}catch(Throwable t) {}
 			try{
@@ -1166,7 +1174,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try {
 				if(this.driverRegistroServizi.isAtomica()) {
-					con.commit();
+					if(con!=null) {
+						con.commit();
+					}
 				}
 			}catch(Throwable t) {}
 			try{
@@ -1189,7 +1199,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try {
 				if(this.driverRegistroServizi.isAtomica()) {
-					con.commit();
+					if(con!=null) {
+						con.commit();
+					}
 				}
 			}catch(Throwable t) {}
 			try{
@@ -1290,7 +1302,7 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
-	// Inefficente
+	// Inefficiente
 	@Deprecated 
 	public void initMappingFruizione(Logger log) throws DriverRegistroServiziException {
 		try{

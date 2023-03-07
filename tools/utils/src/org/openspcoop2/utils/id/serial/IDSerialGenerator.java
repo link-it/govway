@@ -63,7 +63,7 @@ public class IDSerialGenerator {
 			}
 			String sId = this.buildID(param,con,tipoDatabase,log);
 			if(sId==null) {
-				throw new UtilsException("IDSerialGeneratorType["+param.getTipo()+"] build Id failed");
+				throw new UtilsException("IDSerialGeneratorType["+(param!=null ? param.getTipo() : "null")+"] build Id failed");
 			}
 			return Long.parseLong(sId);
 		}catch(Exception e){
@@ -173,8 +173,8 @@ public class IDSerialGenerator {
 				}
 			} catch(Exception er) {
 				//System.out.println("ERROR UNSET:"+er.getMessage());
-				log.error("Creazione serial non riuscita (ripristino transazione): "+er.getMessage());
-				throw new UtilsException("Creazione serial non riuscita (ripristino transazione): "+er.getMessage());
+				log.error("Creazione serial (ripristino transazione): "+er.getMessage());
+				//throw new RuntimeException("Creazione serial non riuscita (ripristino transazione): "+er.getMessage());
 			}
 		}
 

@@ -28,6 +28,6 @@ package org.openspcoop2.pdd.core.token.parser;
  */
 public enum TipologiaClaimsNegoziazione {
 
-	OAUTH2_RFC_6749, CUSTOM
+	OAUTH2_RFC_6749, MAPPING, CUSTOM
 	
 }

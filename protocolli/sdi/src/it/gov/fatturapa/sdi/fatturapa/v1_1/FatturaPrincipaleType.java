@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class FatturaPrincipaleType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public FatturaPrincipaleType() {
+    super();
   }
 
   public java.lang.String getNumeroFatturaPrincipale() {

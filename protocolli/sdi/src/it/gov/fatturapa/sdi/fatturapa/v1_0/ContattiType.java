@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class ContattiType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ContattiType() {
+    super();
   }
 
   public java.lang.String getTelefono() {

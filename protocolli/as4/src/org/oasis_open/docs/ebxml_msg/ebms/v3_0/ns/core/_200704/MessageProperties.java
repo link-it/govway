@@ -58,6 +58,7 @@ import java.util.List;
 
 public class MessageProperties extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public MessageProperties() {
+    super();
   }
 
   public void addProperty(Property property) {

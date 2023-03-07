@@ -97,8 +97,8 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 			String nomeDocumento = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_NOME_DOCUMENTO);
 			String tipoFile = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_TIPO_FILE);
 			
-			int idAllegatoInt = Integer.parseInt(idAllegato);
-			int idAccordoInt = Integer.parseInt(idAccordo);
+			long idAllegatoLong = Long.valueOf(idAllegato);
+			long idAccordoLong = Long.valueOf(idAccordo);
 			
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
@@ -113,10 +113,10 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idAccordoInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
-			Documento doc = archiviCore.getDocumento(idAllegatoInt,false);
+			Documento doc = archiviCore.getDocumento(idAllegatoLong,false);
 			
 			IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 			String uri = idAccordoFactory.getUriFromAccordo(as);

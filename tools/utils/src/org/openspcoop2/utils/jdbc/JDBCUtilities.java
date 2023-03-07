@@ -26,6 +26,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -196,8 +197,6 @@ public class JDBCUtilities {
 	
 	public static void addInformazioniDatabaseFromMetaData(Connection c, StringBuilder bf) throws SQLException{
 		
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 		try{
 			DatabaseMetaData dbMetaDati = c.getMetaData();
 			if(dbMetaDati!=null){
@@ -303,15 +302,38 @@ public class JDBCUtilities {
 			}
 
 		}finally{
-			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception eClose){}
-			try{
-				if(pstmt!=null)
-					pstmt.close();
-			}catch(Exception eClose){}
 		}
 
+	}
+	
+	public static void closeResources(ResultSet rs, PreparedStatement stm) {
+		try{
+			if(rs!=null) 
+				rs.close();
+		}catch (Exception e) {
+			//ignore
+		}
+		try{
+			if(stm!=null) 
+				stm.close();
+		}catch (Exception e) {
+			//ignore
+		}
+	}
+	public static void closeResources(PreparedStatement stm) {
+		try{
+			if(stm!=null) 
+				stm.close();
+		}catch (Exception e) {
+			//ignore
+		}
+	}
+	public static void closeResources(Statement stm) {
+		try{
+			if(stm!=null) 
+				stm.close();
+		}catch (Exception e) {
+			//ignore
+		}
 	}
 }

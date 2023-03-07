@@ -1,0 +1,4 @@
+CREATE TABLE prova_bytewise (
+     descrizione VARCHAR(255) NOT NULL,
+	 REPOSITORY_ACCESS INT NOT NULL DEFAULT 0
+);

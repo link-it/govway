@@ -90,7 +90,7 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 
 			String idAccordo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
-			int idAccordoInt = Integer.parseInt(idAccordo);
+			long idAccordoLong = Long.valueOf(idAccordo);
 			String ruolo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO);
 			String tipoFile = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_FILE);
 			FormFile ff = fileUpload.getTheFile();
@@ -104,7 +104,7 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 			acHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.valueOf(idAccordoInt));
+			AccordoCooperazione ac = acCore.getAccordoCooperazione(idAccordoLong);
 			String titleAS = acHelper.getLabelIdAccordoCooperazione(ac);
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(ac.getSoggettoReferente().getTipo());
 			
@@ -223,7 +223,7 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
-			List<Documento> lista = acCore.accordiCoopAllegatiList(idAccordoInt, ricerca);
+			List<Documento> lista = acCore.accordiCoopAllegatiList(idAccordoLong, ricerca);
 
 			acHelper.prepareAccordiCoopAllegatiList(ac, ricerca, lista);
 

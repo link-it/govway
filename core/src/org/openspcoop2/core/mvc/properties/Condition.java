@@ -77,6 +77,7 @@ import java.util.List;
 
 public class Condition extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Condition() {
+    super();
   }
 
   public void addDefined(Defined defined) {

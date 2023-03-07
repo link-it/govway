@@ -91,7 +91,9 @@ public class AuditLog4JAppender implements IAuditAppender {
 			// Configurazione file
 			File fConf = new File(fileConfigurazione);
 			if(fConf.exists()){
-				loggerProperties.load(new java.io.FileInputStream(fConf));
+				try(java.io.FileInputStream fin = new java.io.FileInputStream(fConf)){
+					loggerProperties.load(fin);
+				}
 			}else{
 				InputStream is = null;
 				try{

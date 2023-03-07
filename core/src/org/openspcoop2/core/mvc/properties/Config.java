@@ -68,6 +68,7 @@ import java.util.List;
 
 public class Config extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Config() {
+    super();
   }
 
   public Compatibility getCompatibility() {

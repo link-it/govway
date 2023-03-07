@@ -264,22 +264,32 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_CLIENT_ID = "form.clientId";
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_RESOURCE = "form.resource";
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS = "form.parameters";
+    // HTTP
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HTTP_METHOD = "http.method";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HTTP_CONTENT_TYPE = "http.contentType";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HTTP_HEADERS = "http.headers";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE = "http.payload.templateType";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HTTP_PAYLOAD = "http.payload";
+    
     // Applicativo Richiedente
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_APPLICATIVE_REQUESTER = "applicativeRequester";
     
+    // Fruizione
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_OUTBOUND_INTERFACE = "outboundInterface";
+    
     /** Attesa attiva di default effettuata per ottenere un lock, in millisecondi */
-    public final static long GET_LOCK_ATTESA_ATTIVA = 90 * 1000; // 2 minuti
+    public final static long GET_LOCK_ATTESA_ATTIVA = 90l * 1000l; // 2 minuti
     /** Intervallo maggiore per frequenza di check per ottenere un lock, in millisecondi */
     public final static int GET_LOCK_CHECK_INTERVAL = 50;
     
     /** Attesa attiva di default effettuata per messaggi gia in processamento, in millisecondi */
-    public final static long MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA = 90 * 1000; // 2 minuti
+    public final static long MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA = 90l * 1000l; // 2 minuti
     /** Intervallo maggiore per frequenza di check per messaggi gia in processamento, in millisecondi */
     public final static int MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL = 500;
   
     
     /** Attesa attiva di default effettuata dal TransactionManager, in millisecondi */
-    public final static long TRANSACTION_MANAGER_ATTESA_ATTIVA = 120 * 1000; // 2 minuti
+    public final static long TRANSACTION_MANAGER_ATTESA_ATTIVA = 120l * 1000l; // 2 minuti
     /** Intervallo maggiore per frequenza di check nell'attesa attiva effettuata dal TransactionManager, in millisecondi */
     public final static int TRANSACTION_MANAGER_CHECK_INTERVAL = 10;
     /** Intervallo di check su DB effettuata dal TransactionManager, in caso di cache attiva */
@@ -287,7 +297,7 @@ public class CostantiPdD {
     
     
     /** Attesa attiva di default effettuata dal timer, in millisecondi */
-    public final static long TIMER_EJB_ATTESA_ATTIVA = 60 * 1000; // 1 minuto
+    public final static long TIMER_EJB_ATTESA_ATTIVA = 60l * 1000l; // 1 minuto
     /** Intervallo maggiore per frequenza di check nell'attesa attiva effettuata dal Timer EJB millisecondi */
     public final static int TIMER_EJB_CHECK_INTERVAL = 200; 
     
@@ -307,7 +317,7 @@ public class CostantiPdD {
     
 
     /** Identifica il timeout di ricezione sulla connesione jms (5 minuti) */
-	public final static long NODE_RECEIVER_ATTESA_ATTIVA = 5 * 60 * 1000;
+	public final static long NODE_RECEIVER_ATTESA_ATTIVA = 5l * 60l * 1000l;
 	/** Intervallo di checl sulla coda in ricezione */
 	public final static int NODE_RECEIVER_CHECK_INTERVAL = 10;
 	/** Intervallo di check su DB effettuata dal NodeReceiver, in caso di cache attiva */

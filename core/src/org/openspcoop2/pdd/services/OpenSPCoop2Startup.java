@@ -144,6 +144,7 @@ import org.openspcoop2.pdd.core.response_caching.GestoreCacheResponseCaching;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.logger.DiagnosticInputStream;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -425,7 +426,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				o = instanceProperties.reads(OpenSPCoop2Startup.log);
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			}
 			try{
 				if(o!=null){
@@ -871,6 +872,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					
 				}
 				
+				// DiagnosticInputStream
+				DiagnosticInputStream.setSetDateEmptyStream(propertiesReader.isConnettoriUseDiagnosticInputStream_setDateEmptyStream());
+				OpenSPCoop2Startup.log.info("DiagnosticInputStream isSetDateEmptyStream: "+DiagnosticInputStream.isSetDateEmptyStream());
+				
 				// PipeUnblockedStream
 				if(propertiesReader.getPipedUnblockedStreamClassName()!=null) {
 					PipedUnblockedStreamFactory.setImplementation(propertiesReader.getPipedUnblockedStreamClassName());
@@ -983,7 +988,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						
 						// Log
 						// stampo comunque saaj factory
-						OpenSPCoop2Startup.log.info("OpenSPCoop MessageFactory (open:"+OpenSPCoop2MessageFactory_impl.class.getName().equals(factory.getClass().getName())+"): "+factory.getClass().getName());
+						String factoryClassName = OpenSPCoop2MessageFactory_impl.class.getName()+"";
+						OpenSPCoop2Startup.log.info("OpenSPCoop MessageFactory (open:"+factoryClassName.equals(factory.getClass().getName())+"): "+factory.getClass().getName());
 						if(propertiesReader.isPrintInfoFactory()){
 							MessageType [] mt = MessageType.values();
 							for (int i = 0; i < mt.length; i++) {
@@ -2654,7 +2660,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 								if(fDati.exists() && fDati.canRead() && fDati.length()>0){
 									FileInputStream fin = new FileInputStream(fDati);
 									GestorePolicyAttive.getInstance(type).initialize(fin,confControlloTraffico);
-									fDati.delete();
+									if(!fDati.delete()) {
+										// ignore
+									}
 								}
 							}
 						}catch(Throwable e){
@@ -2721,7 +2729,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				String ocspConfig = propertiesReader.getOCSPConfig();
 				if(StringUtils.isNotEmpty(ocspConfig)) {
 					File f = new File(ocspConfig);
-					OCSPManager.init(f, propertiesReader.isOCSPConfigRequired(), log);
+					OCSPManager.init(f, propertiesReader.isOCSPConfigRequired(), propertiesReader.isOCSPConfigLoadDefault(), log);
 					OCSPManager ocspManager = OCSPManager.getInstance();
 					String msgInit = "Gestore OCSP inizializzato; policy registrate: "+ocspManager.getOCSPConfigTypes();
 					log.info(msgInit);

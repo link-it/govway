@@ -66,6 +66,7 @@ import java.io.Serializable;
 
 public class ReplaceFruitoreMatchType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ReplaceFruitoreMatchType() {
+    super();
   }
 
   public ReplaceMatchFieldType getNome() {

@@ -28,7 +28,7 @@ import javax.validation.Valid;
 public class FruizioneModIRest  implements OneOfFruizioneModi, OneOfFruizioneModIModi {
   
   @Schema(required = true, description = "")
-  private TipoApiEnum protocollo = null;
+  private TipoConfigurazioneFruizioneEnum protocollo = null;
   
   @Schema(required = true, description = "")
   private FruizioneModIRestRichiesta richiesta = null;
@@ -43,15 +43,15 @@ public class FruizioneModIRest  implements OneOfFruizioneModi, OneOfFruizioneMod
 @JsonProperty("protocollo")
   @NotNull
   @Valid
-  public TipoApiEnum getProtocollo() {
+  public TipoConfigurazioneFruizioneEnum getProtocollo() {
     return this.protocollo;
   }
 
-  public void setProtocollo(TipoApiEnum protocollo) {
+  public void setProtocollo(TipoConfigurazioneFruizioneEnum protocollo) {
     this.protocollo = protocollo;
   }
 
-  public FruizioneModIRest protocollo(TipoApiEnum protocollo) {
+  public FruizioneModIRest protocollo(TipoConfigurazioneFruizioneEnum protocollo) {
     this.protocollo = protocollo;
     return this;
   }

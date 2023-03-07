@@ -88,6 +88,7 @@ import java.io.Serializable;
 
 public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IntegrationErrorCollection() {
+    super();
   }
 
   public RFC7807 getRfc7807() {

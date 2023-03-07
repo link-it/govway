@@ -215,5 +215,7 @@ public class Costanti {
 	public final static String LABEL_PARAMETRO_PROTOCOLLO_COMPACT = "Profilo";
 	public final static String LABEL_PARAMETRO_PROTOCOLLI_COMPACT = "Profili";
 	
+	public final static String VALUE_PARAMETRO_CUSTOM_IN_SELECT =  "custom";
+	
 	public final static String LABEL_PARAMETRO_CUSTOM_IN_SELECT = "plugin";
 }

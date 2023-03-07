@@ -62,6 +62,7 @@ import java.io.Serializable;
 
 public class AltriDatiGestionaliType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public AltriDatiGestionaliType() {
+    super();
   }
 
   public java.lang.String getTipoDato() {

@@ -101,6 +101,10 @@ public final class AccordiServizioParteComuneAllegatiDel extends Action {
 					as = apcCore.getAccordoServizioFull(doc.getIdProprietarioDocumento());
 				}
 			}
+			
+			if(as==null) {
+				throw new Exception("API non trovata");
+			}
 				
 			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneAllegati(as, userLogin, apcCore, apcHelper, idAllegati);
 

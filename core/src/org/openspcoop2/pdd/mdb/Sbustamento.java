@@ -116,7 +116,7 @@ public class Sbustamento extends GenericLib{
 	}
 
 	@Override
-	protected void inizializza() throws GenericLibException {
+	protected synchronized void inizializza() throws GenericLibException {
 		super.inizializza();
 	}
 

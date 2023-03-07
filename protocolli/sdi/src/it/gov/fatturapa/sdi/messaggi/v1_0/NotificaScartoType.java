@@ -72,6 +72,7 @@ import java.io.Serializable;
 
 public class NotificaScartoType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public NotificaScartoType() {
+    super();
   }
 
   public java.lang.String getIdentificativoSdI() {

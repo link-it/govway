@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -48,8 +47,10 @@ import java.io.Serializable;
  * 			&lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="data-accettazione-richiesta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="data-uscita-richiesta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="data-uscita-richiesta-stream" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="data-accettazione-risposta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="data-ingresso-risposta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="data-ingresso-risposta-stream" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="richiesta-uscita-bytes" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="risposta-ingresso-bytes" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="location-connettore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
@@ -100,8 +101,10 @@ import java.io.Serializable;
   	"identificativoMessaggio",
   	"dataAccettazioneRichiesta",
   	"dataUscitaRichiesta",
+  	"dataUscitaRichiestaStream",
   	"dataAccettazioneRisposta",
   	"dataIngressoRisposta",
+  	"dataIngressoRispostaStream",
   	"richiestaUscitaBytes",
   	"rispostaIngressoBytes",
   	"locationConnettore",
@@ -131,22 +134,9 @@ import java.io.Serializable;
 
 @XmlRootElement(name = "transazione-applicativo-server")
 
-public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public TransazioneApplicativoServer() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+    super();
   }
 
   public java.lang.String getIdTransazione() {
@@ -265,6 +255,14 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
     this.dataUscitaRichiesta = dataUscitaRichiesta;
   }
 
+  public java.util.Date getDataUscitaRichiestaStream() {
+    return this.dataUscitaRichiestaStream;
+  }
+
+  public void setDataUscitaRichiestaStream(java.util.Date dataUscitaRichiestaStream) {
+    this.dataUscitaRichiestaStream = dataUscitaRichiestaStream;
+  }
+
   public java.util.Date getDataAccettazioneRisposta() {
     return this.dataAccettazioneRisposta;
   }
@@ -279,6 +277,14 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   public void setDataIngressoRisposta(java.util.Date dataIngressoRisposta) {
     this.dataIngressoRisposta = dataIngressoRisposta;
+  }
+
+  public java.util.Date getDataIngressoRispostaStream() {
+    return this.dataIngressoRispostaStream;
+  }
+
+  public void setDataIngressoRispostaStream(java.util.Date dataIngressoRispostaStream) {
+    this.dataIngressoRispostaStream = dataIngressoRispostaStream;
   }
 
   public java.lang.Long getRichiestaUscitaBytes() {
@@ -475,9 +481,6 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
   private static org.openspcoop2.core.transazioni.model.TransazioneApplicativoServerModel modelStaticInstance = null;
   private static synchronized void initModelStaticInstance(){
 	  if(org.openspcoop2.core.transazioni.TransazioneApplicativoServer.modelStaticInstance==null){
@@ -550,6 +553,11 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-uscita-richiesta-stream",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataUscitaRichiestaStream;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-accettazione-risposta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataAccettazioneRisposta;
 
@@ -557,6 +565,11 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-ingresso-risposta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataIngressoRisposta;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-ingresso-risposta-stream",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataIngressoRispostaStream;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="richiesta-uscita-bytes",required=false,nillable=false)

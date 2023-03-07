@@ -512,7 +512,7 @@
 				<property name="policy.attributeAuthority.request.template" />
 			</item>
 
-			<item type="text" name="aaRichiestaJwsPayloadTemplateContentTypeJwt" label="Content-Type" default="application/jwt" required="true">
+			<item type="textarea" name="aaRichiestaJwsPayloadTemplateContentTypeJwt" label="Content-Type" default="application/jwt" required="true" max="1">
 				<conditions and="true">
 					<condition and="true">
 						<equals name="aaRequestTypeWithPayload" value="jws"/>
@@ -609,7 +609,7 @@
 				<property name="policy.attributeAuthority.request.template" />
 			</item>
 
-			<item type="text" name="aaRichiestaPayloadTemplateContentTypeJson" label="Content-Type" default="application/json" required="true">
+			<item type="textarea" name="aaRichiestaPayloadTemplateContentTypeJson" label="Content-Type" default="application/json" required="true" max="1">
 				<conditions and="true">
 					<condition and="false">
 						<equals name="aaRequestTypeWithPayload" value="json"/>
@@ -617,7 +617,7 @@
 				</conditions>
 			    	<property name="policy.attributeAuthority.request.contentType" />
 			</item>
-			<item type="text" name="aaRichiestaPayloadTemplateContentTypeCustom" label="Content-Type" required="true">
+			<item type="textarea" name="aaRichiestaPayloadTemplateContentTypeCustom" label="Content-Type" required="true" max="1">
 				<conditions and="true">
 					<condition and="false">
 						<equals name="aaRequestTypeWithPayload" value="custom"/>
@@ -664,6 +664,14 @@
 				</condition>
 			</conditions>
 		   	<property name="policy.attributeAuthority.response.jwt.attributes" />
+		</item>
+		<item type="select" name="aaResponseParserCustomPluginChoice" label="Plugin" reloadOnChange="true" >
+			<conditions>
+				<condition>
+					<equals name="aaResponse" value="custom"/>
+				</condition>
+			</conditions>
+			<property name="policy.attributeAuthority.claimsParser.pluginType" />
 		</item>
 		<item type="text" name="aaResponseParserCustom" label="ClassName" required="true">
 			<conditions>

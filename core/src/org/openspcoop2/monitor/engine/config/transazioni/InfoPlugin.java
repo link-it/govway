@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -63,22 +62,9 @@ import java.io.Serializable;
 
 @XmlRootElement(name = "info-plugin")
 
-public class InfoPlugin extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class InfoPlugin extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public InfoPlugin() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+    super();
   }
 
   public java.lang.String getTipoPlugin() {
@@ -122,9 +108,6 @@ public class InfoPlugin extends org.openspcoop2.utils.beans.BaseBean implements 
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
 
 

@@ -42,8 +42,7 @@ public class MessageProvider extends HashMap{
 		try {
 			return this.msgMgr.getMessage((String)key);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			return null;
 		}
 	}

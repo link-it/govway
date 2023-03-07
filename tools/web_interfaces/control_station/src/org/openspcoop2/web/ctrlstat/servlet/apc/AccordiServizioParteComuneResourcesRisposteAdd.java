@@ -61,8 +61,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action {
 
-	private String editMode = null;
-
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -86,10 +84,10 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
-			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idInt = Integer.parseInt(id);
+			long idAccordoLong = Long.valueOf(id);
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
@@ -115,7 +113,7 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
 			Resource risorsa = null;
@@ -151,7 +149,7 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if(ServletUtils.isEditModeInProgress(this.editMode)){
+			if(ServletUtils.isEditModeInProgress(editMode)){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, listaParams);
@@ -208,7 +206,7 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id delle risorse
-			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			as = apcCore.getAccordoServizioFull(idAccordoLong);
 			
 			risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {
@@ -216,6 +214,10 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 				if (nomeRisorsa.equals(risorsa.getNome())) {
 					break;
 				}
+			}
+			
+			if(risorsa==null) {
+				throw new Exception("Risorsa con nome '"+nomeRisorsa+"' non trovata nell'accordo con id '"+idAccordoLong+"'");
 			}
 			
 			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(risorsa.getId(), ricerca);

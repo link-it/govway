@@ -2646,6 +2646,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			String filterCredenziale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CREDENZIALE);
 			this.addFilterCredenziale(filterTipoCredenziali, filterCredenziale);
+			
+			String filterCredenzialeIssuer = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CREDENZIALE_ISSUER);
+			this.addFilterCredenzialeIssuer(filterTipoCredenziali, filterCredenzialeIssuer);
 					
 			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
 			addFilterRuolo(filterRuolo, false);
@@ -2682,6 +2685,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					
 					// filtro plugin
 					this.addFilterConnettorePlugin(ricerca, idLista, filterTipoConnettore);
+	
+					// filtro debug
+					if(!this.isModalitaStandard()) {
+						this.addFilterConnettoreDebug(ricerca, idLista, filterTipoConnettore);
+					}
 					
 					// filtro token policy
 					this.addFilterConnettoreTokenPolicy(ricerca, idLista, filterTipoConnettore);
@@ -2691,7 +2699,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					
 					// filtro keystore
 					this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
-					
+										
 					// imposto apertura sezione
 					this.impostaAperturaSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE);
 					
@@ -2742,6 +2750,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 								// filtro keystore
 								this.addFilterModIKeystorePath(ricerca, idLista);
 								this.addFilterModIKeystoreSubject(ricerca, idLista);
+								this.addFilterModIKeystoreIssuer(ricerca, idLista);
 								
 							}
 							

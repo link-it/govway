@@ -56,6 +56,14 @@ public class FSRecoveryTransazioniImpl extends AbstractFSRecovery {
 		this.log.info("Recovery Transazioni completato");
 	}
 	
+	private static boolean enrichEventi = false;	
+	public static boolean isEnrichEventi() {
+		return enrichEventi;
+	}
+	public static void setEnrichEventi(boolean enrichEventi) {
+		FSRecoveryTransazioniImpl.enrichEventi = enrichEventi;
+	}
+
 	@Override
 	public void insertObject(File file, Connection connection) throws Exception {
 		JaxbDeserializer deserializer = new JaxbDeserializer();
@@ -63,7 +71,6 @@ public class FSRecoveryTransazioniImpl extends AbstractFSRecovery {
 		
 		// aggiungo evento transazione
 		// Non e' più possibile aggiungerlo da quando abbiamo trasformato la colonna in 'eventi'.
-		boolean enrichEventi = false;
 		if(enrichEventi) {
 			if(transazione.getEventiGestione()==null || "".equals(transazione.getEventiGestione())){
 				transazione.setEventiGestione(Costanti.EVENTO_FILE_SYSTEM_RECOVERY);

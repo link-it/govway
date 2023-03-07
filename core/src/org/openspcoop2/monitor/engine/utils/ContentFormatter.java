@@ -90,39 +90,40 @@ public class ContentFormatter {
 	}
 	public static String toString(Object o) throws EngineException{
 		isSupported(o);
-		if(o.getClass().getName().equals(String.class.getName())){
+		String oClassName = o.getClass().getName() + "";
+		if(oClassName.equals(String.class.getName())){
 			return (String)o;
 		}
-		else if(o.getClass().getName().equals(int.class.getName()) ||
-				o.getClass().getName().equals(Integer.class.getName())){
+		else if(oClassName.equals(int.class.getName()) ||
+				oClassName.equals(Integer.class.getName())){
 			return toString((Integer)o);
 		}
-		else if(o.getClass().getName().equals(long.class.getName()) ||
-				o.getClass().getName().equals(Long.class.getName())){
+		else if(oClassName.equals(long.class.getName()) ||
+				oClassName.equals(Long.class.getName())){
 			return toString((Long)o);
 		}
-		else if(o.getClass().getName().equals(double.class.getName()) ||
-				o.getClass().getName().equals(Double.class.getName())){
+		else if(oClassName.equals(double.class.getName()) ||
+				oClassName.equals(Double.class.getName())){
 			return toString((Double)o);
 		}
-		else if(o.getClass().getName().equals(float.class.getName()) ||
-				o.getClass().getName().equals(Float.class.getName())){
+		else if(oClassName.equals(float.class.getName()) ||
+				oClassName.equals(Float.class.getName())){
 			return toString((Float)o);
 		}
-		else if(o.getClass().getName().equals(boolean.class.getName()) ||
-				o.getClass().getName().equals(Boolean.class.getName())){
+		else if(oClassName.equals(boolean.class.getName()) ||
+				oClassName.equals(Boolean.class.getName())){
 			return toString((Boolean)o);
 		}
-		else if(o.getClass().getName().equals(Date.class.getName())){
+		else if(oClassName.equals(Date.class.getName())){
 			return toString((Date)o);
 		}
-		else if(o.getClass().getName().equals(Calendar.class.getName())){
+		else if(oClassName.equals(Calendar.class.getName())){
 			return toString((Calendar)o);
 		}
-		else if(o.getClass().getName().equals(Timestamp.class.getName())){
+		else if(oClassName.equals(Timestamp.class.getName())){
 			return toString((Timestamp)o);
 		}
-		throw new EngineException("Tipo ["+o.getClass().getName()+"] non supportato");
+		throw new EngineException("Tipo ["+oClassName+"] non supportato");
 	}
 	
 	public static String toString(int intValue){

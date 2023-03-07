@@ -417,7 +417,7 @@ public class InitListener implements ServletContextListener {
 				String ocspConfig = consoleProperties.getOCSPConfigurazione();
 				if(StringUtils.isNotEmpty(ocspConfig)) {
 					File f = new File(ocspConfig);
-					OCSPManager.init(f, consoleProperties.isOCSPRequired(), log);
+					OCSPManager.init(f, consoleProperties.isOCSPRequired(), consoleProperties.isOCSPLoadDefault(), log);
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();

@@ -40,6 +40,7 @@ import org.openspcoop2.web.lib.mvc.properties.beans.SectionBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.SubsectionBean;
 import org.openspcoop2.web.lib.mvc.properties.exception.ValidationException;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
@@ -57,7 +58,7 @@ public class ValidationEngine {
 	
 	
 
-	public static boolean validateConfig(Config config)  throws ValidationException{
+	public static boolean validateConfig(Config config, ExternalResources externalResources)  throws ValidationException{
 		
 		// controllo l'univocita' delle chiavi e le conservo per riutilizzarle per verificare 
 		//che gli elementi riferiti nelle conditions esistano.
@@ -68,7 +69,7 @@ public class ValidationEngine {
 		try {
 			for (int i= 0; i < sectionList.size() ; i++) {
 				Section section = sectionList.get(i);
-				validateSection(section,metadata);
+				validateSection(section,metadata, externalResources);
 			}
 		
 			// controllo che tutti gli item che vanno a finire dentro una unica property abbiano lo stesso separatore
@@ -96,20 +97,20 @@ public class ValidationEngine {
 		return true;
 	}
 
-	private static void validateSection(Section section,ConfigBean metadata) throws ValidationException{
+	private static void validateSection(Section section,ConfigBean metadata, ExternalResources externalResources) throws ValidationException{
 		try {
 			validaConditions(section.getConditions(),metadata);
 	
 			if(section.getItemList() != null) {
 				for (Item item : section.getItemList()) {
-					validaItem(item,metadata);
+					validaItem(item,metadata, externalResources);
 				}
 			}
 			
 			if(section.getSubsectionList() != null) {
 				for (int i= 0; i < section.getSubsectionList().size() ; i++) {
 					Subsection subSection  = section.getSubsectionList().get(i);
-					validaSubsection(subSection,metadata);
+					validaSubsection(subSection,metadata, externalResources);
 				}
 			}
 		}catch(ValidationException e) {
@@ -117,13 +118,13 @@ public class ValidationEngine {
 		}
 	}
 
-	private static void validaSubsection(Subsection subSection,ConfigBean metadata) throws ValidationException {
+	private static void validaSubsection(Subsection subSection,ConfigBean metadata, ExternalResources externalResources) throws ValidationException {
 		try {
 			validaConditions(subSection.getConditions(),metadata);
 	
 			if(subSection.getItemList() != null) {
 				for (Item item : subSection.getItemList()) {
-					validaItem(item,metadata);
+					validaItem(item,metadata, externalResources);
 				}
 			}
 		}catch(ValidationException e) {
@@ -131,7 +132,7 @@ public class ValidationEngine {
 		}
 	}
 
-	private static void validaItem(Item item,ConfigBean metadata) throws ValidationException {
+	private static void validaItem(Item item,ConfigBean metadata, ExternalResources externalResources) throws ValidationException {
 		try {
 			validaConditions(item.getConditions(),metadata);
 			
@@ -153,14 +154,14 @@ public class ValidationEngine {
 				validaHidden(item);
 				break;
 			case NUMBER:
-				validaNumber(item,metadata);
+				validaNumber(item,metadata, externalResources);
 				break;
 			case SELECT:
-				validaSelect(item,metadata);
+				validaSelect(item,metadata, externalResources);
 				break;
 			case TEXT:
 			case TEXTAREA:
-				validaText(item,metadata);
+				validaText(item,metadata, externalResources);
 				break;
 			}
 		}catch(Exception e) {
@@ -197,47 +198,47 @@ public class ValidationEngine {
 		
 	}
 
-	private static String getDefault(Item item,ConfigBean metadata) throws ProviderException {
+	private static String getDefault(Item item,ConfigBean metadata, ExternalResources externalResources) throws ProviderException {
 		if(StringUtils.isNotEmpty(item.getDefault())) {
 			return item.getDefault();
 		}
 		else if(metadata.getProvider()!=null) {
-			return metadata.getProvider().getDefault(item.getName());
+			return metadata.getProvider().getDefault(item.getName(), externalResources);
 		}
 		return null;
 	}
 	
-	private static void validaNumber(Item item,ConfigBean metadata) throws ValidationException, ProviderException{
+	private static void validaNumber(Item item,ConfigBean metadata, ExternalResources externalResources) throws ValidationException, ProviderException{
 		Property property = item.getProperty();
 		// se e' una property di tipo append valido il separatore
 		if(property.isAppend()) {
-			String defaultValue = getDefault(item, metadata);
+			String defaultValue = getDefault(item, metadata, externalResources);
 			if(defaultValue != null && defaultValue.contains(property.getAppendSeparator()))
 				throw new ValidationException("Il valore indicato per l'attributo Default ["+item.getValue()+"] contiene il separatore previsto per il salvataggio ["+property.getAppendSeparator()+"]");
 		}
 	}
 
-	private static void validaSelect(Item item,ConfigBean metadata) throws ValidationException, ProviderException{
+	private static void validaSelect(Item item,ConfigBean metadata, ExternalResources externalResources) throws ValidationException, ProviderException{
 		Property property = item.getProperty();
 		// se e' una property di tipo append valido il separatore
 		if(property.isAppend()) {
-			String defaultValue = getDefault(item, metadata);
+			String defaultValue = getDefault(item, metadata, externalResources);
 			if(defaultValue != null && defaultValue.contains(property.getAppendSeparator()))
 				throw new ValidationException("Il valore indicato per l'attributo Default ["+item.getValue()+"] contiene il separatore previsto per il salvataggio ["+property.getAppendSeparator()+"]");
 		}
 		
 		if(item.getValues() == null || item.getValues().sizeValueList() == 0) {
-			if(metadata.getProvider()==null || metadata.getProvider().getValues(item.getName())==null || metadata.getProvider().getValues(item.getName()).size()<=0) {
+			if(metadata.getProvider()==null || metadata.getProvider().getValues(item.getName(), externalResources)==null || metadata.getProvider().getValues(item.getName(), externalResources).size()<=0) {
 				throw new ValidationException("E' necessario indicare una lista di Values, o definirli in un plugins, per gli Item di tipo Select");
 			}
 		}
 	}
 
-	private static void validaText(Item item,ConfigBean metadata) throws ValidationException, ProviderException{
+	private static void validaText(Item item,ConfigBean metadata, ExternalResources externalResources) throws ValidationException, ProviderException{
 		Property property = item.getProperty();
 		// se e' una property di tipo append valido il separatore
 		if(property.isAppend()) {
-			String defaultValue = getDefault(item, metadata);
+			String defaultValue = getDefault(item, metadata, externalResources);
 			if(defaultValue != null &&  defaultValue.contains(property.getAppendSeparator()))
 				throw new ValidationException("Il valore indicato per l'attributo Default ["+item.getValue()+"] contiene il separatore previsto per il salvataggio ["+property.getAppendSeparator()+"]");
 		}

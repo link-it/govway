@@ -89,7 +89,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 
 			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
-			int idServizioInt = Integer.parseInt(idServizio);
+			long idServizioLong = Long.valueOf(idServizio);
 			String ruolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RUOLO  );
 			String tipoFile = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_FILE  );
 
@@ -111,7 +111,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			apsHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.valueOf(idServizioInt));
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizioLong);
 
 			String tipoSoggettoFruitore = null;
 			String nomeSoggettoFruitore = null;
@@ -304,7 +304,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			
-			List<Documento> lista = apsCore.serviziAllegatiList(idServizioInt, ricerca);
+			List<Documento> lista = apsCore.serviziAllegatiList(idServizioLong, ricerca);
 
 			apsHelper.prepareServiziAllegatiList(asps, ricerca, lista);
 			

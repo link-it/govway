@@ -81,15 +81,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
-	private IConfigIntegrationReader configRegistryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
-	private String editMode = null;
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -106,8 +97,17 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
+		// Protocol Properties
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+		ConsoleConfiguration consoleConfiguration =null;
+		ProtocolProperties protocolProperties = null;
+		IProtocolFactory<?> protocolFactory= null;
+		IRegistryReader registryReader = null; 
+		IConfigIntegrationReader configRegistryReader = null; 
+		ConsoleOperationType consoleOperationType = null;
+		
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
-		this.consoleOperationType = ConsoleOperationType.ADD;
+		consoleOperationType = ConsoleOperationType.ADD;
 		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
@@ -116,7 +116,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 		try {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			
-			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idAccordo = 0;
@@ -179,17 +179,17 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			String tipoSoggettoReferente = soggettoReferente.getTipo();
 			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
 
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory);
-			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
+			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			consoleDynamicConfiguration =  protocolFactory.createDynamicConfigurationConsole();
+			registryReader = soggettiCore.getRegistryReader(protocolFactory);
+			configRegistryReader = soggettiCore.getConfigIntegrationReader(protocolFactory);
 			
 			IDAccordoAzione idAzione = new IDAccordoAzione();
 			idAzione.setIdAccordo(idAs);
 			idAzione.setNome(nomeaz); 
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAzione(this.consoleOperationType, apcHelper, 
-					this.registryReader, this.configRegistryReader, idAzione );
-			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigAzione(consoleOperationType, apcHelper, 
+					registryReader, configRegistryReader, idAzione );
+			protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType);
 
 			// Prendo la lista di azioni dell'accordo
 			// e ne metto i nomi in un array di stringhe
@@ -219,7 +219,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if(ServletUtils.isEditModeInProgress(this.editMode)){
+			if(ServletUtils.isEditModeInProgress(editMode)){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
@@ -253,15 +253,15 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idAzione);
+				consoleDynamicConfiguration.updateDynamicConfigAzione(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiAzioniToDati(dati, id, nomeaz, profProtocollo, 
 						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, idRifRichiestaAz, idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz, 
 						profcoll, profcoll, tipoOp, azicorr, azioniList, as.getStatoPackage(),tipoAccordo,protocollo,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration,consoleOperationType, protocolProperties);
 
 				pd.setDati(dati);
 
@@ -275,14 +275,14 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 			// updateDynamic
 			if(isOk) {
-				this.consoleDynamicConfiguration.updateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idAzione);
+				consoleDynamicConfiguration.updateDynamicConfigAzione(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idAzione);
 			}
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
+					apcHelper.validaProtocolProperties(consoleConfiguration, consoleOperationType, protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -294,8 +294,8 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idAzione);
+					consoleDynamicConfiguration.validateDynamicConfigAzione(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
+							registryReader, configRegistryReader, idAzione);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -324,15 +324,15 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idAzione);
+				consoleDynamicConfiguration.updateDynamicConfigAzione(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiAzioniToDati(dati, id, nomeaz, profProtocollo, 
 						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, idRifRichiestaAz, idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz, 
 						profcoll, profcoll, tipoOp, azicorr, azioniList, as.getStatoPackage(),tipoAccordo,protocollo,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration,consoleOperationType, protocolProperties);
 
 				pd.setDati(dati);
 
@@ -379,12 +379,12 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			as.addAzione(newAz);
 
 			//imposto properties custom
-			newAz.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType,null));
+			newAz.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, consoleOperationType,null));
 
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
 
 			// cancello i file temporanei
-			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
+			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(protocolProperties);
 
 
 			// devo aggiornare la lista dei servizi(serviziCorrelati) che

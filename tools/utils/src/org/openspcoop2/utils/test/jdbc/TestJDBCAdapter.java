@@ -41,7 +41,7 @@ public class TestJDBCAdapter {
 	public void testJDBCAdapter(String tipoDatabase, String connectionUrl, String username, String password, String driverJdbc) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.jdbc.TestJDBCAdapter.main(new String[] {tipoDatabase,  connectionUrl, username, password, driverJdbc});
+		org.openspcoop2.utils.jdbc.test.JDBCAdapterTest.main(new String[] {tipoDatabase,  connectionUrl, username, password, driverJdbc});
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 	
 	}

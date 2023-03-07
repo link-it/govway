@@ -34,6 +34,8 @@ import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
+import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.protocol.basic.registry.ConfigIntegrationReader;
 import org.openspcoop2.protocol.basic.registry.RegistryReader;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -215,8 +217,9 @@ public class Loader {
 			
 			logCore.debug("Inizializzazione risorse libreria in corso...");
 			
+			ConfigurazionePdD configPdD = null;
 			try {
-				ConfigurazionePdD configPdD = new ConfigurazionePdD();
+				configPdD = new ConfigurazionePdD();
 				configPdD.setAttesaAttivaJDBC(-1);
 				configPdD.setCheckIntervalJDBC(-1);
 				configPdD.setLoader(new org.openspcoop2.utils.resources.Loader(Loader.class.getClassLoader()));
@@ -231,6 +234,15 @@ public class Loader {
 				ExtendedInfoManager.initialize(new org.openspcoop2.utils.resources.Loader(Loader.class.getClassLoader()), null, null, null);
 			}catch(Exception e){
 				throw new Exception("Inizializzazione [ExtendedInfoManager] fallita",e);
+			}
+			
+			try{
+				CorePluginLoader.initialize(configPdD.getLoader(), logSql,
+						PluginLoader.class,
+						new LoaderRegistroPluginsService(logSql),
+						loaderProperties.getPlugin_seconds());
+			}catch(Exception e){
+				throw new Exception("Inizializzazione [PluginManager] fallita",e);
 			}
 			
 			Properties p = new Properties();

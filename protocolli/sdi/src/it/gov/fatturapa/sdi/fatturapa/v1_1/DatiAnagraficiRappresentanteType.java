@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class DatiAnagraficiRappresentanteType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiAnagraficiRappresentanteType() {
+    super();
   }
 
   public IdFiscaleType getIdFiscaleIVA() {

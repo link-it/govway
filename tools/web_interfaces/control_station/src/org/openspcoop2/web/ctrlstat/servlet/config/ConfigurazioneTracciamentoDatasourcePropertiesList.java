@@ -87,6 +87,10 @@ public final class ConfigurazioneTracciamentoDatasourcePropertiesList extends Ac
 				}
 			}
 
+			if(od==null) {
+				throw new Exception("Datasource non trovato");
+			}
+			
 			// Preparo il menu
 			confHelper.makeMenu();
 

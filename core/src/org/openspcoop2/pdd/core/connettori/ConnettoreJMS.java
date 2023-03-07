@@ -46,6 +46,7 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 
@@ -203,6 +204,8 @@ public class ConnettoreJMS extends ConnettoreBase {
 			}
 			if(this.isDumpBinarioRichiesta()) {
 				try{
+					this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+					
 					MessageType requestMessageType = this.requestMsg.getMessageType();
 					String contentTypeRichiesta = this.requestMsg.getContentType();
 					DumpByteArrayOutputStream bout = DumpByteArrayOutputStream.newInstance(consegna);
@@ -541,7 +544,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 			if(this.debug)
 				this.logger.debug("Connettore jms ha pubblicato con successo");
 			
-			
+			this.dataRichiestaInoltrata = DateManager.getDate();
 			
 			
 			
@@ -581,7 +584,9 @@ public class ConnettoreJMS extends ConnettoreBase {
 			this.logger.error("Errore avvenuto durante la consegna JMS: "+msgErrore,e);
 			try{
 				// Rilascio Risorse
-				sender.close();
+				if(sender!=null) {
+					sender.close();
+				}
 			}catch(Exception ec){
 				// close
 			}

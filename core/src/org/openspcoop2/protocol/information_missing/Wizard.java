@@ -61,6 +61,7 @@ import java.io.Serializable;
 
 public class Wizard extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Wizard() {
+    super();
   }
 
   public Requisiti getRequisiti() {

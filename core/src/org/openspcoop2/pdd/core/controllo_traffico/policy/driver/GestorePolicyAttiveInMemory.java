@@ -593,7 +593,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				if(bytesIn==null || bytesIn.length<=0){
 					return;
 				}
-				f = File.createTempFile("controlloTraffico", ".tmp");
+				f = FileSystemUtilities.createTempFile("controlloTraffico", ".tmp");
 				FileSystemUtilities.writeFile(f, bytesIn);
 				
 				// Leggo Struttura ZIP
@@ -738,8 +738,11 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 						zipFile.close();
 				}catch(Exception eClose){}
 				try{
-					if(f!=null)
-						f.delete();
+					if(f!=null) {
+						if(!f.delete()) {
+							// ignore
+						}
+					}
 				}catch(Exception eClose){}
 				try{
 					if(in!=null)

@@ -64,6 +64,7 @@ import java.io.Serializable;
 
 public class AnagraficaType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public AnagraficaType() {
+    super();
   }
 
   public java.lang.String getDenominazione() {

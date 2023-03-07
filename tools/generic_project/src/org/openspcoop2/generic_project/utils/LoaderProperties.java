@@ -71,8 +71,12 @@ public class LoaderProperties {
 			throw new ServiceException("Loading properties file ["+filePropertiesName+"] failed: "+e.getMessage(),e);
 		}finally{
 			try{
-				is.close();
-			}catch(Exception e){}
+				if(is!=null) {
+					is.close();
+				}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	public LoaderProperties(Properties properties) throws ServiceException{

@@ -76,6 +76,7 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -557,6 +558,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
+						this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+						
 						if(this.isSoap && this.sbustamentoSoap){
 							if(this.debug)
 								this.logger.debug("Sbustamento...");
@@ -608,6 +611,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			else {
 				if(this.isDumpBinarioRichiesta()) {
 					// devo registrare almeno gli header HTTP
+					this.emitDiagnosticStartDumpBinarioRichiestaUscita();
 					this.dumpBinarioRichiestaUscita(null, null, null, this.location, propertiesTrasportoDebug);
 				}
 			}
@@ -623,6 +627,9 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				this.logger.debug("Spedizione byte...");
 			// Eseguo la richiesta e prendo la risposta
 			HttpResponse httpResponse = this.httpClient.execute(this.httpRequest);
+			
+			this.dataRichiestaInoltrata = DateManager.getDate();
+			
 			this.httpEntityResponse = httpResponse.getEntity();
 			
 			
@@ -699,7 +706,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			this.codice = httpResponse.getStatusLine().getStatusCode();
 			this.resultHTTPMessage = httpResponse.getStatusLine().getReasonPhrase();
 			
-			if(this.codice<300)
+			if(this.codice<300) {
 				if(this.isSoap && this.acceptOnlyReturnCode_202_200){
 					if(this.codice!=200 && this.codice!=202){
 						throw new Exception("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
@@ -708,7 +715,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				if(httpBody.isDoInput()){
 					this.isResponse = this.httpEntityResponse.getContent();
 				}
-			else{
+			}else{
 				this.isResponse = this.httpEntityResponse.getContent();
 			}
 			
@@ -798,7 +805,9 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			}				
 		}
 		catch(Throwable t) {
-			this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+			if(this.logger!=null) {
+				this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+			}
 			listExceptionChiusura.add(t);
     	}
     	try{
@@ -817,14 +826,18 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	    	}
 				
     	}catch(Throwable t) {
-			this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+    		if(this.logger!=null) {
+				this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+    		}
 			listExceptionChiusura.add(t);
 		}
     	try{
 	    	// super.disconnect (Per risorse base)
 	    	super.disconnect();
     	}catch(Throwable t) {
-			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+    		if(this.logger!=null) {
+				this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+    		}
 			listExceptionChiusura.add(t);
 		}
     	
@@ -936,7 +949,7 @@ class ConnectionKeepAliveStrategyCustom implements ConnectionKeepAliveStrategy{
 //        }
         // otherwise keep alive for 2 minutes
         //System.out.println("RETURN 2 minuti");
-        return 2 * 60 * 1000;
+        return 2l * 60l * 1000l;
 		
 	}
 	

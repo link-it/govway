@@ -94,7 +94,8 @@ public class IDAccordo implements java.io.Serializable, Cloneable {
 		if(object == null)
 			return false;
 		if(verifyClass) {
-			if(object.getClass().getName().equals(this.getClass().getName()) == false) {
+			String objectClassName = object.getClass().getName() + "";
+			if(objectClassName.equals(this.getClass().getName()) == false) {
 				return false;
 			}
 		}

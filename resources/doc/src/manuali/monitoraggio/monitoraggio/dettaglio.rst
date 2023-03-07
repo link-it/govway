@@ -134,7 +134,7 @@ In questa sezione saranno presenti, quando previste, le tracce applicative dei m
 Quando prevista la registrazione dei messaggi in configurazione, di richiesta e risposta, si
 troveranno in questo riquadro i collegamenti per visualizzare:
 
--  Dati Ingresso/Uscita: i contenuti di entrata ed uscita sul
+-  Contenuti: i contenuti di entrata ed uscita sul
    gateway. Sia in entrata che uscita comprendono (in base al tipo di
    configurazione attiva):
 

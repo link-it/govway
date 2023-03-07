@@ -50,10 +50,16 @@ public abstract class AbstractSerializerWithFactory extends AbstractSerializerBa
 			serializer.writeObject(object, fout);
 		}finally{
 			try{
-				fout.flush();
-			}catch(Exception e){}
+				if(fout!=null) {
+					fout.flush();
+				}
+			}catch(Exception e){
+				// close
+			}
 			try{
-				fout.close();
+				if(fout!=null) {
+					fout.close();
+				}
 			}catch(Exception e){
 				// close
 			}
@@ -68,8 +74,12 @@ public abstract class AbstractSerializerWithFactory extends AbstractSerializerBa
 			serializer.writeObject(object, out);
 		}finally{
 			try{
-				out.flush();
-			}catch(Exception e){}
+				if(out!=null) {
+					out.flush();
+				}
+			}catch(Exception e){
+				// fluse
+			}
 		}
 	}
 

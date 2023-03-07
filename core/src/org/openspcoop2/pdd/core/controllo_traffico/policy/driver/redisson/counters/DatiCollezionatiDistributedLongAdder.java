@@ -146,7 +146,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		// Questo per via di come funziona l'aggiornamento delle policy: i datiCollezionati correnti per una map<IDUnivoco..., DatiCollezionati> vengono cancellati e reinizializzati.
 		// Per gli altri nodi in esecuzione, la updatePolicyDate locale resta sempre la stessa, ma non viene usata.
 		if(this.policyRealtime!=null && this.policyRealtime){
-			if (updatePolicyDate != null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
+			if (updatePolicyDate != null && this.distributedUpdatePolicyDate!=null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
 				this.resetCounters(updatePolicyDate);
 			}
 		}
@@ -225,7 +225,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 										
 			} else {
 			*/
-				Long polDate = this.distributedPolicyDegradoPrestazionaleDate.get();
+				Long polDate = this.distributedPolicyDegradoPrestazionaleDate!=null ? this.distributedPolicyDegradoPrestazionaleDate.get() : null;
 				initPolicyCounters(polDate);
 				
 			//}
@@ -254,7 +254,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 					}
 				}  else {
 				*/	
-					Long degradoPrestazionaleTime = this.distributedPolicyDate.get();
+					Long degradoPrestazionaleTime = this.distributedPolicyDate!=null ? this.distributedPolicyDate.get() : null;
 					initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
 					
 				//}

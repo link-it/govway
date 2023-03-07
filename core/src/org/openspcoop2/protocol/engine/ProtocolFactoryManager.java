@@ -337,7 +337,9 @@ public class ProtocolFactoryManager {
 			manifest = Utilities.getAsByteArray(openStream);
 		}finally{
 			try{
-				openStream.close();
+				if(openStream!=null) {
+					openStream.close();
+				}
 			}catch(Exception e){
 				// close
 			}
@@ -1304,7 +1306,7 @@ public class ProtocolFactoryManager {
 		
 		MapReader<String, List<String>> soap = this.getServiceTypes(ServiceBinding.SOAP);
 		if(soap!=null && soap.size()>0) {
-			Enumeration<String> en = rest.keys();
+			Enumeration<String> en = soap.keys();
 			while (en.hasMoreElements()) {
 				String protocollo = (String) en.nextElement();
 				if(map.containsKey(protocollo)) {

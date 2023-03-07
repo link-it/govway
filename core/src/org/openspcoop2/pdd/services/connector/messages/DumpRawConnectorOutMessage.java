@@ -39,6 +39,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.services.DumpRaw;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -70,8 +71,11 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	private int soglia;
 	private File repositoryFile;
 	
+	private DumpRaw dumpRaw;
+	
 	public DumpRawConnectorOutMessage(Logger log,ConnectorOutMessage connectorOutMessage, Context context,
-			int soglia, File repositoryFile){
+			int soglia, File repositoryFile,
+			DumpRaw dump){
 		this.log = log;
 		this.connectorOutMessage = connectorOutMessage;
 		this.openspcoopProperties =  OpenSPCoop2Properties.getInstance();
@@ -82,6 +86,8 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		}
 		this.soglia = soglia;
 		this.repositoryFile = repositoryFile;
+		
+		this.dumpRaw = dump;
 	}
 	
 	public ConnectorOutMessage getWrappedConnectorOutMessage() {
@@ -145,6 +151,14 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		return this.status;
 	}
 	
+	private boolean emitDiagnostic = false;
+	private void emitDiagnosticStartDumpBinarioRispostaUscita() {
+		if(this.dumpRaw!=null && !this.emitDiagnostic) {
+			this.emitDiagnostic = true;
+			this.dumpRaw.emitDiagnosticStartDumpBinarioRispostaUscita();
+		}
+	}
+	
 	private void _sendHeaders(OpenSPCoop2Message message) throws Exception {
 		if(message==null) {
 			throw new Exception("Message is null");
@@ -174,6 +188,8 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void sendResponse(OpenSPCoop2Message message, boolean consume)
 			throws ConnectorException {
+		
+		emitDiagnosticStartDumpBinarioRispostaUscita();
 		
 		try{
 			// Propago eventuali header http
@@ -244,6 +260,8 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void sendResponse(DumpByteArrayOutputStream message) throws ConnectorException {
 	
+		emitDiagnosticStartDumpBinarioRispostaUscita();
+		
 		try{
 			// Prima lo registro e dopo serializzo
 			if(this.bout!=null){
@@ -277,6 +295,9 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	
 	@Override
 	public void sendResponseHeaders(OpenSPCoop2Message message) throws ConnectorException{
+		
+		emitDiagnosticStartDumpBinarioRispostaUscita();
+		
 		try{
 			// Propago eventuali header http
 			this._sendHeaders(message);

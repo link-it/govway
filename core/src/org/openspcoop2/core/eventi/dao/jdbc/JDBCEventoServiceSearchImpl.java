@@ -100,16 +100,19 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
 
 	
 	
-	
-	
+	private static boolean efficiente = true;
+	public static boolean isEfficiente() {
+		return efficiente;
+	}
+	public static void setEfficiente(boolean efficiente) {
+		JDBCEventoServiceSearchImpl.efficiente = efficiente;
+	}
 	@Override
 	public List<Evento> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
 
         List<Evento> list = new ArrayList<Evento>();
         
-        boolean efficente = true;
-        
-        if(efficente){
+        if(efficiente){
             
     		List<IField> fields = new ArrayList<IField>();
     		fields.add(new CustomField("id", Long.class, "id", this.getEventoFieldConverter().toTable(Evento.model())));  
@@ -125,7 +128,7 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
     			
     		List<Map<String, Object>> returnMap = null;
     		try{
-    			boolean distinct = false; // e' piu' efficente senza il distinct
+    			boolean distinct = false; // e' piu' efficiente senza il distinct
 	    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
 	
 	    		for(Map<String, Object> map: returnMap) {
@@ -166,7 +169,7 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareCount(jdbcProperties, log, connection, sqlQueryObject, expression,
 												this.getEventoFieldConverter(), Evento.model());
 		
-		boolean distinct = false; // e' piu' efficente senza il distinct
+		boolean distinct = false; // e' piu' efficiente senza il distinct
         if(!distinct && expression.inUseField(Evento.model().ORA_REGISTRAZIONE, true)){
         	// uso la prima colonna dell'indice (se c'è la data e non è distinct)
         	sqlQueryObject.addSelectCountField(this.getEventoFieldConverter().toColumn(Evento.model().ORA_REGISTRAZIONE, true),"tot",distinct);
@@ -512,7 +515,7 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
 		
 		List<Long> list = new ArrayList<Long>();
 
-		boolean distinct = false; // e' piu' efficente senza il distinct
+		boolean distinct = false; // e' piu' efficiente senza il distinct
 		
 		sqlQueryObject.setSelectDistinct(distinct);
 		sqlQueryObject.setANDLogicOperator(true);
@@ -537,7 +540,7 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
 	@Override
 	public long findTableId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCExpression expression) throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException, Exception {
 	
-		boolean distinct = false; // e' piu' efficente senza il distinct
+		boolean distinct = false; // e' piu' efficiente senza il distinct
 		
 		sqlQueryObject.setSelectDistinct(distinct);
 		sqlQueryObject.setANDLogicOperator(true);

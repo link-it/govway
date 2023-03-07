@@ -41,7 +41,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 
 /**
@@ -101,7 +100,9 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			throw new AuthenticationServiceException("AuthenticationProvider,ricerca utente fallita: "+e.getMessage(),e);
 		}
 		if(!trovato) {
-			throw new UsernameNotFoundException("Username '"+username+"' not found");
+			//throw new UsernameNotFoundException("Username '"+username+"' not found");
+			// Fix security: Make sure allowing user enumeration is safe here.
+			throw new BadCredentialsException("Bad credentials");
 		}
 		String pwcrypt = u.getPassword();
 		

@@ -25,9 +25,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -300,7 +305,8 @@ public class LoggerWrapperFactory {
 			if(props==null){
 				throw new Exception("Resource Properties undefined");
 			}
-			fTmp = File.createTempFile("op2_log", ".properties");
+			FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+			fTmp = Files.createTempFile("op2_log", ".properties",attr).toFile();
 			foutTmp = new FileOutputStream(fTmp);
 			props.store(foutTmp, "Tmp Configuration");
 			foutTmp.flush();
@@ -324,7 +330,9 @@ public class LoggerWrapperFactory {
 			}catch(Exception e){}
 			try{
 				if(fTmp!=null){
-					fTmp.delete();
+					if(!fTmp.delete()) {
+						// ignore
+					}
 				}
 			}catch(Exception e){
 				// close

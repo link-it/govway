@@ -52,6 +52,7 @@ import java.io.Serializable;
 
 public class CompletionModeTypeCompensateMessage extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public CompletionModeTypeCompensateMessage() {
+    super();
   }
 
   public java.lang.String getName() {

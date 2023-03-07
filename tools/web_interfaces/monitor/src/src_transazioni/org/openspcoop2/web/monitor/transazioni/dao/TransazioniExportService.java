@@ -121,7 +121,7 @@ public class TransazioniExportService implements ITransazioniExportService {
 
 			NonNegativeNumber nnn = this.transazioneExportSearchDAO.count(expr);
 
-			return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+			return nnn != null ? ((int)nnn.longValue()) : 0;
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 		}

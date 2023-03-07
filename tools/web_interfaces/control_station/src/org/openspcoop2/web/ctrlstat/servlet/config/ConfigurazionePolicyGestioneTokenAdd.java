@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -40,8 +41,8 @@ import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -52,7 +53,6 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
-import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 
 
 /**     
@@ -150,7 +150,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			if(tipo != null && !tipo.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 				configurazione = configManager.getConfigurazione(propertiesSourceConfiguration, tipo);
 			
-				configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, null);
+				configurazioneBean = confCore.leggiConfigurazione(configurazione, null);
 				
 				if(postBackElementName != null && postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO)) {
 					// reset di eventuali configurazioni salvate in sessione
@@ -248,7 +248,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			policy.setTipologia(tipologia);
 			policy.setTipo(tipo);
 			
-			Map<String, Properties> mappaDestinazione = configurazioneBean.getPropertiesMap();	
+			Map<String, Properties> mappaDestinazione = configurazioneBean!=null ? configurazioneBean.getPropertiesMap() : new HashMap<>();	
 			Map<String, String> map = DBPropertiesUtils.toMap(mappaDestinazione);
 			
 			for (String propKey : map.keySet()) {
@@ -282,7 +282,9 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
 			
 			// reset di eventuali configurazioni salvate in sessione
-			ServletUtils.removeConfigurazioneBeanFromSession(request, session, configurazioneBean.getId());
+			if(configurazioneBean!=null) {
+				ServletUtils.removeConfigurazioneBeanFromSession(request, session, configurazioneBean.getId());
+			}
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);

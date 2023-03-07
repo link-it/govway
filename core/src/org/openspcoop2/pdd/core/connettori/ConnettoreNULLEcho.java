@@ -272,6 +272,9 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			if(this.isDumpBinarioRichiesta()) {
 				this.requestBout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 						"NullEcho-"+TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
+				
+				this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+				
 				if(this.isSoap && this.sbustamentoSoap){
 					this.logger.debug("Sbustamento...");
 					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,this.requestBout);
@@ -281,6 +284,8 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 				this.requestBout.flush();
 				this.requestBout.close();
 									
+				this.dataRichiestaInoltrata = DateManager.getDate();
+				
 				this.dumpBinarioRichiestaUscita(this.requestBout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 			}
 			else {
@@ -294,6 +299,8 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 				}
 				this.requestBout.flush();
 				this.requestBout.close();
+				
+				this.dataRichiestaInoltrata = DateManager.getDate();
 			}
 			
 			
@@ -333,6 +340,10 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			
 			if(this.isDumpBinarioRisposta()){
 				this.dumpResponse(this.propertiesTrasportoRisposta);
+			}
+			
+			if(this.isResponse!=null) {
+				this.emitDiagnosticResponseRead(this.isResponse);
 			}
 			
 			OpenSPCoop2MessageFactory messageFactory = Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo, MessageRole.RESPONSE);

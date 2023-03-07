@@ -23,7 +23,6 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.net.Authenticator;
@@ -57,6 +56,7 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -90,8 +90,6 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	public ByteArrayOutputStream outByte = new ByteArrayOutputStream();
-		
 	/** Proxy Configuration */
 	protected Proxy.Type proxyType = null;
 	protected String proxyHostname = null;
@@ -131,13 +129,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	
 	@Override
 	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
-		
-		if(this.initialize(request, true, responseCachingConfig)==false){
-			return false;
-		}
-		
-		return true;
-		
+		return this.initialize(request, true, responseCachingConfig);
 	}
 	
 	@Override
@@ -631,7 +623,12 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 
 			
 			// Spedizione byte
-			if(httpBody.isDoOutput()){
+			boolean httpBody_isDoOutput = httpBody.isDoOutput();
+			if(!httpBody.isDoOutput() && request.isForceSendContent()) {
+				this.httpConn.setDoOutput(true);
+				httpBody_isDoOutput = true;
+			}
+			if(httpBody_isDoOutput){
 				boolean consumeRequestMessage = true;
 				if(this.followRedirects){
 					consumeRequestMessage = false;
@@ -643,6 +640,8 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
+						this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+						
 						if(this.isSoap && this.sbustamentoSoap){
 							this.logger.debug("Sbustamento...");
 							TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
@@ -661,6 +660,11 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 							out.write(bout.toByteArray());
 						}
 						
+						out.flush();
+						out.close();
+						
+						this.dataRichiestaInoltrata = DateManager.getDate();
+						
 						this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 					}finally {
 						try {
@@ -677,13 +681,18 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					}else{
 						this.requestMsg.writeTo(out, consumeRequestMessage);
 					}
+					
+					out.flush();
+					out.close();
+					
+					this.dataRichiestaInoltrata = DateManager.getDate();
 				}
-				out.flush();
-				out.close();
+
 			}
 			else {
 				if(this.isDumpBinarioRichiesta()) {
 					// devo registrare almeno gli header HTTP
+					this.emitDiagnosticStartDumpBinarioRichiestaUscita();
 					this.dumpBinarioRichiestaUscita(null, null, null, this.location, propertiesTrasportoDebug);
 				}
 			}
@@ -940,7 +949,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	    			this.isResponse.close();
 	    		}
 	    		catch(Throwable t) {
-	    			this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+	    			if(this.logger!=null) {
+	    				this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+	    			}
 	    			listExceptionChiusura.add(t);
 	    		}
 			}
@@ -970,7 +981,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	    				this.httpConn.disconnect();
 	    			}
 	    		}catch(Throwable t) {
-	    			this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+	    			if(this.logger!=null) {
+	    				this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+	    			}
 	    			listExceptionChiusura.add(t);
 	    		}
 	    	}
@@ -979,7 +992,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	    	try {
 	    		super.disconnect();
 	    	}catch(Throwable t) {
-    			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+	    		if(this.logger!=null) {
+	    			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+	    		}
     			listExceptionChiusura.add(t);
     		}
 			

@@ -8071,11 +8071,13 @@ components:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/IdCanale'
             modi:
               oneOf:
+              - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModIOAuth'
               - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModISoap'
               - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModIRest'
               discriminator:
                 propertyName: protocollo
                 mapping:
+                  'oauth': 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModIOAuth'
                   'soap': 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModISoap'
                   'rest': 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModIRest' 
     FruizioneItem:

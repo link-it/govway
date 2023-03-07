@@ -60,6 +60,7 @@ import java.util.List;
 
 public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Openspcoop2() {
+    super();
   }
 
   public Wizard getWizard() {

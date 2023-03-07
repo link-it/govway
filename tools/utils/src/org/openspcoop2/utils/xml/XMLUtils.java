@@ -56,7 +56,11 @@ public class XMLUtils extends AbstractXMLUtils {
 			// force xerces impl
 //			System.setProperty("javax.xml.parsers.DocumentBuilderFactory", org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName());
 //			return DocumentBuilderFactory.newInstance();
-			return DocumentBuilderFactory.newInstance(org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName(),this.getClass().getClassLoader());
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance(org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName(),this.getClass().getClassLoader());
+			if(DISABLE_DTDs) {
+				documentBuilderFactory.setFeature(getFeatures_disallow_doctype_decl(), true);
+			}
+			return documentBuilderFactory;
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}
@@ -78,7 +82,11 @@ public class XMLUtils extends AbstractXMLUtils {
 			// force xerces impl
 //			System.setProperty("javax.xml.parsers.SAXParserFactory", org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName());
 //			return javax.xml.parsers.SAXParserFactory.newInstance();
-			return javax.xml.parsers.SAXParserFactory.newInstance(org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName(), this.getClass().getClassLoader());
+			javax.xml.parsers.SAXParserFactory saxParserFactory = javax.xml.parsers.SAXParserFactory.newInstance(org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName(), this.getClass().getClassLoader());
+			if(DISABLE_DTDs) {
+				saxParserFactory.setFeature(getFeatures_disallow_doctype_decl(), true);
+			}
+			return saxParserFactory;
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}
@@ -100,8 +108,12 @@ public class XMLUtils extends AbstractXMLUtils {
 	protected SchemaFactory newSchemaFactory() throws XMLException{
 		try{
 			// force xerces impl
-			return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+			SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 					org.apache.xerces.jaxp.validation.XMLSchemaFactory.class.getName(), this.getClass().getClassLoader());
+			if(DISABLE_DTDs) {
+				schemaFactory.setFeature(getFeatures_disallow_doctype_decl(), true);
+			}
+			return schemaFactory;
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}
@@ -114,7 +126,12 @@ public class XMLUtils extends AbstractXMLUtils {
 			// force xalan impl
 //			System.setProperty("javax.xml.transform.TransformerFactory", org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
 //			return TransformerFactory.newInstance();
-			return TransformerFactory.newInstance(org.apache.xalan.processor.TransformerFactoryImpl.class.getName(), this.getClass().getClassLoader());
+			TransformerFactory transformerFactory = TransformerFactory.newInstance(org.apache.xalan.processor.TransformerFactoryImpl.class.getName(), this.getClass().getClassLoader());
+			/*if(DISABLE_DTDs) {
+				transformerFactory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
+				transformerFactory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+			}*/
+			return transformerFactory;
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}

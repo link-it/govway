@@ -63,10 +63,10 @@ public class TransazioniExporter extends HttpServlet{
 	private static Boolean enableHeaderInfo = false;
 	private static Boolean enableConsegneInfo = false;
 	private static Boolean mimeThrowExceptionIfNotFound = false;
-	private boolean headersAsProperties = true;
-	private boolean contenutiAsProperties = false;
-	private transient ITracciaDriver tracciamentoService = null;
-	private transient IDiagnosticDriver diagnosticiService = null; 
+	private static boolean headersAsProperties = true;
+	private static boolean contenutiAsProperties = false;
+	private static ITracciaDriver tracciamentoService = null;
+	private static IDiagnosticDriver diagnosticiService = null; 
 
 	@Override
 	public void init() throws ServletException {
@@ -76,10 +76,10 @@ public class TransazioniExporter extends HttpServlet{
 			TransazioniExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
 			TransazioniExporter.enableConsegneInfo = govwayMonitorProperties.isAttivoTransazioniExportConsegneMultiple();
 			TransazioniExporter.mimeThrowExceptionIfNotFound=govwayMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound();
-			this.headersAsProperties = govwayMonitorProperties.isAttivoTransazioniExportHeaderAsProperties();
-			this.contenutiAsProperties = govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties();
-			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
-			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
+			headersAsProperties = govwayMonitorProperties.isAttivoTransazioniExportHeaderAsProperties();
+			contenutiAsProperties = govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties();
+			tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
+			diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
 		}catch(Exception e){
 			TransazioniExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
@@ -99,7 +99,7 @@ public class TransazioniExporter extends HttpServlet{
 	}
 
 
-	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
+	private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 			if(context==null) {
@@ -215,12 +215,12 @@ public class TransazioniExporter extends HttpServlet{
 			prop.setExportDiagnostici(exportDiagnostici);
 			prop.setExportTracce(exportTracce);
 			prop.setMimeThrowExceptionIfNotFound(TransazioniExporter.mimeThrowExceptionIfNotFound);
-			prop.setHeadersAsProperties(this.headersAsProperties);
-			prop.setContenutiAsProperties(this.contenutiAsProperties);
+			prop.setHeadersAsProperties(headersAsProperties);
+			prop.setContenutiAsProperties(contenutiAsProperties);
 			prop.setUseCount(searchForm.isUseCount());
 
 			SingleFileExporter sfe = new SingleFileExporter(response.getOutputStream(), prop, service,
-					this.tracciamentoService, this.diagnosticiService,null);
+					tracciamentoService, diagnosticiService,null);
 
 			if(isAll){
 				//transazioni = service.findAll(start, limit);
@@ -235,7 +235,7 @@ public class TransazioniExporter extends HttpServlet{
 
 		}catch(Throwable e){
 			TransazioniExporter.log.error(e.getMessage(),e);
-			throw new ServletException(e.getMessage(),e);
+			//throw new ServletException(e.getMessage(),e);
 		}finally {
 			// reset login bean statico
 			Utility.setLoginMBean(null);

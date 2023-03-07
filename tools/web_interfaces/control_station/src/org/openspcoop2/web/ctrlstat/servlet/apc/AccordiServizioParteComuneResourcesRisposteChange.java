@@ -62,8 +62,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComuneResourcesRisposteChange extends Action {
 
-	private String editMode = null;
-
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -86,9 +84,9 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
-			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idInt = Integer.parseInt(id);
+			long idAccordoLong = Long.valueOf(id);
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
@@ -114,7 +112,7 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 
 			ResourceResponse resourceResponseOLD = null;
@@ -167,7 +165,7 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if(ServletUtils.isEditModeInProgress(this.editMode)){
+			if(ServletUtils.isEditModeInProgress(editMode)){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, listaParams);
@@ -224,6 +222,9 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 					break;
 				}
 			}
+			if(res==null) {
+				throw new Exception("Risorsa '"+nomeRisorsa+"' non trovata");
+			}
 			
 			ResourceResponse resourceResponse = null;
 			
@@ -256,7 +257,7 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei nuovi port-type
-			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			as = apcCore.getAccordoServizioFull(idAccordoLong);
 			
 			risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {
@@ -264,6 +265,10 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 				if (nomeRisorsa.equals(risorsa.getNome())) {
 					break;
 				}
+			}
+			
+			if(risorsa==null) {
+				throw new Exception("Risorsa '"+nomeRisorsa+"' non trovata");
 			}
 			
 			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(risorsa.getId(), ricerca);

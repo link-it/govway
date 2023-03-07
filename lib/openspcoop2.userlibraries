@@ -10,7 +10,7 @@
         <archive path="/op2_3.3.dev/lib/commons/commons-lang-2.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-lang3-3.12.0.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-io-2.11.0.jar"/>
-        <archive path="/op2_3.3.dev/lib/commons/commons-fileupload-1.4.jar"/>
+        <archive path="/op2_3.3.dev/lib/commons/commons-fileupload-1.5.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-discovery-0.5.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-digester-2.1.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-dbcp2-2.9.0.jar"/>
@@ -118,7 +118,7 @@
 	<archive path="/op2_3.3.dev/lib/json/btf-1.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-schema-validator-2.2.10.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/handy-uri-templates-2.1.8.jar"/>
-	<archive path="/op2_3.3.dev/lib/json/json-20220924.jar"/>
+	<archive path="/op2_3.3.dev/lib/json/json-20230227.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-schema-core-1.2.8.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/libphonenumber-8.12.57.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/failureaccess-1.0.1.jar"/>

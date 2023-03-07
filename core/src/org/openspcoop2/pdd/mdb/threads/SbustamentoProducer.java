@@ -47,6 +47,7 @@ public class SbustamentoProducer extends ModuloAlternativoProducer implements IP
 				this.coda.put(task);
 			} catch (InterruptedException e) {
 				System.out.println(this.ID_MODULO+" :errore "+e);
+			    Thread.currentThread().interrupt();
 			}
 		}
 			

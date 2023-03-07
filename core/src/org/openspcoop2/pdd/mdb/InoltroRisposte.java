@@ -827,7 +827,9 @@ public class InoltroRisposte extends GenericLib{
 			/* ----------- MTOM Processor AfterSecurity ------------ */
 			msgDiag.mediumDebug("MTOM Processor [AfterSecurity]...");
 			try{
-				mtomProcessor.mtomAfterSecurity(responseMessage, flowProperties.tipoMessaggio);
+				if(mtomProcessor!=null) {
+					mtomProcessor.mtomAfterSecurity(responseMessage, flowProperties!=null ? flowProperties.tipoMessaggio : RuoloMessaggio.RISPOSTA);
+				}
 			}catch(Exception e){
 				// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 				//msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");

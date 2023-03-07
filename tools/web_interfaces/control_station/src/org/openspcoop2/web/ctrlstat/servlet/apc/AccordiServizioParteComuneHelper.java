@@ -40,6 +40,7 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -3009,38 +3010,52 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
 				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
-				as.setByteWsdlDefinitorio(tmp);
+				if(as!=null) {
+					as.setByteWsdlDefinitorio(tmp);
+				}
 				validazioneParteComune = true;
 			}
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
 				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
-				as.setByteWsdlConcettuale(tmp);
+				if(as!=null) {
+					as.setByteWsdlConcettuale(tmp);
+				}
 				validazioneParteComune = true;
 			}
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
 				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
-				as.setByteWsdlLogicoErogatore(tmp);
+				if(as!=null) {
+					as.setByteWsdlLogicoErogatore(tmp);
+				}
 				validazioneParteComune = true;
 			}
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
 				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
-				as.setByteWsdlLogicoFruitore(tmp);
+				if(as!=null) {
+					as.setByteWsdlLogicoFruitore(tmp);
+				}
 				validazioneParteComune = true;
 			}
 
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
 				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
-				as.setByteSpecificaConversazioneConcettuale(tmp);
+				if(as!=null) {
+					as.setByteSpecificaConversazioneConcettuale(tmp);
+				}
 				validazioneSpecificaConversazione = true;
 			}
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
 				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
-				as.setByteSpecificaConversazioneErogatore(tmp);
+				if(as!=null) {
+					as.setByteSpecificaConversazioneErogatore(tmp);
+				}
 				validazioneSpecificaConversazione = true;
 			}
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
 				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
-				as.setByteSpecificaConversazioneFruitore(tmp);
+				if(as!=null) {
+					as.setByteSpecificaConversazioneFruitore(tmp);
+				}
 				validazioneSpecificaConversazione = true;
 			}
 
@@ -4352,13 +4367,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			if(confermaRicezioneSupportato) {
+			//if(confermaRicezioneSupportato) {
 				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
 				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}
-			else {
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}
+			//}
+			//else {
+			//	de.setValue(Costanti.CHECK_BOX_DISABLED);
+			//}
 		}
 		dati.addElement(de);
 
@@ -4381,13 +4396,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			if(collaborazioneSupportato) {
+			//if(collaborazioneSupportato) {
 				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}
-			else {
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}
+			de.setValue(Costanti.CHECK_BOX_DISABLED);
+			//}
+			//else {
+			//	de.setValue(Costanti.CHECK_BOX_DISABLED);
+			//}
 		}
 		dati.addElement(de);
 		
@@ -4410,13 +4425,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			if(idRiferimentoRichiestaSupportato) {
+			//if(idRiferimentoRichiestaSupportato) {
 				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
 				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}
-			else {
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}
+			//}
+			//else {
+			//	de.setValue(Costanti.CHECK_BOX_DISABLED);
+			//}
 		}
 		dati.addElement(de);
 
@@ -4439,13 +4454,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			if(consegnaInOrdineSupportato) {
+			//if(consegnaInOrdineSupportato) {
 				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
 				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}
-			else {
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}
+			//}
+			//else {
+			//	de.setValue(Costanti.CHECK_BOX_DISABLED);
+			//}
 		}
 		dati.addElement(de);
 
@@ -4476,7 +4491,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	
 	public void addCanaleToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale,
 			List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled, boolean modificheAbilitate,
-			boolean gestioneCanale) {
+			boolean gestioneCanale) throws DriverConfigurazioneNotFound {
 		DataElement de;
 		// canale
 		if(gestioneCanaliEnabled) {
@@ -4486,7 +4501,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setValues(AccordiServizioParteComuneCostanti.VALUES_PARAMETRO_APC_CANALE_STATO);
 			
 			List<String> labelsCanaleStato = new ArrayList<>();
-			CanaleConfigurazione canaleConfigurazioneDefault = canaleList.stream().filter((c) -> c.isCanaleDefault()).findFirst().get();
+			
+			CanaleConfigurazione canaleConfigurazioneDefault = getCanaleDefault(canaleList);
+			
 			labelsCanaleStato.add(MessageFormat.format(AccordiServizioParteComuneCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT, canaleConfigurazioneDefault.getNome()));
 			labelsCanaleStato.add(AccordiServizioParteComuneCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO);
 			

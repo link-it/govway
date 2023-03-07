@@ -71,7 +71,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 		
 		                               
 		if (args.length  < 4) {
-			String errorMsg = "ERROR, Usage:  java TestXMLDataConverter proprietaAccessoDatabase tipologiaEliminazione(fruzione/erogazione) servizio(tipo/nome) soggettoErogatoreServizio(tipo/nome o *) fruitore(SOLO se tipologia=fruizione) [Logger]";
+			String errorMsg = "ERROR, Usage:  java OpenSPCoop2DBConfigurationUtility proprietaAccessoDatabase tipologiaEliminazione(fruzione/erogazione) servizio(tipo/nome) soggettoErogatoreServizio(tipo/nome o *) fruitore(SOLO se tipologia=fruizione) [Logger]";
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}
@@ -169,7 +169,9 @@ public class OpenSPCoop2DBConfigurationUtility {
 		// Inizializzo file di properties contenente le configurazioni per l'accesso al database
 		java.util.Properties reader = new java.util.Properties();
 		try{
-			reader.load(new FileInputStream(proprietaAccessoDatabase));
+			try(FileInputStream fin = new FileInputStream(proprietaAccessoDatabase)){
+				reader.load(fin);
+			}
 		}catch(java.io.IOException e) {
 			String errorMsg = "Errore durante il caricamento del file di properties ["+proprietaAccessoDatabase+"] : "+e.getMessage();
 			log.error(errorMsg,e);

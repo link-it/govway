@@ -32,7 +32,7 @@ public class CostantiThreads {
 
     /** Gestione dei messaggi da ritrasmettere */
     public static final boolean REDELIVERY_STATUS = false;
-	public static final long 	REDELIVERY_DELAY  = 60 * 1000;
+	public static final long 	REDELIVERY_DELAY  = 60l * 1000l;
 	public static final int  	REDELIVERY_COUNT  = 25;
 
 	public static final String POOL_TYPE = "fixed";

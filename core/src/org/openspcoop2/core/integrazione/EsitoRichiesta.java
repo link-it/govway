@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class EsitoRichiesta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public EsitoRichiesta() {
+    super();
   }
 
   public java.lang.String getMessageId() {

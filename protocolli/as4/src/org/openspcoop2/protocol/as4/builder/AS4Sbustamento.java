@@ -342,7 +342,9 @@ public class AS4Sbustamento {
 					}
 				}
 				
-				newMessage.castAsSoap().setSoapAction(soapAction);
+				if(newMessage!=null) {
+					newMessage.castAsSoap().setSoapAction(soapAction);
+				}
 			}
 			
 			

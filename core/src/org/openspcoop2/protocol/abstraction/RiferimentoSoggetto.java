@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class RiferimentoSoggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RiferimentoSoggetto() {
+    super();
   }
 
   public Soggetto getIdSoggetto() {

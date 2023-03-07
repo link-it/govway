@@ -56,6 +56,7 @@ import java.io.Serializable;
 
 public class SoapMediaTypeMapping extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SoapMediaTypeMapping() {
+    super();
   }
 
   public String getBase() {

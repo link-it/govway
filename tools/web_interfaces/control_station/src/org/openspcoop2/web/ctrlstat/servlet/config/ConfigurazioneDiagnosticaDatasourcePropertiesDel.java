@@ -136,6 +136,11 @@ public final class ConfigurazioneDiagnosticaDatasourcePropertiesDel extends Acti
 					break;
 				}
 			}
+			
+			if(od==null) {
+				throw new Exception("Datasource non trovato");
+			}
+			
 			List<Property> lista1 = od.getPropertyList();
 
 			confHelper.prepareDiagnosticaDatasourcePropList(od, lista1);

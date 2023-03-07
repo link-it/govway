@@ -65,10 +65,12 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 	//private final Integer semaphore = 1;
 	private final org.openspcoop2.utils.Semaphore lockPIPE = new org.openspcoop2.utils.Semaphore("PipedBytesStream");
 	private byte [] bytesReading = null;
-	private volatile int indexNextByteReceivedForWrite = 0;
+	//private volatile int indexNextByteReceivedForWrite = 0;
+	private int indexNextByteReceivedForWrite = 0;
 	private List<byte[]> chunkList = new ArrayList<byte[]>();
 	private byte [] bytesReceived = null;
-	private volatile int indexNextByteReceivedForRead = -1;
+	//private volatile int indexNextByteReceivedForRead = -1;
+	private int indexNextByteReceivedForRead = -1;
 	
 	private boolean stop = false;
 
@@ -127,6 +129,9 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 							this.asyncReadTask.get();
 						}
 	//					System.out.println("["+this.source+"] READ OK");
+					}catch (InterruptedException timeout) {
+						Thread.currentThread().interrupt();
+						throw new IOException(getPrefixSource()+"Timeout, no bytes available for read: "+timeout.getMessage(),timeout);
 					}catch(Exception timeout) {
 						throw new IOException(getPrefixSource()+"Timeout, no bytes available for read: "+timeout.getMessage(),timeout);
 					}
@@ -137,6 +142,9 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 			throw io;
 		}
 		catch(Throwable t) {
+			if(t !=null && t instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			throw new IOException(t.getMessage(),t);
 		}
 	}
@@ -228,6 +236,10 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 	//			System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC OK");
 			}
 			
+			if(this.bytesReceived==null){
+				return -1;
+			}
+			
 			int bytesAvailableForRead = this.bytesReceived.length - this.indexNextByteReceivedForRead;
 			if ( bytesAvailableForRead == len ) {
 				System.arraycopy( this.bytesReceived, this.indexNextByteReceivedForRead, b, off, bytesAvailableForRead );
@@ -262,7 +274,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 		byte[]b = new byte[1];
 		int len = this.read(b);
 		if ( len == 1 )
-			return b[0];
+			return b[0] & 0xFF;
 		if ( len == -1 )
 			return -1;
 		throw new IOException( "Cannot read single byte" );
@@ -341,7 +353,11 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 							this.asyncWriteTask.get();
 						}
 	//					System.out.println("["+this.source+"] WRITE OK");
-					}catch(Exception timeout) {
+					}catch(InterruptedException timeout) {
+						Thread.currentThread().interrupt();
+						throw new IOException(getPrefixSource()+"Timeout, no bytes available for read: "+timeout.getMessage(),timeout);
+					}
+					catch(Exception timeout) {
 						throw new IOException(getPrefixSource()+"Timeout, no bytes available for read: "+timeout.getMessage(),timeout);
 					}
 				}
@@ -351,6 +367,9 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 			throw io;
 		}
 		catch(Throwable t) {
+			if(t !=null && t instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			throw new IOException(t.getMessage(),t);
 		}
 	}

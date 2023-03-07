@@ -62,6 +62,7 @@ import java.io.Serializable;
 
 public class CollaborationInfo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public CollaborationInfo() {
+    super();
   }
 
   public AgreementRef getAgreementRef() {

@@ -56,7 +56,7 @@ public class PluginJar implements Serializable {
 		this.nome = nome;
 		this.date = data;
 		//this.content = contenuto;
-		this.fContent = File.createTempFile("plugin_"+this.nome, ".raw");
+		this.fContent = FileSystemUtilities.createTempFile("plugin_"+this.nome, ".raw");
 		FileSystemUtilities.writeFile(this.fContent, contenuto);
 		this.resourceURL = this.fContent.toURI().toURL();
 	}
@@ -83,7 +83,9 @@ public class PluginJar implements Serializable {
 	
 	public void close() {
 		if(this.fContent!=null) {
-			this.fContent.delete();
+			if(!this.fContent.delete()) {
+				// ignore
+			}
 		}
 	}
 	

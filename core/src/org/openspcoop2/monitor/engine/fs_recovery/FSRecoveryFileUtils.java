@@ -128,7 +128,9 @@ public class FSRecoveryFileUtils {
 		File newFile = new File(dir, file.getName());
 		
 		dir.mkdirs();
-		file.renameTo(newFile);
+		if(!file.renameTo(newFile)) {
+			// ignore
+		}
 		
 		FileOutputStream fos = null;
 		

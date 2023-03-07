@@ -262,7 +262,8 @@ public class ErogazioniDetailsUtilities {
 		sb.append("=== Informazioni Generali ===");
 		
 		// Nome
-		String labelServizio = gestioneFruitori ? consoleHelper.getLabelIdServizioSenzaErogatore(idServizio) :  consoleHelper.getLabelIdServizioSenzaErogatore(idServizio);
+		//String labelServizio = gestioneFruitori ? consoleHelper.getLabelIdServizioSenzaErogatore(idServizio) :  consoleHelper.getLabelIdServizioSenzaErogatore(idServizio);
+		String labelServizio = consoleHelper.getLabelIdServizioSenzaErogatore(idServizio);
 		String labelServizioConPortType = labelServizio;
 		if(asps.getPortType()!=null && !"".equals(asps.getPortType()) && !asps.getNome().equals(asps.getPortType())) {
 			labelServizioConPortType = labelServizioConPortType +" ("+asps.getPortType()+")";
@@ -407,7 +408,7 @@ public class ErogazioniDetailsUtilities {
 					String canaleAPINome = as.getCanale();
 					if(canaleAPINome == null) { // default sistema
 						List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
-						CanaleConfigurazione canaleConfigurazioneDefault = canaleList.stream().filter((c) -> c.isCanaleDefault()).findFirst().get();
+						CanaleConfigurazione canaleConfigurazioneDefault = consoleHelper.getCanaleDefault(canaleList);
 						canaleNome =  canaleConfigurazioneDefault.getNome();
 					}
 					else { // default API
@@ -883,6 +884,35 @@ public class ErogazioniDetailsUtilities {
 						labelProtocollo, rest, gestioneFruitori, !request, 
 						digest, corniceSicurezza, headerDuplicati,
 						separator, newLine);
+			}
+			else {
+				
+				// Sicurezza OAuth
+				
+				if( gestioneFruitori ) {
+				
+					v = map.get(ModIUtils.API_IMPL_SICUREZZA_OAUTH_IDENTIFICATIVO);
+					if(StringUtils.isNotEmpty(v)) {
+						sb.append(newLine);
+						//sb.append(CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+						sb.append(CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH);
+						sb.append(separator);
+						sb.append(v);
+					}
+					
+					v = map.get(ModIUtils.API_IMPL_SICUREZZA_OAUTH_KID);
+					if(StringUtils.isNotEmpty(v)) {
+						sb.append(newLine);
+						sb.append(CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID);
+						sb.append(separator);
+						sb.append(v);
+					}
+					
+					addStore(sb, map, 
+							"", false, false,
+							separator, newLine);
+				}
+				
 			}
 		}
 
@@ -2340,7 +2370,7 @@ public class ErogazioniDetailsUtilities {
 				sb.append(vAud);
 			}
 		}
-		
+				
 		// TrustStore
 		if( (fruizione && !request) || (!fruizione && request) ) {
 			
@@ -2363,6 +2393,22 @@ public class ErogazioniDetailsUtilities {
 			addStore(sb, map, 
 					prefixKey, false, false,
 					separator, newLine);
+		}
+		
+		if(fruizione && request) {
+			String v = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE);
+			if(StringUtils.isNotEmpty(v)) {
+				sb.append(newLine);
+				sb.append(CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL);
+				sb.append(separator);
+				sb.append(v);
+				
+				if(CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_FRUIZIONE.equals(v)) {
+					addStore(sb, map, 
+							prefixKey, false, false,
+							separator, newLine);
+				}
+			}
 		}
 		
 		// Firma
@@ -2409,6 +2455,15 @@ public class ErogazioniDetailsUtilities {
 			if(StringUtils.isNotEmpty(v)) {
 				sb.append(newLine);
 				sb.append(CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN_LABEL);
+				sb.append(separator);
+				sb.append(v);
+			}
+			
+			// X5U Certificate URL
+			v = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_X5U_CERTIFICATE_URL);
+			if(StringUtils.isNotEmpty(v)) {
+				sb.append(newLine);
+				sb.append(CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_X5U_URL_LABEL);
 				sb.append(separator);
 				sb.append(v);
 			}
@@ -2466,6 +2521,29 @@ public class ErogazioniDetailsUtilities {
 			if(StringUtils.isNotEmpty(v)) {
 				sb.append(newLine);
 				sb.append(CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_INCLUDE_SIGNATURE_TOKEN_LABEL);
+				sb.append(separator);
+				sb.append(v);
+			}
+			
+		}
+		
+		// Sicurezza OAuth
+		
+		if( fruizione && request ) {
+		
+			String v = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_OAUTH_IDENTIFICATIVO);
+			if(StringUtils.isNotEmpty(v)) {
+				sb.append(newLine);
+				//sb.append(CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+				sb.append(CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH);
+				sb.append(separator);
+				sb.append(v);
+			}
+			
+			v = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_OAUTH_KID);
+			if(StringUtils.isNotEmpty(v)) {
+				sb.append(newLine);
+				sb.append(CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID);
 				sb.append(separator);
 				sb.append(v);
 			}

@@ -56,6 +56,7 @@ import java.io.Serializable;
 
 public class RestMediaTypeMapping extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RestMediaTypeMapping() {
+    super();
   }
 
   public String getBase() {

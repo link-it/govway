@@ -59,4 +59,13 @@ public class TestCache {
 		TestLogger.info("Run test '"+ID_TEST+".performance' ok");
 		
 	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS+"."+ID_TEST_MISURAZIONE_TEMPI})
+	public void testLimitedHashMap() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".limitedHashMap' ...");
+		org.openspcoop2.utils.cache.test.LimitedHashMapTest.test();
+		TestLogger.info("Run test '"+ID_TEST+".limitedHashMap' ok");
+		
+	}
 }

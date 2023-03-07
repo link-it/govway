@@ -74,6 +74,7 @@ import java.io.Serializable;
 
 public class RicevutaScartoType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RicevutaScartoType() {
+    super();
   }
 
   public java.lang.String getIdentificativoSdI() {

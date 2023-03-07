@@ -76,6 +76,7 @@ import java.io.Serializable;
 
 public class RicevutaImpossibilitaRecapitoType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RicevutaImpossibilitaRecapitoType() {
+    super();
   }
 
   public java.lang.String getIdentificativoSdI() {

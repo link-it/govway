@@ -62,6 +62,7 @@ import java.io.Serializable;
 
 public class DatiAnagraficiVettoreType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiAnagraficiVettoreType() {
+    super();
   }
 
   public IdFiscaleType getIdFiscaleIVA() {

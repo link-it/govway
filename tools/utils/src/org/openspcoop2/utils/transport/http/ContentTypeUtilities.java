@@ -267,7 +267,10 @@ public class ContentTypeUtilities {
 	public static boolean isMultipartType(String cType) throws UtilsException {
 		try{
 			ContentType contentType = new ContentType(cType);
-			String baseType = contentType.getBaseType().toLowerCase(); 
+			String baseType = contentType.getBaseType();
+			if(baseType!=null) {
+				baseType = baseType.toLowerCase();
+			}
 			if(baseType!=null && baseType.startsWith(HttpConstants.CONTENT_TYPE_MULTIPART_TYPE+"/")){
 				return true;
 			}
@@ -297,7 +300,10 @@ public class ContentTypeUtilities {
 	private static boolean _isMultipart(String cType, String expected) throws UtilsException {
 		try{
 			ContentType contentType = new ContentType(cType);
-			String baseType = contentType.getBaseType().toLowerCase(); 
+			String baseType = contentType.getBaseType();
+			if(baseType!=null) {
+				baseType = baseType.toLowerCase();
+			}
 			if(baseType!=null && baseType.equals(expected)){
 				return true;
 			}
@@ -311,7 +317,10 @@ public class ContentTypeUtilities {
 	public static boolean isMultipartContentType(String cType) throws UtilsException {
 		try{
 			ContentType contentType = new ContentType(cType);
-			String baseType = contentType.getBaseType().toLowerCase(); 
+			String baseType = contentType.getBaseType();
+			if(baseType!=null) {
+				baseType = baseType.toLowerCase();
+			}
 			if(baseType!=null && baseType.startsWith( (HttpConstants.CONTENT_TYPE_MULTIPART_TYPE+"/")) ){
 				return true;
 			}
@@ -325,12 +334,16 @@ public class ContentTypeUtilities {
 	public static String getInternalMultipartContentType(String cType) throws UtilsException {
 		try{
 			ContentType contentType = new ContentType(cType);
-			String baseType = contentType.getBaseType().toLowerCase(); 
+			String baseType = contentType.getBaseType();
+			if(baseType!=null) {
+				baseType = baseType.toLowerCase();
+			}
 			String internalContentType = null;
-			if(baseType == null)
-				internalContentType = null;
 			boolean mtom = false;
-			if(baseType.equals(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED)){
+			if(baseType == null) {
+				internalContentType = null;
+			}
+			else if(baseType.equals(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED)){
 				String typeParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE); 
 				if (typeParam != null) {
 					internalContentType = typeParam.toLowerCase();
@@ -404,17 +417,17 @@ public class ContentTypeUtilities {
 	public static boolean isMtom(String cType) throws UtilsException{
 		try{
 			ContentType contentType = new ContentType(cType);
-			String baseType = contentType.getBaseType().toLowerCase(); 
-			String soapContentType = null;
-			if(baseType == null)
-				soapContentType = null;
+			String baseType = contentType.getBaseType();
+			if(baseType!=null) {
+				baseType = baseType.toLowerCase();
+			}
 			boolean mtom = false;
-			if(baseType.equals(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED)){
+			if(baseType!=null && baseType.equals(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED)){
 				String typeParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE); 
 				if (typeParam == null) {
 					throw new SOAPException("Missing '"+HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE+"' parameter in "+HttpConstants.CONTENT_TYPE_MULTIPART_RELATED);
 				} else {
-					soapContentType = typeParam.toLowerCase();
+					String soapContentType = typeParam.toLowerCase();
 					if(HttpConstants.CONTENT_TYPE_APPLICATION_XOP_XML.equals(soapContentType)){
 						mtom = true;
 					}

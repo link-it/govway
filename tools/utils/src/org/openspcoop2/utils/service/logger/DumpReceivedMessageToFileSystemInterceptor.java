@@ -28,6 +28,7 @@ import java.io.InputStream;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.slf4j.Logger;
 
 /**	
@@ -57,7 +58,7 @@ public class DumpReceivedMessageToFileSystemInterceptor extends AbstractPhaseInt
 		if(paramInputStream!=null) {
 			File f = null;
 			try {
-				f = File.createTempFile("ReceivedMessage", ".dump");
+				f = FileSystemUtilities.createTempFile("ReceivedMessage", ".dump");
 			}catch(Exception e) {
 				log.error(e.getMessage(),e);
 				return;

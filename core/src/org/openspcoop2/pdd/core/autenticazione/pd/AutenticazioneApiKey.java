@@ -132,7 +132,7 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 		try {
 			String apiKey = ApiKeyUtilities.getKey(true, this.header, this.cookie, this.queryParameter, 
 					this.nomeHeaderApiKey, this.nomeCookieApiKey, this.nomeQueryParameterApiKey, 
-					datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), false,
+					datiInvocazione.getInfoConnettoreIngresso(), this.getPddContext(), false,
 					new StringBuilder());
 			if(apiKey==null) {
 				return null;
@@ -140,7 +140,7 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 			if(this.appId) {
 				String appId = ApiKeyUtilities.getKey(false, this.header, this.cookie, this.queryParameter, 
 						this.nomeHeaderAppId, this.nomeCookieAppId, this.nomeQueryParameterAppId, 
-						datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), false,
+						datiInvocazione.getInfoConnettoreIngresso(), this.getPddContext(), false,
 						new StringBuilder());
 				if(appId==null) {
 					return null;
@@ -267,7 +267,8 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
     	
 		IDServizioApplicativo idServizioApplicativo = null;
 		try{
-			idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
+			ConfigurazionePdDManager configurazionePdDManager = datiInvocazione!=null ? ConfigurazionePdDManager.getInstance(datiInvocazione.getState()) : ConfigurazionePdDManager.getInstance();
+			idServizioApplicativo = configurazionePdDManager.
 						getIdServizioApplicativoByCredenzialiApiKey(identitaAutenticata, password, this.appId, cryptConfigApplicativi);
 			if(idServizioApplicativo!=null && soggettoFruitore==null) {
 				soggettoFruitore = idServizioApplicativo.getIdSoggettoProprietario();

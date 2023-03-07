@@ -74,13 +74,18 @@
 				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
-			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Uscita" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}"/>
+			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="In Spedizione" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}">
 				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
-			<h:outputLabel value="Bytes Uscita" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{(empty dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes or dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes lt 0) ? 'n.d.' : dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes}" converter="fileSizeConverter"/>										
+			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Consegnata" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}"/>
+			<h:outputText value="#{(empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiestaStream) ? '-' : dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiestaStream}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}">
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
+			</h:outputText>
+			
+			<h:outputLabel value="Dimensione" styleClass="outputFieldLabel icon-compress" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}"/>
+			<h:outputText value="#{(empty dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes or dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes lt 0) ? '-' : dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes}" converter="fileSizeConverter" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}"/>										
 				
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRichiestaUscita}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRichiestaUscita}">
@@ -113,7 +118,7 @@
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Uscita" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}"/>
+			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}">
 				<h:form id="formDumpBinarioReqUscita">
 					<input type="hidden" id="_csrfFormDumpBinarioReqUscita" name="_csrf" value="#{loginBean.csrf}"/>
@@ -168,13 +173,18 @@
 				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
-			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Ingresso" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}"/>
+			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="In Ricezione" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}">
 				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
-			<h:outputLabel value="Bytes Ingresso" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{(empty dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes or dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes lt 0) ? 'n.d.' : dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes}" converter="fileSizeConverter"/>										
+			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Acquisita" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}"/>
+			<h:outputText value="#{(empty dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRispostaStream) ? '-' : dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRispostaStream}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}">
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
+			</h:outputText>
+			
+			<h:outputLabel value="Dimensione" styleClass="outputFieldLabel icon-compress" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}"/>
+			<h:outputText value="#{(empty dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes or dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes lt 0) ? '-' : dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes}" converter="fileSizeConverter" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}"/>										
 				
 			<h:outputText styleClass="outputFieldLabel" value="Errore"
 					rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaUltimoErrore}"/>
@@ -235,7 +245,7 @@
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Ingresso" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}"/>
+			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}">
 				<h:form id="formDumpBinarioResIngresso">
 					<input type="hidden" id="_csrfFormDumpBinarioResIngresso" name="_csrf" value="#{loginBean.csrf}"/>

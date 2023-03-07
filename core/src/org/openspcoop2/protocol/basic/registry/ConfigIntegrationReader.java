@@ -658,7 +658,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
-			Connection con = null;
 			try {
 				org.openspcoop2.core.commons.Search search = new Search(true);
 				List<String> tipologiaList = new ArrayList<>();
@@ -667,15 +666,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			}
 			catch(Exception e) {
 				throw new RegistryException(e.getMessage(),e);
-			}
-			finally {
-				try {
-					if(con!=null) {
-						driver.releaseConnection(con);
-					}
-				}catch(Exception eClose) {
-					// close
-				}
 			}
 			
 		}
@@ -688,7 +678,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
-			Connection con = null;
 			try {
 				GenericProperties gp = driver.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, nome);
 				if(gp==null) {
@@ -700,15 +689,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			}
 			catch(Exception e) {
 				throw new RegistryException(e.getMessage(),e);
-			}
-			finally {
-				try {
-					if(con!=null) {
-						driver.releaseConnection(con);
-					}
-				}catch(Exception eClose) {
-					// close
-				}
 			}
 			
 		}
@@ -722,7 +702,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
-			Connection con = null;
 			try {
 				org.openspcoop2.core.commons.Search search = new Search(true);
 				List<String> tipologiaList = new ArrayList<>();
@@ -731,15 +710,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			}
 			catch(Exception e) {
 				throw new RegistryException(e.getMessage(),e);
-			}
-			finally {
-				try {
-					if(con!=null) {
-						driver.releaseConnection(con);
-					}
-				}catch(Exception eClose) {
-					// close
-				}
 			}
 			
 		}
@@ -752,7 +722,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
-			Connection con = null;
 			try {
 				GenericProperties gp = driver.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, nome);
 				if(gp==null) {
@@ -764,15 +733,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			}
 			catch(Exception e) {
 				throw new RegistryException(e.getMessage(),e);
-			}
-			finally {
-				try {
-					if(con!=null) {
-						driver.releaseConnection(con);
-					}
-				}catch(Exception eClose) {
-					// close
-				}
 			}
 			
 		}
@@ -786,7 +746,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
-			Connection con = null;
 			try {
 				org.openspcoop2.core.commons.Search search = new Search(true);
 				List<String> tipologiaList = new ArrayList<>();
@@ -795,15 +754,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			}
 			catch(Exception e) {
 				throw new RegistryException(e.getMessage(),e);
-			}
-			finally {
-				try {
-					if(con!=null) {
-						driver.releaseConnection(con);
-					}
-				}catch(Exception eClose) {
-					// close
-				}
 			}
 			
 		}
@@ -816,7 +766,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
-			Connection con = null;
 			try {
 				GenericProperties gp = driver.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY, nome);
 				if(gp==null) {
@@ -828,15 +777,6 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			}
 			catch(Exception e) {
 				throw new RegistryException(e.getMessage(),e);
-			}
-			finally {
-				try {
-					if(con!=null) {
-						driver.releaseConnection(con);
-					}
-				}catch(Exception eClose) {
-					// close
-				}
 			}
 			
 		}

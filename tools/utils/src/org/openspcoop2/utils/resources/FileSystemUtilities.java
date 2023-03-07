@@ -29,6 +29,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
 
 
 /**
@@ -40,6 +46,34 @@ import java.nio.charset.Charset;
  */
 public class FileSystemUtilities {
 
+	public static File createTempFile(String prefix, String suffix) throws IOException{
+		Path p = createTempPath(prefix, suffix);
+		if(p==null) {
+			throw new IOException("Creation failed");
+		}
+		return p.toFile();
+	}
+	public static Path createTempPath(String prefix, String suffix) throws IOException{
+		// Make sure publicly writable directories are used safely here.
+		// Using publicly writable directories is security-sensitivejava:S5443
+		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+		return Files.createTempFile("op2_log", ".properties",attr);
+	}
+	
+	public static File createTempFile(File dir, String prefix, String suffix) throws IOException{
+		Path p = createTempPath(dir.toPath(), prefix, suffix);
+		if(p==null) {
+			throw new IOException("Creation failed");
+		}
+		return p.toFile();
+	}
+	public static Path createTempPath(Path dir, String prefix, String suffix) throws IOException{
+		// Make sure publicly writable directories are used safely here.
+		// Using publicly writable directories is security-sensitivejava:S5443
+		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+		return Files.createTempFile(dir, "op2_log", ".properties",attr);
+	}
+	
 	public static void copy(File in, File out) throws IOException {
 		FileSystemUtilities.copy(in.getAbsolutePath(),out.getAbsolutePath());
 	}
@@ -68,21 +102,13 @@ public class FileSystemUtilities {
 	public static void copy(InputStream in, OutputStream out) 
 	throws IOException {
 
-		// do not allow other threads to read from the
-		// input or write to the output while copying is
-		// taking place
-
-		synchronized (in) {
-			synchronized (out) {
-
-				byte[] buffer = new byte[256];
-				while (true) {
-					int bytesRead = in.read(buffer);
-					if (bytesRead == -1) break;
-					out.write(buffer, 0, bytesRead);
-				}
-			}
+		byte[] buffer = new byte[256];
+		while (true) {
+			int bytesRead = in.read(buffer);
+			if (bytesRead == -1) break;
+			out.write(buffer, 0, bytesRead);
 		}
+
 	} 
 
 	public static void copyDirectory(String srcPath, String dstPath)
@@ -111,16 +137,34 @@ public class FileSystemUtilities {
 				return;
 			}
 			else {
-				InputStream in = new FileInputStream(srcPath);
-				OutputStream out = new FileOutputStream(dstPath); 
-				// Transfer bytes from in to out
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					out.write(buf, 0, len);
+				InputStream in = null;
+				OutputStream out = null;
+				try {
+					in = new FileInputStream(srcPath);
+					out = new FileOutputStream(dstPath); 
+					// Transfer bytes from in to out
+					byte[] buf = new byte[1024];
+					int len;
+					while ((len = in.read(buf)) > 0) {
+						out.write(buf, 0, len);
+					}
+					out.flush();
+				}finally {
+					try {
+						if(in!=null) {
+							in.close();
+						}
+					}catch(Throwable t) {
+						// ignore
+					}
+					try {
+						if(out!=null) {
+							out.close();
+						}
+					}catch(Throwable t) {
+						// ignore
+					}				
 				}
-				in.close();
-				out.close();
 			}
 		}
 		//System.out.println("Directory copied.");
@@ -146,16 +190,33 @@ public class FileSystemUtilities {
 		return _readFile(f, null, charset);
 	}
 	private static String _readFile(File f, String charsetName, Charset charset) throws Exception{
-		FileInputStream fis =new FileInputStream(f);
-		ByteArrayOutputStream byteInputBuffer = new ByteArrayOutputStream();
-		byte [] readB = new byte[8192];
-		int readByte = 0;
-		while((readByte = fis.read(readB))!= -1){
-			byteInputBuffer.write(readB,0,readByte);
+		FileInputStream fis = null;
+		ByteArrayOutputStream byteInputBuffer = null;
+		try {
+			fis =new FileInputStream(f);
+			byteInputBuffer = new ByteArrayOutputStream();
+			byte [] readB = new byte[8192];
+			int readByte = 0;
+			while((readByte = fis.read(readB))!= -1){
+				byteInputBuffer.write(readB,0,readByte);
+			}
+			byteInputBuffer.flush();
+		}finally {
+			try {
+				if(fis!=null) {
+					fis.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}	
+			try {
+				if(byteInputBuffer!=null) {
+					byteInputBuffer.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}	
 		}
-		fis.close();
-		byteInputBuffer.flush();
-		byteInputBuffer.close();
 		
 		if(charsetName!=null) {
 			return  byteInputBuffer.toString(charsetName);
@@ -171,17 +232,34 @@ public class FileSystemUtilities {
 	public static byte[] readBytesFromFile(String f) throws Exception{
 		return FileSystemUtilities.readBytesFromFile(new File(f));
 	}
-	public static byte[] readBytesFromFile(File f) throws Exception{		
-		FileInputStream fis =new FileInputStream(f);
-		ByteArrayOutputStream byteInputBuffer = new ByteArrayOutputStream();
-		byte [] readB = new byte[8192];
-		int readByte = 0;
-		while((readByte = fis.read(readB))!= -1){
-			byteInputBuffer.write(readB,0,readByte);
+	public static byte[] readBytesFromFile(File f) throws Exception{	
+		FileInputStream fis = null;
+		ByteArrayOutputStream byteInputBuffer = null;
+		try {
+			fis =new FileInputStream(f);
+			byteInputBuffer = new ByteArrayOutputStream();
+			byte [] readB = new byte[8192];
+			int readByte = 0;
+			while((readByte = fis.read(readB))!= -1){
+				byteInputBuffer.write(readB,0,readByte);
+			}
+			byteInputBuffer.flush();
+		}finally {
+			try {
+				if(fis!=null) {
+					fis.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}	
+			try {
+				if(byteInputBuffer!=null) {
+					byteInputBuffer.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}
 		}
-		fis.close();
-		byteInputBuffer.flush();
-		byteInputBuffer.close();
 		
 		return  byteInputBuffer.toByteArray();
 	}
@@ -191,22 +269,42 @@ public class FileSystemUtilities {
 		FileSystemUtilities.writeFile(new File(f), contenuto);
 	}
 	public static void writeFile(File f,byte[] contenuto)throws Exception{
-		FileOutputStream fos =new FileOutputStream(f);
-		fos.write(contenuto);
-		fos.flush();
-		fos.close();
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(f);
+			fos.write(contenuto);
+			fos.flush();
+		}finally {
+			try {
+				if(fos!=null) {
+					fos.close();
+				}
+			}catch(Throwable t) {
+				// ignore
+			}	
+		}
 	}
 	public static void writeFile(String f,byte[] ... args)throws Exception{
 		FileSystemUtilities.writeFile(new File(f), args);
 	}
 	public static void writeFile(File f,byte[] ... args)throws Exception{
 		if(args!=null){
-			FileOutputStream fos =new FileOutputStream(f);
-			for(int i=0; i<args.length; i++){
-				fos.write(args[i]);
+			FileOutputStream fos = null;
+			try {
+				fos = new FileOutputStream(f);
+				for(int i=0; i<args.length; i++){
+					fos.write(args[i]);
+				}
+				fos.flush();
+			}finally {
+				try {
+					if(fos!=null) {
+						fos.close();
+					}
+				}catch(Throwable t) {
+					// ignore
+				}	
 			}
-			fos.flush();
-			fos.close();
 		}
 	}
 	
@@ -374,26 +472,38 @@ public class FileSystemUtilities {
 			else {
 				if(readable!=null) {
 					if(readableOwnerOnly!=null) {
-						p.getParentFile().setReadable(readable, readableOwnerOnly);
+						if(!p.getParentFile().setReadable(readable, readableOwnerOnly)) {
+							// ignore
+						}
 					}
 					else {
-						p.getParentFile().setReadable(readable);
+						if(!p.getParentFile().setReadable(readable)) {
+							// ignore
+						}
 					}
 				}
 				if(writable!=null) {
 					if(writableOwnerOnly!=null) {
-						p.getParentFile().setWritable(writable, writableOwnerOnly);
+						if(!p.getParentFile().setWritable(writable, writableOwnerOnly)) {
+							// ignore
+						}
 					}
 					else {
-						p.getParentFile().setWritable(writable);
+						if(!p.getParentFile().setWritable(writable)) {
+							// ignore
+						}
 					}
 				}
 				if(executable!=null) {
 					if(executableOwnerOnly!=null) {
-						p.getParentFile().setExecutable(executable, executableOwnerOnly);
+						if(!p.getParentFile().setExecutable(executable, executableOwnerOnly)) {
+							// ignore
+						}
 					}
 					else {
-						p.getParentFile().setExecutable(executable);
+						if(!p.getParentFile().setExecutable(executable)) {
+							// ignore
+						}
 					}
 				}
 			}
@@ -489,26 +599,38 @@ public class FileSystemUtilities {
 			else {
 				if(readable!=null) {
 					if(readableOwnerOnly!=null) {
-						dir.setReadable(readable, readableOwnerOnly);
+						if(!dir.setReadable(readable, readableOwnerOnly)) {
+							// ignore
+						}
 					}
 					else {
-						dir.setReadable(readable);
+						if(!dir.setReadable(readable)) {
+							// ignore
+						}
 					}
 				}
 				if(writable!=null) {
 					if(writableOwnerOnly!=null) {
-						dir.setWritable(writable, writableOwnerOnly);
+						if(!dir.setWritable(writable, writableOwnerOnly)) {
+							// ignore
+						}
 					}
 					else {
-						dir.setWritable(writable);
+						if(!dir.setWritable(writable)) {
+							// ignore
+						}
 					}
 				}
 				if(executable!=null) {
 					if(executableOwnerOnly!=null) {
-						dir.setExecutable(executable, executableOwnerOnly);
+						if(!dir.setExecutable(executable, executableOwnerOnly)) {
+							// ignore
+						}
 					}
 					else {
-						dir.setExecutable(executable);
+						if(!dir.setExecutable(executable)) {
+							// ignore
+						}
 					}
 				}
 			}

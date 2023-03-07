@@ -255,7 +255,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		}
 
 		if(toRet == null || "".equals(toRet)) {
-			toRet = this.dumpMessaggio.getBody() != null ? new String(this.dumpMessaggio.getBody()) : "";
+			toRet = (this.dumpMessaggio!=null && this.dumpMessaggio.getBody() != null) ? new String(this.dumpMessaggio.getBody()) : "";
 		}
 
 		return toRet;

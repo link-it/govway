@@ -33,6 +33,7 @@ import java.util.List;
 public class InResponseStatefulObject {
 
 	private Date dataUscitaRichiesta;
+	private Date dataRichiestaInoltrata;
 	private Date dataAccettazioneRisposta;
 	private Date dataIngressoRisposta;
 	private String returnCode;
@@ -44,6 +45,12 @@ public class InResponseStatefulObject {
 	
 	private List<String> eventiGestione = new ArrayList<String>();
 	
+	public Date getDataRichiestaInoltrata() {
+		return this.dataRichiestaInoltrata;
+	}
+	public void setDataRichiestaInoltrata(Date dataRichiestaInoltrata) {
+		this.dataRichiestaInoltrata = dataRichiestaInoltrata;
+	}
 	public Date getDataAccettazioneRisposta() {
 		return this.dataAccettazioneRisposta;
 	}

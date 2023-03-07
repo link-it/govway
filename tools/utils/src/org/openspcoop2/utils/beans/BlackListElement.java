@@ -128,13 +128,16 @@ public class BlackListElement implements Serializable {
 		}
 		
 		// assumo che se passa tutti i controlli precedenti i due oggetti abbiano lo stesso esatto numero di parametri.
-		for (int i = 0; i < this.classiParametri.length; i++) {
-			Class<?> _class = this.classiParametri[i];
-			Class<?> bleClass = ble.getClassiParametri()[i];
-			
-			// quando trovo la prima discordanza nell'elenco dei parametri mi fermo: return false;
-			if(!_class.getName().equals(bleClass.getName())){
-				return false;
+		if(this.classiParametri!=null) {
+			for (int i = 0; i < this.classiParametri.length; i++) {
+				Class<?> _class = this.classiParametri[i];
+				Class<?> bleClass = ble.getClassiParametri()[i];
+				
+				// quando trovo la prima discordanza nell'elenco dei parametri mi fermo: return false;
+				//if(!_class.getName().equals(bleClass.getName())){
+				if(!_class.equals(bleClass)){
+					return false;
+				}
 			}
 		}
 		

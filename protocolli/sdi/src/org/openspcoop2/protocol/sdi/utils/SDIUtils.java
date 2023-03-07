@@ -169,15 +169,17 @@ public class SDIUtils {
 				}
 			}
 			
-			return SoapUtils.getSoapFactory(messageFactory, msg.getMessageType()).createElement(element);
-		}catch(Exception e){
-			throw new ProtocolException(e.getMessage(),e);
-		}finally{
+			SOAPElement se = SoapUtils.getSoapFactory(messageFactory, msg.getMessageType()).createElement(element);
+			
 			try{
 				msg.mtomRestoreAfterXSDConformance(xomReference);
 			}catch(Exception e){
 				throw new ProtocolException(e.getMessage(),e);
 			}
+			
+			return se;
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
 

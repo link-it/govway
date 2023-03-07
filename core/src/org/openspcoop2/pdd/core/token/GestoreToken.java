@@ -1260,21 +1260,21 @@ public class GestoreToken {
 						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
 						// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
 						// - impostare il noCache a true
-						if(esitoGestioneToken!=null){
-							esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
-							if(!esitoGestioneToken.isNoCache()){
-								GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-								try{	
-									org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-									responseCache.setObject(esitoGestioneToken);
-									GestoreToken.cacheToken.put(keyCache,responseCache);
-								}catch(UtilsException e){
-									GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
-								}
+						//if(esitoGestioneToken!=null){
+						esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+						if(!esitoGestioneToken.isNoCache()){
+							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esitoGestioneToken);
+								GestoreToken.cacheToken.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
 							}
-						}else{
-							throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 						}
+						//}else{
+						//	throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+						//}
 					}
 				}finally {
 					lockIntrospection.release("introspectionToken", idTransazione);
@@ -1458,21 +1458,21 @@ public class GestoreToken {
 						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
 						// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
 						// - impostare il noCache a true
-						if(esitoGestioneToken!=null){
-							esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
-							if(!esitoGestioneToken.isNoCache()){
-								GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-								try{	
-									org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-									responseCache.setObject(esitoGestioneToken);
-									GestoreToken.cacheToken.put(keyCache,responseCache);
-								}catch(UtilsException e){
-									GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
-								}
+						//if(esitoGestioneToken!=null){
+						esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+						if(!esitoGestioneToken.isNoCache()){
+							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esitoGestioneToken);
+								GestoreToken.cacheToken.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
 							}
-						}else{
-							throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 						}
+						//}else{
+						//	throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+						//}
 					}
 				}finally {
 					lockUserInfo.release("userInfoToken", idTransazione);
@@ -1854,7 +1854,7 @@ public class GestoreToken {
 			if(op2headers) {
 				headerNames = properties.getKeyValue_gestioneTokenHeaderIntegrazioneTrasporto();
 				if(portaDelegata) {
-					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
+					set = properties.getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
 				}
 				else {
 					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
@@ -1866,7 +1866,7 @@ public class GestoreToken {
 			}
 			else {
 				if(portaDelegata) {
-					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson();
+					set = properties.getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson();
 				}
 				else {
 					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson();
@@ -3095,7 +3095,9 @@ public class GestoreToken {
 		try {
 			if(idTransazione!=null) {
 				Transaction t = TransactionContext.getTransaction(idTransazione);
-				t.setInformazioniNegoziazioneToken(esitoNegoziazioneToken.getInformazioniNegoziazioneToken());
+				if(esitoNegoziazioneToken!=null) {
+					t.setInformazioniNegoziazioneToken(esitoNegoziazioneToken.getInformazioniNegoziazioneToken());
+				}
 			}
 		}catch(Throwable t) {}
 		
@@ -3136,6 +3138,12 @@ public class GestoreToken {
 				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret();
 				if(datiRichiesta!=null) {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET);
+				}
+			}
+			else if(policyNegoziazioneToken.isCustomGrant()) {
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_custom();	
+				if(datiRichiesta!=null) {
+					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM);
 				}
 			}
 		}catch(Throwable t) {
@@ -3452,7 +3460,7 @@ public class GestoreToken {
 			datiRichiesta.setEndpoint(endpoint);
 		}
 		
-		HttpRequestMethod httpMethod = HttpRequestMethod.POST;	
+		HttpRequestMethod httpMethod = dynamicParameters.getHttpMethod();
 		
 		// Nell'endpoint config ci finisce i timeout e la configurazione proxy
 		Properties endpointConfig = policyNegoziazioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
@@ -3475,7 +3483,7 @@ public class GestoreToken {
 		String password = null;
 		if(basic) {
 			username = dynamicParameters.getBasicUsername();
-			password = policyNegoziazioneToken.getBasicAuthentication_password();
+			password = dynamicParameters.getBasicPassword();
 			if(datiRichiesta!=null) {
 				datiRichiesta.setClientId(username);
 			}
@@ -3558,7 +3566,6 @@ public class GestoreToken {
 			}
 		}
 		
-		byte[] content = null;
 		
 		TransportRequestContext transportRequestContext = new TransportRequestContext(log);
 		transportRequestContext.setRequestType(httpMethod.name());
@@ -3567,11 +3574,9 @@ public class GestoreToken {
 			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
 			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
 		}
-		transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
-		String contentType = HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED;
-		TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, contentType);
 		
 		Map<String, List<String>> pContent = new HashMap<String, List<String>>();
+		boolean custom = false;
 		if(refreshModeEnabled) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_REFRESH_TOKEN);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REFRESH_TOKEN, refreshToken);
@@ -3586,21 +3591,38 @@ public class GestoreToken {
 		else if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_RESOURCE_OWNER_PASSWORD_CREDENTIALS_GRANT);
 		}
+		else if(policyNegoziazioneToken.isCustomGrant()) {
+			custom = true;
+		}
 		else {
 			throw new Exception("Nessuna modalità definita");
 		}
 		
-		if(basic && !basicAsAuthorizationHeader){
+		transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
+		String contentType = null;
+		if(custom) {
+			contentType = dynamicParameters.getHttpContentType();
+			if(contentType!=null && StringUtils.isNotEmpty(contentType)) {
+				TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, contentType);
+			}
+		}
+		else {
+			contentType = HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED;
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, contentType);
+		}
+		
+		if(!custom && basic && !basicAsAuthorizationHeader){
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ID, username);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_SECRET, password);
 		}
 		
 		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-			String usernamePasswordGrant = dynamicParameters.getUsernamePasswordGrant();
-			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, usernamePasswordGrant);
-			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
+			String usernamePasswordGrant_username = dynamicParameters.getUsernamePasswordGrant_username();
+			String usernamePasswordGrant_password = dynamicParameters.getUsernamePasswordGrant_password();
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, usernamePasswordGrant_username);
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, usernamePasswordGrant_password);
 			if(datiRichiesta!=null) {
-				datiRichiesta.setUsername(usernamePasswordGrant);
+				datiRichiesta.setUsername(usernamePasswordGrant_username);
 			}
 		}
 		
@@ -3617,28 +3639,30 @@ public class GestoreToken {
 			}
 		}
 		
-		List<String> scopes = policyNegoziazioneToken.getScopes(dynamicParameters);
-		if(scopes!=null && !scopes.isEmpty()) {
-			StringBuilder bf = new StringBuilder();
-			for (String scope : scopes) {
+		if(!custom) {
+			List<String> scopes = policyNegoziazioneToken.getScopes(dynamicParameters);
+			if(scopes!=null && !scopes.isEmpty()) {
+				StringBuilder bf = new StringBuilder();
+				for (String scope : scopes) {
+					if(bf.length()>0) {
+						bf.append(" ");
+					}
+					bf.append(scope);
+				}
 				if(bf.length()>0) {
-					bf.append(" ");
+					TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE, bf.toString());
+					if(datiRichiesta!=null) {
+						datiRichiesta.setScope(scopes);
+					}
 				}
-				bf.append(scope);
 			}
-			if(bf.length()>0) {
-				TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE, bf.toString());
+			
+			String aud = dynamicParameters.getAudience();
+			if(aud!=null && !"".equals(aud)) {
+				TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
 				if(datiRichiesta!=null) {
-					datiRichiesta.setScope(scopes);
+					datiRichiesta.setAudience(aud);
 				}
-			}
-		}
-		
-		String aud = dynamicParameters.getAudience();
-		if(aud!=null && !"".equals(aud)) {
-			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
-			if(datiRichiesta!=null) {
-				datiRichiesta.setAudience(aud);
 			}
 		}
 		
@@ -3658,7 +3682,7 @@ public class GestoreToken {
 		}
 		
 		String parameters = dynamicParameters.getParameters();
-		if(parameters!=null && !"".equals(parameters)) {
+		if(!custom && parameters!=null && !"".equals(parameters)) {
 			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(parameters);
 			if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
 				Map<String, String> mapParameters = new HashMap<>();
@@ -3679,13 +3703,45 @@ public class GestoreToken {
 			}
 		}
 		
-		String prefixUrl = "PREFIX?";
-		String contentString = TransportUtils.buildUrlWithParameters(pContent, prefixUrl , log);
-		contentString = contentString.substring(prefixUrl.length());
-		if(contentString.startsWith("&") && contentString.length()>1) {
-			contentString = contentString.substring(1);
+		String httpHeaders = dynamicParameters.getHttpHeaders();
+		if(httpHeaders!=null && !"".equals(httpHeaders)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(httpHeaders);
+			if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
+				Map<String, String> mapHttpHeaders = new HashMap<>();
+				Enumeration<Object> keys = convertTextToProperties.keys();
+				while (keys.hasMoreElements()) {
+					String nome = (String) keys.nextElement();
+					if(nome!=null && !"".equals(nome)) {
+						String valore = convertTextToProperties.getProperty(nome);
+						if(valore!=null) {
+							TransportUtils.setHeader(transportRequestContext.getHeaders(),nome, valore);
+							mapHttpHeaders.put(nome, valore);
+						}
+					}
+				}
+				if(datiRichiesta!=null && !mapHttpHeaders.isEmpty()) {
+					datiRichiesta.setHttpHeaders(mapHttpHeaders);
+				}
+			}
 		}
-		content = contentString.getBytes();
+
+		String prefixUrl = "PREFIX?";
+		byte [] content = null;
+		if(custom) {
+			String contentString = dynamicParameters.getHttpPayload();
+			if(contentString!=null && StringUtils.isNotEmpty(contentString)) {
+				content = contentString.getBytes();
+				connettoreMsg.forceSendContent();
+			}
+		}
+		else {
+			String contentString = TransportUtils.buildUrlWithParameters(pContent, prefixUrl , log);
+			contentString = contentString.substring(prefixUrl.length());
+			if(contentString.startsWith("&") && contentString.length()>1) {
+				contentString = contentString.substring(1);
+			}
+			content = contentString.getBytes();
+		}
 			
 		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);
 		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
@@ -3939,6 +3995,20 @@ public class GestoreToken {
 					throw new Exception("JWT Signature key password undefined");
 				}
 			}
+			else if(policyNegoziazioneToken.isJwtSignKeystoreFruizioneModI()) {
+				ks = dynamicParameters.getKeystoreFruizioneModI();
+				if(ks==null) {
+					throw new Exception("JWT Signature keystore undefined");
+				}
+				keyAlias = dynamicParameters.getKeyAliasFruizioneModI();
+				if(keyAlias==null) {
+					throw new Exception("JWT Signature key alias undefined");
+				}
+				keyPassword = dynamicParameters.getKeyPasswordFruizioneModI();
+				if(keyPassword==null) {
+					throw new Exception("JWT Signature key password undefined");
+				}
+			}
 			else {
 				String keystoreType = policyNegoziazioneToken.getJwtSignKeystoreType();
 				if(keystoreType==null) {
@@ -3990,6 +4060,10 @@ public class GestoreToken {
 		}
 		else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdApplicativoModI()) {
 			String clientId = dynamicParameters.getKidApplicativoModI();
+			jwtHeaders.setKid(clientId);
+		}
+		else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdFruizioneModI()) {
+			String clientId = dynamicParameters.getKidFruizioneModI();
 			jwtHeaders.setKid(clientId);
 		}
 		if(policyNegoziazioneToken.isJwtSignIncludeX509Cert()) {
@@ -4890,7 +4964,7 @@ public class GestoreToken {
 		String password = null;
 		if(basic) {
 			username = dynamicParameters.getBasicUsername();
-			password = policyAttributeAuthority.getBasicAuthentication_password();
+			password = dynamicParameters.getBasicPassword();
 		}
 		
 		boolean bearer = policyAttributeAuthority.isBearerAuthentication();

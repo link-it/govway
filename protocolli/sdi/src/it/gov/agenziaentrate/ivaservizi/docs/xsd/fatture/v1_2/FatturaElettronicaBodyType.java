@@ -66,6 +66,7 @@ import java.util.List;
 
 public class FatturaElettronicaBodyType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public FatturaElettronicaBodyType() {
+    super();
   }
 
   public DatiGeneraliType getDatiGenerali() {

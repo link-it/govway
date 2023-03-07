@@ -513,7 +513,7 @@ if (XRegExp) {
         try {
             while (i--) { // Run in reverse order
                 t = tokens[i];
-                if ((scope & t.scope) && (!t.trigger || t.trigger.call(context))) {
+                if ((scope && t.scope) && (!t.trigger || t.trigger.call(context))) {
                     t.pattern.lastIndex = index;
                     match = t.pattern.exec(pattern); // Running the altered `exec` here allows use of named backreferences, etc.
                     if (match && match.index === index) {
@@ -649,4 +649,6 @@ if (XRegExp) {
 })();
 
 // CommonJS
-typeof(exports) != 'undefined' ? exports.XRegExp = XRegExp : null;
+if(typeof(exports) != 'undefined'){
+   exports.XRegExp = XRegExp;
+}

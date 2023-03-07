@@ -451,9 +451,9 @@ public class GeneratoreMessaggiErrore {
 				if(he.getIntegrationFunctionError()!=null) {
 					functionError = he.getIntegrationFunctionError();
 				}
-				if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
-					genericDetails = true;
-				}
+//				if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+//					genericDetails = true;
+//				}
 				if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 					genericDetails = false;
 				}

@@ -729,12 +729,15 @@ function inizializzaSelectFiltro(){
 										            				
 										            				String tooltipTextValNoEdit = "";
 																	
-																	if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
-																		tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
-																		textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
-																	}
-																	else if(de.getToolTip()!=null && !de.getToolTip().equals("")){
+										            				if(de.getToolTip()!=null && !de.getToolTip().equals("")){
 																		tooltipTextValNoEdit = " title=\"" + de.getToolTip() + "\"";	
+																	}
+										            				
+																	if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
+																		if(tooltipTextValNoEdit==null || "".equals(tooltipTextValNoEdit)){
+																			tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
+																		}
+																		textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
 																	}
 										            				
 										            				%>
@@ -839,7 +842,7 @@ function inizializzaSelectFiltro(){
 																							}
 																							%>
 																							<span class="<%=classSpanNoEdit %>-image" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>">
-																								<img src="images/tema_link/<%= imageCheckBox %>"/>
+																								<img src="images/tema_link/<%= imageCheckBox %>" alt="Stato"/>
 																							</span>
 																							<%
 																						   		String idToRemoveTab = de.getIdToRemove() != null ? de.getIdToRemove() : "";
@@ -947,7 +950,7 @@ function inizializzaSelectFiltro(){
 																										}
 									                            											%>
 									                            												<span class="<%=classSpanNoEdit %>-image-msval" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>_<%=y%>">
-																													<img src="images/tema_link/<%= imageCheckBox %>"/>
+																													<img src="images/tema_link/<%= imageCheckBox %>" alt="Stato"/>
 																												</span>
 																												<span class="<%=classSpanNoEdit %>-msval" <%= statusTooltipTitleAttribute %> ><%= lab %></span>
 																											<%

@@ -49,6 +49,8 @@ import org.openspcoop2.utils.xml.JaxbUtils;
 @XmlTransient
 public abstract class BaseBean {
 
+	public BaseBean(){
+	}
 	
 	
 	/* ********** GENERIC UTILS ********* */
@@ -114,7 +116,13 @@ public abstract class BaseBean {
 	
 	
 	
-
+	
+	// Non lo si vuole realizzare, si demanda eventualmente alla classe che lo implementa
+	// Se lo si aggiunge poi viene invocato l'equals e per alcuni field per cui non esiste il metodo get si ottiene errore (es. transazioneBean)
+//	@Override
+//	public int hashCode(){
+//		return this.getClass().getName().hashCode();
+//	}
 	
 	/* ********** EQUALS ********* */
 	
@@ -147,7 +155,7 @@ public abstract class BaseBean {
 					continue;
 				}
 				
-				if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
+				if(fields[i].getType().isAssignableFrom(org.openspcoop2.utils.jaxb.DecimalWrapper.class)){
 					continue;
 				}
 				
@@ -176,7 +184,8 @@ public abstract class BaseBean {
 					}
 				}else{
 					// ARRAY_LIST
-					if(fields[i].getType().getName().equals("java.util.ArrayList") || fields[i].getType().getName().equals("java.util.List") ){
+					//if(fields[i].getType().getName().equals("java.util.ArrayList") || fields[i].getType().getName().equals("java.util.List") ){
+					if( (fields[i].getType().isAssignableFrom(java.util.ArrayList.class)) || (fields[i].getType().isAssignableFrom(java.util.List.class)) ){
 						java.util.List<?> lista_this = (java.util.List<?>) fieldValue_this;
 						java.util.List<?> lista_parameter = (java.util.List<?>) fieldValue_object;
 						if(lista_parameter==null)
@@ -263,7 +272,8 @@ public abstract class BaseBean {
 							resultMethod = (Boolean) method.invoke(fieldValue_this,fieldValue_object,fieldsNotCheck);
 						}else{
 							boolean checkUguaglianza = false;
-							if("[B".equals(fields[i].getType().getName())){
+							//if("[B".equals(fields[i].getType().getName())){
+							if(fields[i].getType().isAssignableFrom(byte[].class)){
 								if(fieldValue_object!=null){
 									byte[] origi = (byte[]) fieldValue_this;
 									byte[] dest = (byte[]) fieldValue_object;
@@ -278,7 +288,8 @@ public abstract class BaseBean {
 									}
 								}
 							}else{
-								if("java.util.Date".equals(fields[i].getType().getName())){
+								//if("java.util.Date".equals(fields[i].getType().getName())){
+								if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
 									if(fieldValue_object==null) {
 										checkUguaglianza=false; // che fieldValue_this non sia null e' gia' stato controllato sopra
 									}
@@ -308,7 +319,7 @@ public abstract class BaseBean {
 			}
 			return true;
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 			throw new RuntimeException(e.toString(),e);
 		}
 	}
@@ -444,7 +455,8 @@ public abstract class BaseBean {
 					continue;
 				}
 				
-				if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
+				//if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
+				if(fields[i].getType().isAssignableFrom(org.openspcoop2.utils.jaxb.DecimalWrapper.class)){
 					continue;
 				}
 				
@@ -475,7 +487,8 @@ public abstract class BaseBean {
 				if(fieldValue==null){
 					bf.append("null");
 				}else{
-					if(fields[i].getType().getName().equals("java.util.ArrayList") || fields[i].getType().getName().equals("java.util.List")){
+					//if(fields[i].getType().getName().equals("java.util.ArrayList") || fields[i].getType().getName().equals("java.util.List")){
+					if(fields[i].getType().isAssignableFrom(java.util.ArrayList.class) || fields[i].getType().isAssignableFrom(java.util.List.class)){
 						java.util.List<?> lista_this = (java.util.List<?>) fieldValue;
 						bf.append("List size("+lista_this.size()+")");
 						if(lista_this.size()>0){
@@ -521,12 +534,14 @@ public abstract class BaseBean {
 							java.lang.reflect.Method method =  c.getMethod("toString",boolean.class,List.class);
 							bf.append(method.invoke(fieldValue,reportHTML,fieldsNotIncluded));
 						}else{
-							if("[B".equals(fields[i].getType().getName())){
+							//if("[B".equals(fields[i].getType().getName())){
+							if(fields[i].getType().isAssignableFrom(byte[].class)){
 								byte[] array = (byte[])fieldValue;
 								for(int k=0; k<array.length;k++){
 									bf.append(((char)array[k]));
 								}
-							}else if("java.util.Date".equals(fields[i].getType().getName())){
+							//}else if("java.util.Date".equals(fields[i].getType().getName())){
+							}else if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
 								java.util.Date date = (java.util.Date) fieldValue;
 								bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 							}else{
@@ -545,7 +560,7 @@ public abstract class BaseBean {
 			}
 			return bf.toString();
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 			throw new RuntimeException(e.toString(),e);
 		}
 	}
@@ -594,14 +609,16 @@ public abstract class BaseBean {
 					continue;
 				}
 				
-				if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
+				//if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
+				if(fields[i].getType().isAssignableFrom(org.openspcoop2.utils.jaxb.DecimalWrapper.class)){
 					continue;
 				}
 				
 				Object fieldValue_this = this.getFieldValue(fields[i].getName(),this);
 				Object fieldValue_object = this.getFieldValue(fields[i].getName(),object);
 				
-				if(fields[i].getType().getName().equals("java.util.ArrayList") || fields[i].getType().getName().equals("java.util.List")){
+				//if(fields[i].getType().getName().equals("java.util.ArrayList") || fields[i].getType().getName().equals("java.util.List")){
+				if(fields[i].getType().isAssignableFrom(java.util.ArrayList.class) || fields[i].getType().isAssignableFrom(java.util.List.class)){
 					// LISTA
 					java.util.List<?> lista_this = (java.util.List<?>) fieldValue_this;
 					java.util.List<?> lista_parameter = (java.util.List<?>) fieldValue_object;
@@ -747,7 +764,7 @@ public abstract class BaseBean {
 											method.invoke(lista_thisSORT.get(j),lista_parameterSORT.get(j),bf,reportHTML,fieldsNotIncluded);
 										}else{
 											boolean checkUguaglianza = false;
-											if("[B".equals(lista_thisSORT.get(j).getClass().getName())){
+											if(lista_thisSORT.get(j).getClass().isAssignableFrom(byte[].class)){
 												if(lista_parameterSORT.get(j)!=null){
 													byte[] origi = (byte[]) lista_thisSORT.get(j);
 													byte[] dest = (byte[]) lista_parameterSORT.get(j);
@@ -770,7 +787,7 @@ public abstract class BaseBean {
 												bf.append(fields[i].getName()+"["+j+"]");
 												
 												bf.append(" this:");
-												if("[B".equals(lista_thisSORT.get(j).getClass().getName())){
+												if(lista_thisSORT.get(j).getClass().isAssignableFrom(byte[].class)){
 													if(lista_thisSORT.get(j)!=null){
 														byte[] array = (byte[])lista_thisSORT.get(j);
 														for(int k=0; k<array.length;k++)
@@ -778,7 +795,7 @@ public abstract class BaseBean {
 													}
 													else
 														bf.append("null");
-												}else if("java.util.Date".equals(lista_thisSORT.get(j).getClass().getName())){
+												}else if(lista_thisSORT.get(j).getClass().isAssignableFrom(java.util.Date.class)){
 													if(lista_thisSORT.get(j)!=null){
 														java.util.Date date = (java.util.Date) lista_thisSORT.get(j);
 														bf.append(DateUtils.getSimpleDateFormatMs().format(date));
@@ -790,7 +807,7 @@ public abstract class BaseBean {
 												}
 												
 												bf.append(" parameter:");
-												if("[B".equals(lista_parameterSORT.get(j).getClass().getName())){
+												if(lista_parameterSORT.get(j).getClass().isAssignableFrom(byte[].class)){
 													if(lista_parameterSORT.get(j)!=null){
 														byte[] array = (byte[])lista_parameterSORT.get(j);
 														for(int k=0; k<array.length;k++)
@@ -798,7 +815,7 @@ public abstract class BaseBean {
 													}
 													else
 														bf.append("null");
-												}else if("java.util.Date".equals(lista_parameterSORT.get(j).getClass().getName())){
+												}else if(lista_parameterSORT.get(j).getClass().isAssignableFrom(java.util.Date.class)){
 													if(lista_parameterSORT.get(j)!=null){
 														java.util.Date date = (java.util.Date) lista_parameterSORT.get(j);
 														bf.append(DateUtils.getSimpleDateFormatMs().format(date));
@@ -847,11 +864,11 @@ public abstract class BaseBean {
 								java.lang.reflect.Method method =  c.getMethod("toString",boolean.class);
 								bf.append(method.invoke(fieldValue_object,reportHTML));
 							}else{
-								if("[B".equals(fields[i].getType().getName())){
+								if(fields[i].getType().isAssignableFrom(byte[].class)){
 									byte[] array = (byte[])fieldValue_object;
 									for(int k=0; k<array.length;k++)
 										bf.append(array[k]);
-								}else if("java.util.Date".equals(fields[i].getType().getName())){
+								}else if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
 									java.util.Date date = (java.util.Date) fieldValue_object;
 									bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 								}else{
@@ -866,7 +883,7 @@ public abstract class BaseBean {
 							method.invoke(fieldValue_this,fieldValue_object,bf,reportHTML,fieldsNotIncluded);
 						}else{
 							boolean checkUguaglianza = false;
-							if("[B".equals(fields[i].getType().getName())){
+							if(fields[i].getType().isAssignableFrom(byte[].class)){
 								if(fieldValue_object!=null){
 									byte[] origi = (byte[]) fieldValue_this;
 									byte[] dest = (byte[]) fieldValue_object;
@@ -881,7 +898,7 @@ public abstract class BaseBean {
 									}
 								}
 							}else{
-								if("java.util.Date".equals(fields[i].getType().getName())){
+								if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
 									if(fieldValue_object!=null){
 										java.util.Calendar calendarThis = new java.util.GregorianCalendar();
 										calendarThis.setTime((java.util.Date)fieldValue_this);
@@ -905,11 +922,11 @@ public abstract class BaseBean {
 								bf.append(fields[i].getName());
 								
 								bf.append(" this:");
-								if("[B".equals(fields[i].getType().getName())){
+								if(fields[i].getType().isAssignableFrom(byte[].class)){
 									byte[] array = (byte[])fieldValue_this;
 									for(int k=0; k<array.length;k++)
 										bf.append(((char)array[k]));
-								}else if("java.util.Date".equals(fields[i].getType().getName())){
+								}else if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
 									java.util.Date date = (java.util.Date) fieldValue_this;
 									bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 								}else{
@@ -917,7 +934,7 @@ public abstract class BaseBean {
 								}
 								
 								bf.append(" parameter:");
-								if("[B".equals(fields[i].getType().getName())){
+								if(fields[i].getType().isAssignableFrom(byte[].class)){
 									if(fieldValue_object!=null){
 										byte[] array = (byte[])fieldValue_object;
 										for(int k=0; k<array.length;k++)
@@ -925,7 +942,7 @@ public abstract class BaseBean {
 									}
 									else
 										bf.append("null");
-								}else if("java.util.Date".equals(fields[i].getType().getName())){
+								}else if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
 									if(fieldValue_object!=null){
 										java.util.Date date = (java.util.Date) fieldValue_object;
 										bf.append(DateUtils.getSimpleDateFormatMs().format(date));
@@ -942,7 +959,7 @@ public abstract class BaseBean {
 			}
 			return bf.toString();
 		}catch(Exception e){
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 			throw new RuntimeException(e.toString(),e);
 		}
 	}
@@ -978,7 +995,8 @@ public abstract class BaseBean {
 						continue;
 					}
 					
-					if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
+					//if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
+					if(fields[i].getType().isAssignableFrom(org.openspcoop2.utils.jaxb.DecimalWrapper.class)){
 						continue;
 					}
 					
@@ -991,7 +1009,7 @@ public abstract class BaseBean {
 					
 					//System.out.println("ESAMINO FIELD ["+field.getName()+"] type["+field.getType().getName()+"] isEnum["+(field.getType().isEnum())+"]");
 					
-					if("[B".equals(field.getType().getName())){
+					if(field.getType().isAssignableFrom(byte[].class)){
 						//caso particolare arrya di byte
 						byte[] originale = (byte[]) fieldValue;
 						if(originale!=null){
@@ -1022,7 +1040,7 @@ public abstract class BaseBean {
 						for (int j = 0; j < interfacce.length; j++) {
 							//se il field che sto controllando implementa l'interfaccia cloneable e il field che voglio clonare non e' null
 							//richiamo il clone
-							if(java.lang.Cloneable.class.getName().equals(interfacce[j].getName()) && fieldValue!=null ){
+							if(interfacce[j].isAssignableFrom(java.lang.Cloneable.class) && fieldValue!=null ){
 								//recupero il metodo clone dal field
 								java.lang.reflect.Method method =  field.getType().getMethod("clone");
 								//effettuo il clone del field
@@ -1036,19 +1054,19 @@ public abstract class BaseBean {
 			}
 
 		}catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 			throw new RuntimeException(e.toString(),e);
 		}
 		return clone;
 	}
 
 	private boolean isSupportedCloneList(java.lang.reflect.Field field){
-		if(field.getType().getName().equals(java.util.List.class.getName()) ||
-				field.getType().getName().equals(java.util.ArrayList.class.getName())  ||
-				field.getType().getName().equals(java.util.Vector.class.getName()) ||
-				field.getType().getName().equals(java.util.Stack.class.getName()) ||
-				field.getType().getName().equals(java.util.LinkedList.class.getName()) ||
-				field.getType().getName().equals(java.util.concurrent.CopyOnWriteArrayList.class.getName())){
+		if(field.getType().isAssignableFrom(java.util.List.class) ||
+				field.getType().isAssignableFrom(java.util.ArrayList.class)  ||
+				field.getType().isAssignableFrom(java.util.Vector.class) ||
+				field.getType().isAssignableFrom(java.util.Stack.class) ||
+				field.getType().isAssignableFrom(java.util.LinkedList.class) ||
+				field.getType().isAssignableFrom(java.util.concurrent.CopyOnWriteArrayList.class)){
 			return true;
 		}
 		return false;
@@ -1056,19 +1074,19 @@ public abstract class BaseBean {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List cloneList(List<?> listOriginale) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		List listClone  = null;
-		if(java.util.ArrayList.class.getName().equals(listOriginale.getClass().getName())){
+		if(listOriginale.getClass().isAssignableFrom(java.util.ArrayList.class)){
 			listClone = new java.util.ArrayList<>();
 		}
-		else if(java.util.Vector.class.getName().equals(listOriginale.getClass().getName())){
+		else if(listOriginale.getClass().isAssignableFrom(java.util.Vector.class)){
 			listClone = new java.util.Vector<>();
 		}
-		else if(java.util.Stack.class.getName().equals(listOriginale.getClass().getName())){
+		else if(listOriginale.getClass().isAssignableFrom(java.util.Stack.class)){
 			listClone = new java.util.Stack<>();
 		}
-		else if(java.util.LinkedList.class.getName().equals(listOriginale.getClass().getName())){
+		else if(listOriginale.getClass().isAssignableFrom(java.util.LinkedList.class)){
 			listClone = new java.util.LinkedList<>();
 		}
-		else if(java.util.concurrent.CopyOnWriteArrayList.class.getName().equals(listOriginale.getClass().getName())){
+		else if(listOriginale.getClass().isAssignableFrom(java.util.concurrent.CopyOnWriteArrayList.class)){
 			listClone = new java.util.concurrent.CopyOnWriteArrayList<>();
 		}
 		if(listClone!=null){

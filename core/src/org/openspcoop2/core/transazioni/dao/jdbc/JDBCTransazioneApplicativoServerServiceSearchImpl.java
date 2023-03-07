@@ -105,14 +105,19 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		return idTransazioneApplicativoServer;
 	}
 	
+	private static boolean efficiente = true;
+	public static boolean isEfficiente() {
+		return efficiente;
+	}
+	public static void setEfficiente(boolean efficiente) {
+		JDBCTransazioneApplicativoServerServiceSearchImpl.efficiente = efficiente;
+	}
 	@Override
 	public TransazioneApplicativoServer get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdTransazioneApplicativoServer id, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
 		
-		boolean efficente = true;
-        
 		long id_long = (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : -1;
 		
-        if(id_long<=0 && efficente){
+        if(id_long<=0 && efficiente){
 		
         	if(id==null) {
     			throw new ServiceException("Id non definito");
@@ -128,7 +133,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
         	pagExpr.equals(TransazioneApplicativoServer.model().ID_TRANSAZIONE, id.getIdTransazione());
 			pagExpr.and();
 			pagExpr.equals(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE, id.getServizioApplicativoErogatore());
-			//pagExpr.limit(2); Inefficente, per implementare il multipleresult che poi non può succedere
+			//pagExpr.limit(2); Inefficiente, per implementare il multipleresult che poi non può succedere
 			if(sqlQueryObject==null || !(sqlQueryObject instanceof SQLQueryObjectCore) || !((SQLQueryObjectCore)sqlQueryObject).isSelectForUpdate()) {
 				pagExpr.limit(1);
 				// essendoci lo unique comunque il limit serve a poco, e nello stesso tempo la select for update non lo vuole
@@ -169,8 +174,8 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 
 		List<IdTransazioneApplicativoServer> list = new ArrayList<IdTransazioneApplicativoServer>();
 
-		// TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
+		// TODO: implementazione non efficiente. 
+		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari a create l'ID logico
 		// 2. Usare metodo getTransazioneApplicativoServerFetch() sul risultato della select per ottenere un oggetto TransazioneApplicativoServer
 		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
@@ -188,14 +193,20 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		
 	}
 	
+	private static boolean distinct = false;
+	
+	public static boolean isDistinct() {
+		return distinct;
+	}
+	public static void setDistinct(boolean distinct) {
+		JDBCTransazioneApplicativoServerServiceSearchImpl.distinct = distinct;
+	}
 	@Override
 	public List<TransazioneApplicativoServer> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
 
         List<TransazioneApplicativoServer> list = new ArrayList<TransazioneApplicativoServer>();
 
-        boolean efficente = true;
-        
-        if(efficente){
+        if(efficiente){
         
         	List<IField> fields = new ArrayList<IField>();
         	fields.add(new CustomField("id", Long.class, "id", this.getTransazioneApplicativoServerFieldConverter().toTable(TransazioneApplicativoServer.model())));  
@@ -212,8 +223,10 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
     		fields.add(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO);
     		fields.add(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA);
     		fields.add(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA);
+    		fields.add(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM);
     		fields.add(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA);
     		fields.add(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA);
+    		fields.add(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM);
     		fields.add(TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES);
     		fields.add(TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES);
     		fields.add(TransazioneApplicativoServer.model().LOCATION_CONNETTORE);
@@ -242,13 +255,13 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
     		List<Map<String, Object>> returnMap = null;
     		try{
     			 // Il distinct serve solo se ci sono le ricerche con contenuto.
-    	        // NOTA: il distinct rende le ricerce inefficenti (ed inoltre non e' utilizzabile con campi clob in oracle)
-    	        boolean distinct = false;
+    	        // NOTA: il distinct rende le ricerce inefficienti (ed inoltre non e' utilizzabile con campi clob in oracle)
+    	        
     	        
     	        // BUG FIX: Siccome tra le colonne lette ci sono dei CLOB, in oracle non e' consentito utilizzare il DISTINCT.
     	        // Per questo motivo se c'e' da usare il distinct viene utilizzato il vecchio metodo
     	        if(distinct) {
-    	        	//System.out.println("NON EFFICENTE");
+    	        	//System.out.println("NON EFFICIENTE");
     	        	
     	        	 List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
     	 	        
@@ -259,7 +272,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
     	        }
     	        else {
     	        
-    	        	//System.out.println("EFFICENTE");
+    	        	//System.out.println("EFFICIENTE");
     	        	
 		    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
 		
@@ -289,9 +302,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 	public TransazioneApplicativoServer find(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) 
 		throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
 
-		boolean efficente = true;
-        
-        if(efficente){
+		if(efficiente){
 		
         	JDBCPaginatedExpression pagExpr = this.toPaginatedExpression(expression, log);
         	pagExpr.limit(2);
@@ -621,8 +632,10 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA_STREAM,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_INGRESSO_RISPOSTA_STREAM,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().LOCATION_CONNETTORE,true));

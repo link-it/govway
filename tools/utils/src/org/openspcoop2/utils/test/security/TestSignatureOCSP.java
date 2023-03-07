@@ -41,9 +41,9 @@ public class TestSignatureOCSP {
 	@Parameters({"opensslCmd","waitStartupServerMs"})
 	public void testSignatureOcsp_properties(String opensslCmd, String waitStartupServerMs) throws Exception{
 		
-		org.openspcoop2.utils.security.TestSignature.TipoTest tipo = org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_OCSP;
+		org.openspcoop2.utils.security.test.SignatureTest.TipoTest tipo = org.openspcoop2.utils.security.test.SignatureTest.TipoTest.JSON_SIGNATURE_PROPERTIES_OCSP;
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ...");
-		org.openspcoop2.utils.security.TestSignature.main(new String [] { tipo.name(), (false+""), opensslCmd, waitStartupServerMs } );
+		org.openspcoop2.utils.security.test.SignatureTest.main(new String [] { tipo.name(), (false+""), opensslCmd, waitStartupServerMs } );
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ok");
 		
 	}
@@ -52,9 +52,9 @@ public class TestSignatureOCSP {
 	@Parameters({"opensslCmd","waitStartupServerMs"})
 	public void testSignatureOcsp_properties_header_custom(String opensslCmd, String waitStartupServerMs) throws Exception{
 		
-		org.openspcoop2.utils.security.TestSignature.TipoTest tipo = org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_OCSP_HEADER_CUSTOM;
+		org.openspcoop2.utils.security.test.SignatureTest.TipoTest tipo = org.openspcoop2.utils.security.test.SignatureTest.TipoTest.JSON_SIGNATURE_PROPERTIES_OCSP_HEADER_CUSTOM;
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ...");
-		org.openspcoop2.utils.security.TestSignature.main(new String [] { tipo.name(), (false+""), opensslCmd, waitStartupServerMs } );
+		org.openspcoop2.utils.security.test.SignatureTest.main(new String [] { tipo.name(), (false+""), opensslCmd, waitStartupServerMs } );
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ok");
 		
 	}
@@ -63,9 +63,9 @@ public class TestSignatureOCSP {
 	@Parameters({"opensslCmd","waitStartupServerMs"})
 	public void testSignatureOcsp_properties_header_custom_kid_only(String opensslCmd, String waitStartupServerMs) throws Exception{
 		
-		org.openspcoop2.utils.security.TestSignature.TipoTest tipo = org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY;
+		org.openspcoop2.utils.security.test.SignatureTest.TipoTest tipo = org.openspcoop2.utils.security.test.SignatureTest.TipoTest.JSON_SIGNATURE_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY;
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ...");
-		org.openspcoop2.utils.security.TestSignature.main(new String [] { tipo.name(), (false+""), opensslCmd, waitStartupServerMs } );
+		org.openspcoop2.utils.security.test.SignatureTest.main(new String [] { tipo.name(), (false+""), opensslCmd, waitStartupServerMs } );
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ok");
 		
 	}
@@ -74,9 +74,9 @@ public class TestSignatureOCSP {
 	@Parameters({"opensslCmd","waitStartupServerMs"})
 	public void testSignatureOcsp_keystore(String opensslCmd, String waitStartupServerMs) throws Exception{
 		
-		org.openspcoop2.utils.security.TestSignature.TipoTest tipo = org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_OCSP_KEYSTORE;
+		org.openspcoop2.utils.security.test.SignatureTest.TipoTest tipo = org.openspcoop2.utils.security.test.SignatureTest.TipoTest.JSON_SIGNATURE_OCSP_KEYSTORE;
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ...");
-		org.openspcoop2.utils.security.TestSignature.main(new String [] { tipo.name(), (false+""), opensslCmd, waitStartupServerMs } );
+		org.openspcoop2.utils.security.test.SignatureTest.main(new String [] { tipo.name(), (false+""), opensslCmd, waitStartupServerMs } );
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ok");
 		
 	}
@@ -85,9 +85,9 @@ public class TestSignatureOCSP {
 	@Parameters({"opensslCmd","waitStartupServerMs"})
 	public void testSignatureOcsp_keystore_header_custom(String opensslCmd, String waitStartupServerMs) throws Exception{
 		
-		org.openspcoop2.utils.security.TestSignature.TipoTest tipo = org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_OCSP_KEYSTORE_HEADER_CUSTOM;
+		org.openspcoop2.utils.security.test.SignatureTest.TipoTest tipo = org.openspcoop2.utils.security.test.SignatureTest.TipoTest.JSON_SIGNATURE_OCSP_KEYSTORE_HEADER_CUSTOM;
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ...");
-		org.openspcoop2.utils.security.TestSignature.main(new String [] { tipo.name(), (false+""), opensslCmd, waitStartupServerMs } );
+		org.openspcoop2.utils.security.test.SignatureTest.main(new String [] { tipo.name(), (false+""), opensslCmd, waitStartupServerMs } );
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ok");
 		
 	}

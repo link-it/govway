@@ -60,6 +60,7 @@ import java.util.List;
 
 public class PayloadProfiles extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public PayloadProfiles() {
+    super();
   }
 
   public void addPayload(Payload payload) {

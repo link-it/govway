@@ -39,7 +39,7 @@ public class TestProblemDetail {
 	public void testProblemRFC7807() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.rest.problem.Test.test();
+		org.openspcoop2.utils.rest.problem.test.ProblemTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

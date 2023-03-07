@@ -501,54 +501,74 @@ public class MultiFileExporter implements IExporter{
 				//search filter
 				File searchFilter = new File(filesDirPath+File.separator+"SearchFilter.xml");
 				if(!searchFilter.exists()){
-					FileOutputStream fos = new FileOutputStream(searchFilter);
-					UtilityTransazioni.writeSearchFilterXml(this.transazioniService.getSearch(),fos);
-					fos.flush();
-					fos.close();
+					try(FileOutputStream fos = new FileOutputStream(searchFilter)){
+						UtilityTransazioni.writeSearchFilterXml(this.transazioniService.getSearch(),fos);
+						fos.flush();
+					}
 				}
 
 				String filePath = exportDir+File.separator+this.filePrefix+File.separator+fileName;
 				File f = new File(filePath);
 				this.log.debug("creo nuovo file "+f.getAbsolutePath());
-				FileOutputStream fos = new FileOutputStream(f);
-				ZipOutputStream zip = new ZipOutputStream(fos);
+				FileOutputStream fos = null;
+				ZipOutputStream zip = null;
 
-				String rootDir = "Transazioni"+File.separatorChar;
-
-				int lette = 0;
-
-				int start = i*this.maxTransactionPerFile;
-				while((transazioni=this.transazioniService.findAll(start, limit,SortOrder.ASC)).size()>0){
-
-					//transazioni = this.transazioniService.findAll(start, limit,OrderBy.ASC);
-					this.log.debug(" lette [ "+start+" - "+(start+limit)+"] di "+totCount+" transazioni da inserire in file "+fileName+"...");
-
-					export(rootDir,zip,transazioni);
-
-					this.log.debug(" inserite ["+transazioni.size()+"] nel file "+fileName+".");
-
-
-
-					start+=limit;
-					remaining-=transazioni.size();
-					lette += transazioni.size();
-					//se ho gia' letto tutte le transazioni
-					//che posso includere in questo file
-					if(lette>=this.maxTransactionPerFile){
-						this.log.debug("Ho inserito il numero massimo di transazioni ammesse ("+lette+") nel file "+fileName+" chiudo file.");
-						break;
+				try {
+					fos = new FileOutputStream(f);
+					zip = new ZipOutputStream(fos);
+				
+					String rootDir = "Transazioni"+File.separatorChar;
+	
+					int lette = 0;
+	
+					int start = i*this.maxTransactionPerFile;
+					while((transazioni=this.transazioniService.findAll(start, limit,SortOrder.ASC)).size()>0){
+	
+						//transazioni = this.transazioniService.findAll(start, limit,OrderBy.ASC);
+						this.log.debug(" lette [ "+start+" - "+(start+limit)+"] di "+totCount+" transazioni da inserire in file "+fileName+"...");
+	
+						export(rootDir,zip,transazioni);
+	
+						this.log.debug(" inserite ["+transazioni.size()+"] nel file "+fileName+".");
+	
+	
+	
+						start+=limit;
+						remaining-=transazioni.size();
+						lette += transazioni.size();
+						//se ho gia' letto tutte le transazioni
+						//che posso includere in questo file
+						if(lette>=this.maxTransactionPerFile){
+							this.log.debug("Ho inserito il numero massimo di transazioni ammesse ("+lette+") nel file "+fileName+" chiudo file.");
+							break;
+						}
+						this.log.debug(" transazioni rimanenti da processare "+remaining);
+						//leggo le ultime che mi rimangono
+						if(remaining<=limit){
+							limit=remaining;
+							this.log.debug("devo leggere ancora "+remaining+" transazioni partendo da offset:"+start);
+						}
+	
 					}
-					this.log.debug(" transazioni rimanenti da processare "+remaining);
-					//leggo le ultime che mi rimangono
-					if(remaining<=limit){
-						limit=remaining;
-						this.log.debug("devo leggere ancora "+remaining+" transazioni partendo da offset:"+start);
+	
+					zip.flush();
+				}finally {
+					try {
+						if(zip!=null) {
+							zip.close();
+						}
+					}catch(Throwable t) {
+						// ignore
 					}
-
+					try {
+						if(fos!=null) {
+							fos.close();
+						}
+					}catch(Throwable t) {
+						// ignore
+					}
 				}
-
-				zip.flush();
-				zip.close();
+				
 			}
 
 			Date dataFine = Calendar.getInstance().getTime();

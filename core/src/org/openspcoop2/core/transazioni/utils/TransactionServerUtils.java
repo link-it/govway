@@ -20,6 +20,7 @@
 
 package org.openspcoop2.core.transazioni.utils;
 
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -140,8 +141,8 @@ public class TransactionServerUtils {
 				timeStart = DateManager.getTimeMillis();
 			}
 			
-			// prima era inefficente: faceva 2 query
-			// adesso e' stata trasformata in efficente e fa una unica query con limit 1
+			// prima era inefficiente: faceva 2 query
+			// adesso e' stata trasformata in efficiente e fa una unica query con limit 1
 			TransazioneApplicativoServer transazioneApplicativoServerReadFromDB = null;
 			IdTransazioneApplicativoServer idTransazioneApplicativoServerReadFromDB = null;
 			if(useSelectForUpdate) {
@@ -171,7 +172,7 @@ public class TransactionServerUtils {
 			}
 			
 			/*
-			 * Leggermente inefficente per via del limit 2 con cui viene implementata la find
+			 * Leggermente inefficiente per via del limit 2 con cui viene implementata la find
 			org.openspcoop2.generic_project.expression.IExpression expression = transazioneService.newExpression();
 			expression.equals(TransazioneApplicativoServer.model().ID_TRANSAZIONE, idTransazione);
 			expression.and();
@@ -258,8 +259,10 @@ public class TransactionServerUtils {
 				// date
 				transazioneApplicativoServerReadFromDB.setDataAccettazioneRichiesta(serverInfoParam.getDataAccettazioneRichiesta());
 				transazioneApplicativoServerReadFromDB.setDataUscitaRichiesta(serverInfoParam.getDataUscitaRichiesta());
+				transazioneApplicativoServerReadFromDB.setDataUscitaRichiestaStream(serverInfoParam.getDataUscitaRichiestaStream());
 				transazioneApplicativoServerReadFromDB.setDataAccettazioneRisposta(serverInfoParam.getDataAccettazioneRisposta());
 				transazioneApplicativoServerReadFromDB.setDataIngressoRisposta(serverInfoParam.getDataIngressoRisposta());
+				transazioneApplicativoServerReadFromDB.setDataIngressoRispostaStream(serverInfoParam.getDataIngressoRispostaStream());
 				
 				// dimensioni
 				transazioneApplicativoServerReadFromDB.setRichiestaUscitaBytes(serverInfoParam.getRichiestaUscitaBytes());
@@ -357,7 +360,7 @@ public class TransactionServerUtils {
 			}
 			if(transazioneApplicativoServer.getDataPrelievoIm()!=null) {
 				transazioneApplicativoServer.setDataPrimoPrelievoIm(transazioneApplicativoServer.getDataPrelievoIm());
-			}			
+			}
 			
 			// numero tentativi
 			transazioneApplicativoServer.setNumeroTentativi(0);
@@ -625,7 +628,7 @@ public class TransactionServerUtils {
 	private static java.util.Random _rnd = null;
 	private static synchronized void initRandom() {
 		if(_rnd==null) {
-			_rnd = new java.util.Random();
+			_rnd = new SecureRandom();
 		}
 	}
 	protected static java.util.Random getRandom() {

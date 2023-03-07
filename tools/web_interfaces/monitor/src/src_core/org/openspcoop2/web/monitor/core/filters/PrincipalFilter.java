@@ -49,8 +49,9 @@ import org.openspcoop2.web.monitor.core.listener.LoginPhaseListener;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.SessionUtils;
 
-/****
+/**
  * PrincipalFilter Filtro base per il controllo della login via Container basata sulla presenza del principal.
  * 
  * @author Pintori Giuliano (pintori@link.it)
@@ -150,7 +151,7 @@ public class PrincipalFilter implements Filter {
 				if (isSessionControlRequiredForThisResource(httpServletRequest)) {
 
 					// is session invalid?
-					if (isSessionInvalid(httpServletRequest)) {					
+					if (SessionUtils.isSessionInvalid(httpServletRequest)) {					
 						String redirPageUrl = httpServletRequest.getContextPath() + "/";
 						//se la pagina richiesta e' quella di login allora redirigo direttamente a quella, altrimenti a quella di timeout
 						//redirPageUrl += StringUtils.contains(httpServletRequest.getRequestURI(), getLoginPage()) ? getLoginPage() : getTimeoutPage();
@@ -299,7 +300,7 @@ public class PrincipalFilter implements Filter {
 					}	else {
 						this.log.debug("Login Bean Utente Loggato controllo validita' sessione..."); 
 						// controllo se la sessione e' valida
-						boolean isSessionInvalid = isSessionInvalid(httpServletRequest);
+						boolean isSessionInvalid = SessionUtils.isSessionInvalid(httpServletRequest);
 
 						// Se non sono loggato mi autentico e poi faccio redirect verso la pagina di welcome
 						if(isSessionInvalid){
@@ -376,13 +377,6 @@ public class PrincipalFilter implements Filter {
 
 		return controlRequired;
 	}
-
-	private boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
-		boolean sessionInValid = (httpServletRequest.getRequestedSessionId() != null)
-				&& !httpServletRequest.isRequestedSessionIdValid();
-		return sessionInValid;
-	}
-
 
 	//	private boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
 	//		boolean sessionInValid = (httpServletRequest.getRequestedSessionId() == null) || !httpServletRequest.isRequestedSessionIdValid();

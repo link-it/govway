@@ -107,12 +107,12 @@ public class PrefixedLeftPaddedNumericGenerator extends AbstractStringIdentifier
 
     @Override
 	public long maxLength() {
-        return this.count.length + this.prefix.length();
+        return ((long)this.count.length) + ((long)this.prefix.length());
     }
 
     @Override
 	public long minLength() {
-        return this.count.length + this.prefix.length();
+        return ((long)this.count.length) + ((long)this.prefix.length());
     }
 
     /**

@@ -56,6 +56,7 @@ import java.io.Serializable;
 
 public class Functionality extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Functionality() {
+    super();
   }
 
   public boolean isDuplicateFilter() {

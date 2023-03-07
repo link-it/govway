@@ -55,13 +55,21 @@ CREATE TABLE transazioni
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_ingresso_richiesta TIMESTAMP(3) DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ingresso_richiesta_stream TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_uscita_richiesta TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_uscita_richiesta_stream TIMESTAMP(3) DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_accettazione_risposta TIMESTAMP(3) DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_ingresso_risposta TIMESTAMP(3) DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ingresso_risposta_stream TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_uscita_risposta TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_uscita_risposta_stream TIMESTAMP(3) DEFAULT 0,
 	-- Dimensione messaggi gestiti
 	richiesta_ingresso_bytes BIGINT,
 	-- Dimensione messaggi gestiti
@@ -213,9 +221,13 @@ CREATE TABLE transazioni_sa
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_uscita_richiesta TIMESTAMP(3) DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_uscita_richiesta_stream TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_accettazione_risposta TIMESTAMP(3) DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_ingresso_risposta TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ingresso_risposta_stream TIMESTAMP(3) DEFAULT 0,
 	-- Dimensione messaggi gestiti
 	richiesta_uscita_bytes BIGINT,
 	risposta_ingresso_bytes BIGINT,

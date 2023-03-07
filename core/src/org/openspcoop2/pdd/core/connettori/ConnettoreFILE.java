@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -374,6 +375,8 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 						TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 				try {
+					this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+					
 					if(this.isSoap && this.sbustamentoSoap){
 						this.logger.debug("Sbustamento...");
 						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
@@ -392,6 +395,11 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 						out.write(bout.toByteArray());
 					}
 					
+					out.flush();
+					out.close();
+					
+					this.dataRichiestaInoltrata = DateManager.getDate();
+					
 					this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 				}finally {
 					try {
@@ -408,9 +416,13 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				}else{
 					this.requestMsg.writeTo(out, consumeRequestMessage);
 				}
+				
+				out.flush();
+				out.close();
+				
+				this.dataRichiestaInoltrata = DateManager.getDate();
 			}
-			out.flush();
-			out.close();
+
 			if(this.debug)
 				this.logger.debug("Serializzazione ["+this.outputFile.getOutputFile().getAbsolutePath()+"] effettuata");
 			
@@ -972,26 +984,38 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
     private void setPermission(ConnettoreFile_outputConfig config) throws ConnettoreException {
     	if(config.getReadable()!=null) {
 			if(config.getReadable_ownerOnly()!=null) {
-				config.getOutputFile().setReadable(config.getReadable(), config.getReadable_ownerOnly());
+				if(!config.getOutputFile().setReadable(config.getReadable(), config.getReadable_ownerOnly())) {
+					// ignore
+				}
 			}
 			else {
-				config.getOutputFile().setReadable(config.getReadable());
+				if(!config.getOutputFile().setReadable(config.getReadable())) {
+					// ignore
+				}
 			}
 		}
 		if(config.getWritable()!=null) {
 			if(config.getWritable_ownerOnly()!=null) {
-				config.getOutputFile().setWritable(config.getWritable(), config.getWritable_ownerOnly());
+				if(!config.getOutputFile().setWritable(config.getWritable(), config.getWritable_ownerOnly())) {
+					// ignore
+				}
 			}
 			else {
-				config.getOutputFile().setWritable(config.getWritable());
+				if(!config.getOutputFile().setWritable(config.getWritable())) {
+					// ignore
+				}
 			}
 		}
 		if(config.getExecutable()!=null) {
 			if(config.getExecutable_ownerOnly()!=null) {
-				config.getOutputFile().setExecutable(config.getExecutable(), config.getExecutable_ownerOnly());
+				if(!config.getOutputFile().setExecutable(config.getExecutable(), config.getExecutable_ownerOnly())) {
+					// ignore
+				}
 			}
 			else {
-				config.getOutputFile().setExecutable(config.getExecutable());
+				if(!config.getOutputFile().setExecutable(config.getExecutable())) {
+					// ignore
+				}
 			}
 		}
     }

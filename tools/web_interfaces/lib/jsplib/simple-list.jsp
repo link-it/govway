@@ -235,7 +235,7 @@ if(csrfTokenFromSession == null)
 			Vector areaBottoni = pd.getAreaBottoni();
 			if (areaBottoni != null) {
 				%>
-					<td valign="top"><img src="images/spacer.gif" style="width:10px; height:1px;"></td>
+					<td valign="top"><img src="images/spacer.gif" style="width:10px; height:1px;" alt="-"></td>
 			  		<td class="table01dispari" valign="top" nowrap><%
 					for (int i = 0; i < areaBottoni.size(); i++) {
 			    		AreaBottoni area = (AreaBottoni) areaBottoni.elementAt(i);
@@ -244,7 +244,7 @@ if(csrfTokenFromSession == null)
 			    		%><p><%
 			    		if (!title.equals("")) {
 			      			%><strong><%= title %></strong><br>
-			      			<img src="images/dothdx.gif" style="width:80px; height:9px;"/><br/><%
+			      			<img src="images/dothdx.gif" style="width:80px; height:9px;" alt="-"/><br/><%
 			    		}
 				
 			    		for (int b = 0; b < bottoni.size(); b++) {

@@ -81,6 +81,10 @@ public final class ConfigurazioneDumpAppenderPropertiesList extends Action {
 				}
 			}
 
+			if(oa==null) {
+				throw new Exception("Appender non trovato");
+			}
+			
 			// Preparo il menu
 			confHelper.makeMenu();
 

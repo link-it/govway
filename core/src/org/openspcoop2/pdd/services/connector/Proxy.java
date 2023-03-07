@@ -76,17 +76,17 @@ public class Proxy extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static void sendError(HttpServletResponse res, Logger log, String msg, int code) throws IOException {
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code) {
 		sendError(res, log, msg, code, msg, null);
 	}
 	@SuppressWarnings("unused")
-	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, Throwable e) throws IOException {
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, Throwable e) {
 		sendError(res, log, msg, code, msg, e);
 	}
-	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg) throws IOException {
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg) {
 		sendError(res, log, msg, code, msg, null);
 	}
-	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg, Throwable e) throws IOException {
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg, Throwable e) {
 		String prefix = "[Proxy] ";
 		if(e!=null) {
 			log.error(prefix+logMsg, e);
@@ -96,7 +96,11 @@ public class Proxy extends HttpServlet {
 		}
 		res.setStatus(code);
 		res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
-		res.getOutputStream().write(msg.getBytes());
+		try {
+			res.getOutputStream().write(msg.getBytes());
+		}catch(Throwable t) {
+			log.error("[Proxy] SendError failed: "+t.getMessage(),t);
+		}
 	}
 	
 
@@ -377,15 +381,15 @@ public class Proxy extends HttpServlet {
 				}
 				else if(httpResponseFailed!=null) {
 					log.debug("Invoke all node complete 'ERROR'");
-					writeResponse(httpResponseFailed, res);
+					writeResponse(httpResponseFailed, res, log);
 				}
 				else if(resultAggregate!=null) {
 					log.debug("Invoke all node complete 'Aggregate OK'");
-					writeResponse(resultAggregate.getHttpResponse(), res);
+					writeResponse(resultAggregate.getHttpResponse(), res, log);
 				}
 				else if(httpResponseOk!=null) {
 					log.debug("Invoke all node complete 'OK'");
-					writeResponse(httpResponseOk, res);
+					writeResponse(httpResponseOk, res, log);
 				}
 				else {
 					String msg = "Servizio non disponibile";
@@ -407,7 +411,7 @@ public class Proxy extends HttpServlet {
 							usernameCheck, passwordCheck,
 							https, verificaHostname, autenticazioneServer,
 							autenticazioneServer_path, autenticazioneServer_type,  autenticazioneServer_password);
-					writeResponse(httpResponse, res);
+					writeResponse(httpResponse, res, log);
 				}catch(Throwable e) {
 					String msg = "Servizio non disponibile";
 					String logMsg = msg+" (url: "+url+"): "+e.getMessage();
@@ -431,7 +435,7 @@ public class Proxy extends HttpServlet {
 								usernameCheck, passwordCheck,
 								https, verificaHostname, autenticazioneServer,
 								autenticazioneServer_path, autenticazioneServer_type,  autenticazioneServer_password);
-				writeResponse(httpResponse, res);
+				writeResponse(httpResponse, res, log);
 			}catch(Throwable e) {
 				String msg = "Servizio non disponibile";
 				String logMsg = msg+" (url: "+url+"): "+e.getMessage();
@@ -477,13 +481,17 @@ public class Proxy extends HttpServlet {
 		return response;
 	}
 
-	private void writeResponse(HttpResponse httpResponse, HttpServletResponse res) throws IOException {
-		res.setStatus(httpResponse.getResultHTTPOperation());
-		if(httpResponse.getContentType()!=null) {
-			res.setContentType(httpResponse.getContentType());
-		}
-		if(httpResponse.getContent()!=null) {
-			res.getOutputStream().write(httpResponse.getContent());
+	private void writeResponse(HttpResponse httpResponse, HttpServletResponse res, Logger log) {
+		try {
+			res.setStatus(httpResponse.getResultHTTPOperation());
+			if(httpResponse.getContentType()!=null) {
+				res.setContentType(httpResponse.getContentType());
+			}
+			if(httpResponse.getContent()!=null) {
+				res.getOutputStream().write(httpResponse.getContent());
+			}
+		}catch(Throwable t) {
+			log.error("[Proxy] WriteResponse failed: "+t.getMessage(),t);
 		}
 	}
 	

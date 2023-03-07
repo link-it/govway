@@ -421,19 +421,33 @@ public class ErroriProperties {
 		return this.mapErrorType_noWrap.get(functionError);
 	}
 	public IntegrationFunctionError convertToIntegrationFunctionError(String errorType) throws ProtocolException {
-		return this._convertToIntegrationFunctionError(errorType, this.mapErrorType);
+		return this._convertToIntegrationFunctionError(errorType);
 	}
-	public IntegrationFunctionError convertToIntegrationFunctionError_noWrap(String errorType) throws ProtocolException {
-		return this._convertToIntegrationFunctionError(errorType, this.mapErrorType_noWrap);
-	}
-	private IntegrationFunctionError _convertToIntegrationFunctionError(String errorType, ConcurrentHashMap<IntegrationFunctionError,String> map) throws ProtocolException {
-		if(map==null){
+	private IntegrationFunctionError _convertToIntegrationFunctionError(String errorType) throws ProtocolException {
+		if(this.mapErrorType==null){
 			this.initMapErrorType();
 		}
-		Enumeration<IntegrationFunctionError> en = map.keys();
+		Enumeration<IntegrationFunctionError> en = this.mapErrorType.keys();
 		while (en.hasMoreElements()) {
 			IntegrationFunctionError integrationFunctionError = (IntegrationFunctionError) en.nextElement();
-			String type = map.get(integrationFunctionError);
+			String type = this.mapErrorType.get(integrationFunctionError);
+			if(type.equals(errorType)) {
+				return integrationFunctionError;
+			}
+		}
+		throw new ProtocolException("GovWayErrorType '"+errorType+"' unknown");
+	}
+	public IntegrationFunctionError convertToIntegrationFunctionError_noWrap(String errorType) throws ProtocolException {
+		return this._convertToIntegrationFunctionError_noWrap(errorType);
+	}
+	private IntegrationFunctionError _convertToIntegrationFunctionError_noWrap(String errorType) throws ProtocolException {
+		if(this.mapErrorType_noWrap==null){
+			this.initMapErrorType();
+		}
+		Enumeration<IntegrationFunctionError> en = this.mapErrorType_noWrap.keys();
+		while (en.hasMoreElements()) {
+			IntegrationFunctionError integrationFunctionError = (IntegrationFunctionError) en.nextElement();
+			String type = this.mapErrorType_noWrap.get(integrationFunctionError);
 			if(type.equals(errorType)) {
 				return integrationFunctionError;
 			}

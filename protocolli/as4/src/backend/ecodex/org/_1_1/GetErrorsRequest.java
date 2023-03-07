@@ -56,6 +56,7 @@ import java.io.Serializable;
 
 public class GetErrorsRequest extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public GetErrorsRequest() {
+    super();
   }
 
   public java.lang.String getMessageID() {

@@ -134,17 +134,22 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 		
 	}
 	
+	private static boolean efficiente = true;    
+    public static boolean isEfficiente() {
+		return efficiente;
+	}
+	public static void setEfficiente(boolean efficiente) {
+		JDBCTransazioneServiceSearchImpl.efficiente = efficiente;
+	}
 	@Override
 	public List<Transazione> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
 
 		List<Transazione> list = new ArrayList<Transazione>();
         
-        boolean efficente = true;
-        
         boolean soloColonneIndicizzateFullIndexSearch = TransazioniIndexUtils.isEnabledSoloColonneIndicizzateFullIndexSearch(expression); 
         boolean soloColonneIndicizzateFullIndexStats = TransazioniIndexUtils.isEnabledSoloColonneIndicizzateFullIndexStats(expression); 
 
-		if(efficente || soloColonneIndicizzateFullIndexSearch || soloColonneIndicizzateFullIndexStats) {
+		if(efficiente || soloColonneIndicizzateFullIndexSearch || soloColonneIndicizzateFullIndexStats) {
         
     		List<IField> fields = new ArrayList<IField>();
     		if(soloColonneIndicizzateFullIndexSearch){
@@ -167,10 +172,14 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 	    		fields.add(Transazione.model().CODICE_RISPOSTA_USCITA);
 	    		fields.add(Transazione.model().DATA_ACCETTAZIONE_RICHIESTA);
 	    		fields.add(Transazione.model().DATA_INGRESSO_RICHIESTA);
+	    		fields.add(Transazione.model().DATA_INGRESSO_RICHIESTA_STREAM);
 	    		fields.add(Transazione.model().DATA_USCITA_RICHIESTA);
+	    		fields.add(Transazione.model().DATA_USCITA_RICHIESTA_STREAM);
 	    		fields.add(Transazione.model().DATA_ACCETTAZIONE_RISPOSTA);
 	    		fields.add(Transazione.model().DATA_INGRESSO_RISPOSTA);
+	    		fields.add(Transazione.model().DATA_INGRESSO_RISPOSTA_STREAM);
 	    		fields.add(Transazione.model().DATA_USCITA_RISPOSTA);
+	    		fields.add(Transazione.model().DATA_USCITA_RISPOSTA_STREAM);
 	    		fields.add(Transazione.model().RICHIESTA_INGRESSO_BYTES);
 	    		fields.add(Transazione.model().RICHIESTA_USCITA_BYTES);
 	    		fields.add(Transazione.model().RISPOSTA_INGRESSO_BYTES);
@@ -263,7 +272,7 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
     	        // BUG FIX: Siccome tra le colonne lette ci sono dei CLOB, in oracle non e' consentito utilizzare il DISTINCT.
     	        // Per questo motivo se c'e' da usare il distinct viene utilizzato il vecchio metodo
     	        if(distinct) {
-    	        	//System.out.println("NON EFFICENTE");
+    	        	//System.out.println("NON EFFICIENTE");
     	        	
     				List<Object> ids = this._findAllObjectIds(jdbcProperties, log, connection, sqlQueryObject, expression);
     				
@@ -274,7 +283,7 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
     	        }
     	        else {
     	        
-    	        	//System.out.println("EFFICENTE");
+    	        	//System.out.println("EFFICIENTE");
     	        	
 		    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
 		
@@ -816,10 +825,14 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CODICE_RISPOSTA_USCITA,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_ACCETTAZIONE_RICHIESTA,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_INGRESSO_RICHIESTA,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_INGRESSO_RICHIESTA_STREAM,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_USCITA_RICHIESTA,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_USCITA_RICHIESTA_STREAM,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_ACCETTAZIONE_RISPOSTA,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_INGRESSO_RISPOSTA,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_INGRESSO_RISPOSTA_STREAM,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_USCITA_RISPOSTA,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_USCITA_RISPOSTA_STREAM,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().RICHIESTA_INGRESSO_BYTES,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().RICHIESTA_USCITA_BYTES,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().RISPOSTA_INGRESSO_BYTES,true));

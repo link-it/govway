@@ -358,6 +358,8 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
+						this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+						
 						this.requestMsg.writeTo(bout, false);
 						bout.flush();
 						bout.close();
@@ -376,8 +378,12 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				if(this.debug)
 					this.logger.debug("Send...");
 				
+				SOAPMessage soapMsg = this.connection.call( this.soapRequestMessage, this.location);
+				
+				this.dataRichiestaInoltrata = DateManager.getDate();
+				
 				this.responseMsg = messageFactory.
-						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,this.connection.call( this.soapRequestMessage, this.location));
+						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,soapMsg);
 				
 				this.dataAccettazioneRisposta = DateManager.getDate();
 				
@@ -458,12 +464,31 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 			if(this.isDumpBinarioRisposta()){
 				if(this.responseMsg!=null){
 					// Registro Debug.
-					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
-							TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
+					DumpByteArrayOutputStream bout = null;
 					try {
-						this.responseMsg.writeTo(bout, false);
-						bout.flush();
-						bout.close();
+						try {
+							bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+									TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
+							
+							this.emitDiagnosticStartDumpBinarioRispostaIngresso();
+							
+							this.responseMsg.writeTo(bout, false);
+						}finally {
+							try {
+								if(bout!=null) {
+									bout.flush();
+								}
+							}catch(Throwable t) {
+								// ignore
+							}
+							try {
+								if(bout!=null) {
+									bout.close();
+								}
+							}catch(Throwable t) {
+								// ignore
+							}
+						}
 						if(this.debug) {
 							this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") :\n"+bout.toString(),false);
 						}
@@ -476,7 +501,9 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 						
 					}finally {
 						try {
-							bout.clearResources();
+							if(bout!=null) {
+								bout.clearResources();
+							}
 						}catch(Throwable t) {
 							this.logger.error("Release resources failed: "+t.getMessage(),t);
 						}
@@ -493,6 +520,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 					}
 					
 					// devo registrare almeno gli header HTTP
+					this.emitDiagnosticStartDumpBinarioRispostaIngresso();
 					this.dumpBinarioRispostaIngresso(null, null, this.propertiesTrasportoRisposta);
 				}
 			}
@@ -555,7 +583,9 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				try {
 					this.connection.close();
 				}catch(Throwable t) {
-					this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+					if(this.logger!=null) {
+						this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+					}
 					listExceptionChiusura.add(t);
 				}
 	    	}
@@ -564,7 +594,9 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 	    	try {
 	    		super.disconnect();
 	    	}catch(Throwable t) {
-    			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+	    		if(this.logger!=null) {
+					this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+	    		}
     			listExceptionChiusura.add(t);
     		}
 	    	

@@ -1329,7 +1329,7 @@ class InformazioniDatabaseChecker implements Callable<String>{
 		String modulo = this.getClass().getName();
 		StringBuilder bf = new StringBuilder();
 
-		if(this.openspcoopProperties!=null){
+		if(this.openspcoopProperties.getDatabaseType()!=null){
 			bf.append("TipoDatabase: "+this.openspcoopProperties.getDatabaseType());
 		}
 		else{

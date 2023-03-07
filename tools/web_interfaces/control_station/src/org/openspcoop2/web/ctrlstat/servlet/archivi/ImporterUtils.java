@@ -57,6 +57,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveModeType;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.archive.ImportMode;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.serialization.JavaDeserializer;
 import org.openspcoop2.utils.serialization.JavaSerializer;
 import org.openspcoop2.web.ctrlstat.core.SerialiableFormFile;
@@ -362,7 +363,9 @@ public class ImporterUtils {
 			}
 			if(deleteFile){
 				try{
-					f.delete();
+					if(!f.delete()) {
+						// ignore
+					}
 				}catch(Exception e){
 					// ignore
 				}
@@ -371,7 +374,7 @@ public class ImporterUtils {
 	}
 
 	public File writeFormFile(String sessionId,FormFile ff) throws Exception{
-		File tmpF = File.createTempFile(sessionId+"-"+ff.getFileName(), "tmp");
+		File tmpF = FileSystemUtilities.createTempFile(sessionId+"-"+ff.getFileName(), "tmp");
 		this.writeSerializeObject(tmpF, ff);
 		return tmpF;
 	}
@@ -390,12 +393,12 @@ public class ImporterUtils {
 	}
 
 	public File writeImportInformationMissingCollectionFile(String sessionId,ImportInformationMissingCollection importInformationMissingCollection) throws Exception{
-		File tmpF = File.createTempFile(sessionId+"-importInformationMissingCollection", "tmp");
+		File tmpF = FileSystemUtilities.createTempFile(sessionId+"-importInformationMissingCollection", "tmp");
 		this.writeSerializeObject(tmpF, importInformationMissingCollection);
 		return tmpF;
 	}
 	public File writeImportInformationMissingObjectFile(String sessionId,Object object) throws Exception{
-		File tmpF = File.createTempFile(sessionId+"-importInformationMissingObject", "tmp");
+		File tmpF = FileSystemUtilities.createTempFile(sessionId+"-importInformationMissingObject", "tmp");
 		this.writeSerializeObject(tmpF, object);
 		return tmpF;
 	}

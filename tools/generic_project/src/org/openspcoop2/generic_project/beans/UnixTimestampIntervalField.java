@@ -47,10 +47,13 @@ public class UnixTimestampIntervalField extends CustomField {
 		if(minInterval==null){
 			throw new ExpressionException("MinInterval is null");
 		}
-		if(!Date.class.getName().equals(maxInterval.getFieldType().getName())){
+		String dateClassName = Date.class.getName() + "";
+		String maxClassName = maxInterval.getFieldType().getName() + "";
+		if(!dateClassName.equals(maxClassName)){
 			throw new ExpressionException("MaxInterval with wrong type, expected:"+Date.class.getName()+" found:"+maxInterval.getFieldType());
 		}
-		if(!Date.class.getName().equals(minInterval.getFieldType().getName())){
+		String minClassName = minInterval.getFieldType().getName() + "";
+		if(!dateClassName.equals(minClassName)){
 			throw new ExpressionException("MinInterval with wrong type, expected:"+Date.class.getName()+" found:"+minInterval.getFieldType());
 		}
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(fieldConverter.getDatabaseType());

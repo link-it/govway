@@ -70,26 +70,30 @@ public class ValidatoreErrori extends BasicStateComponentFactory implements org.
 					if(faultS!=null)
 						faultS = faultS.trim();
 					
-					return (this.costanti.toString( MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(faultS))  || (this.costanti.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE).equals(faultS));
+					eccezioneProcessamento = (this.costanti.toString( MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(faultS))  || (this.costanti.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE).equals(faultS));
 					
 				}
 			}
 		}catch(Exception e){
 			this.log.error("Errore durante l'analisi per comprendere se un msg e' una busta Errore: "+e.getMessage(),e);
 		}
-		
-		IProtocolVersionManager pManager = null;
-		try{
-			pManager = this.protocolFactory.createProtocolVersionManager(proprietaValidazioneErrori.getVersioneProtocollo());
-		}catch(Exception e){
-			this.log.error("Errore durante la createProtocolManager: "+e.getMessage(),e);
-		}
-		
+				
 		if(eccezioneProcessamento){
 			return true;
 		}
 		else{
-			if( pManager.isIgnoraEccezioniLivelloNonGrave() ||  proprietaValidazioneErrori.isIgnoraEccezioniNonGravi()){
+			IProtocolVersionManager pManager = null;
+			try{
+				pManager = this.protocolFactory.createProtocolVersionManager(proprietaValidazioneErrori.getVersioneProtocollo());
+			}catch(Exception e){
+				this.log.error("Errore durante la createProtocolManager: "+e.getMessage(),e);
+			}
+			
+			if( 
+					(pManager!=null && pManager.isIgnoraEccezioniLivelloNonGrave())
+					||  
+					proprietaValidazioneErrori.isIgnoraEccezioniNonGravi()
+				){
 				if(  busta.containsEccezioniGravi() ){
 					return true;
 				}else{
@@ -155,19 +159,23 @@ public class ValidatoreErrori extends BasicStateComponentFactory implements org.
 		}catch(Exception e){
 			this.log.error("Errore durante l'analisi per comprendere se un msg e' una busta Errore: "+e.getMessage(),e);
 		}
-		
-		IProtocolVersionManager pManager = null;
-		try{
-			pManager = this.protocolFactory.createProtocolVersionManager(proprietaValidazioneErrori.getVersioneProtocollo());
-		}catch(Exception e){
-			this.log.error("Errore durante la createProtocolManager: "+e.getMessage(),e);
-		}
-		
+				
 		if(eccezioneProcessamento){
 			return false;
 		}
 		else{
-			if( pManager.isIgnoraEccezioniLivelloNonGrave() ||  proprietaValidazioneErrori.isIgnoraEccezioniNonGravi()){
+			IProtocolVersionManager pManager = null;
+			try{
+				pManager = this.protocolFactory.createProtocolVersionManager(proprietaValidazioneErrori.getVersioneProtocollo());
+			}catch(Exception e){
+				this.log.error("Errore durante la createProtocolManager: "+e.getMessage(),e);
+			}
+			
+			if( 
+					(pManager!=null && pManager.isIgnoraEccezioniLivelloNonGrave()) 
+					|| 
+					proprietaValidazioneErrori.isIgnoraEccezioniNonGravi()
+				){
 				if(  busta.containsEccezioniGravi() ){
 					return true;
 				}else{

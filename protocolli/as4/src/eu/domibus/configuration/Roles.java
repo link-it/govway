@@ -58,6 +58,7 @@ import java.util.List;
 
 public class Roles extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Roles() {
+    super();
   }
 
   public void addRole(Role role) {

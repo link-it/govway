@@ -195,16 +195,18 @@ public class JDBCSqlLogger {
 	}
 
 	private void logParam(Object object,Class<?> type,StringBuilder sb){
+
+		String typeName = object!=null ? type.getName()+"" : "";
 		
 		if (object == null){
 			sb.append("null");
 		}
 
-		else if(type.getName().equals(String.class.getName())){
+		else if(typeName.equals(String.class.getName())){
 			sb.append('\'').append( object ).append( '\'' );
 		}
 
-		else if(type.getName().equals(Character.class.getName())){
+		else if(typeName.equals(Character.class.getName())){
 			Character valueWrapped = (Character) object;
 			char charPrimitiveValue = valueWrapped.charValue();
 			String charValue = valueWrapped.charValue()+"";
@@ -218,7 +220,7 @@ public class JDBCSqlLogger {
 			else
 				sb.append("null");
 		}
-		else if(type.getName().equals(char.class.getName())){
+		else if(typeName.equals(char.class.getName())){
 			Character valueWrapped = (Character) object;
 			char charPrimitiveValue = valueWrapped.charValue();
 			String charValue = valueWrapped.charValue()+"";
@@ -233,69 +235,69 @@ public class JDBCSqlLogger {
 				sb.append("null");
 		}
 		
-		else if(type.getName().equals(Boolean.class.getName())){
+		else if(typeName.equals(Boolean.class.getName())){
 			sb.append( object.toString() );
 		}
-		else if(type.getName().equals(boolean.class.getName())){
+		else if(typeName.equals(boolean.class.getName())){
 			sb.append( object );
 		}
 		
-		else if(type.getName().equals(Byte.class.getName())){
+		else if(typeName.equals(Byte.class.getName())){
 			sb.append( object.toString() );
 		}
-		else if(type.getName().equals(byte.class.getName())){
+		else if(typeName.equals(byte.class.getName())){
 			sb.append( object );
 		}
 		
-		else if(type.getName().equals(Short.class.getName())){
+		else if(typeName.equals(Short.class.getName())){
 			sb.append( object.toString() );
 		}
-		else if(type.getName().equals(short.class.getName())){
+		else if(typeName.equals(short.class.getName())){
 			sb.append( object );
 		}
 		
-		else if(type.getName().equals(Integer.class.getName())){
+		else if(typeName.equals(Integer.class.getName())){
 			sb.append( object.toString() );
 		}
-		else if(type.getName().equals(int.class.getName())){
+		else if(typeName.equals(int.class.getName())){
 			sb.append( object );
 		}
 						
-		else if(type.getName().equals(Long.class.getName())){
+		else if(typeName.equals(Long.class.getName())){
 			sb.append( object.toString() );
 		}
-		else if(type.getName().equals(long.class.getName())){
+		else if(typeName.equals(long.class.getName())){
 			sb.append( object );
 		}
 		
-		else if(type.getName().equals(Double.class.getName())){
+		else if(typeName.equals(Double.class.getName())){
 			sb.append( object.toString() );
 		}
-		else if(type.getName().equals(double.class.getName())){
+		else if(typeName.equals(double.class.getName())){
 			sb.append( object );
 		}
 		
-		else if(type.getName().equals(Float.class.getName())){
+		else if(typeName.equals(Float.class.getName())){
 			sb.append( object.toString() );
 		}
-		else if(type.getName().equals(float.class.getName())){
+		else if(typeName.equals(float.class.getName())){
 			sb.append( object );
 		}
 		
-		else if(type.getName().equals(Date.class.getName())){
+		else if(typeName.equals(Date.class.getName())){
 			sb.append('\'').append( this.dateformat.format((Date)object) ).append( '\'' );
 		}
-		else if(type.getName().equals(java.sql.Date.class.getName())){
+		else if(typeName.equals(java.sql.Date.class.getName())){
 			sb.append('\'').append( this.dateformat.format((java.sql.Date)object) ).append( '\'' );
 		}
-		else if(type.getName().equals(Timestamp.class.getName())){
+		else if(typeName.equals(Timestamp.class.getName())){
 			sb.append('\'').append( this.dateformat.format( new Date( ((Timestamp)object).getTime() ) )).append( '\'' );
 		}
-		else if(type.getName().equals(Calendar.class.getName())){
+		else if(typeName.equals(Calendar.class.getName())){
 			sb.append('\'').append( this.dateformat.format( new Date( ((Calendar)object).getTime().getTime() ) )).append( '\'' );
 		}
 		
-		else if(type.getName().equals(byte[].class.getName())){
+		else if(typeName.equals(byte[].class.getName())){
 			 // 1024 = 1K
 			 // Visualizzo al massimo 5K
 			 int max = 5 * 1024;
@@ -306,7 +308,7 @@ public class JDBCSqlLogger {
 			 }
 		}
 		
-		else if(type.getName().equals(URI.class.getName())){
+		else if(typeName.equals(URI.class.getName())){
 			sb.append('\'').append( object ).append( '\'' );
 		}
 		

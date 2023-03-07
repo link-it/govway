@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import java.io.Serializable;
@@ -59,22 +58,9 @@ import java.io.Serializable;
 
 @XmlRootElement(name = "credenziali-soggetto")
 
-public class CredenzialiSoggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class CredenzialiSoggetto extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public CredenzialiSoggetto() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+    super();
   }
 
   public void set_value_tipo(String value) {
@@ -178,9 +164,6 @@ public class CredenzialiSoggetto extends org.openspcoop2.utils.beans.BaseBean im
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
 
 

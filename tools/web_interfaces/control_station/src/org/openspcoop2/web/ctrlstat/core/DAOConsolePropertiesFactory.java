@@ -45,8 +45,8 @@ public class DAOConsolePropertiesFactory extends DAOFactoryProperties {
 				||
 		    org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance().getProjectName().equals(tipoDAO.getProjectName())
 		    	||
-		    org.openspcoop2.core.tracciamento.utils.ProjectInfo.getInstance().getProjectName().equals(tipoDAO.getProjectName())
-		    ||
+		    org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance().getProjectName().equals(tipoDAO.getProjectName())
+		    	||
 		    org.openspcoop2.core.diagnostica.utils.ProjectInfo.getInstance().getProjectName().equals(tipoDAO.getProjectName()));
 	}
 	

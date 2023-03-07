@@ -191,7 +191,7 @@ public class LoaderHelper {
 			if (verificaPassword==false) {
 				this.pd.setMessage(Costanti.LABEL_LOGIN_ERRATO,MessageType.ERROR_SINTETICO);
 			} else {
-				this.pd.setMessage(Costanti.LABEL_LOGIN_CON_PASSWORD_ERRATO,MessageType.ERROR_SINTETICO);
+				this.pd.setMessage(Costanti.LABEL_LOGIN_CON_PW_ERRATO,MessageType.ERROR_SINTETICO);
 			}
 			return false;
 		}

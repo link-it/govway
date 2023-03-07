@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.random;
 
+import java.security.SecureRandom;
+
 import org.openspcoop2.utils.io.Base64Utilities;
 
 /**
@@ -191,7 +193,7 @@ public class RandomGenerator {
 		    return sr;
 		}
 		else {
-			return new java.util.Random();
+			return new SecureRandom();
 		}
 	} 
 }

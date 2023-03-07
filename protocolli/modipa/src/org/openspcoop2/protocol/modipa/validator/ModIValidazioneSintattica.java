@@ -147,16 +147,20 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				
 				String nomePortType = asps.getPortType();
 				String azione = datiRichiesta.getAzione();
-								
-				IDServizioApplicativo idSA = null;
-				ServizioApplicativo sa = null;
+				
 				IDSoggetto idSoggettoMittente = null;
-				if(!request && datiRichiesta.getServizioApplicativoFruitore()!=null &&
-						!CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(datiRichiesta.getServizioApplicativoFruitore()) &&
-						datiRichiesta.getTipoMittente()!=null &&
+				if(!request && 	datiRichiesta.getTipoMittente()!=null &&
 						datiRichiesta.getMittente()!=null) {
 					
 					idSoggettoMittente = new IDSoggetto(datiRichiesta.getTipoMittente(),datiRichiesta.getMittente());
+					
+				}
+				
+				IDServizioApplicativo idSA = null;
+				ServizioApplicativo sa = null;
+				if(!request && datiRichiesta.getServizioApplicativoFruitore()!=null &&
+						!CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(datiRichiesta.getServizioApplicativoFruitore()) &&
+						idSoggettoMittente!=null) {
 					
 					idSA = new IDServizioApplicativo();
 					idSA.setIdSoggettoProprietario(idSoggettoMittente);

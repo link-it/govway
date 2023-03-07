@@ -318,7 +318,7 @@ public class DatiCollezionati implements Serializable {
 		// threads
 		Long getActiveRequestCounter = this.getActiveRequestCounter(readRemoteInfo);
 		if(getActiveRequestCounter!=null) {
-			dati.activeRequestCounter = Long.valueOf(getActiveRequestCounter);
+			dati.activeRequestCounter = Long.valueOf(getActiveRequestCounter.longValue()+"");
 		}
 		
 		// data di creazione
@@ -331,16 +331,16 @@ public class DatiCollezionati implements Serializable {
 			dati.policyDateTypeInterval = UnitaTemporale.toEnumConstant(this.policyDateTypeInterval.getValue());
 		}
 		if(this.policyDateInterval!=null){
-			dati.policyDateInterval = Integer.valueOf(this.policyDateInterval);
+			dati.policyDateInterval = Integer.valueOf(this.policyDateInterval.intValue()+"");
 		}
 		if(this.policyDateCurrentInterval!=null){
-			dati.policyDateCurrentInterval = Boolean.valueOf(this.policyDateCurrentInterval);
+			dati.policyDateCurrentInterval = Boolean.valueOf(this.policyDateCurrentInterval.booleanValue()+"");
 		}
 		if(this.policyDateWindowInterval!=null){
 			dati.policyDateWindowInterval = TipoFinestra.toEnumConstant(this.policyDateWindowInterval.getValue());
 		}
 		if(this.policyRealtime!=null){
-			dati.policyRealtime = Boolean.valueOf(this.policyRealtime);
+			dati.policyRealtime = Boolean.valueOf(this.policyRealtime+"");
 		}
 		
 		// dati dinamici	
@@ -349,24 +349,24 @@ public class DatiCollezionati implements Serializable {
 		}	
 		Long getPolicyRequestCounter = this.getPolicyRequestCounter(readRemoteInfo);
 		if(getPolicyRequestCounter!=null){
-			dati.policyRequestCounter = Long.valueOf(getPolicyRequestCounter);
+			dati.policyRequestCounter = Long.valueOf(getPolicyRequestCounter.longValue()+"");
 		}
 		Long getPolicyCounter = this.getPolicyCounter(readRemoteInfo);
 		if(getPolicyCounter!=null){
-			dati.policyCounter = Long.valueOf(getPolicyCounter);
+			dati.policyCounter = Long.valueOf(getPolicyCounter.longValue()+"");
 		}
 		Long getPolicyDenyRequestCounter = this.getPolicyDenyRequestCounter(readRemoteInfo);
 		if(getPolicyDenyRequestCounter!=null){
-			dati.policyDenyRequestCounter = Long.valueOf(getPolicyDenyRequestCounter);
+			dati.policyDenyRequestCounter = Long.valueOf(getPolicyDenyRequestCounter.longValue()+"");
 		}
 		if(this.oldPolicyDate!=null){
 			dati.oldPolicyDate = new Date(this.oldPolicyDate.getTime());
 		}	
 		if(this.oldPolicyRequestCounter!=null){
-			dati.oldPolicyRequestCounter = Long.valueOf(this.oldPolicyRequestCounter);
+			dati.oldPolicyRequestCounter = Long.valueOf(this.oldPolicyRequestCounter.longValue()+"");
 		}
 		if(this.oldPolicyCounter!=null){
-			dati.oldPolicyCounter = Long.valueOf(this.oldPolicyCounter);
+			dati.oldPolicyCounter = Long.valueOf(this.oldPolicyCounter.longValue()+"");
 		}
 		
 		// dati iniziali degrado prestazionale
@@ -374,16 +374,16 @@ public class DatiCollezionati implements Serializable {
 			dati.policyDegradoPrestazionaleDateTypeInterval = UnitaTemporale.toEnumConstant(this.policyDegradoPrestazionaleDateTypeInterval.getValue());
 		}
 		if(this.policyDegradoPrestazionaleDateInterval!=null){
-			dati.policyDegradoPrestazionaleDateInterval = Integer.valueOf(this.policyDegradoPrestazionaleDateInterval);
+			dati.policyDegradoPrestazionaleDateInterval = Integer.valueOf(this.policyDegradoPrestazionaleDateInterval.intValue()+"");
 		}
 		if(this.policyDegradoPrestazionaleDateCurrentInterval!=null){
-			dati.policyDegradoPrestazionaleDateCurrentInterval = Boolean.valueOf(this.policyDegradoPrestazionaleDateCurrentInterval);
+			dati.policyDegradoPrestazionaleDateCurrentInterval = Boolean.valueOf(this.policyDegradoPrestazionaleDateCurrentInterval.booleanValue()+"");
 		}
 		if(this.policyDegradoPrestazionaleDateWindowInterval!=null){
 			dati.policyDegradoPrestazionaleDateWindowInterval = TipoFinestra.toEnumConstant(this.policyDegradoPrestazionaleDateWindowInterval.getValue());
 		}
 		if(this.policyDegradoPrestazionaleRealtime!=null){
-			dati.policyDegradoPrestazionaleRealtime = Boolean.valueOf(this.policyDegradoPrestazionaleRealtime);
+			dati.policyDegradoPrestazionaleRealtime = Boolean.valueOf(this.policyDegradoPrestazionaleRealtime.booleanValue()+"");
 		}
 		
 		// dati dinamici degrado prestazionale
@@ -392,20 +392,20 @@ public class DatiCollezionati implements Serializable {
 		}	
 		Long getPolicyDegradoPrestazionaleRequestCounter = this.getPolicyDegradoPrestazionaleRequestCounter(readRemoteInfo);
 		if(getPolicyDegradoPrestazionaleRequestCounter!=null){
-			dati.policyDegradoPrestazionaleRequestCounter = Long.valueOf(getPolicyDegradoPrestazionaleRequestCounter);
+			dati.policyDegradoPrestazionaleRequestCounter = Long.valueOf(getPolicyDegradoPrestazionaleRequestCounter.longValue()+"");
 		}
 		Long getPolicyDegradoPrestazionaleCounter = this.getPolicyDegradoPrestazionaleCounter(readRemoteInfo);
 		if(getPolicyDegradoPrestazionaleCounter!=null){
-			dati.policyDegradoPrestazionaleCounter = Long.valueOf(getPolicyDegradoPrestazionaleCounter);
+			dati.policyDegradoPrestazionaleCounter = Long.valueOf(getPolicyDegradoPrestazionaleCounter.longValue()+"");
 		}
 		if(this.oldPolicyDegradoPrestazionaleDate!=null){
 			dati.oldPolicyDegradoPrestazionaleDate = new Date(this.oldPolicyDegradoPrestazionaleDate.getTime());
 		}	
 		if(this.oldPolicyDegradoPrestazionaleRequestCounter!=null){
-			dati.oldPolicyDegradoPrestazionaleRequestCounter = Long.valueOf(this.oldPolicyDegradoPrestazionaleRequestCounter);
+			dati.oldPolicyDegradoPrestazionaleRequestCounter = Long.valueOf(this.oldPolicyDegradoPrestazionaleRequestCounter.longValue()+"");
 		}
 		if(this.oldPolicyDegradoPrestazionaleCounter!=null){
-			dati.oldPolicyDegradoPrestazionaleCounter = Long.valueOf(this.oldPolicyDegradoPrestazionaleCounter);
+			dati.oldPolicyDegradoPrestazionaleCounter = Long.valueOf(this.oldPolicyDegradoPrestazionaleCounter.longValue()+"");
 		}
 		
 		

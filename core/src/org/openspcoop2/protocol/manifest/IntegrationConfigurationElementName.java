@@ -53,6 +53,7 @@ import java.io.Serializable;
 
 public class IntegrationConfigurationElementName extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IntegrationConfigurationElementName() {
+    super();
   }
 
   public java.lang.String getPrefix() {

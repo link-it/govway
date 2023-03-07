@@ -29,14 +29,26 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.Search;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.mvc.properties.Item;
+import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
+import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 
 /**     
@@ -59,6 +71,10 @@ public class TokenUtilities {
 	}
 	public static Properties getUserInfoClaimsMappingProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
 		return mapProperties.get(Costanti.USERINFO_TOKEN_PARSER_COLLECTION_ID);
+	}
+	
+	public static Properties getRetrieveResponseClaimsMappingProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+		return mapProperties.get(Costanti.RETRIEVE_TOKEN_PARSER_COLLECTION_ID);
 	}
 	
 	public static List<String> getClaims(Properties p, String name) {
@@ -478,10 +494,10 @@ public class TokenUtilities {
 					String value = claims.getProperty(claim);
 					
 					if(denyClaims.contains(claim) || denyClaims.contains(claim.toLowerCase())) {
-						throw new ProviderValidationException("Il "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non può essere configurato");
+						throw new ProviderValidationException(oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non può essere configurato");
 					}
 					if(value==null || StringUtils.isEmpty(value)) {
-						throw new ProviderValidationException("Il "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non è valorizzato");
+						throw new ProviderValidationException(oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non è valorizzato");
 					}
 					if(checkSpazi) {
 						if(value.contains(" ")) {
@@ -539,5 +555,133 @@ public class TokenUtilities {
 				claims.put(key, newToken);
 			}
 		}
+	}
+	
+	public static List<String> getTokenPluginValues(ExternalResources externalResources, TipoPlugin tipoPlugin) throws ProviderException{
+		return getTokenPluginList(externalResources, tipoPlugin, true);
+	}
+	public static List<String> getTokenPluginLabels(ExternalResources externalResources, TipoPlugin tipoPlugin) throws ProviderException{
+		return getTokenPluginList(externalResources, tipoPlugin, false);
+	}
+	private static List<String> getTokenPluginList(ExternalResources externalResources, TipoPlugin tipoPlugin, boolean value) throws ProviderException{
+		if(externalResources==null) {
+			throw new ProviderException("External resource undefined");
+		}
+		ISearch ricerca = new Search(true);
+		ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_TIPO_PLUGIN_CLASSI, tipoPlugin.toString());
+		List<Plugin> list = null;
+		try {
+			list = PluginsDriverUtils.pluginsClassiList(ricerca, externalResources.getConnection(), externalResources.getLog(), externalResources.getTipoDB());
+		}catch(Throwable t) {
+			throw new ProviderException("Recupero plugin registrati fallito: "+t.getMessage(),t);
+		}
+		List<String> values = new ArrayList<>();
+		values.add(CostantiConfigurazione.POLICY_ID_NON_DEFINITA);
+		if(list!=null && !list.isEmpty()) {
+			for (Plugin plugin : list) {
+				if(plugin.isStato()) {
+					if(value) {
+						values.add(plugin.getTipo());
+					}
+					else {
+						values.add(plugin.getLabel());
+					}
+				}
+			}
+		}
+		
+		return values;
+	}
+	
+	public static String dynamicUpdateTokenPluginChoice(ExternalResources externalResources, TipoPlugin tipoPlugin, Item item, String actualValue) {
+		try {
+			if(externalResources==null) {
+				throw new ProviderException("External resource undefined");
+			}
+			ISearch ricerca = new Search(true);
+			ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_TIPO_PLUGIN_CLASSI, tipoPlugin.toString());
+			List<Plugin> listTmp = null;
+			try {
+				listTmp = PluginsDriverUtils.pluginsClassiList(ricerca, externalResources.getConnection(), externalResources.getLog(), externalResources.getTipoDB());
+			}catch(Throwable t) {
+				throw new ProviderException("Recupero plugin registrati fallito: "+t.getMessage(),t);
+			}
+			List<Plugin> list = null;
+			if(listTmp!=null && !listTmp.isEmpty()) {
+				list = new ArrayList<>();
+				for (Plugin p : listTmp) {
+					if(p.isStato()) {	
+						list.add(p);
+					}
+				}
+			}
+			if(list==null || list.isEmpty()) {
+				item.setType(ItemType.HIDDEN);
+				item.setValue(CostantiConfigurazione.POLICY_ID_NON_DEFINITA);
+				return CostantiConfigurazione.POLICY_ID_NON_DEFINITA;
+			}
+			else {
+				item.setType(ItemType.SELECT);
+				item.setValue(actualValue);
+				return actualValue;
+			}
+		}catch(Throwable t) {
+			// ignore
+			return actualValue;
+		}
+	}
+	public static String dynamicUpdateTokenPluginClassName(ExternalResources externalResources, TipoPlugin tipoPlugin, 
+			List<?> items, Map<String, String> mapNameValue, Item item, 
+			String idChoice, String actualValue) {
+		try {
+			if(externalResources==null) {
+				throw new ProviderException("External resource undefined");
+			}
+			ISearch ricerca = new Search(true);
+			ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_TIPO_PLUGIN_CLASSI, tipoPlugin.toString());
+			List<Plugin> listTmp = null;
+			try {
+				listTmp = PluginsDriverUtils.pluginsClassiList(ricerca, externalResources.getConnection(), externalResources.getLog(), externalResources.getTipoDB());
+			}catch(Throwable t) {
+				throw new ProviderException("Recupero plugin registrati fallito: "+t.getMessage(),t);
+			}
+			List<Plugin> list = null;
+			if(listTmp!=null && !listTmp.isEmpty()) {
+				list = new ArrayList<>();
+				for (Plugin p : listTmp) {
+					if(p.isStato()) {	
+						list.add(p);
+					}
+				}
+			}
+			if(list!=null && !list.isEmpty()) {
+				item.setRequired(false);
+				
+				if(actualValue==null) {
+					item.setType(ItemType.HIDDEN);
+					item.setValue(CostantiConfigurazione.POLICY_ID_NON_DEFINITA);
+					return CostantiConfigurazione.POLICY_ID_NON_DEFINITA;
+				}
+				else {
+					String pluginSelected = AbstractSecurityProvider.readValue(idChoice, items, mapNameValue);
+					if(pluginSelected!=null && !StringUtils.isEmpty(pluginSelected) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginSelected)) {
+						item.setType(ItemType.HIDDEN);
+						item.setValue(CostantiConfigurazione.POLICY_ID_NON_DEFINITA);
+						return CostantiConfigurazione.POLICY_ID_NON_DEFINITA;
+					}
+				}
+				
+				if(actualValue!=null && StringUtils.isNotEmpty(actualValue) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(actualValue)) {
+					item.setType(ItemType.TEXT);
+				}
+			}
+			else {
+				item.setType(ItemType.TEXT);
+				item.setRequired(true);
+			}
+		}catch(Throwable t) {
+			// ignore
+		}
+		return actualValue;
 	}
 }

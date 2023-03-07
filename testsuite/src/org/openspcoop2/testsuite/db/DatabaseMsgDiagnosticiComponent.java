@@ -639,23 +639,53 @@ public class DatabaseMsgDiagnosticiComponent {
 	}
 	
 	public boolean isTracedMessaggiWithCode(String id,String ... code)throws TestSuiteException{
+		return isTracedMessaggiWithCode(id, false, code);
+	}
+	public boolean isTracedMessaggiWithCode(String id,boolean ignoreMsgDiagnosticiDump, String ... code)throws TestSuiteException{
 
 		ResultSet res = null;
 		PreparedStatement prep = null;
 		try {
 			
+			String s = "select count(*) as totale from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+					CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=?";
+			if(ignoreMsgDiagnosticiDump) {
+				s = s + " AND "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" NOT IN ("+LISTA_CODICI_DUMP+")";
+			}
+			
 			prep = this.connectionMsgDiagnostici
-					.prepareStatement("select count(*) as totale from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
-							CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=?");
+					.prepareStatement(s);
 			prep.setString(1, id);
 			res = prep.executeQuery();
 			if(res.next()){
 				long count = res.getLong("totale");
 				if(count!=code.length){
+					System.out.println("S1 '"+s+"' Trovati "+count+" diagnostici");
 					//throw new TestSuiteException("Trovati "+count+" diagnostici");
+					
+					res.close();
+					prep.close();
+					
+					s = "select "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+" from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+							CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=?";
+					if(ignoreMsgDiagnosticiDump) {
+						s = s + " AND "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" NOT IN ("+LISTA_CODICI_DUMP+")";
+					}
+					
+					prep = this.connectionMsgDiagnostici
+							.prepareStatement(s);
+					prep.setString(1, id);
+					res = prep.executeQuery();
+					while(res.next()) {
+						System.out.println("- "+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE));
+					}
+					res.close();
+					prep.close();
+					
 					return false;
 				}
 			}else{
+				System.out.println("S1 '"+s+"' Non trovati");
 				//throw new TestSuiteException("Diagnostico con codice ["+code[i]+"] non trovato");
 				return false;
 			}
@@ -664,10 +694,12 @@ public class DatabaseMsgDiagnosticiComponent {
 			
 			for (int i = 0; i < code.length; i++) {
 				
+				String sSingle = "select count(*) as totale from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=? AND "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+"=? ";
+				
 				prep = this.connectionMsgDiagnostici
-						.prepareStatement("select count(*) as totale from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
-								CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=? AND "+
-								CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+"=? ");
+						.prepareStatement(sSingle);
 				prep.setString(1, id);
 				prep.setString(2, code[i]);
 				res = prep.executeQuery();
@@ -680,10 +712,12 @@ public class DatabaseMsgDiagnosticiComponent {
 						}
 					}
 					if(count!=sommaCodiciDaTrovareUguali){
+						System.out.println("S2 '"+sSingle+"' Trovati "+count+" diagnostici con codice ["+code[i]+"]");
 						//throw new TestSuiteException("Trovati "+count+" diagnostici con codice ["+code[i]+"]");
 						return false;
 					}
 				}else{
+					System.out.println("S2 '"+sSingle+"' Diagnostico con codice ["+code[i]+"] non trovato");
 					//throw new TestSuiteException("Diagnostico con codice ["+code[i]+"] non trovato");
 					return false;
 				}
@@ -691,16 +725,22 @@ public class DatabaseMsgDiagnosticiComponent {
 				prep.close();
 			}
 			
+			String sOrder = "select "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+"  from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+					CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=?";
+			if(ignoreMsgDiagnosticiDump) {
+				sOrder = sOrder + " AND "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" NOT IN ("+LISTA_CODICI_DUMP+")";
+			}
+			sOrder = sOrder + " order by "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO;
+			
 			prep = this.connectionMsgDiagnostici
-					.prepareStatement("select "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+"  from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
-							CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=? order by "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO);
+					.prepareStatement(sOrder);
 			prep.setString(1, id);
 			res = prep.executeQuery();
 			int pos = 0;
 			while(res.next()){
 				String codiceTrovato = res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE);
 				if(code[pos].equals(codiceTrovato)==false){
-					System.out.println("Atteso codice["+code[pos]+"], trovato["+codiceTrovato+"] posizione["+pos+"]");
+					System.out.println("S3 '"+sOrder+"' Atteso codice["+code[pos]+"], trovato["+codiceTrovato+"] posizione["+pos+"]");
 					return false;
 				}
 				pos++;
@@ -942,13 +982,17 @@ public class DatabaseMsgDiagnosticiComponent {
 		return resultsVector;
 	}
 	
+	private static final String LISTA_CODICI_DUMP = "'009007','009008','009009','009010','009011','009012','009013','009014'," // dump
+			+ "'007071','007072'"; // ricezione risposta
+	
 	public Vector<String> getTracciamentoNonRiuscito()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
 		Vector<String> resultsVector = new Vector<String>();
 		try {
 			StringBuilder sql = new StringBuilder();
-			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" is not null AND "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" LIKE '009%'");
+			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+					CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" is not null AND "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" LIKE '009%' AND "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" NOT IN ("+LISTA_CODICI_DUMP+")");
 			prep = this.connectionMsgDiagnostici.prepareStatement(sql.toString());
 			res = prep.executeQuery();
 			while(res.next()){

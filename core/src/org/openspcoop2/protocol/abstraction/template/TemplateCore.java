@@ -36,6 +36,7 @@ import org.openspcoop2.protocol.abstraction.constants.CostantiAbstraction;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.TemplateUtils;
 
 import freemarker.template.Template;
@@ -128,7 +129,7 @@ public class TemplateCore {
 		File tmp = null;
 		FileOutputStream fout = null; 
 		try{
-			tmp = File.createTempFile(this.zipName, ".zip");
+			tmp = FileSystemUtilities.createTempFile(this.zipName, ".zip");
 			
 			fout = new FileOutputStream(tmp);
 			fout.write(zip);
@@ -137,8 +138,11 @@ public class TemplateCore {
 
 			this.updateTemplates(tmp);
 			
-			if(tmp!=null)
-				tmp.delete();
+			if(tmp!=null) {
+				if(!tmp.delete()) {
+					// ignore
+				}
+			}
 			
 		}catch(Exception e){
 			if(tmp!=null)

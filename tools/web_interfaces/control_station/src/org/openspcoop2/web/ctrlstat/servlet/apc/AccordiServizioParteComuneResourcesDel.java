@@ -76,7 +76,7 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idInt = Integer.parseInt(id);
+			long idAccordoLong = Long.valueOf(id);
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
@@ -94,7 +94,7 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
 			ArrayList<String> resourcesToRemove = Utilities.parseIdsToRemove(objToRemove);
-			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 				
 			StringBuilder inUsoMessage = new StringBuilder();
 			
@@ -109,11 +109,11 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
-			List<Resource> lista = apcCore.accordiResourceList(idInt, ricerca);
+			List<Resource> lista = apcCore.accordiResourceList(idAccordoLong, ricerca);
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei port-type
-			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
+			as = apcCore.getAccordoServizioFull(idAccordoLong);
 
 			// Verifico stato (se non c'è un errore precedente)
 			if (inUsoMessage.length()<=0) {

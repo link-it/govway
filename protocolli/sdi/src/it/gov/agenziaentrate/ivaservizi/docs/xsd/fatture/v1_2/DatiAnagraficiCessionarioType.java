@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class DatiAnagraficiCessionarioType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiAnagraficiCessionarioType() {
+    super();
   }
 
   public IdFiscaleType getIdFiscaleIVA() {

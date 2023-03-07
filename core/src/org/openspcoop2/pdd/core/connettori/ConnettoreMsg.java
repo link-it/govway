@@ -123,6 +123,8 @@ public class ConnettoreMsg  {
 	private IDAccordo idAccordo;
 	
 	private String urlInvocazionePorta;
+	
+	private Boolean forceSendContent = null;
 
 
 
@@ -293,6 +295,9 @@ public class ConnettoreMsg  {
 		this.urlInvocazionePorta = urlInvocazionePorta;
 	}
 	
+	public void forceSendContent() {
+		this.forceSendContent = true;
+	}
 
 
 	/* ********  G E T T E R   ******** */
@@ -539,5 +544,9 @@ public class ConnettoreMsg  {
 	
 	public String getUrlInvocazionePorta() {
 		return this.urlInvocazionePorta;
+	}
+	
+	public boolean isForceSendContent() {
+		return this.forceSendContent!=null ? this.forceSendContent.booleanValue() : false;
 	}
 }

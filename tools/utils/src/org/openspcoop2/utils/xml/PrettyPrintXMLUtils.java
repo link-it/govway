@@ -104,11 +104,19 @@ public class PrettyPrintXMLUtils {
 			PrettyPrintXMLUtils.prettyPrintWithXMLSerializer(doc,fout);
 		}finally{
 			try{
-				fout.flush();
-			}catch(Exception eClose){}
+				if(fout!=null) {
+					fout.flush();
+				}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
-				fout.close();
-			}catch(Exception eClose){}
+				if(fout!=null) {
+					fout.close();
+				}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	@Deprecated

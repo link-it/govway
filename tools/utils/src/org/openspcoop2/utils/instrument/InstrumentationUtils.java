@@ -221,10 +221,10 @@ public class InstrumentationUtils
 			}
 		}
 		if(file!=null) {
-			FileOutputStream fos =new FileOutputStream(file);
-			fos.write(sb.toString().getBytes());
-			fos.flush();
-			fos.close();
+			try(FileOutputStream fos =new FileOutputStream(file);){
+				fos.write(sb.toString().getBytes());
+				fos.flush();
+			}
 		}
 	
 	}

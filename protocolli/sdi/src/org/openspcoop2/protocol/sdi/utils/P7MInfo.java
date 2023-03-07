@@ -78,11 +78,19 @@ public class P7MInfo {
 						log.error("DecodificaBase64 via PEMReader non riuscita: "+eDecodePEM.getMessage(), eDecodePEM);
 					}finally {
 						try {
-							pemReader.close();
-						}catch(Throwable eClose) {}
+							if(pemReader!=null) {
+								pemReader.close();
+							}
+						}catch(Throwable eClose) {
+							// ignore
+						}
 						try {
-							stringReader.close();
-						}catch(Throwable eClose) {}
+							if(stringReader!=null) {
+								stringReader.close();
+							}
+						}catch(Throwable eClose) {
+							// ignore
+						}
 					}
 				}
 //				else {

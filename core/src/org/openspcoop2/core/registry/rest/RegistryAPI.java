@@ -156,7 +156,7 @@ public class RegistryAPI extends Api implements Serializable {
 				if(apiRequest!=null) {
 					apiRequest.addCookieParameter(cookie);
 				}
-				else {
+				else if(apiResponse!=null) {
 					apiResponse.addCookieParameter(cookie);
 				}
 				break;
@@ -164,13 +164,17 @@ public class RegistryAPI extends Api implements Serializable {
 				ApiRequestDynamicPathParameter dynamicPath = new ApiRequestDynamicPathParameter(rp.getNome(), apiParameterSchema);
 				dynamicPath.setDescription(rp.getDescrizione());
 				dynamicPath.setRequired(rp.isRequired());
-				apiRequest.addDynamicPathParameter(dynamicPath);
+				if(apiRequest!=null) {
+					apiRequest.addDynamicPathParameter(dynamicPath);
+				}
 				break;
 			case FORM:
 				ApiRequestFormParameter form = new ApiRequestFormParameter(rp.getNome(), apiParameterSchema);
 				form.setDescription(rp.getDescrizione());
 				form.setRequired(rp.isRequired());
-				apiRequest.addFormParameter(form);
+				if(apiRequest!=null) {
+					apiRequest.addFormParameter(form);
+				}
 				break;
 			case HEADER:
 				ApiHeaderParameter header = new ApiHeaderParameter(rp.getNome(), apiParameterSchema);
@@ -179,7 +183,7 @@ public class RegistryAPI extends Api implements Serializable {
 				if(apiRequest!=null) {
 					apiRequest.addHeaderParameter(header);
 				}
-				else {
+				else if(apiResponse!=null) {
 					apiResponse.addHeaderParameter(header);
 				}
 				break;
@@ -187,7 +191,9 @@ public class RegistryAPI extends Api implements Serializable {
 				ApiRequestQueryParameter query = new ApiRequestQueryParameter(rp.getNome(), apiParameterSchema);
 				query.setDescription(rp.getDescrizione());
 				query.setRequired(rp.isRequired());
-				apiRequest.addQueryParameter(query);
+				if(apiRequest!=null) {
+					apiRequest.addQueryParameter(query);
+				}
 				break;
 			default:
 				break;

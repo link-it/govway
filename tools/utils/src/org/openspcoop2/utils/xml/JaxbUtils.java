@@ -113,7 +113,9 @@ public class JaxbUtils {
 		// Se esiste gia' lo sovrascrive
 		File file = new File(xmlFileName);
 		if(file.exists()){
-			file.delete();
+			if(!file.delete()) {
+				// ignore
+			}
 		}  
 
 		JAXBContext jc = JaxbUtils.getJAXBContext(classType.getPackage().getName());
@@ -140,7 +142,9 @@ public class JaxbUtils {
 		// Se esiste gia' lo sovrascrive
 		File file = new File(xmlFileName);
 		if(file.exists()){
-			file.delete();
+			if(!file.delete()) {
+				// ignore
+			}
 		}  
 
 		FileOutputStream fileOut =  new FileOutputStream(xmlFileName);

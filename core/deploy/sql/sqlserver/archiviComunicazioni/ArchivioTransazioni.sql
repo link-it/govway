@@ -51,10 +51,14 @@ CREATE TABLE transazioni
 	-- Tempi di latenza
 	data_accettazione_richiesta DATETIME2,
 	data_ingresso_richiesta DATETIME2,
+	data_ingresso_richiesta_stream DATETIME2,
 	data_uscita_richiesta DATETIME2,
+	data_uscita_richiesta_stream DATETIME2,
 	data_accettazione_risposta DATETIME2,
 	data_ingresso_risposta DATETIME2,
+	data_ingresso_risposta_stream DATETIME2,
 	data_uscita_risposta DATETIME2,
+	data_uscita_risposta_stream DATETIME2,
 	-- Dimensione messaggi gestiti
 	richiesta_ingresso_bytes BIGINT,
 	-- Dimensione messaggi gestiti
@@ -199,8 +203,10 @@ CREATE TABLE transazioni_sa
 	-- Date
 	data_accettazione_richiesta DATETIME2,
 	data_uscita_richiesta DATETIME2,
+	data_uscita_richiesta_stream DATETIME2,
 	data_accettazione_risposta DATETIME2,
 	data_ingresso_risposta DATETIME2,
+	data_ingresso_risposta_stream DATETIME2,
 	-- Dimensione messaggi gestiti
 	richiesta_uscita_bytes BIGINT,
 	risposta_ingresso_bytes BIGINT,

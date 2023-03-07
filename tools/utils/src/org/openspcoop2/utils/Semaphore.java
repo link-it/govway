@@ -137,10 +137,10 @@ public class Semaphore {
 		return this.semaphoreName+"."+methodName+" [Thread:"+Thread.currentThread().getName()+"]"+idTr+" ";
 	}
 	
-	public void acquire(String methodName) throws InterruptedException {
+	public void acquire(String methodName) throws UtilsException {
 		this.acquire(methodName, null);
 	}
-	public void acquire(String methodName, String idTransazione) throws InterruptedException {
+	public void acquire(String methodName, String idTransazione) throws UtilsException {
 		try {
 			if(TIMEOUT_MS<=0) {
 				if(DEBUG) {
@@ -178,18 +178,19 @@ public class Semaphore {
 			if(DEBUG) {
 				System.out.println(getPrefix(methodName, idTransazione)+" acquire("+TIMEOUT_MS+"ms) failed: "+ie.getMessage());
 			}
-			throw ie;
+			throw new UtilsException(ie.getMessage(),ie);
 		}
 	}
 	
-	public void acquireThrowRuntime(String methodName) {
+	public void acquireThrowRuntime(String methodName) throws SemaphoreRuntimeException {
 		this.acquireThrowRuntime(methodName, null);
 	}
-	public void acquireThrowRuntime(String methodName, String idTransazione) {
+	public void acquireThrowRuntime(String methodName, String idTransazione) throws SemaphoreRuntimeException {
 		try {
 			this.acquire(methodName, idTransazione);
-		}catch(Throwable t) {
-			throw new RuntimeException(t.getMessage(),t);
+		}
+		catch(Throwable t) {
+			throw new SemaphoreRuntimeException(t.getMessage(),t);
 		}
 	}
 	
@@ -214,3 +215,28 @@ public class Semaphore {
 	}
 }
 
+@SuppressWarnings("serial")
+class SemaphoreRuntimeException extends RuntimeException{
+
+	public SemaphoreRuntimeException() {
+		super();
+	}
+
+	public SemaphoreRuntimeException(String message, Throwable cause, boolean enableSuppression,
+			boolean writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
+	}
+
+	public SemaphoreRuntimeException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public SemaphoreRuntimeException(String message) {
+		super(message);
+	}
+
+	public SemaphoreRuntimeException(Throwable cause) {
+		super(cause);
+	}
+	
+}

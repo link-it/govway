@@ -20,16 +20,9 @@
 
 package org.openspcoop2.utils.cache;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 
 /**
@@ -298,53 +291,4 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		}
 	}
 
-	public static void main( String[] args ) throws Exception {
-		int maxSize = 50;
-		int maxLifeTime = 10000;
-		int threads = 10;
-		ExecutorService threadsPool = Executors.newFixedThreadPool(threads);
-		Random random = new Random();
-		
-		LimitedHashMap<Object,Serializable> map = new LimitedHashMap<>( "TEST", maxSize, maxLifeTime );
-
-		for ( int ix = 0; ix < 100; ix++ ) {
-			String key = Integer.toString(ix);
-			map.put( key, "test-" + key );
-		}
-		for ( int ix = 0; ix < 100; ix++ ) {
-			String key = Integer.toString(ix);
-			System.out.println( key + " : " +  map.get( key ) );
-		}
-		System.out.println("Attuale size: "+map.size());
-		
-		// Registrazione con threads
-		System.out.println("\n\nTest con "+threads+" threads");
-		
-		Map<String, Runnable> threadsMap = new HashMap<String, Runnable>();
-		CountDownLatch latch = new CountDownLatch(threads);
-		for (int i = 0; i < threads; i++) {
-			String id = "thread-"+i;
-			threadsMap.put(id, new Runnable() {
-				@Override
-				public void run() {
-					for ( int ix = 0; ix < 100; ix++ ) {
-						Utilities.sleep(random.nextInt(50));
-						String key = Integer.toString(ix);
-						map.put( key, id+"_test-" + key );
-					}
-					latch.countDown();
-				}
-			});
-			threadsPool.execute(threadsMap.get(id));
-		}
-		latch.await();
-		threadsPool.shutdown();
-		
-		for ( int ix = 0; ix < 100; ix++ ) {
-			String key = Integer.toString(ix);
-			//Utilities.sleep(random.nextInt(50));
-			System.out.println( key + " : " +  map.get( key ) );
-		}
-		System.out.println("Attuale size: "+map.size());
-	}
 }

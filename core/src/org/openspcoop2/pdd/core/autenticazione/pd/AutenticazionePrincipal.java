@@ -174,7 +174,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     	String principal = null;
     	try {
     		principal = PrincipalUtilities.getPrincipal(this.tipoAutenticazionePrincipal, this.nome, this.pattern, this.tipoTokenClaim,  
-    				datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true,
+    				datiInvocazione.getInfoConnettoreIngresso(), this.getPddContext(), true,
     				fullCredential);
     	}catch(Exception e) {
     		if(this.logError) {

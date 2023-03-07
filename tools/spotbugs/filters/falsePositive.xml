@@ -62,7 +62,7 @@
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB" />
+    <Class name="org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_utilsDriver" />
     <Method name="isAlive" />
     <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
   </Match>
@@ -85,7 +85,7 @@
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB" />
+    <Class name="org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB_utilsDriver" />
     <Method name="isAlive" />
     <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
   </Match>
@@ -161,7 +161,7 @@
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.protocol.engine.driver.repository.TestGestoreRepository" />
+    <Class name="org.openspcoop2.protocol.engine.driver.repository.test.GestoreRepositoryTest" />
     <Method name="test" />
     <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
   </Match>
@@ -240,7 +240,7 @@
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.utils.jdbc.TestJDBCAdapter" />
+    <Class name="org.openspcoop2.utils.jdbc.test.JDBCAdapterTest" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
@@ -248,19 +248,19 @@
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.utils.semaphore.ClientTest" />
+    <Class name="org.openspcoop2.utils.semaphore.test.ClientTest" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.utils.sql.ClientTest" />
+    <Class name="org.openspcoop2.utils.sql.test.ClientTest" />
     <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.utils.sql.ClientTest" />
+    <Class name="org.openspcoop2.utils.sql.test.ClientTest" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
-    <Class name="org.openspcoop2.utils.sonde.ClientTest" />
+    <Class name="org.openspcoop2.utils.sonde.test.ClientTest" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>

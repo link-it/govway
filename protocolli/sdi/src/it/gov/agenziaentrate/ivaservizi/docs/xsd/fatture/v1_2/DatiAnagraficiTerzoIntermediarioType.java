@@ -60,6 +60,7 @@ import java.io.Serializable;
 
 public class DatiAnagraficiTerzoIntermediarioType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiAnagraficiTerzoIntermediarioType() {
+    super();
   }
 
   public IdFiscaleType getIdFiscaleIVA() {

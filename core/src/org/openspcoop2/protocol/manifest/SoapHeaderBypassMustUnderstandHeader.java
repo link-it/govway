@@ -58,6 +58,7 @@ import java.io.Serializable;
 
 public class SoapHeaderBypassMustUnderstandHeader extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SoapHeaderBypassMustUnderstandHeader() {
+    super();
   }
 
   public java.lang.String getLocalName() {

@@ -84,17 +84,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComunePortTypeOperationsAdd extends Action {
 
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
-	private IConfigIntegrationReader configRegistryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
-	
-	private String editMode = null;
-
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -112,8 +101,17 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
+		// Protocol Properties
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+		ConsoleConfiguration consoleConfiguration =null;
+		ProtocolProperties protocolProperties = null;
+		IProtocolFactory<?> protocolFactory= null;
+		IRegistryReader registryReader = null; 
+		IConfigIntegrationReader configRegistryReader = null; 
+		ConsoleOperationType consoleOperationType = null;
+		
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
-		this.consoleOperationType = ConsoleOperationType.ADD;
+		consoleOperationType = ConsoleOperationType.ADD;
 		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
@@ -123,7 +121,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			
-			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
 			String opcorrelata = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_CORRELATA);
 			String servcorr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_SERVIZIO_CORRELATO);
@@ -214,10 +212,10 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 					break;
 			}
 
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory);
-			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
+			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			consoleDynamicConfiguration =  protocolFactory.createDynamicConfigurationConsole();
+			registryReader = soggettiCore.getRegistryReader(protocolFactory);
+			configRegistryReader = soggettiCore.getConfigIntegrationReader(protocolFactory);
 			
 			IDPortType idPt = new IDPortType();
 			idPt.setIdAccordo(idAs);
@@ -226,9 +224,9 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			idAzione.setIdPortType(idPt);
 			idAzione.setNome(nomeop);
 
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigOperation(this.consoleOperationType, apcHelper, 
-					this.registryReader, this.configRegistryReader, idAzione );
-			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigOperation(consoleOperationType, apcHelper, 
+					registryReader, configRegistryReader, idAzione );
+			protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType);
 
 
 			int messageOutputCnt = 0;
@@ -271,7 +269,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if(ServletUtils.isEditModeInProgress(this.editMode)){
+			if(ServletUtils.isEditModeInProgress(editMode)){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, listaParams);
@@ -380,8 +378,8 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idAzione);
+				consoleDynamicConfiguration.updateDynamicConfigOperation(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiPorttypeOperationToDati(dati, id, nomept, nomeop, profProtocollo, 
 						filtrodupop, filtrodupop, confricop, confricop, idcollop, idcollop, idRifRichiestaOp, idRifRichiestaOp, consordop, consordop, scadenzaop, scadenzaop, 
@@ -393,7 +391,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 												opTypeOp, messageInputCnt, messageOutputCnt,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration,consoleOperationType, protocolProperties);
 
 				pd.setDati(dati);
 
@@ -407,14 +405,14 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 
 			// updateDynamic
 			if(isOk) {
-				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idAzione);
+				consoleDynamicConfiguration.updateDynamicConfigOperation(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idAzione);
 			}
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
+					apcHelper.validaProtocolProperties(consoleConfiguration, consoleOperationType, protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -426,8 +424,8 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idAzione);
+					consoleDynamicConfiguration.validateDynamicConfigOperation(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
+							registryReader, configRegistryReader, idAzione);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -489,8 +487,8 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idAzione);
+				consoleDynamicConfiguration.updateDynamicConfigOperation(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiPorttypeOperationToDati(dati, id, nomept, nomeop, profProtocollo, 
 						filtrodupop, filtrodupop, confricop, confricop, idcollop, idcollop, idRifRichiestaOp, idRifRichiestaOp, consordop, consordop, scadenzaop, scadenzaop, 
@@ -502,7 +500,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 												opTypeOp, messageInputCnt, messageOutputCnt,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration,consoleOperationType, protocolProperties);
 
 				pd.setDati(dati);
 
@@ -628,13 +626,13 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			pt.addAzione(newOp);
 			
 			//imposto properties custom
-			newOp.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType,null));
+			newOp.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, consoleOperationType,null));
 			
 			boolean updateAccordo = 
 					AccordiServizioParteComuneUtilities.createPortTypeOperation(apcCore.isEnableAutoMappingWsdlIntoAccordo(), apcCore, apcHelper, as, pt, userLogin);
 			
 			// cancello i file temporanei
-			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
+			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(protocolProperties);
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
