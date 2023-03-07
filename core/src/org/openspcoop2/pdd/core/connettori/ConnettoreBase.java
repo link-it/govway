@@ -632,6 +632,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				if(this.debug) {
 					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' ...");
 				}
+				if(this.msgDiagnostico!=null) {
+					try {
+						this.msgDiagnostico.logPersonalizzato("negoziazioneToken.inCorso");
+					}catch(Throwable t) {
+						this.logger.error("Emissione diagnostica 'negoziazioneToken.inCorso' fallita: "+t.getMessage(),t);
+					}
+				}
 				EsitoNegoziazioneToken esitoNegoziazione = GestoreToken.endpointToken(this.debug, this.logger.getLogger(), this.policyNegoziazioneToken, 
 						this.busta, this.requestInfo, 
 						ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA,
@@ -655,6 +662,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					else {
 						this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; no expire");
 					}
+					if(this.msgDiagnostico!=null) {
+						try {
+							this.msgDiagnostico.logPersonalizzato("negoziazioneToken.inCache");
+						}catch(Throwable t) {
+							this.logger.error("Emissione diagnostica 'negoziazioneToken.inCache' fallita: "+t.getMessage(),t);
+						}
+					}
 				}
 				else {
 					if(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
@@ -662,6 +676,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					}
 					else {
 						this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; no expire");
+					}
+					if(this.msgDiagnostico!=null) {
+						try {
+							this.msgDiagnostico.logPersonalizzato("negoziazioneToken.completata");
+						}catch(Throwable t) {
+							this.logger.error("Emissione diagnostica 'negoziazioneToken.completata' fallita: "+t.getMessage(),t);
+						}
 					}
 				}
 				
