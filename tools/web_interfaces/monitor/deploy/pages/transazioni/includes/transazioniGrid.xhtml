@@ -112,13 +112,13 @@
 				</rich:column>
 				<rich:column id="colDataIngressoRichStream" sortable="false" label="Data Ingresso Richiesta Acquisita" width="190px" visible="false">
 					<f:facet name="header">
-						<h:outputText id="colDataAccettazioneRich1Stream" value="Data Ingresso Richiesta Acquisita" />
+						<h:outputText id="colDataIngressoRich1Stream" value="Data Ingresso Richiesta Acquisita" />
 					</f:facet>
-					<h:outputText id="colDataAccettazioneRich2Stream" value="#{item.dataAccettazioneRichiestaStream}">
+					<h:outputText id="colDataIngressoRich2Stream" value="#{item.dataIngressoRichiestaStream}">
 						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
-					<rich:toolTip for="colDataAccettazioneRich2Stream">
-						<h:outputText value="#{item.dataAccettazioneRichiestaStream}">
+					<rich:toolTip for="colDataIngressoRich2Stream">
+						<h:outputText value="#{item.dataIngressoRichiestaStream}">
 							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 						</h:outputText>
 					</rich:toolTip>
