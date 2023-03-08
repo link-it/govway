@@ -40,6 +40,7 @@ Nei `sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ sono pr
 		- `tools/web_interfaces/lib/monitor/src/src_statistiche <https://github.com/link-it/govway/tree/master/tools/web_interfaces/monitor/src/src_stat>`_ (archivio: openspcoop2_web-govwayMonitor-statistiche-<version>.jar)
 		- `tools/web_interfaces/lib/monitor/src/src_eventi <https://github.com/link-it/govway/tree/master/tools/web_interfaces/monitor/src/src_eventi>`_ (archivio: openspcoop2_web-govwayMonitor-eventi-<version>.jar)
 		- `tools/web_interfaces/lib/monitor/src/src_allarmi <https://github.com/link-it/govway/tree/master/tools/web_interfaces/monitor/src/src_allarmi>`_ (archivio: openspcoop2_web-govwayMonitor-allarmi-<version>.jar)
+		- 'Pagine JSF'; `tools/web_interfaces/monitor/deploy/pages <https://github.com/link-it/govway/tree/master/tools/web_interfaces/monitor/deploy/pages>`_
 
 	- librerie comuni:
 
