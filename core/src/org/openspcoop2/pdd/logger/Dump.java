@@ -620,11 +620,14 @@ public class Dump {
 			}
 		}
 		boolean dumpMultipartHeaders = dumpHeaders;
-		if(dumpNormale) {
-			emitDiagnosticDumpStart(tipoMessaggio, location);
-		}
 		
-		String identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio);
+		String identificativoDiagnostico = null;
+		if(dumpNormale) {
+			identificativoDiagnostico = emitDiagnosticDumpStart(tipoMessaggio);
+		}
+		else {
+			identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio);
+		}
 		
 		try {
 			dumpEngine(onlyLogFileTrace_headers, onlyLogFileTrace_body, 
@@ -679,9 +682,10 @@ public class Dump {
 		return identificativoDiagnostico;
 	}
 	
-	private void emitDiagnosticDumpStart(TipoMessaggio tipoMessaggio) {
+	private String emitDiagnosticDumpStart(TipoMessaggio tipoMessaggio) {
 		String identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio);
 		emitDiagnosticDumpStart(tipoMessaggio, identificativoDiagnostico);
+		return identificativoDiagnostico;
 	}
 	private void emitDiagnosticDumpStart(TipoMessaggio tipoMessaggio, String identificativoDiagnostico) {
 		if(identificativoDiagnostico!=null && this.emitDiagnosticDump) {

@@ -57,7 +57,7 @@ public class FileSystemUtilities {
 		// Make sure publicly writable directories are used safely here.
 		// Using publicly writable directories is security-sensitivejava:S5443
 		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
-		return Files.createTempFile("op2_log", ".properties",attr);
+		return Files.createTempFile(prefix, suffix,attr);
 	}
 	
 	public static File createTempFile(File dir, String prefix, String suffix) throws IOException{
@@ -71,7 +71,7 @@ public class FileSystemUtilities {
 		// Make sure publicly writable directories are used safely here.
 		// Using publicly writable directories is security-sensitivejava:S5443
 		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
-		return Files.createTempFile(dir, "op2_log", ".properties",attr);
+		return Files.createTempFile(dir, prefix, suffix,attr);
 	}
 	
 	public static void copy(File in, File out) throws IOException {
