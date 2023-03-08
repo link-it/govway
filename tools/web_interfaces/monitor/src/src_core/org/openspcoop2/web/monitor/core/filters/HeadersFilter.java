@@ -107,12 +107,11 @@ public class HeadersFilter implements Filter {
 			salvaNonceValueInSessione(session, nonceValue);
 		}
 		
-//		String uuId = UUID.randomUUID().toString().replace("-", "");
 		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, nonceValue);
 		
 		if(StringUtils.isNoneBlank(this.cspHeaderValue)) {
-//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.cspHeaderValue, nonceValue, nonceValue));
-			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.cspHeaderValue, nonceValue, nonceValue));
+			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.cspHeaderValue, nonceValue, nonceValue));
+//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.cspHeaderValue, nonceValue, nonceValue));
 		}
 	}
 	
