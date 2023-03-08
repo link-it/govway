@@ -498,6 +498,12 @@ public class DynamicUtils {
 			dynamicMap.put(Costanti.MAP_ERROR_HANDLER_OBJECT, dynamicInfo.getErrorHandler());
 			dynamicMap.put(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase(), dynamicInfo.getErrorHandler());
 		}
+		
+		if(dynamicMap.containsKey(Costanti.MAP_DYNAMIC_CONFIG_PROPERTY)==false) {
+			dynamicMap.put(Costanti.MAP_DYNAMIC_CONFIG_PROPERTY, new DynamicConfig(log, dynamicMap, requestInfo, 
+					dynamicInfo!=null ? dynamicInfo.getBusta() : null));
+		}
+		
 	}
 
 	

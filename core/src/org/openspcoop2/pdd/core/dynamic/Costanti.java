@@ -89,7 +89,7 @@ public class Costanti {
     public static final String MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY = "providerOrganizationConfig";
     public static final String TYPE_MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY = "java.util.Map<String, String>";
     public static final String TYPE_MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
-        
+    
     // Per ora messi solamente nelle trasformazioni, valutare se poi metterli anche nel connettore
     public final static String MAP_ELEMENT_URL_REGEXP = "urlRegExp";
     public final static String MAP_ELEMENT_URL_REGEXP_PREFIX = "{"+MAP_ELEMENT_URL_REGEXP+":";
@@ -157,6 +157,9 @@ public class Costanti {
     
     public final static String MAP_SECURITY_TOKEN = "securityToken";
     public final static String TYPE_MAP_SECURITY_TOKEN = org.openspcoop2.protocol.sdk.SecurityToken.class.getName();
+    
+    public final static String MAP_DYNAMIC_CONFIG_PROPERTY = "dynamicConfig";
+    public final static String TYPE_MAP_DYNAMIC_CONFIG_PROPERTY = org.openspcoop2.pdd.core.dynamic.DynamicConfig.class.getName();
     
     public final static String MAP_ERROR_HANDLER_OBJECT = "errorHandler";
     public final static String TYPE_MAP_ERROR_HANDLER_OBJECT = org.openspcoop2.pdd.core.dynamic.ErrorHandler.class.getName();
