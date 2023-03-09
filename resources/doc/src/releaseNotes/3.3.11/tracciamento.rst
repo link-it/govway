@@ -1,7 +1,11 @@
 Miglioramenti alla funzionalità di Tracciamento
 ------------------------------------------------
 
-La traccia prodotta da GovWay è stata arricchita delle date di acquisizione completata degli stream in ingresso e di completamento della spedizione dei messaggi in uscita.
+La traccia prodotta da GovWay è stata arricchita:
+
+	- delle date di acquisizione completata degli stream in ingresso e di completamento della spedizione dei messaggi in uscita;
+	- del token ricevuto in caso di validazione fallita;
+	- delle informazioni inviate e della risposta ricevuta in caso di negoziazione token fallita.
 
 La diagnostica è stata arricchita al fine di individuare:
 

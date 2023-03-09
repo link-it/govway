@@ -125,4 +125,6 @@ Per creare una tag version:
 
 22. Aggiungere la nuova versione come directory all'interno degli script di distribuzione delle immagini docker
 
-23. (PVersion) Creazione versione tag
+23. Verificare licenze in 'third-party-licenses' siano tutte aggiornate alle versioni delle lib utilizzate
+
+24. (PVersion) Creazione versione tag
