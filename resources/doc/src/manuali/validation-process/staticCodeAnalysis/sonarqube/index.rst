@@ -9,7 +9,7 @@ Il tool viene utilizzato fin dalle fasi di sviluppo prima di integrare una nuova
 
 Ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ viene effettuata automaticamente una verifica dei sorgenti nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway/job/GovWay/>`_. Maggiori dettagli vengono forniti nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_sonarqube_ci`.
 
-Una verifica manuale dei `sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ è attuabile seguento le indicazioni presenti nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_sonarqube_maven`.
+Una verifica manuale dei `sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ può essere effettuata seguendo le indicazioni presenti nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_sonarqube_maven`.
 
 .. toctree::
         :maxdepth: 2

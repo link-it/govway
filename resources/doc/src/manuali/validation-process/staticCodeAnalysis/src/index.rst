@@ -57,7 +57,7 @@ Nei `sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ sono pr
 	- api di configurazione 'govwayAPIConfig'; `tools/rs/config/server <https://github.com/link-it/govway/tree/master/tools/rs/config/server>`_ (archivio: openspcoop2_rs-config-server-<version>.jar)
 	- api di configurazione 'govwayAPIMonitor'; `tools/rs/monitor/server <https://github.com/link-it/govway/tree/master/tools/rs/monitor/server>`_ (archivio: openspcoop2_rs-monitor-server-<version>.jar)
 
-- *batch*; di seguito vengono descritti i batch utilizzabili su GovWay:
+- *batch*; i batch utilizzati a run time in GovWay:
 
 	- batch di generazione delle statistiche; `tools/batch/statistiche <https://github.com/link-it/govway/tree/master/tools/batch/statistiche>`_ (archivio: openspcoop2_batch-statistiche-<version>.jar)
 	- batch per la gestione del repository di runtime; `tools/batch/runtime-repository <https://github.com/link-it/govway/tree/master/tools/batch/runtime-repository>`_ (archivio: openspcoop2_batch-runtime-repository-<version>.jar)

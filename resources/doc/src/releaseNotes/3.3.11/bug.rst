@@ -9,7 +9,7 @@ Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
 
 Sono stati risolti i seguenti bug:
 
-- l'autorizzazione puntuale in una erogazione con profilo di interoperabilità 'ModI' non veniva attuata se la lista degli applicativi autorizzati veniva lasciata vuota;
+- l'autorizzazione puntuale in una erogazione con profilo di interoperabilità 'ModI' non veniva effettuata se la lista degli applicativi autorizzati veniva lasciata vuota;
 
 - le regole di autorizzazione definite nell'autorizzazione dei contenuti o nell'autorizzazione per token claims non venivano controllate nell'ordine in cui erano state configurate;
 
@@ -24,7 +24,7 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - sono stati corretti i seguenti problemi relativi alla configurazione dell'autorizzazione per contenuti:
 
-	- se nelle regole erano presenti commenti (#) potevano presentarsi segnalazioni errate dovuti a 'commenti duplicati' quando la linea inserita era la medesima in due o più righe;
+	- se nelle regole erano presenti commenti (#) potevano presentarsi segnalazioni errate dovuti a 'commenti duplicati' quando la linea inserita era la stessa in due o più righe;
 
 	- in alcuni casi l'ordine di inserimento delle regole non veniva preservato in fase di salvataggio;
 

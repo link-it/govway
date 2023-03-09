@@ -1,7 +1,7 @@
 Miglioramenti alla funzionalità di Negoziazione Token
 -----------------------------------------------------
 
-In una token policy di negoziazione è adesso possibile personalizzare la chiamata verso l'authorization server nei seguenti parametri:
+In una token policy di negoziazione è adesso possibile personalizzare  seguenti parametri della chiamata verso l'authorization server:
 
 	- metodo http;
 	- eventuale content-type e payload;

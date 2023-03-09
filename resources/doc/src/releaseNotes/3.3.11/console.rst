@@ -20,4 +20,4 @@ Sono stati apportati i seguenti miglioramenti alla console di gestione:
 
 - per i soggetti e per gli applicativi è stata aggiunta la possibilità di effettuare ricerche rispetto all'Issuer del certificato associato;
 
-- aggiunta la possibilità di registrare le classi dei plugin che implementano le funzionalità personalizzabili relative al parsing delle risposte in una Token Policy di validazione o negoziazione e in un Attribute Authority.
+- aggiunta la possibilità di registrare le classi dei plugin che implementano funzionalità personalizzabili relative al parsing delle risposte in una Token Policy di validazione o negoziazione e in una Attribute Authority.
