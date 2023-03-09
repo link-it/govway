@@ -22,13 +22,21 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.token.negoziazione
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Date;
+import java.util.Properties;
+
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
+import org.openspcoop2.utils.security.JOSESerialization;
+import org.openspcoop2.utils.security.JWSOptions;
+import org.openspcoop2.utils.security.JsonSignature;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -48,8 +56,8 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 		
 	
 	@Test
-	public void test_property_full() throws Exception {
-		testDynamicConfig("ApplicativoTestDynamicConfig1", 
+	public void test_clientApplication_property_full() throws Exception {
+		testDynamicConfigFruizione("ApplicativoTestDynamicConfig1", 
 				"PurposeIdApplicativoTestDynamicConfig1",
 				"TESTApplicativoTestDynamicConfig1",
 				"KIDCUSTOM",
@@ -57,8 +65,8 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void test_property_without_organization() throws Exception {
-		testDynamicConfig("ApplicativoTestDynamicConfig2", 
+	public void test_clientApplication_property_without_organization() throws Exception {
+		testDynamicConfigFruizione("ApplicativoTestDynamicConfig2", 
 				"PurposeIdApplicativoTestDynamicConfig2",
 				"TESTApplicativoTestDynamicConfig2",
 				"KIDCUSTOM",
@@ -66,8 +74,8 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void test_property_default() throws Exception {
-		testDynamicConfig("ApplicativoTestDynamicConfig3", 
+	public void test_clientApplication_property_default() throws Exception {
+		testDynamicConfigFruizione("ApplicativoTestDynamicConfig3", 
 				"VALORE_PURPOSEID_DEFAULT",
 				"VALORE_DEFAULT",
 				"KIDCUSTOM",
@@ -75,8 +83,8 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void test_property_undefined() throws Exception {
-		testDynamicConfig("ApplicativoTestDynamicConfig4", 
+	public void test_clientApplication_property_undefined() throws Exception {
+		testDynamicConfigFruizione("ApplicativoTestDynamicConfig4", 
 				null,
 				null,
 				null,
@@ -84,7 +92,7 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 	}
 	
 	
-	private void testDynamicConfig(String username, 
+	private void testDynamicConfigFruizione(String username, 
 			String expectedPurposeId, String expectedClientId, String expectedKID, 
 			String errorMessage) throws Exception {
 		
@@ -98,7 +106,7 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 		
 		// Test HDR
 		
-		HttpResponse response = _test( username, 
+		HttpResponse response = _test(TipoServizio.FRUIZIONE, username, 
 				expectedPurposeId, expectedClientId, expectedKID,
 				error,
 				diagnostico,
@@ -113,7 +121,7 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 				
 		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
 		
-		_test( username, 
+		_test(TipoServizio.FRUIZIONE, username, 
 				expectedPurposeId, expectedClientId, expectedKID,
 				error,
 				diagnostico,
@@ -131,10 +139,90 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 	
 	
 	
+	@Test
+	public void test_tokenClientApplication_property_full() throws Exception {
+		testDynamicConfigErogazione("ApplicativoTokenTestDynamicConfig1", 
+				"PurposeIdApplicativoTokenTestDynamicConfig1",
+				"TESTApplicativoTokenTestDynamicConfig1",
+				"KIDCUSTOM",
+				null);
+	}
+	
+	@Test
+	public void test_tokenClientApplication_property_without_organization() throws Exception {
+		testDynamicConfigErogazione("ApplicativoTokenTestDynamicConfig2", 
+				"PurposeIdApplicativoTokenTestDynamicConfig2",
+				"TESTApplicativoTokenTestDynamicConfig2",
+				"KIDCUSTOM",
+				null);
+	}
+	
+	@Test
+	public void test_tokenClientApplication_property_default() throws Exception {
+		testDynamicConfigErogazione("ApplicativoTokenTestDynamicConfig3", 
+				"VALORE_PURPOSEID_DEFAULT",
+				"VALORE_DEFAULT",
+				"KIDCUSTOM",
+				null);
+	}
+	
+	@Test
+	public void test_tokenClientApplication_property_undefined() throws Exception {
+		testDynamicConfigErogazione("ApplicativoTokenTestDynamicConfig4", 
+				null,
+				null,
+				null,
+				"Proprieta' 'issuer.gwt' contiene un valore non corretto: Placeholder [{dynamicConfig:tokenClientApplicationSearch(clientId)}] resolution failed: method [org.openspcoop2.pdd.core.dynamic.DynamicConfig.getTokenClientApplicationSearch(clientId)] return null object");
+	}
+	
+	private void testDynamicConfigErogazione(String username, 
+			String expectedPurposeId, String expectedClientId, String expectedKID, 
+			String errorMessage) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+	
+		boolean error =  errorMessage!=null;
+		String diagnostico = null;
+		if(error) {
+			diagnostico = errorMessage;
+		}
+		
+		// Test HDR
+		
+		HttpResponse response = _test(TipoServizio.EROGAZIONE, username, 
+				expectedPurposeId, expectedClientId, expectedKID,
+				error,
+				diagnostico,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT-TokenDynamicConfig\"");
+		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+				
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		_test(TipoServizio.EROGAZIONE, username, 
+				expectedPurposeId, expectedClientId, expectedKID,
+				error,
+				diagnostico,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT-TokenDynamicConfig\"",
+				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
+				);
+		
+	}
 	
 	
 	
-	protected static HttpResponse _test(String username,
+	
+	protected static HttpResponse _test(TipoServizio tipoServizio, String username,
 			String expectedPurposeId, String expectedClientId, String expectedKID,
 			boolean error, String diagnostico,
 			String ... tokenInfoCheck) throws Exception {
@@ -144,12 +232,21 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 		
 		String api = api_negoziazione_dynamic_config;
 		String operazione = "signedJWT";
-		String url = System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+api+"/v1/"+operazione;
+		
+		String url = tipoServizio == TipoServizio.EROGAZIONE
+				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+api+"/v1/"+operazione
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+api+"/v1/"+operazione;
 		
 		HttpRequest request = new HttpRequest();
 		
-		request.setUsername(username);
-		request.setPassword("123456");
+		if(tipoServizio == TipoServizio.EROGAZIONE) {
+			String jwt = buildJWT(username);
+			request.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+jwt);
+		}
+		else {
+			request.setUsername(username);
+			request.setPassword("123456");
+		}
 		
 		request.setReadTimeout(20000);
 		request.setMethod(HttpRequestMethod.POST);
@@ -228,7 +325,14 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 			long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
 			verifyOk(response, 503, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
 			
-			DBVerifier.verify(idTransazione, esitoExpected, diagnostico);
+			if(tipoServizio == TipoServizio.EROGAZIONE) {
+				DBVerifier.verify(idTransazione, esitoExpected, diagnostico,
+						"\"type\":\"validated_token\"",
+						"\"valid\":true");
+			}
+			else {
+				DBVerifier.verify(idTransazione, esitoExpected, diagnostico);
+			}
 			
 		}
 		
@@ -240,6 +344,88 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 		
 		assertEquals(code, response.getResultHTTPOperation());
 		assertEquals(expectedContentType, response.getContentType());
+		
+	}
+	
+	
+	private static String buildJson(String cliendId) throws Exception {
+			
+		String prefix = "TEST";		
+		String audience = "testAudience";
+		
+		String issuer = "testAuthEnte";
+		String subject = "10623542342342323";
+		String jti = "33aa1676-1f9e-34e2-8515-0cfca111a188";
+		Date now = DateManager.getDate();
+		Date campione = new Date( (now.getTime()/1000)*1000);
+		Date iat = new Date(campione.getTime());
+		Date nbf = new Date(campione.getTime() - (1000*20));
+		Date exp = new Date(campione.getTime() + (1000*60));
+				
+		String aud = "\""+prefix+"aud\":[\""+audience+"\"]";
+		String jsonInput = 
+				"{ "+aud+",";
+		
+		String clientId = "\""+prefix+"client_id\":\""+cliendId+"\"";
+		jsonInput = jsonInput+
+			clientId+" ,";
+
+		String sub = "\""+prefix+"sub\":\""+subject+"\"";
+		jsonInput = jsonInput+
+				sub+" , ";
+
+		String iss ="\""+prefix+"iss\":\""+issuer+"\"";
+		jsonInput = jsonInput+
+				iss+" , ";
+		
+		String iatJson = "\""+prefix+"iat\":"+(iat.getTime()/1000)+""; 
+		jsonInput = jsonInput +
+				iatJson + " , ";
+		
+		String nbfJson = "\""+prefix+"nbf\":"+(nbf.getTime()/1000)+"";
+		jsonInput = jsonInput +
+				nbfJson+ " , ";
+		
+		String expJson = "\""+prefix+"exp\":"+(exp.getTime()/1000)+"";
+		jsonInput = jsonInput +
+				expJson + " ,  ";
+				
+		String jtiS = "\""+prefix+"jti\":\""+jti+"\"";
+		jsonInput = jsonInput +
+				" "+jtiS+"}";
+		
+		//System.out.println("TOKEN ["+jsonInput+"]");
+		
+		return jsonInput;
+	}
+	private static String buildJWT(String clientId) throws Exception {
+		
+		String jsonInput = buildJson(clientId); 
+		
+		//System.out.println("TOKEN ["+jsonInput+"]");
+		
+		Properties props = new Properties();
+		props.put("rs.security.keystore.type","JKS");
+		String password = "openspcoop";
+		props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+		props.put("rs.security.keystore.alias","erogatore");
+		props.put("rs.security.keystore.password",password);
+		props.put("rs.security.key.password",password);
+
+		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+			
+		props.put("rs.security.signature.algorithm","RS256");
+		props.put("rs.security.signature.include.cert","false");
+		props.put("rs.security.signature.include.key.id","true");
+		props.put("rs.security.signature.include.public.key","false");
+		props.put("rs.security.signature.include.cert.sha1","false");
+		props.put("rs.security.signature.include.cert.sha256","false");
+			
+		JsonSignature jsonSignature = new JsonSignature(props, options);
+		String token = jsonSignature.sign(jsonInput);
+		//System.out.println(token);
+			
+		return token;		
 		
 	}
 }

@@ -2205,7 +2205,7 @@ public class RicezioneContenutiApplicativi {
 						InformazioniToken informazioniTokenNormalizzate = null;
 						if(listaEsiti!=null && listaEsiti.size()>0) {
 							informazioniTokenNormalizzate = GestoreToken.normalizeInformazioniToken(listaEsiti);
-							informazioniTokenNormalizzate.setValid(true);
+							informazioniTokenNormalizzate.setValid(false);
 						}
 						if(informazioniTokenNormalizzate!=null) {
 							pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE, informazioniTokenNormalizzate);

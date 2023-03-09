@@ -1161,6 +1161,13 @@ public class GestoreToken {
 				else {
 					esitoGestioneToken.setDetails("Token non valido");	
 				}
+    			
+    			// comunque lo aggiungo per essere consultabile nei casi di errore
+    			if(OpenSPCoop2Properties.getInstance().isGestioneToken_saveTokenInfo_validationFailed()) {
+    				informazioniToken = new InformazioniToken(esitoGestioneToken.getDetails(), SorgenteInformazioniToken.JWT, token);
+    				esitoGestioneToken.setInformazioniToken(informazioniToken);
+    			}
+    			
     			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
     				esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));   			
@@ -1360,6 +1367,13 @@ public class GestoreToken {
 				else {
 					esitoGestioneToken.setDetails("Token non valido");	
 				}
+    			
+    			// comunque lo aggiungo per essere consultabile nei casi di errore se una connessione http è terminata
+    			if(OpenSPCoop2Properties.getInstance().isGestioneToken_saveSourceTokenInfo() && httpResponseCode!=null) {
+    				informazioniToken = new InformazioniToken(esitoGestioneToken.getDetails(), httpResponseCode, risposta, SorgenteInformazioniToken.INTROSPECTION, token);
+    				esitoGestioneToken.setInformazioniToken(informazioniToken);
+    			}
+    			
     			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
     				esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));   			
@@ -1558,6 +1572,13 @@ public class GestoreToken {
 				else {
 					esitoGestioneToken.setDetails("Token non valido");	
 				}
+    			
+    			// comunque lo aggiungo per essere consultabile nei casi di errore se una connessione http è terminata
+    			if(OpenSPCoop2Properties.getInstance().isGestioneToken_saveSourceTokenInfo() && httpResponseCode!=null) {
+	    			informazioniToken = new InformazioniToken(esitoGestioneToken.getDetails(), httpResponseCode, risposta, SorgenteInformazioniToken.USER_INFO, token);
+	    			esitoGestioneToken.setInformazioniToken(informazioniToken);
+    			}
+    			
     			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
     				esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));   			
@@ -3301,7 +3322,22 @@ public class GestoreToken {
 				}
 				else {
 					esitoNegoziazioneToken.setDetails("AccessToken non recuperabile");	
-				} 	
+				} 
+    			
+    			// comunque lo aggiungo per essere consultabile nei casi di errore
+    			if(OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_saveTokenInfo_retrieveFailed()) {
+    				if(informazioniToken!=null) {
+		    			if(httpResponseCode!=null) {
+		    				informazioniToken.setHttpResponseCode(httpResponseCode+"");
+		    			}
+		    			informazioniToken.setErrorDetails(esitoNegoziazioneToken.getDetails());
+    				}
+    				else {
+    					informazioniToken = new InformazioniNegoziazioneToken(datiRichiesta,
+    							esitoNegoziazioneToken.getDetails(), httpResponseCode, risposta);
+    				}
+    				esitoNegoziazioneToken.setInformazioniNegoziazioneToken(informazioniToken); 
+    			}
     		}
     		
 		}catch(Exception e){

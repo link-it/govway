@@ -1249,6 +1249,12 @@ public class NegoziazioneTest extends ConfigLoader {
 			long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
 			verifyOk(response, 503, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
 			
+			if(tokenInfoCheck==null || tokenInfoCheck.length==0) {
+				// una registrazione avviene comunque
+				tokenInfoCheck = new String[1];
+				tokenInfoCheck[0] = "\"valid\":false";
+			}
+			
 			DBVerifier.verify(idTransazione, esitoExpected, diagnostico, tokenInfoCheck);
 			
 		}

@@ -97,6 +97,23 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 		}
 	}
 	
+	public InformazioniNegoziazioneToken(InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta,
+			String errorDetails, Integer httpResponseCode, byte[] rawResponse) throws Exception {
+		
+		this.claims = null;
+		
+		this.errorDetails = errorDetails;
+		if(httpResponseCode!=null) {
+			this.httpResponseCode = httpResponseCode+"";
+		}
+		if(rawResponse!=null) {
+			this.rawResponse = new String(rawResponse);
+		}
+		
+		this.request = datiRichiesta;
+		this.valid = false;
+	}
+	
 		
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 	
@@ -142,6 +159,12 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	
 	// RawResponse
 	private String rawResponse;
+	
+	// HttpCode (nel caso di errori)
+	private String httpResponseCode;
+	
+	// Failed
+	private String errorDetails;
 		
 	
 	public TipoInformazioni getType() {
@@ -239,4 +262,17 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 		}
 	}
 	
+	public String getHttpResponseCode() {
+		return this.httpResponseCode;
+	}
+	public void setHttpResponseCode(String httpResponseCode) {
+		this.httpResponseCode = httpResponseCode;
+	}
+	
+	public String getErrorDetails() {
+		return this.errorDetails;
+	}
+	public void setErrorDetails(String errorDetails) {
+		this.errorDetails = errorDetails;
+	}
 }

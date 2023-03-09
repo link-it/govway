@@ -96,6 +96,24 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			this.userInfo = new InformazioniTokenUserInfo(this, tokenParser.getUserInfoParser());
 		}
 	}
+	
+	public InformazioniToken(String errorDetails, SorgenteInformazioniToken sourceType, String token) throws Exception {
+		this(errorDetails,null,null,sourceType, token);
+	}
+	public InformazioniToken(String errorDetails, Integer httpResponseCode, byte[] rawResponse, SorgenteInformazioniToken sourceType, String token) throws Exception {
+		this.valid = false;
+		this.token = token;
+		this.claims = null;
+		this.sourceType = sourceType;
+		if(httpResponseCode!=null) {
+			this.httpResponseCode = httpResponseCode+"";
+		}
+		if(rawResponse!=null) {
+			this.rawResponse = new String(rawResponse);
+		}
+		this.errorDetails = errorDetails;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public InformazioniToken(boolean saveSourceTokenInfo, InformazioniToken ... informazioniTokens ) throws Exception {
 		if(informazioniTokens!=null && informazioniTokens.length>0) {
@@ -299,6 +317,15 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	// RawResponse
 	private String rawResponse;
 	
+	// Token (nel caso di errori)
+	private String token;
+	
+	// HttpCode (nel caso di errori)
+	private String httpResponseCode;
+	
+	// Failed
+	private String errorDetails;
+	
 	// SorgenteInformazioniToken
 	private SorgenteInformazioniToken sourceType;
 	
@@ -432,6 +459,27 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			
 	public String getRawResponse() {
 		return this.rawResponse;
+	}
+	
+	public String getToken() {
+		return this.token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	public String getHttpResponseCode() {
+		return this.httpResponseCode;
+	}
+	public void setHttpResponseCode(String httpResponseCode) {
+		this.httpResponseCode = httpResponseCode;
+	}
+	
+	public String getErrorDetails() {
+		return this.errorDetails;
+	}
+	public void setErrorDetails(String errorDetails) {
+		this.errorDetails = errorDetails;
 	}
 	
 	public SorgenteInformazioniToken getSourceType() {

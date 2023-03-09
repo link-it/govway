@@ -91,7 +91,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Risposta del servizio di UserInfo non valida: Connessione terminata con errore (codice trasporto: 500)",
-				null);
+				Utilities.getMapExpectedTokenInfoInvalid());
 	}
 	
 	

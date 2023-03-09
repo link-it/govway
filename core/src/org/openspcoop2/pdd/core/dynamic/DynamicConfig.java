@@ -317,15 +317,112 @@ public class DynamicConfig {
 	
 	// ricerche
 	
+	
+	// ** applicativo client **
+	
 	public String apiSearchByClientApplication(String pNameParam) throws DynamicException {
 		
 		IDServizioApplicativo clientApplicationId = getClientApplicationId();
-		Map<String, String> mapConfig = getMapConfig();
 		
 		// 1. Cerco nell'api con nome '<clientOrganizationName>.<clientApplicationName>.<pName>'
-		if(clientApplicationId!=null && clientApplicationId.getNome()!=null && 
-				clientApplicationId.getIdSoggettoProprietario()!=null && clientApplicationId.getIdSoggettoProprietario().getNome()!=null) {
-			String pName = clientApplicationId.getIdSoggettoProprietario().getNome()+"."+clientApplicationId.getNome()+"."+pNameParam;
+		// 2. Cerco nella fruizione con nome '<clientApplicationName>.<pName>'
+		// 3. Cerco nella fruizione con nome '<clientOrganizationName>.<pName>'
+		// 4. Proprietà di default
+		
+		return apiSearchByClientApplication(pNameParam, clientApplicationId);
+	}
+	
+	public String clientApplicationSearch(String pNameParam) throws DynamicException {
+		
+		Map<String, String> mapClientApplicationConfig = getMapClientApplicationConfig();
+		
+		// 1. Cerco nell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
+		// 2. Cerco nell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 3. Cerco nell'applicativo con nome '<nomeErogatore>.<pName>'
+		// 4. Proprietà di default <pName>
+		
+		return searchByAPI(pNameParam, mapClientApplicationConfig);
+	}
+	
+	public String clientOrganizationSearch(String pNameParam) throws DynamicException {
+		
+		Map<String, String> mapClientOrganizationConfig = getMapClientOrganizationConfig();
+		
+		// 1. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
+		// 2. Cerco nel soggetto dell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 3. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<pName>'
+		// 4. Proprietà di default <pName>
+		
+		return searchByAPI(pNameParam, mapClientOrganizationConfig);
+		
+	}
+	
+	
+	// ** applicativo token client **
+	
+	public String apiSearchByTokenClientApplication(String pNameParam) throws DynamicException {
+		
+		IDServizioApplicativo tokenClientApplicationId = getTokenClientApplicationId();
+		
+		// 1. Cerco nell'api con nome '<tokenClientOrganizationName>.<tokenClientApplicationName>.<pName>'
+		// 2. Cerco nella fruizione con nome '<tokenClientApplicationName>.<pName>'
+		// 3. Cerco nella fruizione con nome '<tokenClientOrganizationName>.<pName>'
+		// 4. Proprietà di default
+		
+		return apiSearchByClientApplication(pNameParam, tokenClientApplicationId);
+	}
+	
+	public String tokenClientApplicationSearch(String pNameParam) throws DynamicException {
+		
+		Map<String, String> mapTokenClientApplicationConfig = getMapTokenClientApplicationConfig();
+		
+		// 1. Cerco nell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
+		// 2. Cerco nell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 3. Cerco nell'applicativo con nome '<nomeErogatore>.<pName>'
+		// 4. Proprietà di default <pName>
+		
+		return searchByAPI(pNameParam, mapTokenClientApplicationConfig);
+	}
+	
+	public String tokenClientOrganizationSearch(String pNameParam) throws DynamicException {
+		
+		Map<String, String> mapTokenClientOrganizationConfig = getMapTokenClientOrganizationConfig();
+		
+		// 1. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
+		// 2. Cerco nel soggetto dell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 3. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<pName>'
+		// 4. Proprietà di default <pName>
+		
+		return searchByAPI(pNameParam, mapTokenClientOrganizationConfig);
+		
+	}
+	
+	
+	// ** provider **
+	
+	public String providerSearch(String pNameParam) throws DynamicException {
+		
+		Map<String, String> mapProviderOrganizationConfig = getMapProviderOrganizationConfig();
+		
+		// 1. Cerco nel soggetto erogatore con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 2. Proprietà di default <pName>
+		
+		return searchByAPIwithoutProvider(pNameParam, mapProviderOrganizationConfig);
+		
+	}
+	
+	
+	
+	// Utility
+	
+	private String apiSearchByClientApplication(String pNameParam, IDServizioApplicativo idSA) throws DynamicException {
+		
+		Map<String, String> mapConfig = getMapConfig();
+		
+		// 1. Cerco nell'api con nome '<clientOrganizationName>.<tokenClientApplicationName>.<pName>'
+		if(idSA!=null && idSA.getNome()!=null && 
+				idSA.getIdSoggettoProprietario()!=null && idSA.getIdSoggettoProprietario().getNome()!=null) {
+			String pName = idSA.getIdSoggettoProprietario().getNome()+"."+idSA.getNome()+"."+pNameParam;
 			String v = this.getValue(mapConfig, pName);
 			if(v!=null) {
 				return v;
@@ -333,8 +430,8 @@ public class DynamicConfig {
 		}
 		
 		// 2. Cerco nella fruizione con nome '<clientApplicationName>.<pName>'
-		if(clientApplicationId!=null && clientApplicationId.getNome()!=null) {
-			String pName = clientApplicationId.getNome()+"."+pNameParam;
+		if(idSA!=null && idSA.getNome()!=null) {
+			String pName = idSA.getNome()+"."+pNameParam;
 			String v = this.getValue(mapConfig, pName);
 			if(v!=null) {
 				return v;
@@ -342,119 +439,72 @@ public class DynamicConfig {
 		}
 		
 		// 3. Cerco nella fruizione con nome '<clientOrganizationName>.<pName>'
-		if(clientApplicationId!=null && 
-				clientApplicationId.getIdSoggettoProprietario()!=null && clientApplicationId.getIdSoggettoProprietario().getNome()!=null) {
-			String pName = clientApplicationId.getIdSoggettoProprietario().getNome()+"."+pNameParam;
+		if(idSA!=null && 
+				idSA.getIdSoggettoProprietario()!=null && idSA.getIdSoggettoProprietario().getNome()!=null) {
+			String pName = idSA.getIdSoggettoProprietario().getNome()+"."+pNameParam;
 			String v = this.getValue(mapConfig, pName);
 			if(v!=null) {
 				return v;
 			}
 		}
 				
-		// 4. Proprietà di default
+		// 4. Proprietà di default <pName>
 		return this.getValue(mapConfig, pNameParam);
 	}
 	
-	public String clientApplicationSearch(String pNameParam) throws DynamicException {
+	private String searchByAPI(String pNameParam, Map<String, String> map) throws DynamicException {
 		
 		IDServizio configId = this.getConfigId();
-		Map<String, String> mapClientApplicationConfig = getMapClientApplicationConfig();
 		
-		// 1. Cerco nell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.purposeId'
+		// 1. Cerco con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		if(configId!=null && configId.getNome()!=null && configId.getVersione()!=null && 
 				configId.getSoggettoErogatore()!=null && configId.getSoggettoErogatore().getNome()!=null) {
 			String pName = configId.getSoggettoErogatore().getNome() +"." + configId.getNome() + ".v"+configId.getVersione()+"."+pNameParam;
-			String v = this.getValue(mapClientApplicationConfig, pName);
+			String v = this.getValue(map, pName);
 			if(v!=null) {
 				return v;
 			}
 		}
 		
-		// 2. Cerco nell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.purposeId'
+		// 2. Cerco con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
 		if(configId!=null && configId.getNome()!=null && configId.getVersione()!=null) {
 			String pName = configId.getNome() + ".v"+configId.getVersione()+"."+pNameParam;
-			String v = this.getValue(mapClientApplicationConfig, pName);
+			String v = this.getValue(map, pName);
 			if(v!=null) {
 				return v;
 			}
 		}
 		
-		// 3. Proprietà di default
-		return this.getValue(mapClientApplicationConfig, pNameParam);
+		// 3. Cerco con nome '<nomeErogatore>.<pName>'
+		if(configId!=null && 
+				configId.getSoggettoErogatore()!=null && configId.getSoggettoErogatore().getNome()!=null) {
+			String pName = configId.getSoggettoErogatore().getNome() +"." + pNameParam;
+			String v = this.getValue(map, pName);
+			if(v!=null) {
+				return v;
+			}
+		}
+		
+		// 4. Proprietà di default <pName>
+		return this.getValue(map, pNameParam);
 	}
 	
-	
-	
-	
-	
-	public String apiSearchByTokenClientApplication(String pNameParam) throws DynamicException {
-		
-		IDServizioApplicativo tokenClientApplicationId = getTokenClientApplicationId();
-		Map<String, String> mapConfig = getMapConfig();
-		
-		// 1. Cerco nell'api con nome '<tokenClientOrganizationName>.<tokenClientApplicationName>.<pName>'
-		if(tokenClientApplicationId!=null && tokenClientApplicationId.getNome()!=null && 
-				tokenClientApplicationId.getIdSoggettoProprietario()!=null && tokenClientApplicationId.getIdSoggettoProprietario().getNome()!=null) {
-			String pName = tokenClientApplicationId.getIdSoggettoProprietario().getNome()+"."+tokenClientApplicationId.getNome()+"."+pNameParam;
-			String v = this.getValue(mapConfig, pName);
-			if(v!=null) {
-				return v;
-			}
-		}
-		
-		// 2. Cerco nella fruizione con nome '<tokenClientApplicationName>.<pName>'
-		if(tokenClientApplicationId!=null && tokenClientApplicationId.getNome()!=null) {
-			String pName = tokenClientApplicationId.getNome()+"."+pNameParam;
-			String v = this.getValue(mapConfig, pName);
-			if(v!=null) {
-				return v;
-			}
-		}
-		
-		// 3. Cerco nella fruizione con nome '<tokenClientOrganizationName>.<pName>'
-		if(tokenClientApplicationId!=null && 
-				tokenClientApplicationId.getIdSoggettoProprietario()!=null && tokenClientApplicationId.getIdSoggettoProprietario().getNome()!=null) {
-			String pName = tokenClientApplicationId.getIdSoggettoProprietario().getNome()+"."+pNameParam;
-			String v = this.getValue(mapConfig, pName);
-			if(v!=null) {
-				return v;
-			}
-		}
-				
-		// 4. Proprietà di default
-		return this.getValue(mapConfig, pNameParam);
-	}
-	
-	public String tokenClientApplicationSearch(String pNameParam) throws DynamicException {
+	private String searchByAPIwithoutProvider(String pNameParam, Map<String, String> map) throws DynamicException {
 		
 		IDServizio configId = this.getConfigId();
-		Map<String, String> mapTokenClientApplicationConfig = getMapTokenClientApplicationConfig();
 		
-		// 1. Cerco nell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.purposeId'
-		if(configId!=null && configId.getNome()!=null && configId.getVersione()!=null && 
-				configId.getSoggettoErogatore()!=null && configId.getSoggettoErogatore().getNome()!=null) {
-			String pName = configId.getSoggettoErogatore().getNome() +"." + configId.getNome() + ".v"+configId.getVersione()+"."+pNameParam;
-			String v = this.getValue(mapTokenClientApplicationConfig, pName);
-			if(v!=null) {
-				return v;
-			}
-		}
-		
-		// 2. Cerco nell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.purposeId'
+		// 1. Cerco con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
 		if(configId!=null && configId.getNome()!=null && configId.getVersione()!=null) {
 			String pName = configId.getNome() + ".v"+configId.getVersione()+"."+pNameParam;
-			String v = this.getValue(mapTokenClientApplicationConfig, pName);
+			String v = this.getValue(map, pName);
 			if(v!=null) {
 				return v;
 			}
 		}
 		
-		// 3. Proprietà di default
-		return this.getValue(mapTokenClientApplicationConfig, pNameParam);
+		// 2. Proprietà di default <pName>
+		return this.getValue(map, pNameParam);
 	}
-	
-	
-	
 	
 	private String getValue(Map<String, String> map, String pName) {
 		if(map!=null && !map.isEmpty()) {

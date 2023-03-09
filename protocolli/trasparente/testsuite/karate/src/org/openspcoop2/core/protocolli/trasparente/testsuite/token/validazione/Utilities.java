@@ -53,6 +53,12 @@ import net.minidev.json.JSONObject;
 */
 public class Utilities extends ConfigLoader {
 
+	public static List<String> getMapExpectedTokenInfoInvalid() {
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		mapExpectedTokenInfo.add("\"valid\":false");
+		return mapExpectedTokenInfo;
+	}
+	
 	public static HttpResponse _test(Logger logCore, String api, String operazione,
 			Map<String, String> headers, Map<String, String> queryParameters, String msgError,
 			List<String> mapExpectedTokenInfo) throws Exception {

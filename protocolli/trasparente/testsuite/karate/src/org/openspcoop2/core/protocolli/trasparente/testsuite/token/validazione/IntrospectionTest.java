@@ -89,7 +89,7 @@ public class IntrospectionTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  null,
 				"Risposta del servizio di Introspection non valida: Connessione terminata con errore (codice trasporto: 500)",
-				null);
+				Utilities.getMapExpectedTokenInfoInvalid());
 	}
 		
 	
