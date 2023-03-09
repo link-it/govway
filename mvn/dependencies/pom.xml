@@ -105,6 +105,7 @@
 								<suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2021-37533.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-45688.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-40705.xml</suppressionFile>
 							</suppressionFiles>
 						</configuration>
 						<goals>
