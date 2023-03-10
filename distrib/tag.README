@@ -47,6 +47,7 @@ Per creare una tag version:
     NOTA!!!!! Dentro il file publiccode.yml è presente anche una release date da aggiornare!!!!!!
 
 14. Verificare che con gli stresstest tramite benchmark si ottengano risultati simili o migliori della precedente versione.
+    NOTA: farlo girare anche in locale per verificare che vi sia un tracciamento corretto (dati ricostruiti)
 14b. Verifica anche che il seguente test base passi con successo:
      mvn test -Dcompile=none -Dowasp=none -Dpackage=none -Dtestsuite.pdd.core=none -Dtestsuite.utils.group=utils.OpenAPI-Validator-BIG
      mvn test -Dcompile=none -Dowasp=none -Dpackage=none -Dtestsuite.pdd.core=none -Dtestsuite.utils.group=utils.Cache-MisurazioneTempi

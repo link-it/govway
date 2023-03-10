@@ -46,7 +46,9 @@ function usage() {
 	echo -e "		-t: Durata in secondi                         (Time duration)\n"
 	echo -e "		Scenari di test:\n"
 	echo -e "		API Gateway REST = [ $elencoTestTrasparenteRest ]\n"
+	echo -e "		API Gateway REST (fruizioni) = [ $elencoTestTrasparenteOutRest ]\n"
 	echo -e "		API Gateway SOAP = [ $elencoTestTrasparenteSoap ]\n"
+	echo -e "		API Gateway SOAP (fruizioni) = [ $elencoTestTrasparenteOutSoap ]\n"
 	echo -e "		ModI REST = [ $elencoTestModiRest ]\n"
 	echo -e "		ModI SOAP = [ $elencoTestModiSoap ]\n"
 }
@@ -55,18 +57,20 @@ function usage() {
 
 declare -A tests
 . ./conf/trasparente-rest.sh
+. ./conf/trasparente-out-rest.sh
 . ./conf/trasparente-soap.sh
+. ./conf/trasparente-out-soap.sh
 . ./conf/modi-rest.sh
 . ./conf/modi-soap.sh
 
-elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteSoap $elencoTestModiRest $elencoTestModiSoap"
+elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteOutRest $elencoTestTrasparenteSoap $elencoTestTrasparenteOutSoap $elencoTestModiRest $elencoTestModiSoap"
 
 function build_jmx_command() {
-	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -Jdebug=${debug} -JnodoRunProtocol=${nodoRunProtocol} -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JforwardedIP=${forwardedIP} -JconnectionTimeout=${connectionTimeout} -JreadTimeout=${readTimeout} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JcontentType=\"${contentType}\" -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloMessaggi=${profiloMessaggi} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
+	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -Jdebug=${debug} -JnodoRunProtocol=${nodoRunProtocol} -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JforwardedIP=${forwardedIP} -JconnectionTimeout=${connectionTimeout} -JreadTimeout=${readTimeout} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JcontentType=\"${contentType}\" -JtipoTest=${tipoTest} -Jbound=${bound} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloMessaggi=${profiloMessaggi} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
 }
 function build_jmx_command_single_test() {
         # uso 10 thread e duro 5 secondi per essere sicuro che con e senza cache non vi siano differenze
-	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -Jdebug=${debug} -JnodoRunProtocol=${nodoRunProtocol} -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JforwardedIP=${forwardedIP} -JconnectionTimeout=${connectionTimeout} -JreadTimeout=${readTimeout} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=10 -Jduration=5 -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JcontentType=\"${contentType}\" -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloMessaggi=${profiloMessaggi} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
+	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -Jdebug=${debug} -JnodoRunProtocol=${nodoRunProtocol} -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JforwardedIP=${forwardedIP} -JconnectionTimeout=${connectionTimeout} -JreadTimeout=${readTimeout} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=10 -Jduration=5 -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JcontentType=\"${contentType}\" -JtipoTest=${tipoTest} -Jbound=${bound} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloMessaggi=${profiloMessaggi} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
 }
 
 function clean_db() {
