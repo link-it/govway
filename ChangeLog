@@ -1,5 +1,11 @@
 2023-03-10  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug
+	L'accesso alle maschere di configurazione delle proprietà di sistema, delle regole di proxy pass, delle regole di response caching e dei canali produce un errore inatteso. 
+
+2023-03-10  Andrea Poli <apoli@link.it>
+
 	* Rilasciata versione 3.3.11
 
 2023-03-09  Andrea Poli <apoli@link.it>

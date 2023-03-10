@@ -419,6 +419,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.gestioneErroreDriver = new DriverConfigurazioneDB_gestioneErroreDriver(this);
 		this.genericPropertiesDriver = new DriverConfigurazioneDB_genericPropertiesDriver(this);
 		this.configDriver = new DriverConfigurazioneDB_configDriver(this);
+		this.configSearchDriver = new DriverConfigurazioneDB_configSearchDriver(this);
 		
 		this.pluginsDriver = new DriverConfigurazioneDB_pluginsDriver(this);
 		
