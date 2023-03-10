@@ -121,11 +121,7 @@ public class AllarmiSearchForm extends BaseSearchForm
 		if(StringUtils.isEmpty(statoSelezionato) || "--".equals(statoSelezionato))
 			this.statoSelezionato = null;
 	}
-	
-	public Object cloneSearchForm() throws CloneNotSupportedException {
-		return super.clone();
-	}
-	
+		
 	@Override
 	protected String ripulisciValori(){
 		this.initSearchListener(null);

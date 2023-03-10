@@ -382,7 +382,8 @@ public class AllarmiService implements IAllarmiService {
 		Long retValue = 0L;
 		try {
 
-			AllarmiSearchForm search = (AllarmiSearchForm) this.searchForm.cloneSearchForm();
+			//AllarmiSearchForm search = (AllarmiSearchForm) this.searchForm.cloneSearchForm();
+			AllarmiSearchForm search = new AllarmiSearchForm();
 
 			if(Utility.isAmministratore()) { // amministratore vede tutti gli allarmi, indipendentemente dai filtri di ricerca
 				search.ripulisci(); 
