@@ -506,9 +506,6 @@ if (
 
 </SCRIPT>
 <!--Funzioni di utilita -->
-<script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.tabs.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" nonce="<%= randomNonce %>">
 function togglePanelListaRicerca(panelListaRicercaOpen){
 	if(panelListaRicercaOpen) {
@@ -516,7 +513,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	$("#searchForm").addClass('searchFormOn');
     	
     	if($( "#iconaPanelListaSpan" ).length > 0){
-    		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
+    		$('#iconaPanelListaSpan').prop('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
     	}
     	
     	// reinit select del filtro
@@ -526,7 +523,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	$("#searchForm").addClass('searchFormOff');
     	
     	if($( "#iconaPanelListaSpan" ).length > 0){
-    		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_VISUALIZZA_FILTRI_RICERCA %>');
+    		$('#iconaPanelListaSpan').prop('title', '<%=Costanti.TOOLTIP_VISUALIZZA_FILTRI_RICERCA %>');
     	}
     }
 }
@@ -536,16 +533,16 @@ function inizializzaSelectFiltro(){
 		// elimino eventuali plugin gia' applicati
 		$('select[id^=filterValue_]').each(function() {
 			var wrapper = $( this ).parent();
-			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
+			if(wrapper.prop('id').indexOf('_wrapper') > -1) {
 				$( this ).appendTo($( this ).parent().parent());
 				wrapper.remove();
 				$( this ).css('width','');
 				$( this ).css('height','');
 			}
 			
-			var checkID = $( this ).attr('id') + '_hidden_chk';
+			var checkID = $( this ).prop('id') + '_hidden_chk';
 			if($( '#' + checkID ).length > 0) {
-				var val = $( '#' + checkID ).attr('value');
+				var val = $( '#' + checkID ).prop('value');
 				if(val && val == 'true'){
 					$( this ).searchable({disableInput : false});	
 				} else {
@@ -571,7 +568,6 @@ function inizializzaSelectFiltro(){
 	 });
 </script>
 <script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
 <tbody>
 	<!-- filtri di ricerca -->
@@ -1076,7 +1072,7 @@ function inizializzaSelectFiltro(){
 											
 											$('#tabsNav').width('');
 											
-											var larghezzaUlOriginale = $('#tabsNav').width();
+											var larghezzaUlOriginale = $('#tabsNav').width() +1;
 											
 											$('#tabsNav').width('300px');
 											
@@ -1092,7 +1088,7 @@ function inizializzaSelectFiltro(){
 												}
 												
 												var larghezzaNextTab = 0;
-												if(idTabSelezionato == $('#tabs').tabs('length') -1){
+												if(idTabSelezionato == $('#tabs').tabs('instance').tabs.length -1){
 													$('#nextTab').hide();
 												} else {
 													$('#nextTab').show();
@@ -1191,39 +1187,76 @@ function inizializzaSelectFiltro(){
 									    }
 									    										
 										var tabSelezionato = <%=tabSelezionato %>;
+										
+										function initTabButtons (tabSelezionato) {
+											var $tabs = $('#tabs').tabs();
+											
+											var htmlDiv = '<div id="tabsNavDiv" class="tabsNavDiv"></div>';
+											
+											var htmlNext = "<a id='nextTab' href='#' class='next-tab mover' rel='next'><i class=\"material-icons md-40 line-height-06\">chevron_right</i></a>";
+											var htmlPrev = "<a id='prevTab' href='#' class='prev-tab mover' rel='prev'><i class=\"material-icons md-40 line-height-06\">chevron_left</i></a>";
+											
+											// 1. attacco il div contentitore
+											$tabs.prepend(htmlDiv);
+											
+											// 2. sposto ul
+											$("#tabsNav").detach().appendTo("#tabsNavDiv");
+											
+											// 3. aggiungo la freccia di sx
+											$('#tabsNavDiv').prepend(htmlPrev);
+											
+											// 4. aggiungo la freccia di dx
+											$('#tabsNavDiv').append(htmlNext);
+									
+											$('.next-tab, .prev-tab').click(function() { 
+													var idTabSelezionato = $("#tabs").tabs('option', 'active');
+													var destinazione = $(this).prop("rel");
+													
+													if(destinazione == 'prev') {
+														$tabs.tabs('option', 'active', idTabSelezionato - 1);
+													} else { 
+														$tabs.tabs('option', 'active', idTabSelezionato + 1);
+													}
+										           
+										           return false;
+										       });
+
+											$("li[id^='li-tabs']").click(function() { 
+												$(this).children('a').click();
+											});
+										}
 									
 										$(document).ready(function(){
 											$( "#tabs" ).tabs(
 												{
 													active: tabSelezionato,
-													selected: tabSelezionato,
-												  	select: function( event, ui ) {
-												  		checkRemoveButton(ui.index);
-												  		setUlWidth(ui.index);
+													activate: function( event, ui ) {
+														var newIndex = ui.newTab.index();
+														
+												  		checkRemoveButton(newIndex);
+												  		setUlWidth(newIndex);
 												  		
-// 												  		console.log('Tab Selezionato: ' + ui.index);
+// 												  		console.log('Tab Selezionato: ' + newIndex);
 // 												  		console.log('OldTab Selezionato: ' + tabSelezionato);
 												  		
-												  		var movimento = tabSelezionato - ui.index;
+												  		var movimento = tabSelezionato - newIndex;
 												  		
 // 												  		console.log('Movimento: ' + (movimento > 0 ? 'SX' : movimento < 0 ? 'DX' : 'Nessuno'));
 												  		
 												  		if(movimento > 0) { // >>SX
-												  			spostaTabsVersoDx(ui.index);
+												  			spostaTabsVersoDx(newIndex);
 												  		} else if(movimento < 0) { // <<DX
-												  			spostaTabsVersoSx(ui.index);
+												  			spostaTabsVersoSx(newIndex);
 												  		} else {
 												  			// stesso tab
 												  		} 
-												  		tabSelezionato = ui.index;
+												  		tabSelezionato = newIndex;
 													  }
 													}		
 											);
-											$( ".ui-state-default.ui-corner-top.ui-tabs-selected.ui-state-active" ).removeClass('ui-state-default');
-											
 											
 											$("#rem_btn_2").click(function(){
-												var idTabSelezionato = $("#tabs").tabs('option', 'selected');
+												var idTabSelezionato = $("#tabs").tabs('option', 'active');
 												var elemToRemove = $("#hiddenIdRemove-" + idTabSelezionato).val();
 												  
 												  if(elemToRemove) {	
@@ -1236,45 +1269,7 @@ function inizializzaSelectFiltro(){
 													}
 											});
 											
-											$(function() {
-
-												var $tabs = $('#tabs').tabs();
-												
-												var htmlDiv = '<div id="tabsNavDiv" class="tabsNavDiv"></div>';
-												
-												var htmlNext = "<a id='nextTab' href='#' class='next-tab mover' rel='next'><i class=\"material-icons md-40 line-height-06\">chevron_right</i></a>";
-												var htmlPrev = "<a id='prevTab' href='#' class='prev-tab mover' rel='prev'><i class=\"material-icons md-40 line-height-06\">chevron_left</i></a>";
-												
-												// 1. attacco il div contentitore
-												$tabs.prepend(htmlDiv);
-												
-												// 2. sposto ul
-												$("#tabsNav").detach().appendTo("#tabsNavDiv");
-												
-												// 3. aggiungo la freccia di sx
-												$('#tabsNavDiv').prepend(htmlPrev);
-												
-												// 4. aggiungo la freccia di dx
-												$('#tabsNavDiv').append(htmlNext);
-										
-												$('.next-tab, .prev-tab').click(function() { 
-														var idTabSelezionato = $("#tabs").tabs('option', 'selected');
-														var destinazione = $(this).attr("rel");
-														
-														if(destinazione == 'prev') {
-															$tabs.tabs('select', idTabSelezionato - 1);
-														} else { 
-															$tabs.tabs('select', idTabSelezionato + 1);
-														}
-											           
-											           return false;
-											       });
-
-												$("li[id^='li-tabs']").click(function() { 
-													$(this).children('a').click();
-												});
-											});
-											
+											initTabButtons(tabSelezionato);
 											checkRemoveButton(tabSelezionato);
 											setUlWidth(tabSelezionato);
 										});

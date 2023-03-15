@@ -54,7 +54,7 @@ $(document).ready(function(){
 				
 	$("a").mousedown(function(e) {
 		
-		var urlDest = $(this).attr('href');
+		var urlDest = $(this).prop('href');
 		
 	    if(e.which == 3) {
 	    	// console.log("right click: " + urlDest);
@@ -67,14 +67,14 @@ $(document).ready(function(){
 	    	if(urlDest) {
 		    	// console.log("left click: " + urlDest);
 		    	
-		    	var targetDest = $(this).attr('target');
+		    	var targetDest = $(this).prop('target');
 		    	
 		    	if(targetDest && targetDest == '_blank') {
 		    		return;
 		    	}
 		    	
 		    	var newUrlDest = addTabIdParam(urlDest);
-		    	$(this).attr('href',newUrlDest);
+		    	$(this).prop('href',newUrlDest);
 	    	} else {
 	    		// console.log("href non trovato per l'elemento di tipo: " + $(this));
 	    	}

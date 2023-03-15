@@ -3811,7 +3811,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						DataElement de = new DataElement();
 						de.setSize(200);
-						de.setIdToRemove(paAssociata.getNome());
+						if(!mapping.isDefault()) {
+							de.setIdToRemove(paAssociata.getNome());
+						}
 						
 						if(visualizzazioneTabs) {
 							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELENCO_AZIONI_GRUPPI_PREFIX+labelAzioni);
@@ -5598,7 +5600,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						DataElement de = new DataElement();
 						de.setSize(200);
-						de.setIdToRemove(pdAssociata.getNome());
+						if(!mapping.isDefault()) {
+							de.setIdToRemove(pdAssociata.getNome());
+						}
 						
 						if(visualizzazioneTabs) {
 					        de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELENCO_AZIONI_GRUPPI_PREFIX+labelAzioni);

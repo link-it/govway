@@ -2,8 +2,7 @@
  * Funzioni di utilita' utilizzate dalle view
  * 
  * @author Stefano Corallo <corallo@link.it>
- */
-
+  */
 
 /*
  * Questo deve essere incluso alla fine di tutte le altre inclusioni di script, nell'header, nella pagina jsp

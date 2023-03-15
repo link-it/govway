@@ -376,7 +376,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		 		};
 		 		
         		$(".spanIconCopyBox").click(function(evt){
-        			var iconCopyBoxId = $(this).parent().attr('id');
+        			var iconCopyBoxId = $(this).parent().prop('id');
         			var idx = iconCopyBoxId.substring(iconCopyBoxId.indexOf("_")+1);
         			// console.log(idx);
         			if(idx) {

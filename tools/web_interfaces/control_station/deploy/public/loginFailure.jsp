@@ -113,7 +113,7 @@ function CheckDati() {
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 <script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 <!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-latest.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-3.6.4.min.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 <script type="text/javascript" nonce="<%= randomNonce %>">
@@ -122,7 +122,7 @@ $(document).ready(function(){
 				
 	$("a").mousedown(function(e) {
 		
-		var urlDest = $(this).attr('href');
+		var urlDest = $(this).prop('href');
 		
 	    if(e.which == 3) {
 	    	// console.log("right click: " + urlDest);
@@ -135,14 +135,14 @@ $(document).ready(function(){
 	    	if(urlDest) {
 		    	// console.log("left click: " + urlDest);
 		    	
-		    	var targetDest = $(this).attr('target');
+		    	var targetDest = $(this).prop('target');
 		    	
 		    	if(targetDest && targetDest == '_blank') {
 		    		return;
 		    	}
 		    	
 		    	var newUrlDest = addTabIdParam(urlDest);
-		    	$(this).attr('href',newUrlDest);
+		    	$(this).prop('href',newUrlDest);
 	    	} else {
 	    		// console.log("href non trovato per l'elemento di tipo: " + $(this));
 	    	}
@@ -155,7 +155,7 @@ $(document).ready(function(){
 });
 </script> 
 </head>
-<body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
+<body marginwidth=0 marginheight=0>
 	<table class="bodyWrapper">
 		<tbody>
 			<% if(StringUtils.isNotEmpty(logoImage)){ %>

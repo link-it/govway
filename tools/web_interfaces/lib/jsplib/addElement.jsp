@@ -52,8 +52,16 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 <link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 <link rel="stylesheet" href="css/materialIcons.css" type="text/css">
+<link rel="stylesheet" href="css/ui.core.css" type="text/css">
+<link rel="stylesheet" href="css/ui.theme.css" type="text/css">
+<link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
+<link rel="stylesheet" href="css/ui.slider.css" type="text/css">
+<link rel="stylesheet" href="css/ui.datepicker.css" type="text/css">
+<link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-1.4.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-3.6.4.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-ui-1.13.2.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/ui.datepicker-it.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 <!--Funzioni di utilita -->
@@ -64,22 +72,7 @@ var path = '<%= request.getContextPath()%>';
 </script>
 <script type="text/javascript" src="js/PostBack.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
-<link rel="stylesheet" href="css/ui.datepicker.css" type="text/css">
-<script type="text/javascript" src="js/ui.datepicker.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.datepicker-it.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/jquery.placement.below.js" nonce="<%= randomNonce %>"></script>
-<link rel="stylesheet" href="css/time-picker.css" type="text/css">
-<script type="text/javascript" src="js/jquery.timepicker-table.js" nonce="<%= randomNonce %>"></script>
-<link rel="stylesheet" href="css/ui.core.css" type="text/css">
-<link rel="stylesheet" href="css/ui.theme.css" type="text/css">
-<link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
-<link rel="stylesheet" href="css/ui.slider.css" type="text/css">
-<script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.slider.js" nonce="<%= randomNonce %>"></script>
-<link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
-<script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/jquery-promises.js" nonce="<%= randomNonce %>"></script>
+
 <script type="text/javascript" src="js/typeahead.bundle.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/bootstrap-tagsinput.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
@@ -147,7 +140,7 @@ function CheckDati() {
         	// info
         	if($(".spanIconInfoBox").length>0){
         		$(".spanIconInfoBox").click(function(){
-        			var iconInfoBoxId = $(this).parent().attr('id');
+        			var iconInfoBoxId = $(this).parent().prop('id');
         			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
         			console.log(idx);
         			if(idx) {
@@ -160,7 +153,7 @@ function CheckDati() {
         	
         	if($(".iconInfoBox-cb-info").length>0){
         		$(".iconInfoBox-cb-info").click(function(){
-        			var iconInfoBoxId = $(this).attr('id');
+        			var iconInfoBoxId = $(this).prop('id');
         			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
         			console.log(idx);
         			if(idx) {
@@ -172,8 +165,8 @@ function CheckDati() {
         	}
                 //date time tracciamento
                 //date time diagnostica
-                $(":input[name='datainizio']").datepicker({dateFormat: 'yy-mm-dd'});
-                $(":input[name='datafine']").datepicker({dateFormat: 'yy-mm-dd'});
+                $(":input[name='datainizio']").datepicker({dateFormat: 'yy-mm-dd', showOtherMonths: true, selectOtherMonths: false, showWeek: true, firstDay: 1, changeMonth: true, changeYear: true});
+                $(":input[name='datafine']").datepicker({dateFormat: 'yy-mm-dd', showOtherMonths: true, selectOtherMonths: false, showWeek: true, firstDay: 1, changeMonth: true, changeYear: true});
 
                 showSlider($("select[name*='percentuale']:not([type=hidden])"));
                 
@@ -305,7 +298,7 @@ function CheckDati() {
 	        		// elimino eventuali plugin gia' applicati
 	        		divElem.find("select" ).each(function() {
 	        			var wrapper = $( this ).parent();
-	        			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
+	        			if(wrapper.prop('id').indexOf('_wrapper') > -1) {
 	        				// appendo la select come secondo elemento dopo la label
 	        				var labelProp = $( this ).parent().parent().children().first();
 	        				labelProp.after($( this ));
@@ -314,9 +307,9 @@ function CheckDati() {
 	        				$( this ).css('height','');
 	        			}
 	        			
-	        			var checkID = $( this ).attr('id') + '_hidden_chk';
+	        			var checkID = $( this ).prop('id') + '_hidden_chk';
 	        			if($( '#' + checkID ).length > 0) {
-	        				var val = $( '#' + checkID ).attr('value');
+	        				var val = $( '#' + checkID ).prop('value');
 	        				if(val && val == 'true'){
 	        					$( this ).searchable({disableInput : false});	
 	        				} else {
@@ -334,11 +327,6 @@ function CheckDati() {
 <jsp:include page="/jsp/addElementCustom.jsp" flush="true" />
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
-<script type="text/javascript" nonce="<%= randomNonce %>">
-$(document).ready(function(){
-	focusText(document.form);
-});
-</script>
 </head>
 <body marginwidth=0 marginheight=0>
 <table class="bodyWrapper">

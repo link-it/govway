@@ -328,13 +328,10 @@ public final class UtenteChange extends Action {
 					String webSiteProtocollo = utentiHelper.getWebSiteProtocollo(protocollo);
 					String labelProtocollo = utentiHelper.getLabelProtocollo(protocollo); 
 
-					//					if(sbProtocolli.length() > 0)
-					//						sbProtocolli.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-
 					sbProtocolli.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-					sbProtocolli.append("<li style=\"list-style-type:disc; margin-left:12px;\">");
+					sbProtocolli.append("<li class=\"protocolloItem\">");
 					sbProtocolli.append("<p><i>");
-					String linkSito = "<a href=\""+webSiteProtocollo+"\" target=\"_blank\">"+labelProtocollo+"</a>";
+					String linkSito = "<a href=\""+webSiteProtocollo+"\" target=\"_blank\" rel=\"noopener\">"+labelProtocollo+"</a>";
 					sbProtocolli.append(linkSito);
 					//sbProtocolli.append(""+labelProtocollo+": ");
 					sbProtocolli.append("</i></p>");

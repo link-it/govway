@@ -111,7 +111,7 @@ $(document).ready(function(){
 	    );
 	
 	$('#menuUtente_menu span[class*="item-icon"]').click(function() {
-		var destinazione = $( this ).parent().children('span[class*="label"]').children().attr('href');
+		var destinazione = $( this ).parent().children('span[class*="label"]').children().prop('href');
 		if(destinazione) {
 			// addTabID
 			destinazione = addTabIdParam(destinazione);
@@ -121,7 +121,7 @@ $(document).ready(function(){
 	});
 	
 	$('#menuUtente_menu div[class*="menu-item"]').click(function() {
-		var destinazione = $( this ).children('span[class*="label"]').children().attr('href');
+		var destinazione = $( this ).children('span[class*="label"]').children().prop('href');
 		if(destinazione) {
 			// addTabID
 			destinazione = addTabIdParam(destinazione);
@@ -174,7 +174,7 @@ $(document).ready(function(){
 			    );
 			
 			$('#menuModalita_menu span[class*="item-icon"]').click(function() {
-				var destinazione = $( this ).parent().children('span[class*="label"]').children().attr('href');
+				var destinazione = $( this ).parent().children('span[class*="label"]').children().prop('href');
 				if(destinazione) {
 					// addTabID
 					destinazione = addTabIdParam(destinazione);
@@ -184,7 +184,7 @@ $(document).ready(function(){
 			});
 			
 			$('#menuModalita_menu div[class*="menu-item"]').click(function() {
-				var destinazione = $( this ).children('span[class*="label"]').children().attr('href');
+				var destinazione = $( this ).children('span[class*="label"]').children().prop('href');
 				if(destinazione) {
 					// addTabID
 					destinazione = addTabIdParam(destinazione);
@@ -237,7 +237,7 @@ if(soggettoLinks!= null && soggettoLinks.size() > 0) {
 			    );
 			
 			$('#menuSoggetto_menu span[class*="item-icon"]').click(function() {
-				var destinazione = $( this ).parent().children('span[class*="label"]').children().attr('href');
+				var destinazione = $( this ).parent().children('span[class*="label"]').children().prop('href');
 				if(destinazione) {
 					// addTabID
 					destinazione = addTabIdParam(destinazione);
@@ -247,7 +247,7 @@ if(soggettoLinks!= null && soggettoLinks.size() > 0) {
 			});
 			
 			$('#menuSoggetto_menu div[class*="menu-item"]').click(function() {
-				var destinazione = $( this ).children('span[class*="label"]').children().attr('href');
+				var destinazione = $( this ).children('span[class*="label"]').children().prop('href');
 				if(destinazione) {
 					// addTabID
 					destinazione = addTabIdParam(destinazione);
@@ -263,7 +263,7 @@ if(soggettoLinks!= null && soggettoLinks.size() > 0) {
 	
 	if(isIE()){
 		if(IEVersione() == 10){
-			$('#menuUtente_menu span[class*="icon-check"]').attr('data-useragent', navigator.userAgent);
+			$('#menuUtente_menu span[class*="icon-check"]').prop('data-useragent', navigator.userAgent);
 		}
 	}
 });

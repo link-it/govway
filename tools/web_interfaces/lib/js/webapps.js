@@ -6,17 +6,6 @@ function white(str) {
   }
 }
 
-function focusText(form) {
-//  for (var i=0; i<form.elements.length; i++) {
-//    if ((form.elements[i].type == "text") || (form.elements[i].type == "password")) {
-//	if(form.elements[i].name != "datainizio" && form.elements[i].name != "datafine"){
-//	      form.elements[i].focus();
-//	      break;
-//	}
-//    }
-//  }
-}
-
 function URLEncode(url) {
   var SAFECHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.!~*'()";
   var HEX = "0123456789ABCDEF";

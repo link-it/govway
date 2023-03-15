@@ -73,9 +73,10 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 <link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
 <link rel="stylesheet" href="css/ui.resizable.css" type="text/css">
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
+<!-- JQuery lib-->
+<script type="text/javascript" src="js/jquery-3.6.4.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-ui-1.13.2.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
-
-
 <SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
 var nomeServletAdd_Custom = '<%= nomeServletAdd %>';
 var nomeServletDel_Custom = '<%= nomeServletDel %>';
@@ -596,14 +597,6 @@ if (
 }%>
 
 </SCRIPT>
-
-<!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-latest.js" nonce="<%= randomNonce %>"></script>
-<!--Funzioni di utilita -->
-<script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.resizable.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.draggable.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" nonce="<%= randomNonce %>">
 function togglePanelListaRicerca(panelListaRicercaOpen){
 	if(panelListaRicercaOpen) {
@@ -611,7 +604,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	$("#searchForm").addClass('searchFormOn');
     	
     	if($( "#iconaPanelListaSpan" ).length > 0){
-    		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
+    		$('#iconaPanelListaSpan').prop('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
     	}
     	
     	// reinit select del filtro
@@ -624,7 +617,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	$("#searchForm").addClass('searchFormOff');
     	
     	if($( "#iconaPanelListaSpan" ).length > 0){
-    		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_VISUALIZZA_FILTRI_RICERCA %>');
+    		$('#iconaPanelListaSpan').prop('title', '<%=Costanti.TOOLTIP_VISUALIZZA_FILTRI_RICERCA %>');
     	}
 //     	$("#iconaPanelLista").removeClass('icon-up-white');
 //     	$("#iconaPanelLista").addClass('icon-down-white');
@@ -636,16 +629,16 @@ function inizializzaSelectFiltro(){
 		// elimino eventuali plugin gia' applicati
 		$('select[id^=filterValue_]').each(function() {
 			var wrapper = $( this ).parent();
-			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
+			if(wrapper.prop('id').indexOf('_wrapper') > -1) {
 				$( this ).appendTo($( this ).parent().parent());
 				wrapper.remove();
 				$( this ).css('width','');
 				$( this ).css('height','');
 			}
 			
-			var checkID = $( this ).attr('id') + '_hidden_chk';
+			var checkID = $( this ).prop('id') + '_hidden_chk';
 			if($( '#' + checkID ).length > 0) {
-				var val = $( '#' + checkID ).attr('value');
+				var val = $( '#' + checkID ).prop('value');
 				if(val && val == 'true'){
 					$( this ).searchable({disableInput : false});	
 				} else {
@@ -687,16 +680,10 @@ function mostraDataElementInfoModal(title,body){
 	 });
 </script>
 <script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.context-menu.min.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
-<script type="text/javascript" nonce="<%= randomNonce %>">
-$(document).ready(function(){
-	focusText(document.form);
-});
-</script>
 </head>
 <body marginwidth=0 marginheight=0>
 	<table class="bodyWrapper">

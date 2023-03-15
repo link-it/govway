@@ -3,7 +3,7 @@
 $(document).ready(function(){
 	$.datepicker.regional['it'] = {clearText: 'Svuota', closeText: 'Chiudi',
 		prevText: '&lt;Prec', nextText: 'Succ&gt;',
-		currentText: 'Oggi', weekHeader: 'Sm',
+		currentText: 'Oggi', weekHeader: '&nbsp;&nbsp;',
 		dayNamesMin: ['Do','Lu','Ma','Me','Gio','Ve','Sa'],
 		dayNamesShort: ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
 		dayNames: ['Domenica','Lunedi','Martedi','Mercoledi','Giovedi','Venerdi','Sabato'],
@@ -11,6 +11,6 @@ $(document).ready(function(){
 		'Lug','Ago','Set','Ott','Nov','Dic'],
 		monthNames: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
 		'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
-		dateFormat: 'dd/mm/yy', firstDay: 0};
+		dateFormat: 'dd/mm/yy', firstDay: 1};
 	$.datepicker.setDefaults($.datepicker.regional['it']);
 });

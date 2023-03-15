@@ -520,7 +520,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 															// info
 													    	if($("#<%=idSpanInfo %>").length>0){
 													    		$("#<%=idSpanInfo %>").click(function(e){
-													    			var iconInfoBoxId = $(this).parent().attr('id');
+													    			var iconInfoBoxId = $(this).parent().prop('id');
 													    			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
 													    			console.log(idx);
 													    			if(idx) {
@@ -561,7 +561,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 															// info
 													    	if($("#<%=idSpanUso %>").length>0){
 													    		$("#<%=idSpanUso %>").click(function(e){
-													    			var iconInfoBoxId = $(this).parent().attr('id');
+													    			var iconInfoBoxId = $(this).parent().prop('id');
 													    			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
 													    			console.log(idx);
 													    			if(idx) {

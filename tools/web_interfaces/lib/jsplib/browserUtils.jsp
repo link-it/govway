@@ -45,7 +45,13 @@ public String[] getBrowserInfo(String Information) {
 			else
 			info[1] = "";
 			
-		} else if(browser.contains("Firefox")){
+		} else if(browser.contains("Edge")){ // Edge (IE 12+)
+           String subsString = browser.substring( browser.indexOf("Edge"));
+           info = (subsString.split(" ")[0]).split("/");
+       	} else if(browser.contains("Edg")){ // Edge (IE 12+)
+           String subsString = browser.substring( browser.indexOf("Edg"));
+           info = (subsString.split(" ")[0]).split("/");
+    	} else if(browser.contains("Firefox")){
            String subsString = browser.substring( browser.indexOf("Firefox"));
            info = (subsString.split(" ")[0]).split("/");
       	} else if(browser.contains("Chrome")){
@@ -106,7 +112,7 @@ if(window.location.hash){
 }  
 </script>
 <%
-boolean debug = false;
+// boolean debug = true;
 String userAgent = request.getHeader("user-agent");
 String info[] = getBrowserInfo(userAgent);
 String browsername = getBrowserName(info);
@@ -115,7 +121,7 @@ String browserversion = getBrowserVersion(info);
 if(browsername != null){
 	// Microsoft IE (Trident e' il browsername che viene impostato da IE11)
 	// <meta http-equiv="X-UA-Compatible" content="IE=8">
-	if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Trident")){
+	if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Trident") ||  browsername.equalsIgnoreCase("Edg") ||  browsername.equalsIgnoreCase("Edge")){
 		// fix ie10
 		%>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -153,12 +159,34 @@ if(browsername != null){
 }
 %>
 
-<% if(debug){ %>
 <script type="text/javascript" nonce="<%= randomNonce %>">
 var browserName = '<%=browsername%>';
 var browserVersione = '<%=browserversion %>';
+var browserVersion = parseInt(browserVersione, 10);
+
+function isIE(){
+    return browserName == 'MSIE' || browserName == 'msie'
+    	 || browserName == 'Trident'  || browserName == 'Edge'
+    		 || browserName == 'Edg';
+}
+
+function isChrome(){
+    return browserName == 'Chrome';
+}
+
+function isFirefox(){
+    return browserName == 'Firefox';
+}
+
+function isOpera(){
+    return browserName == 'Opera';
+}
+
+function isSafari(){
+    return browserName == 'Safari';
+}
+
 </script>
-<% } %>
 
 
 
