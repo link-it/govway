@@ -352,7 +352,8 @@ public class DumpRaw {
 		}
 		
 		if(this.dump!=null && (this.isRegistrazioneDatabaseRichiesta() || this.onlyLogFileTraceRichiesta())) {
-			this.dump.emitDiagnosticStartDumpBinarioRichiestaIngresso();
+			boolean onlyFileTrace = !isRegistrazioneDatabaseRichiesta();
+			this.dump.emitDiagnosticStartDumpBinarioRichiestaIngresso(onlyFileTrace);
 		}
 		
 		try{
@@ -587,7 +588,8 @@ public class DumpRaw {
 	
 	public void emitDiagnosticStartDumpBinarioRispostaUscita() {
 		if(this.dump!=null && (this.isRegistrazioneDatabaseRisposta() || this.onlyLogFileTraceRisposta())) {
-			this.dump.emitDiagnosticStartDumpBinarioRispostaUscita();
+			boolean onlyFileTrace = !isRegistrazioneDatabaseRisposta();
+			this.dump.emitDiagnosticStartDumpBinarioRispostaUscita(onlyFileTrace);
 		}
 	} 
 	

@@ -982,8 +982,10 @@ public class DatabaseMsgDiagnosticiComponent {
 		return resultsVector;
 	}
 	
-	private static final String LISTA_CODICI_DUMP = "'009007','009008','009009','009010','009011','009012','009013','009014'," // dump
-			+ "'007071','007072'"; // ricezione risposta
+	private static final String LISTA_CODICI_DUMP = 
+			"'009007','009008','009009','009010','009011','009012','009013','009014',"+ // dump
+			"'009015','009016','009017','009018','009019','009020','009021','009022',"+ // dump file trace
+			"'007071','007072'"; // ricezione risposta
 	
 	public Vector<String> getTracciamentoNonRiuscito()throws TestSuiteException{
 		ResultSet res = null;

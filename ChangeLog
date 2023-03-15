@@ -1,5 +1,13 @@
 2023-03-15  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1552
+	La diagnostica aggiunta utile ad individuare le fasi di registrazione dei messaggi è stata specializzata per individuarne lo scopo:
+	- la registrazione dei contenuti nelle tracce;
+	- una raccolta dei contenuti utilizzabile dalla funzionalità di 'File Trace'.
+
+2023-03-15  Andrea Poli <apoli@link.it>
+
 	* [Documentazione]
 	Risolto Bug OP-1562
 	Rivista la documentazione degli scenari e anche l'archivio zip contenente le configurazioni per sostituire 
