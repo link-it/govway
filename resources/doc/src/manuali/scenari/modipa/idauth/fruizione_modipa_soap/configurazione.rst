@@ -18,7 +18,7 @@ Il processo di configurazione per questo scenario è del tutto analogo a quello 
 
 **Registrazione API**
 
-Viene registrata l'API "CreditCardVerificationAuth" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_02" (sicurezza canale) e "ID_AUTH_SOAP_01" (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_soap_fig`).
+Viene registrata l'API "TemperatureConversionAuth" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_02" (sicurezza canale) e "ID_AUTH_SOAP_01" (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_soap_fig`).
 
 .. figure:: ../../../_figure_scenari/modipa_profili_api_soap.png
  :scale: 80%
@@ -29,7 +29,7 @@ Viene registrata l'API "CreditCardVerificationAuth" con il relativo descrittore 
 
 **Fruizione**
 
-Si registra la fruizione SOAP 'LuhnCheckerSoapAuth', relativa all'API precedentemente inserita, indicando i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_fruizione_richiesta_soap_fig`).
+Si registra la fruizione SOAP 'TempConvertSoapAuth', relativa all'API precedentemente inserita, indicando i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_fruizione_richiesta_soap_fig`).
 
    .. figure:: ../../../_figure_scenari/modipa_fruizione_richiesta_soap.png
     :scale: 80%

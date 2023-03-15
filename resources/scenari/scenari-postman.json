@@ -863,16 +863,16 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/LuhnCheckerSoapAuth/v1/",
+									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/TempConvertSoapAuth/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -881,7 +881,7 @@
 										"out",
 										"SoloPerDemo{{soggettoEsterno}}",
 										"{{soggetto}}",
-										"LuhnCheckerSoapAuth",
+										"TempConvertSoapAuth",
 										"v1",
 										""
 									]
@@ -917,16 +917,16 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/LuhnCheckerSoapAuth/v1/",
+									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/TempConvertSoapAuth/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -935,7 +935,7 @@
 										"out",
 										"SoloPerDemo{{soggettoEsterno}}",
 										"{{soggetto}}",
-										"LuhnCheckerSoapAuth",
+										"TempConvertSoapAuth",
 										"v1",
 										""
 									]
@@ -971,16 +971,16 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/{{soggetto}}/{{soggettoEsterno}}/LuhnCheckerSoapAuth/v1/",
+									"raw": "{{govway-url}}/soap/out/{{soggetto}}/{{soggettoEsterno}}/TempConvertSoapAuth/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -989,7 +989,7 @@
 										"out",
 										"{{soggetto}}",
 										"{{soggettoEsterno}}",
-										"LuhnCheckerSoapAuth",
+										"TempConvertSoapAuth",
 										"v1",
 										""
 									]
@@ -1035,7 +1035,7 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									},
 									{
@@ -1046,10 +1046,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/LuhnCheckerSoapAuthPDND/v1/",
+									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/TempConvertSoapAuthPDND/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -1058,7 +1058,7 @@
 										"out",
 										"SoloPerDemo{{soggettoEsterno}}",
 										"{{soggetto}}",
-										"LuhnCheckerSoapAuthPDND",
+										"TempConvertSoapAuthPDND",
 										"v1",
 										""
 									]
@@ -1099,7 +1099,7 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									},
 									{
@@ -1110,10 +1110,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/LuhnCheckerSoapAuthPDND/v1/",
+									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/TempConvertSoapAuthPDND/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -1122,7 +1122,7 @@
 										"out",
 										"SoloPerDemo{{soggettoEsterno}}",
 										"{{soggetto}}",
-										"LuhnCheckerSoapAuthPDND",
+										"TempConvertSoapAuthPDND",
 										"v1",
 										""
 									]
@@ -1158,7 +1158,7 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									},
 									{
@@ -1169,10 +1169,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/{{soggetto}}/{{soggettoEsterno}}/LuhnCheckerSoapAuthPDND/v1/",
+									"raw": "{{govway-url}}/soap/out/{{soggetto}}/{{soggettoEsterno}}/TempConvertSoapAuthPDND/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -1181,7 +1181,7 @@
 										"out",
 										"{{soggetto}}",
 										"{{soggettoEsterno}}",
-										"LuhnCheckerSoapAuthPDND",
+										"TempConvertSoapAuthPDND",
 										"v1",
 										""
 									]
@@ -1222,16 +1222,16 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/LuhnCheckerSoapIntegrity/v1/",
+									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/TempConvertSoapIntegrity/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -1240,7 +1240,7 @@
 										"out",
 										"SoloPerDemo{{soggettoEsterno}}",
 										"{{soggetto}}",
-										"LuhnCheckerSoapIntegrity",
+										"TempConvertSoapIntegrity",
 										"v1",
 										""
 									]
@@ -1276,16 +1276,16 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/LuhnCheckerSoapIntegrity/v1/",
+									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/TempConvertSoapIntegrity/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -1294,7 +1294,7 @@
 										"out",
 										"SoloPerDemo{{soggettoEsterno}}",
 										"{{soggetto}}",
-										"LuhnCheckerSoapIntegrity",
+										"TempConvertSoapIntegrity",
 										"v1",
 										""
 									]
@@ -1330,16 +1330,16 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/{{soggetto}}/{{soggettoEsterno}}/LuhnCheckerSoapIntegrity/v1/",
+									"raw": "{{govway-url}}/soap/out/{{soggetto}}/{{soggettoEsterno}}/TempConvertSoapIntegrity/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -1348,7 +1348,7 @@
 										"out",
 										"{{soggetto}}",
 										"{{soggettoEsterno}}",
-										"LuhnCheckerSoapIntegrity",
+										"TempConvertSoapIntegrity",
 										"v1",
 										""
 									]
@@ -1394,7 +1394,7 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									},
 									{
@@ -1405,10 +1405,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/LuhnCheckerSoapIntegrityPDND/v1/",
+									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/TempConvertSoapIntegrityPDND/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -1417,7 +1417,7 @@
 										"out",
 										"SoloPerDemo{{soggettoEsterno}}",
 										"{{soggetto}}",
-										"LuhnCheckerSoapIntegrityPDND",
+										"TempConvertSoapIntegrityPDND",
 										"v1",
 										""
 									]
@@ -1458,7 +1458,7 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									},
 									{
@@ -1469,10 +1469,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/LuhnCheckerSoapIntegrityPDND/v1/",
+									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/TempConvertSoapIntegrityPDND/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -1481,7 +1481,7 @@
 										"out",
 										"SoloPerDemo{{soggettoEsterno}}",
 										"{{soggetto}}",
-										"LuhnCheckerSoapIntegrityPDND",
+										"TempConvertSoapIntegrityPDND",
 										"v1",
 										""
 									]
@@ -1517,7 +1517,7 @@
 									},
 									{
 										"key": "SOAPAction",
-										"value": "http://ws.cdyne.com/CheckCC",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
 										"type": "text"
 									},
 									{
@@ -1528,10 +1528,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
 								},
 								"url": {
-									"raw": "{{govway-url}}/soap/out/{{soggetto}}/{{soggettoEsterno}}/LuhnCheckerSoapIntegrityPDND/v1/",
+									"raw": "{{govway-url}}/soap/out/{{soggetto}}/{{soggettoEsterno}}/TempConvertSoapIntegrityPDND/v1/",
 									"host": [
 										"{{govway-url}}"
 									],
@@ -1540,7 +1540,7 @@
 										"out",
 										"{{soggetto}}",
 										"{{soggettoEsterno}}",
-										"LuhnCheckerSoapIntegrityPDND",
+										"TempConvertSoapIntegrityPDND",
 										"v1",
 										""
 									]

@@ -19,7 +19,7 @@ Il processo di configurazione per questo scenario è del tutto analogo a quello 
 
 **Registrazione API**
 
-Viene registrata l'API "CreditCardVerificationIntegrityPDND" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) e "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_01"  (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_soap_integrity_pdnd_fig`).
+Viene registrata l'API "TemperatureConversionIntegrityPDND" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) e "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_01"  (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_soap_integrity_pdnd_fig`).
 
 .. figure:: ../../../_figure_scenari/modipa_profili_api_soap_integrity_pdnd.png
  :scale: 80%
@@ -30,7 +30,7 @@ Viene registrata l'API "CreditCardVerificationIntegrityPDND" con il relativo des
 
 **Erogazione**
 
-Nell'erogazione SOAP 'LuhnCheckerSoapIntegrityPDND', relativa all'API precedentemente inserita, vanno indicati i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_erogazione_richiesta_soap_integrity_fig`) necessari per validare l'header WSSecurity previsto dal pattern "INTEGRITY_SOAP_01".
+Nell'erogazione SOAP 'TempConvertSoapIntegrityPDND', relativa all'API precedentemente inserita, vanno indicati i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_erogazione_richiesta_soap_integrity_fig`) necessari per validare l'header WSSecurity previsto dal pattern "INTEGRITY_SOAP_01".
 
    .. figure:: ../../../_figure_scenari/modipa_erogazione_richiesta_soap_integrity_pdnd.png
     :scale: 80%

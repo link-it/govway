@@ -16,11 +16,11 @@ Configurazione
 
 Il processo di configurazione per questo scenario è del tutto analogo a quello descritto per lo scenario :ref:`scenari_erogazione_rest_modipa_auth_configurazione`. Nel seguito sono evidenziate le sole differenze. 
 
-L'interfaccia wsdl del servizio soap è ottenibile all'indirizzo 'https://ws.cdyne.com/creditcardverify/luhnchecker.asmx?wsdl'.
+L'interfaccia wsdl del servizio soap è ottenibile all'indirizzo 'https://www.w3schools.com/xml/tempconvert.asmx?wsdl'.
 
 **Registrazione API**
 
-Viene registrata l'API "CreditCardVerificationIntegrity" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_02" (sicurezza canale) e "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_01"  (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_soap_integrity_fig`).
+Viene registrata l'API "TemperatureConversionIntegrity" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_02" (sicurezza canale) e "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_01"  (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_soap_integrity_fig`).
 
 .. figure:: ../../../_figure_scenari/modipa_profili_api_soap_integrity.png
  :scale: 80%
@@ -31,7 +31,7 @@ Viene registrata l'API "CreditCardVerificationIntegrity" con il relativo descrit
 
 **Erogazione**
 
-Si registra l'erogazione SOAP 'LuhnCheckerSoapIntegrity', relativa all'API precedentemente inserita, indicando i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_erogazione_richiesta_soap_integrity_fig`). In questo contesto vengono inseriti i dati necessari per validare le richieste in ingresso.
+Si registra l'erogazione SOAP 'TempConvertSoapIntegrity', relativa all'API precedentemente inserita, indicando i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_erogazione_richiesta_soap_integrity_fig`). In questo contesto vengono inseriti i dati necessari per validare le richieste in ingresso.
 
    .. figure:: ../../../_figure_scenari/modipa_erogazione_richiesta_soap_integrity.png
     :scale: 80%

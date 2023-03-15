@@ -1,3 +1,11 @@
+2023-03-15  Andrea Poli <apoli@link.it>
+
+	* [Documentazione]
+	Risolto Bug OP-1562
+	Rivista la documentazione degli scenari e anche l'archivio zip contenente le configurazioni per sostituire 
+	l'API pubblica SOAP 'Credit Card Verification' non più disponibile alla url 'https://ws.cdyne.com/creditcardverify/luhnchecker.asmx' 
+	con un altra API SOAP 'Temperature Conversion' disponibile alla url 'https://www.w3schools.com/xml/tempconvert.asmx'.
+
 2023-03-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

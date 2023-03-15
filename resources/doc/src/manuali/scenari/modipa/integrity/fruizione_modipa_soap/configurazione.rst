@@ -19,7 +19,7 @@ La configurazione dello scenario è del tutto analogo a quello descritto nello s
 
 **Registrazione API**
 
-Viene registrata l'API "CreditCardVerificationIntegrity" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_02" (sicurezza canale) e "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_01"  (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_soap_integrity_fr_fig`).
+Viene registrata l'API "TemperatureConversionIntegrity" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_02" (sicurezza canale) e "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_01"  (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_soap_integrity_fr_fig`).
 
 .. figure:: ../../../_figure_scenari/modipa_profili_api_soap_integrity.png
  :scale: 80%
@@ -30,7 +30,7 @@ Viene registrata l'API "CreditCardVerificationIntegrity" con il relativo descrit
 
 **Fruizione**
 
-Si registra la fruizione SOAP 'LuhnCheckerSoapIntegrity', relativa all'API precedentemente inserita, indicando i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_fruizione_richiesta_soap_integrity_fig`).
+Si registra la fruizione SOAP 'TempConvertSoapIntegrity', relativa all'API precedentemente inserita, indicando i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_fruizione_richiesta_soap_integrity_fig`).
 
    .. figure:: ../../../_figure_scenari/modipa_fruizione_richiesta_soap.png
     :scale: 80%

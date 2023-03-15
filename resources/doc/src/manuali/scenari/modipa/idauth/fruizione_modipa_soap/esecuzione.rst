@@ -16,9 +16,9 @@ Esecuzione
 
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API SOAP di esempio (Credit Card Verification) definita con pattern di interazione Bloccante e pattern di sicurezza "ID_AUTH_CHANNEL_02" e "ID_AUTH_SOAP_01";
+- una API SOAP di esempio (Temperature Conversion) definita con pattern di interazione Bloccante e pattern di sicurezza "ID_AUTH_CHANNEL_02" e "ID_AUTH_SOAP_01";
 - un'istanza Govway per la gestione del profilo ModI nel dominio del fruitore;
-- un client del dominio gestito che invoca l'azione di esempio "CheckCC" sulla fruzione configurata su Govway.
+- un client del dominio gestito che invoca l'azione di esempio "CelsiusToFahrenheit" sulla fruzione configurata su Govway.
 
 Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "Profilo ModI SOAP - IDAuth - OUT App1" che è stata preconfigurata per il funzionamento con le caratteristiche descritte sopra.
 
