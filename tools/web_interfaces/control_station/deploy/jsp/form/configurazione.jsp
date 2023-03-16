@@ -459,32 +459,6 @@ function Change(form,dataElementName,fromFilters) {
     document.form.submit();
 }
 
-function isModificaUrlRicerca(formAction, urlToCheck){
-	// hack hash documento impostato, la parte di url che contiene la # bisogna eliminarla dal check
-	if(formAction.indexOf('#') > 0) {
-		formAction = formAction.substring(0, formAction.indexOf('#'));
-	}
-	if(formAction.indexOf('?') > 0) {
-		formAction = formAction.substring(0, formAction.indexOf('?'));
-	}
-	
-	return ieEndsWith(formAction, urlToCheck);
-}
-
-function ieEndsWith(str, suffix){
-	return str.indexOf(suffix, str.length - suffix.length) !== -1;
-}
-
-
-function addHidden(theForm, name, value) {
-    // Create a hidden input element, and append it to the form:
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = name;
-    input.value = value;
-    theForm.appendChild(input);
-}
-
 var panelListaRicercaOpen = false; // controlla l'aperture del pannello di ricerca.
 <%
 if ( 

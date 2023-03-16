@@ -65,15 +65,6 @@ function postBack(dataElementName) {
     }
     
     document.location = location;
-}	
-
-function addHidden(theForm, name, value) {
-    // Create a hidden input element, and append it to the form:
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = name;
-    input.value = value;
-    theForm.appendChild(input);
 }
 
 function postVersion_postBack(dataElementName) {

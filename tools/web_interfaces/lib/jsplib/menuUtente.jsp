@@ -48,51 +48,6 @@ if(v!= null && v.size() > 1) {
 %>
 
 <script type="text/javascript" nonce="<%= randomNonce %>">
-	function IEVersione (){
-	    var ua = window.navigator.userAgent;
-	
-	    var msie = ua.indexOf('MSIE ');
-	    if (msie > 0) {
-	      // IE 10 or older => return version number
-	      return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-	    }
-	
-	    var trident = ua.indexOf('Trident/');
-	    if (trident > 0) {
-	      // IE 11 => version
-	      var rv = ua.indexOf('rv:');
-	      return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-	    }
-	
-	    var edge = ua.indexOf('Edge/');
-	    if (edge > 0) {
-	      // Edge (IE 12+) => version
-	      return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-	    }
-	
-	    return -1;
-	}
-	
-	function isIE(){
-	    return IEVersione() > -1;
-	}
-</script>
-<script type="text/javascript" nonce="<%= randomNonce %>">
-
-//the direct source of the delay function in 1.4+
-jQuery.fn.extend({
-    delay: function( time, type ) {
-        time = jQuery.fx ? jQuery.fx.speeds[time] || time : time;
-        type = type || "fx";
-
-        return this.queue( type, function() {
-            var elem = this;
-            setTimeout(function() {
-                jQuery.dequeue( elem, type );
-            }, time );
-        });
-    }
-});
 
 $(document).ready(function(){
 	$('#menuUtente').hover(
