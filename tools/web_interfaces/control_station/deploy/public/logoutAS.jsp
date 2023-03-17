@@ -96,41 +96,10 @@ response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFor
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon" />
 <script type="text/javascript" nonce="<%= randomNonce %>">
-
 $(document).ready(function(){
-				
 	$("a").mousedown(function(e) {
-		
-		var urlDest = $(this).prop('href');
-		
-	    if(e.which == 3) {
-	    	// console.log("right click: " + urlDest);
-	    } else 
-	    if(e.which == 2) {
-	    	// console.log("center click: " + urlDest);
-	    } else 
-	    if(e.which == 1) {
-	    	// aggiungi tab id a tutti i link cliccati col tasto sinistro
-	    	if(urlDest) {
-		    	// console.log("left click: " + urlDest);
-		    	
-		    	var targetDest = $(this).prop('target');
-		    	
-		    	if(targetDest && targetDest == '_blank') {
-		    		return;
-		    	}
-		    	
-		    	var newUrlDest = addTabIdParam(urlDest);
-		    	$(this).prop('href',newUrlDest);
-	    	} else {
-	    		// console.log("href non trovato per l'elemento di tipo: " + $(this));
-	    	}
-	    } else {
-	    	console.log("click non riconosciuto: " + urlDest);
-	    }
+		addTabIdParamToHref($(this),e);
 	});
-	
-	
 });
 </script> 
 </head>

@@ -15,6 +15,36 @@ function addHidden(theForm, name, value) {
     theForm.appendChild(input);
 }
 
+function addTabIdParamToHref(element, event){
+	var urlDest = element.prop('href');
+	
+    if(event.which == 3) {
+    	// console.log("right click: " + urlDest);
+    } else 
+    if(event.which == 2) {
+    	// console.log("center click: " + urlDest);
+    } else 
+    if(event.which == 1) {
+    	// aggiungi tab id a tutti i link cliccati col tasto sinistro
+    	if(urlDest) {
+	    	// console.log("left click: " + urlDest);
+	    	
+	    	var targetDest = element.prop('target');
+	    	
+	    	if(targetDest && targetDest == '_blank') {
+	    		return;
+	    	}
+	    	
+	    	var newUrlDest = addTabIdParam(urlDest);
+	    	element.prop('href',newUrlDest);
+    	} else {
+    		// console.log("href non trovato per l'elemento di tipo: " + $(this));
+    	}
+    } else {
+    	console.log("click non riconosciuto: " + urlDest);
+    }
+}
+
 function white(str) {
   for (var n=0; n<str.length; n++){
     if (str.charAt(n) == ' '){
@@ -198,6 +228,33 @@ function inizializzaSelectSezione(idDiv){
 
 /* Funzioni di utilita' per le pagine con le liste */
 
+function inizializzaSelectFiltro(){
+	if($('select[id^=filterValue_]').length > 0){
+		// elimino eventuali plugin gia' applicati
+		$('select[id^=filterValue_]').each(function() {
+			var wrapper = $( this ).parent();
+			if(wrapper.prop('id').indexOf('_wrapper') > -1) {
+				$( this ).appendTo($( this ).parent().parent());
+				wrapper.remove();
+				$( this ).css('width','');
+				$( this ).css('height','');
+			}
+			
+			var checkID = $( this ).prop('id') + '_hidden_chk';
+			if($( '#' + checkID ).length > 0) {
+				var val = $( '#' + checkID ).prop('value');
+				if(val && val == 'true'){
+					$( this ).searchable({disableInput : false});	
+				} else {
+					$( this ).searchable({disableInput : true});	
+				}
+			} else {
+				$( this ).searchable({disableInput : true});
+			}
+		});
+	}
+}
+
 function formSubmit(){
 	return false;
 }
@@ -217,5 +274,222 @@ function isModificaUrlRicerca(formAction, urlToCheck){
 function ieEndsWith(str, suffix){
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
+
+function Change(form,dataElementName) {
+	Change(form,dataElementName,false);
+}
+function Change(form,dataElementName,fromFilters) {
+    
+	if( fromFilters ){
+		var formAction = form.action;
+		
+		// hack actionvuota
+		if(formAction == ''){
+			formAction = document.location.href;
+		}
+		
+		if(isModificaUrlRicerca(formAction,'Add.do')){
+			form.action=formAction.replace('Add.do','List.do');
+		}
+		if(isModificaUrlRicerca(formAction,'Change.do')){
+			form.action=formAction.replace('Change.do','List.do');
+		}
+		if(isModificaUrlRicerca(formAction,'Del.do')){
+			form.action=formAction.replace('Del.do','List.do');
+		}
+	}
+	
+    //aggiungo parametro per indicare che si tratta di postback e azzero idhid
+    addHidden(form, 'isPostBack' , true);
+    if(dataElementName!=null)
+    	addHidden(document.form, 'postBackElementName' , dataElementName);
+    addHidden(form, 'index' , 0);
+    addHidden(form, 'iddati' , iddati);
+  
+    // formatParams
+    
+     if (formatPar != null && formatPar != ""){
+    	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
+    	for (var i = 0; i < pairs.length; i++) {
+        	var pair = pairs[i].split('=');
+        	addHidden(form, pair[0] , pair[1]);
+    	}
+     }
+     if (params != null && params != ""){
+	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
+	   for (var i = 0; i < pairs.length; i++) {
+	       var pair = pairs[i].split('=');
+	       addHidden(form, pair[0] , pair[1]);
+	   }
+     }
+     
+     // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+     for (var k=0; k<document.form.elements.length; k++) {
+   		var nome = document.form.elements[k].name;
+   		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+   		if(hiddenInfo > -1) {
+   			document.form.elements[k].value = '';
+   		}
+     }
+        
+  // aggiungo parametro idTab
+  	  if(tabValue != ''){
+  	  	addHidden(document.form, tabSessionKey , tabValue);
+  	    addHidden(document.form, prevTabSessionKey , tabValue);
+  	  }
+    // form submit
+    document.form.submit();
+}
+
+function Reset(form) {
+  if (nr != 0) {
+    return false;
+  }
+  nr = 1;
+  
+  document.form.reset();
+  for (var k=0; k<document.form.elements.length; k++) {
+	var name = document.form.elements[k].name;
+	if (name == "search"){
+		document.form.elements[k].value="";
+	} else {
+		var tipo = document.form.elements[k].type;
+		if (tipo == "select-one" || tipo == "select-multiple") {
+			document.form.elements[k].selectedIndex = 0;
+		} else if (tipo == "text" || tipo == "textarea"|| tipo == "number") {
+			document.form.elements[k].value="";
+		} else if (tipo == "checkbox") {
+			document.form.elements[k].checked=false;
+		}
+	}
+  }
+
+  addHidden(form, 'index' , 0);
+  addHidden(form, 'iddati' , iddati);
+  addHidden(form, 'pageSize' , pageSize);
+  addHidden(form, '_searchDone' , true);
+
+  // formatParams
+  
+   if (formatPar != null && formatPar != ""){
+  	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
+  	for (var i = 0; i < pairs.length; i++) {
+      	var pair = pairs[i].split('=');
+      	addHidden(form, pair[0] , pair[1]);
+  	}
+   }
+   if (params != null && params != ""){
+	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
+	   for (var i = 0; i < pairs.length; i++) {
+	       var pair = pairs[i].split('=');
+	       addHidden(form, pair[0] , pair[1]);
+	   }
+  }
+  
+   // imposto la destinazione
+   document.form.action = nomeServletList;
+   
+   // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+   for (var k=0; k<document.form.elements.length; k++) {
+ 		var nome = document.form.elements[k].name;
+ 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+ 		if(hiddenInfo > -1) {
+ 			document.form.elements[k].value = '';
+ 		}
+   }
+   
+   // aggiungo parametro idTab
+   if(tabValue != ''){
+   	addHidden(document.form, tabSessionKey , tabValue);
+   	addHidden(document.form, prevTabSessionKey , tabValue);
+   }
+  // form submit
+  document.form.submit();
+ 
+};
+
+function Search(form) {
+  if (nr != 0) {
+    return false;
+  }
+  nr = 1;
+
+  addHidden(form, 'index' , 0);
+  addHidden(form, 'iddati' , iddati);
+  addHidden(form, 'pageSize' , pageSize);
+  addHidden(form, '_searchDone' , true);
+
+  // formatParams
+  
+   if (formatPar != null && formatPar != ""){
+  	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
+  	for (var i = 0; i < pairs.length; i++) {
+      	var pair = pairs[i].split('=');
+      	addHidden(form, pair[0] , pair[1]);
+  	}
+   }
+   if (params != null && params != ""){
+	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
+	   for (var i = 0; i < pairs.length; i++) {
+	       var pair = pairs[i].split('=');
+	       addHidden(form, pair[0] , pair[1]);
+	   }
+   }
+
+  // imposto la destinazione
+  document.form.action = nomeServletList;
+  
+  //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+  for (var k=0; k<document.form.elements.length; k++) {
+		var nome = document.form.elements[k].name;
+		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+		if(hiddenInfo > -1) {
+			document.form.elements[k].value = '';
+		}
+  }
+      
+  // aggiungo parametro idTab
+  if(tabValue != ''){
+  	addHidden(document.form, tabSessionKey , tabValue);
+  	addHidden(document.form, prevTabSessionKey , tabValue);
+  }
+  // form submit
+  document.form.submit();
+ 
+};
+
+function checkAll(){
+	if(n > 0){
+		var chkAll = $("#chkAll:checked").length;
+		
+		if(chkAll > 0) {
+			SelectAll();
+		} else {
+			DeselectAll();
+		}
+	}
+}
+
+function SelectAll() {
+  if (n > 1) {
+    for (var c = 0; c < document.form.selectcheckbox.length; c++)
+      document.form.selectcheckbox[c].checked = true;
+  } else {
+    document.form.selectcheckbox.checked = true;
+  }
+};
+
+function DeselectAll() {
+  if (n > 1) {
+    for (var c = 0; c < document.form.selectcheckbox.length; c++)
+      document.form.selectcheckbox[c].checked = false;
+  } else {
+    document.form.selectcheckbox.checked = false;
+  }
+};
+
 
 

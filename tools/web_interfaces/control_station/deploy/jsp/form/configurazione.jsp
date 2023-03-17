@@ -64,13 +64,13 @@
 	int colSpanLength = 1;
 	String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
-<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 var nomeServletAdd_Custom = '<%= nomeServletAdd %>';
 var nomeServletDel_Custom = '<%= nomeServletDel %>';
 var nomeServletList_Custom = '<%= nomeServletList %>';
-</SCRIPT>
+</script>
 <jsp:include page="/jsp/listElementCustom.jsp" flush="true" />
-<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 var iddati = '<%= iddati %>';
 var params = '<%= params %>';
 var nomeServletAdd = nomeServletAdd_Custom;
@@ -80,37 +80,8 @@ var formatPar = '<%= formatPar %>';
 var n = <%= n %>;
 var index = <%= pd.getIndex() %>;
 var pageSize = <%= pd.getPageSize() %>;
+var eseguiOperazioniConGET = true;
 var nr = 0;
-
-function checkAll(){
-	if(n > 0){
-		var chkAll = $("#chkAll:checked").length;
-		
-		if(chkAll > 0) {
-			SelectAll();
-		} else {
-			DeselectAll();
-		}
-	}
-}
-
-function SelectAll() {
-  if (n > 1) {
-    for (var c = 0; c < document.form.selectcheckbox.length; c++)
-      document.form.selectcheckbox[c].checked = true;
-  } else {
-    document.form.selectcheckbox.checked = true;
-  }
-};
-
-function DeselectAll() {
-  if (n > 1) {
-    for (var c = 0; c < document.form.selectcheckbox.length; c++)
-      document.form.selectcheckbox[c].checked = false;
-  } else {
-    document.form.selectcheckbox.checked = false;
-  }
-};
 
 function RemoveEntries() {
   if (nr != 0) {
@@ -118,7 +89,7 @@ function RemoveEntries() {
   }
   var elemToRemove = '';
   
-  var idTabSelezionato = $("#tabs").tabs('option', 'selected');
+  var idTabSelezionato = $("#tabs").tabs('option', 'active');
   
   // prendo l'id da rimuovere
   elemToRemove = $("#hiddenIdRemove-" + idTabSelezionato).val();
@@ -126,20 +97,6 @@ function RemoveEntries() {
   // controllo se il tasto rimuovi e' visibile
   var isHidden = $('#rem_btn_2').is(':hidden');
   
-//   if (n > 1) {
-//     for (var j = 0; j < n; j++) {
-//       if (document.form.selectcheckbox[j].checked) {
-//         if (elemToRemove != '') {
-//           elemToRemove += ',';
-//         }
-//         //elemToRemove += j;
-//         elemToRemove +=document.form.selectcheckbox[j].value;
-//       }
-//     }
-//   } else {
-//     if (document.form.selectcheckbox.checked)
-//       elemToRemove += document.form.selectcheckbox.value;
-//   }
   if (!isHidden && elemToRemove != '') {
     nr = 1;
     var destinazione;
@@ -162,373 +119,14 @@ function RemoveEntries() {
   }
 };
 
-function AddEntry() {
-  if (nr != 0) {
-    return false;
-  }
-  nr = 1;
-  var destinazione;
-  if (formatPar != null && formatPar != "")
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletAdd+'?'+formatPar+'&iddati='+iddati+params;
-  else
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletAdd+'?iddati='+iddati+params;
-	  
-	//addTabID
-	destinazione = addTabIdParam(destinazione,true);
-	document.location = destinazione;
-};
-
-function CambiaVisualizzazione(newPageSize) {
-  if (nr != 0) {
-    return false;
-  }
-  nr = 1;
-  if (newPageSize == '0') {
-    index = 0; 
-  }
-  var destinazione;
-  if (formatPar != null && formatPar != "")
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-  else
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-    
-//addTabID
-	destinazione = addTabIdParam(destinazione,true);
-	document.location = destinazione;
-};
-
-function NextPage() {
-  if (nr != 0) {
-    return false;
-  }
-  nr = 1;
-  index += pageSize;
-  var destinazione;
-  if (formatPar != null && formatPar != "")
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-  else
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-    
-//addTabID
-	destinazione = addTabIdParam(destinazione,true);
-	document.location = destinazione;
-};
-
-function PrevPage(pageSize) {
-  if (nr != 0) {
-    return false;
-  }
-  nr = 1;
-  index -= pageSize;
-  if (index < 0) {
-    index = 0;
-  }
-  var destinazione;
-  if (formatPar != null && formatPar != "")
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-  else
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-    
-//addTabID
-	destinazione = addTabIdParam(destinazione,true);
-	document.location = destinazione;
-};
-
-function Search(form) {
-  if (nr != 0) {
-    return false;
-  }
-  nr = 1;
-
-  addHidden(form, 'index' , 0);
-  addHidden(form, 'iddati' , iddati);
-  addHidden(form, 'pageSize' , pageSize);
-  addHidden(form, '_searchDone' , true);
-
-  // formatParams
-  
-   if (formatPar != null && formatPar != ""){
-  	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
-  	for (var i = 0; i < pairs.length; i++) {
-      	var pair = pairs[i].split('=');
-      	addHidden(form, pair[0] , pair[1]);
-  	}
-   }
-   if (params != null && params != ""){
-	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
-	   for (var i = 0; i < pairs.length; i++) {
-	       var pair = pairs[i].split('=');
-	       addHidden(form, pair[0] , pair[1]);
-	   }
-   }
-
-  // imposto la destinazione
-  document.form.action = nomeServletList;
-  
-  //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-  for (var k=0; k<document.form.elements.length; k++) {
-		var nome = document.form.elements[k].name;
-		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
-
-		if(hiddenInfo > -1) {
-			document.form.elements[k].value = '';
-		}
-  }
-      
-  // aggiungo parametro idTab
-  if(tabValue != ''){
-  	addHidden(document.form, tabSessionKey , tabValue);
-  	addHidden(document.form, prevTabSessionKey , tabValue);
-  }
-  // form submit
-  document.form.submit();
- 
-};
-
-function Reset(form) {
-	  if (nr != 0) {
-	    return false;
-	  }
-	  nr = 1;
-	  
-	  document.form.reset();
- 	  for (var k=0; k<document.form.elements.length; k++) {
-		var name = document.form.elements[k].name;
-		if (name == "search"){
-			document.form.elements[k].value="";
-		} else {
-			var tipo = document.form.elements[k].type;
-			if (tipo == "select-one" || tipo == "select-multiple") {
-				document.form.elements[k].selectedIndex = 0;
-			} else if (tipo == "text" || tipo == "textarea"|| tipo == "number") {
-				document.form.elements[k].value="";
-			} else if (tipo == "checkbox") {
-				document.form.elements[k].checked=false;
-			}
-		}
-	  }
-
-	  addHidden(form, 'index' , 0);
-	  addHidden(form, 'iddati' , iddati);
-	  addHidden(form, 'pageSize' , pageSize);
-	  addHidden(form, '_searchDone' , true);
-
-	  // formatParams
-	  
-	   if (formatPar != null && formatPar != ""){
-	  	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
-	  	for (var i = 0; i < pairs.length; i++) {
-	      	var pair = pairs[i].split('=');
-	      	addHidden(form, pair[0] , pair[1]);
-	  	}
-	   }
-	   if (params != null && params != ""){
-		   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
-		   for (var i = 0; i < pairs.length; i++) {
-		       var pair = pairs[i].split('=');
-		       addHidden(form, pair[0] , pair[1]);
-		   }
-	  }
-	  
-	   // imposto la destinazione
-	   document.form.action = nomeServletList;
-	   
-	   // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-	   for (var k=0; k<document.form.elements.length; k++) {
-	 		var nome = document.form.elements[k].name;
-	 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
-
-	 		if(hiddenInfo > -1) {
-	 			document.form.elements[k].value = '';
-	 		}
-	   }
-	   
-	   // aggiungo parametro idTab
-	   if(tabValue != ''){
-	   	addHidden(document.form, tabSessionKey , tabValue);
-	   	addHidden(document.form, prevTabSessionKey , tabValue);
-	   }
-	  // form submit
-	  document.form.submit();
-	 
-	};
-
-function Export(url){
-	var destinazione='<%= request.getContextPath() %>/'+url;
-	//addTabID
-	destinazione = addTabIdParam(destinazione,true);
-	document.location = destinazione;
-};
-
 function Esporta(tipo) {
-
-	 var elemToExport = '';
-	  if (n > 1) {
-	    for (var j = 0; j < n; j++) {
-	      if (document.form.selectcheckbox[j].checked) {
-	        if (elemToExport != '') {
-	        	elemToExport += ',';
-	        }
-	        //elemToRemove += j;
-	        elemToExport +=document.form.selectcheckbox[j].value;
-	      }
-	    }
-	  } else {
-	    if (document.form.selectcheckbox.checked)
-	    	elemToExport +=document.form.selectcheckbox.value;
-	  }
-
-
-	if(elemToExport !== '') {
-		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
-		var destinazione = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport; 
-			
-			//addTabID
-			destinazione = addTabIdParam(destinazione,true);
-			document.location = destinazione;
-	} else {
-		$( "#selezioneRichiestaModal" ).dialog( "open" );
-	}
-		  
+	EsportaImpl(tipo,eseguiOperazioniConGET);
 };
 
-function Change(form,dataElementName) {
-	Change(form,dataElementName,false);
-}
-function Change(form,dataElementName,fromFilters) {
-    
-	if( fromFilters ){
-		var formAction = form.action;
-		
-		// hack actionvuota
-		if(formAction == ''){
-			formAction = document.location.href;
-		}
-		
-		if(isModificaUrlRicerca(formAction,'Add.do')){
-			form.action=formAction.replace('Add.do','List.do');
-		}
-		if(isModificaUrlRicerca(formAction,'Change.do')){
-			form.action=formAction.replace('Change.do','List.do');
-		}
-		if(isModificaUrlRicerca(formAction,'Del.do')){
-			form.action=formAction.replace('Del.do','List.do');
-		}
-	}
-	
-    //aggiungo parametro per indicare che si tratta di postback e azzero idhid
-    addHidden(form, 'isPostBack' , true);
-    if(dataElementName!=null)
-    	addHidden(document.form, 'postBackElementName' , dataElementName);
-    addHidden(form, 'index' , 0);
-    addHidden(form, 'iddati' , iddati);
-  
-    // formatParams
-    
-     if (formatPar != null && formatPar != ""){
-    	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
-    	for (var i = 0; i < pairs.length; i++) {
-        	var pair = pairs[i].split('=');
-        	addHidden(form, pair[0] , pair[1]);
-    	}
-     }
-     if (params != null && params != ""){
-	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
-	   for (var i = 0; i < pairs.length; i++) {
-	       var pair = pairs[i].split('=');
-	       addHidden(form, pair[0] , pair[1]);
-	   }
-     }
-     
-     // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-     for (var k=0; k<document.form.elements.length; k++) {
-   		var nome = document.form.elements[k].name;
-   		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
-
-   		if(hiddenInfo > -1) {
-   			document.form.elements[k].value = '';
-   		}
-     }
-        
-  // aggiungo parametro idTab
-  	  if(tabValue != ''){
-  	  	addHidden(document.form, tabSessionKey , tabValue);
-  	    addHidden(document.form, prevTabSessionKey , tabValue);
-  	  }
-    // form submit
-    document.form.submit();
-}
-
-var panelListaRicercaOpen = false; // controlla l'aperture del pannello di ricerca.
-<%
-if ( 
-	(
-		pd.getSearch().equals("on") || 
-		(pd.getSearch().equals("auto") && (pd.getNumEntries() > pd.getSearchNumEntries()))
-	) || 
-	(
-		pd.getFilterNames() != null &&
-		pd.getFilterValues().size()>0
-	)
-) {
-
-	String searchDescription = pd.getSearchDescription();
-	if (!searchDescription.equals("") || (pd.getFilterNames() != null && pd.hasAlmostOneFilterDefined()) || (pd.isPostBackResult())){
-	%>	panelListaRicercaOpen = true; <% 
-	} 
-}%>
-
-</SCRIPT>
+</script>
 <!--Funzioni di utilita -->
+<jsp:include page="/jsplib/listUtils.jsp" flush="true" />
 <script type="text/javascript" nonce="<%= randomNonce %>">
-function togglePanelListaRicerca(panelListaRicercaOpen){
-	if(panelListaRicercaOpen) {
-    	$("#searchForm").removeClass('searchFormOff');
-    	$("#searchForm").addClass('searchFormOn');
-    	
-    	if($( "#iconaPanelListaSpan" ).length > 0){
-    		$('#iconaPanelListaSpan').prop('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
-    	}
-    	
-    	// reinit select del filtro
-    	inizializzaSelectFiltro();
-    } else {
-    	$("#searchForm").removeClass('searchFormOn');
-    	$("#searchForm").addClass('searchFormOff');
-    	
-    	if($( "#iconaPanelListaSpan" ).length > 0){
-    		$('#iconaPanelListaSpan').prop('title', '<%=Costanti.TOOLTIP_VISUALIZZA_FILTRI_RICERCA %>');
-    	}
-    }
-}
-
-function inizializzaSelectFiltro(){
-	if($('select[id^=filterValue_]').length > 0){
-		// elimino eventuali plugin gia' applicati
-		$('select[id^=filterValue_]').each(function() {
-			var wrapper = $( this ).parent();
-			if(wrapper.prop('id').indexOf('_wrapper') > -1) {
-				$( this ).appendTo($( this ).parent().parent());
-				wrapper.remove();
-				$( this ).css('width','');
-				$( this ).css('height','');
-			}
-			
-			var checkID = $( this ).prop('id') + '_hidden_chk';
-			if($( '#' + checkID ).length > 0) {
-				var val = $( '#' + checkID ).prop('value');
-				if(val && val == 'true'){
-					$( this ).searchable({disableInput : false});	
-				} else {
-					$( this ).searchable({disableInput : true});	
-				}
-			} else {
-				$( this ).searchable({disableInput : true});
-			}
-		});
-	}
-}
-
 	$(document).ready(function(){
 		// pannello ricerca che si apre e chiude iconaPanelLista
 		$("#panelListaRicercaHeader").click(function(){
@@ -541,8 +139,6 @@ function inizializzaSelectFiltro(){
 		document.form.action = '';
 	 });
 </script>
-<script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
 <tbody>
 	<!-- filtri di ricerca -->
 	<jsp:include page="/jsplib/filtriRicerca.jsp" flush="true"/>
