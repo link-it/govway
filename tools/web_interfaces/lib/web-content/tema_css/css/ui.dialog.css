@@ -28,8 +28,8 @@
 .ui-dialog .ui-resizable-e { width: 2px; right: 0; }
 .ui-dialog .ui-resizable-s { height: 2px; bottom: 0; }
 .ui-dialog .ui-resizable-w { width: 2px; left: 0; }
-.ui-dialog .ui-resizable-se, .ui-dialog .ui-resizable-sw, .ui-dialog .ui-resizable-ne, .ui-dialog .ui-resizable-nw { width: 7px; height: 7px; }
-.ui-dialog .ui-resizable-se { right: 0; bottom: 0; }
+.ui-dialog .ui-resizable-se, .ui-dialog .ui-resizable-sw, .ui-dialog .ui-resizable-ne, .ui-dialog .ui-resizable-nw { width: 12px; height: 12px; }
+.ui-dialog .ui-resizable-se { right: 2px; bottom: 2px; }
 .ui-dialog .ui-resizable-sw { left: 0; bottom: 0; }
 .ui-dialog .ui-resizable-ne { right: 0; top: 0; }
 .ui-dialog .ui-resizable-nw { left: 0; top: 0; }

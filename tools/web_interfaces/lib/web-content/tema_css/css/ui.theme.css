@@ -68,6 +68,8 @@ a:link.ui-button, a:visited.ui-button, .ui-button { color: ${jquery.ui.widget.a.
 .ui-state-error .ui-icon, .ui-state-error-text .ui-icon { background-image: url("../images/ui-icons_cc0000_256x240.png"); }
 .ui-button .ui-icon { background-image: url("../images/ui-icons_46464e_256x240.png"); }
 
+.ui-dialog-titlebar-close span.ui-button-icon.ui-icon.ui-icon-closethick { background-image: url("../images/ui-icons_ffffff_256x240.png"); }
+
 /* positioning */
 /* Three classes needed to override `.ui-button:hover .ui-icon` */
 .ui-icon-blank.ui-icon-blank.ui-icon-blank { background-image: none; }
