@@ -50,7 +50,9 @@ function usage() {
 	echo -e "		API Gateway SOAP = [ $elencoTestTrasparenteSoap ]\n"
 	echo -e "		API Gateway SOAP (fruizioni) = [ $elencoTestTrasparenteOutSoap ]\n"
 	echo -e "		ModI REST = [ $elencoTestModiRest ]\n"
+	echo -e "		ModI REST (fruizioni) = [ $elencoTestModiOutRest ]\n"
 	echo -e "		ModI SOAP = [ $elencoTestModiSoap ]\n"
+	echo -e "		ModI SOAP (fruizioni) = [ $elencoTestModiOutSoap ]\n"
 }
 
 
@@ -61,9 +63,11 @@ declare -A tests
 . ./conf/trasparente-soap.sh
 . ./conf/trasparente-out-soap.sh
 . ./conf/modi-rest.sh
+. ./conf/modi-out-rest.sh
 . ./conf/modi-soap.sh
+. ./conf/modi-out-soap.sh
 
-elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteOutRest $elencoTestTrasparenteSoap $elencoTestTrasparenteOutSoap $elencoTestModiRest $elencoTestModiSoap"
+elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteOutRest $elencoTestTrasparenteSoap $elencoTestTrasparenteOutSoap $elencoTestModiRest $elencoTestModiOutRest $elencoTestModiSoap $elencoTestModiOutSoap"
 
 function build_jmx_command() {
 	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -Jdebug=${debug} -JnodoRunProtocol=${nodoRunProtocol} -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JforwardedIP=${forwardedIP} -JconnectionTimeout=${connectionTimeout} -JreadTimeout=${readTimeout} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JcontentType=\"${contentType}\" -JtipoTest=${tipoTest} -Jbound=${bound} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloMessaggi=${profiloMessaggi} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"

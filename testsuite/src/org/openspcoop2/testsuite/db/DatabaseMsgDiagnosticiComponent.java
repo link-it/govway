@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -485,6 +486,9 @@ public class DatabaseMsgDiagnosticiComponent {
 	}
 	
 	public boolean isTracedMessaggioWithLike(String id,String messaggio)throws Exception{
+		return isTracedMessaggioWithLike(id, messaggio, null);
+	}
+	public boolean isTracedMessaggioWithLike(String id,String messaggio, List<String> listDiagnostici)throws Exception{
 		if(messaggio==null)throw new TestSuiteException("Messaggio vale null");
 
 		ResultSet res = null;
@@ -499,7 +503,24 @@ public class DatabaseMsgDiagnosticiComponent {
 //					CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"='"+id+"' AND "+
 //					CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO+" LIKE '%"+org.openspcoop2.utils.sql.SQLQueryObjectCore.getEscapeStringValue(messaggio)+"%' ]");
 			res = prep.executeQuery();
-			return res.next();
+			boolean value=res.next();
+			
+			if(listDiagnostici!=null) {
+				res.close();
+				prep.close();
+				
+				prep = this.connectionMsgDiagnostici
+						.prepareStatement("select "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO+" from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+								CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=? order by "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO+" ASC");
+				prep.setString(1, id);
+				res = prep.executeQuery();
+				while(res.next()) {
+					String msg = res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
+					listDiagnostici.add(msg);
+				}
+			}
+			
+			return value;
 		} catch (SQLException e) {
 			throw new TestSuiteException("Errore nel database: "+e.getMessage(),
 			"nella fase DBC.getResult");
