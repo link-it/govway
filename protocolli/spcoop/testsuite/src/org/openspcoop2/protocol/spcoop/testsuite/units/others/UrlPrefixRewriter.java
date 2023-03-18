@@ -2003,11 +2003,11 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 	
 	
 	
-	/* ************************ TEST 8   http://127.0.0.3 e  http://127.0.0.3 **************************
+	/* ************************ TEST 8   http://127.0.0.3:1234 e  http://127.0.0.3:1234 **************************
 
 
 	/***
-	 * Test per pd-url-prefix-rewriter="http://127.0.0.3"
+	 * Test per pd-url-prefix-rewriter="http://127.0.0.3:1234"
 	 */
 	Date testPD8StartTime = null;
 	Repository repository_testPD8=new Repository();
@@ -2090,7 +2090,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [https://verificaSSLTestPD]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"(location: http://127.0.0.3/govway/spcoop/in)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"(location: http://127.0.0.3:1234/govway/spcoop/in)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"Errore avvenuto durante la consegna HTTP: Connection refused"));
 			
 		}catch(Exception e){
@@ -2113,7 +2113,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 	
 	
 	/***
-	 * Test per pa-url-prefix-rewriter="http://127.0.0.3"
+	 * Test per pa-url-prefix-rewriter="http://127.0.0.3:1234"
 	 */
 	Date testPA8StartTime = null;
 	Repository repository_testPA8=new Repository();
@@ -2272,7 +2272,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 			//Reporter.log("Controllo che la busta abbia generato l'eccezione " + Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO + " rappresentante un servizio applicativo non disponibile");
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
-			String verifica = "(location: http://127.0.0.3/govwayTestSuite/server)";
+			String verifica = "(location: http://127.0.0.3:1234/govwayTestSuite/server)";
 			Reporter.log("Controllo esistenza diagnostico ["+verifica+"]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,verifica));
 			

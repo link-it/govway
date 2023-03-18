@@ -1,3 +1,10 @@
+2023-03-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-1436: aggiornata libreria 'org.codehaus.jettison:jettison' alla versione 1.5.4
+	- CVE-2023-1370: aggiornata libreria 'net.minidev:json-smart' alla versione 2.4.10
+
 2023-03-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
