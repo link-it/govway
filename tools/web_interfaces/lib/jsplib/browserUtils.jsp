@@ -102,6 +102,14 @@ GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+if(tabSessionKey == null)
+	tabSessionKey = "";
+
+String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+if(csrfTokenFromSession == null)
+	csrfTokenFromSession = "";
+
 // boolean debug = true;
 String userAgent = request.getHeader("user-agent");
 String info[] = getBrowserInfo(userAgent);
@@ -109,6 +117,9 @@ String browsername = getBrowserName(info);
 String browserversion = getBrowserVersion(info);
 
 if(browsername != null){
+	// window.location.hash="Again-No-back-button"; viene inserito due volte: again because google chrome don't insert first hash into history
+	
+	
 	// Microsoft IE (Trident e' il browsername che viene impostato da IE11)
 	// <meta http-equiv="X-UA-Compatible" content="IE=8">
 	if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Trident") ||  browsername.equalsIgnoreCase("Edg") ||  browsername.equalsIgnoreCase("Edge")){
@@ -117,7 +128,7 @@ if(browsername != null){
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<script type="text/javascript" nonce="<%= randomNonce %>">
 			window.location.hash="no-back-button";
-			window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+			window.location.hash="Again-No-back-button";
 			window.onhashchange=function(){window.location.hash="no-back-button";}
 		</script> 
 		<%
@@ -126,7 +137,7 @@ if(browsername != null){
 			%>
 			<script type="text/javascript" nonce="<%= randomNonce %>">
 				window.location.hash="no-back-button";
-				window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+				window.location.hash="Again-No-back-button";
 				window.onhashchange=function(){window.location.hash="no-back-button";}
 			</script> 
 			<%
@@ -141,18 +152,17 @@ if(browsername != null){
 		%>
 		<script type="text/javascript" nonce="<%= randomNonce %>">
 			window.location.hash="no-back-button";
-			window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+			window.location.hash="Again-No-back-button";
 			window.onhashchange=function(){window.location.hash="no-back-button";}
 		</script> 
 		<%
 	}
 }
+// console.log("Windows HASH:"); console.log(window.location.hash);
 %>
 
 <script type="text/javascript" nonce="<%= randomNonce %>">
 var destElement;
-console.log("Windows HASH:");
-console.log(window.location.hash);
 
 if(window.location.hash){
 	destElement = window.location.hash.substr(1);
@@ -188,25 +198,9 @@ function IEVersione(){
 	return browserVersion;
 }
 
-<%  
-String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
-if(tabSessionKey == null)
-	tabSessionKey = "";
-%>
 var tabSessionKey = '<%=Costanti.PARAMETER_TAB_KEY %>';
 var prevTabSessionKey = '<%=Costanti.PARAMETER_PREV_TAB_KEY %>';
 var tabValue = '<%=tabSessionKey %>'
-
-if(tabValue != ''){
-    sessionStorage.setItem(tabSessionKey, tabValue);
-}
-
-console.log('IDTab: ['+tabValue+']');
-
-<%String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
-if(csrfTokenFromSession == null)
-	csrfTokenFromSession = "";%>
-
 var csrfTokenKey = '<%=Costanti.PARAMETRO_CSRF_TOKEN%>';
 var csrfToken = '<%=csrfTokenFromSession %>';
 

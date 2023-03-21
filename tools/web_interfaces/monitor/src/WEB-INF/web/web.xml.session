@@ -2,6 +2,8 @@
 	<session-config>
 	        <cookie-config>
         		<name>JSESSIONID_GW_MONITOR</name>
+        		<http-only>true</http-only>
+        		<secure>true</secure>
 	        </cookie-config>
 		<session-timeout>120</session-timeout>
 	</session-config>
