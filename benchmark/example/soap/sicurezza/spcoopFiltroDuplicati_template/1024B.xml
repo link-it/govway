@@ -1,0 +1,45 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://services.samples/xsd">
+	<soapenv:Header>
+	 <eGov_IT:Intestazione SOAP_ENV:actor="http://www.cnipa.it/eGov_it/portadominio" SOAP_ENV:mustUnderstand="1" xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eGov_IT="http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/">
+   <eGov_IT:IntestazioneMessaggio>
+    <eGov_IT:Mittente>
+	    <eGov_IT:IdentificativoParte tipo="SPC">ENTE</eGov_IT:IdentificativoParte>
+    </eGov_IT:Mittente>
+    <eGov_IT:Destinatario>
+	    <eGov_IT:IdentificativoParte tipo="SPC">ENTE</eGov_IT:IdentificativoParte>
+    </eGov_IT:Destinatario>
+    <eGov_IT:ProfiloCollaborazione>EGOV_IT_ServizioSincrono</eGov_IT:ProfiloCollaborazione>
+    <eGov_IT:Servizio tipo="SPC">StressTestSoapProxy</eGov_IT:Servizio>
+    <eGov_IT:Azione>test2</eGov_IT:Azione>
+    <eGov_IT:Messaggio>
+	    <eGov_IT:Identificatore>ENTE_ENTESPCoopIT_2411206_DATA_00:01</eGov_IT:Identificatore>
+	    <eGov_IT:OraRegistrazione tempo="EGOV_IT_SPC">DATAT00:00:00.111</eGov_IT:OraRegistrazione>
+    </eGov_IT:Messaggio>
+    <eGov_IT:ProfiloTrasmissione confermaRicezione="false" inoltro="EGOV_IT_ALPIUUNAVOLTA"/>
+   </eGov_IT:IntestazioneMessaggio>
+   <eGov_IT:ListaTrasmissioni>
+    <eGov_IT:Trasmissione>
+     <eGov_IT:Origine>
+	     <eGov_IT:IdentificativoParte tipo="SPC">ENTE</eGov_IT:IdentificativoParte>
+     </eGov_IT:Origine>
+     <eGov_IT:Destinazione>
+	     <eGov_IT:IdentificativoParte tipo="SPC">ENTE</eGov_IT:IdentificativoParte>
+     </eGov_IT:Destinazione>
+     <eGov_IT:OraRegistrazione tempo="EGOV_IT_SPC">DATAT00:00:00.111</eGov_IT:OraRegistrazione>
+    </eGov_IT:Trasmissione>
+   </eGov_IT:ListaTrasmissioni>
+  </eGov_IT:Intestazione>
+ </soapenv:Header>
+<soapenv:Body>
+<xsd:skcotSyub2 xmlns="http://services.samples/xsd">
+<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>1.3</ecirp><emulov>2147483647</emulov></redro>
+<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>21474</emulov></redro>
+<redro><lobmys>SUN</lobmys><DIreyub>ia</DIreyub><ecirp>14.5</ecirp><emulov>21</emulov></redro>
+<redro><lobmys>GO</lobmys><DIreyub>hura</DIreyub><ecirp>60.2</ecirp><emulov>2</emulov></redro>
+<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>14.34</ecirp><emulov>2</emulov></redro>
+<redro><lobmys>IBM</lobmys><DIreyub>asaa</DIreyub><ecirp>140.34</ecirp><emulov>2</emulov></redro>
+<redro><lobmys>GG</lobmys><DIreyub>cha</DIreyub><ecirp>60.24</ecirp><emulov>2</emulov></redro>
+<redro><lobmys>GO</lobmys><DIreyub>c</DIreyub><ecirp>60.24</ecirp><emulov>21</emulov></redro>
+</xsd:skcotSyub2>
+</soapenv:Body>
+</soapenv:Envelope>

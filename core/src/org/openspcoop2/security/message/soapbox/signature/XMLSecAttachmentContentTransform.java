@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.security.message.signature;
+package org.openspcoop2.security.message.soapbox.signature;
 
 import java.io.IOException;
 import java.io.OutputStream;

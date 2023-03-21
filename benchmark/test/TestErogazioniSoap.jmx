@@ -159,6 +159,11 @@
             <stringProp name="Argument.value">${__P(testName,&quot;TESTNAME&quot;)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="prova" elementType="Argument">
+            <stringProp name="Argument.name">prova</stringProp>
+            <stringProp name="Argument.value">${__P(prova,VALOREACASO)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>

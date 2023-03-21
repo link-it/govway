@@ -30,7 +30,7 @@ import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
-import org.openspcoop2.security.message.signature.XMLSecAttachmentContentTransform;
+import org.openspcoop2.security.message.soapbox.signature.XMLSecAttachmentContentTransform;
 
 /**
  * WSSContext_soapbox

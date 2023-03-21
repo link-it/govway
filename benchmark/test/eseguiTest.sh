@@ -53,6 +53,8 @@ function usage() {
 	echo -e "		ModI REST (fruizioni) = [ $elencoTestModiOutRest ]\n"
 	echo -e "		ModI SOAP = [ $elencoTestModiSoap ]\n"
 	echo -e "		ModI SOAP (fruizioni) = [ $elencoTestModiOutSoap ]\n"
+	echo -e "		SPCoop SOAP = [ $elencoTestSPCoopSoap ]\n"
+	echo -e "		SPCoop SOAP (fruizioni) = [ $elencoTestSPCoopOutSoap ]\n"
 }
 
 
@@ -66,8 +68,10 @@ declare -A tests
 . ./conf/modi-out-rest.sh
 . ./conf/modi-soap.sh
 . ./conf/modi-out-soap.sh
+. ./conf/spcoop-soap.sh
+. ./conf/spcoop-out-soap.sh
 
-elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteOutRest $elencoTestTrasparenteSoap $elencoTestTrasparenteOutSoap $elencoTestModiRest $elencoTestModiOutRest $elencoTestModiSoap $elencoTestModiOutSoap"
+elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteOutRest $elencoTestTrasparenteSoap $elencoTestTrasparenteOutSoap $elencoTestModiRest $elencoTestModiOutRest $elencoTestModiSoap $elencoTestModiOutSoap $elencoTestSPCoopSoap $elencoTestSPCoopOutSoap"
 
 function build_jmx_command() {
 	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -Jdebug=${debug} -JnodoRunProtocol=${nodoRunProtocol} -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JforwardedIP=${forwardedIP} -JconnectionTimeout=${connectionTimeout} -JreadTimeout=${readTimeout} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JcontentType=\"${contentType}\" -JtipoTest=${tipoTest} -Jbound=${bound} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloMessaggi=${profiloMessaggi} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
@@ -146,6 +150,20 @@ function run_jmx_test() {
 					echo "--------- test (protocollo:${protocollo} profiloSicurezza:${profiloSicurezza} tipoTest:$tipoTest dimensione:$dimensione threads:$threadNumber azione:$azione sleepMin:$sleepMin sleepMax:$sleepMax) ..."
 					echo ""
 
+					if [ "${protocollo}" == "spcoop" -a "${bound}" == "in" ]
+					then
+						echo ""
+						echo -e "============================"
+						echo -e "Correzione date SPCoop"
+						echo -e "============================"
+						echo ""
+						DATA_SPCOOP=$(date +%Y-%m-%d)
+						echo "Applicazione data '${DATA_SPCOOP}'"
+						rm -rf ${BENCHMARK_HOME}/example/soap/sicurezza/${profiloSicurezza}
+						cp -r ${BENCHMARK_HOME}/example/soap/sicurezza/${profiloSicurezza}_template ${BENCHMARK_HOME}/example/soap/sicurezza/${profiloSicurezza}
+						find ${BENCHMARK_HOME}/example/soap/sicurezza/${profiloSicurezza} -type f -exec perl -pi -e "s#DATA#${DATA_SPCOOP}#g" {} \;
+					fi
+
 					if [[ ! -z $scriptVerifyLogOptimization ]]; then
 						command_single_test=$(build_jmx_command_single_test)
 
@@ -183,6 +201,11 @@ function run_jmx_test() {
 					
 					if [[ $debug == "false" ]]; then
 						rm -rf ${logDir}/failed*
+					fi
+
+					if [ "${protocollo}" == "spcoop" -a "${bound}" == "in" ]
+					then
+						rm -rf ${BENCHMARK_HOME}/example/soap/sicurezza/${profiloSicurezza}
 					fi
 
 					echo ""

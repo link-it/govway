@@ -105,31 +105,6 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
 					}catch(Exception e){
 						throw new ResourceResolverException(e.getMessage(),e,uri.getLocalName(),BaseURI);
 					}
-//					try{
-////						String contentType = ap.getContentType();
-////						byte[]raw = ap.getRawContentBytes();
-////						if("text/xml".equals(contentType)){
-////							Element signElement = this.xmlUtils.newElement(raw);
-////							XMLSignatureInput result = new XMLSignatureInput(signElement);
-////					        result.setMIMEType("text/xml");
-////					        try {
-////					            URI uriNew = new URI(new URI(BaseURI), uri.getNodeValue());
-////					            result.setSourceURI(uriNew.toString());
-////					        } catch (URI.MalformedURIException ex) {
-////					            result.setSourceURI(BaseURI);
-////					        }
-////					        return result;
-////						}
-////						else{
-////							Canonicalizer canonicalizer = CanonicalizerFactory.getCanonicalizer(contentType);
-////							byte[] canonicalize = canonicalizer.canonicalize(raw);
-////							XMLSignatureInput result = new XMLSignatureInput(Base64.encode(canonicalize));
-////							result.setMIMEType(ap.getContentType());
-////							return result;
-////						}
-//					}catch(Exception e){
-//						throw new ResourceResolverException(e.getMessage(),e,uri,BaseURI);
-//					}
 				}
 			}
         	
