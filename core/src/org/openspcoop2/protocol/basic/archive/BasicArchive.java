@@ -127,6 +127,23 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		return m;
 	}
 	
+	private String normalizeDescription(String description) {
+		if(description==null) {
+			return null;
+		}
+		 String descr = description;
+		 while(descr.contains("\r")) {
+			 descr = descr.replace("\r", "");
+		 }
+		 int OFFSET = 15; // uso 250 per essere sicuro che finisca in oracle con caratteri strani (value too large for column "GOVWAY330"."ACCORDI"."DESCRIZIONE" (actual: 257, maximum: 255))
+		 if(descr.length()<=(255-OFFSET)) { 
+			 return descr;
+		 }
+		 else {
+			return descr.substring(0, (245-OFFSET))+ " ...";
+		 }
+	}
+	
 	/**
 	 * Imposta per ogni portType e operation presente nell'accordo fornito come parametro 
 	 * le informazioni di protocollo analizzando i documenti interni agli archivi
@@ -385,17 +402,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	         
 	         if(accordoServizioParteComune.getDescrizione()==null || "".equals(accordoServizioParteComune.getDescrizione())) {
 	        	 if(api.getDescription()!=null) {
-	        		 String descr = api.getDescription();
-	        		 while(descr.contains("\r")) {
-	        			 descr = descr.replace("\r", "");
-	        		 }
-	        		 int OFFSET = 15; // uso 250 per essere sicuro che finisca in oracle con caratteri strani (value too large for column "GOVWAY330"."ACCORDI"."DESCRIZIONE" (actual: 257, maximum: 255))
-	        		 if(descr.length()<=(255-OFFSET)) { 
-	        			 accordoServizioParteComune.setDescrizione(descr);
-	        		 }
-	        		 else {
-	        			 accordoServizioParteComune.setDescrizione(descr.substring(0, (245-OFFSET))+ " ...");
-	        		 }
+	        		 accordoServizioParteComune.setDescrizione(this.normalizeDescription(api.getDescription()));
 	        	 }
 	         }
 	         
@@ -420,7 +427,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 					if(resourceOpenSPCoop==null){
 						resourceOpenSPCoop = new Resource();
 						resourceOpenSPCoop.setNome(APIUtils.normalizeResourceName(apiOp.getHttpMethod(), apiOp.getPath()));
-						resourceOpenSPCoop.setDescrizione(apiOp.getDescription());	
+						resourceOpenSPCoop.setDescrizione(this.normalizeDescription(apiOp.getDescription()));	
 						resourceOpenSPCoop.setMethod(HttpMethod.toEnumConstant(apiOp.getHttpMethod().name()));
 						resourceOpenSPCoop.setPath(apiOp.getPath());
 						accordoServizioParteComune.addResource(resourceOpenSPCoop);
@@ -448,7 +455,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									resourceOpenSPCoop.getRequest().addRepresentation(rr);
 								}
 								rr.setNome(body.getName());
-								rr.setDescrizione(body.getDescription());
+								rr.setDescrizione(this.normalizeDescription(body.getDescription()));
 								if(body.getElement()!=null) {
 									if(body.getElement() instanceof QName) {
 										QName qname = (QName)body.getElement();
@@ -507,7 +514,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setNome(cookie.getName());
 									resourceOpenSPCoop.getRequest().addParameter(rp);
 								}
-								rp.setDescrizione(cookie.getDescription());
+								rp.setDescrizione(this.normalizeDescription(cookie.getDescription()));
 								rp.setRequired(cookie.isRequired());
 								if(cookie.getApiParameterSchema()!=null) {
 									String type = cookie.getApiParameterSchema().getType();
@@ -542,7 +549,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setNome(dynamicPath.getName());
 									resourceOpenSPCoop.getRequest().addParameter(rp);
 								}
-								rp.setDescrizione(dynamicPath.getDescription());
+								rp.setDescrizione(this.normalizeDescription(dynamicPath.getDescription()));
 								rp.setRequired(dynamicPath.isRequired());
 								if(dynamicPath.getApiParameterSchema()!=null) {
 									String type = dynamicPath.getApiParameterSchema().getType();
@@ -577,7 +584,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setNome(form.getName());
 									resourceOpenSPCoop.getRequest().addParameter(rp);
 								}
-								rp.setDescrizione(form.getDescription());
+								rp.setDescrizione(this.normalizeDescription(form.getDescription()));
 								rp.setRequired(form.isRequired());
 								if(form.getApiParameterSchema()!=null) {
 									String type = form.getApiParameterSchema().getType();
@@ -612,7 +619,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setNome(header.getName());
 									resourceOpenSPCoop.getRequest().addParameter(rp);
 								}
-								rp.setDescrizione(header.getDescription());
+								rp.setDescrizione(this.normalizeDescription(header.getDescription()));
 								rp.setRequired(header.isRequired());
 								if(header.getApiParameterSchema()!=null) {
 									String type = header.getApiParameterSchema().getType();
@@ -647,7 +654,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setNome(query.getName());
 									resourceOpenSPCoop.getRequest().addParameter(rp);
 								}
-								rp.setDescrizione(query.getDescription());
+								rp.setDescrizione(this.normalizeDescription(query.getDescription()));
 								rp.setRequired(query.isRequired());
 								if(query.getApiParameterSchema()!=null) {
 									String type = query.getApiParameterSchema().getType();
@@ -688,7 +695,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								}
 								resourceOpenSPCoop.addResponse(resourceOpenSPCoopResponse);
 							}
-							resourceOpenSPCoopResponse.setDescrizione(apiResponse.getDescription());
+							resourceOpenSPCoopResponse.setDescrizione(this.normalizeDescription(apiResponse.getDescription()));
 							
 							if(apiResponse.sizeBodyParameters()>0) {
 								for (ApiBodyParameter body : apiResponse.getBodyParameters()) {
@@ -706,7 +713,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 										resourceOpenSPCoopResponse.addRepresentation(rr);
 									}
 									rr.setNome(body.getName());
-									rr.setDescrizione(body.getDescription());
+									rr.setDescrizione(this.normalizeDescription(body.getDescription()));
 									if(body.getElement()!=null) {
 										if(body.getElement() instanceof QName) {
 											QName qname = (QName)body.getElement();
@@ -765,7 +772,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 										rp.setNome(cookie.getName());
 										resourceOpenSPCoopResponse.addParameter(rp);
 									}
-									rp.setDescrizione(cookie.getDescription());
+									rp.setDescrizione(this.normalizeDescription(cookie.getDescription()));
 									rp.setRequired(cookie.isRequired());
 									if(cookie.getApiParameterSchema()!=null) {
 										String type = cookie.getApiParameterSchema().getType();
@@ -800,7 +807,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 										rp.setNome(header.getName());
 										resourceOpenSPCoopResponse.addParameter(rp);
 									}
-									rp.setDescrizione(header.getDescription());
+									rp.setDescrizione(this.normalizeDescription(header.getDescription()));
 									rp.setRequired(header.isRequired());
 									if(header.getApiParameterSchema()!=null) {
 										String type = header.getApiParameterSchema().getType();

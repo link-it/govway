@@ -1,5 +1,11 @@
 2023-03-22  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug OP-1571
+	Caricando un'interfaccia OpenAPI 3 contenente una descrizione del corpo della richiesta, di una risposta o di un parametro superiore ai 255 caratteri si otteneva un errore inatteso sulla console.
+
+2023-03-22  Andrea Poli <apoli@link.it>
+
 	* [GovWayMonitor]
 	Risolto Bug OP-1569
 	I tempi medi di risposta riportati nei report statistici non venivano corretti calcolati 
