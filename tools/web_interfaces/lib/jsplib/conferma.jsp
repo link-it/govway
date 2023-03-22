@@ -70,24 +70,6 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 		var nomeServlet_Custom_Ok = '';
 		var nomeServlet_Custom_No = '';
 		
-		function generaUrl() {
-		    var params = '';
-		    
-		    for (var k=0; k<document.form.elements.length; k++) {
-				var nome = document.form.elements[k].name;
-				if (nome && nome.length > 0 && nome != "idhid") {
-				    var tipo = document.form.elements[k].type;
-				    var valore = "";
-				    if ( tipo == "hidden"){
-						valore = document.form.elements[k].value;
-						params += "&" + nome + "=" + valore;
-			    	}
-			    }
-		    }
-		    
-			return params;   
-		}
-		    
 	</SCRIPT>
 	<jsp:include page="/jsp/confermaCustom.jsp" flush="true" />
 	<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
@@ -161,9 +143,9 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'annulla');
 				  
 				  //aggiungo parametro csfr
-				  if(csrfToken != ''){
-				  	addHidden(document.form, csrfTokenKey , csrfToken);
-				  }
+// 				  if(csrfToken != ''){
+// 				  	addHidden(document.form, csrfTokenKey , csrfToken);
+// 				  }
 				
 				document.form.submit();
 			} else {

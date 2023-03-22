@@ -6,13 +6,51 @@
 
 /* Funzioni di utilita' utilizzate in tutte le pagine */
 
+function generaUrl() {
+	return convertFormAsURL(document.form);
+}
+
+function convertFormAsURL(theForm) {
+    var params = '';
+    
+    for (var k=0; k<theForm.elements.length; k++) {
+		var nome = theForm.elements[k].name;
+		if (nome && nome.length > 0 && nome != "idhid") {
+		    var tipo = theForm.elements[k].type;
+		    var valore = "";
+		    if ( tipo == "hidden"){
+				valore = theForm.elements[k].value;
+				params += "&" + nome + "=" + valore;
+	    	}
+	    }
+    }
+    
+	return params;   
+}
+
+function formHasParam(theForm, name){
+	for (var k=0; k<theForm.elements.length; k++) {
+		var nome = theForm.elements[k].name;
+		if (nome && nome.length > 0) {
+		    if ( nome == name){
+				return true;
+	    	}
+	    }
+    }
+	
+	return false;
+}
+
 function addHidden(theForm, name, value) {
-    // Create a hidden input element, and append it to the form:
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = name;
-    input.value = value;
-    theForm.appendChild(input);
+	// controllo di sicurezza per evitare di aggiungere due volte il parametro con lo stesso nome.
+	if(!formHasParam(theForm,name)){
+	    // Create a hidden input element, and append it to the form:
+	    var input = document.createElement('input');
+	    input.type = 'hidden';
+	    input.name = name;
+	    input.value = value;
+	    theForm.appendChild(input);
+    }
 }
 
 function addTabIdParamToHref(element, event){
@@ -122,9 +160,13 @@ function inputNumberChangeEventHandler(e){
     }
 }
 
+function urlHasParam(href, name){
+	return href && href.indexOf(name) > -1;
+}
+
 function addTabIdParam(href, addPrevTabParam){
 	
-	if(tabValue != ''){
+	if(tabValue != '' && !urlHasParam(href,tabSessionKey)){
 		var param = (tabSessionKey + "="+tabValue);
 		
 		if((href != '#' && href.indexOf('#tabs-') == -1)){
@@ -135,7 +177,7 @@ function addTabIdParam(href, addPrevTabParam){
 	        else
 	        	href = href + '?' + param;
 	        
-	        if(addPrevTabParam) {
+	        if(addPrevTabParam && !urlHasParam(href,prevTabSessionKey)) {
 				var paramPrevTab = (prevTabSessionKey + "="+tabValue);
 				return href + '&' + paramPrevTab;
 			}
@@ -146,7 +188,7 @@ function addTabIdParam(href, addPrevTabParam){
 
 function addParamToURL(href, paramKey, paramValue){
 	
-	if(paramValue != ''){
+	if(paramValue != '' && !urlHasParam(href,paramKey)){
 		var param = (paramKey + "="+paramValue);
 		
 		if((href != '#' && href.indexOf('#tabs-') == -1)){
