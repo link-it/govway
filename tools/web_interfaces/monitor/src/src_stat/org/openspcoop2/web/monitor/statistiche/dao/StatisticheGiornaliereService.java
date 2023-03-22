@@ -77,6 +77,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.Union;
 import org.openspcoop2.generic_project.beans.UnionExpression;
+import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -89,6 +90,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.Index;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.condition.FilterImpl;
@@ -743,6 +745,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(model==null) {
 				throw new Exception("Model sconosciuta");
 			}
+			if(this.dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.dao).getFieldConverter(); 
 			
 			List<Index> forceIndexes = null;
 			try{
@@ -819,9 +826,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(this.andamentoTemporaleSearch.isAndamentoTemporalePerEsiti()){
 						TipoLatenza tipoLatenza = this.andamentoTemporaleSearch.getTipoLatenza();
 						switch (tipoLatenza) {
-						case LATENZA_PORTA:
+						case LATENZA_PORTA:{
 							gByExpr.isNotNull(model.LATENZA_PORTA);
-							listaFunzioni.add(new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza_porta"));
+							
+							//listaFunzioni.add(new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza_porta"));
+							listaFunzioni.add(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, "somma_latenza_porta"));
+							
 							isLatenza_porta = true;
 							
 							if(calcolaSommeMediaPesata) {
@@ -830,9 +840,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							}
 							
 							break;
-						case LATENZA_SERVIZIO:
+						}
+						case LATENZA_SERVIZIO:{
 							gByExpr.isNotNull(model.LATENZA_SERVIZIO);
-							listaFunzioni.add(new FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza_servizio"));
+							
+							//listaFunzioni.add(new FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza_servizio"));
+							listaFunzioni.add(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, "somma_latenza_servizio"));
+							
 							isLatenza_servizio = true;
 							
 							if(calcolaSommeMediaPesata) {
@@ -841,10 +855,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							}
 							
 							break;
+						}
 						case LATENZA_TOTALE:
-						default:
+						default:{
 							gByExpr.isNotNull(model.LATENZA_TOTALE);
-							listaFunzioni.add(new  FunctionField(model.LATENZA_TOTALE, 	Function.AVG, "somma_latenza_totale"));
+														
+							//listaFunzioni.add(new  FunctionField(model.LATENZA_TOTALE, 	Function.AVG, "somma_latenza_totale"));
+							listaFunzioni.add(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, "somma_latenza_totale"));
+							
 							isLatenza_totale = true;
 							
 							if(calcolaSommeMediaPesata) {
@@ -854,6 +872,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							
 							break;
 						}
+						}
 					}
 					else{
 						List<TipoLatenza> tipiLatenza = this.andamentoTemporaleSearch.getTipiLatenzaImpostati();
@@ -862,18 +881,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							switch (tipoLatenza) {
 							case LATENZA_PORTA:
 								gByExpr.isNotNull(model.LATENZA_PORTA);
-								listaFunzioni.add(new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza_porta"));
+								//listaFunzioni.add(new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza_porta"));
+								listaFunzioni.add(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, "somma_latenza_porta"));
 								isLatenza_porta = true;
 								break;
 							case LATENZA_SERVIZIO:
 								gByExpr.isNotNull(model.LATENZA_SERVIZIO);
-								listaFunzioni.add(new FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza_servizio"));
+								//listaFunzioni.add(new FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza_servizio"));
+								listaFunzioni.add(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, "somma_latenza_servizio"));
 								isLatenza_servizio = true;
 								break;	
 							case LATENZA_TOTALE:
 							default:
 								gByExpr.isNotNull(model.LATENZA_TOTALE);
-								listaFunzioni.add(new  FunctionField(model.LATENZA_TOTALE, 	Function.AVG, "somma_latenza_totale"));
+								//listaFunzioni.add(new  FunctionField(model.LATENZA_TOTALE, 	Function.AVG, "somma_latenza_totale"));
+								listaFunzioni.add(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, "somma_latenza_totale"));
 								isLatenza_totale = true;
 								break;
 							}
@@ -1293,6 +1315,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							}
 	
 						}
+						else {
+							if(isLatenza && calcolaSommeMediaPesata) {
+								rEsitoSommaMediaPesata.add(0);
+							}
+						}
 						//System.out.println("MISURAZIONE OK: \n"+rEsito.toString());
 	
 						List<Map<String, Object>> listFaultApplicativo = null;
@@ -1443,6 +1470,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							}
 	
 						}
+						else {
+							if(isLatenza && calcolaSommeMediaPesata) {
+								rEsitoSommaMediaPesata.add(0);
+							}
+						}
 						//System.out.println("MISURAZIONE FAULT: \n"+rEsito.toString());
 	
 						List<Map<String, Object>> listKo = null;
@@ -1592,6 +1624,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							}
 	
 						}
+						else {
+							if(isLatenza && calcolaSommeMediaPesata) {
+								rEsitoSommaMediaPesata.add(0);
+							}
+						}
 						//System.out.println("MISURAZIONE KO: \n"+rEsito.toString());
 	
 	
@@ -1608,7 +1645,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								truncDate = statisticheMensiliUtils.truncDate(rEsito.getRisultato(), false);
 							}
 							
-							elaboraIntervalloTemporale(truncDate, res, rEsito, isLatenza_porta, rEsitoSommaMediaPesata);
+							elaboraIntervalloTemporale(truncDate, res, rEsito, isLatenza, rEsitoSommaMediaPesata);
 							
 						}
 						else {
@@ -1629,7 +1666,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								truncDate = statisticheMensiliUtils.truncDate(r.getRisultato(), false);
 							}
 							
-							elaboraIntervalloTemporale(truncDate, res, r, isLatenza_porta, rSommaMediaPesata);
+							elaboraIntervalloTemporale(truncDate, res, r, isLatenza, rSommaMediaPesata);
 							
 						}
 						else {
@@ -1740,7 +1777,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Number nMediaNuovo = nSommaMediaNuovo.longValue() * nNuovo.longValue();
 						Number nMedia = nMediaEsistente.longValue() + nMediaNuovo.longValue();
 						StatisticheGiornaliereService.log.debug("MEDIA: esi "+nMediaEsistente+" + nuovo "+nMediaNuovo+" = "+nMedia);
-						Number nMediaPesata = nMedia.longValue() / totale.longValue();
+						Number nMediaPesata = (totale.longValue()>0) ? (nMedia.longValue() / totale.longValue()) : 0;
 						StatisticheGiornaliereService.log.debug("MEDIA PESATA: "+nMediaPesata);
 						//log.debug("MEDIA REALE: "+((nEsistente.longValue() + nNuovo.longValue())/2));
 						rEsitoRicalcolato.inserisciSomma(nMediaPesata);
@@ -2751,6 +2788,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException("Model unknown");
 			}
 			
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.dao).getFieldConverter(); 
+			
 			IExpression gByExpr = this.createDistribuzioneErroriExpression(this.dao,	model, false);
 
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.ESITO);
@@ -2838,40 +2877,56 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				TipoLatenza tipoLatenza = this.distribErroriSearch.getTipoLatenza();
 
 				union.addOrderBy(sommaAliasName,SortOrder.DESC);
-				union.addField(sommaAliasName, Function.AVG, datoParamAliasName);
+				//union.addField(sommaAliasName, Function.AVG, datoParamAliasName);
+				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
 					fakeExpr.isNotNull(model.LATENZA_PORTA);
 					gByExpr.isNotNull(model.LATENZA_PORTA);
-					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
-
-					unionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_PORTA,
-							Function.AVG, datoParamAliasName));
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
+//							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
+//
+//					unionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_PORTA,
+//							Function.AVG, datoParamAliasName));
+					
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta", 
+							Integer.valueOf(0), model.LATENZA_PORTA.getFieldType()), Function.SUM, datoParamAliasName));
+					unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, datoParamAliasName));
+					
 					break;
 				case LATENZA_SERVIZIO:
 					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
 					gByExpr.isNotNull(model.LATENZA_SERVIZIO);
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
+//							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
+//
+//					unionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_SERVIZIO,
+//							Function.AVG, datoParamAliasName));
+					
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
-
-					unionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_SERVIZIO,
-							Function.AVG, datoParamAliasName));
+							Integer.valueOf(0), model.LATENZA_SERVIZIO.getFieldType()), Function.SUM, datoParamAliasName));
+					unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, datoParamAliasName));
+					
 					break;
 
 				case LATENZA_TOTALE:
 				default:
 					fakeExpr.isNotNull(model.LATENZA_TOTALE);
 					gByExpr.isNotNull(model.LATENZA_TOTALE);
-					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
-
-					unionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_TOTALE,
-							Function.AVG, datoParamAliasName));
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
+//							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
+//
+//					unionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_TOTALE,
+//							Function.AVG, datoParamAliasName));
+					
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale", 
+							Integer.valueOf(0), model.LATENZA_TOTALE.getFieldType()), Function.SUM, datoParamAliasName));
+					unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, datoParamAliasName));
+					
 					break;
 				}
 				break;
@@ -3831,6 +3886,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			throw new ServiceException(e.getMessage(),e);
 		}
 		
+		ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)dao).getFieldConverter(); 
+		
 		List<Map<String, Object>> list = null;
 		ArrayList<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
 		StatisticheGiornaliereService.log
@@ -4175,44 +4232,66 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				break;
 
 			case TEMPO_MEDIO_RISPOSTA:{
-
+				
 				TipoLatenza tipoLatenza = this.distribSoggettoSearch.getTipoLatenza();
 
 				union.addOrderBy("somma",SortOrder.DESC);
-				union.addField("somma", Function.AVG, "dato");
-
+				
+				union.addField("somma_richieste", Function.SUM, "dato_richieste"); // dato non utilizzato, ma richiesto per avere lo stesso numero dei dati ritornati nelle expression
+				//union.addField("somma", Function.AVG, "dato");
+				union.addCustomField("somma",StatisticheUtils.getSqlCalcolaMedia("dato", "dato_richieste"));
+				
+				erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
+						model.NUMERO_TRANSAZIONI, Function.SUM,
+						"dato_richieste"));
+				fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
+						model.NUMERO_TRANSAZIONI, Function.SUM,
+						"dato_richieste"));
+				
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
 					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_PORTA);
 					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_PORTA);
-					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_PORTA,
-							Function.AVG, "dato"));
-					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_PORTA,
-							Function.AVG, "dato"));
+//					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_PORTA,
+//							Function.AVG, "dato"));
+//					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_PORTA,
+//							Function.AVG, "dato"));
+					
+					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, "dato"));
+					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, "dato"));
+															
 					break;
 				case LATENZA_SERVIZIO:
 					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_SERVIZIO);
 					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_SERVIZIO);
-					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_SERVIZIO,
-							Function.AVG, "dato"));
-					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_SERVIZIO,
-							Function.AVG, "dato"));
+//					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_SERVIZIO,
+//							Function.AVG, "dato"));
+//					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_SERVIZIO,
+//							Function.AVG, "dato"));
+					
+					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, "dato"));
+					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, "dato"));
+					
 					break;
 
 				case LATENZA_TOTALE:
 				default:
 					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_TOTALE);
 					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_TOTALE);
-					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_TOTALE,
-							Function.AVG, "dato"));
-					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_TOTALE,
-							Function.AVG, "dato"));
+//					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_TOTALE,
+//							Function.AVG, "dato"));
+//					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_TOTALE,
+//							Function.AVG, "dato"));
+					
+					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, "dato"));
+					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, "dato"));
+					
 					break;
 				}
 				break;
@@ -4503,27 +4582,36 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				TipoLatenza tipoLatenza = this.distribSoggettoSearch.getTipoLatenza();
 
 				union.addOrderBy("somma",SortOrder.DESC);
-				union.addField("somma", Function.AVG, "dato");
+				//union.addField("somma", Function.AVG, "dato");
+				union.addField("somma", Function.SUM, "dato");
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
 					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_PORTA);
 					fakeExpr.isNotNull(model.LATENZA_PORTA);
-					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_PORTA,
-							Function.AVG, "dato"));
-					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+//					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_PORTA,
+//							Function.AVG, "dato"));
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
+//							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+					
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta", 
+							Integer.valueOf(0), model.LATENZA_PORTA.getFieldType()), Function.SUM, "dato"));
+					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, "dato"));
 
 					break;
 				case LATENZA_SERVIZIO:
 					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_SERVIZIO);
 					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
-					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_SERVIZIO,
-							Function.AVG, "dato"));
+//					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_SERVIZIO,
+//							Function.AVG, "dato"));
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
+//							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+					
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(0), model.LATENZA_SERVIZIO.getFieldType()), Function.SUM, "dato"));
+					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, "dato"));
 
 					break;
 
@@ -4531,11 +4619,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				default:
 					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_TOTALE);
 					fakeExpr.isNotNull(model.LATENZA_TOTALE);
-					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_TOTALE,
-							Function.AVG, "dato"));
-					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+//					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_TOTALE,
+//							Function.AVG, "dato"));
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
+//							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+					
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale", 
+							Integer.valueOf(0), model.LATENZA_TOTALE.getFieldType()), Function.SUM, "dato"));
+					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, "dato"));
 
 					break;
 				}
@@ -4821,40 +4913,56 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				TipoLatenza tipoLatenza = this.distribSoggettoSearch.getTipoLatenza();
 
 				union.addOrderBy("somma",SortOrder.DESC);
-				union.addField("somma", Function.AVG, "dato");
+				//union.addField("somma", Function.AVG, "dato");
+				union.addField("somma", Function.SUM, "dato");
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
 					fakeExpr.isNotNull(model.LATENZA_PORTA);
 					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_PORTA);
-					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
-
-					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_PORTA,
-							Function.AVG, "dato"));
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
+//							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+//
+//					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_PORTA,
+//							Function.AVG, "dato"));
+					
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta", 
+							Integer.valueOf(0), model.LATENZA_PORTA.getFieldType()), Function.SUM, "dato"));
+					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, "dato"));
+					
 					break;
 				case LATENZA_SERVIZIO:
 					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
 					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_SERVIZIO);
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
+//							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+//
+//					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_SERVIZIO,
+//							Function.AVG, "dato"));
+					
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
-
-					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_SERVIZIO,
-							Function.AVG, "dato"));
+							Integer.valueOf(0), model.LATENZA_SERVIZIO.getFieldType()), Function.SUM, "dato"));
+					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, "dato"));
+					
 					break;
 
 				case LATENZA_TOTALE:
 				default:
 					fakeExpr.isNotNull(model.LATENZA_TOTALE);
 					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_TOTALE);
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale", 
+//							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+//
+//					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_TOTALE,
+//							Function.AVG, "dato"));
+					
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale", 
-							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
-
-					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_TOTALE,
-							Function.AVG, "dato"));
+							Integer.valueOf(0), model.LATENZA_TOTALE.getFieldType()), Function.SUM, "dato"));
+					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, "dato"));
+					
 					break;
 				}
 				break;
@@ -5037,6 +5145,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException("Model unknown");
 			}
 			
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.dao).getFieldConverter(); 
+			
 			IExpression gByExpr = this.createDistribuzioneServizioExpression(this.dao, model, false);
 
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
@@ -5175,40 +5285,56 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				TipoLatenza tipoLatenza = this.distribServizioSearch.getTipoLatenza();
 
 				union.addOrderBy("somma",SortOrder.DESC);
-				union.addField("somma", Function.AVG, "dato");
+				//union.addField("somma", Function.AVG, "dato");
+				union.addField("somma", Function.SUM, "dato");
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
 					fakeExpr.isNotNull(model.LATENZA_PORTA);
 					gByExpr.isNotNull(model.LATENZA_PORTA);
-					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
-
-					unionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_PORTA,
-							Function.AVG, "dato"));
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
+//							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+//
+//					unionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_PORTA,
+//							Function.AVG, "dato"));
+					
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta", 
+							Integer.valueOf(0), model.LATENZA_PORTA.getFieldType()), Function.SUM, "dato"));
+					unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, "dato"));
+					
 					break;
 				case LATENZA_SERVIZIO:
 					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
 					gByExpr.isNotNull(model.LATENZA_SERVIZIO);
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
+//							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+//
+//					unionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_SERVIZIO,
+//							Function.AVG, "dato"));
+					
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
-
-					unionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_SERVIZIO,
-							Function.AVG, "dato"));
+							Integer.valueOf(0), model.LATENZA_SERVIZIO.getFieldType()), Function.SUM, "dato"));
+					unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, "dato"));
+					
 					break;
 
 				case LATENZA_TOTALE:
 				default:
 					fakeExpr.isNotNull(model.LATENZA_TOTALE);
 					gByExpr.isNotNull(model.LATENZA_TOTALE);
-					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
-
-					unionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_TOTALE,
-							Function.AVG, "dato"));
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
+//							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+//
+//					unionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_TOTALE,
+//							Function.AVG, "dato"));
+					
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale", 
+							Integer.valueOf(0), model.LATENZA_TOTALE.getFieldType()), Function.SUM, "dato"));
+					unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, "dato"));
+					
 					break;
 				}
 				break;
@@ -6049,6 +6175,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException("Model unknown");
 			}
 			
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.dao).getFieldConverter(); 
+			
 			IExpression gByExpr = this.createDistribuzioneAzioneExpression(this.dao,	model, false);
 
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.AZIONE);
@@ -6171,40 +6299,56 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				TipoLatenza tipoLatenza = this.distribAzioneSearch.getTipoLatenza();
 
 				union.addOrderBy(sommaAliasName,SortOrder.DESC);
-				union.addField(sommaAliasName, Function.AVG, datoParamAliasName);
+				//union.addField(sommaAliasName, Function.AVG, datoParamAliasName);
+				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
 					fakeExpr.isNotNull(model.LATENZA_PORTA);
 					gByExpr.isNotNull(model.LATENZA_PORTA);
-					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
-
-					unionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_PORTA,
-							Function.AVG, datoParamAliasName));
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
+//							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
+//
+//					unionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_PORTA,
+//							Function.AVG, datoParamAliasName));
+					
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta", 
+							Integer.valueOf(0), model.LATENZA_PORTA.getFieldType()), Function.SUM, datoParamAliasName));
+					unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, datoParamAliasName));
+					
 					break;
 				case LATENZA_SERVIZIO:
 					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
 					gByExpr.isNotNull(model.LATENZA_SERVIZIO);
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
+//							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
+//
+//					unionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_SERVIZIO,
+//							Function.AVG, datoParamAliasName));
+					
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
-
-					unionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_SERVIZIO,
-							Function.AVG, datoParamAliasName));
+							Integer.valueOf(0), model.LATENZA_SERVIZIO.getFieldType()), Function.SUM, datoParamAliasName));
+					unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, datoParamAliasName));
+					
 					break;
 
 				case LATENZA_TOTALE:
 				default:
 					fakeExpr.isNotNull(model.LATENZA_TOTALE);
 					gByExpr.isNotNull(model.LATENZA_TOTALE);
-					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
-
-					unionExpr.addSelectFunctionField(new FunctionField(
-							model.LATENZA_TOTALE,
-							Function.AVG, datoParamAliasName));
+//					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
+//							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
+//
+//					unionExpr.addSelectFunctionField(new FunctionField(
+//							model.LATENZA_TOTALE,
+//							Function.AVG, datoParamAliasName));
+					
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale", 
+							Integer.valueOf(0), model.LATENZA_TOTALE.getFieldType()), Function.SUM, datoParamAliasName));
+					unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, datoParamAliasName));
+					
 					break;
 				}
 				break;
@@ -6453,6 +6597,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				break;
 			}
 			
+			if(this.dao==null) {
+				throw new ServiceException("DAO unknown");
+			}
+			
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.dao).getFieldConverter(); 
+			
 			// Fix introdotto per gestire il soggetto proprietario
 			boolean forceErogazione = false;
 			boolean forceFruizione = false;
@@ -6638,6 +6788,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			UnionExpression [] uExpressions = new UnionExpression[2];
 			int indexUE = 0;
+			boolean fake = false;
 			if(forceErogazione){
 				uExpressions[indexUE++] = unionExprErogatore;
 			}
@@ -6649,6 +6800,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			if(indexUE == 1){
 				uExpressions[indexUE++] = unionExprFake;
+				fake = true;
 			}
 			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSaSearch.getTipoVisualizzazione();
@@ -6758,58 +6910,88 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				TipoLatenza tipoLatenza = this.distribSaSearch.getTipoLatenza();
 
+				String datoParamRichiesteAliasName = "dato_richieste";
+				
 				union.addOrderBy(sommaAliasName,SortOrder.DESC);
-				union.addField(sommaAliasName, Function.AVG, datoParamAliasName);
+				//union.addField(sommaAliasName, Function.AVG, datoParamAliasName);
+				if(fake) {
+					union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
+				}
+				else {
+					union.addField("somma_richieste", Function.SUM, datoParamRichiesteAliasName); // dato non utilizzato, ma richiesto per avere lo stesso numero dei dati ritornati nelle expression
+					union.addCustomField(sommaAliasName, StatisticheUtils.getSqlCalcolaMedia(datoParamAliasName, datoParamRichiesteAliasName));
+
+					if(unionExprErogatore!=null){
+						unionExprErogatore.addSelectFunctionField(new FunctionField(
+								model.NUMERO_TRANSAZIONI, Function.SUM,
+								datoParamRichiesteAliasName));
+					}
+					if(unionExprFruitore!=null){
+						unionExprFruitore.addSelectFunctionField(new FunctionField(
+								model.NUMERO_TRANSAZIONI, Function.SUM,
+								datoParamRichiesteAliasName));
+					}
+				}
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
 					if(unionExprErogatore!=null){
 						gByExprErogazione.isNotNull(model.LATENZA_PORTA);
-						unionExprErogatore.addSelectFunctionField(new FunctionField(
-								model.LATENZA_PORTA,
-								Function.AVG, datoParamAliasName));
+//						unionExprErogatore.addSelectFunctionField(new FunctionField(
+//								model.LATENZA_PORTA,
+//								Function.AVG, datoParamAliasName));
+						unionExprErogatore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
 						gByExprFruizione.isNotNull(model.LATENZA_PORTA);
-						unionExprFruitore.addSelectFunctionField(new FunctionField(
-								model.LATENZA_PORTA,
-								Function.AVG, datoParamAliasName));
+//						unionExprFruitore.addSelectFunctionField(new FunctionField(
+//								model.LATENZA_PORTA,
+//								Function.AVG, datoParamAliasName));
+						unionExprFruitore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExpr!=null){
 						gByExpr.isNotNull(model.LATENZA_PORTA);
-						unionExpr.addSelectFunctionField(new FunctionField(
-								model.LATENZA_PORTA,
-								Function.AVG, datoParamAliasName));
+//						unionExpr.addSelectFunctionField(new FunctionField(
+//								model.LATENZA_PORTA,
+//								Function.AVG, datoParamAliasName));
+						unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
 						fakeExpr.isNotNull(model.LATENZA_PORTA);
-						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-								Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
+//						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
+//								Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
+						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta", 
+								Integer.valueOf(0), model.LATENZA_PORTA.getFieldType()), Function.SUM, datoParamAliasName));
 					}
 					break;
 				case LATENZA_SERVIZIO:
 					if(unionExprErogatore!=null){
 						gByExprErogazione.isNotNull(model.LATENZA_SERVIZIO);
-						unionExprErogatore.addSelectFunctionField(new FunctionField(
-								model.LATENZA_SERVIZIO,
-								Function.AVG, datoParamAliasName));
+//						unionExprErogatore.addSelectFunctionField(new FunctionField(
+//								model.LATENZA_SERVIZIO,
+//								Function.AVG, datoParamAliasName));
+						unionExprErogatore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
 						gByExprFruizione.isNotNull(model.LATENZA_SERVIZIO);
-						unionExprFruitore.addSelectFunctionField(new FunctionField(
-								model.LATENZA_SERVIZIO,
-								Function.AVG, datoParamAliasName));
+//						unionExprFruitore.addSelectFunctionField(new FunctionField(
+//								model.LATENZA_SERVIZIO,
+//								Function.AVG, datoParamAliasName));
+						unionExprFruitore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExpr!=null){
 						gByExpr.isNotNull(model.LATENZA_SERVIZIO);
-						unionExpr.addSelectFunctionField(new FunctionField(
-								model.LATENZA_SERVIZIO,
-								Function.AVG, datoParamAliasName));
+//						unionExpr.addSelectFunctionField(new FunctionField(
+//								model.LATENZA_SERVIZIO,
+//								Function.AVG, datoParamAliasName));
+						unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
 						fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
-						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio",
-								Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
+//						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio",
+//								Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
+						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
+								Integer.valueOf(0), model.LATENZA_SERVIZIO.getFieldType()), Function.SUM, datoParamAliasName));
 					}
 					break;
 
@@ -6817,26 +6999,31 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				default:
 					if(unionExprErogatore!=null){
 						gByExprErogazione.isNotNull(model.LATENZA_TOTALE);
-						unionExprErogatore.addSelectFunctionField(new FunctionField(
-								model.LATENZA_TOTALE,
-								Function.AVG, datoParamAliasName));
+//						unionExprErogatore.addSelectFunctionField(new FunctionField(
+//								model.LATENZA_TOTALE,
+//								Function.AVG, datoParamAliasName));
+						unionExprErogatore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
 						gByExprFruizione.isNotNull(model.LATENZA_TOTALE);
-						unionExprFruitore.addSelectFunctionField(new FunctionField(
-								model.LATENZA_TOTALE,
-								Function.AVG, datoParamAliasName));
+//						unionExprFruitore.addSelectFunctionField(new FunctionField(
+//								model.LATENZA_TOTALE,
+//								Function.AVG, datoParamAliasName));
+						unionExprFruitore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExpr!=null){
 						gByExpr.isNotNull(model.LATENZA_TOTALE);
-						unionExpr.addSelectFunctionField(new FunctionField(
-								model.LATENZA_TOTALE,
-								Function.AVG, datoParamAliasName));
+//						unionExpr.addSelectFunctionField(new FunctionField(
+//								model.LATENZA_TOTALE,
+//								Function.AVG, datoParamAliasName));
+						unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
 						fakeExpr.isNotNull(model.LATENZA_TOTALE);
-						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-								Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
+//						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
+//								Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
+						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale", 
+								Integer.valueOf(0), model.LATENZA_TOTALE.getFieldType()), Function.SUM, datoParamAliasName));
 					}
 					break;
 				}
@@ -7848,6 +8035,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException("ModelContenuti unknown");
 			}
 			
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.dao).getFieldConverter(); 
+			
 			List<Index> forceIndexes = null;
 			try{
 				if(isCount){
@@ -7915,19 +8104,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
 					expr.isNotNull(modelContenuti.LATENZA_PORTA);
-					listaFunzioni.add(new  FunctionField(modelContenuti.LATENZA_PORTA, Function.AVG, "somma_latenza_porta"));
+					//listaFunzioni.add(new  FunctionField(modelContenuti.LATENZA_PORTA, Function.AVG, "somma_latenza_porta"));
+					listaFunzioni.add(StatisticheUtils.calcolaMedia(fieldConverter, modelContenuti.LATENZA_PORTA, modelContenuti.NUMERO_TRANSAZIONI, "somma_latenza_porta"));
 					isLatenza_porta = true;
 					break;
 				case LATENZA_SERVIZIO:
 					expr.isNotNull(modelContenuti.LATENZA_SERVIZIO);
-					listaFunzioni.add(new FunctionField(modelContenuti.LATENZA_SERVIZIO, Function.AVG, "somma_latenza_servizio"));
+					//listaFunzioni.add(new FunctionField(modelContenuti.LATENZA_SERVIZIO, Function.AVG, "somma_latenza_servizio"));
+					listaFunzioni.add(StatisticheUtils.calcolaMedia(fieldConverter, modelContenuti.LATENZA_SERVIZIO, modelContenuti.NUMERO_TRANSAZIONI, "somma_latenza_servizio"));
 					isLatenza_servizio = true;
 					break;
 
 				case LATENZA_TOTALE:
 				default:
 					expr.isNotNull(modelContenuti.LATENZA_TOTALE);
-					listaFunzioni.add(new  FunctionField(modelContenuti.LATENZA_TOTALE, 	Function.AVG, "somma_latenza_totale"));
+					//listaFunzioni.add(new  FunctionField(modelContenuti.LATENZA_TOTALE, 	Function.AVG, "somma_latenza_totale"));
+					listaFunzioni.add(StatisticheUtils.calcolaMedia(fieldConverter, modelContenuti.LATENZA_TOTALE, modelContenuti.NUMERO_TRANSAZIONI, "somma_latenza_totale"));
 					isLatenza_totale = true;
 					break;
 				}

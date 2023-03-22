@@ -1,3 +1,11 @@
+2023-03-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug OP-1569
+	I tempi medi di risposta riportati nei report statistici non venivano corretti calcolati 
+	in presenza di campionamenti statistici che presentavano variazioni di risultati importanti tra un campionamento ed un altro 
+	come ad es. in presenza di richieste terminate correttamente e richieste terminate con un 'read timeout' (2 minuti).
+
 2022-03-22  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

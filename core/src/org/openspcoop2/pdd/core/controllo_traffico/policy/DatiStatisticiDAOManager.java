@@ -66,8 +66,10 @@ import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.core.statistiche.utils.StatisticheUtils;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBStatisticheManager;
@@ -606,20 +608,25 @@ public class DatiStatisticiDAOManager  {
 				throw new Exception("DAO unknown");
 			}
 			
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)dao).getFieldConverter(); 
+			
 			IExpression expression = this.createWhereExpressionLatenza(dao, model, tipoRisorsa, leftInterval, rightInterval, 
 					datiTransazione.getTipoPdD(), protocolFactory, datiTransazione.getProtocollo(), groupByPolicy, filtro, tipoLatenza, state, requestInfo);
 						
 			FunctionField ff = null;
 			switch (tipoLatenza) {
 			case PORTA:
-				ff = new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza");
+				//ff = new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza");
+				ff = StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, "somma_latenza");
 				break;
 			case SERVIZIO:
-				ff = new  FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza");
+				//ff = new  FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza");
+				ff = StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, "somma_latenza");
 				break;
 			case TOTALE:
 			default:
-				ff = new  FunctionField(model.LATENZA_TOTALE, Function.AVG, "somma_latenza");
+				//ff = new  FunctionField(model.LATENZA_TOTALE, Function.AVG, "somma_latenza");
+				ff = StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, "somma_latenza");
 				break;
 			}
 			
@@ -658,7 +665,7 @@ public class DatiStatisticiDAOManager  {
 							long mediaPesata = latenza*numeroTransazioni;
 							sommaMediePesate+=mediaPesata;
 						}
-						long risultatoPesato = sommaMediePesate / sommaNumeroTransazioni;
+						long risultatoPesato = (sommaNumeroTransazioni>0) ? (sommaMediePesate / sommaNumeroTransazioni) : 0;
 						risultato.setRisultato(risultatoPesato);
 					}
 					else {
