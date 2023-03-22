@@ -1,3 +1,10 @@
+2022-03-22  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1498
+	Durante l'aggiornamento dell'interfaccia OpenAPI o WSDL di una API, se l'utente decideva di annullare l'aggiornamento la console andava in errore.
+	Dal log si evince un bug introdotto con la gestione delle vulnerabilità di tipo CSRF: 'Parametro [_csrf] Duplicato'.
+
 2023-03-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
