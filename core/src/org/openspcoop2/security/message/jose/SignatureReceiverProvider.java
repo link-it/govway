@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.rs.security.jose.common.JoseConstants;
+import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
@@ -51,21 +53,21 @@ public class SignatureReceiverProvider extends TrustStoreSecurityProvider {
 		
 		Properties p = mapProperties.get("signaturePropRefId");
 		if(p!=null && p.size()>0) {
-			if(!p.containsKey("rs.security.keystore") && !p.containsKey("rs.security.keystore.jwkset")) {
+			if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
 				// altrimenti è stato fatto inject del keystore
-				String file = p.getProperty("rs.security.keystore.file");
+				String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
 				if(file!=null && StringUtils.isNotEmpty(file)) {
 					InputValidationUtils.validateTextAreaInput(file, "Verifier Signature - TrustStore - File");
 				}
 			}
 		}
 		
-		String file = defaultP.getProperty("rs.security.keystore.file.ssl");
+		String file = defaultP.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".ssl");
 		if(file!=null && StringUtils.isNotEmpty(file)) {
 			InputValidationUtils.validateTextAreaInput(file, "Configurazione HTTPS (jku/x5u) - TrustStore - File");
 		}
 		
-		file = defaultP.getProperty("rs.security.keystore.ssl.crl");
+		file = defaultP.getProperty(RSSecurityConstants.RSSEC_KEY_STORE+".ssl.crl");
 		if(file!=null && StringUtils.isNotEmpty(file)) {
 			InputValidationUtils.validateTextAreaInput(file, "Configurazione HTTPS (jku/x5u) - TrustStore - CRL File(s)");
 		}

@@ -69,6 +69,29 @@ public class TokenPolicyValidazioneTest extends ConfigLoader {
 	
 	
 	
+	
+	@Test
+	public void case2_kid_certificateValid() throws Exception {
+		Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, api, soggetto,
+				opensslCommand, waitStartupServer, waitStopServer,
+				"case2-kid", 
+				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_KID);
+	}
+
+	
+	@Test
+	public void case2_kid_certificateRevoked() throws Exception {
+		Utils.composedTestError(logCore, TipoServizio.EROGAZIONE, api, soggetto,
+				opensslCommand, waitStartupServer, waitStopServer,
+				"case2-revoked-kid", 
+				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
+				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_KID);
+	}
+	
+	
+	
+	
+	
 	@Test
 	public void case3_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, api, soggetto,

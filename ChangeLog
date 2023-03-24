@@ -1,3 +1,10 @@
+2023-03-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1573
+	Aggiunta possibilità di definire una token policy di validazione che utilizza per la validazione il certificato presente nel truststore
+	che possiede l'alias corrispondente al valore del claim 'kid' presente nell'header del token.
+
 2023-03-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

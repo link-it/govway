@@ -1305,6 +1305,11 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			// token info
 			if(this.transazioniRegistrazioneTokenInformazioniNormalizzate && transaction.getInformazioniToken()!=null) {
 				
+				// token validazione
+				if(transaction.getInformazioniToken().getToken()!=null && op2Properties.isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature()) {
+					transaction.getInformazioniToken().setToken(TokenUtilities.deleteSignature(transaction.getInformazioniToken().getToken()));
+				}
+				
 				// token negoziazione
 				if(informazioniNegoziazioneToken!=null) {
 					transaction.getInformazioniToken().setRetrievedToken(informazioniNegoziazioneToken);

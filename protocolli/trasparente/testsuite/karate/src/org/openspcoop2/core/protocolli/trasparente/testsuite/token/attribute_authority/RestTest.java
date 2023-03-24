@@ -132,6 +132,17 @@ public class RestTest extends ConfigLoader {
 				map);
 	}
 	
+	
+	
+	// *** singleAA: autorizzazione per contenuti (AA JWS Bearer con validazione tramite jwks 'kid') ***
+	@Test
+	public void erogazione_singleAA_authzContenuti_jwksKID() throws Exception {
+		AAHeaderMap map = new AAHeaderMap();
+		map.applicativo="ApplicativoSoggettoInternoTestFruitore1";
+		_test(TipoServizio.EROGAZIONE, "contenuti_singleAA_jwksKID",
+				"singleAA_authzContenuti_jwksKID", null, map);
+	}
+	
 
 	
 	// *** multipleAA: autorizzazione per contenuti (AA JWS Bearer, Payload, Header HTTP e Parametro URL) ***

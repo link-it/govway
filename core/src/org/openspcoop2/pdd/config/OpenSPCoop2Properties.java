@@ -2018,6 +2018,7 @@ public class OpenSPCoop2Properties {
 			this.getGestioneToken_expTimeCheck_tolerance_milliseconds();
 			this.isGestioneToken_saveSourceTokenInfo();
 			this.isGestioneToken_saveTokenInfo_validationFailed();
+			this.isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature();
 			this.getGestioneTokenFormatDate();
 			this.getGestioneTokenHeaderTrasportoJSON();
 			this.getGestioneTokenHeaderTrasportoJWT();
@@ -21834,6 +21835,31 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isGestioneToken_saveTokenInfo_validationFailed;
+	}
+	
+	private Boolean isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature = null;
+	public boolean isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature(){
+
+		if(this.isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature==null){
+			String pName = "org.openspcoop2.pdd.gestioneToken.saveTokenInfo.validationFailed.excludeJwtSignature";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					this.isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature = true;
+			}
+		}
+
+		return this.isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature;
 	}
 	
 	private Boolean getGestioneTokenFormatDate_read = null;

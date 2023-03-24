@@ -714,6 +714,14 @@
 				</conditions>
 				<property name="rs.security.keystore.alias.mode" properties="signatureVerifyPropRefId"/>
 			</item>
+			<item type="select" name="aaJWSTruststoreTypeSelectJWKPublicKey" label="Riferimento Chiave Pubblica" default="alias" reloadOnChange="true">
+				<conditions>
+					<condition>
+						<equals name="aaJWSTruststoreType" value="jwk"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.alias.mode" properties="signatureVerifyPropRefId"/>
+			</item>
 
 			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
 				<conditions and="true">
@@ -729,10 +737,15 @@
 				</conditions>
 				<property name="rs.security.keystore.alias" properties="signatureVerifyPropRefId" />
 			</item>
-			<item type="text" name="keystoreKidAlias" label="Kid Certificato" required="true">
+			<item type="text" name="keystoreKidAlias" label="Kid Chiave Pubblica" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="aaJWSTruststoreType" value="jwk"/>
+					</condition>
+					<condition and="false">
+						<defined not="true" name="aaJWSTruststoreTypeSelectJWKPublicKey"/>
+						<equals name="aaJWSTruststoreTypeSelectJWKPublicKey" value=""/>
+						<equals name="aaJWSTruststoreTypeSelectJWKPublicKey" value="alias"/>
 					</condition>
 				</conditions>
 				<property name="rs.security.keystore.alias" properties="signatureVerifyPropRefId" />

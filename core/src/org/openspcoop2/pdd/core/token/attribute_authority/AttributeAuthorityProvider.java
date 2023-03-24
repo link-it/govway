@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.rs.security.jose.common.JoseConstants;
+import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
@@ -239,9 +241,9 @@ public class AttributeAuthorityProvider implements IProvider {
 				throw new ProviderValidationException("La validazione di una risposta JWS richiede una configurazione del TrustStore; configurazione non riscontrata");
 			}
 			
-			if(!p.containsKey("rs.security.keystore") && !p.containsKey("rs.security.keystore.jwkset")) {
+			if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
 				// altrimenti è stato fatto inject del keystore
-				String file = p.getProperty("rs.security.keystore.file");
+				String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
 				InputValidationUtils.validateTextAreaInput(file, "Risposta - TrustStore - File");
 			}
 			
@@ -307,6 +309,9 @@ public class AttributeAuthorityProvider implements IProvider {
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_CERTIFICATE.equals(id)) {
 			return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES;
 		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY.equals(id)) {
+			return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUES;
+		}
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getValues();
 		}
@@ -347,6 +352,9 @@ public class AttributeAuthorityProvider implements IProvider {
 		}
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_CERTIFICATE.equals(id)) {
 			return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS;
+		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY.equals(id)) {
+			return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_LABELS;
 		}
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getLabels();
@@ -409,14 +417,25 @@ public class AttributeAuthorityProvider implements IProvider {
 			else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C.equals(actualValue)) {
 				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5C;
 			}
-			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256.equals(actualValue)) {
+			else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5T256.equals(actualValue)) {
 				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5T256;
 			}
-			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256.equals(actualValue)) {
+			else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C_X5T256.equals(actualValue)) {
 				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5C_X5T256;
 			}
-			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U.equals(actualValue)) {
+			else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_KID.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_KID;
+			}
+			else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U.equals(actualValue)) {
 				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_X5U;
+			}
+		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY.equals(id)) {
+			if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUE_ALIAS.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_NOTE_ALIAS;
+			}
+			else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUE_KID.equals(actualValue)) {
+				return Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_NOTE_KID;
 			}
 		}
 		return null;

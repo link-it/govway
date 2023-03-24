@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.rs.security.jose.common.JoseConstants;
+import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
@@ -51,9 +53,9 @@ public class EncryptSenderProvider extends TrustStoreSecurityProvider {
 		
 		Properties p = mapProperties.get("encryptionPropRefId");
 		if(p!=null && p.size()>0) {
-			if(!p.containsKey("rs.security.keystore") && !p.containsKey("rs.security.keystore.jwkset")) {
+			if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
 				// altrimenti è stato fatto inject del keystore
-				String file = p.getProperty("rs.security.keystore.file");
+				String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
 				if(file!=null && StringUtils.isNotEmpty(file)) {
 					InputValidationUtils.validateTextAreaInput(file, "Encryption - KeyStore - File");
 				}
