@@ -43,12 +43,13 @@ String styleClassColonnaSX = ""; // "td1PageBodyNoMenu"
 <head>
 	<meta charset="UTF-8">
 	<title><%= gd.getTitle() %></title>
-	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
-	<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 	<!-- JQuery lib-->
 	<script type="text/javascript" src="js/jquery-3.6.4.min.js" nonce="<%= randomNonce %>"></script>
+	<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
+	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+	<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 	<jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>

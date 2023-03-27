@@ -198,9 +198,6 @@
 				<include name="richfaces-ui-3.3.4.Final-gov4j-4.jar" />
 				<include name="richfaces-impl-3.3.4.Final-gov4j-4.jar" />
 				<include name="jsf-facelets-1.1.15.jar" />
-				<include name="aopalliance-1.0.jar" />
-				<include name="cglib-nodep-2.2.3.jar" />
-				<include name="${jsr311-api_jar}" />
 				<include name="${javax_servlet_jsp_jstl_jar}" />
 				<include name="${javax_servlet_jsp_jstl_api_jar}" />
 				<include name="${jsf_impl_jar}" />

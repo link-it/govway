@@ -16,12 +16,20 @@ function white(str){
 };
 
 function CheckDati() {
-  white(document.form.login.value);
-  white(document.form.password.value);
-  if (ok == false) {
-    ok = true;
-    var win = window.open("?op=alert&msg=NoSpace", "winAlert", "width=200,height=130");
-    win.focus();
-    return false;
-  } else { document.form.submit(); }
+	// elimino codice malevolo dall'input	
+	var lTmp = document.form.login.value;
+	document.form.login.value = HtmlSanitizer.SanitizeHtml(lTmp);
+	var pTmp = document.form.password.value;
+	document.form.password.value = HtmlSanitizer.SanitizeHtml(pTmp);
+	
+	document.form.submit();
+	
+//  white(document.form.login.value);
+//  white(document.form.password.value);
+//  if (ok == false) {
+//    ok = true;
+//    var win = window.open("?op=alert&msg=NoSpace", "winAlert", "width=200,height=130");
+//    win.focus();
+//    return false;
+//  } else { document.form.submit(); }
 };

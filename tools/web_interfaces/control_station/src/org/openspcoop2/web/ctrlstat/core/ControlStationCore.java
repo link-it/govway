@@ -1235,6 +1235,9 @@ public class ControlStationCore {
 	private boolean elenchiVisualizzaComandoResetCacheSingoloElemento = false;
 	private Integer validitaTokenCsrf = null;
 	private String cspHeaderValue = null;
+	private String xContentTypeOptionsHeaderValue = null;
+	private String xXssProtectionHeaderValue = null;
+	private String xFrameOptionsHeaderValue = null;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
@@ -1358,6 +1361,15 @@ public class ControlStationCore {
 	}
 	public String getCspHeaderValue() {
 		return this.cspHeaderValue;
+	}
+	public String getXContentTypeOptionsHeaderValue() {
+		return this.xContentTypeOptionsHeaderValue;
+	}
+	public String getXFrameOptionsHeaderValue() {
+		return this.xFrameOptionsHeaderValue;
+	}
+	public String getXXssProtectionHeaderValue() {
+		return this.xXssProtectionHeaderValue;
 	}
 	public boolean showCodaMessage() {
 		return this.isShowJ2eeOptions() || this.isIntegrationManagerEnabled();
@@ -2608,6 +2620,9 @@ public class ControlStationCore {
 		this.elenchiVisualizzaComandoResetCacheSingoloElemento = core.elenchiVisualizzaComandoResetCacheSingoloElemento;
 		this.validitaTokenCsrf = core.validitaTokenCsrf;
 		this.cspHeaderValue = core.cspHeaderValue;
+		this.xContentTypeOptionsHeaderValue = core.xContentTypeOptionsHeaderValue;
+		this.xFrameOptionsHeaderValue = core.xFrameOptionsHeaderValue;
+		this.xXssProtectionHeaderValue = core.xXssProtectionHeaderValue;
 
 		/** Motori di Sincronizzazione */
 		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
@@ -3057,6 +3072,9 @@ public class ControlStationCore {
 			this.elenchiVisualizzaComandoResetCacheSingoloElemento = consoleProperties.isElenchiAbilitaResetCacheSingoloElemento();
 			this.validitaTokenCsrf = consoleProperties.getValiditaTokenCsrf();
 			this.cspHeaderValue = consoleProperties.getCSPHeaderValue();
+			this.xContentTypeOptionsHeaderValue = consoleProperties.getXContentTypeOptionsHeaderValue();
+			this.xFrameOptionsHeaderValue = consoleProperties.getXFrameOptionsHeaderValue();
+			this.xXssProtectionHeaderValue = consoleProperties.getXXssProtectionHeaderValue();
 			
 			// Gestione govwayConsole centralizzata
 			if(this.singlePdD == false){

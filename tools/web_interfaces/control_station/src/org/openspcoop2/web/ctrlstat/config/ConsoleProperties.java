@@ -1557,6 +1557,18 @@ public class ConsoleProperties {
 		return this.readProperty(true, "console.csp.header.value");
 	}
 	
+	public String getXContentTypeOptionsHeaderValue() throws UtilsException{
+		return this.readProperty(true, "console.xContentTypeOptions.header.value");
+	}
+	
+	public String getXFrameOptionsHeaderValue() throws UtilsException{
+		return this.readProperty(true, "console.xFrameOptions.header.value");
+	}
+	
+	public String getXXssProtectionHeaderValue() throws UtilsException{
+		return this.readProperty(true, "console.xXssProtection.header.value");
+	}
+	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
 
 	public Boolean isGestioneCentralizzata_SincronizzazionePdd() throws UtilsException{

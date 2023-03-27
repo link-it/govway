@@ -62,7 +62,6 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 
 <head>
 <meta charset="UTF-8">
-<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <title><%= gd.getTitle() %></title>
 <link rel="stylesheet" href="css/roboto/roboto-fontface.css" type="text/css">
 <link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
@@ -74,8 +73,10 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 <link rel="stylesheet" href="css/ui.resizable.css" type="text/css">
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-3.6.4.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/jquery-ui-1.13.2.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-3.6.4.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-ui-1.13.2.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
+<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" nonce="<%= randomNonce %>">
 var nomeServletAdd_Custom = '<%= nomeServletAdd %>';

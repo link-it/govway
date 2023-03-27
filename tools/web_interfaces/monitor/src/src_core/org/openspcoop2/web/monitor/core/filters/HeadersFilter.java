@@ -57,6 +57,9 @@ public class HeadersFilter implements Filter {
 	private FilterConfig filterConfig = null;
 	
 	private String cspHeaderValue;
+	private String xContentTypeOptionsHeaderValue = null;
+	private String xXssProtectionHeaderValue = null;
+	private String xFrameOptionsHeaderValue = null;
 
 	@Override
 	public void init(FilterConfig filterConfig) {
@@ -65,6 +68,9 @@ public class HeadersFilter implements Filter {
 		try {
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
 			this.cspHeaderValue = pddMonitorProperties.getCspHeaderValue();
+			this.xContentTypeOptionsHeaderValue = pddMonitorProperties.getXContentTypeOptionsHeaderValue();
+			this.xFrameOptionsHeaderValue = pddMonitorProperties.getXFrameOptionsHeaderValue();
+			this.xXssProtectionHeaderValue = pddMonitorProperties.getXXssProtectionHeaderValue();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -79,6 +85,9 @@ public class HeadersFilter implements Filter {
 			// Gestione vulnerabilita' Content Security Policy
 			this.gestioneContentSecurityPolicy(request, response); 
 
+			// Aggiungo header
+			this.gestioneXContentTypeOptions(request, response);
+			
 			// faccio proseguire le chiamate ai filtri
 			chain.doFilter(request, response);
 		} catch (IOException e) {
@@ -123,5 +132,17 @@ public class HeadersFilter implements Filter {
 	public static void salvaNonceValueInSessione(HttpSession session, String nonceValue) {
 		if(session == null) return;
 		session.setAttribute(Costanti.SESSION_ATTRIBUTE_CSP_RANDOM_NONCE, nonceValue);
+	}
+	
+	private void gestioneXContentTypeOptions(HttpServletRequest request, HttpServletResponse response) {
+		if(StringUtils.isNoneBlank(this.xFrameOptionsHeaderValue)) {
+			response.setHeader(HttpConstants.HEADER_NAME_X_FRAME_OPTIONS, this.xFrameOptionsHeaderValue);
+		}
+		if(StringUtils.isNoneBlank(this.xXssProtectionHeaderValue)) {
+			response.setHeader(HttpConstants.HEADER_NAME_X_XSS_PROTECTION, this.xXssProtectionHeaderValue);
+		}
+		if(StringUtils.isNoneBlank(this.xContentTypeOptionsHeaderValue)) {
+			response.setHeader(HttpConstants.HEADER_NAME_X_CONTENT_TYPE_OPTIONS, this.xContentTypeOptionsHeaderValue);
+		}
 	}
 }

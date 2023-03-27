@@ -59,8 +59,9 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 <link rel="stylesheet" href="css/ui.datepicker.css" type="text/css">
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-3.6.4.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/jquery-ui-1.13.2.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-3.6.4.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-ui-1.13.2.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.datepicker-it.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
@@ -94,6 +95,13 @@ function CheckDati() {
 
 		if(hiddenInfo > -1) {
 			document.form.elements[k].value = '';
+		}
+		
+		// elimino codice html dall'input testuale
+		var tipo = document.form.elements[k].type;
+		if (tipo == "text" || tipo == "textarea" || tipo == "number"){
+			var valore = document.form.elements[k].value;
+			document.form.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
 		}
   }
   

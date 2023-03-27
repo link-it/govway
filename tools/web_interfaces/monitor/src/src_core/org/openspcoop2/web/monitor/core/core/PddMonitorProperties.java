@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -1131,7 +1132,19 @@ public class PddMonitorProperties {
 	}
 	
 	public String getCspHeaderValue() throws Exception {
-		return this.appProperties.getProperty("console.csp.header.value", true, true);
+		return this.appProperties.getProperty("console.csp.header.value", false, true);
+	}
+	
+	public String getXContentTypeOptionsHeaderValue() throws Exception{
+		return this.appProperties.getProperty("console.xContentTypeOptions.header.value", false, true);
+	}
+	
+	public String getXFrameOptionsHeaderValue() throws Exception{
+		return this.appProperties.getProperty("console.xFrameOptions.header.value", false, true);
+	}
+	
+	public String getXXssProtectionHeaderValue() throws Exception{
+		return this.appProperties.getProperty("console.xXssProtection.header.value", false, true);
 	}
 	
 	// allarmi

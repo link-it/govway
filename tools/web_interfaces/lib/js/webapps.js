@@ -373,6 +373,13 @@ function Change(form,dataElementName,fromFilters) {
    		if(hiddenInfo > -1) {
    			document.form.elements[k].value = '';
    		}
+   		
+   		// elimino codice html dall'input testuale
+   		 var tipo = document.form.elements[k].type;
+		 if (tipo == "text" || tipo == "textarea" || tipo == "number"){
+			var valore = document.form.elements[k].value;
+			document.form.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
+		}
      }
         
   // aggiungo parametro idTab
@@ -490,6 +497,13 @@ function Search(form) {
 
 		if(hiddenInfo > -1) {
 			document.form.elements[k].value = '';
+		}
+		
+		// elimino codice html dall'input testuale
+		 var tipo = document.form.elements[k].type;
+		 if (tipo == "text" || tipo == "textarea" || tipo == "number"){
+			var valore = document.form.elements[k].value;
+			document.form.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
 		}
   }
       

@@ -20,7 +20,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.UUID;
 
 import javax.servlet.Filter;
@@ -73,10 +72,9 @@ public class HeadersFilter implements Filter {
 			// Gestione vulnerabilita' Content Security Policy
 			this.gestioneContentSecurityPolicy(request, response);
 			// Aggiungo header
-			this.gestioneXSS(request, response);
-			
+			this.gestioneXContentTypeOptions(request, response);
+
 			chain.doFilter(request, response);
-//			addSameSiteAttribute((HttpServletResponse) response); // add SameSite=strict cookie attribute
 		} catch (Exception e) {
 			ControlStationCore.logError("Errore rilevato durante l'headersFilter",e);
 			try{
@@ -106,31 +104,25 @@ public class HeadersFilter implements Filter {
 	private void gestioneContentSecurityPolicy(HttpServletRequest request, HttpServletResponse response) {
 		// Per abilitare l'esecuzione solo degli script che vogliamo far eseguire, si genera un UUID random e si assegna ai tag script con attributo src e a gli script inline nelle pagine
 		// L'id degli script abilitati e' indicato all'interno del campo script-src
-		
+
 		String uuId = UUID.randomUUID().toString().replace("-", "");
 		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, uuId);
-		
+
 		if(StringUtils.isNoneBlank(this.core.getCspHeaderValue())) {
 			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId));
-//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId));
+			//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId));
 		}
 	}
-	
-	private void gestioneXSS(HttpServletRequest request, HttpServletResponse response) {
-		response.setHeader(HttpConstants.HEADER_NAME_X_XSS_PROTECTION, "0");
-		response.setHeader(HttpConstants.HEADER_NAME_X_CONTENT_TYPE_OPTIONS, "nosniff");
+
+	private void gestioneXContentTypeOptions(HttpServletRequest request, HttpServletResponse response) {
+		if(StringUtils.isNoneBlank(this.core.getXFrameOptionsHeaderValue())) {
+			response.setHeader(HttpConstants.HEADER_NAME_X_FRAME_OPTIONS, this.core.getXFrameOptionsHeaderValue());
+		}
+		if(StringUtils.isNoneBlank(this.core.getXXssProtectionHeaderValue())) {
+			response.setHeader(HttpConstants.HEADER_NAME_X_XSS_PROTECTION, this.core.getXXssProtectionHeaderValue());
+		}
+		if(StringUtils.isNoneBlank(this.core.getXContentTypeOptionsHeaderValue())) {
+			response.setHeader(HttpConstants.HEADER_NAME_X_CONTENT_TYPE_OPTIONS, this.core.getXContentTypeOptionsHeaderValue());
+		}
 	}
-	
-	private void addSameSiteAttribute(HttpServletResponse response) {
-        Collection<String> headers = response.getHeaders("Set-Cookie");
-        boolean firstHeader = true;
-        for (String header : headers) {  
-            if (firstHeader) {
-                response.setHeader("Set-Cookie", String.format("%s; %s", header, "SameSite=Strict"));
-                firstHeader = false;
-                continue;
-            }
-            response.addHeader("Set-Cookie", String.format("%s; %s", header, "SameSite=Strict"));
-        }
-    }
 }

@@ -49,12 +49,14 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+
 <title><%= gd.getTitle() %></title>
 <link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 <!-- JQuery lib-->
 <script type="text/javascript" src="js/jquery-3.6.4.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
+<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/login-utils.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />

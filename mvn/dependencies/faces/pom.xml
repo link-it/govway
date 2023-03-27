@@ -17,43 +17,16 @@
 
 		<jar.group.name>faces</jar.group.name>
 		
-		<aopalliance.version>1.0</aopalliance.version>
-		<cglib-nodep.version>2.2.3</cglib-nodep.version>
 		<el-impl.version>2.2</el-impl.version>
 		<servlet.jsp.jstl.version>1.2.1</servlet.jsp.jstl.version>
 		<jsf.version>1.2_15-06</jsf.version>
 		<jsf.facelets.version>1.1.15</jsf.facelets.version>
-		<jsr311.api.version>1.1.1</jsr311.api.version>
 		<richfaces.version>3.3.4.Final</richfaces.version>
 		<richfaces.gov4j.version>3.3.4.Final-gov4j-4</richfaces.gov4j.version>
 
 	</properties>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>aopalliance</groupId>
-			<artifactId>aopalliance</artifactId>
-			<version>${aopalliance.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
-			<version>${cglib-nodep.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.web</groupId>
@@ -127,18 +100,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>jsr311-api</artifactId>
-			<version>${jsr311.api.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
 			<groupId>org.richfaces.framework</groupId>
     			<artifactId>richfaces-api</artifactId>
 			<version>${richfaces.version}</version>
@@ -153,17 +114,6 @@
 			<groupId>org.richfaces.framework</groupId>
 			<artifactId>richfaces-impl</artifactId>
 			<version>${richfaces.gov4j.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.richfaces.framework</groupId>
-			<artifactId>richfaces-impl-jsf2</artifactId>
-			<version>${richfaces.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
