@@ -1,3 +1,9 @@
+2023-03-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-20861: aggiornata libreria 'org.springframework:spring-*' alla versione 5.3.26
+
 2023-03-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
