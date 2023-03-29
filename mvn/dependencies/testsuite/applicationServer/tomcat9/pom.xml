@@ -17,7 +17,7 @@
 
 		<jar.group.name>tomcat9</jar.group.name>
 		
-		<tomcat.version>9.0.37</tomcat.version>
+		<tomcat.version>9.0.72</tomcat.version>
 
 	</properties>
 
