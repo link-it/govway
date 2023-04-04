@@ -56,8 +56,8 @@ import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
-import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.SecurityToken;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.ArchiveType;
@@ -83,6 +83,8 @@ import freemarker.template.TemplateModel;
  * @version $Rev$, $Date$
  */
 public class DynamicUtils {
+	
+	private DynamicUtils() {}
 
 	// *** DYNAMIC MAP ***
 	
@@ -96,7 +98,7 @@ public class DynamicUtils {
 			Map<String, List<String>> url, 
 			Map<String, List<String>> form,
 			ErrorHandler errorHandler) {
-		_fillDynamicMap(log, dynamicMap, pddContext, urlInvocazione, 
+		fillDynamicMapEngine(log, dynamicMap, pddContext, urlInvocazione, 
 				message,
 				messageContent,
 				busta, 
@@ -124,7 +126,7 @@ public class DynamicUtils {
 			ErrorHandler errorHandler,
 			boolean preserveRequest) {
 		Map<String, Object> dynamicMapResponse = new HashMap<>();
-		_fillDynamicMap(log, dynamicMapResponse, pddContext, null, 
+		fillDynamicMapEngine(log, dynamicMapResponse, pddContext, null, 
 				message,
 				messageContent,
 				busta, 
@@ -132,18 +134,18 @@ public class DynamicUtils {
 				null, 
 				null,
 				errorHandler);
-		if(dynamicMapResponse!=null && !dynamicMapResponse.isEmpty()) {
+		if(!dynamicMapResponse.isEmpty()) {
 			Iterator<String> it = dynamicMapResponse.keySet().iterator();
 			while (it.hasNext()) {
-				String key = (String) it.next();
+				String key = it.next();
 				Object o = dynamicMapResponse.get(key);
-				if(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase().equals(key.toLowerCase()) 
+				if(Costanti.MAP_ERROR_HANDLER_OBJECT.equalsIgnoreCase(key) 
 						|| 
-					Costanti.MAP_RESPONSE.toLowerCase().equals(key.toLowerCase())
+					Costanti.MAP_RESPONSE.equalsIgnoreCase(key)
 						||
-					Costanti.MAP_INTEGRATION.toLowerCase().equals(key.toLowerCase())
+					Costanti.MAP_INTEGRATION.equalsIgnoreCase(key)
 						||
-					(Costanti.MAP_INTEGRATION+Costanti.MAP_SUFFIX_RESPONSE).toLowerCase().equals(key.toLowerCase())
+					(Costanti.MAP_INTEGRATION+Costanti.MAP_SUFFIX_RESPONSE).equalsIgnoreCase(key)
 					){
 					dynamicMap.put(key, o);
 				}
@@ -162,10 +164,10 @@ public class DynamicUtils {
 		if(dynamicMapRequest!=null && !dynamicMapRequest.isEmpty()) {
 			Iterator<String> it = dynamicMapRequest.keySet().iterator();
 			while (it.hasNext()) {
-				String key = (String) it.next();
-				if(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase().equals(key.toLowerCase())
+				String key = it.next();
+				if(Costanti.MAP_ERROR_HANDLER_OBJECT.equalsIgnoreCase(key)
 						|| 
-					(Costanti.MAP_REQUEST.toLowerCase().equals(key.toLowerCase()) && !preserveRequest)
+					(Costanti.MAP_REQUEST.equalsIgnoreCase(key) && !preserveRequest)
 						){
 					continue; // error handler viene usato quello istanziato per la risposta; mentre la richiesta è già stata consumata.
 				}
@@ -178,7 +180,7 @@ public class DynamicUtils {
 			}
 		}
 	}
-	public static void _fillDynamicMap(Logger log, Map<String, Object> dynamicMap, Context pddContext, String urlInvocazione,
+	private static void fillDynamicMapEngine(Logger log, Map<String, Object> dynamicMap, Context pddContext, String urlInvocazione,
 			OpenSPCoop2Message message,
 			MessageContent messageContent,
 			Busta busta, 
@@ -190,27 +192,27 @@ public class DynamicUtils {
 		dInfo.setBusta(busta);
 		dInfo.setPddContext(pddContext);
 		if(trasporto!=null) { 
-			//	&& !trasporto.isEmpty()) {
-			//Map<String, String> pNew = new HashMap<String, String>();
+			/**	&& !trasporto.isEmpty()) {
+			//Map<String, String> pNew = new HashMap<>();
 			//pNew.putAll(trasporto);
 			//dInfo.setTrasporto(pNew);
-			// Fix per permettere la modifica degli header direttamente dentro la trasformazione
+			// Fix per permettere la modifica degli header direttamente dentro la trasformazione */
 			dInfo.setHeaders(trasporto);
 		}
 		if(url!=null) {
-			//&& !url.isEmpty()) {
-			//Map<String, String> pNew = new HashMap<String, String>();
+			/** && !url.isEmpty()) {
+			//Map<String, String> pNew = new HashMap<>();
 			//pNew.putAll(url);
 			//dInfo.setQueryParameters(pNew);
-			// Fix per permettere la modifica dei parametri direttamente dentro la trasformazione
+			// Fix per permettere la modifica dei parametri direttamente dentro la trasformazione */
 			dInfo.setParameters(url);
 		}
 		if(form!=null) {
-			//&& !url.isEmpty()) {
-			//Map<String, String> pNew = new HashMap<String, String>();
+			/** && !url.isEmpty()) {
+			//Map<String, String> pNew = new HashMap<>();
 			//pNew.putAll(url);
 			//dInfo.setQueryParameters(pNew);
-			// Fix per permettere la modifica dei parametri direttamente dentro la trasformazione
+			// Fix per permettere la modifica dei parametri direttamente dentro la trasformazione */
 			dInfo.setFormParameters(form);
 		}
 		if(urlInvocazione!=null) {
@@ -228,45 +230,43 @@ public class DynamicUtils {
 	
 	@SuppressWarnings("unchecked")
 	public static void fillDynamicMap(Logger log, Map<String, Object> dynamicMap, DynamicInfo dynamicInfo) {
-		if(dynamicMap.containsKey(Costanti.MAP_DATE_OBJECT)==false) {
+		if(!dynamicMap.containsKey(Costanti.MAP_DATE_OBJECT)) {
 			dynamicMap.put(Costanti.MAP_DATE_OBJECT, DateManager.getDate());
 		}
 		
 		RequestInfo requestInfo = null;
 		
 		if(dynamicInfo!=null && dynamicInfo.getPddContext()!=null) {
-			if(dynamicMap.containsKey(Costanti.MAP_CTX_OBJECT)==false) {
+			if(!dynamicMap.containsKey(Costanti.MAP_CTX_OBJECT)) {
 				dynamicMap.put(Costanti.MAP_CTX_OBJECT, dynamicInfo.getPddContext());
 			}
-			if(dynamicMap.containsKey(Costanti.MAP_TRANSACTION_ID_OBJECT)==false) {
-				if(dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
-					String idTransazione = (String)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
-					dynamicMap.put(Costanti.MAP_TRANSACTION_ID_OBJECT, idTransazione);
-				}
+			if(!dynamicMap.containsKey(Costanti.MAP_TRANSACTION_ID_OBJECT) &&
+				dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+				String idTransazione = (String)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+				dynamicMap.put(Costanti.MAP_TRANSACTION_ID_OBJECT, idTransazione);
 			}
 			if(dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
 				requestInfo = (RequestInfo)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 			}
-			if(dynamicMap.containsKey(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT)==false) {
-				if(requestInfo!=null) {
-					if(requestInfo.getProtocolContext()!=null) {
-						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT, requestInfo.getProtocolContext());
-						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT.toLowerCase(), requestInfo.getProtocolContext());
-					}
-					if(requestInfo.getIdServizio()!=null) {
-						AttachmentsReader aReader = new AttachmentsReader(requestInfo.getIdServizio(), requestInfo);
-						dynamicMap.put(Costanti.MAP_ATTACHMENTS_OBJECT, aReader);
-					}
+			if(!dynamicMap.containsKey(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT) &&
+				requestInfo!=null) {
+				if(requestInfo.getProtocolContext()!=null) {
+					dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT, requestInfo.getProtocolContext());
+					dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT.toLowerCase(), requestInfo.getProtocolContext());
+				}
+				if(requestInfo.getIdServizio()!=null) {
+					AttachmentsReader aReader = new AttachmentsReader(requestInfo.getIdServizio(), requestInfo);
+					dynamicMap.put(Costanti.MAP_ATTACHMENTS_OBJECT, aReader);
 				}
 			}
-			if(dynamicMap.containsKey(Costanti.MAP_INTEGRATION)==false) {
+			if(!dynamicMap.containsKey(Costanti.MAP_INTEGRATION)) {
 				Object oInformazioniIntegrazione = dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.INFORMAZIONI_INTEGRAZIONE);
 	    		if(oInformazioniIntegrazione!=null) {
 	    			InformazioniIntegrazione informazioniIntegrazione = (InformazioniIntegrazione) oInformazioniIntegrazione;
 	    			dynamicMap.put(Costanti.MAP_INTEGRATION, informazioniIntegrazione);
 	    		}
 			}
-			if(dynamicMap.containsKey((Costanti.MAP_INTEGRATION+Costanti.MAP_SUFFIX_RESPONSE))==false) {
+			if(!dynamicMap.containsKey((Costanti.MAP_INTEGRATION+Costanti.MAP_SUFFIX_RESPONSE))) {
 				Object oInformazioniIntegrazione = dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.INFORMAZIONI_INTEGRAZIONE_RISPOSTA);
 	    		if(oInformazioniIntegrazione!=null) {
 	    			InformazioniIntegrazione informazioniIntegrazione = (InformazioniIntegrazione) oInformazioniIntegrazione;
@@ -274,7 +274,7 @@ public class DynamicUtils {
 	    			dynamicMap.put((Costanti.MAP_INTEGRATION+Costanti.MAP_SUFFIX_RESPONSE).toLowerCase(), informazioniIntegrazione);
 	    		}
 			}
-			if(dynamicMap.containsKey(Costanti.MAP_TOKEN_INFO)==false) {
+			if(!dynamicMap.containsKey(Costanti.MAP_TOKEN_INFO)) {
 				Object oInformazioniTokenNormalizzate = dynamicInfo.getPddContext().getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
 	    		if(oInformazioniTokenNormalizzate!=null) {
 	    			InformazioniToken informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
@@ -282,14 +282,14 @@ public class DynamicUtils {
 	    			dynamicMap.put(Costanti.MAP_TOKEN_INFO.toLowerCase(), informazioniTokenNormalizzate);
 	    		}
 			}
-			if(dynamicMap.containsKey(Costanti.MAP_ATTRIBUTES)==false) {
+			if(!dynamicMap.containsKey(Costanti.MAP_ATTRIBUTES)) {
 				Object oInformazioniAttributiNormalizzati = dynamicInfo.getPddContext().getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE);
 	    		if(oInformazioniAttributiNormalizzati!=null) {
 	    			InformazioniAttributi informazioniAttributiNormalizzati = (InformazioniAttributi) oInformazioniAttributiNormalizzati;
 	    			dynamicMap.put(Costanti.MAP_ATTRIBUTES, informazioniAttributiNormalizzati);
 	    		}
 			}
-			if(dynamicMap.containsKey(Costanti.MAP_SECURITY_TOKEN)==false) {
+			if(!dynamicMap.containsKey(Costanti.MAP_SECURITY_TOKEN)) {
 				Object oSecToken = dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.SECURITY_TOKEN);
 	    		if(oSecToken!=null) {
 	    			SecurityToken securityToken = (SecurityToken) oSecToken;
@@ -302,7 +302,7 @@ public class DynamicUtils {
 					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
 				}
 				if(configProperties==null) {
-					configProperties = new HashMap<String, String>();
+					configProperties = new HashMap<>();
 				}
 				dynamicMap.put(Costanti.MAP_API_IMPL_CONFIG_PROPERTY, configProperties);
 			}
@@ -312,7 +312,7 @@ public class DynamicUtils {
 					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO);
 				}
 				if(configProperties==null) {
-					configProperties = new HashMap<String, String>();
+					configProperties = new HashMap<>();
 				}
 				dynamicMap.put(Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY, configProperties);
 				dynamicMap.put(Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY.toLowerCase(), configProperties);
@@ -323,7 +323,7 @@ public class DynamicUtils {
 					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE);
 				}
 				if(configProperties==null) {
-					configProperties = new HashMap<String, String>();
+					configProperties = new HashMap<>();
 				}
 				dynamicMap.put(Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY, configProperties);
 				dynamicMap.put(Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY.toLowerCase(), configProperties);
@@ -334,7 +334,7 @@ public class DynamicUtils {
 					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE);
 				}
 				if(configProperties==null) {
-					configProperties = new HashMap<String, String>();
+					configProperties = new HashMap<>();
 				}
 				dynamicMap.put(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY, configProperties);
 				dynamicMap.put(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY.toLowerCase(), configProperties);
@@ -355,7 +355,7 @@ public class DynamicUtils {
 					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN);
 				}
 				if(configProperties==null) {
-					configProperties = new HashMap<String, String>();
+					configProperties = new HashMap<>();
 				}
 				dynamicMap.put(Costanti.MAP_APPLICATIVO_TOKEN_CONFIG_PROPERTY, configProperties);
 				dynamicMap.put(Costanti.MAP_APPLICATIVO_TOKEN_CONFIG_PROPERTY.toLowerCase(), configProperties);
@@ -366,19 +366,19 @@ public class DynamicUtils {
 					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN);
 				}
 				if(configProperties==null) {
-					configProperties = new HashMap<String, String>();
+					configProperties = new HashMap<>();
 				}
 				dynamicMap.put(Costanti.MAP_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_CONFIG_PROPERTY, configProperties);
 				dynamicMap.put(Costanti.MAP_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_CONFIG_PROPERTY.toLowerCase(), configProperties);
 			}
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_BUSTA_OBJECT)==false && dynamicInfo!=null && dynamicInfo.getBusta()!=null) {
+		if(!dynamicMap.containsKey(Costanti.MAP_BUSTA_OBJECT) && dynamicInfo!=null && dynamicInfo.getBusta()!=null) {
 			dynamicMap.put(Costanti.MAP_BUSTA_OBJECT, dynamicInfo.getBusta());
 		}
-		if(dynamicMap.containsKey(Costanti.MAP_BUSTA_PROPERTY)==false && dynamicInfo!=null && 
+		if(!dynamicMap.containsKey(Costanti.MAP_BUSTA_PROPERTY) && dynamicInfo!=null && 
 				dynamicInfo.getBusta()!=null && dynamicInfo.getBusta().sizeProperties()>0) {
-			Map<String, String> propertiesBusta = new HashMap<String, String>();
+			Map<String, String> propertiesBusta = new HashMap<>();
 			String[] pNames = dynamicInfo.getBusta().getPropertiesNames();
 			if(pNames!=null && pNames.length>0) {
 				for (int j = 0; j < pNames.length; j++) {
@@ -394,16 +394,16 @@ public class DynamicUtils {
 			}
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_HEADER)==false) {
+		if(!dynamicMap.containsKey(Costanti.MAP_HEADER)) {
 			if(dynamicInfo!=null && dynamicInfo.getHeaders()!=null && !dynamicInfo.getHeaders().isEmpty()) {
 				dynamicMap.put(Costanti.MAP_HEADER, TransportUtils.convertToMapSingleValue(dynamicInfo.getHeaders()));
 			}
 			else {
-				dynamicMap.put(Costanti.MAP_HEADER, new HashMap<String, String>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+				dynamicMap.put(Costanti.MAP_HEADER, new HashMap<>()); // aggiungo sempre, piu' pratico il controllo nei template engine
 			}
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_HEADER_VALUES)==false) {
+		if(!dynamicMap.containsKey(Costanti.MAP_HEADER_VALUES)) {
 			if(dynamicInfo!=null && dynamicInfo.getHeaders()!=null) {
 				dynamicMap.put(Costanti.MAP_HEADER_VALUES, dynamicInfo.getHeaders());
 			}
@@ -412,16 +412,16 @@ public class DynamicUtils {
 			}
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_QUERY_PARAMETER)==false) {
+		if(!dynamicMap.containsKey(Costanti.MAP_QUERY_PARAMETER)) {
 			if(dynamicInfo!=null && dynamicInfo.getParameters()!=null && !dynamicInfo.getParameters().isEmpty()) {
 				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER, TransportUtils.convertToMapSingleValue(dynamicInfo.getParameters()));
 			}
 			else {
-				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER, new HashMap<String, String>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER, new HashMap<>()); // aggiungo sempre, piu' pratico il controllo nei template engine
 			}
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_QUERY_PARAMETER_VALUES)==false) {
+		if(!dynamicMap.containsKey(Costanti.MAP_QUERY_PARAMETER_VALUES)) {
 			if(dynamicInfo!=null && dynamicInfo.getParameters()!=null) {
 				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER_VALUES, dynamicInfo.getParameters());
 			}
@@ -430,16 +430,16 @@ public class DynamicUtils {
 			}
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_FORM_PARAMETER)==false) {
+		if(!dynamicMap.containsKey(Costanti.MAP_FORM_PARAMETER)) {
 			if(dynamicInfo!=null && dynamicInfo.getFormParameters()!=null && !dynamicInfo.getFormParameters().isEmpty()) {
 				dynamicMap.put(Costanti.MAP_FORM_PARAMETER, TransportUtils.convertToMapSingleValue(dynamicInfo.getFormParameters()));
 			}
 			else {
-				dynamicMap.put(Costanti.MAP_FORM_PARAMETER, new HashMap<String, String>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+				dynamicMap.put(Costanti.MAP_FORM_PARAMETER, new HashMap<>()); // aggiungo sempre, piu' pratico il controllo nei template engine
 			}
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_FORM_PARAMETER_VALUES)==false) {
+		if(!dynamicMap.containsKey(Costanti.MAP_FORM_PARAMETER_VALUES)) {
 			if(dynamicInfo!=null && dynamicInfo.getFormParameters()!=null) {
 				dynamicMap.put(Costanti.MAP_FORM_PARAMETER_VALUES, dynamicInfo.getFormParameters());
 			}
@@ -486,7 +486,7 @@ public class DynamicUtils {
 			dynamicMap.put(Costanti.MAP_ELEMENT_JSON_PATH.toLowerCase(), pe);
 		}
 		if(dynamicInfo!=null && dynamicInfo.getMessage()!=null) {
-			ContentExtractor content = new ContentExtractor(dynamicInfo.getMessage(), log);
+			ContentExtractor content = new ContentExtractor(dynamicInfo.getMessage(), dynamicInfo.getPddContext(), log);
 			if(MessageRole.REQUEST.equals(dynamicInfo.getMessage().getMessageRole())) {
 				dynamicMap.put(Costanti.MAP_REQUEST, content);
 			}
@@ -499,7 +499,7 @@ public class DynamicUtils {
 			dynamicMap.put(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase(), dynamicInfo.getErrorHandler());
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_DYNAMIC_CONFIG_PROPERTY)==false) {
+		if(!dynamicMap.containsKey(Costanti.MAP_DYNAMIC_CONFIG_PROPERTY)) {
 			dynamicMap.put(Costanti.MAP_DYNAMIC_CONFIG_PROPERTY, new DynamicConfig(log, dynamicMap, requestInfo, 
 					dynamicInfo!=null ? dynamicInfo.getBusta() : null));
 		}
@@ -514,40 +514,40 @@ public class DynamicUtils {
 	@Deprecated
 	// Cercare sempre di passare l'oggetto busta
 	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Logger log, 
-			boolean bufferMessage_readOnly) throws DynamicException {
+			boolean bufferMessageReadOnly) throws DynamicException {
 		return buildDynamicMap(msg, context, null, log, 
-				bufferMessage_readOnly);
+				bufferMessageReadOnly);
 	}
 	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
-			boolean bufferMessage_readOnly) throws DynamicException {
-		return _buildDynamicMap(msg, context, busta, log, 
-				bufferMessage_readOnly, 
+			boolean bufferMessageReadOnly) throws DynamicException {
+		return buildDynamicMapEngine(msg, context, busta, log, 
+				bufferMessageReadOnly, 
 				null);
 	}
 	
 	// Mappa che contiene 'response' field
 	public static Map<String, Object> buildDynamicMapResponse(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
-			boolean bufferMessage_readOnly,
+			boolean bufferMessageReadOnly,
 			Map<String, Object>  dynamicMapRequest) throws DynamicException {
-		return _buildDynamicMap(msg, context, busta, log, 
-				bufferMessage_readOnly, 
+		return buildDynamicMapEngine(msg, context, busta, log, 
+				bufferMessageReadOnly, 
 				dynamicMapRequest);
 	}
 	
-	private static Map<String, Object> _buildDynamicMap(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
-			boolean bufferMessage_readOnly, 
+	private static Map<String, Object> buildDynamicMapEngine(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
+			boolean bufferMessageReadOnly, 
 			Map<String, Object>  dynamicMapRequest) throws DynamicException {
 		
 		/* Costruisco dynamic Map */
 		
 		DynamicInfo dInfo = DynamicUtils.readDynamicInfo(msg, 
-				bufferMessage_readOnly, context);
+				bufferMessageReadOnly, context);
 		MessageContent messageContent = dInfo.getMessageContent();
 		Map<String, List<String>> parametriTrasporto = dInfo.getHeaders();
 		Map<String, List<String>> parametriUrl = dInfo.getParameters();
 		Map<String, List<String>> parametriForm = dInfo.getFormParameters();
 		String urlInvocazione = dInfo.getUrl();
-		Map<String, Object> dynamicMap = new HashMap<String, Object>();
+		Map<String, Object> dynamicMap = new HashMap<>();
 		ErrorHandler errorHandler = new ErrorHandler();
 		
 		if(dynamicMapRequest!=null) {
@@ -579,7 +579,7 @@ public class DynamicUtils {
 	
 	// READ DYNAMIC INFO
 	
-	public static DynamicInfo readDynamicInfo(OpenSPCoop2Message message, boolean bufferMessage_readOnly, Context context) throws DynamicException {
+	public static DynamicInfo readDynamicInfo(OpenSPCoop2Message message, boolean bufferMessageReadOnly, Context context) throws DynamicException {
 		MessageContent content = null;
 		Map<String, List<String>> parametriTrasporto = null;
 		Map<String, List<String>> parametriUrl = null;
@@ -589,16 +589,16 @@ public class DynamicUtils {
 		try{
 			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
-				content = new MessageContent(soapMessage, bufferMessage_readOnly, context);
+				content = new MessageContent(soapMessage, bufferMessageReadOnly, context);
 			}
 			else{
 				if(MessageType.XML.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
-					content = new MessageContent(xml, bufferMessage_readOnly, context);
+					content = new MessageContent(xml, bufferMessageReadOnly, context);
 				}
 				else if(MessageType.JSON.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
-					content = new MessageContent(json, bufferMessage_readOnly, context);
+					content = new MessageContent(json, bufferMessageReadOnly, context);
 				}
 			}
 			
@@ -615,7 +615,7 @@ public class DynamicUtils {
 				if(message.getTransportRequestContext() instanceof HttpServletTransportRequestContext) {
 					HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) message.getTransportRequestContext();
 					HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
-					if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+					if(httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
 						FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
 						if(formServlet.getFormUrlEncodedParametersValues()!=null &&
 								!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
@@ -627,14 +627,13 @@ public class DynamicUtils {
 			}
 			//else
 			// se c'e' la risposta devo usare quello come parametri della risposta
-				if(message.getTransportResponseContext()!=null) {
-				if(message.getTransportResponseContext().getHeaders()!=null &&
+				if(message.getTransportResponseContext()!=null &&
+						message.getTransportResponseContext().getHeaders()!=null &&
 						!message.getTransportResponseContext().getHeaders().isEmpty()) {
 					parametriTrasporto = message.getTransportResponseContext().getHeaders();
-				}
 			}
 			
-		}catch(Throwable e){
+		}catch(Exception e){
 			throw new DynamicException(e.getMessage(),e);
 		}
 		
@@ -675,9 +674,7 @@ public class DynamicUtils {
 		
 		if(forceStartWithDollaro) {
 			transactionIdConstant = Costanti.MAP_TRANSACTION_ID;
-			if(forceStartWithDollaro) {
-				transactionIdConstant = "?"+transactionIdConstant;
-			}
+			transactionIdConstant = "?"+transactionIdConstant;
 			if(tmp.contains(transactionIdConstant)){
 				String idTransazione = (String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 				while(tmp.contains(transactionIdConstant)){
@@ -698,7 +695,7 @@ public class DynamicUtils {
 		String tmp = initTemplateValue(tmpParam, forceStartWithDollaro, pddContext);
 		
 		boolean onlyValidate = true;
-		tmp = processTemplateValue_url_xpath_jsonpath(tmp, onlyValidate, null, forceStartWithDollaro);
+		tmp = processTemplateValueUrlXpathJsonpath(tmp, onlyValidate, null, forceStartWithDollaro);
 		
 		try{
 			DynamicStringReplace.validate(tmp, forceStartWithDollaro);
@@ -716,7 +713,7 @@ public class DynamicUtils {
 		String tmp = initTemplateValue(tmpParam, forceStartWithDollaro, pddContext);
 				
 		boolean onlyValidate = false;
-		tmp = processTemplateValue_url_xpath_jsonpath(tmp, onlyValidate, dynamicMap, forceStartWithDollaro);
+		tmp = processTemplateValueUrlXpathJsonpath(tmp, onlyValidate, dynamicMap, forceStartWithDollaro);
 		
 		try{
 			tmp = DynamicStringReplace.replace(tmp, dynamicMap, forceStartWithDollaro);
@@ -726,7 +723,7 @@ public class DynamicUtils {
 		return tmp;
 	}
 	
-	private static String processTemplateValue_url_xpath_jsonpath(String tmpParam, boolean onlyValidate, Map<String,Object> dynamicMap,
+	private static String processTemplateValueUrlXpathJsonpath(String tmpParam, boolean onlyValidate, Map<String,Object> dynamicMap,
 			boolean forceStartWithDollaro) throws DynamicException {
 		
 		String tmp = tmpParam;
@@ -735,61 +732,61 @@ public class DynamicUtils {
 		
 		// conversione url
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.url,
+				TemplateType.URL,
 				forceStartWithDollaro, request,
 				onlyValidate);
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.url,
+				TemplateType.URL,
 				forceStartWithDollaro, response,
 				onlyValidate);
 		
 		// conversione xpath
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.xml,
+				TemplateType.XML,
 				forceStartWithDollaro, request,
 				onlyValidate);
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.xml,
+				TemplateType.XML,
 				forceStartWithDollaro, response,
 				onlyValidate);
 		
 		// conversione jsonpath
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.json,
+				TemplateType.JSON,
 				forceStartWithDollaro, request,
 				onlyValidate);
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.json,
+				TemplateType.JSON,
 				forceStartWithDollaro, response,
 				onlyValidate);
 		
 		// conversione system properties
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.system,
+				TemplateType.SYSTEM,
 				forceStartWithDollaro, request,
 				onlyValidate);
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.system,
+				TemplateType.SYSTEM,
 				forceStartWithDollaro, response,
 				onlyValidate);
 		
 		// conversione env properties
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.env,
+				TemplateType.ENV,
 				forceStartWithDollaro, request,
 				onlyValidate);
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.env,
+				TemplateType.ENV,
 				forceStartWithDollaro, response,
 				onlyValidate);
 		
 		// conversione java properties
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.java,
+				TemplateType.JAVA,
 				forceStartWithDollaro, request,
 				onlyValidate);
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				TemplateType.java,
+				TemplateType.JAVA,
 				forceStartWithDollaro, response,
 				onlyValidate);
 		
@@ -808,27 +805,27 @@ public class DynamicUtils {
 		String istruzione = null;
 		String prefix = null;
 		switch (templateType) {
-		case xml:
+		case XML:
 			istruzione = Costanti.MAP_ELEMENT_XML_XPATH;
 			prefix = Costanti.MAP_ELEMENT_XML_XPATH_PREFIX;
 			break;
-		case json:
+		case JSON:
 			istruzione = Costanti.MAP_ELEMENT_JSON_PATH;
 			prefix = Costanti.MAP_ELEMENT_JSON_PATH_PREFIX;
 			break;
-		case url:
+		case URL:
 			istruzione = Costanti.MAP_ELEMENT_URL_REGEXP;
 			prefix = Costanti.MAP_ELEMENT_URL_REGEXP_PREFIX;
 			break;
-		case system:
+		case SYSTEM:
 			istruzione = Costanti.MAP_SYSTEM_PROPERTY;
 			prefix = Costanti.MAP_SYSTEM_PROPERTY_PREFIX;
 			break;
-		case env:
+		case ENV:
 			istruzione = Costanti.MAP_ENV_PROPERTY;
 			prefix = Costanti.MAP_ENV_PROPERTY_PREFIX;
 			break;
-		case java:
+		case JAVA:
 			istruzione = Costanti.MAP_JAVA_PROPERTY;
 			prefix = Costanti.MAP_JAVA_PROPERTY_PREFIX;
 			break;
@@ -838,34 +835,34 @@ public class DynamicUtils {
 		String tmp = tmpOriginal;
 		if(forceStartWithDollaro) {
 			String prefixDollaro = "$"+prefix;
-			tmp = _convertDynamicPropertyContent(tmp, dynamicMap, 
+			tmp = convertDynamicPropertyContentEngine(tmp, dynamicMap, 
 					templateType, 
 					response,
 					onlyValidate,
 					istruzione, prefixDollaro);
 			
 			String prefixOptional = "?"+prefix;
-			tmp = _convertDynamicPropertyContent(tmp, dynamicMap, 
+			tmp = convertDynamicPropertyContentEngine(tmp, dynamicMap, 
 					templateType, 
 					response,
 					onlyValidate,
 					istruzione, prefixOptional);
 		}
 		else {
-			tmp = _convertDynamicPropertyContent(tmp, dynamicMap, 
+			tmp = convertDynamicPropertyContentEngine(tmp, dynamicMap, 
 					templateType, 
 					response,
 					onlyValidate,
 					istruzione, prefix);
 		}
 
-		if(tmpOriginal!=null && tmpOriginal.trim().startsWith("?{") && tmp!=null && StringUtils.isEmpty(tmp)) {
+		if(tmpOriginal.trim().startsWith("?{") && tmp!=null && StringUtils.isEmpty(tmp)) {
 			return null;
 		}
 		
 		return tmp;
 	}
-	private static String _convertDynamicPropertyContent(String tmp, Map<String,Object> dynamicMap, 
+	private static String convertDynamicPropertyContentEngine(String tmp, Map<String,Object> dynamicMap, 
 			TemplateType templateType, 
 			boolean response,
 			boolean onlyValidate,
@@ -884,8 +881,8 @@ public class DynamicUtils {
 			while (maxIteration>0 && tmpLowerCase.contains(prefixLowerCase)) {
 				int indexOfStart = tmpLowerCase.indexOf(prefixLowerCase);
 				String pattern = tmp.substring(indexOfStart+prefix.length(),tmp.length());
-				if(pattern.contains("}")==false) {
-					throw new DynamicException("Trovata istruzione '"+istruzione+"' non correttamente formata (chiusura '}' non trovata)");
+				if(!pattern.contains("}")) {
+					throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+"non correttamente formata (chiusura '}' non trovata)");
 				}
 				
 				// cerco chiusura, all'interno ci potrebbero essere altre aperture di { per le regole xpath
@@ -907,7 +904,7 @@ public class DynamicUtils {
 					}
 				}
 				if(positionChiusura<=0) {
-					throw new DynamicException("Trovata istruzione '"+istruzione+"' non correttamente formata (chiusura '}' non trovata)");
+					throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+"non correttamente formata (chiusura '}' non trovata)");
 				}
 				
 				pattern = pattern.substring(0,positionChiusura);
@@ -917,41 +914,41 @@ public class DynamicUtils {
 				if(!onlyValidate) {
 					Object o = dynamicMap.get(istruzione);
 					if(o==null) {
-						throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto");
+						throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+"non utilizzabile in questo contesto");
 					}
 					switch (templateType) {
-					case xml:
-					case json:
+					case XML:
+					case JSON:
 						if( !(o instanceof PatternExtractor) ) {
-							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (extractor wrong class: "+o.getClass().getName()+")");
+							throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildExtractorWrongClassMsg(o));
 						}
 						PatternExtractor patternExtractor = (PatternExtractor) o;
 						value = patternExtractor.read(pattern);
 						break;
-					case url:
+					case URL:
 						if( !(o instanceof URLRegExpExtractor) ) {
-							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (extractor wrong class: "+o.getClass().getName()+")");
+							throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildExtractorWrongClassMsg(o));
 						}
 						URLRegExpExtractor urlExtractor = (URLRegExpExtractor) o;
 						value = urlExtractor.read(pattern);
 						break;
-					case system:
+					case SYSTEM:
 						if( !(o instanceof SystemPropertiesReader) ) {
-							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (reader wrong class: "+o.getClass().getName()+")");
+							throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildReaderWrongClassMsg(o));
 						}
 						SystemPropertiesReader systemPropertiesReader = (SystemPropertiesReader) o;
 						value = systemPropertiesReader.read(pattern);
 						break;
-					case env:
+					case ENV:
 						if( !(o instanceof EnvironmentPropertiesReader) ) {
-							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (reader wrong class: "+o.getClass().getName()+")");
+							throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildReaderWrongClassMsg(o));
 						}
 						EnvironmentPropertiesReader environmentPropertiesReader = (EnvironmentPropertiesReader) o;
 						value = environmentPropertiesReader.read(pattern);
 						break;
-					case java:
+					case JAVA:
 						if( !(o instanceof JavaPropertiesReader) ) {
-							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (reader wrong class: "+o.getClass().getName()+")");
+							throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildReaderWrongClassMsg(o));
 						}
 						JavaPropertiesReader javaPropertiesReader = (JavaPropertiesReader) o;
 						value = javaPropertiesReader.read(pattern);
@@ -970,6 +967,16 @@ public class DynamicUtils {
 		return tmp;
 	}
 	
+	private static String buildPrefixIstruzioneMsgError(String istruzione) {
+		return "Trovata istruzione '"+istruzione+"' ";
+	}
+	private static final String NON_UTILIZZABILE_IN_QUESTO_CONTESTO = "non utilizzabile in questo contesto ";
+	private static String buildReaderWrongClassMsg(Object o) {
+		return "(reader wrong class: "+o.getClass().getName()+")";
+	}
+	private static String buildExtractorWrongClassMsg(Object o) {
+		return "(extractor wrong class: "+o.getClass().getName()+")";
+	}
 	
 	// *** FREEMARKER ***
 	
@@ -988,7 +995,7 @@ public class DynamicUtils {
 			else {
 				oow = new OutputStreamWriter(out);
 			}
-			_convertFreeMarkerTemplate(template, 
+			convertFreeMarkerTemplateEngine(template, 
 					dynamicMap, oow);
 			oow.flush();
 			oow.close();
@@ -999,7 +1006,7 @@ public class DynamicUtils {
 	
 	public static void convertFreeMarkerTemplate(Template template, 
 			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
-		_convertFreeMarkerTemplate(template, 
+		convertFreeMarkerTemplateEngine(template, 
 				dynamicMap, writer);
 	}
 	
@@ -1031,11 +1038,11 @@ public class DynamicUtils {
 		
 		Template template = zipTemplate.getTemplateFreeMarker();
 		
-		_convertFreeMarkerTemplate(template, 
+		convertFreeMarkerTemplateEngine(template, 
 				dynamicMap, writer);
 	}
 	
-	private static void _convertFreeMarkerTemplate(Template template, 
+	private static void convertFreeMarkerTemplateEngine(Template template, 
 			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
 		try {
 			// ** Aggiungo utility per usare metodi statici ed istanziare oggetti
@@ -1076,9 +1083,7 @@ public class DynamicUtils {
 			}
 			
 			// costruisco template
-			freemarker.template.Template templateFTL = TemplateUtils.buildTemplate(config, name, templateBin);
-			
-			return templateFTL;
+			return TemplateUtils.buildTemplate(config, name, templateBin);
 			
 		}catch(Exception e) {
 			throw new DynamicException(e.getMessage(),e);
@@ -1104,7 +1109,7 @@ public class DynamicUtils {
 			else {
 				oow = new OutputStreamWriter(out);
 			}
-			_convertVelocityTemplate(template, 
+			convertVelocityTemplateEngine(template, 
 					dynamicMap, oow);
 			oow.flush();
 			oow.close();
@@ -1115,7 +1120,7 @@ public class DynamicUtils {
 	
 	public static void convertVelocityTemplate(Template template,
 			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
-		_convertVelocityTemplate(template,
+		convertVelocityTemplateEngine(template,
 				dynamicMap, writer);
 	}
 	
@@ -1147,11 +1152,11 @@ public class DynamicUtils {
 		
 		Template template = zipTemplate.getTemplateFreeMarker();
 		
-		_convertVelocityTemplate(template, 
+		convertVelocityTemplateEngine(template, 
 				dynamicMap, writer);
 	}
 	
-	private static void _convertVelocityTemplate(Template template, 
+	private static void convertVelocityTemplateEngine(Template template, 
 			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
 		try {
 			// ** Aggiungo utility per usare metodi statici ed istanziare oggetti
@@ -1181,9 +1186,7 @@ public class DynamicUtils {
 			Map<String, byte[]> templateIncludes = template.getTemplateIncludes();
 			
 			// Configurazione
-			org.apache.velocity.Template templateVelocity = VelocityTemplateUtils.buildTemplate(name, templateBin, templateIncludes);
-						
-			return templateVelocity;
+			return VelocityTemplateUtils.buildTemplate(name, templateBin, templateIncludes);
 					
 		}catch(Exception e) {
 			throw new DynamicException(e.getMessage(),e);
@@ -1194,12 +1197,18 @@ public class DynamicUtils {
 	
 	// *** XSLT ***
 	
-	public static boolean XSLT_PROCESS_AS_DOMSOURCE = true;
+	private static boolean xsltProcessAsDomSource = true;
 	
+	public static boolean isXsltProcessAsDomSource() {
+		return xsltProcessAsDomSource;
+	}
+	public static void setXsltProcessAsDomSource(boolean xsltProcessAsDomSource) {
+		DynamicUtils.xsltProcessAsDomSource = xsltProcessAsDomSource;
+	}
 	public static void convertXSLTTemplate(String name, byte[] template, Element element, OutputStream out) throws DynamicException {
 		try {
 			Source xsltSource = null;
-			if(XSLT_PROCESS_AS_DOMSOURCE) {
+			if(xsltProcessAsDomSource) {
 				xsltSource = new DOMSource(org.openspcoop2.utils.xml.XMLUtils.getInstance().newElement(template)); 	
 			}
 			else {
@@ -1210,7 +1219,7 @@ public class DynamicUtils {
 			trans.transform(xmlSource, new StreamResult(out));
 			out.flush();
 		}catch(Exception e) {
-			throw new DynamicException(e.getMessage(),e);
+			throw new DynamicException("["+name+"] "+e.getMessage(),e);
 		}
 	}
 	
@@ -1244,116 +1253,17 @@ public class DynamicUtils {
 					keyP = keyP.trim();
 					
 					String oggetto = "property-"+keyP;
-					String entryName = null;
-					try {
-						entryName = DynamicUtils.convertDynamicPropertyValue(oggetto, keyP, dynamicMap, pddContext);
-					}catch(Exception e) {
-						throw new Exception("["+oggetto+"] Conversione valore per entry name '"+keyP+"' non riuscita: "+e.getMessage(),e);
-					}
+					String entryName = convertCompressorTemplateReadDynamicValueEntryName(oggetto, keyP, dynamicMap, pddContext);
 					String prefixError = "["+keyP+"] ";
 					
 					String valoreP = p.getProperty(keyP);
 					if(valoreP==null) {
-						throw new Exception(prefixError+"Nessun valore fornito per la proprietà");
+						throw new DynamicException(prefixError+"Nessun valore fornito per la proprietà");
 					}
 					valoreP = valoreP.trim();
-					byte[] content = null;
-					if(Costanti.COMPRESS_CONTENT.equals(valoreP)) {
-						if(contentExtractor==null || !contentExtractor.hasContent()) {
-							throw new Exception(prefixError+"Il "+ruolo+" non possiede un payload");
-						}
-						content = contentExtractor.getContent();
-					}
-					else if(Costanti.COMPRESS_ENVELOPE.equals(valoreP) ||
-							Costanti.COMPRESS_BODY.equals(valoreP) ||
-							Costanti.COMPRESS_ENVELOPE.toLowerCase().equals(valoreP.toLowerCase()) ||
-							Costanti.COMPRESS_BODY.toLowerCase().equals(valoreP.toLowerCase())) {
-						if(contentExtractor==null || !contentExtractor.hasContent()) {
-							throw new Exception(prefixError+"Il "+ruolo+" non possiede un payload");
-						}
-						if(!contentExtractor.isSoap()) {
-							throw new Exception(prefixError+"Il "+ruolo+" non è un messaggio soap");
-						}
-						if(Costanti.COMPRESS_ENVELOPE.equals(valoreP) ||
-								Costanti.COMPRESS_ENVELOPE.toLowerCase().equals(valoreP.toLowerCase())) {
-							DumpMessaggio dump = contentExtractor.dumpMessage();
-							if(dump==null) {
-								throw new Exception(prefixError+"Dump del "+ruolo+" non disponibile");
-							}
-							content = dump.getBody();
-						}
-						else {
-							content = contentExtractor.getContentSoapBody();
-						}
-					}
-					else if(valoreP.startsWith(Costanti.COMPRESS_ATTACH_PREFIX) ||
-							valoreP.startsWith(Costanti.COMPRESS_ATTACH_BY_ID_PREFIX) &&
-							valoreP.endsWith(Costanti.COMPRESS_SUFFIX)) {
-						String valoreInterno = valoreP.substring(Costanti.COMPRESS_ATTACH_PREFIX.length(), valoreP.length()-1);
-						if(valoreInterno==null || "".equals(valoreInterno)) {
-							throw new Exception(prefixError+"Non è stato definito un indice per l'attachment");
-						}
-						DumpMessaggio dump = contentExtractor.dumpMessage();
-						if(dump==null) {
-							throw new Exception(prefixError+"Dump del "+ruolo+" non disponibile");
-						}
-						
-						DumpAttachment attach = null;
-						boolean attachAtteso = true;
-						if(valoreP.startsWith(Costanti.COMPRESS_ATTACH_PREFIX)) {
-							int index = -1;
-							try {
-								index = Integer.valueOf(valoreInterno);
-							}catch(Exception e) {
-								throw new Exception(prefixError+"L'indice definito per l'attachment non è un numero intero: "+e.getMessage(),e);
-							}
-							if(contentExtractor.isRest() && index==0) {
-								content = dump.getBody();
-								attachAtteso = false;
-							}
-							else {
-								if(contentExtractor.isRest()) {
-									attach = dump.getAttachment((index-1));
-								}
-								else {
-									attach = dump.getAttachment(index);
-								}
-							}
-						}
-						else {
-							if(contentExtractor.isRest() &&
-									dump.getMultipartInfoBody()!=null &&
-									valoreInterno.equals(dump.getMultipartInfoBody().getContentId())) {
-								content = dump.getBody();
-								attachAtteso = false;
-							}
-							else {
-								attach = dump.getAttachment(valoreInterno);
-							}
-						}
-						
-						if(attachAtteso) {
-							if(attach==null) {
-								throw new Exception(prefixError+"L'indice definito per l'attachment non ha identificato alcun attachment");
-							}
-							content = attach.getContent();
-						}
-					}
-					else {
-						String oggettoV = "valore-"+keyP;
-						try {
-							String v = DynamicUtils.convertDynamicPropertyValue(oggettoV, valoreP, dynamicMap, pddContext);
-							if(v!=null) {
-								content = v.getBytes();
-							}
-						}catch(Exception e) {
-							throw new Exception(prefixError+"["+oggettoV+"] Conversione valore non riuscita: "+e.getMessage(),e);
-						}
-					}
 					
-					if(content==null) {
-						throw new Exception(prefixError+"Nessun contenuto da associare alla entry trovato");
-					}
+					byte[] content = converCompressTemplateReadContent(prefixError, keyP, valoreP, contentExtractor, ruolo,
+							dynamicMap, pddContext);
 					
 					listEntries.add(new Entry(entryName, content));
 				}
@@ -1361,14 +1271,152 @@ public class DynamicUtils {
 				out.write(CompressorUtilities.archive(listEntries, archiveType));
 			}
 		}catch(Exception e) {
-			throw new DynamicException(e.getMessage(),e);
+			throw new DynamicException("["+name+"] "+e.getMessage(),e);
 		}
 		
 	}
+	private static byte[] converCompressTemplateReadContent(String prefixError, String keyP, String valoreP, ContentExtractor contentExtractor, String ruolo,
+			Map<String,Object> dynamicMap,Context pddContext) throws DynamicException {
+		byte[] content = null;
+		if(Costanti.COMPRESS_CONTENT.equals(valoreP)) {
+			if(contentExtractor==null || !contentExtractor.hasContent()) {
+				throw new DynamicException(prefixError+"Il "+ruolo+" non possiede un payload");
+			}
+			content = contentExtractor.getContent();
+		}
+		else if(Costanti.COMPRESS_ENVELOPE.equals(valoreP) ||
+				Costanti.COMPRESS_BODY.equals(valoreP) ||
+				Costanti.COMPRESS_ENVELOPE.equalsIgnoreCase(valoreP) ||
+				Costanti.COMPRESS_BODY.equalsIgnoreCase(valoreP)) {
+			content = convertCompressorTemplateReadEnvelope(prefixError, valoreP, contentExtractor, ruolo);
+		}
+		else if(valoreP.startsWith(Costanti.COMPRESS_ATTACH_PREFIX) ||
+				valoreP.startsWith(Costanti.COMPRESS_ATTACH_BY_ID_PREFIX) &&
+				valoreP.endsWith(Costanti.COMPRESS_SUFFIX)) {
+			content = convertCompressorTemplateReadAttachContent(prefixError, valoreP, contentExtractor, ruolo);
+		}
+		else {
+			String oggettoV = "valore-"+keyP;
+			content = convertCompressorTemplateReadDynamicContent(prefixError, oggettoV, valoreP, dynamicMap, pddContext);
+		}
+		
+		if(content==null || content.length==0) {
+			throw new DynamicException(prefixError+"Nessun contenuto da associare alla entry trovato");
+		}
+		return content;
+	}
+	private static int converCompressTemplateReadAttachmentIndex(String prefixError, String valoreInterno) throws DynamicException {
+		int index = -1;
+		try {
+			index = Integer.valueOf(valoreInterno);
+		}catch(Exception e) {
+			throw new DynamicException(prefixError+"L'indice definito per l'attachment non è un numero intero: "+e.getMessage(),e);
+		}
+		return index;
+	}
+	private static String convertCompressorTemplateReadDynamicValueEntryName(String oggetto, String key, Map<String,Object> dynamicMap,Context pddContext) throws DynamicException {
+		try {
+			return DynamicUtils.convertDynamicPropertyValue(oggetto, key, dynamicMap, pddContext);
+		}catch(Exception e) {
+			throw new DynamicException("["+oggetto+"] Conversione valore per entry name '"+key+"' non riuscita: "+e.getMessage(),e);
+		}
+	}
+	private static byte[] convertCompressorTemplateReadEnvelope(String prefixError, String valoreP, ContentExtractor contentExtractor, String ruolo) throws DynamicException {
+		byte[] content = null;
+		if(contentExtractor==null || !contentExtractor.hasContent()) {
+			throw new DynamicException(prefixError+"Il "+ruolo+" non possiede un payload");
+		}
+		if(!contentExtractor.isSoap()) {
+			throw new DynamicException(prefixError+"Il "+ruolo+" non è un messaggio soap");
+		}
+		if(Costanti.COMPRESS_ENVELOPE.equals(valoreP) ||
+				Costanti.COMPRESS_ENVELOPE.equalsIgnoreCase(valoreP)) {
+			DumpMessaggio dump = contentExtractor.dumpMessage();
+			if(dump==null) {
+				throw new DynamicException(prefixError+"Dump del "+ruolo+" non disponibile");
+			}
+			content = dump.getBody();
+		}
+		else {
+			content = contentExtractor.getContentSoapBody();
+		}
+		return content;
+	}
+	private static byte[] convertCompressorTemplateReadDynamicContent(String prefixError, String oggettoV, String valoreP, Map<String,Object> dynamicMap,Context pddContext) throws DynamicException {
+		try {
+			String v = DynamicUtils.convertDynamicPropertyValue(oggettoV, valoreP, dynamicMap, pddContext);
+			if(v!=null) {
+				return v.getBytes();
+			}
+		}catch(Exception e) {
+			throw new DynamicException(prefixError+"["+oggettoV+"] Conversione valore non riuscita: "+e.getMessage(),e);
+		}
+		return new byte[0];
+	}
+	private static byte[] convertCompressorTemplateReadAttachContent(String prefixError, String valoreP, ContentExtractor contentExtractor, String ruolo) throws DynamicException {
+		String valoreInterno = valoreP.substring(Costanti.COMPRESS_ATTACH_PREFIX.length(), valoreP.length()-1);
+		if(valoreInterno==null || "".equals(valoreInterno)) {
+			throw new DynamicException(prefixError+"Non è stato definito un indice per l'attachment");
+		}
+		DumpMessaggio dump = contentExtractor.dumpMessage();
+		if(dump==null) {
+			throw new DynamicException(prefixError+"Dump del "+ruolo+" non disponibile");
+		}
+		
+		DumpAttachment attach = null;
+		boolean attachAtteso = true;
+		byte[] content = null;
+		if(valoreP.startsWith(Costanti.COMPRESS_ATTACH_PREFIX)) {
+			int index = converCompressTemplateReadAttachmentIndex(prefixError, valoreInterno);
+			if(contentExtractor.isRest() && index==0) {
+				content = dump.getBody();
+				attachAtteso = false;
+			}
+			else {
+				attach = convertCompressorTemplateReadDumpAttachment(dump, contentExtractor, index);
+			}
+		}
+		else {
+			if(contentExtractor.isRest() &&
+					dump.getMultipartInfoBody()!=null &&
+					valoreInterno.equals(dump.getMultipartInfoBody().getContentId())) {
+				content = dump.getBody();
+				attachAtteso = false;
+			}
+			else {
+				attach = dump.getAttachment(valoreInterno);
+			}
+		}
+		
+		if(attachAtteso) {
+			content = convertCompressorTemplateReadAttachContent(prefixError, attach);
+		}
+		
+		return content;
+	}
+	private static DumpAttachment convertCompressorTemplateReadDumpAttachment(DumpMessaggio dump, ContentExtractor contentExtractor, int index) {
+		DumpAttachment attach = null;
+		if(contentExtractor.isRest()) {
+			attach = dump.getAttachment((index-1));
+		}
+		else {
+			attach = dump.getAttachment(index);
+		}
+		return attach;
+	}
+	private static byte[] convertCompressorTemplateReadAttachContent(String prefixError, DumpAttachment attach) throws DynamicException{
+		byte[] content = null;
+		if(attach==null) {
+			throw new DynamicException(prefixError+"L'indice definito per l'attachment non ha identificato alcun attachment");
+		}
+		content = attach.getContent();
+		return content;
+	}
+
 }
 
 enum TemplateType {
 	
-	xml, json, url, system, env, java; 
+	XML, JSON, URL, SYSTEM, ENV, JAVA; 
 	
 }

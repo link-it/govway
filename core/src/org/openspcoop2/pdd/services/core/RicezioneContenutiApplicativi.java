@@ -87,6 +87,7 @@ import org.openspcoop2.pdd.core.CORSFilter;
 import org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
+import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativaConfig;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.pdd.core.IntegrationContext;
@@ -2287,12 +2288,19 @@ public class RicezioneContenutiApplicativi {
 			// ignore
 		}
 		
-		GestoreCorrelazioneApplicativa correlazioneApplicativa = 
-			new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, 
-					richiestaDelegata.getIdSoggettoFruitore(), richiestaDelegata.getIdServizio(), busta,
-					servizioApplicativo,protocolFactory,
-					transaction, pddContext,
-					portaDelegata);
+		GestoreCorrelazioneApplicativaConfig caConfig = new GestoreCorrelazioneApplicativaConfig();
+		caConfig.setState(openspcoopstate.getStatoRichiesta());
+		caConfig.setAlog(logCore);
+		caConfig.setSoggettoFruitore(richiestaDelegata.getIdSoggettoFruitore());
+		caConfig.setIdServizio(richiestaDelegata.getIdServizio());
+		caConfig.setBusta(busta);
+		caConfig.setServizioApplicativo(servizioApplicativo);
+		caConfig.setProtocolFactory(protocolFactory);
+		caConfig.setTransaction(transaction);
+		caConfig.setPddContext(pddContext);
+		caConfig.setPd(portaDelegata);
+		GestoreCorrelazioneApplicativa correlazioneApplicativa = new GestoreCorrelazioneApplicativa(caConfig);
+		
 		boolean correlazioneEsistente = false;
 		String idCorrelazioneApplicativa = null;
 		if (correlazionePD != null) {

@@ -81,6 +81,7 @@ import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
+import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativaConfig;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.MTOMProcessor;
@@ -3910,12 +3911,18 @@ public class InoltroBuste extends GenericLib{
 				GestoreCorrelazioneApplicativa gestoreCorrelazione = null;
 				try{
 					
-					gestoreCorrelazione = 
-							new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(), this.log,
-									soggettoFruitore,idServizio, bustaRichiesta, 
-									servizioApplicativoFruitore,protocolFactory,
-									transactionNullable, pddContext,
-									pd);
+					GestoreCorrelazioneApplicativaConfig caConfig = new GestoreCorrelazioneApplicativaConfig();
+					caConfig.setState(openspcoopstate.getStatoRisposta());
+					caConfig.setAlog(this.log);
+					caConfig.setSoggettoFruitore(soggettoFruitore);
+					caConfig.setIdServizio(idServizio);
+					caConfig.setBusta(bustaRichiesta);
+					caConfig.setServizioApplicativo(servizioApplicativoFruitore);
+					caConfig.setProtocolFactory(protocolFactory);
+					caConfig.setTransaction(transactionNullable);
+					caConfig.setPddContext(pddContext);
+					caConfig.setPd(pd);
+					gestoreCorrelazione = new GestoreCorrelazioneApplicativa(caConfig);
 
 					gestoreCorrelazione.verificaCorrelazioneRisposta(pd.getCorrelazioneApplicativaRisposta(), responseMessage, headerIntegrazioneRisposta, false);
 					

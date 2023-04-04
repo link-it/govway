@@ -86,6 +86,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
 import org.openspcoop2.pdd.core.EJBUtilsException;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
+import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativaConfig;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.LocalForwardEngine;
@@ -3898,22 +3899,26 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							GestoreCorrelazioneApplicativa gestoreCorrelazione = null;
 							try{
 								
+								GestoreCorrelazioneApplicativaConfig caConfig = new GestoreCorrelazioneApplicativaConfig();
+								caConfig.setState(openspcoopstate.getStatoRisposta());
+								caConfig.setAlog(this.log);
+								caConfig.setSoggettoFruitore(soggettoFruitore);
+								caConfig.setIdServizio(idServizio);
+								caConfig.setBusta(bustaRichiesta);
+								caConfig.setServizioApplicativo(servizioApplicativo);
+								caConfig.setProtocolFactory(protocolFactory);
+								caConfig.setTransaction(transactionNullable);
+								caConfig.setPddContext(pddContext);
+								
 								if(pa!=null) {
-									gestoreCorrelazione = 
-											new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(), this.log,
-													soggettoFruitore,idServizio,bustaRichiesta, 
-													servizioApplicativo,protocolFactory,
-													transactionNullable, pddContext,
-													pa);
+									caConfig.setPa(pa);
+									gestoreCorrelazione = new GestoreCorrelazioneApplicativa(caConfig);
 								}
 								else if(pd!=null) {
-									gestoreCorrelazione = 
-											new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(), this.log,
-													soggettoFruitore,idServizio,bustaRichiesta, 
-													servizioApplicativo,protocolFactory,
-													transactionNullable, pddContext,
-													pd);
+									caConfig.setPd(pd);
+									gestoreCorrelazione = new GestoreCorrelazioneApplicativa(caConfig);
 								}
+								
 								if(gestoreCorrelazione!=null){
 									gestoreCorrelazione.verificaCorrelazioneRisposta(correlazioneApplicativaRisposta, responseMessage, headerIntegrazioneRisposta, false);
 									

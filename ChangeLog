@@ -1,6 +1,12 @@
 2023-04-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Aggiunta funzionalità OP-1576
+	Tra le informazioni dinamiche utilizzabili all'interno di trasformazioni è adesso possibile riferire anche l'identificativo di correlazione applicativa.
+
+2023-04-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Aggiunta funzionalità OP-1560
 	È adesso possibile configurare GovWay per utilizzare una configurazione https differente da quella ereditata dalla jvm, 
 	oltre che tramite la configurazione specifica di un connettore https,

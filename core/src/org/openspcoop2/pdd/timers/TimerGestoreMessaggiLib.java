@@ -32,6 +32,7 @@ import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
+import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativaConfig;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.JMSReceiver;
 import org.openspcoop2.pdd.core.MessaggioServizioApplicativo;
@@ -909,7 +910,10 @@ public class TimerGestoreMessaggiLib  {
 			if(TimerState.ENABLED.equals(STATE_CORRELAZIONE_APPLICATIVA)) {
 
 				//	CorrelazioniApplicative da eliminare
-				GestoreCorrelazioneApplicativa gestoreCorrelazioneApplicativa = new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(),this.logTimer,null,null);
+				GestoreCorrelazioneApplicativaConfig caConfig = new GestoreCorrelazioneApplicativaConfig();
+				caConfig.setState(openspcoopstate.getStatoRichiesta());
+				caConfig.setAlog(this.logTimer);
+				GestoreCorrelazioneApplicativa gestoreCorrelazioneApplicativa = new GestoreCorrelazioneApplicativa(caConfig);
 	
 	
 				// -- Scadute (Correlazioni per cui era stata impostata una scadenza) --

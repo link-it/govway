@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.dynamic;
 import java.io.ByteArrayOutputStream;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.DumpRestMessageUtils;
@@ -31,6 +32,8 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.utils.DumpMessaggioConfig;
+import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.digest.DigestEncoding;
 import org.slf4j.Logger;
 
@@ -43,66 +46,91 @@ import org.slf4j.Logger;
  */
 public class ContentReader {
 
-	@SuppressWarnings("unused")
+	protected static final String FUNZIONALITA_RICHIEDE_SOAP = "Funzionalità utilizzabile solamente con service binding soap";
+	protected static final String FUNZIONALITA_RICHIEDE_JSON = "Funzionalità richiede un messaggio JSON";
+	protected static final String FUNZIONALITA_RICHIEDE_XML = "Funzionalità richiede un messaggio XML";
+	
 	protected Logger log;
 	
 	protected OpenSPCoop2Message message;
+	
+	protected Context pddContext;
 
-	public ContentReader(OpenSPCoop2Message message, Logger log) {
+	public ContentReader(OpenSPCoop2Message message, Context pddContext, Logger log) {
 		this.message = message; 
+		this.pddContext = pddContext;
 		this.log = log;
 	}
 
 
+	public String getApplicationMessageId() {
+		boolean request = this.message==null || 
+				this.message.getMessageRole()==null || 
+				MessageRole.NONE.equals(this.message.getMessageRole()) || 
+				MessageRole.REQUEST.equals(this.message.getMessageRole());
+		if(request) {
+			if(this.pddContext!=null && this.pddContext.containsKey(GestoreCorrelazioneApplicativa.CONTEXT_CORRELAZIONE_APPLICATIVA_RICHIESTA)) {
+				return (String) this.pddContext.get(GestoreCorrelazioneApplicativa.CONTEXT_CORRELAZIONE_APPLICATIVA_RICHIESTA);
+			}
+		}
+		else {
+			if(this.pddContext!=null && this.pddContext.containsKey(GestoreCorrelazioneApplicativa.CONTEXT_CORRELAZIONE_APPLICATIVA_RISPOSTA)) {
+				return (String) this.pddContext.get(GestoreCorrelazioneApplicativa.CONTEXT_CORRELAZIONE_APPLICATIVA_RISPOSTA);
+			}
+		}
+		return null;
+	}
+	
+	
 	public OpenSPCoop2Message getMessage() {
 		return this.message; // questo metodo consente di attuare trasformazione più avanzate agendo sull'oggetto
 	}
 
 	
-	public boolean isSoap() throws DynamicException {
+	public boolean isSoap() {
 		if(this.message==null) {
 			return false;
 		}
 		return ServiceBinding.SOAP.equals(this.message.getServiceBinding());
 	}
-	public boolean isSoap11() throws DynamicException {
+	public boolean isSoap11() {
 		if(this.message==null || this.message.getMessageType()==null) {
 			return false;
 		}
 		return MessageType.SOAP_11.equals(this.message.getMessageType());
 	}
-	public boolean isSoap12() throws DynamicException {
+	public boolean isSoap12() {
 		if(this.message==null || this.message.getMessageType()==null) {
 			return false;
 		}
 		return MessageType.SOAP_12.equals(this.message.getMessageType());
 	}
 	
-	public boolean isRest() throws DynamicException {
+	public boolean isRest() {
 		if(this.message==null) {
 			return false;
 		}
 		return ServiceBinding.REST.equals(this.message.getServiceBinding());
 	}
-	public boolean isRestXml() throws DynamicException {
+	public boolean isRestXml() {
 		if(this.message==null || this.message.getMessageType()==null) {
 			return false;
 		}
 		return MessageType.XML.equals(this.message.getMessageType());
 	}
-	public boolean isRestJson() throws DynamicException {
+	public boolean isRestJson() {
 		if(this.message==null || this.message.getMessageType()==null) {
 			return false;
 		}
 		return MessageType.JSON.equals(this.message.getMessageType());
 	}
-	public boolean isRestMultipart() throws DynamicException {
+	public boolean isRestMultipart() {
 		if(this.message==null || this.message.getMessageType()==null) {
 			return false;
 		}
 		return MessageType.MIME_MULTIPART.equals(this.message.getMessageType());
 	}
-	public boolean isRestBinary() throws DynamicException {
+	public boolean isRestBinary() {
 		if(this.message==null || this.message.getMessageType()==null) {
 			return false;
 		}
@@ -125,33 +153,37 @@ public class ContentReader {
 			else {
 				return this.message.castAsRest().hasContent();
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new DynamicException(t.getMessage(),t);
 		}
 	}
 	public byte[] getContent() throws DynamicException {
-		if(this.hasContent()==false) {
-			return null;
+		byte [] content = null;
+		if(!this.hasContent()) {
+			content = null;
 		}
-		try {
-			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
-				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				this.message.castAsSoap().writeTo(bout, false);
-				bout.flush();
-				bout.close();
-				return bout.toByteArray();
+		else {
+			try {
+				if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					this.message.castAsSoap().writeTo(bout, false);
+					bout.flush();
+					bout.close();
+					content = bout.toByteArray();
+				}
+				else {
+					/** non viene preservato il charset, es il test org.openspcoop2.pdd.core.trasformazioni.Test fallisce: Test [zip-json] (charset: ISO-8859-1) ... nei caratteri strani
+					return this.message.castAsRest().getContentAsByteArray(); */
+					content = this.message.castAsRest().getContentAsString().getBytes();
+				}
+			}catch(Exception t) {
+				throw new DynamicException(t.getMessage(),t);
 			}
-			else {
-				// non viene preservato il charset, es il test org.openspcoop2.pdd.core.trasformazioni.Test fallisce: Test [zip-json] (charset: ISO-8859-1) ... nei caratteri strani
-				//return this.message.castAsRest().getContentAsByteArray();
-				return this.message.castAsRest().getContentAsString().getBytes();
-			}
-		}catch(Throwable t) {
-			throw new DynamicException(t.getMessage(),t);
 		}
+		return content;
 	}
 	public String getContentAsString() throws DynamicException {
-		if(this.hasContent()==false) {
+		if(!this.hasContent()) {
 			return null;
 		}
 		try {
@@ -165,7 +197,7 @@ public class ContentReader {
 			else {
 				return this.message.castAsRest().getContentAsString();
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new DynamicException(t.getMessage(),t);
 		}
 	}
@@ -179,7 +211,7 @@ public class ContentReader {
 		try {
 			v = Boolean.valueOf(rfc3230);
 		}catch(Exception e) {
-			throw new DynamicException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+			throw new DynamicException(this.buildUncorrectBooleaValueMessage(rfc3230, e),e);
 		}
 		return getContentBase64Digest(algorithm, v);
 	}
@@ -196,7 +228,7 @@ public class ContentReader {
 		try {
 			v = Boolean.valueOf(rfc3230);
 		}catch(Exception e) {
-			throw new DynamicException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+			throw new DynamicException(this.buildUncorrectBooleaValueMessage(rfc3230, e),e);
 		}
 		return getContentHexDigest(algorithm, v);
 	}
@@ -216,7 +248,7 @@ public class ContentReader {
 		try {
 			v = Boolean.valueOf(rfc3230);
 		}catch(Exception e) {
-			throw new DynamicException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+			throw new DynamicException(this.buildUncorrectBooleaValueMessage(rfc3230, e),e);
 		}
 		return getContentDigest(algorithm, digestEncodingParam, v);
 	}
@@ -226,7 +258,7 @@ public class ContentReader {
 		DigestEncoding digestEncoding = null;
 		try {
 			digestEncoding = DigestEncoding.valueOf(digestEncodingParam);
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new DynamicException("DigestEncoding '"+digestEncodingParam+"' unsupported");
 		}
 		return getContentDigest(algorithm, digestEncoding, rfc3230);
@@ -237,7 +269,7 @@ public class ContentReader {
 		try {
 			v = Boolean.valueOf(rfc3230);
 		}catch(Exception e) {
-			throw new DynamicException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+			throw new DynamicException(this.buildUncorrectBooleaValueMessage(rfc3230, e),e);
 		}
 		return getContentDigest(algorithm, digestEncoding, v);
 	}
@@ -256,22 +288,26 @@ public class ContentReader {
 	}
 	
 	public byte[] getContentSoapBody() throws DynamicException {
-		if(this.hasContent()==false) {
-			return null;
+		byte [] content = null;
+		if(!this.hasContent()) {
+			content = null;
 		}
-		try {
-			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
-				if(this.message.castAsSoap().getSOAPPart()==null || this.message.castAsSoap().getSOAPPart().getEnvelope()==null) {
-					throw new Exception("Messaggio senza una busta SOAP");
+		else {
+			try {
+				if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+					if(this.message.castAsSoap().getSOAPPart()==null || this.message.castAsSoap().getSOAPPart().getEnvelope()==null) {
+						throw new DynamicException("Messaggio senza una busta SOAP");
+					}
+					content = TunnelSoapUtils.sbustamentoSOAPEnvelope(this.message.getFactory(), this.message.castAsSoap().getSOAPPart().getEnvelope(), false);
 				}
-				return TunnelSoapUtils.sbustamentoSOAPEnvelope(this.message.getFactory(), this.message.castAsSoap().getSOAPPart().getEnvelope(), false);
+				else {
+					throw new DynamicException(FUNZIONALITA_RICHIEDE_SOAP);
+				}
+			}catch(Exception t) {
+				throw new DynamicException(t.getMessage(),t);
 			}
-			else {
-				throw new Exception("Funzionalità utilizzabile solamente con service binding soap");
-			}
-		}catch(Throwable t) {
-			throw new DynamicException(t.getMessage(),t);
 		}
+		return content;
 	}
 	
 	public String getContentSoapBodyBase64Digest(String algorithm) throws DynamicException{
@@ -283,7 +319,7 @@ public class ContentReader {
 		try {
 			v = Boolean.valueOf(rfc3230);
 		}catch(Exception e) {
-			throw new DynamicException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+			throw new DynamicException(this.buildUncorrectBooleaValueMessage(rfc3230, e),e);
 		}
 		return getContentSoapBodyBase64Digest(algorithm, v);
 	}
@@ -300,7 +336,7 @@ public class ContentReader {
 		try {
 			v = Boolean.valueOf(rfc3230);
 		}catch(Exception e) {
-			throw new DynamicException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+			throw new DynamicException(this.buildUncorrectBooleaValueMessage(rfc3230, e),e);
 		}
 		return getContentSoapBodyHexDigest(algorithm, v);
 	}
@@ -320,7 +356,7 @@ public class ContentReader {
 		try {
 			v = Boolean.valueOf(rfc3230);
 		}catch(Exception e) {
-			throw new DynamicException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+			throw new DynamicException(this.buildUncorrectBooleaValueMessage(rfc3230, e),e);
 		}
 		return getContentSoapBodyDigest(algorithm, digestEncodingParam, v);
 	}
@@ -330,7 +366,7 @@ public class ContentReader {
 		DigestEncoding digestEncoding = null;
 		try {
 			digestEncoding = DigestEncoding.valueOf(digestEncodingParam);
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new DynamicException("DigestEncoding '"+digestEncodingParam+"' unsupported");
 		}
 		return getContentSoapBodyDigest(algorithm, digestEncoding, rfc3230);
@@ -341,7 +377,7 @@ public class ContentReader {
 		try {
 			v = Boolean.valueOf(rfc3230);
 		}catch(Exception e) {
-			throw new DynamicException("Uncorrect boolean value '"+rfc3230+"': "+e.getMessage(),e);
+			throw new DynamicException(this.buildUncorrectBooleaValueMessage(rfc3230, e),e);
 		}
 		return getContentSoapBodyDigest(algorithm, digestEncoding, v);
 	}
@@ -359,6 +395,10 @@ public class ContentReader {
 		}
 	}
 	
+	private String buildUncorrectBooleaValueMessage(String rfc3230, Exception e) {
+		return "Uncorrect boolean value '"+rfc3230+"': "+e.getMessage();
+	}
+	
 	
 	
 	public boolean isSoapFault() throws DynamicException {
@@ -367,9 +407,9 @@ public class ContentReader {
 				return this.message.castAsSoap().hasSOAPFault();
 			}
 			else {
-				throw new Exception("Funzionalità utilizzabile solamente con service binding soap");
+				throw new DynamicException(FUNZIONALITA_RICHIEDE_SOAP);
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new DynamicException(t.getMessage(),t);
 		}
 	}
@@ -379,9 +419,9 @@ public class ContentReader {
 				return this.message.castAsSoap().isSOAPBodyEmpty();
 			}
 			else {
-				throw new Exception("Funzionalità utilizzabile solamente con service binding soap");
+				throw new DynamicException(FUNZIONALITA_RICHIEDE_SOAP);
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new DynamicException(t.getMessage(),t);
 		}
 	}
@@ -391,9 +431,9 @@ public class ContentReader {
 				return this.message.castAsSoap().hasAttachments();
 			}
 			else {
-				throw new Exception("Funzionalità utilizzabile solamente con service binding soap");
+				throw new DynamicException(FUNZIONALITA_RICHIEDE_SOAP);
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new DynamicException(t.getMessage(),t);
 		}
 	}
@@ -403,9 +443,9 @@ public class ContentReader {
 				return this.message.castAsSoap().getSoapReader();
 			}
 			else {
-				throw new Exception("Funzionalità utilizzabile solamente con service binding soap");
+				throw new DynamicException(FUNZIONALITA_RICHIEDE_SOAP);
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new DynamicException(t.getMessage(),t);
 		}
 	}
@@ -447,13 +487,14 @@ public class ContentReader {
 						this.dumpMessaggio = DumpRestMessageUtils.dumpMessage(this.message.castAsRest(), config, true);
 					}
 				}
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			
 			this.dumpMessaggioInit = true;
 		}
 	}
+
 	
 }
 

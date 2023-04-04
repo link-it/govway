@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,10 +77,12 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
@@ -111,6 +114,10 @@ public class GestoreCorrelazioneApplicativa {
 	/* Colonne della tabella */
 	public static final String CORRELAZIONE_APPLICATIVA_COLUMN_ID_APPLICATIVO  = "ID_APPLICATIVO";
 	public static final String CORRELAZIONE_APPLICATIVA_COLUMN_ID_MESSAGGIO  = "ID_MESSAGGIO";
+	
+	/** Salvataggio in context */
+	public static final MapKey<String> CONTEXT_CORRELAZIONE_APPLICATIVA_RICHIESTA = org.openspcoop2.utils.Map.newMapKey("CONTEXT_CORRELAZIONE_APPLICATIVA_RICHIESTA");
+	public static final MapKey<String> CONTEXT_CORRELAZIONE_APPLICATIVA_RISPOSTA = org.openspcoop2.utils.Map.newMapKey("CONTEXT_CORRELAZIONE_APPLICATIVA_RISPOSTA");
 	
 	/** Se IState e' un'istanza di StatefulMessage possiede una Connessione SQL in autoCommit mode su cui effettuare query
 	 *  Altrimenti, e' un'istanza di StatelessMessage e nn necessita di connessioni
@@ -165,47 +172,32 @@ public class GestoreCorrelazioneApplicativa {
 	 * Costruttore. 
 	 *
 	 */
-	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,Busta busta,
-			String servizioApplicativo,IProtocolFactory<?> protocolFactory,
-			Transaction transaction, PdDContext pddContext,
-			PortaDelegata pd){
-		this.pd = pd;
-		init(state, alog, 
-				soggettoFruitore, idServizio, busta,
-				servizioApplicativo, protocolFactory, 
-				transaction, pddContext, 
-				pd!=null ? pd.getProprietaList() : null);
-	}
-	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,Busta busta,
-			String servizioApplicativo,IProtocolFactory<?> protocolFactory,
-			Transaction transaction, PdDContext pddContext,
-			PortaApplicativa pa){
-		this.pa = pa;
-		init(state, alog, 
-				soggettoFruitore, idServizio, busta,
-				servizioApplicativo, protocolFactory, 
-				transaction, pddContext, 
-				pa!=null ? pa.getProprietaList() : null);
-	}
-	private void init(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,Busta busta,
-			String servizioApplicativo,IProtocolFactory<?> protocolFactory,
-			Transaction transaction, PdDContext pddContext,
-			List<Proprieta> proprieta){
-		this.state = state;
-		if(alog!=null){
-			this.log = alog;
+	public GestoreCorrelazioneApplicativa(GestoreCorrelazioneApplicativaConfig config){		
+		this.state = config.getState();
+		if(config.getAlog()!=null){
+			this.log = config.getAlog();
 		}else{
 			this.log = LoggerWrapperFactory.getLogger(GestoreCorrelazioneApplicativa.class);
 		}
-		this.soggettoFruitore = soggettoFruitore;
-		this.idServizio = idServizio;
-		this.busta = busta;
-		this.servizioApplicativo = servizioApplicativo;
-		this.protocolFactory = protocolFactory;
-		this.transaction = transaction;
-		this.pddContext = pddContext;
+		this.soggettoFruitore = config.getSoggettoFruitore();
+		this.idServizio = config.getIdServizio();
+		this.busta = config.getBusta();
+		this.servizioApplicativo = config.getServizioApplicativo();
+		this.protocolFactory = config.getProtocolFactory();
+		this.transaction = config.getTransaction();
+		this.pddContext = config.getPddContext();
 		if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
 			this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
+		List<Proprieta> proprieta = null;
+		if(config.getPd()!=null) {
+			this.pd = config.getPd();
+			proprieta = this.pd.getProprietaList();
+		}
+		else if(config.getPa()!=null) {
+			this.pa = config.getPa(); 
+			proprieta = this.pa.getProprietaList();
 		}
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
@@ -239,19 +231,6 @@ public class GestoreCorrelazioneApplicativa {
 			this.log.error("[isCorrelazioneApplicativaRisposta_identificazioneFallita_accetta_truncate] failed: "+e.getMessage(),e);
 		}
 		
-	}
-	/**
-	 * Costruttore. 
-	 *
-	 */
-	public GestoreCorrelazioneApplicativa(IState state,Logger alog,
-			IProtocolFactory<?> protocolFactory,
-			Transaction transaction){
-		init(state,alog,
-				null,null,null,
-				null,protocolFactory,
-				transaction, null, 
-				null);
 	}
 
 	public void updateState(IState state){
@@ -439,7 +418,7 @@ public class GestoreCorrelazioneApplicativa {
 		}
 		
 		// Calcolo nomi
-		List<String> nomiPresentiBody = new ArrayList<String>();
+		List<String> nomiPresentiBody = new ArrayList<>();
 		if(checkElementoInTransito && nList!=null){
 			for (int elem=0; elem<nList.size(); elem++){
 				String elementName = null;
@@ -492,7 +471,7 @@ public class GestoreCorrelazioneApplicativa {
 					
 					// Devo applicare lo '*' solo se ho prima guardato tutti i nodi radice e sono ad esaminare l'ultimo nodo radice.
 					// L'ordine delle correlazioni mi garantira' che lo '*' sara' esaminato per ultimo
-					if( (elem==posizioneUltimoNodo) == false)
+					if( !(elem==posizioneUltimoNodo))
 						continue;
 					
 				}
@@ -815,57 +794,25 @@ public class GestoreCorrelazioneApplicativa {
 			}
 		}else{			
 			this.idCorrelazione = idCorrelazioneApplicativa;
+			if(this.pddContext!=null) {
+				this.pddContext.addObject(CONTEXT_CORRELAZIONE_APPLICATIVA_RICHIESTA, this.idCorrelazione);
+			}
 		}
 
 	}
 	
-	private boolean verificaCorrelazioneIdentificativoRichiestaEngine() throws GestoreMessaggiException, ProtocolException{
+	private boolean verificaCorrelazioneIdentificativoRichiestaEngine() throws GestoreMessaggiException{
 		
 		/** Fase di verifica dell'id di correlazione con l'id */
 		
 		if(this.riusoIdentificativo){
-			PreparedStatement pstmt = null;
-			ResultSet rs = null;
 			try{
 				StateMessage stateMSG = (StateMessage)this.state;
 				Connection connectionDB = stateMSG.getConnectionDB();
 	
 				// Lettura attuale valore
 				
-				// Azione
-				String valoreAzione = "(AZIONE is null)";
-				if( (this.idServizio.getAzione()!=null) && (!"".equals(this.idServizio.getAzione())) ){
-					valoreAzione = "AZIONE=?";
-				}
-				
-				StringBuilder query = new StringBuilder();
-				query.append("SELECT * FROM "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA+" WHERE ID_APPLICATIVO=? AND SERVIZIO_APPLICATIVO=? AND"+
-						" TIPO_MITTENTE=? AND MITTENTE=? AND TIPO_DESTINATARIO=? AND DESTINATARIO=? AND TIPO_SERVIZIO=? AND SERVIZIO=? AND VERSIONE_SERVIZIO=? AND "+valoreAzione);
-				pstmt = connectionDB.prepareStatement(query.toString());
-				int index = 1;
-				pstmt.setString(index++,this.idCorrelazione);
-				pstmt.setString(index++,this.servizioApplicativo);
-				pstmt.setString(index++,this.soggettoFruitore.getTipo());
-				pstmt.setString(index++,this.soggettoFruitore.getNome());
-				pstmt.setString(index++,this.idServizio.getSoggettoErogatore().getTipo());
-				pstmt.setString(index++,this.idServizio.getSoggettoErogatore().getNome());
-				pstmt.setString(index++,this.idServizio.getTipo());
-				pstmt.setString(index++,this.idServizio.getNome());
-				pstmt.setInt(index++,this.idServizio.getVersione());
-				
-				if( (this.idServizio.getAzione()!=null) && (!"".equals(this.idServizio.getAzione())) ){
-					pstmt.setString(index++,this.idServizio.getAzione());
-				}
-				rs = pstmt.executeQuery();
-				if(rs == null) {
-					pstmt.close();
-					this.log.error("Verifica correlazione IDApplicativo - ID non riuscita: ResultSet is null?");
-					throw new GestoreMessaggiException("Verifica correlazione IDApplicativo - ID non riuscita: ResultSet is null?");		
-				}
-				boolean correlazionePresente = rs.next();
-				if(correlazionePresente){
-					this.idBustaCorrelato = rs.getString("ID_MESSAGGIO");
-				}
+				executeVerificaCorrelazioneIdentificativoRichiesta(connectionDB);
 	
 			} catch(Exception er) {
 				this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -873,22 +820,7 @@ public class GestoreCorrelazioneApplicativa {
 				String error = "Verifica correlazione IDApplicativo - ID non riuscita: "+er.getMessage();
 				this.log.error(error);
 				throw new GestoreMessaggiException("Verifica correlazione IDApplicativo - ID non riuscita: "+er.getMessage(),er);
-			} finally {
-				try {
-					if(rs!=null) {
-						rs.close();
-					}
-				}catch(Exception t) {
-					// ignore
-				}
-				try {
-					if(pstmt!=null) {
-						pstmt.close();
-					}
-				}catch(Exception t) {
-					// ignore
-				}
-			}
+			} 
 	
 			return this.idBustaCorrelato!=null;
 
@@ -896,6 +828,67 @@ public class GestoreCorrelazioneApplicativa {
 			return false;
 		}
 
+	}
+	private boolean executeVerificaCorrelazioneIdentificativoRichiesta(Connection connectionDB) throws SQLException, GestoreMessaggiException{
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		boolean correlazionePresente = false;
+		try{
+		
+			// Azione
+			String valoreAzione = "(AZIONE is null)";
+			if( (this.idServizio.getAzione()!=null) && (!"".equals(this.idServizio.getAzione())) ){
+				valoreAzione = "AZIONE=?";
+			}
+			
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT * FROM "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA+" WHERE ID_APPLICATIVO=? AND SERVIZIO_APPLICATIVO=? AND"+
+					" TIPO_MITTENTE=? AND MITTENTE=? AND TIPO_DESTINATARIO=? AND DESTINATARIO=? AND TIPO_SERVIZIO=? AND SERVIZIO=? AND VERSIONE_SERVIZIO=? AND "+valoreAzione);
+			pstmt = connectionDB.prepareStatement(query.toString());
+			int index = 1;
+			pstmt.setString(index++,this.idCorrelazione);
+			pstmt.setString(index++,this.servizioApplicativo);
+			pstmt.setString(index++,this.soggettoFruitore.getTipo());
+			pstmt.setString(index++,this.soggettoFruitore.getNome());
+			pstmt.setString(index++,this.idServizio.getSoggettoErogatore().getTipo());
+			pstmt.setString(index++,this.idServizio.getSoggettoErogatore().getNome());
+			pstmt.setString(index++,this.idServizio.getTipo());
+			pstmt.setString(index++,this.idServizio.getNome());
+			pstmt.setInt(index++,this.idServizio.getVersione());
+			
+			if( (this.idServizio.getAzione()!=null) && (!"".equals(this.idServizio.getAzione())) ){
+				pstmt.setString(index,this.idServizio.getAzione());
+			}
+			
+			rs = pstmt.executeQuery();
+			if(rs == null) {
+				pstmt.close();
+				this.log.error("Verifica correlazione IDApplicativo - ID non riuscita: ResultSet is null?");
+				throw new GestoreMessaggiException("Verifica correlazione IDApplicativo - ID non riuscita: ResultSet is null?");		
+			}
+			correlazionePresente = rs.next();
+			if(correlazionePresente){
+				this.idBustaCorrelato = rs.getString(CORRELAZIONE_APPLICATIVA_COLUMN_ID_MESSAGGIO);
+			}
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			}catch(Exception t) {
+				// ignore
+			}
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			}catch(Exception t) {
+				// ignore
+			}
+		}
+		
+		return correlazionePresente;
 	}
 
 
@@ -1417,6 +1410,9 @@ public class GestoreCorrelazioneApplicativa {
 			}
 		}else{
 			this.idCorrelazione = idCorrelazioneApplicativa;
+			if(this.pddContext!=null) {
+				this.pddContext.addObject(CONTEXT_CORRELAZIONE_APPLICATIVA_RISPOSTA, this.idCorrelazione);
+			}
 		}
 
 	}
@@ -1497,27 +1493,7 @@ public class GestoreCorrelazioneApplicativa {
 			java.sql.Timestamp nowT = DateManager.getTimestamp();
 
 
-			if(Configurazione.getSqlQueryObjectType()==null){
-				StringBuilder query = new StringBuilder();
-				query.append("SELECT id FROM ");
-				query.append(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
-				query.append(" WHERE "+COLUMN_SCADENZA+" is not null AND "+COLUMN_SCADENZA+" < ?");
-				queryString = query.toString();
-			}else{
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());	
-				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addSelectField(COLUMN_SCADENZA);
-				sqlQueryObject.addFromTable(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
-				sqlQueryObject.addWhereCondition(COLUMN_SCADENZA+" is not null");
-				sqlQueryObject.addWhereCondition(COLUMN_SCADENZA+" < ?");
-				sqlQueryObject.setANDLogicOperator(true);
-				if(orderBy){
-					sqlQueryObject.addOrderBy(COLUMN_SCADENZA);
-					sqlQueryObject.setSortType(true);
-				}
-				sqlQueryObject.setLimit(limit);
-				queryString = sqlQueryObject.createSQLQuery();
-			}
+			queryString = buildQueryCorrelazioniScadute(limit, orderBy);
 			/** System.out.println("QUERY CORRELAZIONE APPLICATIVA IS: ["+queryString+"] 1["+nowT+"]"); */
 
 
@@ -1537,17 +1513,9 @@ public class GestoreCorrelazioneApplicativa {
 				this.log.debug(debugS);
 			}
 
-			int countLimit = 0;
 			while(rs.next()){
-				if(Configurazione.getSqlQueryObjectType()==null){
-					// LIMIT Applicativo
-					idMsg.add(rs.getLong("id"));
-					countLimit++;
-					if(countLimit==limit)
-						break;
-				}
-				else{
-					idMsg.add(rs.getLong("id"));
+				if(!readCorrelazioniScaduteEngine(idMsg, rs, limit)) {
+					break;
 				}
 			}
 			rs.close();
@@ -1572,6 +1540,31 @@ public class GestoreCorrelazioneApplicativa {
 			this.log.error(errorMsg);
 			throw new GestoreMessaggiException(errorMsg,e);
 		}	
+	}
+	private String buildQueryCorrelazioniScadute(int limit,boolean orderBy) throws SQLQueryObjectException{
+		String queryString = null;
+		if(Configurazione.getSqlQueryObjectType()==null){
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT id FROM ");
+			query.append(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
+			query.append(" WHERE "+COLUMN_SCADENZA+" is not null AND "+COLUMN_SCADENZA+" < ?");
+			queryString = query.toString();
+		}else{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());	
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField(COLUMN_SCADENZA);
+			sqlQueryObject.addFromTable(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
+			sqlQueryObject.addWhereCondition(COLUMN_SCADENZA+" is not null");
+			sqlQueryObject.addWhereCondition(COLUMN_SCADENZA+" < ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			if(orderBy){
+				sqlQueryObject.addOrderBy(COLUMN_SCADENZA);
+				sqlQueryObject.setSortType(true);
+			}
+			sqlQueryObject.setLimit(limit);
+			queryString = sqlQueryObject.createSQLQuery();
+		}
+		return queryString;
 	}
 	
 	
@@ -1599,32 +1592,7 @@ public class GestoreCorrelazioneApplicativa {
 			long scadenza = DateManager.getTimeMillis() - (scadenzaMsg * 60 * 1000);
 			java.sql.Timestamp scandenzaT = new java.sql.Timestamp(scadenza);
 
-			if(Configurazione.getSqlQueryObjectType()==null){
-				StringBuilder query = new StringBuilder();
-				query.append("SELECT id FROM ");
-				query.append(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
-				query.append(" WHERE "+COLUMN_ORA_REGISTRAZIONE+" < ?");
-				if(escludiCorrelazioniConScadenza){
-					query.append(" AND "+COLUMN_SCADENZA+" is null");
-				}
-				queryString = query.toString();
-			}else{
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());	
-				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addSelectField(COLUMN_SCADENZA);
-				sqlQueryObject.addFromTable(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
-				sqlQueryObject.addWhereCondition(COLUMN_ORA_REGISTRAZIONE+" < ?");
-				if(escludiCorrelazioniConScadenza){
-					sqlQueryObject.addWhereCondition(COLUMN_SCADENZA+" is null");
-				}
-				sqlQueryObject.setANDLogicOperator(true);
-				if(orderBy){
-					sqlQueryObject.addOrderBy(COLUMN_ORA_REGISTRAZIONE);
-					sqlQueryObject.setSortType(true);
-				}
-				sqlQueryObject.setLimit(limit);
-				queryString = sqlQueryObject.createSQLQuery();
-			}
+			queryString = buildQueryCorrelazioniScaduteRispettoOraRegistrazione(limit, orderBy, escludiCorrelazioniConScadenza);
 			/** System.out.println("QUERY CORRELAZIONE APPLICATIVA IS: ["+queryString+"] 1["+nowT+"]"); */
 
 
@@ -1644,17 +1612,9 @@ public class GestoreCorrelazioneApplicativa {
 				this.log.debug(sDebug);
 			}
 
-			int countLimit = 0;
 			while(rs.next()){
-				if(Configurazione.getSqlQueryObjectType()==null){
-					// LIMIT Applicativo
-					idMsg.add(rs.getLong("id"));
-					countLimit++;
-					if(countLimit==limit)
-						break;
-				}
-				else{
-					idMsg.add(rs.getLong("id"));
+				if(!readCorrelazioniScaduteEngine(idMsg, rs, limit)) {
+					break;
 				}
 			}
 			rs.close();
@@ -1679,6 +1639,52 @@ public class GestoreCorrelazioneApplicativa {
 			this.log.error(errorMsg);
 			throw new GestoreMessaggiException(errorMsg,e);
 		}	
+	}
+	private String buildQueryCorrelazioniScaduteRispettoOraRegistrazione(int limit,boolean orderBy, boolean escludiCorrelazioniConScadenza) throws SQLQueryObjectException{
+		String queryString = null;
+		if(Configurazione.getSqlQueryObjectType()==null){
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT id FROM ");
+			query.append(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
+			query.append(" WHERE "+COLUMN_ORA_REGISTRAZIONE+" < ?");
+			if(escludiCorrelazioniConScadenza){
+				query.append(" AND "+COLUMN_SCADENZA+" is null");
+			}
+			queryString = query.toString();
+		}else{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());	
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField(COLUMN_SCADENZA);
+			sqlQueryObject.addFromTable(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
+			sqlQueryObject.addWhereCondition(COLUMN_ORA_REGISTRAZIONE+" < ?");
+			if(escludiCorrelazioniConScadenza){
+				sqlQueryObject.addWhereCondition(COLUMN_SCADENZA+" is null");
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			if(orderBy){
+				sqlQueryObject.addOrderBy(COLUMN_ORA_REGISTRAZIONE);
+				sqlQueryObject.setSortType(true);
+			}
+			sqlQueryObject.setLimit(limit);
+			queryString = sqlQueryObject.createSQLQuery();
+		}
+		return queryString;
+	}
+	
+	private boolean readCorrelazioniScaduteEngine(java.util.List<Long> idMsg, ResultSet rs, int limit) throws SQLException {
+		int countLimit = 0;
+		if(Configurazione.getSqlQueryObjectType()==null){
+			// LIMIT Applicativo
+			idMsg.add(rs.getLong("id"));
+			countLimit++;
+			if(countLimit==limit) {
+				return false;
+			}
+		}
+		else{
+			idMsg.add(rs.getLong("id"));
+		}
+		return true;
 	}
 
 	

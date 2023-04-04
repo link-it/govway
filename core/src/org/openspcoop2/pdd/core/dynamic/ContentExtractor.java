@@ -26,10 +26,12 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 
+import org.openspcoop2.core.commons.CoreRuntimeException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathReturnType;
 import org.slf4j.Logger;
@@ -45,8 +47,8 @@ import org.w3c.dom.Node;
 public class ContentExtractor extends ContentReader {
 
 
-	public ContentExtractor(OpenSPCoop2Message message, Logger log) {
-		super(message, log);
+	public ContentExtractor(OpenSPCoop2Message message, Context pddContext, Logger log) {
+		super(message, pddContext, log);
 	}
 
 
@@ -87,10 +89,9 @@ public class ContentExtractor extends ContentReader {
 		}
 	}
 	public void removeUrlProperty(String name) {
-		if(this.message!=null) {
-			if(this.message.getTransportRequestContext()!=null) {
-				this.message.getTransportRequestContext().removeParameter(name);
-			}
+		if(this.message!=null &&
+			this.message.getTransportRequestContext()!=null) {
+			this.message.getTransportRequestContext().removeParameter(name);
 		}
 	}
 
@@ -102,8 +103,8 @@ public class ContentExtractor extends ContentReader {
 		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
 			try {
 				this.message.castAsSoap().setThrowExceptionIfFoundMoreSecurityHeader(false);
-			}catch(Throwable t) {
-				throw new RuntimeException(t.getMessage(),t); // non dovrebbe mai avvenire
+			}catch(Exception t) {
+				throw new CoreRuntimeException(t.getMessage(),t); // non dovrebbe mai avvenire
 			}
 		}
 	}
@@ -126,7 +127,7 @@ public class ContentExtractor extends ContentReader {
 				
 				header.addChildElement(soapElement);
 				
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			
@@ -148,7 +149,7 @@ public class ContentExtractor extends ContentReader {
 				soapMsg.getSOAPBody().removeContents();
 				soapMsg.getSOAPBody().addChildElement(soapElement);
 				
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			
@@ -182,7 +183,7 @@ public class ContentExtractor extends ContentReader {
 					n.appendChild(nImported);
 				}
 				
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			
@@ -196,7 +197,7 @@ public class ContentExtractor extends ContentReader {
 	
 	public void prettyFormatJsonContent() throws DynamicException {
 		if(!isRestJson()) {
-			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_JSON);
 		}
 		try {
 			this.message.castAsRestJson().prettyFormatContent();
@@ -207,7 +208,7 @@ public class ContentExtractor extends ContentReader {
 	
 	public void addSimpleJsonElement(String name, Object value) throws DynamicException {
 		if(!isRestJson()) {
-			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_JSON);
 		}
 		try {
 			this.message.castAsRestJson().addSimpleElement(name, value);
@@ -217,7 +218,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void addSimpleJsonElement(String jsonPath, String name, Object value) throws DynamicException {
 		if(!isRestJson()) {
-			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_JSON);
 		}
 		try {
 			this.message.castAsRestJson().addSimpleElement(jsonPath, name, value);
@@ -227,7 +228,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void addObjectJsonElement(String name, Object value) throws DynamicException {
 		if(!isRestJson()) {
-			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_JSON);
 		}
 		try {
 			this.message.castAsRestJson().addObjectElement(name, value);
@@ -237,7 +238,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void addObjectJsonElement(String jsonPath, String name, Object value) throws DynamicException {
 		if(!isRestJson()) {
-			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_JSON);
 		}
 		try {
 			this.message.castAsRestJson().addObjectElement(jsonPath, name, value);
@@ -247,7 +248,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void addArrayJsonElement(String name, Object value) throws DynamicException {
 		if(!isRestJson()) {
-			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_JSON);
 		}
 		try {
 			this.message.castAsRestJson().addArrayElement(name, value);
@@ -257,7 +258,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void addArrayJsonElement(String jsonPath, String name, Object value) throws DynamicException {
 		if(!isRestJson()) {
-			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_JSON);
 		}
 		try {
 			this.message.castAsRestJson().addArrayElement(jsonPath, name, value);
@@ -267,7 +268,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void removeJsonField(String name) throws DynamicException {
 		if(!isRestJson()) {
-			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_JSON);
 		}
 		try {
 			this.message.castAsRestJson().removeElement(name);
@@ -277,7 +278,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void removeJsonField(String jsonPath, String name) throws DynamicException {
 		if(!isRestJson()) {
-			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_JSON);
 		}
 		try {
 			this.message.castAsRestJson().removeElement(jsonPath, name);
@@ -291,7 +292,7 @@ public class ContentExtractor extends ContentReader {
 	
 	public void addXmlElement(String name, String value) throws DynamicException {
 		if(!isRestXml()) {
-			throw new DynamicException("Funzionalità richiede un messaggio XML");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_XML);
 		}
 		try {
 			this.message.castAsRestXml().addElement(name, value);
@@ -301,7 +302,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void addXmlElement(String name, String namespace, String value) throws DynamicException {
 		if(!isRestXml()) {
-			throw new DynamicException("Funzionalità richiede un messaggio XML");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_XML);
 		}
 		try {
 			this.message.castAsRestXml().addElement(name, namespace, value);
@@ -312,7 +313,7 @@ public class ContentExtractor extends ContentReader {
 	
 	public void addXmlElementIn(String pattern, String name, String value) throws DynamicException {
 		if(!isRestXml()) {
-			throw new DynamicException("Funzionalità richiede un messaggio XML");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_XML);
 		}
 		try {
 			this.message.castAsRestXml().addElementIn(pattern, name, value);
@@ -322,7 +323,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void addXmlElementIn(String pattern, String name, String namespace, String value) throws DynamicException {
 		if(!isRestXml()) {
-			throw new DynamicException("Funzionalità richiede un messaggio XML");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_XML);
 		}
 		try {
 			this.message.castAsRestXml().addElementIn(pattern, name, namespace, value);
@@ -333,7 +334,7 @@ public class ContentExtractor extends ContentReader {
 	
 	public void removeXmlElement(String name) throws DynamicException {
 		if(!isRestXml()) {
-			throw new DynamicException("Funzionalità richiede un messaggio XML");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_XML);
 		}
 		try {
 			this.message.castAsRestXml().removeElement(name);
@@ -343,7 +344,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void removeXmlElement(String name, String namespace) throws DynamicException {
 		if(!isRestXml()) {
-			throw new DynamicException("Funzionalità richiede un messaggio XML");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_XML);
 		}
 		try {
 			this.message.castAsRestXml().removeElement(name, namespace);
@@ -354,7 +355,7 @@ public class ContentExtractor extends ContentReader {
 	
 	public void removeXmlElementIn(String pattern, String name) throws DynamicException {
 		if(!isRestXml()) {
-			throw new DynamicException("Funzionalità richiede un messaggio XML");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_XML);
 		}
 		try {
 			this.message.castAsRestXml().removeElementIn(pattern, name);
@@ -364,7 +365,7 @@ public class ContentExtractor extends ContentReader {
 	}
 	public void removeXmlElementIn(String pattern, String name, String namespace) throws DynamicException {
 		if(!isRestXml()) {
-			throw new DynamicException("Funzionalità richiede un messaggio XML");
+			throw new DynamicException(ContentReader.FUNZIONALITA_RICHIEDE_XML);
 		}
 		try {
 			this.message.castAsRestXml().removeElementIn(pattern, name, namespace);

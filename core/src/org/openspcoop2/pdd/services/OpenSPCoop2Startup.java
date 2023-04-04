@@ -923,8 +923,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				AbstractXMLUtils.DISABLE_DTDs = !propertiesReader.isXmlFactoryDTDsEnabled();
 				OpenSPCoop2Startup.logStartupInfo("XMLUtils - DISABLE_DTDs: "+AbstractXMLUtils.DISABLE_DTDs);
 				
-				DynamicUtils.XSLT_PROCESS_AS_DOMSOURCE = propertiesReader.isXsltProcessAsDOMSource();
-				OpenSPCoop2Startup.logStartupInfo("DynamicUtils - XSLT_PROCESS_AS_DOMSOURCE: "+DynamicUtils.XSLT_PROCESS_AS_DOMSOURCE);
+				DynamicUtils.setXsltProcessAsDomSource(propertiesReader.isXsltProcessAsDOMSource());
+				OpenSPCoop2Startup.logStartupInfo("DynamicUtils - XSLT_PROCESS_AS_DOMSOURCE: "+DynamicUtils.isXsltProcessAsDomSource());
 				
 				Properties yamlSnakeLimits = propertiesReader.getYamlSnakeLimits();
 				if(yamlSnakeLimits!=null && !yamlSnakeLimits.isEmpty()) {

@@ -353,6 +353,9 @@ Di seguito vengono descritti i test del package 'trasformazione':
 - 'protocollo', verifica la trasformazione utilizzata per effettuare trasformazioni di protocollo rest->soap e viceversa
   ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.protocollo
 
+- 'info_integrazione', verifica la trasformazione utilizzata per inoltrare informazioni al backend
+  ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.info_integrazione
+
 Di seguito vengono descritti i test del package 'registrazione_messaggi':
 
 - 'dump_binario', verifica la registrazione dei messaggi in modalità 'binaria'
