@@ -40,7 +40,6 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.ForwardProxyConfigurazione;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -263,48 +262,44 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		return init;
 	}
 	
-	protected void setSSLContext() throws Exception{
+	protected void setSSLContext() throws ConnettoreException{
 		if(this.connettoreHttps){
 			this.sslContextProperties = ConnettoreHTTPSProperties.readProperties(this.properties);
 		}
 		else {
 			String location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-			if(location.trim().startsWith("https")==false){
+			if(!location.trim().startsWith("https")){
 				if(this.debug){
 					this.logger.debug("Location non richiede gestione https ["+location.trim()+"]");
 				}
 				return;
 			}
-			boolean urlHttps_overrideDefaultConfiguration = false;
-			boolean fruizioni = false;
-			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-				urlHttps_overrideDefaultConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi();
-				fruizioni = false;
-			}
-			else{
-				// InoltroBuste e InoltroRisposte
-				urlHttps_overrideDefaultConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste();
-				fruizioni = true;
-			}
-			if(urlHttps_overrideDefaultConfiguration==false) {
+			
+			boolean urlHttpsOverrideJvmConfiguration = ConnettoreHTTPUrlHttpsKeystoreRepository.isEnabled(this.idModulo, this.proprietaPorta);
+			if(!urlHttpsOverrideJvmConfiguration) {
 				if(this.debug){
 					this.logger.debug("Location https ["+location.trim()+"]; gestione personalizzata dei keystore disabilitata");
 				}
 				return;
 			}
-			this.sslContextProperties = ConnettoreHTTP_urlHttps_keystoreRepository.readSSLContext(this.debug, this.logger, this.busta, fruizioni);
+			
+			ConnettoreHTTPUrlHttpsKeystoreRepository utils = new ConnettoreHTTPUrlHttpsKeystoreRepository(this.debug, this.logger, this.idModulo);
+			utils.init(this.proprietaPorta, this.busta, this.dynamicMap, this.getPddContext());
+			this.sslContextProperties = utils.readSSLContext(this.requestInfo);
 		}
 		
-		if(this.sslContextProperties!=null){
-			if(!this.sslContextProperties.isSecureRandomSet()) {
-				if(this.openspcoopProperties.isConnettoreHttps_useSecureRandom()) {
-					this.sslContextProperties.setSecureRandom(true);
-					if(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo()!=null) {
-						this.sslContextProperties.setSecureRandomAlgorithm(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo());
-					}
+		this.setSecureRandomSSLContext();
+	}
+	private void setSecureRandomSSLContext() throws ConnettoreException{
+		if(this.sslContextProperties!=null &&
+				!this.sslContextProperties.isSecureRandomSet() &&
+				this.openspcoopProperties.isConnettoreHttps_useSecureRandom()
+				) {
+				this.sslContextProperties.setSecureRandom(true);
+				if(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo()!=null) {
+					this.sslContextProperties.setSecureRandomAlgorithm(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo());
 				}
 			}
-		}
 	}
 	
 	protected SSLSocketFactory buildSSLContextFactory() throws UtilsException {

@@ -26,7 +26,7 @@ il significato dei parametri:
    -  **Modalità Data Transfer** (default, content-length,
       transfer-encoding-chunked): indica il tipo di trasferimento dati;
       scegliendo la voce default verrà utilizzato il comportamento
-      configurato a livello globale nel file govway.properties tramite
+      configurato a livello globale nel file govway_local.properties tramite
       le opzioni:
 
       -  org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength
@@ -44,7 +44,7 @@ il significato dei parametri:
    -  **Gestione Redirect** (default, abilitato, disabilitato): consente
       di personalizzare il comportamento sul singolo connettore;
       scegliendo la voce default verrà utilizzato il comportamento
-      configurato a livello globale nel file govway.properties tramite
+      configurato a livello globale nel file govway_local.properties tramite
       le opzioni:
 
       -  org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects

@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
 
@@ -199,7 +200,11 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 				try {
 					useRequestInfo = this.requestInfo!=null && this.requestInfo.getRequestConfig()!=null;
 					if(useRequestInfo) {
-						list = this.requestInfo.getRequestConfig().getPorteApplicativeByFiltroRicerca(filtroPA);
+						BooleanNullable nullConditionsList = BooleanNullable.NULL();
+						list = this.requestInfo.getRequestConfig().getPorteApplicativeByFiltroRicerca(filtroPA, nullConditionsList);
+						if(nullConditionsList==null || nullConditionsList.getValue()==null) {
+							list = null;
+						}
 					}
 					
 					if(list==null) {

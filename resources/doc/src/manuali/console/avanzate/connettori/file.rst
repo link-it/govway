@@ -36,16 +36,14 @@ il significato dei parametri:
 
    -  **File**: indirizzo su file-system (path) dove verrà serializzato
       il messaggio di richiesta. È possibile fornire delle macro per
-      creare dei path dinamici (per ulteriori dettagli vedi sezione
-      'Informazioni Dinamiche').
+      creare dei path dinamici (per ulteriori dettagli si rimanda alla sezione :ref:`valoriDinamici`).
 
    -  **File (Permessi)**: consente di impostare i permessi del file, indicato nel campo precedente, tramite il formato '[o/a]+/-rwx'.
 
    -  **File Headers** (opzionale): indirizzo su file-system (path) dove
       verranno serializzati gli header di trasporto associati alla
       richiesta. È possibile fornire delle macro per creare dei path
-      dinamici (per ulteriori dettagli vedi sezione 'Informazioni
-      Dinamiche').
+      dinamici (per ulteriori dettagli si rimanda alla sezione :ref:`valoriDinamici`).
 
    -  **File Headers (Permessi)**: consente di impostare i permessi del file, indicato nel campo precedente, tramite il formato '[o/a]+/-rwx'.
 
@@ -63,13 +61,11 @@ il significato dei parametri:
 
    -  **File**: indirizzo su file-system (path) dove verrà letto il
       messaggio di risposta. È possibile fornire delle macro per creare
-      dei path dinamici, come descritto più avanti al punto
-      "Informazioni Dinamiche".
+      dei path dinamici (per ulteriori dettagli si rimanda alla sezione :ref:`valoriDinamici`).
 
    -  **File Headers** (opzionale): indirizzo su file system (path) dove
       verranno letti gli header di trasporto da associare alla risposta.
-      E' possibile fornire delle macro per creare dei path dinamici,
-      come descritto più avanti al punto "Informazioni Dinamiche".
+      È possibile fornire delle macro per creare dei path dinamici (per ulteriori dettagli si rimanda alla sezione :ref:`valoriDinamici`).
 
    -  **Delete After Read** (true/false): abilita l'eventuale
       eliminazione del file una volta utilizzato per la generazione
@@ -81,7 +77,7 @@ il significato dei parametri:
 
 -  *Informazioni Dinamiche*. Per creare dei path dinamici rispetto alla
    transazione in corso di elaborazione, possono essere utilizzate le
-   seguenti macro:
+   macro descritte nella sezione sezione :ref:`valoriDinamici`. Di seguito vengono riportati solo alcuni esempi:
 
    -  **{date:FORMAT}** indica la data di elaborazione del messaggio. Il
       formato fornito deve essere conforme a quanto richiesto dalla
@@ -100,7 +96,7 @@ il significato dei parametri:
 
    -  **{header:NAME}** permette di utilizzare informazioni, relative
       alla transazione in corso, inserite negli header http generati da
-      GovWay (maggiori dettagli in sezione :ref:`headerIntegrazione`). Il valore 'NAME' indica il nome
+      GovWay (maggiori dettagli in sezione :ref:`headerIntegrazione`). Il valore 'NAMÈ indica il nome
       dell'header da utilizzare. Ad esempio per utilizzare il nome del
       mittente è possibile usare {header:GovWay-Sender}. Un altro
       esempio valido nello scenario della fatturazione elettronica (sezione :ref:`profiloFatturaPA`)
@@ -109,7 +105,7 @@ il significato dei parametri:
 
    -  **{query:NAME}** permette di utilizzare informazioni, relative
       alla transazione in corso, inserite nei query parameter aggiunti
-      all'endpoint da GovWay (maggiori dettagli in sezione :ref:`headerIntegrazione`). Il valore 'NAME'
+      all'endpoint da GovWay (maggiori dettagli in sezione :ref:`headerIntegrazione`). Il valore 'NAMÈ
       indica il nome della proprietà da utilizzare. Ad esempio per
       utilizzare il nome del mittente è possibile usare
       {query:govway\_sender}.
@@ -117,7 +113,7 @@ il significato dei parametri:
    -  **{property:NAME}** permette di utilizzare informazioni, relative
       alla transazione in corso, specifiche della sezione relativa al
       profilo utilizzato all'interno della traccia (es. sezione
-      'Informazioni Fatturazione Elettronica'). Il valore 'NAME' indica
+      'Informazioni Fatturazione Elettronica'). Il valore 'NAMÈ indica
       il nome della proprietà da utilizzare. Un esempio valido nello
       scenario della fatturazione elettronica (sezione :ref:`profiloFatturaPA`) potrebbe essere quello
       di utilizzare l'identificativo sdi utilizzando la sintassi

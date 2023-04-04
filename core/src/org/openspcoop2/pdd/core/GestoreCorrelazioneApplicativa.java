@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.SOAPEnvelope;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
@@ -109,6 +110,7 @@ public class GestoreCorrelazioneApplicativa {
 
 	/* Colonne della tabella */
 	public static final String CORRELAZIONE_APPLICATIVA_COLUMN_ID_APPLICATIVO  = "ID_APPLICATIVO";
+	public static final String CORRELAZIONE_APPLICATIVA_COLUMN_ID_MESSAGGIO  = "ID_MESSAGGIO";
 	
 	/** Se IState e' un'istanza di StatefulMessage possiede una Connessione SQL in autoCommit mode su cui effettuare query
 	 *  Altrimenti, e' un'istanza di StatelessMessage e nn necessita di connessioni
@@ -149,10 +151,10 @@ public class GestoreCorrelazioneApplicativa {
 	private PortaApplicativa pa;
 	
 	private int maxLengthCorrelazioneApplicativa = 255;
-	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request = -1;
-	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request = -1;
-	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response = -1;
-	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response = -1;
+	private int maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateRequest = -1;
+	private int maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRequest = -1;
+	private int maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateResponse = -1;
+	private int maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateResponse = -1;
 
 	public boolean isRiusoIdentificativo() {
 		return this.riusoIdentificativo;
@@ -209,31 +211,31 @@ public class GestoreCorrelazioneApplicativa {
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		this.maxLengthCorrelazioneApplicativa = op2Properties.getMaxLengthCorrelazioneApplicativa();
 		try {
-			if(CostantiProprieta.isCorrelazioneApplicativaRichiesta_identificazioneFallita_blocca_truncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate())) {
-				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
+			if(CostantiProprieta.isCorrelazioneApplicativaRichiestaIdentificazioneFallitaBloccaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate())) {
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateRequest = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
 			}
-		}catch(Throwable e) {
+		}catch(Exception e) {
 			this.log.error("[isCorrelazioneApplicativaRichiesta_identificazioneFallita_blocca_truncate] failed: "+e.getMessage(),e);
 		}
 		try {
-			if(CostantiProprieta.isCorrelazioneApplicativaRisposta_identificazioneFallita_blocca_truncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate())) {
-				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
+			if(CostantiProprieta.isCorrelazioneApplicativaRispostaIdentificazioneFallitaBloccaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate())) {
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateResponse = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
 			}
-		}catch(Throwable e) {
+		}catch(Exception e) {
 			this.log.error("[isCorrelazioneApplicativaRisposta_identificazioneFallita_blocca_truncate] failed: "+e.getMessage(),e);
 		}
 		try {
-			if(CostantiProprieta.isCorrelazioneApplicativaRichiesta_identificazioneFallita_accetta_truncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate())) {
-				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
+			if(CostantiProprieta.isCorrelazioneApplicativaRichiestaIdentificazioneFallitaAccettaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate())) {
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRequest = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
 			}
-		}catch(Throwable e) {
+		}catch(Exception e) {
 			this.log.error("[isCorrelazioneApplicativaRichiesta_identificazioneFallita_accetta_truncate] failed: "+e.getMessage(),e);
 		}
 		try {
-			if(CostantiProprieta.isCorrelazioneApplicativaRisposta_identificazioneFallita_accetta_truncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate())) {
-				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
+			if(CostantiProprieta.isCorrelazioneApplicativaRispostaIdentificazioneFallitaAccettaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate())) {
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateResponse = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
 			}
-		}catch(Throwable e) {
+		}catch(Exception e) {
 			this.log.error("[isCorrelazioneApplicativaRisposta_identificazioneFallita_accetta_truncate] failed: "+e.getMessage(),e);
 		}
 		
@@ -256,6 +258,18 @@ public class GestoreCorrelazioneApplicativa {
 		this.state = state;
 	}
 	
+	private static final String ERRORE_IDENTIFICAZIONE_MESSAGE = "errore durante l'analisi dell'elementName: ";
+	private static final String ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO = "identificativo di correlazione applicativa non identificato nell'elemento [";
+	private static final String ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_URL_BASED = "] con modalita' di acquisizione urlBased (Pattern:";
+	private static final String ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_HEADER_BASED = "] con modalita' di acquisizione headerBased (Header:";
+	private static final String ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_CONTENT_BASED = "] con modalita' di acquisizione contentBased (Pattern:";
+	private static final String ERRORE_IDENTIFICAZIONE_PER_ELEMENTO = "identificativo di correlazione applicativa per l'elemento [";
+	private static final String ERRORE_IDENTIFICAZIONE_PER_ELEMENTO_MODALITA_INPUT_BASED = "con modalita' di acquisizione inputBased non presente tra le informazioni di integrazione";
+
+	private String buildErroreLunghezzaIdentificativo(String idCorrelazioneApplicativa) {
+		return "Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai "+this.maxLengthCorrelazioneApplicativa+" caratteri consentiti";
+	}
+	
 	
 	
 	
@@ -268,7 +282,7 @@ public class GestoreCorrelazioneApplicativa {
 			this.transaction.getTempiElaborazione().startCorrelazioneApplicativaRichiesta();
 		}
 		try {
-			this._verificaCorrelazione(correlazioneApplicativa, urlProtocolContext, message, headerIntegrazione, readFirstHeaderIntegrazione);
+			this.verificaCorrelazioneEngine(correlazioneApplicativa, urlProtocolContext, message, headerIntegrazione, readFirstHeaderIntegrazione);
 		}
 		finally {
 			if(this.transaction!=null) {
@@ -278,7 +292,7 @@ public class GestoreCorrelazioneApplicativa {
 	}
 	public boolean verificaCorrelazioneIdentificativoRichiesta() throws GestoreMessaggiException, ProtocolException{
 		try {
-			return this._verificaCorrelazioneIdentificativoRichiesta();
+			return this.verificaCorrelazioneIdentificativoRichiestaEngine();
 		}
 		finally {
 			if(this.transaction!=null) {
@@ -286,7 +300,7 @@ public class GestoreCorrelazioneApplicativa {
 			}
 		}
 	}
-	private void _verificaCorrelazione(CorrelazioneApplicativa correlazioneApplicativa,
+	private void verificaCorrelazioneEngine(CorrelazioneApplicativa correlazioneApplicativa,
 			URLProtocolContext urlProtocolContext,OpenSPCoop2Message message,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
 
 		if(correlazioneApplicativa==null){
@@ -308,15 +322,16 @@ public class GestoreCorrelazioneApplicativa {
 			if(this.pddContext!=null) {
 				idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			}
-			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			boolean checkSoapBodyEmpty = false; // devo poter fare xpath anche su soapBody empty
-			element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessage_readOnly, idTransazione);
-			elementJson = MessageUtils.getContentString(message, bufferMessage_readOnly, idTransazione);
+			element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessageReadOnly, idTransazione);
+			elementJson = MessageUtils.getContentString(message, bufferMessageReadOnly, idTransazione);
 		}catch(Exception e){
 			throw new GestoreMessaggiException(e.getMessage(),e);
 		}
 		
 		/** Fase di identificazione dell'id di correlazione */
+		
 		boolean checkElementoInTransito = false;
 		if(correlazioneApplicativa.sizeElementoList()>1){
 			checkElementoInTransito = true;
@@ -335,16 +350,16 @@ public class GestoreCorrelazioneApplicativa {
 				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 					SOAPEnvelope envelope = (SOAPEnvelope) element;
 					if(envelope==null){
-						throw new Exception("Envelope non presente nel messaggio Soap");
+						throw new CoreException("Envelope non presente nel messaggio Soap");
 					}
-					if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
-						throw new Exception("Body applicativo non presente nel messaggio Soap");
+					if(envelope.getBody()==null || !envelope.getBody().hasChildNodes()){
+						throw new CoreException("Body applicativo non presente nel messaggio Soap");
 					}
 					NodeList nListSoapBody = envelope.getBody().getChildNodes();
 					if(nListSoapBody==null || nListSoapBody.getLength()==0){
-						throw new Exception("Elementi del Body non presenti?");
+						throw new CoreException("Elementi del Body non presenti?");
 					}
-					nList = new ArrayList<Node>();
+					nList = new ArrayList<>();
 					for (int elem=0; elem<nListSoapBody.getLength(); elem++){
 						Node nodeInEsame =  nListSoapBody.item(elem);
 						if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
@@ -357,23 +372,22 @@ public class GestoreCorrelazioneApplicativa {
 					if(MessageType.XML.equals(message.getMessageType()) || 
 							MessageType.MIME_MULTIPART.equals(message.getMessageType()) // viene prelevato il primo xml trovato
 							){
-						// Nei GET il messaggio e' vuoto
-//						if(element==null){
-//							throw new Exception("Contenuto non presente nel messaggio");
-//						}
+						/** Nei GET il messaggio e' vuoto
+						if(element==null){
+							throw new Exception("Contenuto non presente nel messaggio");
+						}*/
 						if(element!=null){
-							nList = new ArrayList<Node>();
+							nList = new ArrayList<>();
 							nList.add(element);
 						}
 					}
 					else{
-						//throw new GestoreMessaggiException("MessageType ["+message.getMessageType()+"] non supportato in presenza di specifici elementi");
 						checkElementoInTransito = false;
 					}
 				}
 			}catch(Exception e){
 				this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-						getErrore416_CorrelazioneApplicativaRichiesta("errore durante l'analisi dell'elementName: "+e.getMessage());
+						getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_MESSAGE+e.getMessage());
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 			}
 		}
@@ -382,7 +396,7 @@ public class GestoreCorrelazioneApplicativa {
 		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
 		
 		/** Gestioni correlazioni, in modo da avere lo '*' in fondo */
-		java.util.List<CorrelazioneApplicativaElemento> c = new java.util.ArrayList<CorrelazioneApplicativaElemento>();
+		java.util.List<CorrelazioneApplicativaElemento> c = new java.util.ArrayList<>();
 		int posizioneElementoQualsiasi = -1;
 		for(int i=0; i<correlazioneApplicativa.sizeElementoList(); i++){
 			CorrelazioneApplicativaElemento elemento = correlazioneApplicativa.getElemento(i);
@@ -430,20 +444,19 @@ public class GestoreCorrelazioneApplicativa {
 			for (int elem=0; elem<nList.size(); elem++){
 				String elementName = null;
 				Node nodeInEsame =  nList.get(elem);
-				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
-					continue;
+				if( (!(nodeInEsame instanceof Text)) && (!(nodeInEsame instanceof Comment)) ){
+					try{
+						elementName = nodeInEsame.getLocalName();
+					}catch(Exception e){
+						this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
+								getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_MESSAGE+e.getMessage());
+						throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
+					}
+					if(elementName==null){
+						continue;
+					}
+					nomiPresentiBody.add(elementName);
 				}
-				try{
-					elementName = nodeInEsame.getLocalName();
-				}catch(Exception e){
-					this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-							getErrore416_CorrelazioneApplicativaRichiesta("errore durante l'analisi dell'elementName: "+e.getMessage());
-					throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
-				}
-				if(elementName==null){
-					continue;
-				}
-				nomiPresentiBody.add(elementName);
 			}
 		}
 		else{
@@ -483,14 +496,19 @@ public class GestoreCorrelazioneApplicativa {
 						continue;
 					
 				}
-				else if(this.idServizio!=null && this.idServizio.getAzione()!=null &&
-						this.idServizio.getAzione().equals(elemento.getNome())) {
-					// Ricerco per match sull'azione
-					matchNodePerCorrelazioneApplicativa = true;
-					nomeElemento = elemento.getNome();
-				}
-				else if( elementName.equals(elemento.getNome()) ){
-					// Ricerco per match sul localName dell'elemento (se XML)
+				else if(
+							(
+								// Ricerco per match sull'azione
+								this.idServizio!=null && this.idServizio.getAzione()!=null &&
+								this.idServizio.getAzione().equals(elemento.getNome())
+							)
+						||
+							(
+								// Ricerco per match sul localName dell'elemento (se XML)
+								elementName.equals(elemento.getNome())	
+							)
+						) {
+					
 					matchNodePerCorrelazioneApplicativa = true;
 					nomeElemento = elemento.getNome();
 				}
@@ -510,7 +528,7 @@ public class GestoreCorrelazioneApplicativa {
 						// Ricerco elemento con una espressione
 						try{
 							if(element==null && elementJson==null){
-								throw new Exception("Contenuto non disponibile su cui effettuare un match");
+								throw new CoreException("Contenuto non disponibile su cui effettuare un match");
 							}
 							if(element!=null) {
 								nomeElemento = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getNome(), this.log);
@@ -522,7 +540,8 @@ public class GestoreCorrelazioneApplicativa {
 								matchNodePerCorrelazioneApplicativa = true;
 							}
 						}catch(Exception e){
-							this.log.info("Calcolo (contentBased) non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+							String error = "Calcolo (contentBased) non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage();
+							this.log.info(error);
 						}
 						// Ricerco tramuite espressione regolare sulla url
 						if(!matchNodePerCorrelazioneApplicativa) {
@@ -533,7 +552,8 @@ public class GestoreCorrelazioneApplicativa {
 									matchNodePerCorrelazioneApplicativa = true;
 								}
 							}catch(Exception e){
-								this.log.info("Calcolo (urlBased) non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+								String error = "Calcolo (urlBased) non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage();
+								this.log.info(error);
 							}
 						}
 					}
@@ -552,19 +572,18 @@ public class GestoreCorrelazioneApplicativa {
 					}
 					
 					
-					if(readFirstHeaderIntegrazione){
-						if(headerIntegrazione.getIdApplicativo()!=null){
-							idCorrelazioneApplicativa = headerIntegrazione.getIdApplicativo();
-							findCorrelazione = true;
-							break;
-						}
+					if(readFirstHeaderIntegrazione &&
+						headerIntegrazione.getIdApplicativo()!=null){
+						idCorrelazioneApplicativa = headerIntegrazione.getIdApplicativo();
+						findCorrelazione = true;
+						break;
 					}
 
 					if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_URL_BASED.equals(elemento.getIdentificazione())){
 						try{
 							List<String> l = RegularExpressionEngine.getAllStringMatchPattern(urlProtocolContext.getUrlInvocazione_formBased(), 
 									elemento.getPattern());
-							if(l!=null && l.size()>0) {
+							if(l!=null && !l.isEmpty()) {
 								StringBuilder bf = new StringBuilder();
 								for (String id : l) {
 									if(bf.length()>0) {
@@ -577,7 +596,7 @@ public class GestoreCorrelazioneApplicativa {
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione urlBased (Pattern:"+elemento.getPattern()+"): "+e.getMessage());
+										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_URL_BASED+elemento.getPattern()+"): "+e.getMessage());
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
@@ -590,13 +609,13 @@ public class GestoreCorrelazioneApplicativa {
 									message.getTransportRequestContext()==null || 
 									message.getTransportRequestContext().getHeaders()==null ||
 									message.getTransportRequestContext().getHeaders().isEmpty()) {
-								throw new Exception ("Header trasporto non disponibile");
+								throw new CoreException ("Header trasporto non disponibile");
 							}
 							idCorrelazioneApplicativa = message.getTransportRequestContext().getHeaderFirstValue(elemento.getPattern());
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione headerBased (Header:"+elemento.getPattern()+"): "+e.getMessage());
+										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_HEADER_BASED+elemento.getPattern()+"): "+e.getMessage());
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
@@ -608,8 +627,8 @@ public class GestoreCorrelazioneApplicativa {
 						if(idCorrelazioneApplicativa==null){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa per l'elemento ["+nomeElemento+"] " +
-												"con modalita' di acquisizione inputBased non presente tra le informazioni di integrazione");
+										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_PER_ELEMENTO+nomeElemento+"] " +
+												ERRORE_IDENTIFICAZIONE_PER_ELEMENTO_MODALITA_INPUT_BASED);
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
@@ -624,7 +643,7 @@ public class GestoreCorrelazioneApplicativa {
 						try{
 							
 							if(elemento.getPattern()==null || StringUtils.isEmpty(elemento.getPattern())) {
-								throw new Exception ("Template non disponibile");
+								throw new CoreException ("Template non disponibile");
 							}
 							
 							Map<String, List<String>> pTrasporto = null;
@@ -636,9 +655,9 @@ public class GestoreCorrelazioneApplicativa {
 								urlInvocazione = this.requestInfo.getProtocolContext().getUrlInvocazione_formBased();
 								pQuery = this.requestInfo.getProtocolContext().getParameters();
 								if(this.requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
-									HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) this.requestInfo.getProtocolContext();
+									HttpServletTransportRequestContext httpServletContext = this.requestInfo.getProtocolContext();
 									HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
-									if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+									if(httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
 										FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
 										if(formServlet.getFormUrlEncodedParametersValues()!=null &&
 												!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
@@ -648,20 +667,20 @@ public class GestoreCorrelazioneApplicativa {
 								}
 							}
 							MessageContent messageContent = null;
-							boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+							boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 							if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-								messageContent = new MessageContent(message.castAsSoap(), bufferMessage_readOnly, this.pddContext);
+								messageContent = new MessageContent(message.castAsSoap(), bufferMessageReadOnly, this.pddContext);
 							}
 							else{
 								if(MessageType.XML.equals(message.getMessageType())){
-									messageContent = new MessageContent(message.castAsRestXml(), bufferMessage_readOnly, this.pddContext);
+									messageContent = new MessageContent(message.castAsRestXml(), bufferMessageReadOnly, this.pddContext);
 								}
 								else if(MessageType.JSON.equals(message.getMessageType())){
-									messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, this.pddContext);
+									messageContent = new MessageContent(message.castAsRestJson(), bufferMessageReadOnly, this.pddContext);
 								}
 							}
 							
-							Map<String, Object> dynamicMap = new HashMap<String, Object>();
+							Map<String, Object> dynamicMap = new HashMap<>();
 							ErrorHandler errorHandler = new ErrorHandler();
 							DynamicUtils.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
 									message,
@@ -691,7 +710,7 @@ public class GestoreCorrelazioneApplicativa {
 									idPD.setNome(this.pd.getNome());
 								}
 								else {
-									throw new Exception ("Porta non disponibile");
+									throw new CoreException ("Porta non disponibile");
 								}
 								Template template = idPA!=null ?
 										configurazionePdDManager.getTemplateCorrelazioneApplicativaRichiesta(idPA, elemento.getNome(), elemento.getPattern().getBytes(), this.requestInfo)
@@ -702,7 +721,7 @@ public class GestoreCorrelazioneApplicativa {
 									DynamicUtils.convertFreeMarkerTemplate(template, dynamicMap, bout);
 								}
 								else {
-									//if(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_VELOCITY_TEMPLATE.equals(elemento.getIdentificazione())) {
+									/** if(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_VELOCITY_TEMPLATE.equals(elemento.getIdentificazione())) { */
 									DynamicUtils.convertVelocityTemplate(template, dynamicMap, bout);
 								}
 								bout.flush();
@@ -716,7 +735,7 @@ public class GestoreCorrelazioneApplicativa {
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione headerBased (Header:"+elemento.getPattern()+"): "+e.getMessage());
+										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_HEADER_BASED+elemento.getPattern()+"): "+e.getMessage());
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
@@ -730,11 +749,11 @@ public class GestoreCorrelazioneApplicativa {
 									!MessageType.XML.equals(message.getMessageType()) && 
 									!MessageType.JSON.equals(message.getMessageType()) &&
 									!MessageType.MIME_MULTIPART.equals(message.getMessageType())){
-								throw new Exception("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
+								throw new CoreException("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
 										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
 							}
 							if(element==null && elementJson==null){
-								throw new Exception("Contenuto non disponibile su cui effettuare una correlazione di tipo '"+
+								throw new CoreException("Contenuto non disponibile su cui effettuare una correlazione di tipo '"+
 										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
 							}
 							if(element!=null) {
@@ -747,11 +766,12 @@ public class GestoreCorrelazioneApplicativa {
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione contentBased (Pattern:"+elemento.getPattern()+"): "+e.getMessage());
+										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_CONTENT_BASED+elemento.getPattern()+"): "+e.getMessage());
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
-								this.log.info("[AccettaIdentificazioneFallita] Identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione contentBased (Pattern:"+elemento.getPattern()+"): "+e.getMessage());
+								String debugInfo = "[AccettaIdentificazioneFallita] Identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_CONTENT_BASED+elemento.getPattern()+"): "+e.getMessage();
+								this.log.info(debugInfo);
 							}
 						}
 					}
@@ -764,7 +784,7 @@ public class GestoreCorrelazioneApplicativa {
 							}
 							else {
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-										getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai "+this.maxLengthCorrelazioneApplicativa+" caratteri consentiti");
+										getErrore416_CorrelazioneApplicativaRichiesta(this.buildErroreLunghezzaIdentificativo(idCorrelazioneApplicativa));
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 							}
 						}
@@ -773,7 +793,8 @@ public class GestoreCorrelazioneApplicativa {
 								idCorrelazioneApplicativa = this.truncate(idCorrelazioneApplicativa, RICHIESTA, ACCETTA);
 							}
 							else {
-								this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai "+this.maxLengthCorrelazioneApplicativa+" caratteri consentiti");
+								String erroreId = this.buildErroreLunghezzaIdentificativo(idCorrelazioneApplicativa);
+								this.log.error(erroreId);
 								correlazioneNonRiuscitaDaAccettare = true;
 								idCorrelazioneApplicativa = null;
 							}
@@ -787,21 +808,18 @@ public class GestoreCorrelazioneApplicativa {
 		}
 		
 		if(idCorrelazioneApplicativa == null){
-			if(correlazioneNonRiuscitaDaAccettare==false){
+			if(!correlazioneNonRiuscitaDaAccettare){
 				this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
 						getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body");
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
-			}else{
-				return;
 			}
 		}else{			
 			this.idCorrelazione = idCorrelazioneApplicativa;
 		}
 
-		return;
 	}
 	
-	private boolean _verificaCorrelazioneIdentificativoRichiesta() throws GestoreMessaggiException, ProtocolException{
+	private boolean verificaCorrelazioneIdentificativoRichiestaEngine() throws GestoreMessaggiException, ProtocolException{
 		
 		/** Fase di verifica dell'id di correlazione con l'id */
 		
@@ -816,7 +834,7 @@ public class GestoreCorrelazioneApplicativa {
 				
 				// Azione
 				String valoreAzione = "(AZIONE is null)";
-				if( (this.idServizio.getAzione()!=null) && ("".equals(this.idServizio.getAzione())==false) ){
+				if( (this.idServizio.getAzione()!=null) && (!"".equals(this.idServizio.getAzione())) ){
 					valoreAzione = "AZIONE=?";
 				}
 				
@@ -835,7 +853,7 @@ public class GestoreCorrelazioneApplicativa {
 				pstmt.setString(index++,this.idServizio.getNome());
 				pstmt.setInt(index++,this.idServizio.getVersione());
 				
-				if( (this.idServizio.getAzione()!=null) && ("".equals(this.idServizio.getAzione())==false) ){
+				if( (this.idServizio.getAzione()!=null) && (!"".equals(this.idServizio.getAzione())) ){
 					pstmt.setString(index++,this.idServizio.getAzione());
 				}
 				rs = pstmt.executeQuery();
@@ -852,29 +870,28 @@ public class GestoreCorrelazioneApplicativa {
 			} catch(Exception er) {
 				this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA);
-				this.log.error("Verifica correlazione IDApplicativo - ID non riuscita: "+er.getMessage());
+				String error = "Verifica correlazione IDApplicativo - ID non riuscita: "+er.getMessage();
+				this.log.error(error);
 				throw new GestoreMessaggiException("Verifica correlazione IDApplicativo - ID non riuscita: "+er.getMessage(),er);
 			} finally {
 				try {
 					if(rs!=null) {
 						rs.close();
 					}
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					// ignore
 				}
 				try {
 					if(pstmt!=null) {
 						pstmt.close();
 					}
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					// ignore
 				}
 			}
 	
-			if(this.idBustaCorrelato!=null)
-				return true;
-			else
-				return false;
+			return this.idBustaCorrelato!=null;
+
 		}else{
 			return false;
 		}
@@ -894,7 +911,7 @@ public class GestoreCorrelazioneApplicativa {
 			this.transaction.getTempiElaborazione().startCorrelazioneApplicativaRisposta();
 		}
 		try {
-			this._verificaCorrelazioneRisposta(correlazioneApplicativa, message, headerIntegrazione, readFirstHeaderIntegrazione);
+			this.verificaCorrelazioneRispostaEngine(correlazioneApplicativa, message, headerIntegrazione, readFirstHeaderIntegrazione);
 		}
 		finally {
 			if(this.transaction!=null) {
@@ -902,7 +919,7 @@ public class GestoreCorrelazioneApplicativa {
 			}
 		}
 	}
-	private void _verificaCorrelazioneRisposta(CorrelazioneApplicativaRisposta correlazioneApplicativa,
+	private void verificaCorrelazioneRispostaEngine(CorrelazioneApplicativaRisposta correlazioneApplicativa,
 			OpenSPCoop2Message message,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
 
 		if(correlazioneApplicativa==null){
@@ -924,10 +941,10 @@ public class GestoreCorrelazioneApplicativa {
 			if(this.pddContext!=null) {
 				idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			}
-			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			boolean checkSoapBodyEmpty = false; // devo poter fare xpath anche su soapBody empty
-			element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessage_readOnly, idTransazione);
-			elementJson = MessageUtils.getContentString(message, bufferMessage_readOnly, idTransazione);
+			element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessageReadOnly, idTransazione);
+			elementJson = MessageUtils.getContentString(message, bufferMessageReadOnly, idTransazione);
 		}catch(Exception e){
 			throw new GestoreMessaggiException(e.getMessage(),e);
 		}
@@ -954,16 +971,16 @@ public class GestoreCorrelazioneApplicativa {
 				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 					SOAPEnvelope envelope = (SOAPEnvelope) element;
 					if(envelope==null){
-						throw new Exception("Envelope non presente nel messaggio Soap");
+						throw new CoreException("Envelope non presente nel messaggio Soap");
 					}
-					if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
-						throw new Exception("Body applicativo non presente nel messaggio Soap");
+					if(envelope.getBody()==null || !envelope.getBody().hasChildNodes()){
+						throw new CoreException("Body applicativo non presente nel messaggio Soap");
 					}
 					NodeList nListSoapBody = envelope.getBody().getChildNodes();
 					if(nListSoapBody==null || nListSoapBody.getLength()==0){
-						throw new Exception("Elementi del Body non presenti?");
+						throw new CoreException("Elementi del Body non presenti?");
 					}
-					nList = new ArrayList<Node>();
+					nList = new ArrayList<>();
 					for (int elem=0; elem<nListSoapBody.getLength(); elem++){
 						Node nodeInEsame =  nListSoapBody.item(elem);
 						if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
@@ -976,30 +993,29 @@ public class GestoreCorrelazioneApplicativa {
 					if(MessageType.XML.equals(message.getMessageType()) || 
 							MessageType.MIME_MULTIPART.equals(message.getMessageType()) // viene prelevato il primo xml trovato
 							){
-						// il body http puo' essere vuoto
-//						if(element==null){
-//							throw new Exception("Contenuto non presente nel messaggio");
-//						}
+						/** il body http puo' essere vuoto
+						if(element==null){
+							throw new Exception("Contenuto non presente nel messaggio");
+						}*/
 						if(element!=null) {
-							nList = new ArrayList<Node>();
+							nList = new ArrayList<>();
 							nList.add(element);
 						}
 					}
 					else{
-						//throw new GestoreMessaggiException("MessageType ["+message.getMessageType()+"] non supportato in presenza di specifici elementi");
 						checkElementiInTransito = false;
 					}
 				}
 			}catch(Exception e){
 				this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-						getErrore434_CorrelazioneApplicativaRisposta("errore durante l'analisi dell'elementName: "+e.getMessage());
+						getErrore434_CorrelazioneApplicativaRisposta(ERRORE_IDENTIFICAZIONE_MESSAGE+e.getMessage());
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 			}
 		}
 
 		
 		/** Gestioni correlazioni, in modo da avere lo '*' in fondo */
-		java.util.List<CorrelazioneApplicativaRispostaElemento> c = new java.util.ArrayList<CorrelazioneApplicativaRispostaElemento>();
+		java.util.List<CorrelazioneApplicativaRispostaElemento> c = new java.util.ArrayList<>();
 		int posizioneElementoQualsiasi = -1;
 		for(int i=0; i<correlazioneApplicativa.sizeElementoList(); i++){
 			CorrelazioneApplicativaRispostaElemento elemento = correlazioneApplicativa.getElemento(i);
@@ -1042,25 +1058,24 @@ public class GestoreCorrelazioneApplicativa {
 		}
 		
 		// Calcolo nomi
-		List<String> nomiPresentiBody = new ArrayList<String>();
+		List<String> nomiPresentiBody = new ArrayList<>();
 		if(checkElementiInTransito && nList!=null){
 			for (int elem=0; elem<nList.size(); elem++){
 				String elementName = null;
 				Node nodeInEsame =  nList.get(elem);
-				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
-					continue;
+				if( (!(nodeInEsame instanceof Text)) && (!(nodeInEsame instanceof Comment)) ){
+					try{
+						elementName = nodeInEsame.getLocalName();
+					}catch(Exception e){
+						this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
+								getErrore434_CorrelazioneApplicativaRisposta(ERRORE_IDENTIFICAZIONE_MESSAGE+e.getMessage());
+						throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
+					}
+					if(elementName==null){
+						continue;
+					}
+					nomiPresentiBody.add(elementName);
 				}
-				try{
-					elementName = nodeInEsame.getLocalName();
-				}catch(Exception e){
-					this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-							getErrore434_CorrelazioneApplicativaRisposta("errore durante l'analisi dell'elementName: "+e.getMessage());
-					throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
-				}
-				if(elementName==null){
-					continue;
-				}
-				nomiPresentiBody.add(elementName);
 			}
 		}
 		else{
@@ -1095,18 +1110,24 @@ public class GestoreCorrelazioneApplicativa {
 					
 					// Devo applicare lo '*' solo se ho prima guardato tutti i nodi radice e sono ad esaminare l'ultimo nodo radice.
 					// L'ordine delle correlazioni mi garantira' che lo '*' sara' esaminato per ultimo
-					if( (elem==posizioneUltimoNodo) == false)
+					if( elem!=posizioneUltimoNodo ) {
 						continue;
+					}
 					
 				}
-				else if(this.idServizio!=null && this.idServizio.getAzione()!=null &&
-						this.idServizio.getAzione().equals(elemento.getNome())) {
-					// Ricerco per match sull'azione
-					matchNodePerCorrelazioneApplicativa = true;
-					nomeElemento = elemento.getNome();
-				}
-				else if( elementName.equals(elemento.getNome()) ){
-					// Ricerco per match sul localName dell'elemento (se XML)
+				else if(
+							(
+								// Ricerco per match sull'azione
+								this.idServizio!=null && this.idServizio.getAzione()!=null &&
+								this.idServizio.getAzione().equals(elemento.getNome())
+							)
+							||
+							(
+								// Ricerco per match sul localName dell'elemento (se XML)
+								elementName.equals(elemento.getNome())
+							)
+						) {
+					
 					matchNodePerCorrelazioneApplicativa = true;
 					nomeElemento = elemento.getNome();
 				}
@@ -1126,7 +1147,7 @@ public class GestoreCorrelazioneApplicativa {
 						// Ricerco elemento con una espressione che potrebbe essere riferita a tutta l'envelope
 						try{
 							if(element==null && elementJson==null){
-								throw new Exception("Contenuto non disponibile su cui effettuare un match");
+								throw new CoreException("Contenuto non disponibile su cui effettuare un match");
 							}
 							if(element!=null) {
 								nomeElemento = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getNome(), this.log);
@@ -1138,7 +1159,8 @@ public class GestoreCorrelazioneApplicativa {
 								matchNodePerCorrelazioneApplicativa = true;
 							}
 						}catch(Exception e){
-							this.log.info("Calcolo non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+							String error = "Calcolo non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage();
+							this.log.info(error);
 						}
 						// Ricerco tramuite espressione regolare sulla url
 						// Non possibile sulla risposta
@@ -1158,12 +1180,11 @@ public class GestoreCorrelazioneApplicativa {
 					}
 					
 					
-					if(readFirstHeaderIntegrazione){
-						if(headerIntegrazione.getIdApplicativo()!=null){
-							idCorrelazioneApplicativa = headerIntegrazione.getIdApplicativo();
-							findCorrelazione = true;
-							break;
-						}
+					if(readFirstHeaderIntegrazione &&
+						headerIntegrazione.getIdApplicativo()!=null){
+						idCorrelazioneApplicativa = headerIntegrazione.getIdApplicativo();
+						findCorrelazione = true;
+						break;
 					}
 
 					if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_HEADER_BASED.equals(elemento.getIdentificazione())){
@@ -1172,14 +1193,14 @@ public class GestoreCorrelazioneApplicativa {
 									message.getTransportResponseContext()==null || 
 									message.getTransportResponseContext().getHeaders()==null ||
 									message.getTransportResponseContext().getHeaders().isEmpty()) {
-								throw new Exception ("Header trasporto non disponibile");
+								throw new CoreException ("Header trasporto non disponibile");
 							}
 							idCorrelazioneApplicativa = message.getTransportResponseContext().getHeaderFirstValue(elemento.getPattern());
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-										getErrore434_CorrelazioneApplicativaRisposta("identificativo di correlazione applicativa per l'elemento ["+nomeElemento+"] " +
-												"con modalita' di acquisizione inputBased non presente tra le informazioni di integrazione");
+										getErrore434_CorrelazioneApplicativaRisposta(ERRORE_IDENTIFICAZIONE_PER_ELEMENTO+nomeElemento+"] " +
+												ERRORE_IDENTIFICAZIONE_PER_ELEMENTO_MODALITA_INPUT_BASED);
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
@@ -1191,8 +1212,8 @@ public class GestoreCorrelazioneApplicativa {
 						if(idCorrelazioneApplicativa==null){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-										getErrore434_CorrelazioneApplicativaRisposta("identificativo di correlazione applicativa per l'elemento ["+nomeElemento+"] " +
-												"con modalita' di acquisizione inputBased non presente tra le informazioni di integrazione");
+										getErrore434_CorrelazioneApplicativaRisposta(ERRORE_IDENTIFICAZIONE_PER_ELEMENTO+nomeElemento+"] " +
+												ERRORE_IDENTIFICAZIONE_PER_ELEMENTO_MODALITA_INPUT_BASED);
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
@@ -1207,7 +1228,7 @@ public class GestoreCorrelazioneApplicativa {
 						try{
 							
 							if(elemento.getPattern()==null || StringUtils.isEmpty(elemento.getPattern())) {
-								throw new Exception ("Template non disponibile");
+								throw new CoreException ("Template non disponibile");
 							}
 							
 							Map<String, List<String>> pTrasporto = null;
@@ -1219,9 +1240,9 @@ public class GestoreCorrelazioneApplicativa {
 								urlInvocazione = this.requestInfo.getProtocolContext().getUrlInvocazione_formBased();
 								pQuery = this.requestInfo.getProtocolContext().getParameters();
 								if(this.requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
-									HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) this.requestInfo.getProtocolContext();
+									HttpServletTransportRequestContext httpServletContext = this.requestInfo.getProtocolContext();
 									HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
-									if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+									if(httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
 										FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
 										if(formServlet.getFormUrlEncodedParametersValues()!=null &&
 												!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
@@ -1238,26 +1259,26 @@ public class GestoreCorrelazioneApplicativa {
 									parametriTrasporto = message.getTransportResponseContext().getHeaders();
 								}
 								else {
-									parametriTrasporto = new HashMap<String, List<String>>();
+									parametriTrasporto = new HashMap<>();
 									message.getTransportResponseContext().setHeaders(parametriTrasporto);
 								}
 							}
 
 							MessageContent messageContent = null;
-							boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+							boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 							if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-								messageContent = new MessageContent(message.castAsSoap(), bufferMessage_readOnly, this.pddContext);
+								messageContent = new MessageContent(message.castAsSoap(), bufferMessageReadOnly, this.pddContext);
 							}
 							else{
 								if(MessageType.XML.equals(message.getMessageType())){
-									messageContent = new MessageContent(message.castAsRestXml(), bufferMessage_readOnly, this.pddContext);
+									messageContent = new MessageContent(message.castAsRestXml(), bufferMessageReadOnly, this.pddContext);
 								}
 								else if(MessageType.JSON.equals(message.getMessageType())){
-									messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, this.pddContext);
+									messageContent = new MessageContent(message.castAsRestJson(), bufferMessageReadOnly, this.pddContext);
 								}
 							}
 							
-							Map<String, Object> dynamicMapRequest = new HashMap<String, Object>();
+							Map<String, Object> dynamicMapRequest = new HashMap<>();
 							ErrorHandler errorHandlerRequest = new ErrorHandler();
 							DynamicUtils.fillDynamicMapRequest(this.log, dynamicMapRequest, this.pddContext, urlInvocazione,
 									null, //message,
@@ -1268,7 +1289,7 @@ public class GestoreCorrelazioneApplicativa {
 									pForm,
 									errorHandlerRequest);
 							
-							Map<String, Object> dynamicMap = new HashMap<String, Object>();
+							Map<String, Object> dynamicMap = new HashMap<>();
 							ErrorHandler errorHandler = new ErrorHandler();
 							DynamicUtils.fillDynamicMapResponse(this.log, dynamicMap, dynamicMapRequest, this.pddContext, 
 									message,
@@ -1294,7 +1315,7 @@ public class GestoreCorrelazioneApplicativa {
 									idPD.setNome(this.pd.getNome());
 								}
 								else {
-									throw new Exception ("Porta non disponibile");
+									throw new CoreException ("Porta non disponibile");
 								}
 								Template template = idPA!=null ?
 										configurazionePdDManager.getTemplateCorrelazioneApplicativaRisposta(idPA, elemento.getNome(), elemento.getPattern().getBytes(), this.requestInfo)
@@ -1305,7 +1326,7 @@ public class GestoreCorrelazioneApplicativa {
 									DynamicUtils.convertFreeMarkerTemplate(template, dynamicMap, bout);
 								}
 								else {
-									//if(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_VELOCITY_TEMPLATE.equals(elemento.getIdentificazione())) {
+									/** if(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_VELOCITY_TEMPLATE.equals(elemento.getIdentificazione())) { */
 									DynamicUtils.convertVelocityTemplate(template, dynamicMap, bout);
 								}
 								bout.flush();
@@ -1319,7 +1340,7 @@ public class GestoreCorrelazioneApplicativa {
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione headerBased (Header:"+elemento.getPattern()+"): "+e.getMessage());
+										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_HEADER_BASED+elemento.getPattern()+"): "+e.getMessage());
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
@@ -1333,11 +1354,11 @@ public class GestoreCorrelazioneApplicativa {
 									!MessageType.XML.equals(message.getMessageType()) && 
 									!MessageType.JSON.equals(message.getMessageType()) &&
 									!MessageType.MIME_MULTIPART.equals(message.getMessageType())){
-								throw new Exception("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
+								throw new CoreException("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
 										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
 							}
 							if(element==null && elementJson==null){
-								throw new Exception("Contenuto non disponibile su cui effettuare una correlazione di tipo '"+
+								throw new CoreException("Contenuto non disponibile su cui effettuare una correlazione di tipo '"+
 										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
 							}
 							if(element!=null) {
@@ -1350,7 +1371,7 @@ public class GestoreCorrelazioneApplicativa {
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-										getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione contentBased (Pattern:"+elemento.getPattern()+"): "+e.getMessage());
+										getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_CONTENT_BASED+elemento.getPattern()+"): "+e.getMessage());
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
@@ -1365,7 +1386,7 @@ public class GestoreCorrelazioneApplicativa {
 							}
 							else {
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-										getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai "+this.maxLengthCorrelazioneApplicativa+" caratteri consentiti");
+										getErrore434_CorrelazioneApplicativaRisposta(this.buildErroreLunghezzaIdentificativo(idCorrelazioneApplicativa));
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 							}
 						}
@@ -1374,7 +1395,8 @@ public class GestoreCorrelazioneApplicativa {
 								idCorrelazioneApplicativa = this.truncate(idCorrelazioneApplicativa, RISPOSTA, ACCETTA);
 							}
 							else {
-								this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai "+this.maxLengthCorrelazioneApplicativa+" caratteri consentiti");
+								String errorId = this.buildErroreLunghezzaIdentificativo(idCorrelazioneApplicativa);
+								this.log.error(errorId);
 								correlazioneNonRiuscitaDaAccettare = true;
 								idCorrelazioneApplicativa = null;
 							}
@@ -1388,7 +1410,7 @@ public class GestoreCorrelazioneApplicativa {
 		}
 
 		if(idCorrelazioneApplicativa == null){
-			if(correlazioneNonRiuscitaDaAccettare==false){
+			if(!correlazioneNonRiuscitaDaAccettare){
 				this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
 						getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body");
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
@@ -1454,9 +1476,11 @@ public class GestoreCorrelazioneApplicativa {
 	 *
 	 * @return Nel caso l'operazione ha successo ritorna gli id delle tabelle delle correlazioni scadute
 	 */
+	private static final String COLUMN_SCADENZA = "SCADENZA";
+	private static final String COLUMN_ORA_REGISTRAZIONE = "ORA_REGISTRAZIONE";
 	public java.util.List<Long> getCorrelazioniScadute(int limit,boolean logQuery,boolean orderBy) throws GestoreMessaggiException{
 
-		java.util.List<Long> idMsg = new java.util.ArrayList<Long>();
+		java.util.List<Long> idMsg = new java.util.ArrayList<>();
 
 		PreparedStatement pstmtMsgScaduti = null;
 		ResultSet rs = null;
@@ -1465,10 +1489,11 @@ public class GestoreCorrelazioneApplicativa {
 			StateMessage stateMSG = (StateMessage)this.state;
 			Connection connectionDB = stateMSG.getConnectionDB();
 
-			// Query per Ricerca messaggi scaduti
-			// Algoritmo:
-			//    if( scaduto < now )
-			//       msgScaduto
+			/** Query per Ricerca messaggi scaduti
+			 Algoritmo:
+			    if( scaduto < now )
+			       msgScaduto
+			 */
 			java.sql.Timestamp nowT = DateManager.getTimestamp();
 
 
@@ -1476,37 +1501,41 @@ public class GestoreCorrelazioneApplicativa {
 				StringBuilder query = new StringBuilder();
 				query.append("SELECT id FROM ");
 				query.append(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
-				query.append(" WHERE SCADENZA is not null AND SCADENZA < ?");
+				query.append(" WHERE "+COLUMN_SCADENZA+" is not null AND "+COLUMN_SCADENZA+" < ?");
 				queryString = query.toString();
 			}else{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());	
 				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addSelectField("SCADENZA");
+				sqlQueryObject.addSelectField(COLUMN_SCADENZA);
 				sqlQueryObject.addFromTable(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
-				sqlQueryObject.addWhereCondition("SCADENZA is not null");
-				sqlQueryObject.addWhereCondition("SCADENZA < ?");
+				sqlQueryObject.addWhereCondition(COLUMN_SCADENZA+" is not null");
+				sqlQueryObject.addWhereCondition(COLUMN_SCADENZA+" < ?");
 				sqlQueryObject.setANDLogicOperator(true);
 				if(orderBy){
-					sqlQueryObject.addOrderBy("SCADENZA");
+					sqlQueryObject.addOrderBy(COLUMN_SCADENZA);
 					sqlQueryObject.setSortType(true);
 				}
 				sqlQueryObject.setLimit(limit);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
-			//System.out.println("QUERY CORRELAZIONE APPLICATIVA IS: ["+queryString+"] 1["+nowT+"]");
+			/** System.out.println("QUERY CORRELAZIONE APPLICATIVA IS: ["+queryString+"] 1["+nowT+"]"); */
 
 
 			pstmtMsgScaduti = connectionDB.prepareStatement(queryString);
 			pstmtMsgScaduti.setTimestamp(1,nowT);
 
 			long startDateSQLCommand = DateManager.getTimeMillis();
-			if(logQuery)
-				this.log.debug("[QUERY] (CorrelazioneApplicativa.scaduta) ["+queryString+"] 1["+nowT+"]...");
+			if(logQuery) {
+				String debugS = "[QUERY] (CorrelazioneApplicativa.scaduta) ["+queryString+"] 1["+nowT+"]...";
+				this.log.debug(debugS);
+			}
 			rs = pstmtMsgScaduti.executeQuery();
 			long endDateSQLCommand = DateManager.getTimeMillis();
 			long secondSQLCommand = (endDateSQLCommand - startDateSQLCommand) / 1000;
-			if(logQuery)
-				this.log.debug("[QUERY] (CorrelazioneApplicativa.scaduta) ["+queryString+"] 1["+nowT+"] effettuata in "+secondSQLCommand+" secondi");
+			if(logQuery) {
+				String debugS = "[QUERY] (CorrelazioneApplicativa.scaduta) ["+queryString+"] 1["+nowT+"] effettuata in "+secondSQLCommand+" secondi"; 
+				this.log.debug(debugS);
+			}
 
 			int countLimit = 0;
 			while(rs.next()){
@@ -1553,7 +1582,7 @@ public class GestoreCorrelazioneApplicativa {
 	 */
 	public java.util.List<Long> getCorrelazioniScaduteRispettoOraRegistrazione(int limit,long scadenzaMsg,boolean logQuery,boolean orderBy,boolean escludiCorrelazioniConScadenza) throws GestoreMessaggiException{
 
-		java.util.List<Long> idMsg = new java.util.ArrayList<Long>();
+		java.util.List<Long> idMsg = new java.util.ArrayList<>();
 		
 		PreparedStatement pstmtMsgScaduti = null;
 		ResultSet rs = null;
@@ -1562,10 +1591,11 @@ public class GestoreCorrelazioneApplicativa {
 			StateMessage stateMSG = (StateMessage)this.state;
 			Connection connectionDB = stateMSG.getConnectionDB();
 
-			// Query per Ricerca messaggi scaduti
-			// Algoritmo:
-			//    if( (now-timeout) > oraRegistrazione )
-			//       msgScaduto
+			/** Query per Ricerca messaggi scaduti
+			 Algoritmo:
+			    if( (now-timeout) > oraRegistrazione )
+			       msgScaduto
+			 */
 			long scadenza = DateManager.getTimeMillis() - (scadenzaMsg * 60 * 1000);
 			java.sql.Timestamp scandenzaT = new java.sql.Timestamp(scadenza);
 
@@ -1573,42 +1603,46 @@ public class GestoreCorrelazioneApplicativa {
 				StringBuilder query = new StringBuilder();
 				query.append("SELECT id FROM ");
 				query.append(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
-				query.append(" WHERE ORA_REGISTRAZIONE < ?");
+				query.append(" WHERE "+COLUMN_ORA_REGISTRAZIONE+" < ?");
 				if(escludiCorrelazioniConScadenza){
-					query.append(" AND SCADENZA is null");
+					query.append(" AND "+COLUMN_SCADENZA+" is null");
 				}
 				queryString = query.toString();
 			}else{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());	
 				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addSelectField("SCADENZA");
+				sqlQueryObject.addSelectField(COLUMN_SCADENZA);
 				sqlQueryObject.addFromTable(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
-				sqlQueryObject.addWhereCondition("ORA_REGISTRAZIONE < ?");
+				sqlQueryObject.addWhereCondition(COLUMN_ORA_REGISTRAZIONE+" < ?");
 				if(escludiCorrelazioniConScadenza){
-					sqlQueryObject.addWhereCondition("SCADENZA is null");
+					sqlQueryObject.addWhereCondition(COLUMN_SCADENZA+" is null");
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				if(orderBy){
-					sqlQueryObject.addOrderBy("ORA_REGISTRAZIONE");
+					sqlQueryObject.addOrderBy(COLUMN_ORA_REGISTRAZIONE);
 					sqlQueryObject.setSortType(true);
 				}
 				sqlQueryObject.setLimit(limit);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
-			//System.out.println("QUERY CORRELAZIONE APPLICATIVA IS: ["+queryString+"] 1["+nowT+"]");
+			/** System.out.println("QUERY CORRELAZIONE APPLICATIVA IS: ["+queryString+"] 1["+nowT+"]"); */
 
 
 			pstmtMsgScaduti = connectionDB.prepareStatement(queryString);
 			pstmtMsgScaduti.setTimestamp(1,scandenzaT);
 
 			long startDateSQLCommand = DateManager.getTimeMillis();
-			if(logQuery)
-				this.log.debug("[QUERY] (CorrelazioneApplicativa.storiche) ["+queryString+"] 1["+scandenzaT+"]...");
+			if(logQuery) {
+				String sDebug = "[QUERY] (CorrelazioneApplicativa.storiche) ["+queryString+"] 1["+scandenzaT+"]...";
+				this.log.debug(sDebug);
+			}
 			rs = pstmtMsgScaduti.executeQuery();
 			long endDateSQLCommand = DateManager.getTimeMillis();
 			long secondSQLCommand = (endDateSQLCommand - startDateSQLCommand) / 1000;
-			if(logQuery)
-				this.log.debug("[QUERY] (CorrelazioneApplicativa.storiche) ["+queryString+"] 1["+scandenzaT+"] effettuata in "+secondSQLCommand+" secondi");
+			if(logQuery) {
+				String sDebug = "[QUERY] (CorrelazioneApplicativa.storiche) ["+queryString+"] 1["+scandenzaT+"] effettuata in "+secondSQLCommand+" secondi";
+				this.log.debug(sDebug);
+			}
 
 			int countLimit = 0;
 			while(rs.next()){
@@ -1661,22 +1695,22 @@ public class GestoreCorrelazioneApplicativa {
 			StateMessage stateMSG = (StateMessage)this.state;
 			Connection connectionDB = stateMSG.getConnectionDB();
 
-			String query = "SELECT ID_MESSAGGIO,ID_APPLICATIVO  FROM "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA+" WHERE id=?";
-			//log.debug("Query: "+query);
+			String query = "SELECT "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA_COLUMN_ID_MESSAGGIO+","+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA_COLUMN_ID_APPLICATIVO+"  FROM "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA+" WHERE id=?";
+			/** log.debug("Query: "+query); */
 			pstmtReadMSG=connectionDB.prepareStatement(query);
 			pstmtReadMSG.setLong(1,idCorrelazioneApplicativa);
 			rs = pstmtReadMSG.executeQuery();
 			if(rs.next()){
 				String [] s = new String[2];
-				s[0] = rs.getString("ID_MESSAGGIO");
-				s[1] = rs.getString("ID_APPLICATIVO");
+				s[0] = rs.getString(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA_COLUMN_ID_MESSAGGIO);
+				s[1] = rs.getString(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA_COLUMN_ID_APPLICATIVO);
 				rs.close();
 				pstmtReadMSG.close();
 				return s;
 			}
 			rs.close();
 			pstmtReadMSG.close();
-			throw new Exception("CorrelazioneApplicativa con id["+idCorrelazioneApplicativa+"] non trovata");
+			throw new CoreException("CorrelazioneApplicativa con id["+idCorrelazioneApplicativa+"] non trovata");
 		}
 		catch(Exception e) {
 			String errorMsg = "GestoreCorrelazioneApplicativa, error getIDMappingCorrelazioneApplicativa ["+idCorrelazioneApplicativa+"] : "+e.getMessage();		
@@ -1712,7 +1746,7 @@ public class GestoreCorrelazioneApplicativa {
 			Connection connectionDB = stateMSG.getConnectionDB();
 
 			String query = "DELETE FROM "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA+" WHERE id=?";
-			//log.debug("Query: "+query);
+			/** log.debug("Query: "+query); */
 			pstmtDeleteMSG=connectionDB.prepareStatement(query);
 			pstmtDeleteMSG.setLong(1,idCorrelazioneApplicativa);
 			pstmtDeleteMSG.execute();
@@ -1749,47 +1783,47 @@ public class GestoreCorrelazioneApplicativa {
 		return this.idCorrelazione;
 	}
 
-	private static boolean RICHIESTA = true;
-	private static boolean RISPOSTA = false;
-	private static boolean BLOCCA = true;
-	private static boolean ACCETTA = false;
+	private static final boolean RICHIESTA = true;
+	private static final boolean RISPOSTA = false;
+	private static final boolean BLOCCA = true;
+	private static final boolean ACCETTA = false;
 	public boolean isTruncateEnabled(boolean request, boolean blocca) {
 		if(blocca) {
 			if(request) {
-				return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request>0 && 
-						this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request<this.maxLengthCorrelazioneApplicativa;
+				return this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateRequest>0 && 
+						this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateRequest<this.maxLengthCorrelazioneApplicativa;
 			}
 			else {
-				return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response>0 && 
-						this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response<this.maxLengthCorrelazioneApplicativa;
+				return this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateResponse>0 && 
+						this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateResponse<this.maxLengthCorrelazioneApplicativa;
 			}
 		}
 		else {
 			if(request) {
-				return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request>0 && 
-						this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request<this.maxLengthCorrelazioneApplicativa;
+				return this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRequest>0 && 
+						this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRequest<this.maxLengthCorrelazioneApplicativa;
 			}
 			else {
-				return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response>0 && 
-						this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response<this.maxLengthCorrelazioneApplicativa;
+				return this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateResponse>0 && 
+						this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateResponse<this.maxLengthCorrelazioneApplicativa;
 			}
 		}
 	}
 	public String truncate(String id, boolean request, boolean blocca) {
 		if(blocca) {
 			if(request) {
-				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request);
+				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateRequest);
 			}
 			else {
-				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response);
+				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateResponse);
 			}
 		}
 		else {
 			if(request) {
-				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request);
+				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRequest);
 			}
 			else {
-				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response);
+				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateResponse);
 			}
 		}
 	}

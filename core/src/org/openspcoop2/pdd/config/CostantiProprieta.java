@@ -29,9 +29,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
+import org.openspcoop2.utils.BooleanNullable;
 
 /**
  * Classe che raccoglie le proprieta
@@ -43,6 +45,8 @@ import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 
 public class CostantiProprieta {
 
+	private CostantiProprieta() {}
+	
 	
 	public static final String VALUE_ENABLED = "true";
 	public static final String VALUE_DISABLED = "false";
@@ -171,23 +175,21 @@ public class CostantiProprieta {
 	public static boolean isAutenticazioneHttpsTrustStore(List<Proprieta> proprieta, File pathDefaultValue) {
 		String enabled = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE_ENABLED);
 		boolean isEnabled = true;
-		if(enabled!=null && !StringUtils.isEmpty(enabled)) {
-			if(AUTENTICAZIONE_VALUE_ENABLED.equals(enabled.trim())) {
-				isEnabled = true;
-			}
-			else if(AUTENTICAZIONE_VALUE_DISABLED.equals(enabled.trim())) {
-				isEnabled = false;
-			}
+		if(enabled!=null && !StringUtils.isEmpty(enabled) &&
+				AUTENTICAZIONE_VALUE_DISABLED.equals(enabled.trim())) {
+			isEnabled = false;
 		}
 		if(!isEnabled) {
 			return false; // la proprietà serve soprattutto a disabilitarlo se definito in govway.properties
 		}
 		
 		String path = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE);
-		if(path==null || StringUtils.isEmpty(path)) {
-			if(pathDefaultValue!=null) {
-				path = pathDefaultValue.getAbsolutePath();
-			}
+		if( 
+				(path==null || StringUtils.isEmpty(path)) 
+				&&
+				pathDefaultValue!=null
+			) {
+			path = pathDefaultValue.getAbsolutePath();
 		}
 		
 		// La presenza di un path, basta ad abilitarlo. La proprietà enabled serve per disabilitarlo
@@ -196,10 +198,12 @@ public class CostantiProprieta {
 	
 	public static String getAutenticazioneHttpsTrustStorePath(List<Proprieta> proprieta, File pathDefaultValue) {
 		String path = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE);
-		if(path==null || StringUtils.isEmpty(path)) {
-			if(pathDefaultValue!=null) {
-				path = pathDefaultValue.getAbsolutePath();
-			}
+		if(
+				(path==null || StringUtils.isEmpty(path))
+				&&
+				pathDefaultValue!=null
+			) {
+			path = pathDefaultValue.getAbsolutePath();
 		}
 		return path;
 	}
@@ -253,58 +257,45 @@ public class CostantiProprieta {
 	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.response.acceptIdentificationFailed.truncate";
 	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.response.blockIdentificationFailed.truncate";
 	
-	public static boolean isCorrelazioneApplicativaRichiesta_identificazioneFallita_blocca_truncate(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		return _isCorrelazioneApplicativa_truncate(proprieta, defaultValue,
+	public static boolean isCorrelazioneApplicativaRichiestaIdentificazioneFallitaBloccaTruncate(List<Proprieta> proprieta, boolean defaultValue) {
+		return isCorrelazioneApplicativaTruncate(proprieta, defaultValue,
 				CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_TRUNCATE_ID);
 	}
-	public static boolean isCorrelazioneApplicativaRichiesta_identificazioneFallita_accetta_truncate(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		return _isCorrelazioneApplicativa_truncate(proprieta, defaultValue,
+	public static boolean isCorrelazioneApplicativaRichiestaIdentificazioneFallitaAccettaTruncate(List<Proprieta> proprieta, boolean defaultValue) {
+		return isCorrelazioneApplicativaTruncate(proprieta, defaultValue,
 				CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_TRUNCATE_ID);
 	}
-	public static boolean isCorrelazioneApplicativaRisposta_identificazioneFallita_blocca_truncate(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		return _isCorrelazioneApplicativa_truncate(proprieta, defaultValue,
+	public static boolean isCorrelazioneApplicativaRispostaIdentificazioneFallitaBloccaTruncate(List<Proprieta> proprieta, boolean defaultValue) {
+		return isCorrelazioneApplicativaTruncate(proprieta, defaultValue,
 				CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_TRUNCATE_ID);
 	}
-	public static boolean isCorrelazioneApplicativaRisposta_identificazioneFallita_accetta_truncate(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		return _isCorrelazioneApplicativa_truncate(proprieta, defaultValue,
+	public static boolean isCorrelazioneApplicativaRispostaIdentificazioneFallitaAccettaTruncate(List<Proprieta> proprieta, boolean defaultValue) {
+		return isCorrelazioneApplicativaTruncate(proprieta, defaultValue,
 				CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID,
 				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_TRUNCATE_ID);
 	}
-	private static boolean _isCorrelazioneApplicativa_truncate(List<Proprieta> proprieta, boolean defaultValue,
+	private static boolean isCorrelazioneApplicativaTruncate(List<Proprieta> proprieta, boolean defaultValue,
 			String propertyNameIdentificationFailedFlow, String propertyNameFlow,
-			String propertyNameIdentificationFailed, String propertyName) throws Exception {
-		String valueS = readValue(proprieta, propertyNameIdentificationFailedFlow);
-		if(valueS!=null && StringUtils.isNotEmpty(valueS)) {
-			if(CORRELAZIONE_APPLICATIVA_VALUE_ENABLED.equals(valueS.trim())) {
-				return true;
-			}
-			else if(CORRELAZIONE_APPLICATIVA_VALUE_DISABLED.equals(valueS.trim())) {
-				return false;
-			}
-		}
+			String propertyNameIdentificationFailed, String propertyName) {
 		
-		valueS = readValue(proprieta, propertyNameFlow);
-		if(valueS!=null && StringUtils.isNotEmpty(valueS)) {
-			if(CORRELAZIONE_APPLICATIVA_VALUE_ENABLED.equals(valueS.trim())) {
-				return true;
-			}
-			else if(CORRELAZIONE_APPLICATIVA_VALUE_DISABLED.equals(valueS.trim())) {
-				return false;
-			}
+		BooleanNullable flow = isCorrelazioneApplicativaTruncateFlow(proprieta,
+				propertyNameIdentificationFailedFlow, propertyNameFlow);
+		if(flow!=null && flow.getValue()!=null) {
+			return flow.getValue().booleanValue();
 		}
-		
-		valueS = readValue(proprieta, propertyNameIdentificationFailed);
+				
+		String valueS = readValue(proprieta, propertyNameIdentificationFailed);
 		if(valueS!=null && StringUtils.isNotEmpty(valueS)) {
 			if(CORRELAZIONE_APPLICATIVA_VALUE_ENABLED.equals(valueS.trim())) {
 				return true;
@@ -326,6 +317,30 @@ public class CostantiProprieta {
 		
 		return defaultValue;
 	}
+	private static BooleanNullable isCorrelazioneApplicativaTruncateFlow(List<Proprieta> proprieta,
+			String propertyNameIdentificationFailedFlow, String propertyNameFlow) {
+		String valueS = readValue(proprieta, propertyNameIdentificationFailedFlow);
+		if(valueS!=null && StringUtils.isNotEmpty(valueS)) {
+			if(CORRELAZIONE_APPLICATIVA_VALUE_ENABLED.equals(valueS.trim())) {
+				return BooleanNullable.TRUE();
+			}
+			else if(CORRELAZIONE_APPLICATIVA_VALUE_DISABLED.equals(valueS.trim())) {
+				return BooleanNullable.FALSE();
+			}
+		}
+		
+		valueS = readValue(proprieta, propertyNameFlow);
+		if(valueS!=null && StringUtils.isNotEmpty(valueS)) {
+			if(CORRELAZIONE_APPLICATIVA_VALUE_ENABLED.equals(valueS.trim())) {
+				return BooleanNullable.TRUE();
+			}
+			else if(CORRELAZIONE_APPLICATIVA_VALUE_DISABLED.equals(valueS.trim())) {
+				return BooleanNullable.FALSE();
+			}
+		}
+		
+		return BooleanNullable.NULL();
+	}
 	
 	
 	// ****  CONNETTORI *****
@@ -336,10 +351,10 @@ public class CostantiProprieta {
 	private static final String CONNETTORE_TIMEOUT_INPUT_STREAM_ENABLED = "connettori.timeoutInputStream.enabled";
 	private static final String CONNETTORE_TIMEOUT_INPUT_STREAM_REQUEST_TIMEOUT = "connettori.request.timeoutMs";
 	
-	public static boolean isConnettoriUseTimeoutInputStream(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isConnettoriUseTimeoutInputStream(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, CONNETTORE_TIMEOUT_INPUT_STREAM_ENABLED, defaultValue, CONNETTORE_VALUE_ENABLED, CONNETTORE_VALUE_DISABLED);
 	}
-	public static int getConnettoriRequestTimeout(List<Proprieta> proprieta, int defaultValue) throws Exception {
+	public static int getConnettoriRequestTimeout(List<Proprieta> proprieta, int defaultValue) {
 		return readIntValueWithDefault(proprieta, CONNETTORE_TIMEOUT_INPUT_STREAM_REQUEST_TIMEOUT, defaultValue);
 	}
 	
@@ -361,14 +376,14 @@ public class CostantiProprieta {
 	private static final String CONNETTORE_PROXY_PASS_REVERSE_USE_PROTOCOL_PREFIX = "connettori.proxyPassReverse.useProtocolPrefix";
 	
 	
-	public static boolean isConnettoriProxyPassReverseEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isConnettoriProxyPassReverseEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_ENABLED, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
 	}
-	public static List<String> getConnettoriProxyPassReverseHeaders(List<Proprieta> proprieta, List<String> defaultValue) throws Exception {
-		return _getConnettoriProxyPassReverseHeaders(CONNETTORE_PROXY_PASS_REVERSE_HEADERS, proprieta, defaultValue);
+	public static List<String> getConnettoriProxyPassReverseHeaders(List<Proprieta> proprieta, List<String> defaultValue) {
+		return engineGetConnettoriProxyPassReverseHeaders(CONNETTORE_PROXY_PASS_REVERSE_HEADERS, proprieta, defaultValue);
 	}
 	
-	public static boolean isConnettoriProxyPassReverseSetCookiePathEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isConnettoriProxyPassReverseSetCookiePathEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		String setCookieEnabled = readValue(proprieta, CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_PATH_ENABLED);
 		if(setCookieEnabled!=null && !"".equals(setCookieEnabled)) {
 			if(CONNETTORE_PROXY_PASS_VALUE_ENABLED.equals(setCookieEnabled.trim())) {
@@ -380,7 +395,7 @@ public class CostantiProprieta {
 		}
 		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_ENABLED, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
 	}
-	public static boolean isConnettoriProxyPassReverseSetCookieDomainEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isConnettoriProxyPassReverseSetCookieDomainEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		String setCookieEnabled = readValue(proprieta, CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_DOMAIN_ENABLED);
 		if(setCookieEnabled!=null && !"".equals(setCookieEnabled)) {
 			if(CONNETTORE_PROXY_PASS_VALUE_ENABLED.equals(setCookieEnabled.trim())) {
@@ -392,20 +407,20 @@ public class CostantiProprieta {
 		}
 		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_ENABLED, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
 	}
-	public static List<String> getConnettoriProxyPassReverseSetCookieHeaders(List<Proprieta> proprieta, List<String> defaultValue) throws Exception {
-		return _getConnettoriProxyPassReverseHeaders(CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_HEADERS, proprieta, defaultValue);
+	public static List<String> getConnettoriProxyPassReverseSetCookieHeaders(List<Proprieta> proprieta, List<String> defaultValue) {
+		return engineGetConnettoriProxyPassReverseHeaders(CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_HEADERS, proprieta, defaultValue);
 	}
 	
-	public static boolean isConnettoriProxyPassReverseUseProtocolPrefix(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isConnettoriProxyPassReverseUseProtocolPrefix(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_USE_PROTOCOL_PREFIX, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
 	}
 	
-	private static List<String> _getConnettoriProxyPassReverseHeaders(String pName, List<Proprieta> proprieta, List<String> defaultValue) throws Exception {
+	private static List<String> engineGetConnettoriProxyPassReverseHeaders(String pName, List<Proprieta> proprieta, List<String> defaultValue) {
 		String v = readValue(proprieta, pName);
 		if(v==null || StringUtils.isEmpty(v)) {
 			return defaultValue;
 		}
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(v.contains(",")) {
 			String [] tmp = v.split(",");
 			for (int i = 0; i < tmp.length; i++) {
@@ -418,6 +433,37 @@ public class CostantiProprieta {
 		return l;
 	}
 	
+	
+	
+	
+	// ****  CONNETTORI HTTPS *****
+	
+	public static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_DISABLED = VALUE_DISABLED;
+	
+	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_ENABLED = "connettori.httpsEndpoint.jvmConfigOverride.enabled";
+	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_REPOSITORY = "connettori.httpsEndpoint.jvmConfigOverride.repository";
+	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_CONFIG = "connettori.httpsEndpoint.jvmConfigOverride.config";
+	
+	public static boolean isConnettoriHttpsEndpointJvmConfigOverrideEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_ENABLED, defaultValue, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_ENABLED, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_DISABLED);
+	}
+	
+	public static String getConnettoriHttpsEndpointJvmConfigOverrideRepository(List<Proprieta> proprieta, String defaultValue) {
+		String v = readValue(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_REPOSITORY);
+		if(v==null || StringUtils.isEmpty(v)) {
+			return defaultValue;
+		}
+		return v;
+	}
+	
+	public static String getConnettoriHttpsEndpointJvmConfigOverrideConfig(List<Proprieta> proprieta, String defaultValue) {
+		String v = readValue(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_CONFIG);
+		if(v==null || StringUtils.isEmpty(v)) {
+			return defaultValue;
+		}
+		return v;
+	}
 	
 	
 	
@@ -439,11 +485,11 @@ public class CostantiProprieta {
 	
 	private static final String FILE_TRACE_CONFIG = "fileTrace.config";
 	
-	public static boolean isFileTraceEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isFileTraceEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, FILE_TRACE_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
 	}
 	
-	public static boolean isFileTraceDumpBinarioPayloadEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isFileTraceDumpBinarioPayloadEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_PAYLOAD_ENABLED);
 		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
 			if(FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim())) {
@@ -455,7 +501,7 @@ public class CostantiProprieta {
 		}
 		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
 	}
-	public static boolean isFileTraceDumpBinarioHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isFileTraceDumpBinarioHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_HEADERS_ENABLED);
 		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
 			if(FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim())) {
@@ -468,7 +514,7 @@ public class CostantiProprieta {
 		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
 	}
 	
-	public static boolean isFileTraceDumpBinarioConnettorePayloadEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isFileTraceDumpBinarioConnettorePayloadEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_PAYLOAD_ENABLED);
 		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
 			if(FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim())) {
@@ -480,7 +526,7 @@ public class CostantiProprieta {
 		}
 		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
 	}
-	public static boolean isFileTraceDumpBinarioConnettoreHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isFileTraceDumpBinarioConnettoreHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_HEADERS_ENABLED);
 		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
 			if(FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim())) {
@@ -494,7 +540,7 @@ public class CostantiProprieta {
 	}
 	
 	
-	public static File getFileTraceConfig(List<Proprieta> proprieta, File defaultValue) throws Exception {
+	public static File getFileTraceConfig(List<Proprieta> proprieta, File defaultValue) throws CoreException {
 		String v = readValue(proprieta, FILE_TRACE_CONFIG);
 		if(v==null || StringUtils.isEmpty(v)) {
 			return defaultValue;
@@ -508,16 +554,8 @@ public class CostantiProprieta {
 			}
 		}
 		
-		if(!getTransazioniFileTraceConfig.exists()) {
-			throw new Exception("Config file ["+getTransazioniFileTraceConfig.getAbsolutePath()+"] not exists");
-		}
-		if(getTransazioniFileTraceConfig.isDirectory()) {
-			throw new Exception("Config file ["+getTransazioniFileTraceConfig.getAbsolutePath()+"] is directory");
-		}
-		if(getTransazioniFileTraceConfig.canRead()==false) {
-			throw new Exception("Config file ["+getTransazioniFileTraceConfig.getAbsolutePath()+"] cannot read");
-		}
-		
+		checkFile(getTransazioniFileTraceConfig);
+				
 		return getTransazioniFileTraceConfig;
 	}
 	
@@ -529,7 +567,7 @@ public class CostantiProprieta {
 	
 	private static final String FILTRO_DUPLICATI_TEST = "duplicates-filter-test.enabled";
 	
-	public static boolean isFiltroDuplicatiTestEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isFiltroDuplicatiTestEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, FILTRO_DUPLICATI_TEST, defaultValue, FILTRO_DUPLICATI_TEST_ENABLED, FILTRO_DUPLICATI_TEST_DISABLED);
 	}
 	
@@ -547,59 +585,65 @@ public class CostantiProprieta {
 	private static final String INFORMAZIONI_INTEGRAZIONE_ENCODE = "integrationInfo.encode";
 	private static final String INFORMAZIONI_INTEGRAZIONE_REQUIRED = "integrationInfo.required";
 		
-	public static boolean isInformazioniIntegrazioneEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isInformazioniIntegrazioneEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, INFORMAZIONI_INTEGRAZIONE_ENABLED, defaultValue, INFORMAZIONI_INTEGRAZIONE_VALUE_ENABLED, INFORMAZIONI_INTEGRAZIONE_VALUE_DISABLED);
 	}
-	public static InformazioniIntegrazioneSorgente getTipoInformazioniIntegrazione(List<Proprieta> proprieta, InformazioniIntegrazioneSorgente defaultValue) throws Exception {
+	public static InformazioniIntegrazioneSorgente getTipoInformazioniIntegrazione(List<Proprieta> proprieta, InformazioniIntegrazioneSorgente defaultValue) throws CoreException {
 		String valueS = readValue(proprieta, INFORMAZIONI_INTEGRAZIONE_TYPE);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			try {
 				return InformazioniIntegrazioneSorgente.valueOf(valueS);
-			}catch(Throwable t) {
-				InformazioniIntegrazioneSorgente [] s = InformazioniIntegrazioneSorgente.values();
-				StringBuilder sb = new StringBuilder();
-				if(s!=null) {
-					for (InformazioniIntegrazioneSorgente informazioniIntegrazioneSorgente : s) {
-						if(sb.length()>0) {
-							sb.append(", ");
-						}
-						sb.append(informazioniIntegrazioneSorgente);
-					}
-				}
-				throw new Exception("Uncorrect value '"+valueS+"' for property '"+INFORMAZIONI_INTEGRAZIONE_TYPE+"' (Supported values: "+sb.toString()+")");
+			}catch(Exception t) {
+				throw newTipoInformazioniIntegrazioneException(valueS);
 			}
 		}
 		return defaultValue;
 	}
-	public static String getNomeSorgenteInformazioniIntegrazione(List<Proprieta> proprieta, String defaultValue) throws Exception {
+	private static CoreException newTipoInformazioniIntegrazioneException(String valueS) {
+		InformazioniIntegrazioneSorgente [] s = InformazioniIntegrazioneSorgente.values();
+		StringBuilder sb = new StringBuilder();
+		if(s!=null) {
+			for (InformazioniIntegrazioneSorgente informazioniIntegrazioneSorgente : s) {
+				if(sb.length()>0) {
+					sb.append(", ");
+				}
+				sb.append(informazioniIntegrazioneSorgente);
+			}
+		}
+		return newCoreException(valueS, INFORMAZIONI_INTEGRAZIONE_TYPE, sb.toString());
+	}
+	public static String getNomeSorgenteInformazioniIntegrazione(List<Proprieta> proprieta, String defaultValue) {
 		String valueS = readValue(proprieta, INFORMAZIONI_INTEGRAZIONE_NAME);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			return valueS;
 		}
 		return defaultValue;
 	}
-	public static InformazioniIntegrazioneCodifica getTipoCodificaInformazioniIntegrazione(List<Proprieta> proprieta, InformazioniIntegrazioneCodifica defaultValue) throws Exception {
+	public static InformazioniIntegrazioneCodifica getTipoCodificaInformazioniIntegrazione(List<Proprieta> proprieta, InformazioniIntegrazioneCodifica defaultValue) throws CoreException {
 		String valueS = readValue(proprieta, INFORMAZIONI_INTEGRAZIONE_ENCODE);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			try {
 				return InformazioniIntegrazioneCodifica.valueOf(valueS);
-			}catch(Throwable t) {
-				InformazioniIntegrazioneCodifica [] s = InformazioniIntegrazioneCodifica.values();
-				StringBuilder sb = new StringBuilder();
-				if(s!=null) {
-					for (InformazioniIntegrazioneCodifica informazioniIntegrazioneCodifica : s) {
-						if(sb.length()>0) {
-							sb.append(", ");
-						}
-						sb.append(informazioniIntegrazioneCodifica);
-					}
-				}
-				throw new Exception("Uncorrect value '"+valueS+"' for property '"+INFORMAZIONI_INTEGRAZIONE_ENCODE+"' (Supported values: "+sb.toString()+")");
+			}catch(Exception t) {
+				throw newTipoCodificaInformazioniIntegrazioneException(valueS);
 			}
 		}
 		return defaultValue;
 	}
-	public static boolean isInformazioniIntegrazioneRequired(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	private static CoreException newTipoCodificaInformazioniIntegrazioneException(String valueS) {
+		InformazioniIntegrazioneCodifica [] s = InformazioniIntegrazioneCodifica.values();
+		StringBuilder sb = new StringBuilder();
+		if(s!=null) {
+			for (InformazioniIntegrazioneCodifica informazioniIntegrazioneCodifica : s) {
+				if(sb.length()>0) {
+					sb.append(", ");
+				}
+				sb.append(informazioniIntegrazioneCodifica);
+			}
+		}
+		return newCoreException(valueS, INFORMAZIONI_INTEGRAZIONE_ENCODE, sb.toString());
+	}
+	public static boolean isInformazioniIntegrazioneRequired(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, INFORMAZIONI_INTEGRAZIONE_REQUIRED, defaultValue, INFORMAZIONI_INTEGRAZIONE_VALUE_ENABLED, INFORMAZIONI_INTEGRAZIONE_VALUE_DISABLED);
 	}
 	
@@ -613,38 +657,41 @@ public class CostantiProprieta {
 	private static final String INFORMAZIONI_INTEGRAZIONE_RISPOSTA_ENCODE = "responseIntegrationInfo.encode";
 	private static final String INFORMAZIONI_INTEGRAZIONE_RISPOSTA_REQUIRED = "responseIntegrationInfo.required";
 		
-	public static boolean isInformazioniIntegrazioneRispostaEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isInformazioniIntegrazioneRispostaEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_ENABLED, defaultValue, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_ENABLED, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_DISABLED);
 	}
-	public static String getNomeSorgenteInformazioniIntegrazioneRisposta(List<Proprieta> proprieta, String defaultValue) throws Exception {
+	public static String getNomeSorgenteInformazioniIntegrazioneRisposta(List<Proprieta> proprieta, String defaultValue) {
 		String valueS = readValue(proprieta, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_NAME);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			return valueS;
 		}
 		return defaultValue;
 	}
-	public static InformazioniIntegrazioneCodifica getTipoCodificaInformazioniIntegrazioneRisposta(List<Proprieta> proprieta, InformazioniIntegrazioneCodifica defaultValue) throws Exception {
+	public static InformazioniIntegrazioneCodifica getTipoCodificaInformazioniIntegrazioneRisposta(List<Proprieta> proprieta, InformazioniIntegrazioneCodifica defaultValue) throws CoreException {
 		String valueS = readValue(proprieta, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_ENCODE);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			try {
 				return InformazioniIntegrazioneCodifica.valueOf(valueS);
-			}catch(Throwable t) {
-				InformazioniIntegrazioneCodifica [] s = InformazioniIntegrazioneCodifica.values();
-				StringBuilder sb = new StringBuilder();
-				if(s!=null) {
-					for (InformazioniIntegrazioneCodifica informazioniIntegrazioneCodifica : s) {
-						if(sb.length()>0) {
-							sb.append(", ");
-						}
-						sb.append(informazioniIntegrazioneCodifica);
-					}
-				}
-				throw new Exception("Uncorrect value '"+valueS+"' for property '"+INFORMAZIONI_INTEGRAZIONE_RISPOSTA_ENCODE+"' (Supported values: "+sb.toString()+")");
+			}catch(Exception t) {
+				throw newTipoCodificaInformazioniIntegrazioneRispostaException(valueS);
 			}
 		}
 		return defaultValue;
 	}
-	public static boolean isInformazioniIntegrazioneRispostaRequired(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	private static CoreException newTipoCodificaInformazioniIntegrazioneRispostaException(String valueS) {
+		InformazioniIntegrazioneCodifica [] s = InformazioniIntegrazioneCodifica.values();
+		StringBuilder sb = new StringBuilder();
+		if(s!=null) {
+			for (InformazioniIntegrazioneCodifica informazioniIntegrazioneCodifica : s) {
+				if(sb.length()>0) {
+					sb.append(", ");
+				}
+				sb.append(informazioniIntegrazioneCodifica);
+			}
+		}
+		return newCoreException(valueS, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_ENCODE, sb.toString());
+	}
+	public static boolean isInformazioniIntegrazioneRispostaRequired(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_REQUIRED, defaultValue, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_ENABLED, INFORMAZIONI_INTEGRAZIONE_RISPOSTA_VALUE_DISABLED);
 	}
 	
@@ -660,10 +707,10 @@ public class CostantiProprieta {
 	private static final String SECURITY_HEADERS_LIST = "securityHeaders"; // separati con la virgola
 	private static final String SECURITY_HEADERS_PREFIX = "securityHeaders.";
 
-	public static boolean isSecurityHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+	public static boolean isSecurityHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, SECURITY_HEADERS_ENABLED, defaultValue, SECURITY_HEADERS_VALUE_ENABLED, SECURITY_HEADERS_VALUE_DISABLED);
 	}
-	public static Map<String, String> getSecurityHeaders(List<Proprieta> proprieta, Properties defaultConfig) throws Exception {
+	public static Map<String, String> getSecurityHeaders(List<Proprieta> proprieta, Properties defaultConfig) {
 		
 		Map<String, String> p = new HashMap<>();
 		
@@ -673,7 +720,7 @@ public class CostantiProprieta {
 				if(oKey instanceof String) {
 					String key = (String) oKey;
 					String value = defaultConfig.getProperty(key);
-					if(key!=null && StringUtils.isNotEmpty(key) &&
+					if(StringUtils.isNotEmpty(key) &&
 						value!=null && StringUtils.isNotEmpty(value)) {
 						p.put(key, value);
 					}
@@ -681,35 +728,42 @@ public class CostantiProprieta {
 			}
 		}
 	
+		fillSecurityHeaders(p, proprieta);
+		
+		return p;
+	}
+	private static void fillSecurityHeaders(Map<String, String> p, List<Proprieta> proprieta) {
 		String pLista = readValue(proprieta, SECURITY_HEADERS_LIST);
 		if(pLista!=null && StringUtils.isNotEmpty(pLista)) {
 			String [] tmp = pLista.split(",");
 			if(tmp!=null && tmp.length>0) {
 				for (String key : tmp) {
-					if(key!=null) {
-						key = key.trim();
-						if(StringUtils.isNotEmpty(key)) {
-							String pName = (SECURITY_HEADERS_PREFIX+key);
-							String value = readValue(proprieta, pName);
-							if(value!=null) {
-								value = value.trim();
-								p.put(key, value); // se gia' esiste viene sovrascritto
-							}
-//							else {
-//								throw new Exception("Proprietà '"+pName+"' non definita");
-//							}
-						}
-					}
+					addSecurityHeader(p, key, proprieta);
 				}
 			}
 		}
-		
-		return p;
+	}
+	private static void addSecurityHeader(Map<String, String> p, String key, List<Proprieta> proprieta) {
+		if(key!=null) {
+			key = key.trim();
+			if(StringUtils.isNotEmpty(key)) {
+				String pName = (SECURITY_HEADERS_PREFIX+key);
+				String value = readValue(proprieta, pName);
+				if(value!=null) {
+					value = value.trim();
+					p.put(key, value); // se gia' esiste viene sovrascritto
+				}
+			}
+		}
 	}
 	
 	
 	
 	// METODI DI UTILITA GENERICI
+	
+	private static CoreException newCoreException(String valueS, String property, String supportedValues) {
+		return new CoreException("Uncorrect value '"+valueS+"' for property '"+property+"' (Supported values: "+supportedValues+")");
+	}
 	
 	private static String readValue(List<Proprieta> proprieta, String nome) {
 		if(proprieta==null || proprieta.isEmpty()) {
@@ -739,8 +793,36 @@ public class CostantiProprieta {
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			try {
 				return Integer.valueOf(valueS);
-			}catch(Throwable e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 		return defaultValue;
+	}
+	
+	public static void checkFile(File file) throws CoreException {
+		checkFileEngine(file, false);
+	}
+	public static void checkDir(File file) throws CoreException {
+		checkFileEngine(file, true);
+	}
+	private static void checkFileEngine(File file, boolean expectedDir) throws CoreException {
+		String prefix = "Config file ["+file.getAbsolutePath()+"] ";
+		if(!file.exists()) {
+			throw new CoreException(prefix+"not exists");
+		}
+		if(expectedDir) {
+			if(!file.isDirectory()) {
+				throw new CoreException(prefix+"isn't directory");
+			}
+		}
+		else {
+			if(file.isDirectory()) {
+				throw new CoreException(prefix+"is directory");
+			}
+		}
+		if(!file.canRead()) {
+			throw new CoreException(prefix+"cannot read");
+		}
 	}
 }

@@ -132,7 +132,7 @@ public class SSLConfig implements Serializable  {
 			sb.append(" ");
 			sb.append("trustStoreType=").append(this.trustStoreType);
 			sb.append(" ");
-			sb.append("trustStorePassword=").append(includePassword? this.trustStorePassword : ((this.trustStorePassword!=null) ? "***" : "unset" ) );
+			sb.append("trustStorePassword=").append(includePassword? this.trustStorePassword : hidePassword(this.trustStorePassword) );
 			sb.append(" ");
 			sb.append("trustManagementAlgorithm=").append(this.trustManagementAlgorithm);
 			sb.append(" ");
@@ -153,11 +153,11 @@ public class SSLConfig implements Serializable  {
 			sb.append(" ");
 			sb.append("keyStoreType=").append(this.keyStoreType);
 			sb.append(" ");
-			sb.append("keyStorePassword=").append(includePassword? this.keyStorePassword : ((this.keyStorePassword!=null) ? "***" : "unset" ) );
+			sb.append("keyStorePassword=").append(includePassword? this.keyStorePassword : hidePassword(this.keyStorePassword) );
 			sb.append(" ");
 			sb.append("keyAlias=").append(this.keyAlias);
 			sb.append(" ");
-			sb.append("keyPassword=").append(includePassword? this.keyPassword : ((this.keyPassword!=null) ? "***" : "unset" ) );
+			sb.append("keyPassword=").append(includePassword? this.keyPassword : hidePassword(this.keyPassword) );
 			sb.append(" ");
 			sb.append("keyManagementAlgorithm=").append(this.keyManagementAlgorithm);
 			sb.append(" ");
@@ -168,6 +168,9 @@ public class SSLConfig implements Serializable  {
 		}
 		
 		return sb.toString();
+	}
+	private String hidePassword(String value) {
+		return (value!=null) ? "***" : "unset" ;
 	}
 
 	public boolean isTrustAllCerts() {

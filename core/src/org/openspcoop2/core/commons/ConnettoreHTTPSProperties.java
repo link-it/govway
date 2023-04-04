@@ -21,8 +21,14 @@
 
 package org.openspcoop2.core.commons;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.Serializable;
 import java.security.KeyStore;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -45,7 +51,12 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static ConnettoreHTTPSProperties readProperties(java.util.Map<String,String> properties) throws Exception{
+	private static final String VALORE_DEFINITO_PER_PROPRIETA = "Valore definito per la proprietà '";
+	private static final String VALORE_NON_DEFINITO_PER_PROPRIETA = "Valore non definito per la proprietà '";
+	private static final String NON_VALIDO_TRUE_FALSE = "' non valido, valori accettati true/false";
+	private static final String DEFINITO_TRAMITE_PROPRIETA = "' nonostante sia stato definito un trustStore attraverso la proprietà '";
+	
+	public static ConnettoreHTTPSProperties readProperties(java.util.Map<String,String> properties) throws CoreException{
 		ConnettoreHTTPSProperties propertiesHTTPS = new ConnettoreHTTPSProperties();
 		
 		// AUTENTICAZIONE SERVER
@@ -54,91 +65,20 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 			try{
 				propertiesHTTPS.setTrustAllCerts(Boolean.parseBoolean(tmp));
 			}catch(Exception e){
-				throw new Exception("Valore definito per la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS+"' non valido, valori accettati true/false");
+				throw new CoreException(VALORE_DEFINITO_PER_PROPRIETA+CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS+NON_VALIDO_TRUE_FALSE);
 			}
 		}
 		if(!propertiesHTTPS.isTrustAllCerts() && properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION)!=null){
-			String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION).trim();
-			propertiesHTTPS.setTrustStoreLocation(tmp);
-			
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD).trim();
-				propertiesHTTPS.setTrustStorePassword(tmp);
-			}
-			else{
-				throw new Exception("Valore non definito per la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD+
-						"' nonostante sia stato definito un trustStore attraverso la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION+"'");
-			}
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM).trim();
-				propertiesHTTPS.setTrustManagementAlgorithm(tmp);
-			}else{
-				propertiesHTTPS.setTrustManagementAlgorithm(TrustManagerFactory.getDefaultAlgorithm());
-			}
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE).trim();
-				propertiesHTTPS.setTrustStoreType(tmp);
-			}else{
-				propertiesHTTPS.setTrustStoreType(KeyStore.getDefaultType()); // JKS
-			}
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs).trim();
-				propertiesHTTPS.setTrustStoreCRLsLocation(tmp);
-			}
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY).trim();
-				propertiesHTTPS.setTrustStoreOCSPPolicy(tmp);
-			}
+			readTrustStoreConfig(properties, propertiesHTTPS);
 		}
 		else if(propertiesHTTPS.isTrustAllCerts()){
 			// potrei accettare qualsiasi certificato ma validarlo rispetto a OCSP
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY)!=null){
-				String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY).trim();
-				propertiesHTTPS.setTrustStoreOCSPPolicy(tmp);
-				
-				if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)!=null){
-					tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs).trim();
-					propertiesHTTPS.setTrustStoreCRLsLocation(tmp);
-				}
-			}
+			readTrustStoreAllConfig(properties, propertiesHTTPS);
 		}
 		
 		// AUTENTICAZIONE CLIENT
 		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION)!=null){
-			String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION).trim();
-			propertiesHTTPS.setKeyStoreLocation(tmp);
-			
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD).trim();
-				propertiesHTTPS.setKeyStorePassword(tmp);
-			}
-			else{
-				throw new Exception("Valore non definito per la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD
-						+"' nonostante sia stato definito un trustStore attraverso la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION+"'");
-			}
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD).trim();
-				propertiesHTTPS.setKeyPassword(tmp);
-			}else{
-				throw new Exception("Valore non definito per la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD
-						+"' nonostante sia stato definito un trustStore attraverso la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION+"'");
-			}
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS).trim();
-				propertiesHTTPS.setKeyAlias(tmp);
-			}
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM).trim();
-				propertiesHTTPS.setKeyManagementAlgorithm(tmp);
-			}else{
-				propertiesHTTPS.setKeyManagementAlgorithm(KeyManagerFactory.getDefaultAlgorithm());
-			}
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE).trim();
-				propertiesHTTPS.setKeyStoreType(tmp);
-			}else{
-				propertiesHTTPS.setKeyStoreType(KeyStore.getDefaultType()); // JKS
-			}
+			readKeyStoreConfig(properties, propertiesHTTPS);
 		}	
 		
 		// HostName verifier
@@ -147,7 +87,7 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 			try{
 				propertiesHTTPS.setHostnameVerifier(Boolean.parseBoolean(tmp));
 			}catch(Exception e){
-				throw new Exception("Valore definito per la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER+"' non valido, valori accettati true/false");
+				throw new CoreException(VALORE_DEFINITO_PER_PROPRIETA+CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER+NON_VALIDO_TRUE_FALSE);
 			}
 		}
 		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_CLASSNAME_HOSTNAME_VERIFIER)!=null){
@@ -165,21 +105,137 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 		
 		// SecureRandom
 		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM)!=null){
-			String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM).trim();
-			try{
-				propertiesHTTPS.setSecureRandom(Boolean.parseBoolean(tmp));
-			}catch(Exception e){
-				throw new Exception("Valore definito per la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM+"' non valido, valori accettati true/false");
-			}
-			if(propertiesHTTPS.isSecureRandom()) {
-				if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM_ALGORITHM)!=null){
-					propertiesHTTPS.setSecureRandomAlgorithm(properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM_ALGORITHM).trim());
-				}
-			}
+			readSecureRandomConfig(properties, propertiesHTTPS);
 		}
 		
 		return propertiesHTTPS;
 	}
+	private static void readTrustStoreConfig(java.util.Map<String,String> properties, ConnettoreHTTPSProperties propertiesHTTPS) throws CoreException {
+		String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION).trim();
+		propertiesHTTPS.setTrustStoreLocation(tmp);
+		
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD).trim();
+			propertiesHTTPS.setTrustStorePassword(tmp);
+		}
+		else{
+			throw new CoreException(VALORE_NON_DEFINITO_PER_PROPRIETA+CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD+
+					DEFINITO_TRAMITE_PROPRIETA+CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION+"'");
+		}
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM).trim();
+			propertiesHTTPS.setTrustManagementAlgorithm(tmp);
+		}else{
+			propertiesHTTPS.setTrustManagementAlgorithm(TrustManagerFactory.getDefaultAlgorithm());
+		}
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE).trim();
+			propertiesHTTPS.setTrustStoreType(tmp);
+		}else{
+			propertiesHTTPS.setTrustStoreType(KeyStore.getDefaultType()); // JKS
+		}
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs).trim();
+			propertiesHTTPS.setTrustStoreCRLsLocation(tmp);
+		}
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY).trim();
+			propertiesHTTPS.setTrustStoreOCSPPolicy(tmp);
+		}
+	}
+	private static void readTrustStoreAllConfig(java.util.Map<String,String> properties, ConnettoreHTTPSProperties propertiesHTTPS) {
+		// potrei accettare qualsiasi certificato ma validarlo rispetto a OCSP
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY)!=null){
+			String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY).trim();
+			propertiesHTTPS.setTrustStoreOCSPPolicy(tmp);
+			
+			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)!=null){
+				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs).trim();
+				propertiesHTTPS.setTrustStoreCRLsLocation(tmp);
+			}
+		}
+	}
+	private static void readKeyStoreConfig(java.util.Map<String,String> properties, ConnettoreHTTPSProperties propertiesHTTPS) throws CoreException {
+		String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION).trim();
+		propertiesHTTPS.setKeyStoreLocation(tmp);
+		
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD).trim();
+			propertiesHTTPS.setKeyStorePassword(tmp);
+		}
+		else{
+			throw new CoreException(VALORE_NON_DEFINITO_PER_PROPRIETA+CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD
+					+DEFINITO_TRAMITE_PROPRIETA+CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION+"'");
+		}
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD).trim();
+			propertiesHTTPS.setKeyPassword(tmp);
+		}else{
+			throw new CoreException(VALORE_NON_DEFINITO_PER_PROPRIETA+CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD
+					+DEFINITO_TRAMITE_PROPRIETA+CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION+"'");
+		}
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS).trim();
+			propertiesHTTPS.setKeyAlias(tmp);
+		}
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM).trim();
+			propertiesHTTPS.setKeyManagementAlgorithm(tmp);
+		}else{
+			propertiesHTTPS.setKeyManagementAlgorithm(KeyManagerFactory.getDefaultAlgorithm());
+		}
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE).trim();
+			propertiesHTTPS.setKeyStoreType(tmp);
+		}else{
+			propertiesHTTPS.setKeyStoreType(KeyStore.getDefaultType()); // JKS
+		}
+	}
+	private static void readSecureRandomConfig(java.util.Map<String,String> properties, ConnettoreHTTPSProperties propertiesHTTPS) throws CoreException {
+		String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM).trim();
+		try{
+			propertiesHTTPS.setSecureRandom(Boolean.parseBoolean(tmp));
+		}catch(Exception e){
+			throw new CoreException(VALORE_DEFINITO_PER_PROPRIETA+CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM+NON_VALIDO_TRUE_FALSE);
+		}
+		if(propertiesHTTPS.isSecureRandom() &&
+			properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM_ALGORITHM)!=null){
+			propertiesHTTPS.setSecureRandomAlgorithm(properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM_ALGORITHM).trim());
+		}
+	}
 	
-	
+	public static ConnettoreHTTPSProperties readPropertyFile(String file, boolean sslConfigRequired) throws CoreException{
+		return readPropertyFile(new File(file), sslConfigRequired);
+	}
+	public static ConnettoreHTTPSProperties readPropertyFile(File file, boolean sslConfigRequired) throws CoreException{
+		
+		String prefix = "Config file ["+file.getAbsolutePath()+"] ";
+		if(!file.exists()) {
+			if(sslConfigRequired) {
+				throw new CoreException(prefix+"not exists");
+			}
+			return null;
+		}
+		if(file.isDirectory()) {
+			throw new CoreException(prefix+"is directory");
+		}
+		if(!file.canRead()) {
+			throw new CoreException(prefix+"cannot read");
+		}
+		
+		Properties p = new Properties();
+		try (FileInputStream fin = new FileInputStream(file)){
+			p.load(fin);
+		}
+		catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
+		Map<String, String> pMap = new HashMap<>();
+		Enumeration<?> enP = p.keys();
+		while (enP.hasMoreElements()) {
+			String key = (String) enP.nextElement();
+			pMap.put(key, p.getProperty(key));
+		}
+		return readProperties(pMap); 
+	}
 }

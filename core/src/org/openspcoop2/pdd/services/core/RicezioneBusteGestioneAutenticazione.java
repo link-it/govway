@@ -316,6 +316,16 @@ public class RicezioneBusteGestioneAutenticazione {
 				}	
 				else{
 					
+					// annullo eventuale applicativo letto da header di integrazione (vale solo in caso di autenticazione 'none')
+					if(this.servizioApplicativoFruitore!=null) {
+						this.servizioApplicativoFruitore = null;
+						this.parametriGenerazioneBustaErrore.setServizioApplicativoFruitore(this.servizioApplicativoFruitore);
+						this.parametriInvioBustaErrore.setServizioApplicativoFruitore(this.servizioApplicativoFruitore);
+						this.generatoreErrore.updateInformazioniCooperazione(this.servizioApplicativoFruitore);
+						this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, this.servizioApplicativoFruitore);
+						this.msgContext.getIntegrazione().setServizioApplicativoFruitore(this.servizioApplicativoFruitore);
+					}
+					
 					this.transaction.getTempiElaborazione().startAutenticazione();
 					try {
 					

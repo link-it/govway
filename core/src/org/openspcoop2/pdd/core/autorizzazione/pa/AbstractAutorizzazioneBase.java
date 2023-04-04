@@ -51,7 +51,10 @@ public abstract class AbstractAutorizzazioneBase extends AbstractCore implements
 	public static String getErrorString(IDServizioApplicativo idServizioApplicativo, IDSoggetto idSoggetto, IDServizio idServizio){
 		String prefix = "Il mittente";
 		if(idServizioApplicativo!=null && idServizioApplicativo.getNome()!=null) {
-			prefix = "L'applicativo "+idServizioApplicativo.getNome()+" (soggetto "+idServizioApplicativo.getIdSoggettoProprietario().toString()+")";
+			prefix = "L'applicativo "+idServizioApplicativo.getNome();
+			if(idServizioApplicativo.getIdSoggettoProprietario()!=null) {
+				prefix = prefix+" (soggetto "+idServizioApplicativo.getIdSoggettoProprietario().toString()+")";
+			}
 		}
 		else if(idSoggetto!=null){
 			prefix = "Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome();

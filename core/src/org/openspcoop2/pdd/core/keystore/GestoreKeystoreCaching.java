@@ -330,7 +330,7 @@ public class GestoreKeystoreCaching {
 	private static long itemCrlLifeSecond; 
 	public static void setCacheCrlLifeSeconds(long itemCrlLifeSecondParam,Logger alog) throws Exception{
 		itemCrlLifeSecond = itemCrlLifeSecondParam;
-		org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.setKeystoreCacheJCS_crlLifeSeconds(itemCrlLifeSecond>0 ? (int)itemCrlLifeSecond : 7200);
+		org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.setKeystoreCacheJCSCrlLifeSeconds(itemCrlLifeSecond>0 ? (int)itemCrlLifeSecond : 7200);
 	}
 	public static long getItemCrlLifeSecond() {
 		return itemCrlLifeSecond;
