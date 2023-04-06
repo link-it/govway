@@ -63,13 +63,14 @@ import org.slf4j.Logger;
 
 public class Utilities {
 
+	private Utilities() {}
 	
 	
 	// ** Thread Sleep **
 	public static void sleep(long ms) {
 		try {
 			Thread.sleep(ms);
-		}catch(Throwable t) {
+		}catch(InterruptedException t) {
 			// ignore
 			Thread.currentThread().interrupt();
 		}
@@ -82,14 +83,11 @@ public class Utilities {
 			Future<?> future = executor.submit(callable);
 			return (T) future.get(secondsTimeout, TimeUnit.SECONDS); //timeout is in 2 seconds
 		} catch (TimeoutException e) {
-		    //System.err.println("Timeout");
 		    throw e;
 		} catch (InterruptedException e) {
-			//System.err.println("Interrupted");
 			Thread.currentThread().interrupt();
 			throw new UtilsException(e.getMessage(),e);
 		} catch (ExecutionException e) {
-			//System.err.println("ExecutionException");
 			throw new UtilsException(e.getMessage(),e);
 		}finally {
 			executor.shutdownNow();
@@ -114,7 +112,7 @@ public class Utilities {
 	public static <T> T newInstance(Class<T> classType) throws UtilsException {
 		if(classType!=null) {
 			try {
-				return  (T) classType.getConstructor().newInstance();
+				return  classType.getConstructor().newInstance();
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(), e);
 			}

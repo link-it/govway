@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 
@@ -79,15 +80,17 @@ public class CRLCertstore implements Serializable {
 	}
 	
 	public static List<String> readCrlPaths(String crlPaths){
-		List<String> crlPathsList = new ArrayList<String>();
-		if(crlPaths.contains(",")) {
-			String [] tmp = crlPaths.split(",");
-			for (String crlPath : tmp) {
-				crlPathsList.add(crlPath.trim());
+		List<String> crlPathsList = new ArrayList<>();
+		if(crlPaths!=null && StringUtils.isNotEmpty(crlPaths)) {
+			if(crlPaths.contains(",")) {
+				String [] tmp = crlPaths.split(",");
+				for (String crlPath : tmp) {
+					crlPathsList.add(crlPath.trim());
+				}
 			}
-		}
-		else {
-			crlPathsList.add(crlPaths.trim());
+			else {
+				crlPathsList.add(crlPaths.trim());
+			}
 		}
 		return crlPathsList;
 	}

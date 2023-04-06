@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
@@ -83,16 +84,28 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_configFileDinamica_applicativoMittente_error() throws Exception {
+		
+		String errore = "Ricevuto un Problem Detail (RFC 7807) in seguito all''invio del messaggio applicativo: {\"type\":\"https://govway.org/handling-errors/403/AuthorizationContentDeny.html\",\"title\":\"AuthorizationContentDeny\",\"status\":403,\"detail\":\"Unauthorized request content\"";
+		if(Utils.isJenkins()) {
+			errore = "Errore avvenuto durante la consegna HTTP: Received fatal alert: bad_certificate";
+		}
+		
 		_test(TipoServizio.EROGAZIONE,
 				"test2", 
-				"Ricevuto un Problem Detail (RFC 7807) in seguito all''invio del messaggio applicativo: {\"type\":\"https://govway.org/handling-errors/403/AuthorizationContentDeny.html\",\"title\":\"AuthorizationContentDeny\",\"status\":403,\"detail\":\"Unauthorized request content\"",
+				errore,
 				"HttpsOverrideJvmConfigSoggetto2");
 	}
 	@Test
 	public void fruizione_configFileDinamica_applicativoMittente_error() throws Exception {
+		
+		String errore = "Ricevuto un Problem Detail (RFC 7807) in seguito all''invio della busta di cooperazione: {\"type\":\"https://govway.org/handling-errors/403/AuthorizationContentDeny.html\",\"title\":\"AuthorizationContentDeny\",\"status\":403,\"detail\":\"Unauthorized request content\"";
+		if(Utils.isJenkins()) {
+			errore = "Errore avvenuto durante la consegna HTTP: Received fatal alert: bad_certificate";
+		}
+		
 		_test(TipoServizio.FRUIZIONE, 
 				"test2", 
-				"Ricevuto un Problem Detail (RFC 7807) in seguito all''invio della busta di cooperazione: {\"type\":\"https://govway.org/handling-errors/403/AuthorizationContentDeny.html\",\"title\":\"AuthorizationContentDeny\",\"status\":403,\"detail\":\"Unauthorized request content\"",
+				errore,
 				"HttpsOverrideJvmConfigSoggetto2");
 	}
 	
@@ -181,12 +194,22 @@ public class RestTest extends ConfigLoader {
 		
 		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		if(msgErrore!=null) {
-			esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_APPLICATIVO);
+			if(msgErrore.contains("Received fatal alert: bad_certificate")) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
+			}
+			else {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_APPLICATIVO);
+			}
 		}
 
 		if(msgErrore!=null) {
-			response.addHeader(Headers.GovWayTransactionErrorType, "AuthorizationContentDeny"); // arrivando come errore applicativo non viene impostato l'header http
-			org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.errori.RestTest.verifyKo(response, null, "AuthorizationContentDeny", 403, "Unauthorized request content");
+			if(msgErrore.contains("Received fatal alert: bad_certificate")) {
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.errori.RestTest.verifyKo(response, null, "APIUnavailable", 503, "The API Implementation is temporary unavailable");
+			}
+			else {
+				response.addHeader(Headers.GovWayTransactionErrorType, "AuthorizationContentDeny"); // arrivando come errore applicativo non viene impostato l'header http
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.errori.RestTest.verifyKo(response, null, "AuthorizationContentDeny", 403, "Unauthorized request content");
+			}
 		}
 		else {
 			assertEquals(200, response.getResultHTTPOperation());

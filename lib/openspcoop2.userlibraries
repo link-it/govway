@@ -171,6 +171,9 @@
         <archive path="/op2_3.3.dev/lib/opensaml/opensaml-xmlsec-api-3.4.6.jar"/>
         <archive path="/op2_3.3.dev/lib/opensaml/opensaml-xmlsec-impl-3.4.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/opensaml/java-support-7.5.2.jar"/>
+	<!-- pdf -->
+	<archive path="/op2_3.3.dev/lib/pdf/pdfbox-2.0.27.jar"/>
+	<archive path="/op2_3.3.dev/lib/pdf/fontbox-2.0.27.jar"/>
 	<!-- redis -->
 	<archive path="/op2_3.3.dev/lib/redis/redisson-3.17.7.jar"/>
 	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-4.1.86.Final.jar"/>

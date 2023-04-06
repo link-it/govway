@@ -30,24 +30,26 @@ package org.openspcoop2.utils.mime;
  */
 public class MimeTypeConstants {
 	
+	private MimeTypeConstants() {}
+	
 	/** Content Type */
-	public final static String MEDIA_TYPE_SOAP_1_1 = "text/xml";
-	public final static String MEDIA_TYPE_SOAP_1_2 = "application/soap+xml";
-	public final static String MEDIA_TYPE_APPLICATION_OCTET_STREAM = "application/octet-stream";
-	public final static String MEDIA_TYPE_ZIP = "application/zip";
-	public final static String MEDIA_TYPE_PDF = "application/pdf";
-	public final static String MEDIA_TYPE_APPLICATION_XOP_XML = "application/xop+xml";
-	public final static String MEDIA_TYPE_HTML = "text/html";
-	public final static String MEDIA_TYPE_PLAIN = "text/plain";	
-	public final static String MEDIA_TYPE_XML = "application/xml";
-	public final static String MEDIA_TYPE_JSON = "application/json";
-	public final static String MEDIA_TYPE_OPENSPCOOP2_TUNNEL_SOAP = "application/openspcoop2";
-	public final static String MEDIA_TYPE_X_DOWNLOAD = "application/x-download";
-	public final static String MEDIA_TYPE_X_WWW_FORM_URLENCODED= "application/x-www-form-urlencoded";
-	public final static String MEDIA_TYPE_FORM_DATA= "multipart/form-data";
-	public final static String MEDIA_TYPE_JSON_PROBLEM_DETAILS_RFC_7807 = "application/problem+json";
-	public final static String MEDIA_TYPE_XML_PROBLEM_DETAILS_RFC_7807 = "application/problem+xml";
-	public final static String MEDIA_TYPE_OCSP_REQUEST = "application/ocsp-request";
-	public final static String MEDIA_TYPE_OCSP_RESPONSE = "application/ocsp-response";
+	public static final String MEDIA_TYPE_SOAP_1_1 = "text/xml";
+	public static final String MEDIA_TYPE_SOAP_1_2 = "application/soap+xml";
+	public static final String MEDIA_TYPE_APPLICATION_OCTET_STREAM = "application/octet-stream";
+	public static final String MEDIA_TYPE_ZIP = "application/zip";
+	public static final String MEDIA_TYPE_PDF = "application/pdf";
+	public static final String MEDIA_TYPE_APPLICATION_XOP_XML = "application/xop+xml";
+	public static final String MEDIA_TYPE_HTML = "text/html";
+	public static final String MEDIA_TYPE_PLAIN = "text/plain";	
+	public static final String MEDIA_TYPE_XML = "application/xml";
+	public static final String MEDIA_TYPE_JSON = "application/json";
+	public static final String MEDIA_TYPE_OPENSPCOOP2_TUNNEL_SOAP = "application/openspcoop2";
+	public static final String MEDIA_TYPE_X_DOWNLOAD = "application/x-download";
+	public static final String MEDIA_TYPE_X_WWW_FORM_URLENCODED= "application/x-www-form-urlencoded";
+	public static final String MEDIA_TYPE_FORM_DATA= "multipart/form-data";
+	public static final String MEDIA_TYPE_JSON_PROBLEM_DETAILS_RFC_7807 = "application/problem+json";
+	public static final String MEDIA_TYPE_XML_PROBLEM_DETAILS_RFC_7807 = "application/problem+xml";
+	public static final String MEDIA_TYPE_OCSP_REQUEST = "application/ocsp-request";
+	public static final String MEDIA_TYPE_OCSP_RESPONSE = "application/ocsp-response";
 }
 

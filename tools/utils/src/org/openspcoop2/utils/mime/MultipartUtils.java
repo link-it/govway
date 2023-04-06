@@ -36,6 +36,8 @@ import java.io.InputStream;
  */
 
 public class MultipartUtils {
+	
+	private MultipartUtils() {}
 
 	/**
 	 * Trova la stringa utilizzata, all'interno del parametro <var>input</var>,
@@ -49,9 +51,6 @@ public class MultipartUtils {
 
 		ByteArrayOutputStream boundary = null;
 		try{
-
-			//if(!messageWithAttachment(xml))
-			//  return null;
 
 			boundary = new ByteArrayOutputStream();
 			int i=0;
@@ -68,23 +67,27 @@ public class MultipartUtils {
 				i++;
 			}
 
-			String bS = null;
-			if(boundary.size() != 0) {
-				//bS = boundary.toString().substring(0,boundary.toString().length()-2);
-				// Lo \n non lo includo proprio nel calcolo del boundary
-				bS = boundary.toString();
-			}
-
+			boundary.flush();
 			boundary.close();
-			return bS;
+			
+			return getBoundary(boundary);
 
 		}catch(Exception e){
 			try{
 				if(boundary!=null)
 					boundary.close();
-			}catch(Exception eis){}
+			}catch(Exception eis){
+				// ignore
+			}
 			return null;
 		}
+	}
+	private static String getBoundary(ByteArrayOutputStream boundary) {
+		String bS = null;
+		if(boundary.size() != 0) {
+			bS = boundary.toString();
+		}
+		return bS;
 	}
 
 
@@ -124,7 +127,9 @@ public class MultipartUtils {
 			try{
 				if(boundary!=null)
 					boundary.close();
-			}catch(Exception eis){}
+			}catch(Exception eis){
+				// ignore
+			}
 			return null;
 		}
 	}
@@ -170,42 +175,46 @@ public class MultipartUtils {
 		ByteArrayOutputStream line = null;
 		try{
 
-			//log.info("Check ID First");
-			String IDfirst = null;
+			String idfirst = null;
 			int index=0;
 			boolean found = false;
 			while(!found && index<input.length){
 				line  = new ByteArrayOutputStream();
-				while(true){
-					if(input[index]=='\r'){
-						index++;
-						if(input[index]=='\n'){
-							index++;//elimino anche \n
-						}
-						break;
-					} 
-					line.write(input[index]);
-					index++;
-				}
+				index = readLineFirstContentID(input, line, index);
 				if (line.toString().toLowerCase().startsWith("Content-Id:".toLowerCase())){
 					found = true;
 					String[] rr = line.toString().split(" ");
-					//log.info("ID FIRST ["+rr[1]+"]");
-					IDfirst = rr[1];
+					idfirst = rr[1];
 				}
 				line.close();
 			}  
 
-			return IDfirst;
+			return idfirst;
 
 		}catch(Exception e){
 			try{
 				if(line!=null)
 					line.close();
-			}catch(Exception eis){}
+			}catch(Exception eis){
+				// ignore
+			}
 			return null;
 		}
 
+	}
+	private static int readLineFirstContentID(byte [] input, ByteArrayOutputStream line, int index) {
+		while(true){
+			if(input[index]=='\r'){
+				index++;
+				if(input[index]=='\n'){
+					index++;//elimino anche \n
+				}
+				break;
+			} 
+			line.write(input[index]);
+			index++;
+		}
+		return index;
 	}
 
 

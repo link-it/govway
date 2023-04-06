@@ -123,11 +123,11 @@ public class CsrfFilter implements Filter {
 			// faccio proseguire le chiamate ai filtri
 			chain.doFilter(request, response);
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(),e);
 		} catch (ServletException e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(),e);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(),e);
 		}
 	}
 	

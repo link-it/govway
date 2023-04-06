@@ -41,12 +41,12 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class MimeMultipart {
 	
-	private javax.mail.internet.MimeMultipart mimeMultipart = null;
+	private javax.mail.internet.MimeMultipart mimeMultipartObject = null;
 	
 	
 	public MimeMultipart() throws UtilsException{
 		try{
-			this.mimeMultipart = new javax.mail.internet.MimeMultipart();
+			this.mimeMultipartObject = new javax.mail.internet.MimeMultipart();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -55,7 +55,7 @@ public class MimeMultipart {
 	public MimeMultipart(String subType) throws UtilsException{
 		try{
 			// multipart/<subType>
-			this.mimeMultipart = new javax.mail.internet.MimeMultipart(subType);
+			this.mimeMultipartObject = new javax.mail.internet.MimeMultipart(subType);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -64,7 +64,7 @@ public class MimeMultipart {
 	public MimeMultipart(InputStream is, String contentType) throws UtilsException{
 		try{
 			javax.activation.DataSource ds = new ByteArrayDataSource(is, contentType);
-			this.mimeMultipart = new javax.mail.internet.MimeMultipart(ds);
+			this.mimeMultipartObject = new javax.mail.internet.MimeMultipart(ds);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -76,14 +76,14 @@ public class MimeMultipart {
 	
 	public void addBodyPart(BodyPart bodyPart) throws UtilsException{
 		try{
-			this.mimeMultipart.addBodyPart(bodyPart);
+			this.mimeMultipartObject.addBodyPart(bodyPart);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	public void addBodyPart(BodyPart bodyPart, int index) throws UtilsException{
 		try{
-			this.mimeMultipart.addBodyPart(bodyPart, index);
+			this.mimeMultipartObject.addBodyPart(bodyPart, index);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -106,7 +106,7 @@ public class MimeMultipart {
 	
 	public int countBodyParts() throws UtilsException{
 		try{
-			return this.mimeMultipart.getCount();
+			return this.mimeMultipartObject.getCount();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -114,14 +114,14 @@ public class MimeMultipart {
 	
 	public BodyPart getBodyPart(int index) throws UtilsException{
 		try{
-			return this.mimeMultipart.getBodyPart(index);
+			return this.mimeMultipartObject.getBodyPart(index);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	public BodyPart getBodyPart(String contentID) throws UtilsException{
 		try{
-			return this.mimeMultipart.getBodyPart(contentID);
+			return this.mimeMultipartObject.getBodyPart(contentID);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -129,7 +129,7 @@ public class MimeMultipart {
 	
 	public void removeBodyPart(int index) throws UtilsException{
 		try{
-			this.mimeMultipart.removeBodyPart(index);
+			this.mimeMultipartObject.removeBodyPart(index);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -138,7 +138,7 @@ public class MimeMultipart {
 		try{
 			BodyPart bodyPart = this.getBodyPart(contentID);
 			if(bodyPart!=null){
-				this.mimeMultipart.removeBodyPart(bodyPart);
+				this.mimeMultipartObject.removeBodyPart(bodyPart);
 			}
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
@@ -146,7 +146,7 @@ public class MimeMultipart {
 	}
 	public void removeBodyPart(BodyPart bodyPart) throws UtilsException{
 		try{
-			this.mimeMultipart.removeBodyPart(bodyPart);
+			this.mimeMultipartObject.removeBodyPart(bodyPart);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -154,7 +154,7 @@ public class MimeMultipart {
 
 	public void writeTo(OutputStream os) throws UtilsException{
 		try{
-			this.mimeMultipart.writeTo(os);
+			this.mimeMultipartObject.writeTo(os);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -162,15 +162,15 @@ public class MimeMultipart {
 	
 	public String getContentType() throws UtilsException{
 		try{
-			return this.mimeMultipart.getContentType();
+			return this.mimeMultipartObject.getContentType();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	
-	private final static String CONTENT_ID = "Content-ID"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
-	private final static String CONTENT_LOCATION = "Content-Location"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
-	private final static String CONTENT_DISPOSITION = "Content-Disposition"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
+	private static final String CONTENT_ID = "Content-ID"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
+	private static final String CONTENT_LOCATION = "Content-Location"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
+	private static final String CONTENT_DISPOSITION = "Content-Disposition"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
 	
 	public String getContentID(BodyPart bodyPart) throws UtilsException{
 		return this.getHeaderValue(CONTENT_ID, bodyPart);
@@ -212,8 +212,6 @@ public class MimeMultipart {
 	}
 	
 	private boolean match(String headerName, String check){
-		return headerName.equals(check) || 
-				headerName.toLowerCase().equals(check.toLowerCase()) || 
-				headerName.toUpperCase().equals(check.toUpperCase()) ;
+		return headerName.equalsIgnoreCase(check) ;
 	}
 }

@@ -1,3 +1,18 @@
+2023-04-06  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-1578
+	Aggiunte utility che consentono di processare file PDF al fine di:
+	- firmarli o estrarre le informazioni sulla signature (compreso i certificati)
+	- inserire o estrarre documenti interni al PDF nelle modalità Embedded o XFA
+	- gestire documenti inseriti nel pdf tramite '{http://www.xfa.org/schema/xfa-data/1.0/}datasets'
+
+2023-04-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug
+	La verifica dei certificati, su erogazioni/fruizioni ModI, andava in errore se veniva impostata una OCSP Policy.
+
 2023-04-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

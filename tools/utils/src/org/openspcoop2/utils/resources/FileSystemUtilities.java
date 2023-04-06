@@ -24,6 +24,7 @@ package org.openspcoop2.utils.resources;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +37,8 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
 
+import org.openspcoop2.utils.UtilsException;
+
 
 /**
  * Classe utilizzabile per raccogliere utility su operazioni effettuate su file system
@@ -45,6 +48,8 @@ import java.util.Set;
  * @version $Rev$, $Date$
  */
 public class FileSystemUtilities {
+	
+	private FileSystemUtilities() {}
 
 	public static File createTempFile(String prefix, String suffix) throws IOException{
 		Path p = createTempPath(prefix, suffix);
@@ -79,24 +84,10 @@ public class FileSystemUtilities {
 	}
 	public static void copy(String in, String out) 
 	throws IOException {
-		FileInputStream fin = null;
-		FileOutputStream fout = null;
-		try{
-			fin = new FileInputStream(in);
-			fout = new FileOutputStream(out);
+		try(FileInputStream fin = new FileInputStream(in);
+			FileOutputStream fout = new FileOutputStream(out);){
 			FileSystemUtilities.copy(fin,fout);
 			fout.flush();
-		}finally{
-			try{
-				if(fin!=null)
-					fin.close();
-			}catch(Exception e){}
-			try{
-				if(fout!=null)
-					fout.close();
-			}catch(Exception e){
-				// close
-			}
 		}
 	}
 	public static void copy(InputStream in, OutputStream out) 
@@ -123,7 +114,7 @@ public class FileSystemUtilities {
 				dstPath.mkdir();
 			}
 
-			String files[] = srcPath.list();
+			String[] files = srcPath.list();
 			if(files!=null) {
 				for(int i = 0; i < files.length; i++){
 						FileSystemUtilities.copyDirectory(new File(srcPath, files[i]), 
@@ -133,15 +124,11 @@ public class FileSystemUtilities {
 		}
 		else{
 			if(!srcPath.exists()){
-				//System.out.println("File or directory does not exist.");
-				return;
+				/** System.out.println("File or directory does not exist."); */
 			}
 			else {
-				InputStream in = null;
-				OutputStream out = null;
-				try {
-					in = new FileInputStream(srcPath);
-					out = new FileOutputStream(dstPath); 
+				try (InputStream in = new FileInputStream(srcPath);
+					OutputStream out = new FileOutputStream(dstPath);){ 
 					// Transfer bytes from in to out
 					byte[] buf = new byte[1024];
 					int len;
@@ -149,198 +136,145 @@ public class FileSystemUtilities {
 						out.write(buf, 0, len);
 					}
 					out.flush();
-				}finally {
-					try {
-						if(in!=null) {
-							in.close();
-						}
-					}catch(Throwable t) {
-						// ignore
-					}
-					try {
-						if(out!=null) {
-							out.close();
-						}
-					}catch(Throwable t) {
-						// ignore
-					}				
 				}
 			}
 		}
-		//System.out.println("Directory copied.");
+		/** System.out.println("Directory copied."); */
 	}
 	
 	
-	public static String readFile(String f) throws Exception{
+	public static String readFile(String f) throws UtilsException, FileNotFoundException{
 		return FileSystemUtilities.readFile(new File(f));
 	}
-	public static String readFile(File f) throws Exception{
-		return _readFile(f, null, null);
+	public static String readFile(File f) throws UtilsException, FileNotFoundException{
+		return readFileEngine(f, null, null);
 	}
-	public static String readFile(String f, String charsetName) throws Exception{
+	public static String readFile(String f, String charsetName) throws UtilsException, FileNotFoundException{
 		return FileSystemUtilities.readFile(new File(f),charsetName);
 	}
-	public static String readFile(File f, String charsetName) throws Exception{
-		return _readFile(f, charsetName, null);
+	public static String readFile(File f, String charsetName) throws UtilsException, FileNotFoundException{
+		return readFileEngine(f, charsetName, null);
 	}
-	public static String readFile(String f, Charset charset) throws Exception{
+	public static String readFile(String f, Charset charset) throws UtilsException, FileNotFoundException{
 		return FileSystemUtilities.readFile(new File(f), charset);
 	}
-	public static String readFile(File f, Charset charset) throws Exception{
-		return _readFile(f, null, charset);
+	public static String readFile(File f, Charset charset) throws UtilsException, FileNotFoundException{
+		return readFileEngine(f, null, charset);
 	}
-	private static String _readFile(File f, String charsetName, Charset charset) throws Exception{
-		FileInputStream fis = null;
-		ByteArrayOutputStream byteInputBuffer = null;
-		try {
-			fis =new FileInputStream(f);
-			byteInputBuffer = new ByteArrayOutputStream();
+	private static String readFileEngine(File f, String charsetName, Charset charset) throws UtilsException, FileNotFoundException{
+		try (FileInputStream fis =new FileInputStream(f);
+			ByteArrayOutputStream byteInputBuffer = new ByteArrayOutputStream();){
 			byte [] readB = new byte[8192];
 			int readByte = 0;
 			while((readByte = fis.read(readB))!= -1){
 				byteInputBuffer.write(readB,0,readByte);
 			}
 			byteInputBuffer.flush();
-		}finally {
-			try {
-				if(fis!=null) {
-					fis.close();
-				}
-			}catch(Throwable t) {
-				// ignore
-			}	
-			try {
-				if(byteInputBuffer!=null) {
-					byteInputBuffer.close();
-				}
-			}catch(Throwable t) {
-				// ignore
-			}	
+			
+			if(charsetName!=null) {
+				return  byteInputBuffer.toString(charsetName);
+			}
+			else if(charset!=null) {
+				return  byteInputBuffer.toString(charset);
+			}
+			else {
+				return  byteInputBuffer.toString();
+			}
 		}
-		
-		if(charsetName!=null) {
-			return  byteInputBuffer.toString(charsetName);
+		catch(FileNotFoundException notFound) {
+			throw notFound;
 		}
-		else if(charset!=null) {
-			return  byteInputBuffer.toString(charset);
-		}
-		else {
-			return  byteInputBuffer.toString();
+		catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	
-	public static byte[] readBytesFromFile(String f) throws Exception{
+	public static byte[] readBytesFromFile(String f) throws UtilsException, FileNotFoundException{
 		return FileSystemUtilities.readBytesFromFile(new File(f));
 	}
-	public static byte[] readBytesFromFile(File f) throws Exception{	
-		FileInputStream fis = null;
-		ByteArrayOutputStream byteInputBuffer = null;
-		try {
-			fis =new FileInputStream(f);
-			byteInputBuffer = new ByteArrayOutputStream();
+	public static byte[] readBytesFromFile(File f) throws UtilsException, FileNotFoundException{	
+		try (FileInputStream fis =new FileInputStream(f);
+			ByteArrayOutputStream byteInputBuffer = new ByteArrayOutputStream();){
 			byte [] readB = new byte[8192];
 			int readByte = 0;
 			while((readByte = fis.read(readB))!= -1){
 				byteInputBuffer.write(readB,0,readByte);
 			}
 			byteInputBuffer.flush();
-		}finally {
-			try {
-				if(fis!=null) {
-					fis.close();
-				}
-			}catch(Throwable t) {
-				// ignore
-			}	
-			try {
-				if(byteInputBuffer!=null) {
-					byteInputBuffer.close();
-				}
-			}catch(Throwable t) {
-				// ignore
-			}
+			
+			return  byteInputBuffer.toByteArray();
 		}
-		
-		return  byteInputBuffer.toByteArray();
+		catch(FileNotFoundException notFound) {
+			throw notFound;
+		}
+		catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 	
 	
-	public static void writeFile(String f,byte[] contenuto)throws Exception{
+	public static void writeFile(String f,byte[] contenuto)throws UtilsException{
 		FileSystemUtilities.writeFile(new File(f), contenuto);
 	}
-	public static void writeFile(File f,byte[] contenuto)throws Exception{
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(f);
+	public static void writeFile(File f,byte[] contenuto)throws UtilsException{
+		try (FileOutputStream fos = new FileOutputStream(f);){
 			fos.write(contenuto);
 			fos.flush();
-		}finally {
-			try {
-				if(fos!=null) {
-					fos.close();
-				}
-			}catch(Throwable t) {
-				// ignore
-			}	
+		}
+		catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	public static void writeFile(String f,byte[] ... args)throws Exception{
+	public static void writeFile(String f,byte[] ... args)throws UtilsException{
 		FileSystemUtilities.writeFile(new File(f), args);
 	}
-	public static void writeFile(File f,byte[] ... args)throws Exception{
+	public static void writeFile(File f,byte[] ... args)throws UtilsException{
 		if(args!=null){
-			FileOutputStream fos = null;
-			try {
-				fos = new FileOutputStream(f);
+			try (FileOutputStream fos = new FileOutputStream(f);){
 				for(int i=0; i<args.length; i++){
 					fos.write(args[i]);
 				}
 				fos.flush();
-			}finally {
-				try {
-					if(fos!=null) {
-						fos.close();
-					}
-				}catch(Throwable t) {
-					// ignore
-				}	
+			}
+			catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
 			}
 		}
 	}
 	
-	public static void copyFileAndReplaceAllKeywords(String read,String write,String keyword,String values) throws Exception{
+	public static void copyFileAndReplaceAllKeywords(String read,String write,String keyword,String values) throws UtilsException, FileNotFoundException{
 		FileSystemUtilities.copyFileAndReplaceAllKeywords(new File(read),new File(write),keyword,values);
 	}
-	public static void copyFileAndReplaceAllKeywords(File read,File write,String keyword,String values) throws Exception{
+	public static void copyFileAndReplaceAllKeywords(File read,File write,String keyword,String values) throws UtilsException, FileNotFoundException{
 		String[]k = new String[1];
 		k[0] = keyword;
 		String[]v = new String[1];
 		v[0] = values;
 		FileSystemUtilities.copyFileAndReplaceAllKeywords(read, write, k, v);
 	}
-	public static void copyFileAndReplaceAllKeywords(String read,String write,String[] keyword,String[] values) throws Exception{
+	public static void copyFileAndReplaceAllKeywords(String read,String write,String[] keyword,String[] values) throws UtilsException, FileNotFoundException{
 		FileSystemUtilities.copyFileAndReplaceAllKeywords(new File(read),new File(write),keyword,values);
 	}
-	public static void copyFileAndReplaceAllKeywords(File read,File write,String[] keyword,String[] values) throws Exception{
+	public static void copyFileAndReplaceAllKeywords(File read,File write,String[] keyword,String[] values) throws UtilsException, FileNotFoundException{
 		String file = FileSystemUtilities.readFile(read);
 		for(int i=0; i<keyword.length; i++){
 			
-			//System.out.println("FILE ["+file+"] contains ["+keyword[i]+"] (value:"+file.indexOf(keyword[i])+")");
+			/** System.out.println("FILE ["+file+"] contains ["+keyword[i]+"] (value:"+file.indexOf(keyword[i])+")"); */
 			int indexOf = file.indexOf(keyword[i]);
 			while(indexOf>=0){
-				//System.out.println("REPLACE ["+keyword[i]+"] ["+values[i]+"]");
+				/** System.out.println("REPLACE ["+keyword[i]+"] ["+values[i]+"]"); */
 				file = file.replace(keyword[i], values[i]);
 				indexOf = file.indexOf(keyword[i],indexOf+values[i].length());
-				//System.out.println("INDEX OF ["+indexOf+"]");
+				/** System.out.println("INDEX OF ["+indexOf+"]"); */
 			}
 		}
 		FileSystemUtilities.writeFile(write, file.getBytes());
 	}
 	
-	public static void copyFileAndReplaceKeywords(String read,String write,String keyword,String values) throws Exception{
+	public static void copyFileAndReplaceKeywords(String read,String write,String keyword,String values) throws UtilsException, FileNotFoundException{
 		FileSystemUtilities.copyFileAndReplaceKeywords(new File(read),new File(write),keyword,values);
 	}
-	public static void copyFileAndReplaceKeywords(File read,File write,String keyword,String values) throws Exception{
+	public static void copyFileAndReplaceKeywords(File read,File write,String keyword,String values) throws UtilsException, FileNotFoundException{
 		String[]k = new String[1];
 		k[0] = keyword;
 		String[]v = new String[1];
@@ -348,10 +282,10 @@ public class FileSystemUtilities {
 		FileSystemUtilities.copyFileAndReplaceKeywords(read, write, k, v);
 	}
 	
-	public static void copyFileAndReplaceKeywords(String read,String write,String[] keyword,String[] values) throws Exception{
+	public static void copyFileAndReplaceKeywords(String read,String write,String[] keyword,String[] values) throws UtilsException, FileNotFoundException{
 		FileSystemUtilities.copyFileAndReplaceKeywords(new File(read),new File(write),keyword,values);
 	}
-	public static void copyFileAndReplaceKeywords(File read,File write,String[] keyword,String[] values) throws Exception{
+	public static void copyFileAndReplaceKeywords(File read,File write,String[] keyword,String[] values) throws UtilsException, FileNotFoundException{
 		String file = FileSystemUtilities.readFile(read);
 		for(int i=0; i<keyword.length; i++){
 		    file = file.replace(keyword[i], values[i]);
@@ -362,7 +296,7 @@ public class FileSystemUtilities {
 
 	public static boolean emptyDir(String dir) {
 		File d = new File(dir);
-		if(d.exists()==false){
+		if(!d.exists()){
 			return true;
 		}
 		return FileSystemUtilities.emptyDir(d);
@@ -387,7 +321,7 @@ public class FileSystemUtilities {
     
 	public static boolean deleteDir(String dir) {
 		File d = new File(dir);
-		if(d.exists()==false){
+		if(!d.exists()){
 			return true;
 		}
 		return FileSystemUtilities.deleteDir(d);
@@ -400,7 +334,12 @@ public class FileSystemUtilities {
         }
 
         // The directory is now empty so now it can be smoked
-        return dir.delete();
+        try {
+        	Files.delete(dir.toPath());
+        	return true;
+        }catch(Exception e) {
+        	return false;
+        }
     }
     
     public static boolean moveToDir(String src,String destDir){
@@ -415,8 +354,8 @@ public class FileSystemUtilities {
     public static boolean moveToDir(File src,File destDir){
 
         // Move file to new directory
-        boolean success = src.renameTo(new File(destDir, src.getName()));
-        return success;
+        return src.renameTo(new File(destDir, src.getName()));
+
     }
     
     public static boolean moveToFile(String src,String destFile){
@@ -431,23 +370,22 @@ public class FileSystemUtilities {
    public static boolean moveToFile(File src,File destFile){
 
        // Move file to new directory
-       boolean success = src.renameTo(destFile);
-       return success;
+       return src.renameTo(destFile);
    }
    
-   public static void mkdirParentDirectory(File file) throws Exception {
+   public static void mkdirParentDirectory(File file) throws UtilsException {
 	   FileSystemUtilities.mkdirParentDirectory(file.getAbsolutePath());
    }
    public static void mkdirParentDirectory(File file,
 		   Boolean readable, Boolean readableOwnerOnly,
 		   Boolean writable, Boolean writableOwnerOnly,
-		   Boolean executable, Boolean executableOwnerOnly) throws Exception {
+		   Boolean executable, Boolean executableOwnerOnly) throws UtilsException {
 	   FileSystemUtilities.mkdirParentDirectory(file.getAbsolutePath(),
 			   readable, readableOwnerOnly,
 			   writable, writableOwnerOnly,
 			   executable, executableOwnerOnly);
    }
-   public static void mkdirParentDirectory(String file) throws Exception {
+   public static void mkdirParentDirectory(String file) throws UtilsException {
 	   mkdirParentDirectory(file,
 			   null, null,
 			   null, null,
@@ -456,7 +394,7 @@ public class FileSystemUtilities {
    public static void mkdirParentDirectory(String file,
 		   Boolean readable, Boolean readableOwnerOnly,
 		   Boolean writable, Boolean writableOwnerOnly,
-		   Boolean executable, Boolean executableOwnerOnly) throws Exception {
+		   Boolean executable, Boolean executableOwnerOnly) throws UtilsException {
 		try{
 			File p = new File(file);
 			if(p.getParentFile()==null){
@@ -466,174 +404,215 @@ public class FileSystemUtilities {
 				return;
 			}
 			FileSystemUtilities.mkdirParentDirectory(p.getParentFile().getAbsolutePath());
-			if(p.getParentFile().mkdir()==false){
-				throw new Exception("Directory ["+p.getParentFile().getAbsolutePath()+"] non esistente e creazione non riuscita");
+			if(!p.getParentFile().mkdir()){
+				throw new UtilsException(DIRECTORY_PREFIX_MSG+p.getParentFile().getAbsolutePath()+"] non esistente e creazione non riuscita");
 			}
 			else {
-				if(readable!=null) {
-					if(readableOwnerOnly!=null) {
-						if(!p.getParentFile().setReadable(readable, readableOwnerOnly)) {
-							// ignore
-						}
-					}
-					else {
-						if(!p.getParentFile().setReadable(readable)) {
-							// ignore
-						}
-					}
-				}
-				if(writable!=null) {
-					if(writableOwnerOnly!=null) {
-						if(!p.getParentFile().setWritable(writable, writableOwnerOnly)) {
-							// ignore
-						}
-					}
-					else {
-						if(!p.getParentFile().setWritable(writable)) {
-							// ignore
-						}
-					}
-				}
-				if(executable!=null) {
-					if(executableOwnerOnly!=null) {
-						if(!p.getParentFile().setExecutable(executable, executableOwnerOnly)) {
-							// ignore
-						}
-					}
-					else {
-						if(!p.getParentFile().setExecutable(executable)) {
-							// ignore
-						}
-					}
-				}
+				setRWX(p,
+						readable, readableOwnerOnly,
+						writable, writableOwnerOnly,
+						executable, executableOwnerOnly);
 			}
 		}catch(Exception e){
-			throw new Exception("mkdirParentDirectory non riuscito: "+e.getMessage(),e);
+			throw new UtilsException("mkdirParentDirectory non riuscito: "+e.getMessage(),e);
 		}
-	}
+   }
+   private static void setRWX(File p,
+		   Boolean readable, Boolean readableOwnerOnly,
+		   Boolean writable, Boolean writableOwnerOnly,
+		   Boolean executable, Boolean executableOwnerOnly) {
+	   setParentR(p, readable, readableOwnerOnly);
+	   setParentW(p, writable, writableOwnerOnly);
+	   setParentX(p, executable, executableOwnerOnly);
+   }
+   private static void setParentR(File p, Boolean readable, Boolean readableOwnerOnly) {
+	   if(readable!=null) {
+			if(readableOwnerOnly!=null) {
+				if(!p.getParentFile().setReadable(readable, readableOwnerOnly)) {
+					// ignore
+				}
+			}
+			else {
+				if(!p.getParentFile().setReadable(readable)) {
+					// ignore
+				}
+			}
+	   }
+   }
+   private static void setParentW(File p, Boolean writable, Boolean writableOwnerOnly) {
+	   if(writable!=null) {
+			if(writableOwnerOnly!=null) {
+				if(!p.getParentFile().setWritable(writable, writableOwnerOnly)) {
+					// ignore
+				}
+			}
+			else {
+				if(!p.getParentFile().setWritable(writable)) {
+					// ignore
+				}
+			}
+		}
+   }
+   private static void setParentX(File p, Boolean executable, Boolean executableOwnerOnly) {
+		if(executable!=null) {
+			if(executableOwnerOnly!=null) {
+				if(!p.getParentFile().setExecutable(executable, executableOwnerOnly)) {
+					// ignore
+				}
+			}
+			else {
+				if(!p.getParentFile().setExecutable(executable)) {
+					// ignore
+				}
+			}
+		}
+   }
    
-   public static void mkdir(String f) throws Exception{
+   public static void mkdir(String f) throws UtilsException{
 	   mkdir(f, new FileSystemMkdirConfig());
    }
    public static void mkdir(String f,
 		   Boolean readable, Boolean readableOwnerOnly,
 		   Boolean writable, Boolean writableOwnerOnly,
-		   Boolean executable, Boolean executableOwnerOnly) throws Exception{
+		   Boolean executable, Boolean executableOwnerOnly) throws UtilsException{
 	   mkdir(f, new FileSystemMkdirConfig(),
-			   readable, readableOwnerOnly,
-			   writable, writableOwnerOnly,
-			   executable, executableOwnerOnly);
+			   new FileRWXConfig(readable, readableOwnerOnly,
+					   writable, writableOwnerOnly,
+					   executable, executableOwnerOnly));
    }
-   public static void mkdir(String f, FileSystemMkdirConfig config) throws Exception{
+   public static void mkdir(String f,
+		   FileRWXConfig rwxConfig) throws UtilsException{
+	   mkdir(f, new FileSystemMkdirConfig(), rwxConfig);
+   }
+   public static void mkdir(String f, FileSystemMkdirConfig config) throws UtilsException{
 	   File dir = new File(f);
 	   mkdir(dir, config);
    }
    public static void mkdir(String f, FileSystemMkdirConfig config,
-		   Boolean readable, Boolean readableOwnerOnly,
-		   Boolean writable, Boolean writableOwnerOnly,
-		   Boolean executable, Boolean executableOwnerOnly) throws Exception{
+		   FileRWXConfig rwxConfig) throws UtilsException{
 	   File dir = new File(f);
-	   mkdir(dir, config,
-			   readable, readableOwnerOnly,
-			   writable, writableOwnerOnly,
-			   executable, executableOwnerOnly);
+	   mkdir(dir, config, rwxConfig);
    }
    
-   public static void mkdir(File dir) throws Exception{
+   public static void mkdir(File dir) throws UtilsException{
 	   mkdir(dir, new FileSystemMkdirConfig());
    }
    public static void mkdir(File dir,
 		   Boolean readable, Boolean readableOwnerOnly,
 		   Boolean writable, Boolean writableOwnerOnly,
-		   Boolean executable, Boolean executableOwnerOnly) throws Exception{
+		   Boolean executable, Boolean executableOwnerOnly) throws UtilsException{
 	   mkdir(dir, new FileSystemMkdirConfig(),
-			   readable, readableOwnerOnly,
-			   writable, writableOwnerOnly,
-			   executable, executableOwnerOnly);
+			   new FileRWXConfig(readable, readableOwnerOnly,
+					   writable, writableOwnerOnly,
+					   executable, executableOwnerOnly));
    }
-   public static void mkdir(File dir, FileSystemMkdirConfig config) throws Exception{
-	   mkdir(dir, config,
-			   null, null,
-			   null, null,
-			   null, null);
+   public static void mkdir(File dir, FileRWXConfig rwxConfig) throws UtilsException{
+	   mkdir(dir, new FileSystemMkdirConfig(), rwxConfig);
+   }
+   public static void mkdir(File dir, FileSystemMkdirConfig config) throws UtilsException{
+	   mkdir(dir, config, null);
    }
    public static void mkdir(File dir, FileSystemMkdirConfig config,
-		   Boolean readable, Boolean readableOwnerOnly,
-		   Boolean writable, Boolean writableOwnerOnly,
-		   Boolean executable, Boolean executableOwnerOnly) throws Exception{
+		   FileRWXConfig rwxConfig) throws UtilsException{
+	   
+	   Boolean readable = null;
+	   Boolean readableOwnerOnly = null;
+	   Boolean writable = null;
+	   Boolean writableOwnerOnly = null;
+	   Boolean executable = null;
+	   Boolean executableOwnerOnly = null;
+	   if(rwxConfig!=null) {
+		   readable = rwxConfig.getReadable();
+		   readableOwnerOnly = rwxConfig.getReadableOwnerOnly();
+		   writable = rwxConfig.getWritable();
+		   writableOwnerOnly = rwxConfig.getWritableOwnerOnly();
+		   executable = rwxConfig.getExecutable();
+		   executableOwnerOnly = rwxConfig.getExecutableOwnerOnly();
+	   }
+	   
 	   if(dir.exists()){
-			if(dir.isDirectory()==false){
-				throw new Exception("File ["+dir.getAbsolutePath()+"] is not directory");
-			}
-			if(config.isCheckCanRead()) {
-				if(dir.canRead()==false){
-					throw new Exception("Directory ["+dir.getAbsolutePath()+"] cannot read");
-				}
-			}
-			if(config.isCheckCanWrite()){
-				if(dir.canWrite()==false){
-					throw new Exception("Directory ["+dir.getAbsolutePath()+"] cannot write");
-				}
-			}
-			if(config.isCheckCanExecute()){
-				if(dir.canExecute()==false){
-					throw new Exception("Directory ["+dir.getAbsolutePath()+"] cannot execute");
-				}
-			}
+		   checkDir(dir, config);
 		}
 		else{
 			if(dir.getParentFile()!=null) {
 				File parent = dir.getParentFile();
-				if(parent.exists()==false) {
-					if(config.crateParentIfNotExists) {
-						mkdirParentDirectory(dir,
-								   readable, readableOwnerOnly,
-								   writable, writableOwnerOnly,
-								   executable, executableOwnerOnly);
-					}
+				if(!parent.exists() &&
+					config.crateParentIfNotExists) {
+					mkdirParentDirectory(dir,
+							readable, readableOwnerOnly,
+							writable, writableOwnerOnly,
+							executable, executableOwnerOnly);
 				}
 			}
-			if(dir.mkdir()==false){
-				throw new Exception("Creazione directory ["+dir.getAbsolutePath()+"] non riuscita");
+			if(!dir.mkdir()){
+				throw new UtilsException("Creazione directory ["+dir.getAbsolutePath()+"] non riuscita");
 			}
 			else {
-				if(readable!=null) {
-					if(readableOwnerOnly!=null) {
-						if(!dir.setReadable(readable, readableOwnerOnly)) {
-							// ignore
-						}
-					}
-					else {
-						if(!dir.setReadable(readable)) {
-							// ignore
-						}
-					}
+				setR(dir, readable, readableOwnerOnly);
+				setW(dir, writable, writableOwnerOnly);
+				setX(dir, executable, executableOwnerOnly);
+			}
+		}
+   }
+   private static void checkDir(File dir, FileSystemMkdirConfig config) throws UtilsException {
+	   if(!dir.isDirectory()){
+			throw new UtilsException("File ["+dir.getAbsolutePath()+"] is not directory");
+		}
+		if(config.isCheckCanRead() &&
+			!dir.canRead()){
+			throw new UtilsException(DIRECTORY_PREFIX_MSG+dir.getAbsolutePath()+"] cannot read");
+		}
+		if(config.isCheckCanWrite() &&
+			!dir.canWrite()){
+			throw new UtilsException(DIRECTORY_PREFIX_MSG+dir.getAbsolutePath()+"] cannot write");
+		}
+		if(config.isCheckCanExecute() &&
+			!dir.canExecute()){
+			throw new UtilsException(DIRECTORY_PREFIX_MSG+dir.getAbsolutePath()+"] cannot execute");
+		}
+   }
+   private static void setR(File dir, Boolean readable, Boolean readableOwnerOnly) {
+	   if(readable!=null) {
+			if(readableOwnerOnly!=null) {
+				if(!dir.setReadable(readable, readableOwnerOnly)) {
+					// ignore
 				}
-				if(writable!=null) {
-					if(writableOwnerOnly!=null) {
-						if(!dir.setWritable(writable, writableOwnerOnly)) {
-							// ignore
-						}
-					}
-					else {
-						if(!dir.setWritable(writable)) {
-							// ignore
-						}
-					}
-				}
-				if(executable!=null) {
-					if(executableOwnerOnly!=null) {
-						if(!dir.setExecutable(executable, executableOwnerOnly)) {
-							// ignore
-						}
-					}
-					else {
-						if(!dir.setExecutable(executable)) {
-							// ignore
-						}
-					}
+			}
+			else {
+				if(!dir.setReadable(readable)) {
+					// ignore
 				}
 			}
 		}
-	}
+   }
+   private static void setW(File dir, Boolean writable, Boolean writableOwnerOnly) {
+	   if(writable!=null) {
+			if(writableOwnerOnly!=null) {
+				if(!dir.setWritable(writable, writableOwnerOnly)) {
+					// ignore
+				}
+			}
+			else {
+				if(!dir.setWritable(writable)) {
+					// ignore
+				}
+			}
+		}
+   }
+   private static void setX(File dir, Boolean executable, Boolean executableOwnerOnly) {
+	   if(executable!=null) {
+			if(executableOwnerOnly!=null) {
+				if(!dir.setExecutable(executable, executableOwnerOnly)) {
+					// ignore
+				}
+			}
+			else {
+				if(!dir.setExecutable(executable)) {
+					// ignore
+				}
+			}
+		}
+   }
+   
+   private static final String DIRECTORY_PREFIX_MSG = "Directory [";
 }
