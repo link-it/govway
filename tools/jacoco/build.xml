@@ -1,0 +1,1504 @@
+<project name="jacoco" basedir="." default="jacoco" xmlns:jacoco="antlib:org.jacoco.ant">
+
+	<import file="local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	
+	<!-- 
+	     https://www.jacoco.org/jacoco/index.html
+	     https://www.jacoco.org/jacoco/trunk/doc/index.html
+	     https://www.jacoco.org/jacoco/trunk/doc/cli.html
+	     https://www.jacoco.org/jacoco/trunk/doc/agent.html
+	     https://www.jacoco.org/jacoco/trunk/doc/examples/build/build.xml
+
+	     https://docs.sonarqube.org/9.7/analyzing-source-code/test-coverage/java-test-coverage/
+	     https://community.sonarsource.com/t/generating-coverage-using-multiple-jacoco-xml-and-exec-reports/13341/7
+ 	-->
+
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${openspcoop2.lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- estensione di jacoco -->
+	<path id="classpath_jacoco">
+		<fileset dir="${openspcoop2.lib}/coverage">
+			<include name="org.jacoco.*.jar"/>
+			<include name="asm*.jar"/>
+		</fileset>
+	</path>
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpathref="classpath_jacoco"/>
+
+	<!-- local -->
+	<property name="jacoco.build" location="build"/>
+
+	<!-- Find -->
+	<target name="jacoco">
+
+                <if>
+                        <equals arg1="${jacoco.exec.dir}" arg2="$${jacoco.exec.dir}"/>
+                        <then>
+                                <fail message="Parametro 'jacoco.exec.dir' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${jacoco.exec.dir}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'jacoco.exec.dir' non definito"/>
+                        </then>
+                </if>
+
+		<if>
+                        <equals arg1="${jacoco.govway.project}" arg2="$${jacoco.govway.project}"/>
+                        <then>
+				<var name="govway.group" value="all"/>
+			</then>
+			<else>
+				<var name="govway.group" value="${jacoco.govway.project}"/>
+			</else>
+                </if>
+
+		<delete dir="${jacoco.build}" />
+		<mkdir dir="${jacoco.build}" />
+
+		<var name="jacoco.sources.analyze" value=""/>
+
+		<var name="govway.binary" value=""/> <!-- oggetti che non contengono codice java -->
+		<var name="govway.tests" value=""/> <!-- classi di test -->
+		<var name="govway.falsePositive" value=""/> <!-- falsi positivi -->
+
+		<!-- Utils Commons -->
+		<var name="projectAnalyze" value="utils-commons"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_utils_commons" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_utils_commons" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_utils_commons}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="utils"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/utils/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/utils/src"/>
+					</else>
+				</if>
+				
+				<antcall target="-prepare">
+					<param name="analyzeType" value="${projectAnalyze}"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/utils/"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/utils/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_utils*.jar"/>
+				</antcall>
+
+				<!-- Classi di test -->
+				<delete dir="${jacoco.build}">
+					<include name="**/org/openspcoop2/utils/**/test/*.class"/>
+					<include name="**/org/openspcoop2/utils/test/**/*.class"/>
+					<include name="**/org/openspcoop2/utils/Test*.class"/>
+					<include name="**/org/openspcoop2/utils/instrument/*"/>
+				</delete>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Utils GenericProject -->
+		<var name="projectAnalyze" value="utils-generic-project"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_utils_generic_project" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_utils_generic_project" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_utils_generic_project}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="generic-project"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/generic_project/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/generic_project/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="utils-generic-project"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/generic_project/"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/generic_project/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_generic-project*.jar"/>
+				</antcall>
+
+				<!-- Classi di test -->
+				<delete dir="${jacoco.build}">
+					<include name="**/org/openspcoop2/generic_project/expression/impl/test/**/*.class"/>
+				</delete>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
+		<!-- Runtime Message -->
+		<var name="projectAnalyze" value="runtime-message"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_runtime_message" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_runtime_message" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_runtime_message}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="message"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="core/src/org/openspcoop2/message"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},core/src/org/openspcoop2/message"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="runtime-message"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>
+					<param name="analyzeSrc" value="${openspcoop2}/core/src/org/openspcoop2/message"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_message*.jar"/>
+				</antcall>
+
+				<!-- Classi di test -->
+				<delete dir="${jacoco.build}">
+					<include name="**/org/openspcoop2/message/**/test/*.class"/>
+					<include name="**/org/openspcoop2/message/utils/ServletTestService.class"/>
+				</delete>
+
+				<!-- Classi da eliminare, inutilizzate e presenti per motivi storici -->
+				<if>
+				        <equals arg1="${jacoco.deleteOldClasses}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/org/openspcoop2/message/context/utils/serializer/**/*.class"/>    
+							<include name="**/org/openspcoop2/message/context/model/**/*.class"/>   
+						</delete>   
+				        </then>
+				</if>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Runtime Core -->
+		<var name="projectAnalyze" value="runtime-core"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_runtime_core" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_runtime_core" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_runtime_core}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="core"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="core/src/org/openspcoop2/core"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},core/src/org/openspcoop2/core"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="runtime-core"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>
+					<param name="analyzeSrc" value="${openspcoop2}/core/src/org/openspcoop2/core"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_core*.jar"/>
+				</antcall>
+
+				<!-- Classi di test -->
+				<delete dir="${jacoco.build}">
+					<include name="**/org/openspcoop2/core/registry/driver/test/*.class"/>
+				</delete>
+
+				<!-- Classi da eliminare, inutilizzate e presenti per motivi storici -->
+				<if>
+				        <equals arg1="${jacoco.deleteOldClasses}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/org/openspcoop2/core/transazioni/utils/serializer/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/tracciamento/utils/serializer/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/tracciamento/model/**/*.class"/>   
+							<include name="**/org/openspcoop2/core/statistiche/utils/serializer/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/plugins/utils/serializer/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/registry/utils/serializer/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/registry/model/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/registry/driver/ws/**/*.class"/>   
+							<include name="**/org/openspcoop2/core/registry/driver/web/**/*.class"/> 
+							<include name="**/org/openspcoop2/core/registry/driver/uddi/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/integrazione/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/eccezione/router_details/**/*.class"/>
+							<include name="**/org/openspcoop2/core/eccezione/errore_applicativo/utils/serializer/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/eccezione/errore_applicativo/model/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/eccezione/details/utils/serializer/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/eccezione/details/model/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/diagnostica/utils/serializer/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/diagnostica/model/**/*.class"/>   
+							<include name="**/org/openspcoop2/core/config/utils/serializer/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/config/model/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/commons/search/utils/serializer/**/*.class"/>    
+						</delete>   
+				        </then>
+				</if>
+
+				<!-- Classi da eliminare utilizzate dalle console -->
+				<if>
+				        <equals arg1="${jacoco.deleteClassesUsedByConsole}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/org/openspcoop2/core/mvc/**/*.class"/>     
+							<include name="**/org/openspcoop2/core/allarmi/**/*.class"/>     
+						</delete>  
+				        </then>
+				</if>
+
+				<!-- Classi da eliminare generare dal generatore -->
+				<if>
+				        <equals arg1="${jacoco.deleteClassesGenerated}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/org/openspcoop2/core/transazioni/dao/jdbc/**/*.class"/>   
+							<include name="**/org/openspcoop2/core/transazioni/utils/serializer/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/transazioni/model/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/statistiche/dao/jdbc/**/*.class"/>   
+							<include name="**/org/openspcoop2/core/statistiche/utils/serializer/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/statistiche/model/**/*.class"/>         
+							<include name="**/org/openspcoop2/core/plugins/dao/jdbc/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/plugins/utils/serializer/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/plugins/model/**/*.class"/>        
+							<include name="**/org/openspcoop2/core/eventi/dao/jdbc/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/eventi/utils/serializer/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/eventi/model/**/*.class"/>        
+							<include name="**/org/openspcoop2/core/controllo_traffico/dao/jdbc/**/*.class"/>     
+							<include name="**/org/openspcoop2/core/controllo_traffico/utils/serializer/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/controllo_traffico/model/**/*.class"/>         
+							<include name="**/org/openspcoop2/core/commons/search/dao/jdbc/**/*.class"/>       
+							<include name="**/org/openspcoop2/core/commons/search/utils/serializer/**/*.class"/>  
+							<include name="**/org/openspcoop2/core/commons/search/model/**/*.class"/>     
+						</delete>  
+				        </then>
+				</if>
+
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Runtime protocol -->
+		<var name="projectAnalyze" value="runtime-protocol"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_runtime_protocol" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_runtime_protocol" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_runtime_protocol}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="protocol"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="core/src/org/openspcoop2/protocol"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},core/src/org/openspcoop2/protocol"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="runtime-protocol"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>
+					<param name="analyzeSrc" value="${openspcoop2}/core/src/org/openspcoop2/protocol"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_protocol*.jar"/>
+				</antcall>
+
+				<!-- Classi di test -->
+				<delete dir="${jacoco.build}">
+					<include name="**/org/openspcoop2/protocol/engine/driver/repository/test/*.class"/>
+				</delete>
+
+				<!-- Classi da eliminare, inutilizzate e presenti per motivi storici -->
+				<if>
+				        <equals arg1="${jacoco.deleteOldClasses}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/org/openspcoop2/protocol/manifest/utils/**/*.class"/>
+							<include name="**/org/openspcoop2/protocol/manifest/model/**/*.class"/> 
+						</delete>       
+				        </then>
+				</if>
+
+				<!-- Classi da eliminare utilizzate dalle console -->
+				<if>
+				        <equals arg1="${jacoco.deleteClassesUsedByConsole}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/org/openspcoop2/protocol/abstraction/**/*.class"/>    
+							<include name="**/org/openspcoop2/protocol/information_missing/**/*.class"/>    
+							<include name="**/org/openspcoop2/protocol/sdk/archive/**/*.class"/> 
+							<include name="**/org/openspcoop2/protocol/engine/archive/**/*.class"/> 
+							<include name="**/org/openspcoop2/protocol/basic/archive/**/*.class"/> 
+							<include name="**/org/openspcoop2/protocol/basic/properties/**/*.class"/> 
+						</delete>  
+				        </then>
+				</if>
+
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Runtime monitor -->
+		<var name="projectAnalyze" value="runtime-monitor"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_runtime_monitor" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_runtime_monitor" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_runtime_monitor}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="monitor"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="core/src/org/openspcoop2/monitor"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},core/src/org/openspcoop2/monitor"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="runtime-monitor"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>
+					<param name="analyzeSrc" value="${openspcoop2}/core/src/org/openspcoop2/monitor"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_monitor*.jar"/>
+				</antcall>
+
+				<!-- Classi di test -->
+				<delete dir="${jacoco.build}">
+					<include name="**/org/openspcoop2/monitor/engine/condition/test/*.class"/>
+				</delete>
+
+				<!-- Classi da eliminare, inutilizzate e presenti per motivi storici -->
+				<if>
+				        <equals arg1="${jacoco.deleteOldClasses}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/org/openspcoop2/monitor/sdk/transaction/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/sdk/statistic/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/sdk/exceptions/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/sdk/condition/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/engine/transaction/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/engine/config/transazioni/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/engine/config/statistiche/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/engine/config/ricerche/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/engine/config/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/engine/exceptions/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/engine/utils/**/*.class"/>
+							<include name="**/org/openspcoop2/monitor/engine/condition/**/*.class"/>
+						</delete>       
+				        </then>
+				</if>
+
+				<!-- Classi da eliminare utilizzate dalle console -->
+				<if>
+				        <equals arg1="${jacoco.deleteClassesUsedByConsole}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/org/openspcoop2/monitor/sdk/parameters/**/*.class"/>    
+							<include name="**/org/openspcoop2/monitor/sdk/alarm/**/*.class"/>    
+							<include name="**/org/openspcoop2/monitor/sdk/plugins/**/*.class"/>    
+							<include name="**/org/openspcoop2/monitor/engine/alarm/**/*.class"/>  
+							<include name="**/org/openspcoop2/monitor/engine/status/**/*.class"/>
+						</delete>  
+				        </then>
+				</if>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Runtime security -->
+		<var name="projectAnalyze" value="runtime-security"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_runtime_security" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_runtime_security" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_runtime_security}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="security"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="core/src/org/openspcoop2/security"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},core/src/org/openspcoop2/security"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="runtime-security"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>
+					<param name="analyzeSrc" value="${openspcoop2}/core/src/org/openspcoop2/security"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_security*.jar"/>
+				</antcall>
+
+				<!-- Classi di test -->
+				<delete dir="${jacoco.build}">
+					<include name="**/org/openspcoop2/security/message/soapbox/test/*.class"/>
+				</delete>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Runtime pdd -->
+		<var name="projectAnalyze" value="runtime-pdd"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_runtime_pdd" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_runtime_pdd" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_runtime_pdd}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="pdd"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="core/src/org/openspcoop2/pdd"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},core/src/org/openspcoop2/pdd"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="runtime-pdd"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>
+					<param name="analyzeSrc" value="${openspcoop2}/core/src/org/openspcoop2/pdd"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_pdd*.jar"/>
+				</antcall>
+
+				<!-- Classi di test -->
+				<delete dir="${jacoco.build}">
+					<include name="**/org/openspcoop2/pdd/**/test/*.class"/>
+					<include name="**/org/openspcoop2/pdd_test/**"/>
+				</delete>
+
+				<!-- Classi da eliminare, inutilizzate e presenti per motivi storici -->
+				<if>
+				        <equals arg1="${jacoco.deleteOldClasses}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/org/openspcoop2/pdd/mdb/threads/**/*.class"/>
+							<include name="**/org/openspcoop2/pdd/core/handlers/statistics/**/*.class"/>
+							<include name="**/org/openspcoop2/pdd/core/handlers/notifier/**/*.class"/>
+						</delete>       
+				        </then>
+				</if>
+
+				<!-- Classi da eliminare utilizzate dalle console -->
+				<if>
+				        <equals arg1="${jacoco.deleteClassesUsedByConsole}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/org/openspcoop2/pdd/monitor/**/*.class"/>    
+						</delete>  
+				        </then>
+				</if>
+
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
+		<!-- Profilo AS4 -->
+		<var name="projectAnalyze" value="protocol-as4"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_protocol_as4" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_protocol_as4" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_protocol_as4}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="as4"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="protocolli/as4/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},protocolli/as4/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="protocol-as4"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/protocolli/as4"/>
+					<param name="analyzeSrc" value="${openspcoop2}/protocolli/as4/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_as4-protocol*.jar"/>
+				</antcall>
+
+				<!-- Classi di test -->
+				<delete dir="${jacoco.build}">
+					<include name="**/org/openspcoop2/protocol/as4/pmode/test/*.class"/>
+				</delete>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Profilo ModI -->
+		<var name="projectAnalyze" value="protocol-modipa"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_protocol_modipa" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_protocol_modipa" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_protocol_modipa}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="modipa"/>
+					<equals arg1="${govway.group}" arg2="modi"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="protocolli/modipa/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},protocolli/modipa/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="protocol-modipa"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/protocolli/modipa"/>
+					<param name="analyzeSrc" value="${openspcoop2}/protocolli/modipa/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_modipa-protocol*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Profilo SDI -->
+		<var name="projectAnalyze" value="protocol-sdi"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_protocol_sdi" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_protocol_sdi" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_protocol_sdi}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="sdi"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="protocolli/sdi/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},protocolli/sdi/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="protocol-sdi"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/protocolli/sdi"/>
+					<param name="analyzeSrc" value="${openspcoop2}/protocolli/sdi/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_sdi-protocol*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Profilo SPCoop -->
+		<var name="projectAnalyze" value="protocol-spcoop"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_protocol_spcoop" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_protocol_spcoop" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_protocol_spcoop}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="spcoop"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="protocolli/spcoop/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},protocolli/spcoop/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="protocol-sdi"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/protocolli/spcoop"/>
+					<param name="analyzeSrc" value="${openspcoop2}/protocolli/spcoop/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_spcoop-protocol*.jar"/>
+				</antcall>
+
+				<!-- Classi da eliminare utilizzate dalle console -->
+				<if>
+				        <equals arg1="${jacoco.deleteClassesUsedByConsole}" arg2="true"/>
+				        <then>
+						<delete dir="${jacoco.build}">
+							<include name="**/it/**/*.class"/> 
+							<include name="**/org/openspcoop2/protocol/spcoop/archive/**/*.class"/>    
+							<include name="**/org/openspcoop2/protocol/spcoop/sica/**/*.class"/>    
+						</delete>  
+				        </then>
+				</if>
+
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Profilo API Gateway -->
+		<var name="projectAnalyze" value="protocol-trasparente"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_protocol_trasparente" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_protocol_trasparente" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_protocol_trasparente}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="trasparente"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="protocolli/trasparente/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},protocolli/trasparente/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="protocol-trasparente"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/protocolli/trasparente"/>
+					<param name="analyzeSrc" value="${openspcoop2}/protocolli/trasparente/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_trasparente-protocol*.jar"/>
+				</antcall>
+
+				<!-- Classi di test -->
+				<delete dir="${jacoco.build}">
+					<include name="**/org/openspcoop2/protocol/trasparente/properties/TrasparenteConfigurazioneTest.class"/>
+				</delete>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
+		<!-- WEB Lib audit -->
+		<var name="projectAnalyze" value="web-lib-audit"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_web_lib_audit" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_web_lib_audit" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_web_lib_audit}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="audit"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/web_interfaces/lib/audit/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/lib/audit/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-lib-audit"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/lib/audit"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/audit/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-lib-audit*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- WEB Lib mvc -->
+		<var name="projectAnalyze" value="web-lib-mvc"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_web_lib_mvc" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_web_lib_mvc" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_web_lib_mvc}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="mvc"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/web_interfaces/lib/mvc/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/lib/mvc/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-lib-mvc"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/lib/mvc"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/mvc/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-lib-mvc*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- WEB Lib queue -->
+		<var name="projectAnalyze" value="web-lib-queue"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_web_lib_queue" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_web_lib_queue" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_web_lib_queue}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="queue"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/web_interfaces/lib/queue/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/lib/queue/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-lib-queue"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/lib/queue"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/queue/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-lib-queue*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- WEB Lib users -->
+		<var name="projectAnalyze" value="web-lib-users"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_web_lib_users" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_web_lib_users" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_web_lib_users}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="users"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/web_interfaces/lib/users/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/lib/users/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-lib-users"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/lib/users"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/users/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-lib-users*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
+		<!-- WEB Loader -->
+		<var name="projectAnalyze" value="web-loader"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_web_loader" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_web_loader" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_web_loader}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="govwayloader"/>
+					<equals arg1="${govway.group}" arg2="govwayLoader"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/web_interfaces/loader/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/loader/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-loader"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/loader"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/loader/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-loaderConsole*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- WEB Console -->
+		<var name="projectAnalyze" value="web-govwayConsole"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_web_govwayConsole" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_web_govwayConsole" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_web_govwayConsole}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="govwayconsole"/>
+					<equals arg1="${govway.group}" arg2="govwayConsole"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/web_interfaces/control_station/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/control_station/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-govwayConsole"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/control_station"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/control_station/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-govwayConsole*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- WEB Monitor -->
+		<var name="projectAnalyze" value="web-govwayMonitor"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_web_govwayMonitor" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_web_govwayMonitor" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_web_govwayMonitor}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="govwaymonitor"/>
+					<equals arg1="${govway.group}" arg2="govwayMonitor"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/web_interfaces/monitor/src/src_allarmi"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/monitor/src/src_allarmi"/>
+					</else>
+				</if>
+				<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/monitor/src/src_core"/>
+				<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/monitor/src/src_eventi"/>
+				<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/monitor/src/src_stat"/>
+				<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/monitor/src/src_transazioni"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="web-govwayMonitor"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/monitor"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/monitor/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_web-govwayMonitor*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
+		<!-- RS API Config -->
+		<var name="projectAnalyze" value="rs-config"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_rs_config" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_rs_config" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_rs_config}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="rs-config"/>
+					<equals arg1="${govway.group}" arg2="api-config"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/rs/config/server/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/rs/config/server/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="rs-config"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/rs/config/server"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/rs/config/server/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_rs-config-server*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- RS API Monitor -->
+		<var name="projectAnalyze" value="rs-monitor"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_rs_monitor" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_rs_monitor" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_rs_monitor}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="rs-monitor"/>
+					<equals arg1="${govway.group}" arg2="api-monitor"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/rs/monitor/server/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/rs/monitor/server/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="rs-monitor"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/rs/monitor/server"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/rs/monitor/server/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_rs-monitor-server*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
+		<!-- Batch Statistiche -->
+		<var name="projectAnalyze" value="batch-statistiche"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_batch_statistiche" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_batch_statistiche" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_batch_statistiche}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="statistiche"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/batch/statistiche/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/batch/statistiche/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="batch-statistiche"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/batch/statistiche"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/batch/statistiche/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_batch-statistiche*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+		<!-- Batch Runtime -->
+		<var name="projectAnalyze" value="batch-runtime-repository"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_batch_runtime_repository" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_batch_runtime_repository" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_batch_runtime_repository}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="runtime-repository"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/batch/runtime-repository/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/batch/runtime-repository/src"/>
+					</else>
+				</if>
+
+				<!-- Falsi positivi -->
+				<property file="${jacoco.falsePositivesDir}/tools/batch/runtime-repository/enum.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.batch.runtime-repository.enum.falsePositives}"/>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="batch-runtime-repository"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/batch/runtime-repository"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/batch/runtime-repository/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_batch-runtime-repository*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
+
+		<!-- Execute jacoco-reports for ant -->
+		<echo message="Avvio analisi jacoco per i sorgenti: ${jacoco.sources.analyze}"/>
+		<echo message="Test: ${govway.tests}"/>
+		
+              	<echo message="produces jacoco reports"/>
+		<delete dir="${jacoco.xml.output}"/>
+		<delete dir="${jacoco.html.output}"/>
+		<delete dir="${jacoco.csv.output}"/>
+		<mkdir dir="${jacoco.xml.output}"/>
+		<mkdir dir="${jacoco.html.output}"/>
+		<mkdir dir="${jacoco.csv.output}"/>
+		<jacoco:report>
+			<!--  This task needs the collected execution data and ...  -->
+			<executiondata>
+				<!-- <file file="${jacoco.exec.dir}"/> -->
+				<fileset dir="${jacoco.exec.dir}">
+					<include name="**/*.exec"/>
+				</fileset>
+			</executiondata>
+			<!--  the class files and optional source files ...  -->
+			<structure name="JaCoCo GovWay">
+				<classfiles>
+					<fileset dir="${jacoco.build}"/>
+				</classfiles>
+				<sourcefiles encoding="UTF-8">
+					<fileset dir="${openspcoop2}/tools/utils/src"/>
+					<fileset dir="${openspcoop2}/tools/generic_project/src"/>
+					<fileset dir="${openspcoop2}/core/src"/>
+					<fileset dir="${openspcoop2}/protocolli/as4/src"/>
+					<fileset dir="${openspcoop2}/protocolli/modipa/src"/>
+					<fileset dir="${openspcoop2}/protocolli/sdi/src"/>
+					<fileset dir="${openspcoop2}/protocolli/spcoop/src"/>
+					<fileset dir="${openspcoop2}/protocolli/trasparente/src"/>
+					<fileset dir="${openspcoop2}/tools/web_interfaces/lib/audit/src"/>
+					<fileset dir="${openspcoop2}/tools/web_interfaces/lib/mvc/src"/>
+					<fileset dir="${openspcoop2}/tools/web_interfaces/lib/queue/src"/>
+					<fileset dir="${openspcoop2}/tools/web_interfaces/lib/users/src"/>
+					<fileset dir="${openspcoop2}/tools/web_interfaces/loader/src"/>
+					<fileset dir="${openspcoop2}/tools/web_interfaces/control_station/src"/>
+					<fileset dir="${openspcoop2}/tools/web_interfaces/monitor/src"/>
+					<fileset dir="${openspcoop2}/tools/rs/config/server/src"/>
+					<fileset dir="${openspcoop2}/tools/rs/monitor/server/src"/>
+					<fileset dir="${openspcoop2}/tools/batch/statistiche/src"/>
+					<fileset dir="${openspcoop2}/tools/batch/runtime-repository/src"/>
+				</sourcefiles>
+			</structure>
+			<!--  to produce reports in different formats.  -->
+			<html destdir="${jacoco.html.output}"/>
+			<csv destfile="${jacoco.csv.output}/report.csv"/>
+			<xml destfile="${jacoco.xml.output}/report.xml"/>
+		</jacoco:report>
+
+
+	</target>
+	<target name="-prepare">
+		<echo message="Analizzo sorgenti: ${analyzeSrc}"/>
+		<echo message="Archivi jar: ${analyzeJarDir}/${analyzeJar}"/>
+
+		<unzip dest="${jacoco.build}/">
+			<fileset dir="${analyzeJarDir}">
+				<include name="${analyzeJar}"/>
+			</fileset>
+		</unzip>
+
+	</target>
+
+
+</project>

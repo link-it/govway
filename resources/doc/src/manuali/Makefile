@@ -53,6 +53,12 @@ pdf-vulnerability-management:
 	cd vulnerability-management; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c .. -Dproject="Gestione delle Vulnerabilità" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
 	@echo "Producing pdf Gestione delle Vulnerabilità to ok"
 
+# Per documentazione solamente relativa alla Dynamic Analysis
+pdf-validation-process-dynamic-analysis:
+	@echo "Producing pdf Processo di Validazione (Dynamic Analysis) to ..."
+	cd validation-process/dynamicAnalysis/; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c ../.. -Dproject="Dynamic Analysis" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
+	@echo "Producing pdf Processo di Validazione (Dynamic Analysis) to ok"
+
 post:
 	sh ./postprocess.sh
 

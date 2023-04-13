@@ -1132,6 +1132,22 @@
 		<property name="sonar.java.binaries" value="${sonar.build}" />
 		<property name="sonar.login" value="${sonar.token}" />
 
+		<!-- Coverage test with jacoco -->
+ 		<if>
+			<not>
+				<or>
+		                        <equals arg1="${sonar.coverage.xmlReportPaths}" arg2="$${sonar.coverage.xmlReportPaths}"/>
+					<equals arg1="${sonar.coverage.xmlReportPaths}" arg2=""/>
+				</or>
+			</not>
+			<then>
+				<property name="sonar.coverage.jacoco.xmlReportPaths" value="${sonar.coverage.xmlReportPaths}" /> <!-- es, /tmp/jacoco.xml,/tmp/jacoco_test2.xml -->
+				<!-- sonar.coverage.exclusions
+				     https://docs.sonarqube.org/latest/project-administration/narrowing-the-focus/#code-coverage-exclusion
+				-->
+			</then>
+                </if>
+
 
                 <if>
 			<not>
@@ -1158,6 +1174,19 @@
 				<echo message="sonar.sourceEncoding=${sonar.sourceEncoding}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.verbose=${sonar.verbose}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.log.level=${sonar.log.level}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+
+				<if>
+					<not>
+						<or>
+						        <equals arg1="${sonar.coverage.jacoco.xmlReportPaths}" arg2="$${sonar.coverage.jacoco.xmlReportPaths}"/>
+							<equals arg1="${sonar.coverage.jacoco.xmlReportPaths}" arg2=""/>
+						</or>
+					</not>
+					<then>
+						<echo message="sonar.coverage.jacoco.xmlReportPaths=${sonar.coverage.jacoco.xmlReportPaths}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+					</then>
+				</if>
+
 				<echo message="sonar.issue.ignore.multicriteria=${sonar.issue.ignore.multicriteria}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<delete file="${sonar.build}/_propertiesSonar.tmp"/>
 				<echoproperties destfile="${sonar.build}/_propertiesSonar.tmp">

@@ -53,6 +53,13 @@
 		<testsuite.pdd.group>pdd</testsuite.pdd.group>
 		<testsuite.pdd.sql.group>pdd.sql</testsuite.pdd.sql.group>
 
+		<!-- testsuite coverage -->
+		<testsuite.coverage>false</testsuite.coverage>
+		<testsuite.utils.coverage>${testsuite.coverage}</testsuite.utils.coverage>
+		<testsuite.utils.sql.coverage>${testsuite.coverage}</testsuite.utils.sql.coverage>
+		<testsuite.pdd.coverage>${testsuite.coverage}</testsuite.pdd.coverage>
+		<testsuite.pdd.sql.coverage>${testsuite.coverage}</testsuite.pdd.sql.coverage>
+
 		<!-- testsuite (openssl config) -->
 		<testsuite.utils.openssl.cmd>/usr/bin/openssl</testsuite.utils.openssl.cmd>
 		<testsuite.utils.openssl.waitStartupServerOcspMs>5000</testsuite.utils.openssl.waitStartupServerOcspMs>
@@ -74,6 +81,9 @@
                 <!-- dynamic_analysis -->
                 <zaproxy>none</zaproxy>
 
+                <!-- coverage-reports -->
+                <jacoco>none</jacoco>
+
 	</properties>
 
 	<modules>
@@ -87,6 +97,7 @@
 		<module>tools/spotbugs/mvn</module>
                 <module>tools/sonarqube/mvn</module>
                 <module>tools/zap/mvn</module>
+                <module>tools/jacoco/mvn</module>
 	</modules>
 
 	<repositories>

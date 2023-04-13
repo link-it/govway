@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="jacoco_LocalEnv" basedir=".">
+
+	<!-- openspcoop2 -->
+	<property name="openspcoop2" location="../../" />
+	<property name="openspcoop2.dist" value="${openspcoop2}/dist" />
+	<property name="openspcoop2.lib" value="${openspcoop2}/lib" />
+	<property name="required_lib" value="${openspcoop2.lib}"/>
+
+        <!--  Names the output dir in which the Jacoco output will be saved -->
+        <property name="jacoco.xml.output" value="reports/xml" />
+	<property name="jacoco.html.output" value="reports/html" />
+	<property name="jacoco.csv.output" value="reports/csv" />
+
+	
+</project>
+
+

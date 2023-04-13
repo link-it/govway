@@ -15,6 +15,7 @@ Se i test rilevano un nuovo problema o una regressione viene avviata una gestion
 	autenticazione
         autorizzazione
 	modi
+	token
 	messageSecurity
 	certificate
 	ocsp
