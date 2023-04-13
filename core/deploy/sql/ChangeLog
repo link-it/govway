@@ -1,3 +1,8 @@
+2023-04-11  Andrea Poli <apoli@link.it>
+
+	Aggiunte colonne per memorizzare il contesto della transazione
+	ALTER TABLE DEFINIZIONE_MESSAGGI ADD COLUMN TRANSACTION_CONTEXT BLOB;
+
 2023-03-02  Andrea Poli <apoli@link.it>
 
 	Aggiunte colonne che riportano ulteriori informazioni sulle date.

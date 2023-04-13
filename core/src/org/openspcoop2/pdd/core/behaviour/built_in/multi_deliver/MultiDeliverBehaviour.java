@@ -78,7 +78,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 		
 		try{
 
-			ConfigurazioneMultiDeliver configurazione = MultiDeliverUtils.read(pa, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+			ConfigurazioneMultiDeliver configurazione = MultiDeliverUtils.read(pa);
 			
 			List<IDServizioApplicativo> listaServiziApplicativiAll = new ArrayList<IDServizioApplicativo>();
 			

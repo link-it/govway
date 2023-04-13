@@ -63,6 +63,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
@@ -218,12 +219,12 @@ public class GestoreTrasformazioni {
 	
 	
 	public OpenSPCoop2Message trasformazioneNotifica(OpenSPCoop2Message message, Busta busta,
-			MessaggioDaNotificare messageTypeForNotifier, OpenSPCoop2Message responseMessageForNotifier) throws GestoreTrasformazioniException{
+			MessaggioDaNotificare messageTypeForNotifier, OpenSPCoop2Message responseMessageForNotifier, Context transactionContextForNotifier) throws GestoreTrasformazioniException{
 		if(this.transaction!=null) {
 			this.transaction.getTempiElaborazione().startTrasformazioneRichiesta();
 		}
 		try {
-			return this._trasformazioneRichiesta(message, busta, messageTypeForNotifier, responseMessageForNotifier);
+			return this._trasformazioneRichiesta(message, busta, messageTypeForNotifier, responseMessageForNotifier, transactionContextForNotifier);
 		}
 		finally {
 			if(this.transaction!=null) {
@@ -236,7 +237,7 @@ public class GestoreTrasformazioni {
 			this.transaction.getTempiElaborazione().startTrasformazioneRichiesta();
 		}
 		try {
-			return this._trasformazioneRichiesta(message, busta, null, null);
+			return this._trasformazioneRichiesta(message, busta, null, null, null);
 		}
 		finally {
 			if(this.transaction!=null) {
@@ -277,7 +278,7 @@ public class GestoreTrasformazioni {
 	}
 	
 	private OpenSPCoop2Message _trasformazioneRichiesta(OpenSPCoop2Message messageP, Busta busta,
-			MessaggioDaNotificare messageTypeForNotifier, OpenSPCoop2Message responseMessageForNotifier) throws GestoreTrasformazioniException{
+			MessaggioDaNotificare messageTypeForNotifier, OpenSPCoop2Message responseMessageForNotifier, Context transactionContextForNotifier) throws GestoreTrasformazioniException{
 
 		if(this.trasformazioni==null || this.trasformazioni.sizeRegolaList()<=0) {
 			this.msgDiag.logPersonalizzato(messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaDisabilitato" : "trasformazione.processamentoRichiestaDisabilitato");
@@ -312,23 +313,23 @@ public class GestoreTrasformazioni {
 		String urlInvocazione = null;
 		
 		try{
-			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			if(ServiceBinding.SOAP.equals(messageP.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = messageP.castAsSoap();
-				messageContent = new MessageContent(soapMessage, bufferMessage_readOnly, this.pddContext);
+				messageContent = new MessageContent(soapMessage, bufferMessageReadOnly, this.pddContext);
 			}
 			else{
 				if(MessageType.XML.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
 					OpenSPCoop2RestXmlMessage xml = messageP.castAsRestXml();
-					messageContent = new MessageContent(xml, bufferMessage_readOnly, this.pddContext);
+					messageContent = new MessageContent(xml, bufferMessageReadOnly, this.pddContext);
 				}
 				else if(MessageType.JSON.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
 					OpenSPCoop2RestJsonMessage json = messageP.castAsRestJson();
-					messageContent = new MessageContent(json, bufferMessage_readOnly, this.pddContext);
+					messageContent = new MessageContent(json, bufferMessageReadOnly, this.pddContext);
 				}
 				else if(MessageType.MIME_MULTIPART.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
 					OpenSPCoop2RestMimeMultipartMessage mime = messageP.castAsRestMimeMultipart();
-					messageContent = new MessageContent(mime, bufferMessage_readOnly, this.pddContext);
+					messageContent = new MessageContent(mime, bufferMessageReadOnly, this.pddContext);
 				}
 				else {
 					contenutoNonNavigabile = true;
@@ -343,7 +344,7 @@ public class GestoreTrasformazioni {
 					parametriTrasporto = messageP.getTransportRequestContext().getHeaders();
 				}
 				else {
-					parametriTrasporto = new HashMap<String, List<String>>();
+					parametriTrasporto = new HashMap<>();
 					messageP.getTransportRequestContext().setHeaders(parametriTrasporto);
 				}
 				
@@ -352,7 +353,7 @@ public class GestoreTrasformazioni {
 					parametriUrl = messageP.getTransportRequestContext().getParameters();
 				}
 				else {
-					parametriUrl = new HashMap<String, List<String>>();
+					parametriUrl = new HashMap<>();
 					messageP.getTransportRequestContext().setParameters(parametriUrl);
 				}
 				
@@ -392,23 +393,23 @@ public class GestoreTrasformazioni {
 		try{
 			if(messageTypeForNotifier!=null && MessaggioDaNotificare.ENTRAMBI.equals(messageTypeForNotifier) && responseMessageForNotifier!=null) {
 			
-				boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+				boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 				if(ServiceBinding.SOAP.equals(responseMessageForNotifier.getServiceBinding())){
 					OpenSPCoop2SoapMessage soapMessage = responseMessageForNotifier.castAsSoap();
-					messageResponseContent = new MessageContent(soapMessage, bufferMessage_readOnly, this.pddContext);
+					messageResponseContent = new MessageContent(soapMessage, bufferMessageReadOnly, this.pddContext);
 				}
 				else{
 					if(MessageType.XML.equals(responseMessageForNotifier.getMessageType()) && responseMessageForNotifier.castAsRest().hasContent()){
 						OpenSPCoop2RestXmlMessage xml = responseMessageForNotifier.castAsRestXml();
-						messageResponseContent = new MessageContent(xml, bufferMessage_readOnly, this.pddContext);
+						messageResponseContent = new MessageContent(xml, bufferMessageReadOnly, this.pddContext);
 					}
 					else if(MessageType.JSON.equals(responseMessageForNotifier.getMessageType()) && responseMessageForNotifier.castAsRest().hasContent()){
 						OpenSPCoop2RestJsonMessage json = responseMessageForNotifier.castAsRestJson();
-						messageResponseContent = new MessageContent(json, bufferMessage_readOnly, this.pddContext);
+						messageResponseContent = new MessageContent(json, bufferMessageReadOnly, this.pddContext);
 					}
 					else if(MessageType.MIME_MULTIPART.equals(responseMessageForNotifier.getMessageType()) && responseMessageForNotifier.castAsRest().hasContent()){
 						OpenSPCoop2RestMimeMultipartMessage mime = responseMessageForNotifier.castAsRestMimeMultipart();
-						messageResponseContent = new MessageContent(mime, bufferMessage_readOnly, this.pddContext);
+						messageResponseContent = new MessageContent(mime, bufferMessageReadOnly, this.pddContext);
 					}
 					else {
 						contenutoNonNavigabile = true;
@@ -421,7 +422,7 @@ public class GestoreTrasformazioni {
 						parametriTrasportoRisposta = responseMessageForNotifier.getTransportResponseContext().getHeaders();
 					}
 					else {
-						parametriTrasportoRisposta = new HashMap<String, List<String>>();
+						parametriTrasportoRisposta = new HashMap<>();
 						responseMessageForNotifier.getTransportResponseContext().setHeaders(parametriTrasportoRisposta);
 					}
 				}
@@ -438,7 +439,7 @@ public class GestoreTrasformazioni {
 						parametriTrasportoRisposta = messageP.getTransportResponseContext().getHeaders();
 					}
 					else {
-						parametriTrasportoRisposta = new HashMap<String, List<String>>();
+						parametriTrasportoRisposta = new HashMap<>();
 						messageP.getTransportResponseContext().setHeaders(parametriTrasporto);
 					}
 				}

@@ -345,7 +345,7 @@ public class ServletTestService extends HttpServlet {
 				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Header ["+key+"] non presente");
 			}
 			if(v.equals(valore)==false){
-				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso");
+				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso '"+valore+"'");
 			}
 		}
 		
@@ -378,7 +378,7 @@ public class ServletTestService extends HttpServlet {
 				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Parametro ["+key+"] non presente");
 			}
 			if(v.equals(valore)==false){
-				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso");
+				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso '"+valore+"'");
 			}
 		}
 		
@@ -411,7 +411,7 @@ public class ServletTestService extends HttpServlet {
 				throw new ServletException("Ricevuta una richiesta di verifica cookie ("+key+":"+valore+"). Cookie ["+key+"] non presente");
 			}
 			if(v.equals(valore)==false){
-				throw new ServletException("Ricevuta una richiesta di verifica cookie ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso");
+				throw new ServletException("Ricevuta una richiesta di verifica cookie ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso '"+valore+"'");
 			}
 		}
 		

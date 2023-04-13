@@ -51,6 +51,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.xml.MessageXMLUtils;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
@@ -239,6 +240,11 @@ public class DynamicUtils {
 		if(dynamicInfo!=null && dynamicInfo.getPddContext()!=null) {
 			if(!dynamicMap.containsKey(Costanti.MAP_CTX_OBJECT)) {
 				dynamicMap.put(Costanti.MAP_CTX_OBJECT, dynamicInfo.getPddContext());
+			}
+			if(!dynamicMap.containsKey(Costanti.MAP_SYNC_CTX_OBJECT) &&
+					dynamicInfo.getPddContext().containsKey(CostantiPdD.CONTESTO_RICHIESTA_MESSAGGIO_NOTIFICA)) {
+				Context transactionSyncContext = (Context)dynamicInfo.getPddContext().getObject(CostantiPdD.CONTESTO_RICHIESTA_MESSAGGIO_NOTIFICA);
+				dynamicMap.put(Costanti.MAP_SYNC_CTX_OBJECT, transactionSyncContext);
 			}
 			if(!dynamicMap.containsKey(Costanti.MAP_TRANSACTION_ID_OBJECT) &&
 				dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
@@ -505,7 +511,7 @@ public class DynamicUtils {
 		}
 		
 	}
-
+	
 	
 	
 	// DYNAMIC MAP

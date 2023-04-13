@@ -46,6 +46,10 @@ public class Costanti {
     public static final String TYPE_MAP_CTX_OBJECT = "java.util.Map<String, Object>";
     public static final String TYPE_MAP_CTX_OBJECT_HTML_ESCAPED = "java.util.Map&amp;lt;String, Object&amp;gt;";
     
+    public static final String MAP_SYNC_CTX_OBJECT = "syncContext";
+    public static final String TYPE_MAP_SYNC_CTX_OBJECT = "java.util.Map<String, Object>";
+    public static final String TYPE_MAP_SYNC_CTX_OBJECT_HTML_ESCAPED = "java.util.Map&amp;lt;String, Object&amp;gt;";
+    
     public static final String MAP_HEADER = "header";
     public static final String TYPE_MAP_HEADER = "java.util.Map<String, String>";
     public static final String TYPE_MAP_HEADER_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";

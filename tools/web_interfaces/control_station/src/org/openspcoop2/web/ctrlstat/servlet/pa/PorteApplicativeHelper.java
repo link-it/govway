@@ -8773,7 +8773,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					de.setLabel(label);
 					
-					ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA, this.log);
+					ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA);
 					
 					String consegnaNotificheLabel = "";
 					
@@ -10843,7 +10843,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 						if(behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
 								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
-										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
+										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa);
 
 							if(configurazioneMultiDeliver != null) {
 								if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
@@ -10981,7 +10981,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String gestioneFault, String faultCode, String faultActor, String faultMessage,
 			boolean consegnaSincrona,
 			String coda, String priorita, String prioritaMax,
-			String connettoreTipoMessaggioDaNotificare, String httpMethodDaNotificare
+			String connettoreTipoMessaggioDaNotificare, String connettoreIniettaContestoSincrono, String httpMethodDaNotificare
 	) {
 		
 		DataElement de = new DataElement();
@@ -11009,7 +11009,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setSelected(connettoreTipoMessaggioDaNotificare);
 			de.setPostBack(true);
 			dati.addElement(de);
-			
+						
 			// http notifica
 			if(ServiceBinding.REST.equals(serviceBinding) || 
 					(connettoreTipoMessaggioDaNotificare!=null && MessaggioDaNotificare.ENTRAMBI.equals(connettoreTipoMessaggioDaNotificare)) 
@@ -11030,6 +11030,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setPostBack(false);
 				dati.addElement(de);
 			}
+			
+			// contesto sincrono
+			de = new DataElement();
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_INIETTA_CONTESTO_SINCRONO);
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_INIETTA_CONTESTO_SINCRONO);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(connettoreIniettaContestoSincrono);
+			dati.addElement(de);
 			
 		}
 		
@@ -11161,7 +11169,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue,
 					gestioneFault, faultCode, faultActor, faultMessage,
 					consegnaSincrona,
-					connettoreTipoMessaggioDaNotificare, httpMethodDaNotificare);
+					connettoreTipoMessaggioDaNotificare, connettoreIniettaContestoSincrono, httpMethodDaNotificare);
 			if(nuovaConfigurazioneGestioneConsegnaNotifiche != null) {
 				consegnaNotificheLabel = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.GestioneConsegnaNotificheUtils.toString(nuovaConfigurazioneGestioneConsegnaNotifiche,
 						serviceBinding.equals(ServiceBinding.SOAP));
@@ -11517,7 +11525,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String codiceRisposta5xx, String codiceRisposta5xxValueMin, String codiceRisposta5xxValueMax, String codiceRisposta5xxValue,
 			String gestioneFault, String faultCode, String faultActor, String faultMessage,
 			boolean consegnaSincrona,
-			String connettoreTipoMessaggioDaNotificare, String httpMethodDaNotificare) throws Exception {
+			String connettoreTipoMessaggioDaNotificare, String connettoreIniettaContestoSincrono, String httpMethodDaNotificare) throws Exception {
 		
 		ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche = new ConfigurazioneGestioneConsegnaNotifiche();
 		
@@ -11527,6 +11535,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				tipo = MessaggioDaNotificare.toEnumConstant(connettoreTipoMessaggioDaNotificare, false);
 			}
 			configurazioneGestioneConsegnaNotifiche.setMessaggioDaNotificare(tipo);
+			
+			configurazioneGestioneConsegnaNotifiche.setInjectTransactionSyncContext(ServletUtils.isCheckBoxEnabled(connettoreIniettaContestoSincrono));
 			
 			HttpRequestMethod tipoHttp = null;
 			if(httpMethodDaNotificare!=null && !PorteApplicativeCostanti.VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA.equals(httpMethodDaNotificare)) {

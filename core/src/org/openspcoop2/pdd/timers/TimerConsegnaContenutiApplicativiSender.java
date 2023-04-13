@@ -323,7 +323,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 							if(pasa.getDatiConnettore()!=null) {
 								idTransazioneApplicativoServer.setConnettoreNome(pasa.getDatiConnettore().getNome());
 							}
-							ConfigurazioneGestioneConsegnaNotifiche configGestioneConsegna = MultiDeliverUtils.read(pasa, this.log.getLog()); 
+							ConfigurazioneGestioneConsegnaNotifiche configGestioneConsegna = MultiDeliverUtils.read(pasa); 
 							GestioneErrore gestioneErroreBehaviour = GestioneConsegnaNotificheUtils.toGestioneErrore(configGestioneConsegna);		
 							behaviourMsg.setGestioneErrore(gestioneErroreBehaviour);
 							break;

@@ -409,7 +409,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 							//if(!isSoapOneWay) {
 							if(!behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)) {
-								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa, ControlStationCore.getLog());
+								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa);
 								connettoreImplementaAPI = configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null ? configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() : "";
 								notificheCondizionaliEsito = configurazioneMultiDeliver.isNotificheByEsito();
 								esitiTransazione = porteApplicativeHelper.getEsitiTransazione(configurazioneMultiDeliver);
@@ -668,7 +668,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 					//if(!isSoapOneWay) {
 					if(!behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)) {
-						org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa, ControlStationCore.getLog());
+						org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa);
 						connettoreImplementaAPI = configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null ? configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() : "";
 						notificheCondizionaliEsito = configurazioneMultiDeliver.isNotificheByEsito();
 						esitiTransazione = porteApplicativeHelper.getEsitiTransazione(configurazioneMultiDeliver);

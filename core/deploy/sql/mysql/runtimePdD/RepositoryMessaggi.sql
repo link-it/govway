@@ -107,6 +107,7 @@ CREATE TABLE DEFINIZIONE_MESSAGGI
 	RESPONSE_CONTENT_TYPE VARCHAR(255),
 	RESPONSE_MSG_BYTES MEDIUMBLOB,
 	RESPONSE_MSG_CONTEXT MEDIUMBLOB,
+	TRANSACTION_CONTEXT MEDIUMBLOB,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ORA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns

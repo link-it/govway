@@ -112,6 +112,7 @@ public class Costanti {
 	public final static MapKey<String> CONSEGNA_MULTIPLA_CONNETTORI_BY_SA = Map.newMapKey("CONSEGNA_MULTIPLA_CONNETTORI_BY_SA");
 	
 	public final static MapKey<String> CONSEGNA_MULTIPLA_NOME_CONNETTORE = Map.newMapKey("CONSEGNA_MULTIPLA_NOME_CONNETTORE");
+	public final static MapKey<String> CONSEGNA_MULTIPLA_NOME_CONNETTORE_API = Map.newMapKey("CONSEGNA_MULTIPLA_NOME_CONNETTORE_API");
 	
 	public final static MapKey<String> LIMITED_STREAM = Map.newMapKey("LIMITED_STREAM");
 	

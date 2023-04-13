@@ -23,32 +23,43 @@
 
 package org.openspcoop2.pdd.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.openspcoop2.generic_project.exception.DeserializerException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.context.MessageContext;
+import org.openspcoop2.message.context.SerializedContext;
+import org.openspcoop2.message.context.SerializedParameter;
+import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
+import org.openspcoop2.utils.serialization.JavaDeserializer;
 import org.slf4j.Logger;
 
 
@@ -72,7 +83,18 @@ public class SavedMessage implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** Logger utilizzato per debug. */
-	protected Logger log = null;
+	protected transient Logger internalLog = null;
+	private synchronized void initLog() {
+		if(this.internalLog==null) {
+			this.internalLog = LoggerWrapperFactory.getLogger(SavedMessage.class);
+		}
+	}
+	protected Logger getLog() {
+		if(this.internalLog==null) {
+			this.initLog();
+		}
+		return this.internalLog;
+	}
 
 	protected static final String REST_CONTENT_TYPE_EMPTY = "____EMPTY____";
 	
@@ -80,6 +102,7 @@ public class SavedMessage implements java.io.Serializable {
 	private static final String MSG_CONTEXT = "_context.bin";
 	private static final String MSG_RESPONSE_BYTES = "_response_bytes.bin";
 	private static final String MSG_RESPONSE_CONTEXT = "_response_context.bin";
+	private static final String MSG_TRANSACTION_CONTEXT = "_transaction_context.bin";
 
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
@@ -97,15 +120,17 @@ public class SavedMessage implements java.io.Serializable {
 	/** Indica la directory dove effettuare salvataggi */
 	/** Identificativo del Messaggio passato sotto una funziona HASH */
 	protected String keyMsgResponseBytes;
-	/** Identificativo del MessaggeContext passato sotto una funziona HASH */
+	/** Identificativo del MessageContext passato sotto una funziona HASH */
 	protected String keyMsgResponseContext;
+	/** Identificativo del TransactionContext passato sotto una funziona HASH */
+	protected String keyMsgTransactionContext;
 	/** Indica la directory dove effettuare salvataggi */
 	private String workDir;
 	/** AdapterJDBC */
-	protected IJDBCAdapter adapter;
+	protected transient IJDBCAdapter adapter;
 
 
-	protected IOpenSPCoopState openspcoopstate;
+	protected transient IOpenSPCoopState openspcoopstate;
 
 	/** OpenSPCoopProperties */
 	private transient OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
@@ -157,29 +182,28 @@ public class SavedMessage implements java.io.Serializable {
 		this.box = box;
 		this.openspcoopstate = openspcoopstate;
 		if(alog!=null){
-			this.log = alog;
+			this.internalLog = alog;
 		}else{
-			this.log = LoggerWrapperFactory.getLogger(SavedMessage.class);
+			this.internalLog = LoggerWrapperFactory.getLogger(SavedMessage.class);
 		}
 		try{
 
-			String hashKeyMsgBytes = this.hash(idMsg);
-			if(hashKeyMsgBytes == null){
-				throw new Exception("Codifica hash non riuscita: keyMsgBytes is null");
+			String hashKey = this.hash(idMsg);
+			if(hashKey == null){
+				throw new UtilsException("Codifica hash non riuscita: keyMsgBytes is null");
 			}
-			this.keyMsgBytes = hashKeyMsgBytes + MSG_BYTES;
-			this.keyMsgResponseBytes = hashKeyMsgBytes + MSG_RESPONSE_BYTES;
+			
+			this.keyMsgBytes = hashKey + MSG_BYTES;
+			this.keyMsgResponseBytes = hashKey + MSG_RESPONSE_BYTES;
 
-			String hashKeyMsgContext = this.hash(idMsg);
-			if(hashKeyMsgContext == null){
-				throw new Exception("Codifica hash non riuscita: keyMsgContext is null");
-			}
-			this.keyMsgContext = hashKeyMsgContext + MSG_CONTEXT;
-			this.keyMsgResponseContext = hashKeyMsgContext + MSG_RESPONSE_CONTEXT;
+			this.keyMsgContext = hashKey + MSG_CONTEXT;
+			this.keyMsgResponseContext = hashKey + MSG_RESPONSE_CONTEXT;
+			
+			this.keyMsgTransactionContext = hashKey + MSG_TRANSACTION_CONTEXT;
 
 		}catch(Exception e){
 			String errorMsg = "SOAP_MESSAGE, costructor error (CodificaHash): "+box+"/"+idMsg+": "+e.getMessage();		
-			this.log.error(errorMsg);
+			this.getLog().error(errorMsg);
 			throw new UtilsException(errorMsg,e);
 		}
 
@@ -208,8 +232,6 @@ public class SavedMessage implements java.io.Serializable {
 					returnKey.append(key.charAt(i));
 			}
 
-			//log.info("Costruito ["+returnKey.toString()+"]");
-
 			return returnKey.toString();
 
 		} catch (java.lang.Exception e) {
@@ -234,11 +256,13 @@ public class SavedMessage implements java.io.Serializable {
 	 */
 	public String getBaseDir() throws UtilsException{
 
+		String prefix = "SOAP_MESSAGE, getBaseDir: "+this.box+"/"+this.idMessaggio;
+		
 		// Controllo esistenza directory fornita per salvare i messaggi
 		File dir = new File(this.workDir);
-		if(dir.exists() == false){
-			String errorMsg = "SOAP_MESSAGE, getBaseDir: "+this.box+"/"+this.idMessaggio+": directory di lavoro inesistente ("+this.workDir+").";		
-			this.log.error(errorMsg);
+		if(!dir.exists()){
+			String errorMsg = prefix+": directory di lavoro inesistente ("+this.workDir+").";		
+			this.getLog().error(errorMsg);
 			throw new UtilsException(errorMsg);
 		}
 		String baseDir = this.workDir;
@@ -251,19 +275,18 @@ public class SavedMessage implements java.io.Serializable {
 		}else if (Costanti.OUTBOX.equals(this.box)){
 			baseDir = baseDir + Costanti.OUTBOX;
 		}else{
-			String errorMsg = "SOAP_MESSAGE, getBaseDir: "+this.box+"/"+this.idMessaggio+": box non valido? .";		
-			this.log.error(errorMsg);
+			String errorMsg = prefix+": box non valido? .";		
+			this.getLog().error(errorMsg);
 			throw new UtilsException(errorMsg);
 		}
 
 		// Controllo esistenza di INBUX/OUTBOX
 		File dirINOUT = new File(baseDir);
-		if(dirINOUT.exists() == false){
-			if(dirINOUT.mkdir()==false){
-				String errorMsg = "SOAP_MESSAGE, getBaseDir: "+this.box+"/"+this.idMessaggio+": directory di lavoro ("+this.workDir+") non permette la creazione di sottodirectory INBOX/OUTBOX.";		
-				this.log.error(errorMsg);
-				throw new UtilsException(errorMsg);
-			}
+		if(!dirINOUT.exists() &&
+			!dirINOUT.mkdir()){
+			String errorMsg = prefix+": directory di lavoro ("+this.workDir+") non permette la creazione di sottodirectory INBOX/OUTBOX.";		
+			this.getLog().error(errorMsg);
+			throw new UtilsException(errorMsg);
 		}
 
 		return (baseDir+ File.separator);
@@ -286,6 +309,25 @@ public class SavedMessage implements java.io.Serializable {
 	public void updateState(IOpenSPCoopState openspcoopstate){
 		this.openspcoopstate = openspcoopstate;
 	}
+	
+	protected void checkInizializzazioneWorkingDir(String saveDir) throws UtilsException {
+		if(saveDir==null){
+			String errorMsg = "WorkDir non correttamente inizializzata";		
+			throw new UtilsException(errorMsg);
+		}
+	}
+	
+	protected void checkInizializzazioneAdapter() throws UtilsException {
+		if(this.adapter==null) {
+			throw new UtilsException("Adapter unavailable");
+		}
+	}
+	
+	protected void logError(String errorMsg, Exception e) {
+		this.getLog().error(errorMsg,e);
+	}
+	
+	
 
 
 	/* ********  S A V E  ******** */
@@ -307,11 +349,9 @@ public class SavedMessage implements java.io.Serializable {
 		try{
 
 			File fileMsg = new File(path);
-			if(fileMsg.exists() == true){
+			if(fileMsg.exists()){
 				if(overwrite) {
-					if(!fileMsg.delete()) {
-						throw new UtilsException("L'identificativo del Messaggio risulta già registrato e non eliminabile: "+path);
-					}
+					deleteMessageFile(fileMsg);
 				}
 				else {
 					throw new UtilsException("L'identificativo del Messaggio risulta già registrato: "+path);
@@ -339,11 +379,9 @@ public class SavedMessage implements java.io.Serializable {
 		try{
 
 			File fileMsg = new File(path);
-			if(fileMsg.exists() == true){
+			if(fileMsg.exists()){
 				if(overwrite) {
-					if(!fileMsg.delete()) {
-						throw new UtilsException("L'identificativo del Messaggio risulta già registrato e non eliminabile: "+path);
-					}
+					deleteMessageFile(fileMsg);
 				}
 				else {
 					throw new UtilsException("L'identificativo del Messaggio risulta gia' registrato: "+path);
@@ -362,16 +400,56 @@ public class SavedMessage implements java.io.Serializable {
 			} catch(Exception er) {
 				// close
 			}
-			throw new UtilsException("Utilities.saveMessage error "+e.getMessage(),e);
+			throw new UtilsException("Utilities.saveMessageContext error "+e.getMessage(),e);
+		}
+	}
+	protected void saveTransactionContext(String path,SerializedContext sc, boolean overwrite) throws UtilsException{
+
+		FileOutputStream fos = null;
+		try{
+
+			File fileMsg = new File(path);
+			if(fileMsg.exists()){
+				if(overwrite) {
+					deleteMessageFile(fileMsg);
+				}
+				else {
+					throw new UtilsException("L'identificativo del Messaggio risulta gia' registrato: "+path);
+				}
+			}	
+
+			fos = new FileOutputStream(path);
+			// Scrittura Messaggio su FileSystem
+			sc.writeTo(fos, WriteToSerializerType.XML_JAXB);
+			fos.close();
+
+		}catch(Exception e){
+			try{
+				if( fos != null )
+					fos.close();
+			} catch(Exception er) {
+				// close
+			}
+			throw new UtilsException("Utilities.saveTransactionContext error "+e.getMessage(),e);
 		}
 	}
 
 	
 	public void updateResponse(OpenSPCoop2Message msg, boolean consumeMessage) throws UtilsException{
 		SavedMessagePSUtilities.updateResponse(this, msg, consumeMessage);
-	}     
+	} 
 	
+	public void updateTransactionContext(Context transactionContext) throws UtilsException{
+		SavedMessagePSUtilities.updateTransactionContext(this, transactionContext);
+	} 
 	
+	private void deleteMessageFile(File fileMsg) throws UtilsException {
+		try {
+			Files.delete(fileMsg.toPath());
+		}catch(Exception e) {
+			throw new UtilsException("L'identificativo del Messaggio risulta già registrato e non eliminabile ("+fileMsg.getAbsolutePath()+"): "+e.getMessage(),e);
+		}
+	}
 
 
 
@@ -384,12 +462,17 @@ public class SavedMessage implements java.io.Serializable {
 	 * 
 	 */
 	public OpenSPCoop2Message read(boolean isRichiesta, boolean portaDiTipoStateless, Date oraRegistrazione) throws UtilsException {
-		 return _read(isRichiesta, portaDiTipoStateless, oraRegistrazione, false);
+		 return readEngine(isRichiesta, portaDiTipoStateless, oraRegistrazione, false, null);
 	}
 	public OpenSPCoop2Message readResponse(Date oraRegistrazione) throws UtilsException {
-		 return _read(false, false, oraRegistrazione, true);
+		 return readEngine(false, false, oraRegistrazione, true, null);
 	}
-	public OpenSPCoop2Message _read(boolean isRichiesta, boolean portaDiTipoStateless, Date oraRegistrazione, boolean readResponseField) throws UtilsException {
+	public Context readTransactionContext(Date oraRegistrazione) throws UtilsException {
+		Context c = new Context();
+		readEngine(false, false, oraRegistrazione, false, c);
+		return c;
+	}
+	private OpenSPCoop2Message readEngine(boolean isRichiesta, boolean portaDiTipoStateless, Date oraRegistrazione, boolean readResponseField, Context readTransactionContext) throws UtilsException {
 
 		if( !portaDiTipoStateless ) {
 
@@ -397,180 +480,341 @@ public class SavedMessage implements java.io.Serializable {
 					((StateMessage)this.openspcoopstate.getStatoRichiesta()).getConnectionDB() :
 						((StateMessage)this.openspcoopstate.getStatoRisposta()).getConnectionDB();
 
-			OpenSPCoop2Message msg = null;
-			PreparedStatement pstmt = null;
-			InputStream isBytes = null;
-			InputStream isContext = null;
-			ResultSet rs = null;
-			try{
+			return readMessage(oraRegistrazione, readResponseField, readTransactionContext, connectionDB);
 
-				String columnContentType = readResponseField ? "RESPONSE_CONTENT_TYPE" : "CONTENT_TYPE";
-				String columnMsgBytes = readResponseField ? "RESPONSE_MSG_BYTES" : "MSG_BYTES";
-				String columnMsgContext = readResponseField ? "RESPONSE_MSG_CONTEXT" : "MSG_CONTEXT";
-				
-				// Leggo proprieta' messaggio
-				StringBuilder query = new StringBuilder();
-				if(this.saveOnFS)
-					query.append("select "+columnContentType+" ");
-				else
-					query.append("select "+columnContentType+","+columnMsgBytes+","+columnMsgContext+" ");
-				query.append("from ");
-				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
-				query.append(" WHERE ");
-				if(oraRegistrazione!=null) {
-					query.append("(ORA_REGISTRAZIONE BETWEEN ? AND ?) AND ");
-				}
-				query.append("ID_MESSAGGIO = ? AND TIPO = ?");
-				
-				pstmt =  connectionDB.prepareStatement(query.toString());
-				int index = 1;
-				
-				Timestamp leftValue = null;
-				Timestamp rightValue = null;
-				if(oraRegistrazione!=null) {
-					leftValue = new Timestamp(oraRegistrazione.getTime() - (1000*60*5));
-					rightValue = new Timestamp(oraRegistrazione.getTime() + (1000*60*5));
-					pstmt.setTimestamp(index++,leftValue);
-					pstmt.setTimestamp(index++,rightValue);
-				}
-				
-				pstmt.setString(index++,this.idMessaggio);
-				if(Costanti.INBOX.equals(this.box))
-					pstmt.setString(index++,Costanti.INBOX);
-				else
-					pstmt.setString(index++,Costanti.OUTBOX);
-				rs = pstmt.executeQuery();
-				if(rs==null){
-					String errorMsg = "ResultSet is null?";		
-					throw new UtilsException(errorMsg);
-				}
-				if(rs.next()==false){
-					String errorMsg = "Messaggio non esistente";		
-					throw new UtilsException(errorMsg);
-				}
-
-				String saveDir = null;
-				if(this.saveOnFS){
-					// READ FROM FILE SYSTEM
-					
-					saveDir = getBaseDir();
-					if(saveDir==null){
-						String errorMsg = "WorkDir non correttamente inizializzata";		
-						throw new UtilsException(errorMsg);
-					}
-				}
-				
-				// Lettura Message Context
-				if(this.saveOnFS){
-					// READ FROM FILE SYSTEM
-					String pathContext = saveDir + (readResponseField ? this.keyMsgResponseContext : this.keyMsgContext);
-					File fileCheckContext = new File(pathContext);
-					if(fileCheckContext.exists() == false){
-						String errorMsg = "Il messaggio (contesto) non risulta gia' registrato ("+pathContext+").";		
-						throw new UtilsException(errorMsg);
-					}	   
-					isContext = new FileInputStream(pathContext);
-				}else{
-					// READ FROM DB
-					isContext = new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,3));
-				}
-				
-				org.openspcoop2.message.context.utils.serializer.JaxbDeserializer jaxbDeserializer  = 
-						new org.openspcoop2.message.context.utils.serializer.JaxbDeserializer();
-				MessageContext msgContext = jaxbDeserializer.readMessageContext(isContext);
-				
-				if(msgContext.getMessageType()==null) {
-					throw new Exception("Message Type undefined in context serialized");
-				}
-				MessageType mt = MessageType.valueOf(msgContext.getMessageType());
-				if(mt==null) {
-					throw new Exception("MessageType ["+msgContext.getMessageType()+"] unknown");
-				}
-				
-				if(msgContext.getMessageRole()==null) {
-					throw new Exception("Message Role undefined in context serialized");
-				}
-				MessageRole mr = MessageRole.valueOf(msgContext.getMessageRole());
-				if(mr==null) {
-					throw new Exception("MessageRole ["+msgContext.getMessageRole()+"] unknown");
-				}
-				
-				// ContentType
-				String contentType = rs.getString(columnContentType);
-				if(MessageType.BINARY.equals(mt)) {
-					if(REST_CONTENT_TYPE_EMPTY.equals(contentType)) {
-						contentType = null;
-					}
-				}
-				
-				// Lettura Message Bytes
-				if(contentType!=null && !"".equals(contentType)) {
-					if(this.saveOnFS){
-						// READ FROM FILE SYSTEM
-						String pathBytes = saveDir + (readResponseField ? this.keyMsgResponseBytes : this.keyMsgBytes);
-						File fileCheckBytes = new File(pathBytes);
-						if(fileCheckBytes.exists() == false){
-							String errorMsg = "Il messaggio non risulta gia' registrato ("+pathBytes+").";		
-							throw new UtilsException(errorMsg);
-						}	   
-						isBytes = new FileInputStream(pathBytes);
-					}else{
-						// READ FROM DB
-						isBytes = new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,2));
-					}
-				}
-					
-				// CostruzioneMessaggio
-				OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
-				NotifierInputStreamParams notifierInputStreamParams = null; // Non dovrebbe servire, un eventuale handler attaccato, dovrebbe gia aver ricevuto tutto il contenuto una volta serializzato il messaggio su database.
-				OpenSPCoop2MessageParseResult pr = null;
-				pr = mf.createMessage(mt,mr,contentType,
-						isBytes,notifierInputStreamParams,
-						this.openspcoopProperties.getAttachmentsProcessingMode());
-				msg = pr.getMessage_throwParseException();
-				msg.readResourcesFrom(msgContext);
-
-				rs.close();
-				pstmt.close();
-
-			}catch(Exception e){
-				try{
-					if( rs != null )
-						rs.close();
-				} catch(Exception er) {
-					// close
-				}
-				try{
-					if( pstmt != null )
-						pstmt.close();
-				} catch(Exception er) {
-					// close
-				}
-				try{
-					if( isBytes != null )
-						isBytes.close();
-				} catch(Exception er) {
-					// close
-				}
-				try{
-					if( isContext != null )
-						isContext.close();
-				} catch(Exception er) {
-					// close
-				}
-				String errorMsg = "SOAP_MESSAGE, read: "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
-				this.log.error(errorMsg,e);
-				throw new UtilsException(errorMsg,e);
-			}
-
-			return msg;
-		}else { // if ( portaDiTipoStateless ){
+		}else { /** if ( portaDiTipoStateless ){ */
 			if (isRichiesta) return	((OpenSPCoopStateless)this.openspcoopstate).getRichiestaMsg();
 			else return	((OpenSPCoopStateless)this.openspcoopstate).getRispostaMsg();
 		}
 	}
 
+	private OpenSPCoop2Message readMessage(Date oraRegistrazione, boolean readResponseField, Context readTransactionContext, Connection connectionDB) throws UtilsException {
+		
+		if(readTransactionContext!=null && this.saveOnFS) {
+			fillTransactionContextFromFileSystem(readTransactionContext);
+			return null;	
+		}
+		
+		OpenSPCoop2Message msg = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
 
+			String sql = buildReadStatement(oraRegistrazione, readResponseField, readTransactionContext);
+			
+			pstmt =  connectionDB.prepareStatement(sql);
+			initPreparedStatement(oraRegistrazione, pstmt);
+			rs = pstmt.executeQuery();
+			
+			msg = readMessage(rs, readResponseField, readTransactionContext);
+
+			rs.close();
+			pstmt.close();
+
+		}catch(Exception e){
+			try{
+				if( rs != null )
+					rs.close();
+			} catch(Exception er) {
+				// close
+			}
+			try{
+				if( pstmt != null )
+					pstmt.close();
+			} catch(Exception er) {
+				// close
+			}
+			String errorMsg = "SOAP_MESSAGE, read: "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
+			logError(errorMsg, e);
+			throw new UtilsException(errorMsg,e);
+		}
+		
+		return msg;
+	}
+	
+	private void fillTransactionContextFromFileSystem(Context readTransactionContext) throws UtilsException {
+		String saveDir = getBaseDir();
+		checkInizializzazioneWorkingDir(saveDir);
+		
+		InputStream isContext = null;
+		try{
+		
+			// Lettura Message Context
+			isContext = readTransactionContextBytes(saveDir, null);
+								
+			// CostruzioneMessaggio
+			fillTransactionContext(readTransactionContext, isContext);
+			
+		}catch(Exception e){
+			try{
+				if( isContext != null )
+					isContext.close();
+			} catch(Exception er) {
+				// close
+			}
+			throw new UtilsException(e.getMessage(),e);
+		}
+		
+	}
+	
+	private String buildReadStatement(Date oraRegistrazione, boolean readResponseField, Context readTransactionContext) {
+		StringBuilder query = new StringBuilder();
+		if(readTransactionContext!=null) {
+			query.append("select TRANSACTION_CONTEXT ");
+		}
+		else {
+			String columnContentType = readResponseField ? "RESPONSE_CONTENT_TYPE" : "CONTENT_TYPE";
+			String columnMsgBytes = readResponseField ? "RESPONSE_MSG_BYTES" : "MSG_BYTES";
+			String columnMsgContext = readResponseField ? "RESPONSE_MSG_CONTEXT" : "MSG_CONTEXT";
+			
+			// Leggo proprieta' messaggio
+			if(this.saveOnFS)
+				query.append("select "+columnContentType+" ");
+			else
+				query.append("select "+columnContentType+","+columnMsgBytes+","+columnMsgContext+" ");
+		}
+		query.append("from ");
+		query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
+		query.append(" WHERE ");
+		if(oraRegistrazione!=null) {
+			query.append("(ORA_REGISTRAZIONE BETWEEN ? AND ?) AND ");
+		}
+		query.append("ID_MESSAGGIO = ? AND TIPO = ?");
+		
+		return query.toString();
+	}
+	
+	private void initPreparedStatement(Date oraRegistrazione, PreparedStatement pstmt) throws SQLException {
+		int index = 1;
+		
+		Timestamp leftValue = null;
+		Timestamp rightValue = null;
+		if(oraRegistrazione!=null) {
+			leftValue = new Timestamp(oraRegistrazione.getTime() - (1000*60*5));
+			rightValue = new Timestamp(oraRegistrazione.getTime() + (1000*60*5));
+			pstmt.setTimestamp(index++,leftValue);
+			pstmt.setTimestamp(index++,rightValue);
+		}
+		
+		pstmt.setString(index++,this.idMessaggio);
+		if(Costanti.INBOX.equals(this.box))
+			pstmt.setString(index,Costanti.INBOX);
+		else
+			pstmt.setString(index,Costanti.OUTBOX);
+	}
+	
+	private InputStream readMessageBytes(String contentType, String saveDir, boolean readResponseField, ResultSet rs) throws UtilsException, FileNotFoundException, SQLException {
+		if(contentType!=null && !"".equals(contentType)) {
+			if(this.saveOnFS){
+				// READ FROM FILE SYSTEM
+				String pathBytes = saveDir + (readResponseField ? this.keyMsgResponseBytes : this.keyMsgBytes);
+				File fileCheckBytes = new File(pathBytes);
+				if(!fileCheckBytes.exists()){
+					String errorMsg = "Il messaggio non risulta gia' registrato ("+pathBytes+").";		
+					throw new UtilsException(errorMsg);
+				}	   
+				return new FileInputStream(pathBytes);
+			}else{
+				// READ FROM DB
+				this.checkInizializzazioneAdapter();
+				return new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,2));
+			}
+		}
+		return null;
+	}
+
+	private InputStream readContextBytes(String saveDir, boolean readResponseField, ResultSet rs) throws UtilsException, FileNotFoundException, SQLException {
+		if(this.saveOnFS){
+			// READ FROM FILE SYSTEM
+			String pathContext = saveDir + (readResponseField ? this.keyMsgResponseContext : this.keyMsgContext);
+			File fileCheckContext = new File(pathContext);
+			if(!fileCheckContext.exists()){
+				String errorMsg = "Il messaggio (contesto) non risulta gia' registrato ("+pathContext+").";		
+				throw new UtilsException(errorMsg);
+			}	   
+			return new FileInputStream(pathContext);
+		}else{
+			// READ FROM DB
+			this.checkInizializzazioneAdapter();
+			return new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,3));
+		}
+	}
+	
+	private InputStream readTransactionContextBytes(String saveDir, ResultSet rs) throws UtilsException, FileNotFoundException, SQLException {
+		if(this.saveOnFS){
+			// READ FROM FILE SYSTEM
+			String pathContext = saveDir + this.keyMsgTransactionContext;
+			File fileCheckContext = new File(pathContext);
+			if(!fileCheckContext.exists()){
+				String errorMsg = "Il messaggio (transaction context) non risulta gia' registrato ("+pathContext+").";		
+				throw new UtilsException(errorMsg);
+			}	   
+			return new FileInputStream(pathContext);
+		}else{
+			// READ FROM DB
+			this.checkInizializzazioneAdapter();
+			return new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,1));
+		}
+	}
+	
+	private OpenSPCoop2Message readMessage(ResultSet rs, boolean readResponseField, Context readTransactionContext) throws UtilsException, SQLException {
+		if(rs==null){
+			String errorMsg = "ResultSet is null?";		
+			throw new UtilsException(errorMsg);
+		}
+		if(!rs.next()){
+			String errorMsg = "Messaggio non esistente";		
+			throw new UtilsException(errorMsg);
+		}
+
+		OpenSPCoop2Message msg = null;
+		if(readTransactionContext!=null) {
+			fillTransactionContext(rs, readTransactionContext);
+		}
+		else {
+			msg = readMessage(rs, readResponseField);
+		}
+		return msg;
+	}
+	
+	private void fillTransactionContext(ResultSet rs, Context readTransactionContext) throws UtilsException {
+		InputStream isContext = null;
+		try{
+		
+			// Lettura Message Context
+			isContext = readTransactionContextBytes(null, rs);
+								
+			// CostruzioneMessaggio
+			fillTransactionContext(readTransactionContext, isContext);
+			
+		}catch(Exception e){
+			try{
+				if( isContext != null )
+					isContext.close();
+			} catch(Exception er) {
+				// close
+			}
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	private OpenSPCoop2Message readMessage(ResultSet rs, boolean readResponseField) throws UtilsException, SQLException {
+		String saveDir = null;
+		if(this.saveOnFS){
+			// READ FROM FILE SYSTEM
+			
+			saveDir = getBaseDir();
+			checkInizializzazioneWorkingDir(saveDir);
+		}
+		
+		InputStream isBytes = null;
+		InputStream isContext = null;
+		try{
+		
+			// Lettura Message Context
+			isContext = readContextBytes(saveDir, readResponseField, rs);
+			
+			// ContentType
+			String columnContentType = readResponseField ? "RESPONSE_CONTENT_TYPE" : "CONTENT_TYPE";
+			String contentType = rs.getString(columnContentType);
+			
+			// Costruzione MessageContext
+			SavedMessageContext smc = buildMessageContext(contentType, isContext);
+			contentType = smc.contentTypeNormalized;
+			
+			// Lettura Message Bytes
+			isBytes = readMessageBytes(contentType, saveDir, readResponseField, rs);
+				
+			// CostruzioneMessaggio
+			return buildMessage(smc, contentType, isBytes);
+			
+		}catch(Exception e){
+			try{
+				if( isBytes != null )
+					isBytes.close();
+			} catch(Exception er) {
+				// close
+			}
+			try{
+				if( isContext != null )
+					isContext.close();
+			} catch(Exception er) {
+				// close
+			}
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	private SavedMessageContext buildMessageContext(String contentType, InputStream isContext) throws UtilsException, DeserializerException {
+		org.openspcoop2.message.context.utils.serializer.JaxbDeserializer jaxbDeserializer  = 
+				new org.openspcoop2.message.context.utils.serializer.JaxbDeserializer();
+		MessageContext msgContext = jaxbDeserializer.readMessageContext(isContext);
+		
+		if(msgContext.getMessageType()==null) {
+			throw new UtilsException("Message Type undefined in context serialized");
+		}
+		MessageType mt = MessageType.valueOf(msgContext.getMessageType());
+		if(mt==null) {
+			throw new UtilsException("MessageType ["+msgContext.getMessageType()+"] unknown");
+		}
+		
+		if(msgContext.getMessageRole()==null) {
+			throw new UtilsException("Message Role undefined in context serialized");
+		}
+		MessageRole mr = MessageRole.valueOf(msgContext.getMessageRole());
+		if(mr==null) {
+			throw new UtilsException("MessageRole ["+msgContext.getMessageRole()+"] unknown");
+		}
+		
+		if(MessageType.BINARY.equals(mt) &&
+				REST_CONTENT_TYPE_EMPTY.equals(contentType)) {
+			contentType = null;
+		}
+		
+		SavedMessageContext smc = new SavedMessageContext();
+		smc.msgContext = msgContext;
+		smc.mt = mt;
+		smc.mr = mr;
+		smc.contentTypeNormalized = contentType;
+		return smc;
+	}
+	
+	private OpenSPCoop2Message buildMessage(SavedMessageContext smc, String contentType, InputStream isBytes) throws MessageException {
+		
+		OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		NotifierInputStreamParams notifierInputStreamParams = null; // Non dovrebbe servire, un eventuale handler attaccato, dovrebbe gia aver ricevuto tutto il contenuto una volta serializzato il messaggio su database.
+		OpenSPCoop2MessageParseResult pr = null;
+		pr = mf.createMessage(smc.mt,smc.mr,contentType,
+				isBytes,notifierInputStreamParams,
+				this.openspcoopProperties.getAttachmentsProcessingMode());
+		try {
+			OpenSPCoop2Message msg = pr.getMessage_throwParseException();
+			msg.readResourcesFrom(smc.msgContext);
+			return msg;
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+
+	private void fillTransactionContext(Context context, InputStream is) throws UtilsException {
+		SerializedContext serializedContext = null;
+		try {
+			org.openspcoop2.message.context.utils.serializer.JaxbDeserializer deserializer = 
+					new org.openspcoop2.message.context.utils.serializer.JaxbDeserializer();
+			serializedContext = deserializer.readSerializedContext(is);
+			
+			if(serializedContext!=null && serializedContext.sizePropertyList()>0) {
+				JavaDeserializer jDeserializer = new JavaDeserializer();
+				for (SerializedParameter p : serializedContext.getPropertyList()) {
+					Object o = jDeserializer.readObject(new ByteArrayInputStream(p.getBase()), Class.forName(p.getClasse()));
+					context.addObject(org.openspcoop2.utils.Map.newMapKey(p.getNome()), o);
+				}
+			}
+			
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}	
+	}
 
 
 
@@ -592,80 +836,69 @@ public class SavedMessage implements java.io.Serializable {
 					: (StateMessage)this.openspcoopstate.getStatoRisposta();
 			Connection connectionDB = stateMSG.getConnectionDB();
 
-			PreparedStatement pstmt = null;
-			try{
-				// Eliminazione da FileSystem
-				if(this.saveOnFS){
-					
-					String saveDir = getBaseDir();
-					if(saveDir==null){
-						String errorMsg = "WorkDir non correttamente inizializzata";		
-						throw new UtilsException(errorMsg);
-					}
-					
-					String pathBytes = saveDir + this.keyMsgBytes;
-					File fileDeleteBytes = new File(pathBytes);
-					if(fileDeleteBytes.exists()){
-						if(!fileDeleteBytes.delete()) {
-							// ignore
-						}
-					}	
-					
-					String pathContext = saveDir + this.keyMsgContext;
-					File fileDeleteContext = new File(pathContext);
-					if(fileDeleteContext.exists()){
-						if(!fileDeleteContext.delete()) {
-							// ignore
-						}
-					}
-				}
-
-				//	Eliminazione from DB.
-				StringBuilder query = new StringBuilder();
-				query.append("DELETE from ");
-				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
-				query.append(" WHERE ");
-				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_ID_MESSAGGIO);
-				query.append(" = ? AND ");
-				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_TIPO_MESSAGGIO);
-				query.append(" = ?");	    
-				if(data!=null) {
-					query.append(" AND ");
-					query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
-					query.append("<=?");
-				}
-				pstmt= connectionDB.prepareStatement(query.toString());
-				pstmt.setString(1,this.idMessaggio);
-				if(Costanti.INBOX.equals(this.box))
-					pstmt.setString(2,Costanti.INBOX);
-				else
-					pstmt.setString(2,Costanti.OUTBOX);
-				if(data!=null) {
-					pstmt.setTimestamp(3, data);
-				}
-				pstmt.execute();
-				pstmt.close();
-
-			}catch(Exception e){
-				try{
-					if( pstmt != null )
-						pstmt.close();
-				} catch(Exception er) {
-					// close
-				}
-				String errorMsg = "SOAP_MESSAGE, delete: "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
-				this.log.error(errorMsg,e);
-				throw new UtilsException(errorMsg,e);
-			}
+			deleteStateful(connectionDB, data);
+			
 		}else if (this.openspcoopstate instanceof OpenSPCoopStateless){
 			// NOP
 		}else{
 			throw new UtilsException("Metodo invocato con IState non valido");
 		}
 	}
+	
+	private void deleteStateful(Connection connectionDB, java.sql.Timestamp data) throws UtilsException {
+		PreparedStatement pstmt = null;
+		try{
+			// Eliminazione da FileSystem
+			if(this.saveOnFS){
+				deleteFileSystem();
+			}
 
+			//	Eliminazione from DB.
+			String sql = buildDeleteStatement(data);
+			pstmt= connectionDB.prepareStatement(sql);
+			pstmt.setString(1,this.idMessaggio);
+			if(Costanti.INBOX.equals(this.box))
+				pstmt.setString(2,Costanti.INBOX);
+			else
+				pstmt.setString(2,Costanti.OUTBOX);
+			if(data!=null) {
+				pstmt.setTimestamp(3, data);
+			}
+			pstmt.execute();
+			pstmt.close();
+
+		}catch(Exception e){
+			try{
+				if( pstmt != null )
+					pstmt.close();
+			} catch(Exception er) {
+				// close
+			}
+			String errorMsg = "SOAP_MESSAGE, delete: "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
+			logError(errorMsg,e);
+			throw new UtilsException(errorMsg,e);
+		}
+	}
+	
+	private String buildDeleteStatement(java.sql.Timestamp data) {
+		StringBuilder query = new StringBuilder();
+		query.append("DELETE from ");
+		query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
+		query.append(" WHERE ");
+		query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_ID_MESSAGGIO);
+		query.append(" = ? AND ");
+		query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_TIPO_MESSAGGIO);
+		query.append(" = ?");	    
+		if(data!=null) {
+			query.append(" AND ");
+			query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
+			query.append("<=?");
+		}
+		return query.toString();
+	}
+	
 	/**
-	 * Elimina un messaggio completamente, sia dal filesystem che dal db 
+	 * Elimina un messaggio completamente filesystem
 	 * 
 	 * 
 	 */
@@ -676,54 +909,71 @@ public class SavedMessage implements java.io.Serializable {
 			// Eliminazione da FileSystem
 			if(this.saveOnFS){
 				
-				String saveDir = getBaseDir();
-				if(saveDir==null){
-					String errorMsg = "WorkDir non correttamente inizializzata";		
-					throw new UtilsException(errorMsg);
-				}
+				deleteFileSystem();
 				
-				String pathBytes = saveDir + this.keyMsgBytes;
-				File fileDeleteBytes = new File(pathBytes);
-				if(fileDeleteBytes.exists()){
-					if(!fileDeleteBytes.delete()) {
-						// ignore
-					}
-				}	
-								
-				String pathContext = saveDir + this.keyMsgContext;
-				File fileDeleteContext = new File(pathContext);
-				if(fileDeleteContext.exists()){
-					if(!fileDeleteContext.delete()) {
-						// ignore
-					}
-				}
-				
-				String pathResponseBytes = saveDir + this.keyMsgResponseBytes;
-				File fileDeleteResponseBytes = new File(pathResponseBytes);
-				if(fileDeleteResponseBytes.exists()){
-					if(!fileDeleteResponseBytes.delete()) {
-						// ignore
-					}
-				}
-				
-				String pathResponseContext = saveDir + this.keyMsgResponseContext;
-				File fileDeleteResponseContext = new File(pathResponseContext);
-				if(fileDeleteResponseContext.exists()){
-					if(!fileDeleteResponseContext.delete()) {
-						// ignore
-					}
-				}
 			}
 
 		}catch(Exception e){
 			String errorMsg = "SOAP_MESSAGE, deleteMessageFromFileSystem: "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
-			this.log.error(errorMsg,e);
+			this.getLog().error(errorMsg,e);
 		}
 	}
+	
+	private void deleteFileSystem() throws UtilsException {
+		
+		String saveDir = getBaseDir();
+		checkInizializzazioneWorkingDir(saveDir);
+		
+		String pathBytes = saveDir + this.keyMsgBytes;
+		File fileDeleteBytes = new File(pathBytes);
+		if(fileDeleteBytes.exists()){
+			deleteFileIgnoreException(fileDeleteBytes);
+		}	
+						
+		String pathContext = saveDir + this.keyMsgContext;
+		File fileDeleteContext = new File(pathContext);
+		if(fileDeleteContext.exists()){
+			deleteFileIgnoreException(fileDeleteContext);
+		}
+		
+		String pathResponseBytes = saveDir + this.keyMsgResponseBytes;
+		File fileDeleteResponseBytes = new File(pathResponseBytes);
+		if(fileDeleteResponseBytes.exists()){
+			deleteFileIgnoreException(fileDeleteResponseBytes);
+		}
+		
+		String pathResponseContext = saveDir + this.keyMsgResponseContext;
+		File fileDeleteResponseContext = new File(pathResponseContext);
+		if(fileDeleteResponseContext.exists()){
+			deleteFileIgnoreException(fileDeleteResponseContext);
+		}
+		
+		String pathTransactionContext = saveDir + this.keyMsgTransactionContext;
+		File fileDeleteTransactionContext = new File(pathTransactionContext);
+		if(fileDeleteTransactionContext.exists()){
+			deleteFileIgnoreException(fileDeleteTransactionContext);
+		}
+		
+	}
 
+	
+	private void deleteFileIgnoreException(File file) {
+		try {
+			Files.delete(file.toPath());
+		}catch(Exception e) {
+			// ignore
+		}
+	}
 }
 
-
+class SavedMessageContext {
+	
+	MessageContext msgContext;
+	MessageType mt;
+	MessageRole mr;
+	String contentTypeNormalized;
+	
+}
 
 
 

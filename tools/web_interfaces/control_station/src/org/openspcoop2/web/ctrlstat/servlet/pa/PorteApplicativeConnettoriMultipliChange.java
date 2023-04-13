@@ -339,7 +339,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			}
 			if(integrationManagerEnabled) {
 				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(beaBehaviourType)) {
-					ConfigurazioneMultiDeliver confMultiDeliver = MultiDeliverUtils.read(pa, ControlStationCore.getLog());
+					ConfigurazioneMultiDeliver confMultiDeliver = MultiDeliverUtils.read(pa);
 					String nomeConnettoreSincrono = null;
 					if(confMultiDeliver!=null) {
 						nomeConnettoreSincrono = confMultiDeliver.getTransazioneSincrona_nomeConnettore();
@@ -1473,7 +1473,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 							if( behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
 								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
-										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
+										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa);
 
 								if(configurazioneMultiDeliver != null) {
 									if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {

@@ -742,6 +742,9 @@ public class CostantiPdD {
     /** Costante che indica il tipo di validazione */
     public static final String KEY_TIPO_VALIDAZIONE_BUSTA = "@TIPO_VALIDAZIONE_BUSTA@";
 
+    public static final MapKey<String> SALVA_CONTESTO_IDENTIFICATIVO_MESSAGGIO_NOTIFICA = Map.newMapKey("SALVA_CONTESTO_IDENTIFICATIVO_MESSAGGIO_NOTIFICA");
+    public static final MapKey<String> CONTESTO_RICHIESTA_MESSAGGIO_NOTIFICA = Map.newMapKey("CONTESTO_RICHIESTA_MESSAGGIO_NOTIFICA");
+    
     /** Costante che indica il Tipo di appender utilizzato per il tracciamento */
     public static final String KEY_TRACCIAMENTO_PERSONALIZZATO = "@TIPO_TRACCIAMENTO_PERSONALIZZATO@";
     /** Costante che indica l' errore che non ha permesso il tracciamento */
