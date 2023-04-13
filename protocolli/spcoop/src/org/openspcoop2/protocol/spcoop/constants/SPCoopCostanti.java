@@ -37,12 +37,12 @@ public class SPCoopCostanti {
 	public static final String SERVIZIO_SPC = "SPC";
 	public static final String SERVIZIO_AOO = "AOO";
 
-    public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
+    public static final String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
-    public final static String SPCOOP_PROPERTIES_LOCAL_PATH = "spcoop_local.properties";
-    public final static String SPCOOP_PROPERTIES = "SPCOOP_PROPERTIES";
+    public static final String SPCOOP_PROPERTIES_LOCAL_PATH = "spcoop_local.properties";
+    public static final String SPCOOP_PROPERTIES = "SPCOOP_PROPERTIES";
 	
-    public final static String ECCEZIONE_PREFIX_CODE = "EGOV_IT_";
+    public static final String ECCEZIONE_PREFIX_CODE = "EGOV_IT_";
     
     /** Profilo di gestione della Busta eGov: busta eGov v1.1 */
     public static final String PROFILO_CNIPA_BUSTA_EGOV_11 = "eGov1.1";
@@ -79,18 +79,18 @@ public class SPCoopCostanti {
     public static final int CIFRE_SERIALI_ID_EGOV = 7;
    
     /** Tipo di identificativo egov: default */
-    public final static String IDENTIFICATIVO_EGOV_SERIALE_DB = CostantiProtocollo.IDENTIFICATIVO_SERIALE_DB;
+    public static final String IDENTIFICATIVO_EGOV_SERIALE_DB = CostantiProtocollo.IDENTIFICATIVO_SERIALE_DB;
     /** Tipo di identificativo egov: mysql */
-    public final static String IDENTIFICATIVO_EGOV_SERIALE_MYSQL = CostantiProtocollo.IDENTIFICATIVO_SERIALE_MYSQL;
+    public static final String IDENTIFICATIVO_EGOV_SERIALE_MYSQL = CostantiProtocollo.IDENTIFICATIVO_SERIALE_MYSQL;
     /** Tipo di identificativo egov: static */
-    public final static String IDENTIFICATIVO_EGOV_SERIALE_STATIC = CostantiProtocollo.IDENTIFICATIVO_SERIALE_STATIC;
+    public static final String IDENTIFICATIVO_EGOV_SERIALE_STATIC = CostantiProtocollo.IDENTIFICATIVO_SERIALE_STATIC;
     /** Tipo di identificativo egov: static */
-    public final static String IDENTIFICATIVO_EGOV_SERIALE_DYNAMIC = CostantiProtocollo.IDENTIFICATIVO_SERIALE_DYNAMIC;
+    public static final String IDENTIFICATIVO_EGOV_SERIALE_DYNAMIC = CostantiProtocollo.IDENTIFICATIVO_SERIALE_DYNAMIC;
     
     /** Attesa attiva di default effettuata per la gestione del livello serializable nel DB, in millisecondi */
-    public final static long GESTIONE_SERIALIZABLE_ATTESA_ATTIVA = 60l * 1000l; // 1 minuto
+    public static final long GESTIONE_SERIALIZABLE_ATTESA_ATTIVA = 60l * 1000l; // 1 minuto
     /** Intervallo maggiore per frequenza di check nell'attesa attiva effettuata per la gestione del livello serializable nel DB, in millisecondi */
-    public final static int GESTIONE_SERIALIZABLE_CHECK_INTERVAL = 100; 
+    public static final int GESTIONE_SERIALIZABLE_CHECK_INTERVAL = 100; 
 
     /** Definisce un tipo di EccezioneApplicativa */
     public static final String ECCEZIONE_INTEGRAZIONE = "EccezioneIntegrazione";

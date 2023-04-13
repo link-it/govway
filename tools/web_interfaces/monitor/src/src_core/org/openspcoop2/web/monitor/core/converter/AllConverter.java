@@ -34,8 +34,8 @@ import javax.faces.convert.Converter;
 public class AllConverter implements Converter {
 	
 	
-	public final static String ALL_STRING  = "[Qualsiasi]";
-	//private final static String NONE_STRING = ALL_STRING;
+	public static final String ALL_STRING  = "[Qualsiasi]";
+	//private static final String NONE_STRING = ALL_STRING;
 	
 	@Override
 	public Object getAsObject(FacesContext ctx, UIComponent component, String value) {

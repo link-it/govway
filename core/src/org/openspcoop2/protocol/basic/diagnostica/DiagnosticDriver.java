@@ -76,7 +76,7 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 	}
 
 	
-	public final static String IDDIAGNOSTICI = "@@@@@-----@@@@-----IDDIAGNOSTICI-DB----@@@@@-----@@@@";
+	public static final String IDDIAGNOSTICI = "@@@@@-----@@@@-----IDDIAGNOSTICI-DB----@@@@@-----@@@@";
 	
 	
 	/**

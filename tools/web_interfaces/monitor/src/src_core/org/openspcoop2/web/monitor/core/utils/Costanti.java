@@ -47,9 +47,9 @@ public class Costanti {
 	public static final String APP_LOG_PROPERTIES_LOCAL_PATH = "monitor_local.log4j2.properties";
 	public static final String APP_LOG_PROPERTIES = "MONITOR_LOG_PROPERTIES";
 	
-	public final static String APP_PROPERTIES_PATH = "monitor.properties";
-	public final static String APP_PROPERTIES_LOCAL_PATH = "monitor_local.properties";
-	public final static String APP_PROPERTIES = "MONITOR_PROPERTIES";
+	public static final String APP_PROPERTIES_PATH = "monitor.properties";
+	public static final String APP_PROPERTIES_LOCAL_PATH = "monitor_local.properties";
+	public static final String APP_PROPERTIES = "MONITOR_PROPERTIES";
 	
 	
 	

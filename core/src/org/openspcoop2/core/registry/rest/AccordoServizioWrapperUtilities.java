@@ -95,7 +95,7 @@ public class AccordoServizioWrapperUtilities {
 	
 	
 	
-	public final static String API_SENZA_SPECIFICA = "L'API non contiene una specifica";
+	public static final String API_SENZA_SPECIFICA = "L'API non contiene una specifica";
 	
 	public void buildApiFromSpecific(boolean fromBytes,boolean buildSchemi,boolean processInclude) throws DriverRegistroServiziException {
 		

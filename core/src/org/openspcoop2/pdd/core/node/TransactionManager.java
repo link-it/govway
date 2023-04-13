@@ -61,7 +61,7 @@ public class TransactionManager {
 	private static org.slf4j.Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 	
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public final static String ID_MODULO = "TransactionManager";
+	public static final String ID_MODULO = "TransactionManager";
 
 	/**
 	 * Quando un modulo di OpenSPCoop chiama questo metodo, si aspetta come risposta una indicazione

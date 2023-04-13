@@ -31,16 +31,16 @@ import java.awt.Color;
  */
 public class Colors {
 
-	public final static String CODE_FAULT_APPLICATIVO = "FF8F52";
-	public final static String CODE_ERROR = "CD4A50";
-	public final static String CODE_OK = "95B964";
+	public static final String CODE_FAULT_APPLICATIVO = "FF8F52";
+	public static final String CODE_ERROR = "CD4A50";
+	public static final String CODE_OK = "95B964";
 	
-	public final static String CSS_COLOR_FAULT_APPLICATIVO = "#"+CODE_FAULT_APPLICATIVO;
-	public final static String CSS_COLOR_ERROR = "#"+CODE_ERROR;
-	public final static String CSS_COLOR_OK = "#"+CODE_OK;
+	public static final String CSS_COLOR_FAULT_APPLICATIVO = "#"+CODE_FAULT_APPLICATIVO;
+	public static final String CSS_COLOR_ERROR = "#"+CODE_ERROR;
+	public static final String CSS_COLOR_OK = "#"+CODE_OK;
 	
-	public final static Color COLOR_FAULT_APPLICATIVO = Color.decode(CSS_COLOR_FAULT_APPLICATIVO);
-	public final static Color COLOR_ERROR = Color.decode(CSS_COLOR_ERROR);
-	public final static Color COLOR_OK = Color.decode(CSS_COLOR_OK);
+	public static final Color COLOR_FAULT_APPLICATIVO = Color.decode(CSS_COLOR_FAULT_APPLICATIVO);
+	public static final Color COLOR_ERROR = Color.decode(CSS_COLOR_ERROR);
+	public static final Color COLOR_OK = Color.decode(CSS_COLOR_OK);
 	
 }

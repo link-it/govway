@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPDDelete {
 
-	private final static String ID_GRUPPO = "REST.PD.DELETE";
+	private static final String ID_GRUPPO = "REST.PD.DELETE";
 	private HttpRequestMethod method = HttpRequestMethod.DELETE;
 
 	private RESTCore restCore;

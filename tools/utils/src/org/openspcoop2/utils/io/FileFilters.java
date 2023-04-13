@@ -34,7 +34,7 @@ import java.io.FileFilter;
  */
 public class FileFilters {
 
-	public final static FileFilter DIRECTORIES_ONLY = new FileFilter ()
+	public static final FileFilter DIRECTORIES_ONLY = new FileFilter ()
 	{
 		@Override
 		public boolean accept (File f)
@@ -44,7 +44,7 @@ public class FileFilters {
 		}
 	};
 	
-	public final static FileFilter FILES_ONLY = new FileFilter ()
+	public static final FileFilter FILES_ONLY = new FileFilter ()
 	{
 		@Override
 		public boolean accept (File f)
@@ -54,7 +54,7 @@ public class FileFilters {
 		}
 	};
 	
-	public final static FileFilter HIDDEN_ONLY = new FileFilter ()
+	public static final FileFilter HIDDEN_ONLY = new FileFilter ()
 	{
 		@Override
 		public boolean accept (File f)
@@ -64,7 +64,7 @@ public class FileFilters {
 		}
 	};
 	
-	public final static FileFilter JAR_ONLY = new FileFilter ()
+	public static final FileFilter JAR_ONLY = new FileFilter ()
 	{
 		@Override
 		public boolean accept (File f)
@@ -74,7 +74,7 @@ public class FileFilters {
 		}
 	};
 	
-	public final static FileFilter WAR_ONLY = new FileFilter ()
+	public static final FileFilter WAR_ONLY = new FileFilter ()
 	{
 		@Override
 		public boolean accept (File f)
@@ -84,7 +84,7 @@ public class FileFilters {
 		}
 	};
 	
-	public final static FileFilter EAR_ONLY = new FileFilter ()
+	public static final FileFilter EAR_ONLY = new FileFilter ()
 	{
 		@Override
 		public boolean accept (File f)

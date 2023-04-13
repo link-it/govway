@@ -478,16 +478,16 @@ public abstract class AbstractUtils {
 	
 	// INSERT VALUE
 	
-	public final static String CAST_PREFIX = "cast(";
-	public final static String CAST_SUFFIX_AS_INT = " as int)";
-	public final static String CAST_SUFFIX_AS_LONG = " as long)";
-	public final static String CAST_SUFFIX_AS_FLOAT = " as float)";
-	public final static String CAST_SUFFIX_AS_DOUBLE = " as double)";
-	public final static String CAST_SUFFIX_AS_BOOLEAN = " as boolean)";
+	public static final String CAST_PREFIX = "cast(";
+	public static final String CAST_SUFFIX_AS_INT = " as int)";
+	public static final String CAST_SUFFIX_AS_LONG = " as long)";
+	public static final String CAST_SUFFIX_AS_FLOAT = " as float)";
+	public static final String CAST_SUFFIX_AS_DOUBLE = " as double)";
+	public static final String CAST_SUFFIX_AS_BOOLEAN = " as boolean)";
 	
-	private final static String CAST_ARRAY_OPTIONAL_EMPTY_RESULT = "cast( as string array)";
-	public final static String CAST_PREFIX_ARRAY = "cast([";
-	public final static String CAST_SUFFIX_AS_STRING_ARRAY = "] as string array)";
+	private static final String CAST_ARRAY_OPTIONAL_EMPTY_RESULT = "cast( as string array)";
+	public static final String CAST_PREFIX_ARRAY = "cast([";
+	public static final String CAST_SUFFIX_AS_STRING_ARRAY = "] as string array)";
 	
 	public void putValue(ObjectNode objectNode, String key, String value) throws UtilsException {
 		if(value!=null) {

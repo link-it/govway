@@ -61,15 +61,15 @@ import org.slf4j.Logger;
 public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Nomi proprieta' */
-	public final static String MAX_LIFE_PRESA_IN_CONSEGNA = "maxlifePresaInConsegna";
+	public static final String MAX_LIFE_PRESA_IN_CONSEGNA = "maxlifePresaInConsegna";
 
 	/** Nomi metodi' */
-	public final static String THREAD_POOL_STATUS = "getThreadPoolStatus";
-	public final static String QUEUE_CONFIG = "getQueueConfig";
-	public final static String GET_APPLICATIVI_PRIORITARI = "getApplicativiPrioritari";
-	public final static String GET_CONNETTORI_PRIORITARI = "getConnettoriPrioritari";
-	public final static String UPDATE_CONNETTORI_PRIORITARI = "updateConnettoriPrioritari";
-	public final static String RESET_CONNETTORI_PRIORITARI = "resetConnettoriPrioritari";
+	public static final String THREAD_POOL_STATUS = "getThreadPoolStatus";
+	public static final String QUEUE_CONFIG = "getQueueConfig";
+	public static final String GET_APPLICATIVI_PRIORITARI = "getApplicativiPrioritari";
+	public static final String GET_CONNETTORI_PRIORITARI = "getConnettoriPrioritari";
+	public static final String UPDATE_CONNETTORI_PRIORITARI = "updateConnettoriPrioritari";
+	public static final String RESET_CONNETTORI_PRIORITARI = "resetConnettoriPrioritari";
 		
 	/** Attributi */
 	private boolean cacheAbilitata = false;

@@ -32,7 +32,7 @@ import org.openspcoop2.utils.certificate.test.KeystoreTest;
 */
 public class XmlSecurityTest extends ConfigLoader {
 
-	private final static String api = "TestXmlSecurity";
+	private static final String api = "TestXmlSecurity";
 	
 	@Test
 	public void signature() throws Exception {

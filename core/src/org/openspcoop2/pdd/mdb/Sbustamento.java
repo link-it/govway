@@ -104,7 +104,7 @@ import org.slf4j.Logger;
  */
 public class Sbustamento extends GenericLib{
 
-	public final static String ID_MODULO = "Sbustamento";
+	public static final String ID_MODULO = "Sbustamento";
 
 	/** XMLBuilder */
 	private RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore;

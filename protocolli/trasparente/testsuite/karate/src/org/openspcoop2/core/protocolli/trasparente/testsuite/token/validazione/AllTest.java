@@ -43,7 +43,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 */
 public class AllTest extends ConfigLoader {
 
-	public final static String validazione = "TestValidazioneToken-MergeToken";
+	public static final String validazione = "TestValidazioneToken-MergeToken";
 		
 	@Test
 	public void success() throws Exception {

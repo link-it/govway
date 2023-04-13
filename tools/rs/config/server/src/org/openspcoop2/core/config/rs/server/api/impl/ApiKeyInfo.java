@@ -29,8 +29,8 @@ package org.openspcoop2.core.config.rs.server.api.impl;
  */
 public class ApiKeyInfo {
 
-	public final static String API_KEY = "X-Api-Key";
-	public final static String APP_ID = "X-App-Id";
+	public static final String API_KEY = "X-Api-Key";
+	public static final String APP_ID = "X-App-Id";
 	
 	private boolean multipleApiKeys = false;
 	private String appId;

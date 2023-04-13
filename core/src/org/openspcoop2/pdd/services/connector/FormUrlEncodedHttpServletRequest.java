@@ -62,7 +62,7 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
      *  </servlet-container>
 	 **/
 	
-	private final static String CONTENT_TYPE_FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+	private static final String CONTENT_TYPE_FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 	
 	public static boolean isFormUrlEncodedRequest(HttpServletRequest httpServletRequest) {
 		String ct = httpServletRequest.getContentType();

@@ -32,7 +32,7 @@ import org.openspcoop2.utils.certificate.test.KeystoreTest;
 */
 public class WSSecurityTest extends ConfigLoader {
 
-	private final static String api = "TestWSSecurity";
+	private static final String api = "TestWSSecurity";
 	
 	@Test
 	public void signature_soap11() throws Exception {

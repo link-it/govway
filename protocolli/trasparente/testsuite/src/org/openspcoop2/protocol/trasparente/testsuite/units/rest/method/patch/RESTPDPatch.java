@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPDPatch {
 
-	private final static String ID_GRUPPO = "REST.PD.PATCH";
+	private static final String ID_GRUPPO = "REST.PD.PATCH";
 	private HttpRequestMethod method = HttpRequestMethod.PATCH;
 
 	private RESTCore restCore;

@@ -44,13 +44,13 @@ import org.openspcoop2.utils.properties.PropertiesReader;
  */
 public class ConfigurazioneNodiRuntime {
 
-	public final static String RESOURCE_NAME = "govway.nodirun.properties";
+	public static final String RESOURCE_NAME = "govway.nodirun.properties";
 	
-	public final static String RESOURCE_TIPOLOGIA_ACCESSO_JMX = "jmx";
-	public final static String RESOURCE_TIPOLOGIA_ACCESSO_OPENSPCOOP = "openspcoop";
-	public final static String RESOURCE_TIPOLOGIA_ACCESSO_GOVWAY = "govway";
+	public static final String RESOURCE_TIPOLOGIA_ACCESSO_JMX = "jmx";
+	public static final String RESOURCE_TIPOLOGIA_ACCESSO_OPENSPCOOP = "openspcoop";
+	public static final String RESOURCE_TIPOLOGIA_ACCESSO_GOVWAY = "govway";
 	
-	public final static String ALIAS_DEFAULT = "pdd";
+	public static final String ALIAS_DEFAULT = "pdd";
 	
 	private static Map<String, ConfigurazioneNodiRuntime> staticInstanceMap = new HashMap<String, ConfigurazioneNodiRuntime>();
 	private static final String PREFIX_DEFAULT = "";

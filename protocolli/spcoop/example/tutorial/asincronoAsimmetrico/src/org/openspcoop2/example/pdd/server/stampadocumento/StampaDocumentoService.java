@@ -40,9 +40,9 @@ import javax.xml.ws.WebServiceFeature;
                   targetNamespace = "http://openspcoop2.org/example/pdd/server/StampaDocumento") 
 public class StampaDocumentoService extends Service {
 	
-    public final static URL WSDL_LOCATION;
-    public final static QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/StampaDocumento", "StampaDocumentoService");
-    public final static QName StampaDocumentoInterfaceEndpoint = new QName("http://openspcoop2.org/example/pdd/server/StampaDocumento", "StampaDocumentoInterfaceEndpoint");
+    public static final URL WSDL_LOCATION;
+    public static final QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/StampaDocumento", "StampaDocumentoService");
+    public static final QName StampaDocumentoInterfaceEndpoint = new QName("http://openspcoop2.org/example/pdd/server/StampaDocumento", "StampaDocumentoInterfaceEndpoint");
     static {
         URL url = null;
         try {

@@ -51,21 +51,21 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 */
 public class Bodies {
 	
-	public final static int SIZE_1K = 1024; // 1024 byte=1K
-	public final static int SIZE_5K = 1024*5; 
-	public final static int SIZE_50K = 1024*50; 
-	public final static int SIZE_500K = 1024*500; 
+	public static final int SIZE_1K = 1024; // 1024 byte=1K
+	public static final int SIZE_5K = 1024*5; 
+	public static final int SIZE_50K = 1024*50; 
+	public static final int SIZE_500K = 1024*500; 
 	
-	public final static int SMALL_SIZE = 1024; // 1024 byte=1K
-	public final static int BIG_SIZE = 1024*1024*2; // {(1024*1024*2)}, // 2MB
+	public static final int SMALL_SIZE = 1024; // 1024 byte=1K
+	public static final int BIG_SIZE = 1024*1024*2; // {(1024*1024*2)}, // 2MB
 	
-	private final static String PATH = "/org/openspcoop2/core/protocolli/trasparente/testsuite/";
+	private static final String PATH = "/org/openspcoop2/core/protocolli/trasparente/testsuite/";
 	
 	@SuppressWarnings("unused")
-	private final static String getXmlPayload(int sizePayload,String prefix) { 
+	private static final String getXmlPayload(int sizePayload,String prefix) { 
 		return getXmlPayload(sizePayload, prefix, null);
 	}
-	private final static String getXmlPayload(int sizePayload,String prefix, String applicativeId) { 
+	private static final String getXmlPayload(int sizePayload,String prefix, String applicativeId) { 
 		StringBuilder sb = new StringBuilder();
 		int index = 1;
 		while(sb.length()<sizePayload) {
@@ -77,25 +77,25 @@ public class Bodies {
 		return sb.toString();
 	}
 	
-	public final static String getXML(int sizePayload) { 
+	public static final String getXML(int sizePayload) { 
 		return getXML(sizePayload, null);
 	}
-	public final static String getXML(int sizePayload, String applicativeId) { 
+	public static final String getXML(int sizePayload, String applicativeId) { 
 		return "<ns2:Test xmlns:ns2=\"http://govway.org/example\">\n" + 
 				getXmlPayload(sizePayload,"",applicativeId) +
 				"\n</ns2:Test>";
 	}
 	
-	public final static String getSOAPEnvelope11(int sizePayload) { 
+	public static final String getSOAPEnvelope11(int sizePayload) { 
 		return getSOAPEnvelope11(0, sizePayload, null);
 	}
-	public final static String getSOAPEnvelope11(int sizeHeader, int sizePayload) { 
+	public static final String getSOAPEnvelope11(int sizeHeader, int sizePayload) { 
 		return getSOAPEnvelope11(sizeHeader, sizePayload, null);
 	}
-	public final static String getSOAPEnvelope11(int sizePayload, String applicativeId) { 
+	public static final String getSOAPEnvelope11(int sizePayload, String applicativeId) { 
 		return getSOAPEnvelope11(0, sizePayload, applicativeId);
 	}
-	public final static String getSOAPEnvelope11(int sizeHeader, int sizePayload, String applicativeId) { 
+	public static final String getSOAPEnvelope11(int sizeHeader, int sizePayload, String applicativeId) { 
 		String env = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n";
 		if(sizeHeader>0) {
 			env = env+
@@ -115,16 +115,16 @@ public class Bodies {
 		return env;
 	}
 	
-	public final static String getSOAPEnvelope12(int sizePayload) { 
+	public static final String getSOAPEnvelope12(int sizePayload) { 
 		return getSOAPEnvelope12(0, sizePayload, null);
 	}
-	public final static String getSOAPEnvelope12(int sizeHeader, int sizePayload) { 
+	public static final String getSOAPEnvelope12(int sizeHeader, int sizePayload) { 
 		return getSOAPEnvelope12(sizeHeader, sizePayload, null);
 	}
-	public final static String getSOAPEnvelope12(int sizePayload, String applicativeId) { 
+	public static final String getSOAPEnvelope12(int sizePayload, String applicativeId) { 
 		return getSOAPEnvelope12(0, sizePayload, applicativeId);
 	}
-	public final static String getSOAPEnvelope12(int sizeHeader, int sizePayload, String applicativeId) { 
+	public static final String getSOAPEnvelope12(int sizeHeader, int sizePayload, String applicativeId) { 
 		String env = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n"; 
 		if(sizeHeader>0) {
 			env = env+
@@ -145,7 +145,7 @@ public class Bodies {
 	}
 	
 	
-	private final static String getJsonPayload(int sizePayload) { 
+	private static final String getJsonPayload(int sizePayload) { 
 		StringBuilder sb = new StringBuilder();
 		int index = 1;
 		while(sb.length()<sizePayload) {
@@ -157,12 +157,12 @@ public class Bodies {
 		return sb.toString();
 	}
 	
-	public final static String getJson(int sizePayload) { 
+	public static final String getJson(int sizePayload) { 
 		return "{\n" + 
 				getJsonPayload(sizePayload) +
 			"\n}";
 	}
-	public final static String getJson(int sizePayload, String applicativeIdClaim) { 
+	public static final String getJson(int sizePayload, String applicativeIdClaim) { 
 		return "{\n" + 
 				getJsonPayload(sizePayload) +
 				","+
@@ -170,20 +170,20 @@ public class Bodies {
 			"\n}";
 	}
 		
-	public final static byte[] getPdf() throws UtilsException {
+	public static final byte[] getPdf() throws UtilsException {
 		return Utilities.getAsByteArray(Bodies.class.getResourceAsStream(PATH+"HelloWorld.pdf"));
 	}
-	public final static byte[] getZip() throws UtilsException {
+	public static final byte[] getZip() throws UtilsException {
 		return Utilities.getAsByteArray(Bodies.class.getResourceAsStream(PATH+"HelloWorld.zip"));
 	}
 	
-	public final static MimeMultipart getMultipartRelated(int sizePayload) throws Exception {
+	public static final MimeMultipart getMultipartRelated(int sizePayload) throws Exception {
 		return getMultipartRelated(sizePayload, "related");
 	}
-	public final static MimeMultipart getMultipartMixed(int sizePayload) throws Exception {
+	public static final MimeMultipart getMultipartMixed(int sizePayload) throws Exception {
 		return getMultipartRelated(sizePayload, "mixed");
 	}
-	private final static MimeMultipart getMultipartRelated(int sizePayload, String subType) throws Exception { 
+	private static final MimeMultipart getMultipartRelated(int sizePayload, String subType) throws Exception { 
 		
 		org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator uuidGeneratore = new org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator();
 		
@@ -229,7 +229,7 @@ public class Bodies {
 		return mm;
 		
 	}
-	public final static byte[] toByteArray(MimeMultipart mm) throws Exception{
+	public static final byte[] toByteArray(MimeMultipart mm) throws Exception{
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		
 		mm.writeTo(os);
@@ -240,22 +240,22 @@ public class Bodies {
 	}
 	
 	
-	public final static OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload) throws Throwable{
+	public static final OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload) throws Throwable{
 		return getSOAP11WithAttachments(sizePayload, null, null);
 	}
-	public final static OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId) throws Throwable{
+	public static final OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId) throws Throwable{
 		return getSOAP11WithAttachments(sizePayload, applicativeId, null);	
 	}
-	public final static OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId, Charset charset) throws Throwable{
+	public static final OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId, Charset charset) throws Throwable{
 		return getSOAP11WithAttachments(sizePayload, applicativeId, charset,
 				true, true, true, true, true);
 	}
-	public final static OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId,
+	public static final OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId,
 			boolean xmlAttachment, boolean jsonAttachment, boolean pdfAttachment, boolean textAttachment, boolean zipAttachment) throws Throwable{
 		return getSOAP11WithAttachments(sizePayload, applicativeId, null,
 				xmlAttachment, jsonAttachment, pdfAttachment, textAttachment, zipAttachment);
 	}
-	public final static OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId, Charset charset,
+	public static final OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId, Charset charset,
 			boolean xmlAttachment, boolean jsonAttachment, boolean pdfAttachment, boolean textAttachment, boolean zipAttachment) throws Throwable{
 		String envelope = getSOAPEnvelope11(sizePayload, applicativeId);
 		if(charset!=null) {
@@ -274,22 +274,22 @@ public class Bodies {
 		return _getSOAPWithAttachments(MessageType.SOAP_11, HttpConstants.CONTENT_TYPE_SOAP_1_1+charsetSuffix, envelopeB, 
 				xmlAttachment, jsonAttachment, pdfAttachment, textAttachment, zipAttachment);
 	}
-	public final static OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload) throws Throwable{
+	public static final OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload) throws Throwable{
 		return getSOAP12WithAttachments(sizePayload, null, null);
 	}
-	public final static OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId) throws Throwable{
+	public static final OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId) throws Throwable{
 		return getSOAP12WithAttachments(sizePayload, applicativeId, null);
 	}
-	public final static OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId, Charset charset) throws Throwable{
+	public static final OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId, Charset charset) throws Throwable{
 		return getSOAP12WithAttachments(sizePayload, applicativeId, charset,
 				true, true, true, true, true);
 	}
-	public final static OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId,
+	public static final OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId,
 			boolean xmlAttachment, boolean jsonAttachment, boolean pdfAttachment, boolean textAttachment, boolean zipAttachment) throws Throwable{
 		return getSOAP12WithAttachments(sizePayload, applicativeId, null,
 				xmlAttachment, jsonAttachment, pdfAttachment, textAttachment, zipAttachment);
 	}
-	public final static OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId, Charset charset,
+	public static final OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId, Charset charset,
 			boolean xmlAttachment, boolean jsonAttachment, boolean pdfAttachment, boolean textAttachment, boolean zipAttachment) throws Throwable{
 		String envelope = getSOAPEnvelope12(sizePayload, applicativeId);
 		if(charset!=null) {
@@ -308,7 +308,7 @@ public class Bodies {
 		return _getSOAPWithAttachments(MessageType.SOAP_12, HttpConstants.CONTENT_TYPE_SOAP_1_2+charsetSuffix, envelopeB, 
 				xmlAttachment, jsonAttachment, pdfAttachment, textAttachment, zipAttachment);
 	}
-	private final static OpenSPCoop2Message _getSOAPWithAttachments(MessageType messageType, String contentType, byte [] envelope, 
+	private static final OpenSPCoop2Message _getSOAPWithAttachments(MessageType messageType, String contentType, byte [] envelope, 
 			boolean xmlAttachment, boolean jsonAttachment, boolean pdfAttachment, boolean textAttachment, boolean zipAttachment) throws Throwable { 
 		
 		OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
@@ -408,7 +408,7 @@ public class Bodies {
 		return soapMsg;
 		
 	}
-	public final static byte[] toByteArray(OpenSPCoop2Message msg) throws Exception{
+	public static final byte[] toByteArray(OpenSPCoop2Message msg) throws Exception{
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		
 		msg.writeTo(os, true);

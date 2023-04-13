@@ -28,7 +28,7 @@ package org.openspcoop2.pdd.mdb.threads;
  * @version $Rev$, $Date$
  */
 public class ImbustamentoRisposteMain extends ModuloAlternativoMain {
-	private final static String idModulo = "ImbustamentoRisposte";
+	private static final String idModulo = "ImbustamentoRisposte";
 	
 	public ImbustamentoRisposteMain(){
 		super(ImbustamentoRisposteMain.idModulo);

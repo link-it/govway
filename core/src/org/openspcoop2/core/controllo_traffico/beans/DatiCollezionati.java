@@ -78,7 +78,7 @@ public class DatiCollezionati implements Serializable {
 	// dati di attuazione manuale di un reset dei contatori
 	private Long manuallyResetPolicyTimeMillis = null;
 
-	private final static MapKey<String> START_PROCESS_REQUEST_TIME_MS = Map.newMapKey("START_PROCESS_REQUEST_TIME_MS");
+	private static final MapKey<String> START_PROCESS_REQUEST_TIME_MS = Map.newMapKey("START_PROCESS_REQUEST_TIME_MS");
 	
 	// dati iniziali
 	private UnitaTemporale policyDateTypeInterval = null;

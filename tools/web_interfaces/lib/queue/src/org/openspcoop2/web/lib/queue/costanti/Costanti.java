@@ -29,7 +29,7 @@ package org.openspcoop2.web.lib.queue.costanti;
  */
 public class Costanti {
 
-    public final static String OPENSPCOOP2_QUEUE_LOCAL_PATH = "queue_local.properties";
-    public final static String OPENSPCOOP2_QUEUE_PROPERTIES = "OPENSPCOOP2_QUEUE_PROPERTIES";
+    public static final String OPENSPCOOP2_QUEUE_LOCAL_PATH = "queue_local.properties";
+    public static final String OPENSPCOOP2_QUEUE_PROPERTIES = "OPENSPCOOP2_QUEUE_PROPERTIES";
 	
 }

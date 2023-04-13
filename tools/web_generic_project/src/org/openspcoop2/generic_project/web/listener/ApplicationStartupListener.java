@@ -43,9 +43,9 @@ public abstract class ApplicationStartupListener  implements ServletContextListe
 	public static final String APP_LOG_PROPERTIES_LOCAL_PATH = "application_local.logger.properties";
 	public static final String APP_LOG_PROPERTIES = "APPLICATION_LOG_PROPERTIES";
 	
-	public final static String APP_PROPERTIES_PATH = "application.properties";
-	public final static String APP_PROPERTIES_LOCAL_PATH = "application_local.properties";
-	public final static String APP_PROPERTIES = "APPLICATION_PROPERTIES";
+	public static final String APP_PROPERTIES_PATH = "application.properties";
+	public static final String APP_PROPERTIES_LOCAL_PATH = "application_local.properties";
+	public static final String APP_PROPERTIES = "APPLICATION_PROPERTIES";
 	
 	/*
 	 * APPLICATION

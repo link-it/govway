@@ -196,7 +196,7 @@ import org.slf4j.Logger;
  */
 public class InoltroBuste extends GenericLib{
 
-	public final static String ID_MODULO = "InoltroBuste";
+	public static final String ID_MODULO = "InoltroBuste";
 
 	/** XMLBuilder */
 	protected RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore;

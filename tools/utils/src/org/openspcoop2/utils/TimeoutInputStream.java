@@ -33,9 +33,9 @@ import java.io.InputStream;
  */
 public class TimeoutInputStream extends FilterInputStream {
 
-	public final static MapKey<String> EXCEPTION_KEY = Map.newMapKey("TimeoutIOException");
-	public final static MapKey<String> ERROR_MSG_KEY = Map.newMapKey("TimeoutInputStream");
-	public final static String ERROR_MSG = "Read timed out";
+	public static final MapKey<String> EXCEPTION_KEY = Map.newMapKey("TimeoutIOException");
+	public static final MapKey<String> ERROR_MSG_KEY = Map.newMapKey("TimeoutInputStream");
+	public static final String ERROR_MSG = "Read timed out";
 	
 	public TimeoutInputStream(InputStream is, int timeoutMs) throws IOException {
 		this(is, timeoutMs, null, null);

@@ -30,22 +30,22 @@ package org.openspcoop2.message.soap.wsaddressing;
  */
 public class Costanti {
 		
-	public final static String WSA_NAMESPACE = "http://www.w3.org/2005/08/addressing";
-	public final static String WSA_PREFIX = "wsa";
+	public static final String WSA_NAMESPACE = "http://www.w3.org/2005/08/addressing";
+	public static final String WSA_PREFIX = "wsa";
 	
-	public final static String WSA_RELATIONSHIP_TYPE_REPLY = "http://www.w3.org/2005/08/addressing/reply";
-	public final static String WSA_SOAP_HEADER_TO = "To";
-	public final static String WSA_SOAP_HEADER_FROM = "From";
-	public final static String WSA_SOAP_HEADER_ACTION = "Action";
-	public final static String WSA_SOAP_HEADER_ID = "MessageID";
-	public final static String WSA_SOAP_HEADER_RELATES_TO = "RelatesTo";
-	public final static String WSA_SOAP_HEADER_RELATES_TO_ATTRIBUTE = "RelationshipType";
-	public final static String WSA_SOAP_HEADER_REPLY_TO = "ReplyTo";
-	public final static String WSA_SOAP_HEADER_FAULT_TO = "FaultTo";
+	public static final String WSA_RELATIONSHIP_TYPE_REPLY = "http://www.w3.org/2005/08/addressing/reply";
+	public static final String WSA_SOAP_HEADER_TO = "To";
+	public static final String WSA_SOAP_HEADER_FROM = "From";
+	public static final String WSA_SOAP_HEADER_ACTION = "Action";
+	public static final String WSA_SOAP_HEADER_ID = "MessageID";
+	public static final String WSA_SOAP_HEADER_RELATES_TO = "RelatesTo";
+	public static final String WSA_SOAP_HEADER_RELATES_TO_ATTRIBUTE = "RelationshipType";
+	public static final String WSA_SOAP_HEADER_REPLY_TO = "ReplyTo";
+	public static final String WSA_SOAP_HEADER_FAULT_TO = "FaultTo";
 		
-	public final static String WSA_SOAP_HEADER_EPR_ADDRESS = "Address";
+	public static final String WSA_SOAP_HEADER_EPR_ADDRESS = "Address";
 	
-	public final static String WSA_SOAP_HEADER_EPR_ADDRESS_ANONYMOUS = "http://www.w3.org/2005/08/addressing/anonymous";
+	public static final String WSA_SOAP_HEADER_EPR_ADDRESS_ANONYMOUS = "http://www.w3.org/2005/08/addressing/anonymous";
 	
 
 }

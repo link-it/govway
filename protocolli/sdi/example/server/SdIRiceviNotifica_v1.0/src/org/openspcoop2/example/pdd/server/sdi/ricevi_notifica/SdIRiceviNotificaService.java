@@ -40,10 +40,10 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0") 
 public class SdIRiceviNotificaService extends Service {
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0", "SdIRiceviNotifica_service");
-    public final static QName SdIRiceviNotificaPort = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0", "SdIRiceviNotifica_port");
+    public static final QName SERVICE = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0", "SdIRiceviNotifica_service");
+    public static final QName SdIRiceviNotificaPort = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0", "SdIRiceviNotifica_port");
     static {
         URL url = SdIRiceviNotificaService.class.getResource("SdIRiceviNotifica_v1.0.wsdl");
         if (url == null) {

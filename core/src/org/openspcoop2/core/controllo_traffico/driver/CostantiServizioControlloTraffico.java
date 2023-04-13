@@ -29,43 +29,43 @@ package org.openspcoop2.core.controllo_traffico.driver;
  */
 public class CostantiServizioControlloTraffico {
 
-    public final static String OPERAZIONE_REGISTER_POLICY = "registerPolicy";
+    public static final String OPERAZIONE_REGISTER_POLICY = "registerPolicy";
     
-    public final static String OPERAZIONE_GET_POLICY = "getPolicy";
+    public static final String OPERAZIONE_GET_POLICY = "getPolicy";
     
-    public final static String OPERAZIONE_REGISTER_START_REQUEST = "registerStartRequest";
+    public static final String OPERAZIONE_REGISTER_START_REQUEST = "registerStartRequest";
     
-    public final static String OPERAZIONE_UPDATE_START_REQUEST = "updateStartRequest";
+    public static final String OPERAZIONE_UPDATE_START_REQUEST = "updateStartRequest";
     
-    public final static String OPERAZIONE_REGISTER_STOP_REQUEST = "registerStopRequest";
+    public static final String OPERAZIONE_REGISTER_STOP_REQUEST = "registerStopRequest";
     
-    public final static String OPERAZIONE_SIZE_ACTIVE_THREADS_POLICY = "sizeActiveThreadsPolicy";
+    public static final String OPERAZIONE_SIZE_ACTIVE_THREADS_POLICY = "sizeActiveThreadsPolicy";
     
-    public final static String OPERAZIONE_PRINT_KEYS_POLICY = "printKeysPolicy";
+    public static final String OPERAZIONE_PRINT_KEYS_POLICY = "printKeysPolicy";
     
-    public final static String OPERAZIONE_PRINT_INFO_POLICY = "printInfoPolicy";
+    public static final String OPERAZIONE_PRINT_INFO_POLICY = "printInfoPolicy";
     
-    public final static String OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY = "removeActiveThreadsPolicy";
+    public static final String OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY = "removeActiveThreadsPolicy";
     
-    public final static String OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY_UNSAFE = "removeActiveThreadsPolicyUnsafe";
+    public static final String OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY_UNSAFE = "removeActiveThreadsPolicyUnsafe";
     
-    public final static String OPERAZIONE_REMOVE_ALL_ACTIVE_THREADS_POLICY = "removeAllActiveThreadsPolicy";
+    public static final String OPERAZIONE_REMOVE_ALL_ACTIVE_THREADS_POLICY = "removeAllActiveThreadsPolicy";
     
-    public final static String OPERAZIONE_RESET_COUNTERS_ACTIVE_THREADS_POLICY = "resetCountersActiveThreadsPolicy";
+    public static final String OPERAZIONE_RESET_COUNTERS_ACTIVE_THREADS_POLICY = "resetCountersActiveThreadsPolicy";
     
-    public final static String OPERAZIONE_RESET_COUNTERS_ALL_ACTIVE_THREADS_POLICY = "resetCountersAllActiveThreadsPolicy";
+    public static final String OPERAZIONE_RESET_COUNTERS_ALL_ACTIVE_THREADS_POLICY = "resetCountersAllActiveThreadsPolicy";
     
-    public final static String PARAMETER_ACTIVE_ID = "activeId";
+    public static final String PARAMETER_ACTIVE_ID = "activeId";
     
-    public final static String PARAMETER_GROUP_BY_ID = "groupById";
+    public static final String PARAMETER_GROUP_BY_ID = "groupById";
     
-    public final static String PARAMETER_MISURAZIONI_TRANSAZIONE = "misurazioniTransazione";
+    public static final String PARAMETER_MISURAZIONI_TRANSAZIONE = "misurazioniTransazione";
     
-    public final static String PARAMETER_APPLICABILE = "applicabile";
+    public static final String PARAMETER_APPLICABILE = "applicabile";
     
-    public final static String PARAMETER_VIOLATA = "violata";
+    public static final String PARAMETER_VIOLATA = "violata";
     
-    public final static String PARAMETER_SUM = "sum";
+    public static final String PARAMETER_SUM = "sum";
     
-    public final static String PARAMETER_SEPARATOR = "separator";
+    public static final String PARAMETER_SEPARATOR = "separator";
 }

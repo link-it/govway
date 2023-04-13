@@ -47,11 +47,11 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 */
 public class Soap11to12Test extends ConfigLoader {
 
-	private final static String soapaction11 = "http://govway.org/testSoapAction/v11";
-	private final static String soapaction12 = "http://govway.org/testSoapAction/v12";
+	private static final String soapaction11 = "http://govway.org/testSoapAction/v11";
+	private static final String soapaction12 = "http://govway.org/testSoapAction/v12";
 	
-	private final static String CONTENT_TYPE_SOAP11_WITH_ATTACHMENTS = HttpConstants.CONTENT_TYPE_MULTIPART_RELATED+"; boundary=\"----=_Part_0_6330713.1171639717331\"; type=\""+HttpConstants.CONTENT_TYPE_SOAP_1_1+"\"";
-	private final static String CONTENT_TYPE_SOAP12_WITH_ATTACHMENTS = HttpConstants.CONTENT_TYPE_MULTIPART_RELATED+"; boundary=\"----=_Part_0_6330713.1171639717331\"; type=\""+HttpConstants.CONTENT_TYPE_SOAP_1_2+"\"";
+	private static final String CONTENT_TYPE_SOAP11_WITH_ATTACHMENTS = HttpConstants.CONTENT_TYPE_MULTIPART_RELATED+"; boundary=\"----=_Part_0_6330713.1171639717331\"; type=\""+HttpConstants.CONTENT_TYPE_SOAP_1_1+"\"";
+	private static final String CONTENT_TYPE_SOAP12_WITH_ATTACHMENTS = HttpConstants.CONTENT_TYPE_MULTIPART_RELATED+"; boundary=\"----=_Part_0_6330713.1171639717331\"; type=\""+HttpConstants.CONTENT_TYPE_SOAP_1_2+"\"";
 	
 	@Test
 	public void erogazione_soap11to12() throws Exception {

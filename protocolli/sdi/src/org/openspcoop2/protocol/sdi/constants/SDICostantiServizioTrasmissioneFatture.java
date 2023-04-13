@@ -30,47 +30,47 @@ import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.ProjectInfo;
  */
 public class SDICostantiServizioTrasmissioneFatture {
 
-    public final static String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE = "TrasmissioneFatture";
-    public final static String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_RICEVUTA_CONSEGNA = "RicevutaConsegna";
-    public final static String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_MANCATA_CONSEGNA = "NotificaMancataConsegna";
-    public final static String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_SCARTO = "NotificaScarto";
-    public final static String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_ESITO = "NotificaEsito";
-    public final static String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_DECORRENZA_TERMINI = "NotificaDecorrenzaTermini";
-    public final static String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_ATTESTAZIONE_TRASMISSIONE_FATTURA = "AttestazioneTrasmissioneFattura";
+    public static final String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE = "TrasmissioneFatture";
+    public static final String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_RICEVUTA_CONSEGNA = "RicevutaConsegna";
+    public static final String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_MANCATA_CONSEGNA = "NotificaMancataConsegna";
+    public static final String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_SCARTO = "NotificaScarto";
+    public static final String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_ESITO = "NotificaEsito";
+    public static final String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_DECORRENZA_TERMINI = "NotificaDecorrenzaTermini";
+    public static final String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_ATTESTAZIONE_TRASMISSIONE_FATTURA = "AttestazioneTrasmissioneFattura";
 	
-	public final static String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_NAMESPACE = ProjectInfo.getInstance().getProjectNamespace();
+	public static final String TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_NAMESPACE = ProjectInfo.getInstance().getProjectNamespace();
 	
 	
 	// AZIONE: RicevutaConsegna
     
-	public final static String RICEVUTA_CONSEGNA_RICHIESTA_ROOT_ELEMENT = "ricevutaConsegna";
+	public static final String RICEVUTA_CONSEGNA_RICHIESTA_ROOT_ELEMENT = "ricevutaConsegna";
 
 	// AZIONE: NotificaMancataConsegna
     
-	public final static String NOTIFICA_MANCATA_CONSEGNA_RICHIESTA_ROOT_ELEMENT = "notificaMancataConsegna";
+	public static final String NOTIFICA_MANCATA_CONSEGNA_RICHIESTA_ROOT_ELEMENT = "notificaMancataConsegna";
 
 	// AZIONE: NotificaScarto
     
-	public final static String NOTIFICA_SCARTO_RICHIESTA_ROOT_ELEMENT = "notificaScarto";
+	public static final String NOTIFICA_SCARTO_RICHIESTA_ROOT_ELEMENT = "notificaScarto";
 	
 	// AZIONE: NotificaEsito
     
-	public final static String NOTIFICA_ESITO_RICHIESTA_ROOT_ELEMENT = "notificaEsito";
+	public static final String NOTIFICA_ESITO_RICHIESTA_ROOT_ELEMENT = "notificaEsito";
 	
 	// AZIONE: NotificaDecorrenzaTermini
     
-	public final static String NOTIFICA_DECORRENZA_TERMINI_RICHIESTA_ROOT_ELEMENT = "notificaDecorrenzaTermini";
+	public static final String NOTIFICA_DECORRENZA_TERMINI_RICHIESTA_ROOT_ELEMENT = "notificaDecorrenzaTermini";
 	
 	// AZIONE: AttestazioneTrasmissioneFattura
     
-	public final static String ATTESTAZIONE_TRASMISSIONE_FATTURA_RICHIESTA_ROOT_ELEMENT = "attestazioneTrasmissioneFattura";
+	public static final String ATTESTAZIONE_TRASMISSIONE_FATTURA_RICHIESTA_ROOT_ELEMENT = "attestazioneTrasmissioneFattura";
 	
 	
 	// COMMON fileSdI_Type
 	
-    public final static String FILE_SDI_TYPE_RICHIESTA_ELEMENT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
-    public final static String FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_NOME_FILE = "NomeFile";
-    public final static String FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE = "File";
+    public static final String FILE_SDI_TYPE_RICHIESTA_ELEMENT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
+    public static final String FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_NOME_FILE = "NomeFile";
+    public static final String FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE = "File";
 
 	
 	

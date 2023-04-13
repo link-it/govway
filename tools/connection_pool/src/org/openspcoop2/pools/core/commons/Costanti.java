@@ -34,39 +34,39 @@ public class Costanti {
 
 
     /** tipo di transaction isolation: none */
-    public final static String TRANSACTION_ISOLATION_NONE = "none";
+    public static final String TRANSACTION_ISOLATION_NONE = "none";
     /** tipo di transaction isolation:  readCommitted*/
-    public final static String TRANSACTION_ISOLATION_READ_COMMITTED = "readCommitted";
+    public static final String TRANSACTION_ISOLATION_READ_COMMITTED = "readCommitted";
     /** tipo di transaction isolation: readUncommited  */
-    public final static String TRANSACTION_ISOLATION_READ_UNCOMMITTED = "readUncommitted";
+    public static final String TRANSACTION_ISOLATION_READ_UNCOMMITTED = "readUncommitted";
     /** tipo di transaction isolation: repeatableRead */
-    public final static String TRANSACTION_ISOLATION_REPEATABLE_READ = "repeatableRead";
+    public static final String TRANSACTION_ISOLATION_REPEATABLE_READ = "repeatableRead";
     /** tipo di transaction isolation: serializable */
-    public final static String TRANSACTION_ISOLATION_SERIALIZABLE = "serializable";
+    public static final String TRANSACTION_ISOLATION_SERIALIZABLE = "serializable";
 
     /** Disabilitato */
-    public final static String DISABILITATO = "disabilitato";
+    public static final String DISABILITATO = "disabilitato";
     /** abilitato */
-    public final static String ABILITATO = "abilitato";
+    public static final String ABILITATO = "abilitato";
 
 
     /** tipo di when exausted action: block */
-    public final static String WHEN_EXHAUSTED_BLOCK = "block";
+    public static final String WHEN_EXHAUSTED_BLOCK = "block";
     /** tipo di when exausted action: grow */
-    public final static String WHEN_EXHAUSTED_GROW = "grow";
+    public static final String WHEN_EXHAUSTED_GROW = "grow";
     /** tipo di when exausted action: fail */
-    public final static String WHEN_EXHAUSTED_FAIL = "fail";
+    public static final String WHEN_EXHAUSTED_FAIL = "fail";
 
     
     /** tipo di acknowledgment: autoAcknowledgment */
-    public final static String ACKNOWLEDGMENT_AUTO = "autoAcknowledgment";
+    public static final String ACKNOWLEDGMENT_AUTO = "autoAcknowledgment";
     /** tipo di acknowledgment: clientAcknowledgment  */
-    public final static String ACKNOWLEDGMENT_CLIENT = "clientAcknowledgment";
+    public static final String ACKNOWLEDGMENT_CLIENT = "clientAcknowledgment";
     /** tipo di acknowledgment: dupsOkAcknowledgment */
-    public final static String ACKNOWLEDGMENT_DUPS_OK = "dupsOkAcknowledgment";
+    public static final String ACKNOWLEDGMENT_DUPS_OK = "dupsOkAcknowledgment";
     
     /** Risorsa di tipo XML */
-    public final static String RISORSE_SISTEMA_XML = "xml";
+    public static final String RISORSE_SISTEMA_XML = "xml";
     
     /** Dominio utilizzato per le risorse JMX */
     public static final String JMX_DOMINIO = "org.openspcoop2.pools";

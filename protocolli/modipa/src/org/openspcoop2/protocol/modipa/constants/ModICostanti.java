@@ -44,72 +44,72 @@ public class ModICostanti {
    
     public static final String MODIPA_PROTOCOL_NAME = Costanti.MODIPA_PROTOCOL_NAME;
 	
-	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
+	public static final String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
-    public final static String MODIPA_PROPERTIES_LOCAL_PATH = "modipa_local.properties";
-    public final static String MODIPA_PROPERTIES = "MODIPA_PROPERTIES";
+    public static final String MODIPA_PROPERTIES_LOCAL_PATH = "modipa_local.properties";
+    public static final String MODIPA_PROPERTIES = "MODIPA_PROPERTIES";
 	
-    public final static String MODIPA_USE_BODY_NAMESPACE = "useBodyNamespace";
+    public static final String MODIPA_USE_BODY_NAMESPACE = "useBodyNamespace";
         
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE = "ProfiloInterazione";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX = "ProfiloInterazioneAsincrona-";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_TIPO = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"Tipo";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_RUOLO = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"Ruolo";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"ApiCorrelata";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"ServizioCorrelato";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"AzioneCorrelata";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_RISORSA_RICHIESTA_CORRELATA = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"RisorsaCorrelata";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"CorrelationID";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_REPLY_TO = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"ReplyTo";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_LOCATION = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"Location";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE = "ProfiloInterazione";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX = "ProfiloInterazioneAsincrona-";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_TIPO = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"Tipo";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_RUOLO = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"Ruolo";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"ApiCorrelata";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"ServizioCorrelato";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"AzioneCorrelata";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_RISORSA_RICHIESTA_CORRELATA = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"RisorsaCorrelata";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"CorrelationID";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_REPLY_TO = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"ReplyTo";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_LOCATION = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"Location";
     
-    public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE_AGGIUNTO_PER_CONSENTIRE_VALIDAZIONE_CONTENUTI = "__@@SkipValidation##__";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE_AGGIUNTO_PER_CONSENTIRE_VALIDAZIONE_CONTENUTI = "__@@SkipValidation##__";
     
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE = "ProfiloSicurezzaCanale";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE = "ProfiloSicurezzaCanale";
     
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO = "ProfiloSicurezzaMessaggio";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_PREFIX = "ProfiloSicurezzaMessaggio-";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CUSTOM_HEADER = "ProfiloSicurezzaMessaggio-Custom-JWT-Signature";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT = "ProfiloSicurezzaMessaggio-X509-Subject";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER = "ProfiloSicurezzaMessaggio-X509-Issuer";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF = "ProfiloSicurezzaMessaggio-NotBefore";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT = "ProfiloSicurezzaMessaggio-IssuedAt";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP = "ProfiloSicurezzaMessaggio-Expiration";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_NBF = "ProfiloSicurezzaMessaggio-IntegrityNotBefore";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_IAT = "ProfiloSicurezzaMessaggio-IntegrityIssuedAt";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP = "ProfiloSicurezzaMessaggio-IntegrityExpiration";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID = "ProfiloSicurezzaMessaggio-MessageId";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_RELATES_TO = "ProfiloSicurezzaMessaggio-RelatesTo";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST = "ProfiloSicurezzaMessaggio-Digest";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT = "ProfiloSicurezzaMessaggio-Subject";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER = "ProfiloSicurezzaMessaggio-Issuer";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID = "ProfiloSicurezzaMessaggio-ClientId";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE = "ProfiloSicurezzaMessaggio-Audience";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE = "ProfiloSicurezzaMessaggio-IntegrityAudience";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_FROM = "ProfiloSicurezzaMessaggio-WSA-From";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO = "ProfiloSicurezzaMessaggio-WSA-To";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLAIM_PREFIX = "ProfiloSicurezzaMessaggio-Claim-";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID = "ProfiloSicurezzaMessaggio-AuthorizationMessageId";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_ID = "ProfiloSicurezzaMessaggio-IntegrityMessageId";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO = "ProfiloSicurezzaMessaggio";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_PREFIX = "ProfiloSicurezzaMessaggio-";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CUSTOM_HEADER = "ProfiloSicurezzaMessaggio-Custom-JWT-Signature";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT = "ProfiloSicurezzaMessaggio-X509-Subject";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER = "ProfiloSicurezzaMessaggio-X509-Issuer";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF = "ProfiloSicurezzaMessaggio-NotBefore";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT = "ProfiloSicurezzaMessaggio-IssuedAt";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP = "ProfiloSicurezzaMessaggio-Expiration";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_NBF = "ProfiloSicurezzaMessaggio-IntegrityNotBefore";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_IAT = "ProfiloSicurezzaMessaggio-IntegrityIssuedAt";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP = "ProfiloSicurezzaMessaggio-IntegrityExpiration";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID = "ProfiloSicurezzaMessaggio-MessageId";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_RELATES_TO = "ProfiloSicurezzaMessaggio-RelatesTo";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST = "ProfiloSicurezzaMessaggio-Digest";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT = "ProfiloSicurezzaMessaggio-Subject";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER = "ProfiloSicurezzaMessaggio-Issuer";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID = "ProfiloSicurezzaMessaggio-ClientId";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE = "ProfiloSicurezzaMessaggio-Audience";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE = "ProfiloSicurezzaMessaggio-IntegrityAudience";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_FROM = "ProfiloSicurezzaMessaggio-WSA-From";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO = "ProfiloSicurezzaMessaggio-WSA-To";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLAIM_PREFIX = "ProfiloSicurezzaMessaggio-Claim-";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID = "ProfiloSicurezzaMessaggio-AuthorizationMessageId";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_ID = "ProfiloSicurezzaMessaggio-IntegrityMessageId";
     
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_PREFIX = "ProfiloSicurezzaMessaggioSignedHeader-";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_MULTIPLE_VALUE_SUFFIX = "___#";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_PREFIX = "ProfiloSicurezzaMessaggioSignedHeader-";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_MULTIPLE_VALUE_SUFFIX = "___#";
     
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX = "ProfiloSicurezzaMessaggioSignedSoap-";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX = "ProfiloSicurezzaMessaggioSignedSoap-";
     
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE = "ProfiloSicurezzaMessaggio-CorniceSicurezza-Ente";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER = "ProfiloSicurezzaMessaggio-CorniceSicurezza-User";
-    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP = "ProfiloSicurezzaMessaggio-CorniceSicurezza-UserIP";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE = "ProfiloSicurezzaMessaggio-CorniceSicurezza-Ente";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER = "ProfiloSicurezzaMessaggio-CorniceSicurezza-User";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP = "ProfiloSicurezzaMessaggio-CorniceSicurezza-UserIP";
         
-    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK = Map.newMapKey("MODIPA_IAT_TTL_CHECK");
-    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK = Map.newMapKey("MODIPA_AUDIENCE_CHECK");
-    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK = Map.newMapKey("MODIPA_AUDIENCE_INTEGRITY_CHECK");
-    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN = Map.newMapKey("MODIPA_BUILD_SECURITY_REQUEST_TOKEN");
-    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST = Map.newMapKey("MODIPA_SBUSTAMENTO_REST");
-    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_SOAP = Map.newMapKey("MODIPA_SBUSTAMENTO_SOAP");
+    public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK = Map.newMapKey("MODIPA_IAT_TTL_CHECK");
+    public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK = Map.newMapKey("MODIPA_AUDIENCE_CHECK");
+    public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK = Map.newMapKey("MODIPA_AUDIENCE_INTEGRITY_CHECK");
+    public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN = Map.newMapKey("MODIPA_BUILD_SECURITY_REQUEST_TOKEN");
+    public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST = Map.newMapKey("MODIPA_SBUSTAMENTO_REST");
+    public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_SOAP = Map.newMapKey("MODIPA_SBUSTAMENTO_SOAP");
     
-    public final static MapKey<String> MODIPA_CONTEXT_REQUEST_DIGEST = Map.newMapKey("MODIPA_REQUEST_DIGEST");
-    public final static MapKey<String> MODIPA_CONTEXT_X509_AUTHORIZATION = Map.newMapKey("MODIPA_X509_AUTHORIZATION");
+    public static final MapKey<String> MODIPA_CONTEXT_REQUEST_DIGEST = Map.newMapKey("MODIPA_REQUEST_DIGEST");
+    public static final MapKey<String> MODIPA_CONTEXT_X509_AUTHORIZATION = Map.newMapKey("MODIPA_X509_AUTHORIZATION");
     
     public static final String MODIPA_VALUE_UNDEFINED = Costanti.MODIPA_VALUE_UNDEFINED;
         

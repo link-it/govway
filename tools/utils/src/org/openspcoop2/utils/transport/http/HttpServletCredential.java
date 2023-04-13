@@ -47,7 +47,7 @@ public class HttpServletCredential extends Credential implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public final static String SERVLET_REQUEST_X509CERTIFICATE = "javax.servlet.request.X509Certificate";
+	public static final String SERVLET_REQUEST_X509CERTIFICATE = "javax.servlet.request.X509Certificate";
 	
 	// Servlet Request
 	private transient HttpServletRequest httpServletRequest;

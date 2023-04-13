@@ -30,12 +30,12 @@ package org.openspcoop2.core.monitor.rs.server.config;
 
 public class ConstantsEnv {
 
-    public final static String OPENSPCOOP2_RS_API_MONITOR_LOCAL_PATH = "rs-api-monitor_local.properties";
-    public final static String OPENSPCOOP2_RS_API_MONITOR_PROPERTIES = "OPENSPCOOP2_RSMONITOR_PROPERTIES";
+    public static final String OPENSPCOOP2_RS_API_MONITOR_LOCAL_PATH = "rs-api-monitor_local.properties";
+    public static final String OPENSPCOOP2_RS_API_MONITOR_PROPERTIES = "OPENSPCOOP2_RSMONITOR_PROPERTIES";
     
-    public final static String OPENSPCOOP2_DATASOURCE_LOCAL_PATH = "rs-api-monitor_local.datasource.properties";
-    public final static String OPENSPCOOP2_DATASOURCE_PROPERTIES = "OPENSPCOOP2_RSMONITOR_DATASOURCE_PROPERTIES";
+    public static final String OPENSPCOOP2_DATASOURCE_LOCAL_PATH = "rs-api-monitor_local.datasource.properties";
+    public static final String OPENSPCOOP2_DATASOURCE_PROPERTIES = "OPENSPCOOP2_RSMONITOR_DATASOURCE_PROPERTIES";
     	
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "rs-api-monitor_local.log4j2.properties";
-    public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_RSMONITOR_LOG_PROPERTIES";
+    public static final String OPENSPCOOP2_LOGGER_LOCAL_PATH = "rs-api-monitor_local.log4j2.properties";
+    public static final String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_RSMONITOR_LOG_PROPERTIES";
 }

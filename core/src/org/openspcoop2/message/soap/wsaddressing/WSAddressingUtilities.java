@@ -131,8 +131,8 @@ public class WSAddressingUtilities {
 	
 	// ***** BUILD STATIC UTILS *****
 	
-	private final static boolean BUILD_VALUE_AS_EPR = true;
-	private final static boolean BUILD_VALUE_RAW = false;
+	private static final boolean BUILD_VALUE_AS_EPR = true;
+	private static final boolean BUILD_VALUE_RAW = false;
 	
 	public static SOAPHeaderElement buildWSATo(OpenSPCoop2SoapMessage msg,String actor,boolean mustUnderstand, String value) throws MessageException{
 		QName name =  new QName(Costanti.WSA_NAMESPACE,Costanti.WSA_SOAP_HEADER_TO,Costanti.WSA_PREFIX);

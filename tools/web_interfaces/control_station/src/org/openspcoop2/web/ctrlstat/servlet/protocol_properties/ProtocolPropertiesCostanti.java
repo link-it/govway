@@ -33,12 +33,12 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  */
 public class ProtocolPropertiesCostanti {
 
-	public final static String OBJECT_NAME_PP = "protocolProperty";
+	public static final String OBJECT_NAME_PP = "protocolProperty";
 	
-	public final static ForwardParams TIPO_OPERAZIONE_BINARY_PROPERTY_CHANGE = ForwardParams.OTHER("BinaryPropertyChange");
+	public static final ForwardParams TIPO_OPERAZIONE_BINARY_PROPERTY_CHANGE = ForwardParams.OTHER("BinaryPropertyChange");
 	public static final String SERVLET_NAME_BINARY_PROPERTY_CHANGE = OBJECT_NAME_PP+"BinaryPropertyChange.do";
 	
-	public final static Vector<String> SERVLET_PP = new Vector<String>();
+	public static final Vector<String> SERVLET_PP = new Vector<String>();
 	static{
 		SERVLET_PP.add(SERVLET_NAME_BINARY_PROPERTY_CHANGE);
 	}
@@ -53,46 +53,46 @@ public class ProtocolPropertiesCostanti {
 	public static final String PARAMETRO_PP_NOME_PARENT_PROPRIETARIO = "nomeParentProprietario";
 	public static final String PARAMETRO_PP_URL_ORIGINALE_CHANGE = "urlOrigChange";
 	public static final String PARAMETRO_PP_SET = "ppSet";
-	public final static String PARAMETRO_PP_CONTENUTO_DOCUMENTO = "contenutoDocumento";
-	public final static String PARAMETRO_PP_CONTENUTO_DOCUMENTO_NOTE = "contenutoDocumentoNote";
-	public final static String PARAMETRO_PP_CONTENUTO_DOCUMENTO_WARN = "contenutoDocumentoWarn";
-	public final static String PARAMETRO_PP_PROTOCOLLO = "protocollo";
+	public static final String PARAMETRO_PP_CONTENUTO_DOCUMENTO = "contenutoDocumento";
+	public static final String PARAMETRO_PP_CONTENUTO_DOCUMENTO_NOTE = "contenutoDocumentoNote";
+	public static final String PARAMETRO_PP_CONTENUTO_DOCUMENTO_WARN = "contenutoDocumentoWarn";
+	public static final String PARAMETRO_PP_PROTOCOLLO = "protocollo";
 	public static final String PARAMETRO_PP_TIPO_ACCORDO = "tipoAccordo";
-	public final static String PARAMETRO_PP_ID_ALLEGATO = "idAllegato";
+	public static final String PARAMETRO_PP_ID_ALLEGATO = "idAllegato";
 	public static final String PARAMETRO_PP_CHANGE_BINARY = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_PP_CHANGE_BINARY;
 	public static final String PARAMETRO_PP_CHANGE_BINARY_VALUE_TRUE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_PP_CHANGE_BINARY_VALUE_TRUE;
 	
 	/* LABEL PARAMETRI */
 	
-	public final static String LABEL_PARAMETRO_PP_ID = "Id Property";
-	public final static String LABEL_PARAMETRO_PP_ID_PROPRIETARIO = "Id Proprietario";
-	public final static String LABEL_PARAMETRO_PP_TIPO_PROPRIETARIO = "Tipo Proprietario";
-	public final static String LABEL_GESTIONE_DOCUMENTO = "Gestione Documento";
-	public final static String LABEL_GESTIONE = "Gestione ";
+	public static final String LABEL_PARAMETRO_PP_ID = "Id Property";
+	public static final String LABEL_PARAMETRO_PP_ID_PROPRIETARIO = "Id Proprietario";
+	public static final String LABEL_PARAMETRO_PP_TIPO_PROPRIETARIO = "Tipo Proprietario";
+	public static final String LABEL_GESTIONE_DOCUMENTO = "Gestione Documento";
+	public static final String LABEL_GESTIONE = "Gestione ";
 
-	public final static String LABEL_SOGGETTO = "Soggetto";
-	public final static String LABEL_SERVIZIO_APPLICATIVO = "Applicativo";
-	public final static String LABEL_APC = "Accordo Parte Comune";
-	public final static String LABEL_ASC = "Servizio Composto";
-	public final static String LABEL_APS = "Accordo Parte Specifica";
-	public final static String LABEL_PORT_TYPE= "Port Type";
-	public final static String LABEL_AZIONE = "Azione";
-	public final static String LABEL_AZIONE_ACCORDO = "Azione Accordo";
-	public final static String LABEL_SERVIZIO = "Servizio";
-	public final static String LABEL_RESOURCE = "Risorsa";
-	public final static String LABEL_AC = "Accordo Cooperazione";
-	public final static String LABEL_OPERATION = "Operazione";
-	public final static String LABEL_FRUITORE = "Fruitore";
-	public final static String LABEL_DOCUMENTO_ATTUALE = "Attuale";
-	public final static String LABEL_NOME = "Nome";
-	public final static String LABEL_DOWNLOAD = "Download";
-	public final static String LABEL_DOCUMENTO_AGGIORNAMENTO = "Aggiorna Documento";
-	public final static String LABEL_AGGIORNAMENTO = "Aggiorna ";
-	public final static String LABEL_DOCUMENTO_NOT_FOUND = "non fornito";
-	public final static String LABEL_DOCUMENTO_NUOVO = "Nuovo Documento";
-	public final static String LABEL_CONTENUTO_NUOVO = "Nuovo Contenuto";
-	public final static String LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING = "Warning: ";
-	public final static String LABEL_DOCUMENTO_CHANGE_CLEAR = "Se si desidera eliminare un contenuto precedentemente caricato cliccare su 'Salva' senza selezionare alcun file"; //fornirne un'altra versione";
+	public static final String LABEL_SOGGETTO = "Soggetto";
+	public static final String LABEL_SERVIZIO_APPLICATIVO = "Applicativo";
+	public static final String LABEL_APC = "Accordo Parte Comune";
+	public static final String LABEL_ASC = "Servizio Composto";
+	public static final String LABEL_APS = "Accordo Parte Specifica";
+	public static final String LABEL_PORT_TYPE= "Port Type";
+	public static final String LABEL_AZIONE = "Azione";
+	public static final String LABEL_AZIONE_ACCORDO = "Azione Accordo";
+	public static final String LABEL_SERVIZIO = "Servizio";
+	public static final String LABEL_RESOURCE = "Risorsa";
+	public static final String LABEL_AC = "Accordo Cooperazione";
+	public static final String LABEL_OPERATION = "Operazione";
+	public static final String LABEL_FRUITORE = "Fruitore";
+	public static final String LABEL_DOCUMENTO_ATTUALE = "Attuale";
+	public static final String LABEL_NOME = "Nome";
+	public static final String LABEL_DOWNLOAD = "Download";
+	public static final String LABEL_DOCUMENTO_AGGIORNAMENTO = "Aggiorna Documento";
+	public static final String LABEL_AGGIORNAMENTO = "Aggiorna ";
+	public static final String LABEL_DOCUMENTO_NOT_FOUND = "non fornito";
+	public static final String LABEL_DOCUMENTO_NUOVO = "Nuovo Documento";
+	public static final String LABEL_CONTENUTO_NUOVO = "Nuovo Contenuto";
+	public static final String LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING = "Warning: ";
+	public static final String LABEL_DOCUMENTO_CHANGE_CLEAR = "Se si desidera eliminare un contenuto precedentemente caricato cliccare su 'Salva' senza selezionare alcun file"; //fornirne un'altra versione";
 
 	/* VALORI PARAMETRI */
 	public static final String PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_SERVIZIO_APPLICATIVO = "SERVIZIO_APPLICATIVO";
@@ -107,8 +107,8 @@ public class ProtocolPropertiesCostanti {
 	public static final String PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_FRUITORE = "FRUITORE";
 	public static final String PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_RESOURCE = "RESOURCE";
 	
-	public final static String PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE = "apc";
-	public final static String PARAMETRO_VALORE_PP_TIPO_ACCORDO_SERVIZIO_COMPOSTO = "asc";
+	public static final String PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE = "apc";
+	public static final String PARAMETRO_VALORE_PP_TIPO_ACCORDO_SERVIZIO_COMPOSTO = "asc";
 
 	public static final String PARAMETER_FILENAME_PREFIX = Costanti.PARAMETER_FILENAME_PREFIX;  
 	public static final String PARAMETER_FILEID_PREFIX = Costanti.PARAMETER_FILEID_PREFIX;

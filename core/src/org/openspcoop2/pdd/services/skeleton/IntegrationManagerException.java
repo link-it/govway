@@ -100,8 +100,8 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	 */
 	private static final long serialVersionUID = 4100781617691120752L;
 	
-	public final static String ECCEZIONE_PROTOCOLLO = "EccezioneProtocollo";
-	public final static String ECCEZIONE_INTEGRAZIONE = "EccezioneIntegrazione";
+	public static final String ECCEZIONE_PROTOCOLLO = "EccezioneProtocollo";
+	public static final String ECCEZIONE_INTEGRAZIONE = "EccezioneIntegrazione";
 	
 	/** Variabili */
 

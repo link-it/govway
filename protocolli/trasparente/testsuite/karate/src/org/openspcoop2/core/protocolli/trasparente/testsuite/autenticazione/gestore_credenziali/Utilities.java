@@ -55,12 +55,12 @@ import net.minidev.json.JSONObject;
 */
 public class Utilities extends ConfigLoader {
 
-	public final static String CREDENZIALI_NON_CORRETTE = "credenzialiNonCorrette";
-	public final static String CREDENZIALI_NON_FORNITE = "credenzialiNonFornite";
-	public final static String AUTORIZZAZIONE_NEGATA = "autorizzazioneNegata";
-	public final static String CREDENZIALI_PROXY_NON_FORNITE = "credenzialiProxyNonFornite";
-	public final static String CREDENZIALI_PROXY_FORNITE_NON_CONFORMI = "credenzialiProxyForniteNonConformi";
-	public final static String CREDENZIALI_PROXY_NON_CORRETTE = "credenzialiProxyNonCorrette";
+	public static final String CREDENZIALI_NON_CORRETTE = "credenzialiNonCorrette";
+	public static final String CREDENZIALI_NON_FORNITE = "credenzialiNonFornite";
+	public static final String AUTORIZZAZIONE_NEGATA = "autorizzazioneNegata";
+	public static final String CREDENZIALI_PROXY_NON_FORNITE = "credenzialiProxyNonFornite";
+	public static final String CREDENZIALI_PROXY_FORNITE_NON_CONFORMI = "credenzialiProxyForniteNonConformi";
+	public static final String CREDENZIALI_PROXY_NON_CORRETTE = "credenzialiProxyNonCorrette";
 	
 	public static final String AUTHENTICATION_FAILED = "AuthenticationFailed";
 	public static final String AUTHENTICATION_FAILED_MESSAGE = "Authentication Failed";

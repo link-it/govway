@@ -81,7 +81,7 @@ public class TestCORS {
 	private static final String TEST_INVALID_ORIGIN_4 = "http://www.w3.org%0%0d%0ad%0%0d%0aa";
 	private static final String TEST_INVALID_ORIGIN_5 = "http://www.w3.org http://altraUrl"; 
 
-	private final static List<String> ALLOW_METHOD_DEFAULT = new ArrayList<String> ();
+	private static final List<String> ALLOW_METHOD_DEFAULT = new ArrayList<String> ();
 	static {
 		ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.GET.name());
 		ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.POST.name());
@@ -90,7 +90,7 @@ public class TestCORS {
 		ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.PATCH.name());
 	}
 
-	private final static List<String> ALLOW_HEADER_DEFAULT = new ArrayList<String> ();
+	private static final List<String> ALLOW_HEADER_DEFAULT = new ArrayList<String> ();
 	static {
 		ALLOW_HEADER_DEFAULT.add(HttpConstants.AUTHORIZATION);
 		ALLOW_HEADER_DEFAULT.add(HttpConstants.CONTENT_TYPE);

@@ -83,62 +83,62 @@ import org.slf4j.Logger;
  */
 public class CommonConsegnaMultipla {
 	
-	public final static EsitiProperties esitiProperties = getEsitiProperties();
+	public static final EsitiProperties esitiProperties = getEsitiProperties();
 	
 	final static QName SERVICE_NAME_MessageBox = new QName("http://services.pdd.openspcoop2.org", "MessageBoxService");
 	
-	public final static String PROTOCOL_NAME = "trasparente";
+	public static final String PROTOCOL_NAME = "trasparente";
 
-	public final static int ESITO_CONSEGNA_MULTIPLA = 38;
+	public static final int ESITO_CONSEGNA_MULTIPLA = 38;
 
-	public final static int ESITO_CONSEGNA_MULTIPLA_COMPLETATA = 39;
+	public static final int ESITO_CONSEGNA_MULTIPLA_COMPLETATA = 39;
 
-	public final static int ESITO_CONSEGNA_MULTIPLA_FALLITA = 40;
+	public static final int ESITO_CONSEGNA_MULTIPLA_FALLITA = 40;
 
-	public final static int ESITO_CONSEGNA_MULTIPLA_IN_CORSO = 48;
+	public static final int ESITO_CONSEGNA_MULTIPLA_IN_CORSO = 48;
 	
-	public final static int ESITO_ERRORE_PROCESSAMENTO_PDD_4XX = 4;
+	public static final int ESITO_ERRORE_PROCESSAMENTO_PDD_4XX = 4;
 	
-	public final static int ESITO_MESSAGE_BOX = 47;
+	public static final int ESITO_MESSAGE_BOX = 47;
 	
-	public final static int ESITO_3XX = 28;
-	public final static int ESITO_4XX = 29;
-	public final static int ESITO_5XX = 30;
-	public final static int ESITO_OK = 0;
-	public final static int ESITO_ERRORE_INVOCAZIONE = 10;
-	public final static int ESITO_ERRORE_APPLICATIVO = 2;
-	public final static int ESITO_OK_PRESENZA_ANOMALIE = 12;
+	public static final int ESITO_3XX = 28;
+	public static final int ESITO_4XX = 29;
+	public static final int ESITO_5XX = 30;
+	public static final int ESITO_OK = 0;
+	public static final int ESITO_ERRORE_INVOCAZIONE = 10;
+	public static final int ESITO_ERRORE_APPLICATIVO = 2;
+	public static final int ESITO_OK_PRESENZA_ANOMALIE = 12;
 	
-	public final static String FAULT_REST = "{\"type\":\"https://httpstatuses.com/500\",\"title\":\"Internal Server Error\",\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
-	public final static String FORMATO_FAULT_REST = "JSON";
+	public static final String FAULT_REST = "{\"type\":\"https://httpstatuses.com/500\",\"title\":\"Internal Server Error\",\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
+	public static final String FORMATO_FAULT_REST = "JSON";
 	
-	public final static String FAULT_SOAP1_1 = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:Server.OpenSPCoo"
+	public static final String FAULT_SOAP1_1 = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:Server.OpenSPCoo"
 			+ "pExampleFault</faultcode><faultstring>Fault ritornato dalla servlet di trace, esempio di OpenSPCoop</faultstring><faultactor>OpenSPCoopTrace</faultactor></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 	
-	public final static String FAULT_SOAP1_2 = "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Header/><env:Body><env:Fault><env:Code><env:Value>env:Receiver</env:Value><env:Subcode><env:Value xmlns:ns1=\"http://www.openspcoop2.or"
+	public static final String FAULT_SOAP1_2 = "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Header/><env:Body><env:Fault><env:Code><env:Value>env:Receiver</env:Value><env:Subcode><env:Value xmlns:ns1=\"http://www.openspcoop2.or"
 			+ "g/example\">ns1:Server.OpenSPCoopExampleFault</env:Value></env:Subcode></env:Code><env:Reason><env:Text xml:lang=\"en-US\">Fault ritornato dalla servlet di trace, esempio di OpenSPCoop</env:Text></env:Reason><env:Role>OpenSPCoopTrace</env:Ro"
 			+ "le></env:Fault></env:Body></env:Envelope>";
 	
-	public final static String FORMATO_FAULT_SOAP1_1 = "SOAP_11";
-	public final static String FORMATO_FAULT_SOAP1_2 = "SOAP_12";
+	public static final String FORMATO_FAULT_SOAP1_1 = "SOAP_11";
+	public static final String FORMATO_FAULT_SOAP1_2 = "SOAP_12";
 	
-	public final static boolean attesaAttivaDebugLogger = Boolean
+	public static final boolean attesaAttivaDebugLogger = Boolean
 			.valueOf(System.getProperty("connettori.consegna_multipla.attesaAttiva.log"));
-	public final static boolean attesaAttivaDebugSystemOut = Boolean
+	public static final boolean attesaAttivaDebugSystemOut = Boolean
 			.valueOf(System.getProperty("connettori.consegna_multipla.attesaAttiva.systemOut"));
 	
-	public final static int intervalloControllo = Integer
+	public static final int intervalloControllo = Integer
 			.valueOf(System.getProperty("connettori.consegna_multipla.next_messages.intervallo_controllo")) * 1000;
 	
-	public final static int scheduleNewAfter = Integer
+	public static final int scheduleNewAfter = Integer
 			.valueOf(System.getProperty("connettori.consegna_multipla.next_messages.schedule_new_after")) * 1000;
 	
 	// Sommo un altro secondo rispetto a quello indicato in govway, perchè a quanto pare non basta.
-	public final static int _intervalloControlloFallite = Integer.valueOf(
+	public static final int _intervalloControlloFallite = Integer.valueOf(
 			System.getProperty("connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_controllo"))
 			* 1000;
 	
-	public final static int _intervalloMinimoRiconsegna = Integer.valueOf(System
+	public static final int _intervalloMinimoRiconsegna = Integer.valueOf(System
 			.getProperty("connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_minimo_riconsegna"))
 			* 1000;
 	
@@ -158,11 +158,11 @@ public class CommonConsegnaMultipla {
 		return _intervalloMinimoRiconsegna;
 	}
 	
-	public final static Path connettoriFilePath = Paths
+	public static final Path connettoriFilePath = Paths
 			.get(System.getProperty("connettori.consegna_multipla.connettore_file.path"));
 	
 	
-	public final static Map<Integer, Set<String>> statusCode2xxVsConnettori  = Map
+	public static final Map<Integer, Set<String>> statusCode2xxVsConnettori  = Map
 			.of(200, Set.of(CONNETTORE_1,CONNETTORE_2),
 				  201, Set.of(CONNETTORE_1, CONNETTORE_3),
 				  202, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
@@ -170,21 +170,21 @@ public class CommonConsegnaMultipla {
 				  299, Set.of(CONNETTORE_1));
 	
 	
-	public final static Map<Integer, Set<String>> statusCode3xxVsConnettori  = Map
+	public static final Map<Integer, Set<String>> statusCode3xxVsConnettori  = Map
 			.of(300, Set.of(CONNETTORE_1,CONNETTORE_2),
 				  301, Set.of(CONNETTORE_1, CONNETTORE_3),
 				  302, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
 				  306, Set.of(CONNETTORE_1),
 				  399, Set.of(CONNETTORE_1));
 	
-	public final static Map<Integer, Set<String>> statusCode4xxVsConnettori  = Map
+	public static final Map<Integer, Set<String>> statusCode4xxVsConnettori  = Map
 			.of(400, Set.of(CONNETTORE_1,CONNETTORE_2),
 				  401, Set.of(CONNETTORE_1, CONNETTORE_3),
 				  402, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
 				  406, Set.of(CONNETTORE_1),
 				  499, Set.of(CONNETTORE_1));
 	
-	public final static Map<Integer, Set<String>> statusCode5xxVsConnettori  = Map
+	public static final Map<Integer, Set<String>> statusCode5xxVsConnettori  = Map
 			.of(500, Set.of(CONNETTORE_1,CONNETTORE_2),
 				  501, Set.of(CONNETTORE_1, CONNETTORE_3),
 				  502, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
@@ -192,28 +192,28 @@ public class CommonConsegnaMultipla {
 			  	  599, Set.of(CONNETTORE_1));
 	
 
-	public final static Map<Integer,Set<String>> statusCode2xx4xxVsConnettori = new HashMap<>();
+	public static final Map<Integer,Set<String>> statusCode2xx4xxVsConnettori = new HashMap<>();
 	static {
 		statusCode2xx4xxVsConnettori.putAll(statusCode2xxVsConnettori);
 		statusCode2xx4xxVsConnettori.putAll(statusCode4xxVsConnettori);
 	}
 	
 	
-	public final static Map<Integer,Set<String>> statusCode3xx5xxVsConnettori = new HashMap<>();
+	public static final Map<Integer,Set<String>> statusCode3xx5xxVsConnettori = new HashMap<>();
 	static {
 		statusCode3xx5xxVsConnettori.putAll(statusCode3xxVsConnettori);
 		statusCode3xx5xxVsConnettori.putAll(statusCode5xxVsConnettori);
 	}
 	
 	
-	public final static Map<Integer,Set<String>> statusCodeVsConnettori = new HashMap<>();
+	public static final Map<Integer,Set<String>> statusCodeVsConnettori = new HashMap<>();
 	static {
 		statusCodeVsConnettori.putAll(statusCode2xxVsConnettori);
 		statusCodeVsConnettori.putAll(statusCode4xxVsConnettori);
 		statusCodeVsConnettori.putAll(statusCode5xxVsConnettori);
 	}
 	
-	public final static Map<Integer,Set<String>> statusCodeRestVsConnettori = new HashMap<>();
+	public static final Map<Integer,Set<String>> statusCodeRestVsConnettori = new HashMap<>();
 	static {
 		statusCodeRestVsConnettori.putAll(statusCode2xxVsConnettori);
 		statusCodeRestVsConnettori.putAll(statusCode3xxVsConnettori);

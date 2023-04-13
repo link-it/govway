@@ -29,10 +29,10 @@ package org.openspcoop2.protocol.spcoop.sica;
  */
 public class SICAtoOpenSPCoopConstants {
 
-	public final static String WSBL_CONCETTUALE = "WSBLConcettuale";
-	public final static String WSBL_LOGICO_EROGATORE = "WSBLLogicoErogatore";
-	public final static String WSBL_LOGICO_FRUITORE = "WSBLLogicoFruitore";
+	public static final String WSBL_CONCETTUALE = "WSBLConcettuale";
+	public static final String WSBL_LOGICO_EROGATORE = "WSBLLogicoErogatore";
+	public static final String WSBL_LOGICO_FRUITORE = "WSBLLogicoFruitore";
 	
-	public final static String WSBL_TYPE= "wsbl";
+	public static final String WSBL_TYPE= "wsbl";
 	
 }

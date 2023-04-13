@@ -33,9 +33,9 @@ import java.io.InputStream;
  */
 public class LimitedInputStream extends FilterInputStream {
 
-	public final static MapKey<String> EXCEPTION_KEY = Map.newMapKey("LimitExceededIOException");
-	public final static MapKey<String> ERROR_MSG_KEY = Map.newMapKey("LimitedInputStream");
-	public final static String ERROR_MSG = "Payload too large";
+	public static final MapKey<String> EXCEPTION_KEY = Map.newMapKey("LimitExceededIOException");
+	public static final MapKey<String> ERROR_MSG_KEY = Map.newMapKey("LimitedInputStream");
+	public static final String ERROR_MSG = "Payload too large";
 	
 	public LimitedInputStream(InputStream is, long limitBytes) throws IOException {
 		this(is, limitBytes, null, null, null);

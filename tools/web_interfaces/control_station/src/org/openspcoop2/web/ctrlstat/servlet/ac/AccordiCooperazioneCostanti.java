@@ -36,21 +36,21 @@ public class AccordiCooperazioneCostanti {
 
 	/* OBJECT NAME */
 	
-	public final static String OBJECT_NAME_ACCORDI_COOPERAZIONE = "accordiCooperazione";
+	public static final String OBJECT_NAME_ACCORDI_COOPERAZIONE = "accordiCooperazione";
 	
-	public final static String OBJECT_NAME_AC_ALLEGATI = "accordiCooperazioneAllegati";
-	public final static ForwardParams TIPO_OPERAZIONE_VIEW = ForwardParams.OTHER("View");
+	public static final String OBJECT_NAME_AC_ALLEGATI = "accordiCooperazioneAllegati";
+	public static final ForwardParams TIPO_OPERAZIONE_VIEW = ForwardParams.OTHER("View");
 	
-	public final static String OBJECT_NAME_AC_PARTECIPANTI = "accordiCooperazionePartecipanti";
+	public static final String OBJECT_NAME_AC_PARTECIPANTI = "accordiCooperazionePartecipanti";
 	
 	
 	/* SERVLET NAME */
 	
-	public final static String SERVLET_NAME_ACCORDI_COOPERAZIONE_ADD = OBJECT_NAME_ACCORDI_COOPERAZIONE+"Add.do";
-	public final static String SERVLET_NAME_ACCORDI_COOPERAZIONE_CHANGE = OBJECT_NAME_ACCORDI_COOPERAZIONE+"Change.do";
-	public final static String SERVLET_NAME_ACCORDI_COOPERAZIONE_DELETE = OBJECT_NAME_ACCORDI_COOPERAZIONE+"Del.do";
-	public final static String SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST = OBJECT_NAME_ACCORDI_COOPERAZIONE+"List.do";
-	public final static Vector<String> SERVLET_ACCORDI_COOPERAZIONE = new Vector<String>();
+	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_ADD = OBJECT_NAME_ACCORDI_COOPERAZIONE+"Add.do";
+	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_CHANGE = OBJECT_NAME_ACCORDI_COOPERAZIONE+"Change.do";
+	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_DELETE = OBJECT_NAME_ACCORDI_COOPERAZIONE+"Del.do";
+	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST = OBJECT_NAME_ACCORDI_COOPERAZIONE+"List.do";
+	public static final Vector<String> SERVLET_ACCORDI_COOPERAZIONE = new Vector<String>();
 	static{
 		SERVLET_ACCORDI_COOPERAZIONE.add(SERVLET_NAME_ACCORDI_COOPERAZIONE_ADD);
 		SERVLET_ACCORDI_COOPERAZIONE.add(SERVLET_NAME_ACCORDI_COOPERAZIONE_CHANGE);
@@ -58,12 +58,12 @@ public class AccordiCooperazioneCostanti {
 		SERVLET_ACCORDI_COOPERAZIONE.add(SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 	}
 	
-	public final static String SERVLET_NAME_AC_ALLEGATI_ADD = OBJECT_NAME_AC_ALLEGATI+"Add.do";
-	public final static String SERVLET_NAME_AC_ALLEGATI_CHANGE = OBJECT_NAME_AC_ALLEGATI+"Change.do";
-	public final static String SERVLET_NAME_AC_ALLEGATI_DELETE = OBJECT_NAME_AC_ALLEGATI+"Del.do";
-	public final static String SERVLET_NAME_AC_ALLEGATI_LIST = OBJECT_NAME_AC_ALLEGATI+"List.do";
-	public final static String SERVLET_NAME_AC_ALLEGATI_VIEW = OBJECT_NAME_AC_ALLEGATI+"View.do";
-	public final static Vector<String> SERVLET_AC_ALLEGATI = new Vector<String>();
+	public static final String SERVLET_NAME_AC_ALLEGATI_ADD = OBJECT_NAME_AC_ALLEGATI+"Add.do";
+	public static final String SERVLET_NAME_AC_ALLEGATI_CHANGE = OBJECT_NAME_AC_ALLEGATI+"Change.do";
+	public static final String SERVLET_NAME_AC_ALLEGATI_DELETE = OBJECT_NAME_AC_ALLEGATI+"Del.do";
+	public static final String SERVLET_NAME_AC_ALLEGATI_LIST = OBJECT_NAME_AC_ALLEGATI+"List.do";
+	public static final String SERVLET_NAME_AC_ALLEGATI_VIEW = OBJECT_NAME_AC_ALLEGATI+"View.do";
+	public static final Vector<String> SERVLET_AC_ALLEGATI = new Vector<String>();
 	static{
 		SERVLET_AC_ALLEGATI.add(SERVLET_NAME_AC_ALLEGATI_ADD);
 		SERVLET_AC_ALLEGATI.add(SERVLET_NAME_AC_ALLEGATI_CHANGE);
@@ -72,10 +72,10 @@ public class AccordiCooperazioneCostanti {
 		SERVLET_AC_ALLEGATI.add(SERVLET_NAME_AC_ALLEGATI_VIEW);
 	}
 	
-	public final static String SERVLET_NAME_AC_PARTECIPANTI_ADD = OBJECT_NAME_AC_PARTECIPANTI+"Add.do";
-	public final static String SERVLET_NAME_AC_PARTECIPANTI_DELETE = OBJECT_NAME_AC_PARTECIPANTI+"Del.do";
-	public final static String SERVLET_NAME_AC_PARTECIPANTI_LIST = OBJECT_NAME_AC_PARTECIPANTI+"List.do";
-	public final static Vector<String> SERVLET_AC_PARTECIPANTI = new Vector<String>();
+	public static final String SERVLET_NAME_AC_PARTECIPANTI_ADD = OBJECT_NAME_AC_PARTECIPANTI+"Add.do";
+	public static final String SERVLET_NAME_AC_PARTECIPANTI_DELETE = OBJECT_NAME_AC_PARTECIPANTI+"Del.do";
+	public static final String SERVLET_NAME_AC_PARTECIPANTI_LIST = OBJECT_NAME_AC_PARTECIPANTI+"List.do";
+	public static final Vector<String> SERVLET_AC_PARTECIPANTI = new Vector<String>();
 	static{
 		SERVLET_AC_PARTECIPANTI.add(SERVLET_NAME_AC_PARTECIPANTI_ADD);
 		SERVLET_AC_PARTECIPANTI.add(SERVLET_NAME_AC_PARTECIPANTI_DELETE);
@@ -89,67 +89,67 @@ public class AccordiCooperazioneCostanti {
 	
 	/* LABEL GENERALI */
 	
-	public final static String LABEL_ACCORDI_COOPERAZIONE = "Accordi Cooperazione";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI = "Partecipanti di ";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI = "Allegati di ";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_NOME_ACCORDO_NECESSARIO = "Il nome dell'accordo &egrave; necessario!";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE  = "Partecipante";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI  = "Partecipanti";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_ALLEGATI = "Allegati";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_ALLEGATO = "Allegato";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI = "Esporta";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI_CLICK_EVENT ="Esporta('"+ArchiveType.ACCORDO_COOPERAZIONE.name()+"')";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE_12 = "referenteLabelAccordo1.2";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_SOGGETTI_PARTECIPANTI = "Soggetti Partecipanti";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_DOWNLOAD = "Download";
+	public static final String LABEL_ACCORDI_COOPERAZIONE = "Accordi Cooperazione";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI = "Partecipanti di ";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI = "Allegati di ";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_NOME_ACCORDO_NECESSARIO = "Il nome dell'accordo &egrave; necessario!";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE  = "Partecipante";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI  = "Partecipanti";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_ALLEGATI = "Allegati";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_ALLEGATO = "Allegato";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI = "Esporta";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI_CLICK_EVENT ="Esporta('"+ArchiveType.ACCORDO_COOPERAZIONE.name()+"')";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE_12 = "referenteLabelAccordo1.2";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_SOGGETTI_PARTECIPANTI = "Soggetti Partecipanti";
+	public static final String LABEL_ACCORDI_COOPERAZIONE_DOWNLOAD = "Download";
 	
-	public final static String LABEL_AC_MENU_VISUALE_AGGREGATA = "Accordi Cooperazione";
+	public static final String LABEL_AC_MENU_VISUALE_AGGREGATA = "Accordi Cooperazione";
 	
 	/* PARAMETRI */
 	
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_ID = "id";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO = "idAccordo";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO = "idAllegato";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_NOME = "nome";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE = "descr";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE = "referente";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE = "versione";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO = "privato";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_STATO = "stato";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA = "tipoSICA";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE = "partecipante";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO = "nomeDoc";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_FILE = "tipoFile";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO = "ruolo";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO_LABEL = "privatoLabel";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO = "documento";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_THE_FILE = "theFile";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_DOCUMENTO = "tipoDocumento";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO = "tipoProtocollo";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_ID = "id";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO = "idAccordo";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO = "idAllegato";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_NOME = "nome";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE = "descr";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE = "referente";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE = "versione";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO = "privato";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_STATO = "stato";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA = "tipoSICA";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE = "partecipante";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO = "nomeDoc";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_FILE = "tipoFile";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO = "ruolo";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO_LABEL = "privatoLabel";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO = "documento";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_THE_FILE = "theFile";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_DOCUMENTO = "tipoDocumento";
+	public static final String PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO = "tipoProtocollo";
 	
 	
 	
 	
 	/* LABEL PARAMETRI */
 	
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE = "Referente";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE = "Versione";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO = "Privato";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO = "Stato";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE = "Soggetto Referente";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO = "Visibilit&agrave; accordo";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO = "Ruolo";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_TIPO = "Tipo";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE = "Soggetto";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO = "Documento";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO_COMPACT = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_COMPACT;
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME = "Nome";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE = "Descrizione";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE = "Referente";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE = "Versione";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO = "Privato";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO = "Stato";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE = "Soggetto Referente";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO = "Visibilit&agrave; accordo";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO = "Ruolo";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_TIPO = "Tipo";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE = "Soggetto";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO = "Documento";
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
+	public static final String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO_COMPACT = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_COMPACT;
 	
 	
 	/* DEFAULT VALUE PARAMETRI */
 
-	public final static String DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO_PUBBLICA = "pubblica";
-	public final static String DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO_PRIVATA = "privata";
+	public static final String DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO_PUBBLICA = "pubblica";
+	public static final String DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO_PRIVATA = "privata";
 }

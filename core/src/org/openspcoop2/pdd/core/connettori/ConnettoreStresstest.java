@@ -73,9 +73,9 @@ public class ConnettoreStresstest extends ConnettoreBase {
     	return "HTTP";
     }
 	
-	public final static String ENDPOINT_TYPE = "stresstest";
+	public static final String ENDPOINT_TYPE = "stresstest";
 	
-	public final static String LOCATION = "openspcoop2://stresstest";
+	public static final String LOCATION = "openspcoop2://stresstest";
 	
 
 	/* ********  F I E L D S  P R I V A T I  ******** */

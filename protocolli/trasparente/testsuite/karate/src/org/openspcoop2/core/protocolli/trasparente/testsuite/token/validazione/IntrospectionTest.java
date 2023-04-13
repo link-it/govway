@@ -38,7 +38,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 */
 public class IntrospectionTest extends ConfigLoader {
 
-	public final static String validazione = "TestValidazioneToken-Introspection";
+	public static final String validazione = "TestValidazioneToken-Introspection";
 		
 	@Test
 	public void success() throws Exception {

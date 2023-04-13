@@ -89,7 +89,7 @@ public class ObjectFactory {
         return new RispostaRiceviFattureType();
     }
 
-    private final static QName _NotificaEsito = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "notificaEsito");
+    private static final QName _NotificaEsito = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "notificaEsito");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FileSdIType }{@code >}}
@@ -102,7 +102,7 @@ public class ObjectFactory {
         return new JAXBElement<FileSdIType>(_NotificaEsito, FileSdIType.class, null, notificaEsito);
     }
 
-    private final static QName _FileSdIConMetadati = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "fileSdIConMetadati");
+    private static final QName _FileSdIConMetadati = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "fileSdIConMetadati");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FileSdIConMetadatiType }{@code >}}
@@ -115,7 +115,7 @@ public class ObjectFactory {
         return new JAXBElement<FileSdIConMetadatiType>(_FileSdIConMetadati, FileSdIConMetadatiType.class, null, fileSdIConMetadati);
     }
 
-    private final static QName _RispostaRiceviFatture = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "rispostaRiceviFatture");
+    private static final QName _RispostaRiceviFatture = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "rispostaRiceviFatture");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RispostaRiceviFattureType }{@code >}}
@@ -128,7 +128,7 @@ public class ObjectFactory {
         return new JAXBElement<RispostaRiceviFattureType>(_RispostaRiceviFatture, RispostaRiceviFattureType.class, null, rispostaRiceviFatture);
     }
 
-    private final static QName _FileSdI = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "fileSdI");
+    private static final QName _FileSdI = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "fileSdI");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FileSdIType }{@code >}}
@@ -141,7 +141,7 @@ public class ObjectFactory {
         return new JAXBElement<FileSdIType>(_FileSdI, FileSdIType.class, null, fileSdI);
     }
 
-    private final static QName _RispostaSdINotificaEsito = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "rispostaSdINotificaEsito");
+    private static final QName _RispostaSdINotificaEsito = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "rispostaSdINotificaEsito");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RispostaSdINotificaEsitoType }{@code >}}
@@ -154,7 +154,7 @@ public class ObjectFactory {
         return new JAXBElement<RispostaSdINotificaEsitoType>(_RispostaSdINotificaEsito, RispostaSdINotificaEsitoType.class, null, rispostaSdINotificaEsito);
     }
 
-    private final static QName _NotificaDecorrenzaTermini = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "notificaDecorrenzaTermini");
+    private static final QName _NotificaDecorrenzaTermini = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "notificaDecorrenzaTermini");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FileSdIType }{@code >}}

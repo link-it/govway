@@ -64,117 +64,117 @@ public final class CostantiLabel {
      * PROPRIETA STORE
      */
     
-	public final static String STORE_HSM = "HSM";
-	public final static String STORE_CARICATO_BASEDATI = "Archivio caricato";
-	public final static String KEYSTORE = "KeyStore";
-	public final static String TRUSTSTORE = "TrustStore";
-	public final static String CRL = "CRL";
-	public final static String CRLs = "CRLs";
-	public final static String OCSP_POLICY = "OCSP Policy";
-	public final static String KEY_ALIAS = "Key Alias";
-	public final static String CERTIFICATE_ALIAS = "Certificate Alias";
-	public final static String ALIAS = "Alias";
+	public static final String STORE_HSM = "HSM";
+	public static final String STORE_CARICATO_BASEDATI = "Archivio caricato";
+	public static final String KEYSTORE = "KeyStore";
+	public static final String TRUSTSTORE = "TrustStore";
+	public static final String CRL = "CRL";
+	public static final String CRLs = "CRLs";
+	public static final String OCSP_POLICY = "OCSP Policy";
+	public static final String KEY_ALIAS = "Key Alias";
+	public static final String CERTIFICATE_ALIAS = "Certificate Alias";
+	public static final String ALIAS = "Alias";
 	
 	/**
      * PROPRIETA CERTIFICATI
      */
 	
-	public final static String CERTIFICATE_SUBJECT = "Subject";
-	public final static String CERTIFICATE_ISSUER = "Issuer";
-	public final static String CERTIFICATE_SELF_SIGNED = "Self Signed";
-	public final static String CERTIFICATE_NOT_BEFORE = "Not Before";
-	public final static String CERTIFICATE_NOT_AFTER = "Not After";
-	public final static String CERTIFICATE_SERIAL_NUMBER = "Serial Number";
-	public final static String CERTIFICATE_SERIAL_NUMBER_HEX = "Serial Number (Hex)";
+	public static final String CERTIFICATE_SUBJECT = "Subject";
+	public static final String CERTIFICATE_ISSUER = "Issuer";
+	public static final String CERTIFICATE_SELF_SIGNED = "Self Signed";
+	public static final String CERTIFICATE_NOT_BEFORE = "Not Before";
+	public static final String CERTIFICATE_NOT_AFTER = "Not After";
+	public static final String CERTIFICATE_SERIAL_NUMBER = "Serial Number";
+	public static final String CERTIFICATE_SERIAL_NUMBER_HEX = "Serial Number (Hex)";
 	
 	
     /**
      * PROPRIETA CREDENZIALI
      */
     
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_USERNAME = "Utente";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_PASSWORD = "Password";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_SUBJECT = "Subject";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_ISSUER = "Issuer";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS_DESCR = "Multiple API Keys";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_APP_ID = "App ID";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_API_KEY = "Api Key";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL = "UserId";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_DESCR = "Credenziali Token";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_WITH_HTTPS = "Abilitato";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY = "Token Policy";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY_VALIDAZIONE = "Token Policy di Validazione";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID = "Identificativo";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH = "Token ClientId";
-	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID = "Key Id (kid) del Certificato";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_USERNAME = "Utente";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_PASSWORD = "Password";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_SUBJECT = "Subject";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_ISSUER = "Issuer";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS_DESCR = "Multiple API Keys";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_APP_ID = "App ID";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_API_KEY = "Api Key";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL = "UserId";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_DESCR = "Credenziali Token";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_WITH_HTTPS = "Abilitato";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY = "Token Policy";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY_VALIDAZIONE = "Token Policy di Validazione";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID = "Identificativo";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH = "Token ClientId";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID = "Key Id (kid) del Certificato";
    	
     /**
      * PROPRIETA CONFIGURAZIONE
      */
 	
-	public final static String LABEL_CONFIGURAZIONE_STATO = "Stato";
-	public final static String LABEL_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_TOKEN = "Autenticazione Token";
-	public final static String LABEL_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_TRASPORTO = "Autenticazione Trasporto";
-	public final static String LABEL_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_CANALE = "Autenticazione Canale";
-	public final static String LABEL_CONFIGURAZIONE_RATE_LIMITING = "Rate Limiting";
-	public final static String LABEL_CONFIGURAZIONE_VALIDAZIONE = "Validazione";
-	public final static String LABEL_CONFIGURAZIONE_CACHE_RISPOSTA = "Caching Risposta";
-	public final static String LABEL_CONFIGURAZIONE_MESSAGE_SECURITY = "Sicurezza Messaggio";
-	public final static String LABEL_CONFIGURAZIONE_MTOM = "MTOM";
-	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONE = "Trasformazione";
-	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA= "Correlazione Applicativa";
-	public final static String LABEL_CONFIGURAZIONE_TIPO_DUMP = "Registrazione Messaggi";
-	public final static String LABEL_CONFIGURAZIONE_CORS= "Gestione CORS";
-	public final static String LABEL_CONFIGURAZIONE_CORS_ORIGIN= "Allow Origins";
+	public static final String LABEL_CONFIGURAZIONE_STATO = "Stato";
+	public static final String LABEL_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_TOKEN = "Autenticazione Token";
+	public static final String LABEL_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_TRASPORTO = "Autenticazione Trasporto";
+	public static final String LABEL_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_CANALE = "Autenticazione Canale";
+	public static final String LABEL_CONFIGURAZIONE_RATE_LIMITING = "Rate Limiting";
+	public static final String LABEL_CONFIGURAZIONE_VALIDAZIONE = "Validazione";
+	public static final String LABEL_CONFIGURAZIONE_CACHE_RISPOSTA = "Caching Risposta";
+	public static final String LABEL_CONFIGURAZIONE_MESSAGE_SECURITY = "Sicurezza Messaggio";
+	public static final String LABEL_CONFIGURAZIONE_MTOM = "MTOM";
+	public static final String LABEL_CONFIGURAZIONE_TRASFORMAZIONE = "Trasformazione";
+	public static final String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA= "Correlazione Applicativa";
+	public static final String LABEL_CONFIGURAZIONE_TIPO_DUMP = "Registrazione Messaggi";
+	public static final String LABEL_CONFIGURAZIONE_CORS= "Gestione CORS";
+	public static final String LABEL_CONFIGURAZIONE_CORS_ORIGIN= "Allow Origins";
 	
     /**
      * PROPRIETA CONNETTORE
      */
     
-	public final static String LABEL_CONNETTORE = "Connettore";
-	public final static String LABEL_TIPO_CONNETTORE = "Tipo";
-	public final static String LABEL_SERVER = "Applicativo Server";
-	public final static String LABEL_CONNETTORE_ENDPOINT = "Endpoint";
+	public static final String LABEL_CONNETTORE = "Connettore";
+	public static final String LABEL_TIPO_CONNETTORE = "Tipo";
+	public static final String LABEL_SERVER = "Applicativo Server";
+	public static final String LABEL_CONNETTORE_ENDPOINT = "Endpoint";
 	
-	public final static String CONNETTORE_HSM = STORE_HSM;
+	public static final String CONNETTORE_HSM = STORE_HSM;
 		
-	public final static String LABEL_CONNETTORE_HTTPS_HOST_VERIFY = "Verifica Hostname";
+	public static final String LABEL_CONNETTORE_HTTPS_HOST_VERIFY = "Verifica Hostname";
 	
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP = "Autenticazione Http";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP = "Autenticazione Http";
 	
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_BEARER = "Autenticazione Bearer";
-	public final static String LABEL_CONNETTORE_BEARER_TOKEN = "Token";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_BEARER = "Autenticazione Bearer";
+	public static final String LABEL_CONNETTORE_BEARER_TOKEN = "Token";
 	
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN = "Autenticazione Token";
-	public final static String LABEL_CONNETTORE_TOKEN_POLICY = "Policy";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN = "Autenticazione Token";
+	public static final String LABEL_CONNETTORE_TOKEN_POLICY = "Policy";
 	
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS = "Autenticazione Https";
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS = "Trust all certificates";
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE = "Auth Server - TrustStore";
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs = "Auth Server - CRLs";
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_OCSP_POLICY = "Auth Server - OCSP Policy";
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE = "Auth Client - KeyStore";
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS = "Auth Client - Key Alias";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS = "Autenticazione Https";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS = "Trust all certificates";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE = "Auth Server - TrustStore";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs = "Auth Server - CRLs";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_OCSP_POLICY = "Auth Server - OCSP Policy";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE = "Auth Client - KeyStore";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS = "Auth Client - Key Alias";
 	
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY = "Proxy";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY = "Proxy";
 	
-	public final static String LABEL_CONNETTORE_JMS_NOME_CODA = "Nome";
-	public final static String LABEL_CONNETTORE_JMS_USERNAME = "Utente";
+	public static final String LABEL_CONNETTORE_JMS_NOME_CODA = "Nome";
+	public static final String LABEL_CONNETTORE_JMS_USERNAME = "Utente";
 	
 	public static final String LABEL_INPUT_FILE_HEADER = "InputFile (Header)";
 	public static final String LABEL_INPUT_FILE = "InputFile";
 	public static final String LABEL_OUTPUT_FILE_HEADER = "OutputFile (Header)";
 	public static final String LABEL_OUTPUT_FILE = "OutputFile";
     
-	public final static String LABEL_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT = "Connection Timeout";
-	public final static String LABEL_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT = "Read Timeout";
+	public static final String LABEL_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT = "Connection Timeout";
+	public static final String LABEL_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT = "Read Timeout";
 	
-	public final static String LABEL_VERIFICA_CONNETTORE_EFFETTUATO_CON_SUCCESSO = "Test di connettività effettuato con successo";
-	public final static String LABEL_VERIFICA_CONNETTORE_FALLITA = "Test di connettività fallito: ";
+	public static final String LABEL_VERIFICA_CONNETTORE_EFFETTUATO_CON_SUCCESSO = "Test di connettività effettuato con successo";
+	public static final String LABEL_VERIFICA_CONNETTORE_FALLITA = "Test di connettività fallito: ";
 	
-	public final static String LABEL_VERIFICA_CERTIFICATI_EFFETTUATA_CON_SUCCESSO = "Tutti i certificati configurati risultano validi";
-	public final static String LABEL_VERIFICA_CERTIFICATI_WARNING = "Identificati certificati che necessitano di un aggiornamento: ";
-	public final static String LABEL_VERIFICA_CERTIFICATI_FALLITA = "Identificati certificati non validi: ";
+	public static final String LABEL_VERIFICA_CERTIFICATI_EFFETTUATA_CON_SUCCESSO = "Tutti i certificati configurati risultano validi";
+	public static final String LABEL_VERIFICA_CERTIFICATI_WARNING = "Identificati certificati che necessitano di un aggiornamento: ";
+	public static final String LABEL_VERIFICA_CERTIFICATI_FALLITA = "Identificati certificati non validi: ";
 	
 		
 	

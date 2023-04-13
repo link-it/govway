@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPDTrace {
 
-	private final static String ID_GRUPPO = "REST.PD.TRACE";
+	private static final String ID_GRUPPO = "REST.PD.TRACE";
 	private HttpRequestMethod method = HttpRequestMethod.TRACE;
 
 	private RESTCore restCore;

@@ -81,7 +81,7 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 		this.erroreApplicativoBuilder = this.protocolFactory.createErroreApplicativoBuilder();
 	}
 
-	private final static String dateformatPattern = "yyyyMMddHHmmssSSS"; // utile per il filtro duplicati
+	private static final String dateformatPattern = "yyyyMMddHHmmssSSS"; // utile per il filtro duplicati
 	
 	@Override
 	public String newID(IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {

@@ -29,16 +29,16 @@ package org.openspcoop2.utils.certificate.hsm;
  */
 public class HSMCostanti {
 
-	public final static String PROPERTY_PREFIX = "hsm.";
+	public static final String PROPERTY_PREFIX = "hsm.";
 	
-	public final static String PROPERTY_SUFFIX_PROVIDER = "provider";
-	public final static String PROPERTY_SUFFIX_PROVIDER_ADD = "provider.add";
-	public final static String PROPERTY_SUFFIX_PROVIDER_CONFIG_FILE = "provider.configFile";
-	public final static String PROPERTY_SUFFIX_PROVIDER_CONFIG = "provider.config";
-	public final static String PROPERTY_SUFFIX_PIN = "pin";
-	public final static String PROPERTY_SUFFIX_KEYSTORE_TYPE_LABEL = "keystoreType.label";
-	public final static String PROPERTY_SUFFIX_KEYSTORE_TYPE = "keystoreType";
-	public final static String PROPERTY_SUFFIX_USABLE_AS_TRUST_STORE = "usableAsTrustStore";
-	public final static String PROPERTY_SUFFIX_USABLE_AS_SECRET_KEY_STORE = "usableAsSecretKeyStore";
+	public static final String PROPERTY_SUFFIX_PROVIDER = "provider";
+	public static final String PROPERTY_SUFFIX_PROVIDER_ADD = "provider.add";
+	public static final String PROPERTY_SUFFIX_PROVIDER_CONFIG_FILE = "provider.configFile";
+	public static final String PROPERTY_SUFFIX_PROVIDER_CONFIG = "provider.config";
+	public static final String PROPERTY_SUFFIX_PIN = "pin";
+	public static final String PROPERTY_SUFFIX_KEYSTORE_TYPE_LABEL = "keystoreType.label";
+	public static final String PROPERTY_SUFFIX_KEYSTORE_TYPE = "keystoreType";
+	public static final String PROPERTY_SUFFIX_USABLE_AS_TRUST_STORE = "usableAsTrustStore";
+	public static final String PROPERTY_SUFFIX_USABLE_AS_SECRET_KEY_STORE = "usableAsSecretKeyStore";
 
 }

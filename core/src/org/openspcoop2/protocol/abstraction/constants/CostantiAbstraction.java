@@ -30,31 +30,31 @@ package org.openspcoop2.protocol.abstraction.constants;
  */
 public class CostantiAbstraction {
 
-	public final static String TEMPLATES_DIR = "templates";
-	public final static String TEMPLATES_CORE_DIR = "core";
-	public final static String TEMPLATES_EROGAZIONE_DIR = "erogazione";
-	public final static String TEMPLATES_FRUIZIONE_DIR = "fruizione";
-	public final static String TEMPLATES_PDD = "pdd";
-	public final static String TEMPLATES_SOGGETTO = "soggetto";
-	public final static String TEMPLATES_ACCORDI_PARTE_SPECIFICA = "asps";
-	public final static String TEMPLATES_FRUITORE = "fruitore";
-	public final static String TEMPLATES_SERVIZI_APPLICATIVI = "sa";
-	public final static String TEMPLATES_PORTE_APPLICATIVE = "pa";
-	public final static String TEMPLATES_PORTE_DELEGATE = "pd";
+	public static final String TEMPLATES_DIR = "templates";
+	public static final String TEMPLATES_CORE_DIR = "core";
+	public static final String TEMPLATES_EROGAZIONE_DIR = "erogazione";
+	public static final String TEMPLATES_FRUIZIONE_DIR = "fruizione";
+	public static final String TEMPLATES_PDD = "pdd";
+	public static final String TEMPLATES_SOGGETTO = "soggetto";
+	public static final String TEMPLATES_ACCORDI_PARTE_SPECIFICA = "asps";
+	public static final String TEMPLATES_FRUITORE = "fruitore";
+	public static final String TEMPLATES_SERVIZI_APPLICATIVI = "sa";
+	public static final String TEMPLATES_PORTE_APPLICATIVE = "pa";
+	public static final String TEMPLATES_PORTE_DELEGATE = "pd";
 	
-	public final static String TEMPLATE_FILE = "templates.zip";
-	public final static String CSV_FORMAT_FILE = "csvFormat.properties";
-	public final static String CSV_MAPPING_FILE = "csvMapping.properties";
-	public final static String CSV_TEMPLATE_FILE = "csvTemplate.ftl";
+	public static final String TEMPLATE_FILE = "templates.zip";
+	public static final String CSV_FORMAT_FILE = "csvFormat.properties";
+	public static final String CSV_MAPPING_FILE = "csvMapping.properties";
+	public static final String CSV_TEMPLATE_FILE = "csvTemplate.ftl";
 	
-	public final static String EROGAZIONI_DIR = "erogazioni";
+	public static final String EROGAZIONI_DIR = "erogazioni";
 	
-	public final static String FRUIZIONI_DIR = "fruizioni";
+	public static final String FRUIZIONI_DIR = "fruizioni";
 	
-	public final static String XML_EXTENSION = "xml";
-	public final static String CSV_EXTENSION = "csv";
-	public final static String FTL_EXTENSION = "ftl";
-	public final static String ZIP_EXTENSION = "zip";
+	public static final String XML_EXTENSION = "xml";
+	public static final String CSV_EXTENSION = "csv";
+	public static final String FTL_EXTENSION = "ftl";
+	public static final String ZIP_EXTENSION = "zip";
 	
 	
 	public static final String EROGAZIONE_MAP_KEY_SERVIZIO = "servizio";

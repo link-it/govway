@@ -30,33 +30,33 @@ import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.ProjectInfo;
  */
 public class SDICostantiServizioRicezioneFatture {
 
-    public final static String RICEZIONE_SERVIZIO_RICEZIONE_FATTURE = "RicezioneFatture";
-    public final static String RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE = "RiceviFatture";
-    public final static String RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_NOTIFICA_DECORRENZA_TERMINI = "NotificaDecorrenzaTermini";
+    public static final String RICEZIONE_SERVIZIO_RICEZIONE_FATTURE = "RicezioneFatture";
+    public static final String RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE = "RiceviFatture";
+    public static final String RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_NOTIFICA_DECORRENZA_TERMINI = "NotificaDecorrenzaTermini";
 	
-	public final static String RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_NAMESPACE = ProjectInfo.getInstance().getProjectNamespace();
+	public static final String RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_NAMESPACE = ProjectInfo.getInstance().getProjectNamespace();
 	
 	
 	// AZIONE: RiceviFatture
     
-	public final static String RICEVI_FATTURE_RICHIESTA_ROOT_ELEMENT = "fileSdIConMetadati";
+	public static final String RICEVI_FATTURE_RICHIESTA_ROOT_ELEMENT = "fileSdIConMetadati";
     
-    public final static String RICEVI_FATTURE_RICHIESTA_ELEMENT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
-    public final static String RICEVI_FATTURE_RICHIESTA_ELEMENT_NOME_FILE = "NomeFile";
-    public final static String RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE = "File";
-    public final static String RICEVI_FATTURE_RICHIESTA_ELEMENT_NOME_FILE_METADATI = "NomeFileMetadati";
-    public final static String RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI = "Metadati";
+    public static final String RICEVI_FATTURE_RICHIESTA_ELEMENT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
+    public static final String RICEVI_FATTURE_RICHIESTA_ELEMENT_NOME_FILE = "NomeFile";
+    public static final String RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE = "File";
+    public static final String RICEVI_FATTURE_RICHIESTA_ELEMENT_NOME_FILE_METADATI = "NomeFileMetadati";
+    public static final String RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI = "Metadati";
     
     
     // AZIONE: NotificaDecorrenzaTermini
     
- 	public final static String NOTIFICA_DECORRENZA_TERMINI_RICHIESTA_ROOT_ELEMENT = "fileSdI";
+ 	public static final String NOTIFICA_DECORRENZA_TERMINI_RICHIESTA_ROOT_ELEMENT = "fileSdI";
  	
  	
  	// COMMON fileSdI_Type
  	
-     public final static String FILE_SDI_TYPE_RICHIESTA_ELEMENT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
-     public final static String FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_NOME_FILE = "NomeFile";
-     public final static String FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE = "File";
+     public static final String FILE_SDI_TYPE_RICHIESTA_ELEMENT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
+     public static final String FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_NOME_FILE = "NomeFile";
+     public static final String FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE = "File";
 	
 }

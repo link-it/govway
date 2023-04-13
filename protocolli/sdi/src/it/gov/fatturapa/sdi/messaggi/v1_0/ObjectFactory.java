@@ -152,7 +152,7 @@ public class ObjectFactory {
         return new ErroreType();
     }
 
-    private final static QName _MetadatiInvioFile = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "MetadatiInvioFile");
+    private static final QName _MetadatiInvioFile = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "MetadatiInvioFile");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MetadatiInvioFileType }{@code >}}
@@ -165,7 +165,7 @@ public class ObjectFactory {
         return new JAXBElement<MetadatiInvioFileType>(_MetadatiInvioFile, MetadatiInvioFileType.class, null, metadatiInvioFile);
     }
 
-    private final static QName _NotificaScarto = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "NotificaScarto");
+    private static final QName _NotificaScarto = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "NotificaScarto");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NotificaScartoType }{@code >}}
@@ -178,7 +178,7 @@ public class ObjectFactory {
         return new JAXBElement<NotificaScartoType>(_NotificaScarto, NotificaScartoType.class, null, notificaScarto);
     }
 
-    private final static QName _ScartoEsitoCommittente = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "ScartoEsitoCommittente");
+    private static final QName _ScartoEsitoCommittente = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "ScartoEsitoCommittente");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ScartoEsitoCommittenteType }{@code >}}
@@ -191,7 +191,7 @@ public class ObjectFactory {
         return new JAXBElement<ScartoEsitoCommittenteType>(_ScartoEsitoCommittente, ScartoEsitoCommittenteType.class, null, scartoEsitoCommittente);
     }
 
-    private final static QName _NotificaDecorrenzaTermini = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "NotificaDecorrenzaTermini");
+    private static final QName _NotificaDecorrenzaTermini = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "NotificaDecorrenzaTermini");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NotificaDecorrenzaTerminiType }{@code >}}
@@ -204,7 +204,7 @@ public class ObjectFactory {
         return new JAXBElement<NotificaDecorrenzaTerminiType>(_NotificaDecorrenzaTermini, NotificaDecorrenzaTerminiType.class, null, notificaDecorrenzaTermini);
     }
 
-    private final static QName _NotificaEsitoCommittente = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "NotificaEsitoCommittente");
+    private static final QName _NotificaEsitoCommittente = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "NotificaEsitoCommittente");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NotificaEsitoCommittenteType }{@code >}}
@@ -217,7 +217,7 @@ public class ObjectFactory {
         return new JAXBElement<NotificaEsitoCommittenteType>(_NotificaEsitoCommittente, NotificaEsitoCommittenteType.class, null, notificaEsitoCommittente);
     }
 
-    private final static QName _NotificaEsito = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "NotificaEsito");
+    private static final QName _NotificaEsito = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "NotificaEsito");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NotificaEsitoType }{@code >}}
@@ -230,7 +230,7 @@ public class ObjectFactory {
         return new JAXBElement<NotificaEsitoType>(_NotificaEsito, NotificaEsitoType.class, null, notificaEsito);
     }
 
-    private final static QName _RicevutaConsegna = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "RicevutaConsegna");
+    private static final QName _RicevutaConsegna = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "RicevutaConsegna");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RicevutaConsegnaType }{@code >}}
@@ -243,7 +243,7 @@ public class ObjectFactory {
         return new JAXBElement<RicevutaConsegnaType>(_RicevutaConsegna, RicevutaConsegnaType.class, null, ricevutaConsegna);
     }
 
-    private final static QName _AttestazioneTrasmissioneFattura = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "AttestazioneTrasmissioneFattura");
+    private static final QName _AttestazioneTrasmissioneFattura = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "AttestazioneTrasmissioneFattura");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AttestazioneTrasmissioneFatturaType }{@code >}}
@@ -256,7 +256,7 @@ public class ObjectFactory {
         return new JAXBElement<AttestazioneTrasmissioneFatturaType>(_AttestazioneTrasmissioneFattura, AttestazioneTrasmissioneFatturaType.class, null, attestazioneTrasmissioneFattura);
     }
 
-    private final static QName _NotificaMancataConsegna = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "NotificaMancataConsegna");
+    private static final QName _NotificaMancataConsegna = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "NotificaMancataConsegna");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NotificaMancataConsegnaType }{@code >}}

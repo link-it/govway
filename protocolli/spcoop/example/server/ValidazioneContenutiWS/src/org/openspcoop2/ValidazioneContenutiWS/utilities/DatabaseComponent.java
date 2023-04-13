@@ -102,7 +102,7 @@ public class DatabaseComponent {
 	/* ------------------------- IS ARRIVED ------------------------ */
 	
 	private static final String TRACCE = "tracce";
-	private final static String TRACCE_COLUMN_ID = "id";
+	private static final String TRACCE_COLUMN_ID = "id";
 	private static final String TRACCE_COLUMN_GDO = "gdo";
 	private static final String TRACCE_COLUMN_PDD_CODICE = "pdd_codice";
 	private static final String TRACCE_COLUMN_ID_MESSAGGIO = "id_messaggio";

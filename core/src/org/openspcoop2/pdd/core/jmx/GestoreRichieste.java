@@ -53,8 +53,8 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
  */
 public class GestoreRichieste extends NotificationBroadcasterSupport implements DynamicMBean {
 
-	public final static String CACHE_METHOD_NAME_REMOVE_DATI_CONTROLLO_TRAFFICO_GLOBALE = "removeRateLimitingGlobalConfigCache";
-	public final static String CACHE_METHOD_NAME_REMOVE_DATI_CONTROLLO_TRAFFICO_API = "removeRateLimitingAPIConfigCache";
+	public static final String CACHE_METHOD_NAME_REMOVE_DATI_CONTROLLO_TRAFFICO_GLOBALE = "removeRateLimitingGlobalConfigCache";
+	public static final String CACHE_METHOD_NAME_REMOVE_DATI_CONTROLLO_TRAFFICO_API = "removeRateLimitingAPIConfigCache";
 	
 	/** Attributi */
 	private boolean cacheAbilitata = false;

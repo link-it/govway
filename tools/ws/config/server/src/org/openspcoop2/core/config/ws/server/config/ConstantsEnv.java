@@ -30,14 +30,14 @@ package org.openspcoop2.core.config.ws.server.config;
 
 public class ConstantsEnv {
 
-	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
+	public static final String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
-    public final static String OPENSPCOOP2_WSCONFIG_LOCAL_PATH = "wsconfig_local.properties";
-    public final static String OPENSPCOOP2_WSCONFIG_PROPERTIES = "OPENSPCOOP2_WSCONFIG_PROPERTIES";
+    public static final String OPENSPCOOP2_WSCONFIG_LOCAL_PATH = "wsconfig_local.properties";
+    public static final String OPENSPCOOP2_WSCONFIG_PROPERTIES = "OPENSPCOOP2_WSCONFIG_PROPERTIES";
     
-    public final static String OPENSPCOOP2_BACKEND_LOCAL_PATH = "wsconfig_local.backend.properties";
-    public final static String OPENSPCOOP2_BACKEND_PROPERTIES = "OPENSPCOOP2_WSCONFIG_BACKEND_PROPERTIES";
+    public static final String OPENSPCOOP2_BACKEND_LOCAL_PATH = "wsconfig_local.backend.properties";
+    public static final String OPENSPCOOP2_BACKEND_PROPERTIES = "OPENSPCOOP2_WSCONFIG_BACKEND_PROPERTIES";
     	
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "wsconfig_local.log4j2.properties";
-    public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_WSCONFIG_LOG_PROPERTIES";
+    public static final String OPENSPCOOP2_LOGGER_LOCAL_PATH = "wsconfig_local.log4j2.properties";
+    public static final String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_WSCONFIG_LOG_PROPERTIES";
 }

@@ -327,7 +327,7 @@ public class ObjectFactory {
         return new FatturaElettronicaBodyType();
     }
 
-    private final static QName _FatturaElettronica = new QName("http://www.fatturapa.gov.it/sdi/fatturapa/v1.0", "FatturaElettronica");
+    private static final QName _FatturaElettronica = new QName("http://www.fatturapa.gov.it/sdi/fatturapa/v1.0", "FatturaElettronica");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FatturaElettronicaType }{@code >}}

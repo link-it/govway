@@ -48,7 +48,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 */
 public class SPIDProviderTest extends ConfigLoader {
 
-	private final static String PATH = "/org/openspcoop2/core/protocolli/trasparente/testsuite/trasformazione/form/";
+	private static final String PATH = "/org/openspcoop2/core/protocolli/trasparente/testsuite/trasformazione/form/";
 	
 
 	

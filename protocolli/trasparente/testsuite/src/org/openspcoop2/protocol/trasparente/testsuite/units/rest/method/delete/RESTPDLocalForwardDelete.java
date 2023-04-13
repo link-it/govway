@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPDLocalForwardDelete {
 
-	private final static String ID_GRUPPO = "REST.PD.LOCAL_FORWARD.DELETE";
+	private static final String ID_GRUPPO = "REST.PD.LOCAL_FORWARD.DELETE";
 	private HttpRequestMethod method = HttpRequestMethod.DELETE;
 
 	private RESTCore restCore;

@@ -49,14 +49,14 @@ public class MultiKeystore implements Serializable  {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private final static String ALIASES = "aliases";
-	private final static String KEYSTORE_TYPE = ".keystore.type";
-	private final static String KEYSTORE_PATH = ".keystore.path";
-	private final static String KEYSTORE_PASSWORD = ".keystore.password";
-	private final static String KEY_ALIAS = ".key.alias";
-	private final static String KEY_PASSWORD = ".key.password";
-	private final static String KEY_VALUE = ".key.value";
-	private final static String KEY_ALGORITHM = ".key.algorithm";
+	private static final String ALIASES = "aliases";
+	private static final String KEYSTORE_TYPE = ".keystore.type";
+	private static final String KEYSTORE_PATH = ".keystore.path";
+	private static final String KEYSTORE_PASSWORD = ".keystore.password";
+	private static final String KEY_ALIAS = ".key.alias";
+	private static final String KEY_PASSWORD = ".key.password";
+	private static final String KEY_VALUE = ".key.value";
+	private static final String KEY_ALGORITHM = ".key.algorithm";
 	
 	private List<String> aliases = new ArrayList<String>();
 	private Map<String, Serializable> keystores = new HashMap<String, Serializable>();

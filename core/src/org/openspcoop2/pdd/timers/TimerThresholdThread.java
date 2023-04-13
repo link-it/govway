@@ -60,7 +60,7 @@ public class TimerThresholdThread extends BaseThread{
 	public static boolean freeSpace = true;
 	
 	 /** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-    public final static String ID_MODULO = "GestoreThreshold";
+    public static final String ID_MODULO = "GestoreThreshold";
 	 
     
 	/** Properties Reader */

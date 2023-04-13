@@ -31,7 +31,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 */
 public class AttributeAuthorityTest extends ConfigLoader {
 
-	public final static String api = "TestAttributeAuthorityPKCS11";
+	public static final String api = "TestAttributeAuthorityPKCS11";
 	
 	
 	@Test

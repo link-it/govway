@@ -38,14 +38,14 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AttributeAuthorityTest extends ConfigLoader {
 
-	public final static String api = "TestOCSPAttributeAuthority";
-	public final static String soggetto = "SoggettoInternoTest";
+	public static final String api = "TestOCSPAttributeAuthority";
+	public static final String soggetto = "SoggettoInternoTest";
 	
-	public final static String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
+	public static final String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
 	
-	public final static int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
+	public static final int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
 	
-	public final static int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
+	public static final int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
 	
 
 	@Test

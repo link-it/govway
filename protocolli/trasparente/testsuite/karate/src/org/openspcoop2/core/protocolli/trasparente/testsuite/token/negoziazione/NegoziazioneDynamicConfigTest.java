@@ -52,7 +52,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 */
 public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 
-	public final static String api_negoziazione_dynamic_config = "TestNegoziazioneTokenDynamicConfig";
+	public static final String api_negoziazione_dynamic_config = "TestNegoziazioneTokenDynamicConfig";
 		
 	
 	@Test

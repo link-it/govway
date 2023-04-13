@@ -43,36 +43,36 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _SearchFilterServizioApplicativo_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "search-filter-servizio-applicativo");
-    private final static QName _InvocazionePortaGestioneErrore_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "invocazione-porta-gestione-errore");
-    private final static QName _InvocazionePorta_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "invocazione-porta");
-    private final static QName _InvocazioneCredenziali_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "invocazione-credenziali");
-    private final static QName _Connettore_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "connettore");
-    private final static QName _InvocazioneServizio_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "invocazione-servizio");
-    private final static QName _RispostaAsincrona_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "risposta-asincrona");
-    private final static QName _WrapperIdSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "wrapperIdSoggetto");
-    private final static QName _WrapperIdPortaDelegata_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "wrapperIdPortaDelegata");
-    private final static QName _WrapperIdPortaApplicativa_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "wrapperIdPortaApplicativa");
-    private final static QName _WrapperIdServizioApplicativo_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "wrapperIdServizioApplicativo");
-    private final static QName _ConfigServiceException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-service-exception");
-    private final static QName _ConfigNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-not-found-exception");
-    private final static QName _ConfigMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-multiple-result-exception");
-    private final static QName _ConfigNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-not-implemented-exception");
-    private final static QName _ConfigNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-not-authorized-exception");
-    private final static QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "findAll");
-    private final static QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "findAllResponse");
-    private final static QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "find");
-    private final static QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "findResponse");
-    private final static QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "count");
-    private final static QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "countResponse");
-    private final static QName _Get_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "get");
-    private final static QName _GetResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "getResponse");
-    private final static QName _Exists_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "exists");
-    private final static QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "existsResponse");
-    private final static QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "findAllIds");
-    private final static QName _FindAllIdsResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "findAllIdsResponse");
-    private final static QName _InUse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "inUse");
-    private final static QName _InUseResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "inUseResponse");
+    private static final QName _SearchFilterServizioApplicativo_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "search-filter-servizio-applicativo");
+    private static final QName _InvocazionePortaGestioneErrore_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "invocazione-porta-gestione-errore");
+    private static final QName _InvocazionePorta_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "invocazione-porta");
+    private static final QName _InvocazioneCredenziali_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "invocazione-credenziali");
+    private static final QName _Connettore_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "connettore");
+    private static final QName _InvocazioneServizio_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "invocazione-servizio");
+    private static final QName _RispostaAsincrona_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "risposta-asincrona");
+    private static final QName _WrapperIdSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "wrapperIdSoggetto");
+    private static final QName _WrapperIdPortaDelegata_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "wrapperIdPortaDelegata");
+    private static final QName _WrapperIdPortaApplicativa_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "wrapperIdPortaApplicativa");
+    private static final QName _WrapperIdServizioApplicativo_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "wrapperIdServizioApplicativo");
+    private static final QName _ConfigServiceException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-service-exception");
+    private static final QName _ConfigNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-not-found-exception");
+    private static final QName _ConfigMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-multiple-result-exception");
+    private static final QName _ConfigNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-not-implemented-exception");
+    private static final QName _ConfigNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-not-authorized-exception");
+    private static final QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "findAll");
+    private static final QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "findAllResponse");
+    private static final QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "find");
+    private static final QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "findResponse");
+    private static final QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "count");
+    private static final QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "countResponse");
+    private static final QName _Get_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "get");
+    private static final QName _GetResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "getResponse");
+    private static final QName _Exists_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "exists");
+    private static final QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "existsResponse");
+    private static final QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "findAllIds");
+    private static final QName _FindAllIdsResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "findAllIdsResponse");
+    private static final QName _InUse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "inUse");
+    private static final QName _InUseResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "inUseResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.core.config.ws.client.servizioapplicativo.search

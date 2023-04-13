@@ -68,7 +68,7 @@ public class PolicyDateUtils {
 		return bf.toString();
 	}	
 	
-	private final static MapKey<String> RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE = Map.newMapKey("RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE");
+	private static final MapKey<String> RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE = Map.newMapKey("RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE");
 	public static void setGestorePolicyConfigDateIntoContext(Map<Object> ctx, Long gestorePolicyConfigDate) {
 		if(ctx!=null && gestorePolicyConfigDate!=null && gestorePolicyConfigDate>0) {
 			ctx.put(RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE, gestorePolicyConfigDate);

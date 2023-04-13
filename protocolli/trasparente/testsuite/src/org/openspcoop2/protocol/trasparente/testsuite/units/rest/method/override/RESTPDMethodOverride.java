@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPDMethodOverride {
 
-	private final static String ID_GRUPPO = "REST.PD.METHOD_OVERRIDE";
+	private static final String ID_GRUPPO = "REST.PD.METHOD_OVERRIDE";
 	private HttpRequestMethod method = HttpRequestMethod.POST;
 
 	private RESTCore restCore;

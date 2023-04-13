@@ -897,7 +897,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 		}
     }
     
-    public final static String PERMESSI_FORMATO = "[o/a]+/-rwx";
+    public static final String PERMESSI_FORMATO = "[o/a]+/-rwx";
     private static void _validateSinglePermission(String p, ConnettoreFile_outputConfig config) throws ConnettoreException {
     	String errorMsg = "Wrong permission format ("+p+"); expected "+PERMESSI_FORMATO;
     	if(p==null || StringUtils.isEmpty(p) || (!p.contains("+") && !p.contains("-")) || p.length()<=1) {

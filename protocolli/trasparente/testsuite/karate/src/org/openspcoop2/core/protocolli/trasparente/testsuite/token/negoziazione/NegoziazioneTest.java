@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 */
 public class NegoziazioneTest extends ConfigLoader {
 
-	public final static String api_negoziazione = "TestNegoziazioneToken";
+	public static final String api_negoziazione = "TestNegoziazioneToken";
 	
 	
 	@Test

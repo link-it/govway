@@ -40,10 +40,10 @@ import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.Co
                   targetNamespace = "http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione") 
 public class ComunicazioneVariazioneService11 extends Service {
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneSOAP11Service");
-    public final static QName ComunicazioneVariazioneInterfaceEndpoint = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneSOAP11InterfaceEndpoint");
+    public static final QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneSOAP11Service");
+    public static final QName ComunicazioneVariazioneInterfaceEndpoint = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneSOAP11InterfaceEndpoint");
     static {
         URL url = ComunicazioneVariazioneService11.class.getResource("configurazionePdD/wsdl/implementazioneErogatoreSoap11.wsdl");
         if (url == null) {

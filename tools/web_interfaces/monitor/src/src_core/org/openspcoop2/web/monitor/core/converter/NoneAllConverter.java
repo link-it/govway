@@ -33,8 +33,8 @@ import javax.faces.convert.Converter;
  */
 public class NoneAllConverter implements Converter {
 	
-	private final static String NONE_STRING = "[Nessuno]";
-	private final static String ALL_STRING  = "[Qualsiasi]";
+	private static final String NONE_STRING = "[Nessuno]";
+	private static final String ALL_STRING  = "[Qualsiasi]";
 	
 	@Override
 	public Object getAsObject(FacesContext ctx, UIComponent component, String value) {

@@ -38,7 +38,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 */
 public class UserInfoTest extends ConfigLoader {
 
-	public final static String validazione = "TestValidazioneToken-UserInfo";
+	public static final String validazione = "TestValidazioneToken-UserInfo";
 		
 	@Test
 	public void success() throws Exception {

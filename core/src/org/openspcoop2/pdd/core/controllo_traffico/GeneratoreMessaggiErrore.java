@@ -47,118 +47,118 @@ public class GeneratoreMessaggiErrore {
 
 	
 	// identificativi diagnostici parziali per policy violate
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_SIMULTANEE = "controlloTraffico.policy.violata.risorsaNumeroRichieste.simultaneo";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE = "controlloTraffico.policy.violata.risorsaNumeroRichieste";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_OCCUPAZIONE_BANDA = "controlloTraffico.policy.violata.risorsaOccupazioneBanda";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_TEMPO_COMPLESSIVO = "controlloTraffico.policy.violata.risorsaTempoComplessivo";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_TEMPO_MEDIO = "controlloTraffico.policy.violata.risorsaTempoMedio";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO = "controlloTraffico.policy.violata.risorsaNumeroRichiesteCompletateConSuccesso";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE = "controlloTraffico.policy.violata.risorsaNumeroRichiesteFallite";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_FAULT_APPLICATIVI = "controlloTraffico.policy.violata.risorsaNumeroFaultApplicativi";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI= "controlloTraffico.policy.violata.risorsaNumeroRichiesteFalliteOFaultApplicativi";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_SIMULTANEE = "controlloTraffico.policy.violata.risorsaNumeroRichieste.simultaneo";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE = "controlloTraffico.policy.violata.risorsaNumeroRichieste";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_OCCUPAZIONE_BANDA = "controlloTraffico.policy.violata.risorsaOccupazioneBanda";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_TEMPO_COMPLESSIVO = "controlloTraffico.policy.violata.risorsaTempoComplessivo";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_TEMPO_MEDIO = "controlloTraffico.policy.violata.risorsaTempoMedio";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO = "controlloTraffico.policy.violata.risorsaNumeroRichiesteCompletateConSuccesso";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE = "controlloTraffico.policy.violata.risorsaNumeroRichiesteFallite";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_FAULT_APPLICATIVI = "controlloTraffico.policy.violata.risorsaNumeroFaultApplicativi";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI= "controlloTraffico.policy.violata.risorsaNumeroRichiesteFalliteOFaultApplicativi";
 	
 	// identificativi diagnostici parziali per applicabilità policy
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA = "controlloTraffico.policy.applicabilita.nonCongestionato";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA_CONTROLLO_DISABILITATO = "controlloTraffico.policy.applicabilita.controlloCongestioneDisabilitato";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_DEGRADO_PRESTAZIONALE_RILEVATO = "controlloTraffico.policy.applicabilita.degradoPrestazionale.rilevato";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_DEGRADO_PRESTAZIONALE_NON_RILEVATO = "controlloTraffico.policy.applicabilita.degradoPrestazionale.nonRilevato";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_STATO_ALLARME_RILEVATO = "controlloTraffico.policy.applicabilita.statoAllarme.rilevato";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_STATO_ALLARME_NON_RILEVATO = "controlloTraffico.policy.applicabilita.statoAllarme.nonRilevato";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA = "controlloTraffico.policy.applicabilita.nonCongestionato";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA_CONTROLLO_DISABILITATO = "controlloTraffico.policy.applicabilita.controlloCongestioneDisabilitato";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_DEGRADO_PRESTAZIONALE_RILEVATO = "controlloTraffico.policy.applicabilita.degradoPrestazionale.rilevato";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_DEGRADO_PRESTAZIONALE_NON_RILEVATO = "controlloTraffico.policy.applicabilita.degradoPrestazionale.nonRilevato";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_STATO_ALLARME_RILEVATO = "controlloTraffico.policy.applicabilita.statoAllarme.rilevato";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_STATO_ALLARME_NON_RILEVATO = "controlloTraffico.policy.applicabilita.statoAllarme.nonRilevato";
 	
 	// identificativi diagnostici
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED = "controlloTraffico.maxRequestsViolated";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED_WARNING_ONLY = "controlloTraffico.maxRequestsViolatedWarningOnly";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_PDD_CONGESTIONATA = "controlloTraffico.pddCongestionata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_IN_CORSO = "controlloTraffico.policy.controlloInCorso";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_SUCCESSO = "controlloTraffico.policy.controlloTerminato.richiestaNonBloccata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_ERRORE = "controlloTraffico.policy.controlloTerminato.richiestaBloccata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_DISABILITATA = "controlloTraffico.policy.disabilitata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_FILTRATA = "controlloTraffico.policy.filtrata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_NON_APPLICABILE = "controlloTraffico.policy.nonApplicabile";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA = "controlloTraffico.policy.violata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY = "controlloTraffico.policy.violataWarningOnly";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_RISPETTATA = "controlloTraffico.policy.rispettata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_IN_ERRORE = "controlloTraffico.policy.inErrore";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED = "controlloTraffico.maxRequestsViolated";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED_WARNING_ONLY = "controlloTraffico.maxRequestsViolatedWarningOnly";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_PDD_CONGESTIONATA = "controlloTraffico.pddCongestionata";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_IN_CORSO = "controlloTraffico.policy.controlloInCorso";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_SUCCESSO = "controlloTraffico.policy.controlloTerminato.richiestaNonBloccata";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_ERRORE = "controlloTraffico.policy.controlloTerminato.richiestaBloccata";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_DISABILITATA = "controlloTraffico.policy.disabilitata";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_FILTRATA = "controlloTraffico.policy.filtrata";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_NON_APPLICABILE = "controlloTraffico.policy.nonApplicabile";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA = "controlloTraffico.policy.violata";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY = "controlloTraffico.policy.violataWarningOnly";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_RISPETTATA = "controlloTraffico.policy.rispettata";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_IN_ERRORE = "controlloTraffico.policy.inErrore";
 	
 	
 	
 	
 	// ** KEYWORDS
-	public final static String TEMPLATE_MAX_THREADS_THRESHOLD = "@CT_MAX_THREADS_THRESHOLD@"; // numero massimo di richieste simultanee configurate sul sistema
-	public final static String TEMPLATE_CONTROLLO_TRAFFICO_THRESHOLD = "@CT_THRESHOLD@"; // soglia in % che indica quando attivare il controllo del traffico
-	public final static String TEMPLATE_ACTIVE_THREADS = "@CT_ACTIVE_THREADS@"; // threads attivi
-	public final static String TEMPLATE_NUMERO_POLICY = "@CT_POLICIES@"; // numero di policy configurate
-	public final static String TEMPLATE_NUMERO_POLICY_DISABILITATE = "@CT_DISABLED_POLICIES@"; // numero di policy disabilitate
-	public final static String TEMPLATE_NUMERO_POLICY_FILTRATE = "@CT_FILTERED_POLICIES@"; // numero di policy filtrate
-	public final static String TEMPLATE_NUMERO_POLICY_NON_APPLICATE = "@CT_NOT_APPLICABLED_POLICIES@"; // numero di policy non applicabili
-	public final static String TEMPLATE_NUMERO_POLICY_RISPETTATE = "@CT_RESPECTED_POLICIES@"; // numero di policy rispettate
-	public final static String TEMPLATE_NUMERO_POLICY_VIOLATE = "@CT_VIOLATED_POLICIES@"; // numero di policy violate
-	public final static String TEMPLATE_NUMERO_POLICY_VIOLATE_WARNING_ONLY = "@CT_VIOLATED_WARNING_ONLY_POLICIES@"; // numero di policy violate in warning only mode
-	public final static String TEMPLATE_NUMERO_POLICY_IN_ERRORE = "@CT_ERROR_POLICIES@"; // numero di policy la cui verifica ha provocato un errore
+	public static final String TEMPLATE_MAX_THREADS_THRESHOLD = "@CT_MAX_THREADS_THRESHOLD@"; // numero massimo di richieste simultanee configurate sul sistema
+	public static final String TEMPLATE_CONTROLLO_TRAFFICO_THRESHOLD = "@CT_THRESHOLD@"; // soglia in % che indica quando attivare il controllo del traffico
+	public static final String TEMPLATE_ACTIVE_THREADS = "@CT_ACTIVE_THREADS@"; // threads attivi
+	public static final String TEMPLATE_NUMERO_POLICY = "@CT_POLICIES@"; // numero di policy configurate
+	public static final String TEMPLATE_NUMERO_POLICY_DISABILITATE = "@CT_DISABLED_POLICIES@"; // numero di policy disabilitate
+	public static final String TEMPLATE_NUMERO_POLICY_FILTRATE = "@CT_FILTERED_POLICIES@"; // numero di policy filtrate
+	public static final String TEMPLATE_NUMERO_POLICY_NON_APPLICATE = "@CT_NOT_APPLICABLED_POLICIES@"; // numero di policy non applicabili
+	public static final String TEMPLATE_NUMERO_POLICY_RISPETTATE = "@CT_RESPECTED_POLICIES@"; // numero di policy rispettate
+	public static final String TEMPLATE_NUMERO_POLICY_VIOLATE = "@CT_VIOLATED_POLICIES@"; // numero di policy violate
+	public static final String TEMPLATE_NUMERO_POLICY_VIOLATE_WARNING_ONLY = "@CT_VIOLATED_WARNING_ONLY_POLICIES@"; // numero di policy violate in warning only mode
+	public static final String TEMPLATE_NUMERO_POLICY_IN_ERRORE = "@CT_ERROR_POLICIES@"; // numero di policy la cui verifica ha provocato un errore
 	
 	// ** KEYWORDS UTILIZZATE SOLAMENTE IN CONDIZIONI DI ERRORE O DEBUG
 	// sono i diagnostici emessi dai moduli ricezione contenuti o buste
-	public final static String TEMPLATE_POLICY_ACTIVE_ID = "@CT_POLICY_ACTIVE_ID@"; // identificativo della policy attivata
-	public final static String TEMPLATE_POLICY_ACTIVE_TIPO = "@CT_POLICY_ACTIVE_TIPO@"; // tipo della policy attivata (Globale/API)
-	public final static String TEMPLATE_POLICY_ACTIVE_ALIAS = "@CT_POLICY_ACTIVE_ALIAS@"; // alias della policy attivata
-	public final static String TEMPLATE_POLICY_ACTIVE_RISORSA = "@CT_POLICY_ACTIVE_RISORSA@"; // risorsa in fase di valutazione (es. NumeroRichieste, OccupazioneBanda...)
-	public final static String TEMPLATE_POLICY_ACTIVE_CONTINUE = "@CT_POLICY_ACTIVE_CONTINUE@"; //  true/false; indica se la valutazione delle policy per la stessa risorsa deve continuare o meno
-	public final static String TEMPLATE_POLICY_VIOLATA_MOTIVO = "@CT_POLICY_ERROR_MSG@"; // errore di violazione riscontrato sulla policy
-	public final static String TEMPLATE_POLICY_FILTRATA_MOTIVO = "@CT_POLICY_FILTERED_REASON@"; // motivo di filtro della policy
-	public final static String TEMPLATE_POLICY_NON_APPLICABILE_MOTIVO = "@CT_POLICY_NOT_APPLICABLED_REASON@"; // motivo della mancata applicabilità
+	public static final String TEMPLATE_POLICY_ACTIVE_ID = "@CT_POLICY_ACTIVE_ID@"; // identificativo della policy attivata
+	public static final String TEMPLATE_POLICY_ACTIVE_TIPO = "@CT_POLICY_ACTIVE_TIPO@"; // tipo della policy attivata (Globale/API)
+	public static final String TEMPLATE_POLICY_ACTIVE_ALIAS = "@CT_POLICY_ACTIVE_ALIAS@"; // alias della policy attivata
+	public static final String TEMPLATE_POLICY_ACTIVE_RISORSA = "@CT_POLICY_ACTIVE_RISORSA@"; // risorsa in fase di valutazione (es. NumeroRichieste, OccupazioneBanda...)
+	public static final String TEMPLATE_POLICY_ACTIVE_CONTINUE = "@CT_POLICY_ACTIVE_CONTINUE@"; //  true/false; indica se la valutazione delle policy per la stessa risorsa deve continuare o meno
+	public static final String TEMPLATE_POLICY_VIOLATA_MOTIVO = "@CT_POLICY_ERROR_MSG@"; // errore di violazione riscontrato sulla policy
+	public static final String TEMPLATE_POLICY_FILTRATA_MOTIVO = "@CT_POLICY_FILTERED_REASON@"; // motivo di filtro della policy
+	public static final String TEMPLATE_POLICY_NON_APPLICABILE_MOTIVO = "@CT_POLICY_NOT_APPLICABLED_REASON@"; // motivo della mancata applicabilità
 	
-	public final static String TEMPLATE_POLICY_FILTRATA_MOTIVO_FILTRO = "i dati della transazione non rispettano i criteri di filtro impostati: ";
-	public final static String TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK = "rilevata precedente policy soddisfatta";
-	public final static String TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK_VIOLATA = "rilevata precedente policy violata";
+	public static final String TEMPLATE_POLICY_FILTRATA_MOTIVO_FILTRO = "i dati della transazione non rispettano i criteri di filtro impostati: ";
+	public static final String TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK = "rilevata precedente policy soddisfatta";
+	public static final String TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK_VIOLATA = "rilevata precedente policy violata";
 	
 	// sono i diagnostici di "appoggio" registrati nel modulo 'all' utilizzati per generare l'errore
-	public final static String TEMPLATE_POLICY_VALORE_SOGLIA = "@CT_SOGLIA@"; // valore della soglia di una policy
-	public final static String TEMPLATE_POLICY_TIPOLOGIA_TEMPO_MEDIO = "@CT_TIPOLOGIA_TEMPO_MEDIO@"; // tipologia di tempo medio (servizio, totale...)
-	public final static String TEMPLATE_POLICY_VALORE_RILEVATO =  "@CT_RILEVATO@"; // contatore rilevato
-	public final static String TEMPLATE_POLICY_AVG_TIME_RILEVATO = "@CT_AVG_TIME_RILEVATO@"; // tempo medio rilevato
-	public final static String TEMPLATE_POLICY_VALORE_SOGLIA_DEGRADO_PRESTAZIONALE = "@CT_DEGRADO_SOGLIA@"; // valore di soglia per il degrado prestazionale
-	public final static String TEMPLATE_POLICY_GRUPPO = "@CT_DATI_IDENTIFICATIVI_GRUPPO@"; // raggruppamento
-	public final static String TEMPLATE_POLICY_INTERVALLO_TEMPORALE = "@CT_INTERVALLO_TEMPORALE@"; // intervallo temporale configurato
-	public final static String TEMPLATE_POLICY_NOME_ALLARME = "@CT_NOME_ALLARME@"; // nome dell'allarme utilizzata nelle condizioni di applicabilità
-	public final static String TEMPLATE_POLICY_STATO_ALLARME = "@CT_STATO_ALLARME@"; // stato dell'allarme
-	public final static String TEMPLATE_POLICY_STATO_ALLARME_ATTESO = "@CT_STATO_ALLARME_ATTESO@"; // stato dell'allarme atteso
+	public static final String TEMPLATE_POLICY_VALORE_SOGLIA = "@CT_SOGLIA@"; // valore della soglia di una policy
+	public static final String TEMPLATE_POLICY_TIPOLOGIA_TEMPO_MEDIO = "@CT_TIPOLOGIA_TEMPO_MEDIO@"; // tipologia di tempo medio (servizio, totale...)
+	public static final String TEMPLATE_POLICY_VALORE_RILEVATO =  "@CT_RILEVATO@"; // contatore rilevato
+	public static final String TEMPLATE_POLICY_AVG_TIME_RILEVATO = "@CT_AVG_TIME_RILEVATO@"; // tempo medio rilevato
+	public static final String TEMPLATE_POLICY_VALORE_SOGLIA_DEGRADO_PRESTAZIONALE = "@CT_DEGRADO_SOGLIA@"; // valore di soglia per il degrado prestazionale
+	public static final String TEMPLATE_POLICY_GRUPPO = "@CT_DATI_IDENTIFICATIVI_GRUPPO@"; // raggruppamento
+	public static final String TEMPLATE_POLICY_INTERVALLO_TEMPORALE = "@CT_INTERVALLO_TEMPORALE@"; // intervallo temporale configurato
+	public static final String TEMPLATE_POLICY_NOME_ALLARME = "@CT_NOME_ALLARME@"; // nome dell'allarme utilizzata nelle condizioni di applicabilità
+	public static final String TEMPLATE_POLICY_STATO_ALLARME = "@CT_STATO_ALLARME@"; // stato dell'allarme
+	public static final String TEMPLATE_POLICY_STATO_ALLARME_ATTESO = "@CT_STATO_ALLARME_ATTESO@"; // stato dell'allarme atteso
 	
 
 	
-	private final static String SISTEMA_NON_DISPONIBILE = "Servizio Temporaneamente Non Erogabile";
+	private static final String SISTEMA_NON_DISPONIBILE = "Servizio Temporaneamente Non Erogabile";
 		
-	private final static String ERRORE_PROCESSAMENTO_CODE = "CC00";
-	private final static String MAX_THREADS_VIOLATED_CODE = "CC01";
+	private static final String ERRORE_PROCESSAMENTO_CODE = "CC00";
+	private static final String MAX_THREADS_VIOLATED_CODE = "CC01";
 	
-	private final static String ERRORE_GENERICO_DURANTE_VERIFICA = "ERR-";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_UNKNOW_TIPO = "CP00";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_SIMULTANEE_CODE = "CP01";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_CODE = "CP02";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_OCCUPAZIONE_BANDA_CODE = "CP03";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_TEMPO_COMPLESSIVO_CODE = "CP04";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_TEMPO_MEDIO_CODE = "CP05";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_CODE = "CP06";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_CODE = "CP07";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_FAULT_APPLICATIVI_CODE = "CP08";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI_CODE = "CP09";
-	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_DIMENSIONE_MASSIMA_MESSAGGIO_CODE = "CP10";
-	private final static String APPLICABILITA_CONGESTIONE_CODE = "-CC";
-	private final static String APPLICABILITA_DEGRADO_CODE = "-DP";
-	private final static String APPLICABILITA_STATO_ALLARME_CODE = "-SA";
+	private static final String ERRORE_GENERICO_DURANTE_VERIFICA = "ERR-";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_UNKNOW_TIPO = "CP00";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_SIMULTANEE_CODE = "CP01";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_CODE = "CP02";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_OCCUPAZIONE_BANDA_CODE = "CP03";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_TEMPO_COMPLESSIVO_CODE = "CP04";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_TEMPO_MEDIO_CODE = "CP05";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_CODE = "CP06";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_CODE = "CP07";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_FAULT_APPLICATIVI_CODE = "CP08";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI_CODE = "CP09";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_DIMENSIONE_MASSIMA_MESSAGGIO_CODE = "CP10";
+	private static final String APPLICABILITA_CONGESTIONE_CODE = "-CC";
+	private static final String APPLICABILITA_DEGRADO_CODE = "-DP";
+	private static final String APPLICABILITA_STATO_ALLARME_CODE = "-SA";
 	
 	
 	
 	/* ***** EVENTI UTILI PER RICONOSCERE L'ESITO DELLA TRANSAZIONE ****** */
 	
-	public final static MapKey<String> PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE = Map.newMapKey("controlloTrafficoViolazione");
+	public static final MapKey<String> PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE = Map.newMapKey("controlloTrafficoViolazione");
 	
-	private final static String PDD_CONTEXT_VALUE_GENERIC_ERROR = "controlloTrafficoGenericError";
+	private static final String PDD_CONTEXT_VALUE_GENERIC_ERROR = "controlloTrafficoGenericError";
 	public static void addPddContextInfo_ControlloTrafficoGenericError(PdDContext pddContext){
 		pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_GENERIC_ERROR);
 	}
 	
-	private final static String PDD_CONTEXT_VALUE_MAX_THREADS_VIOLATO = "controlloTrafficoNumeroMassimoRichiesteSimultaneeViolato";
-	private final static String PDD_CONTEXT_VALUE_MAX_THREADS_VIOLATO_WARNING_ONLY = "controlloTrafficoNumeroMassimoRichiesteSimultaneeViolatoWarningOnly";
+	private static final String PDD_CONTEXT_VALUE_MAX_THREADS_VIOLATO = "controlloTrafficoNumeroMassimoRichiesteSimultaneeViolato";
+	private static final String PDD_CONTEXT_VALUE_MAX_THREADS_VIOLATO_WARNING_ONLY = "controlloTrafficoNumeroMassimoRichiesteSimultaneeViolatoWarningOnly";
 	public static void addPddContextInfo_ControlloTrafficoMaxThreadsViolated(PdDContext pddContext, boolean warningOnly){
 		if(warningOnly){
 			pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_MAX_THREADS_VIOLATO_WARNING_ONLY);
@@ -168,8 +168,8 @@ public class GeneratoreMessaggiErrore {
 		}
 	}
 	
-	private final static String PDD_CONTEXT_VALUE_POLICY_VIOLATA = "controlloTrafficoRateLimitingPolicyViolata";
-	private final static String PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY = "controlloTrafficoRateLimitingPolicyViolataWarningOnly";
+	private static final String PDD_CONTEXT_VALUE_POLICY_VIOLATA = "controlloTrafficoRateLimitingPolicyViolata";
+	private static final String PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY = "controlloTrafficoRateLimitingPolicyViolataWarningOnly";
 	public static void addPddContextInfo_ControlloTrafficoPolicyViolated(PdDContext pddContext, boolean warningOnly){
 		addContextInfo_ControlloTrafficoPolicyViolated(pddContext, warningOnly);
 	}
@@ -182,18 +182,18 @@ public class GeneratoreMessaggiErrore {
 		}
 	}
 	
-	public final static MapKey<String> PDD_CONTEXT_MAX_THREADS_THRESHOLD = Map.newMapKey("CT_MAX_THREADS_THRESHOLD"); // numero massimo di richieste simultanee configurate sul sistema
-	public final static MapKey<String> PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD = Map.newMapKey("CT_THRESHOLD"); // soglia in % che indica quando attivare il controllo del traffico
+	public static final MapKey<String> PDD_CONTEXT_MAX_THREADS_THRESHOLD = Map.newMapKey("CT_MAX_THREADS_THRESHOLD"); // numero massimo di richieste simultanee configurate sul sistema
+	public static final MapKey<String> PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD = Map.newMapKey("CT_THRESHOLD"); // soglia in % che indica quando attivare il controllo del traffico
 	
-	public final static MapKey<String> PDD_CONTEXT_ACTIVE_THREADS = Map.newMapKey("CT_ACTIVE_THREADS"); // threads attivi
-	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY = Map.newMapKey("CT_POLICIES"); // numero di policy configurate
-	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_DISABILITATE = Map.newMapKey("CT_DISABLED_POLICIES"); // numero di policy disabilitate
-	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_FILTRATE = Map.newMapKey("CT_FILTERED_POLICIES"); // numero di policy filtrate
-	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_NON_APPLICATE = Map.newMapKey("CT_NOT_APPLICABLED_POLICIES"); // numero di policy non applicabili
-	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_RISPETTATE = Map.newMapKey("CT_RESPECTED_POLICIES"); // numero di policy rispettate
-	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_VIOLATE = Map.newMapKey("CT_VIOLATED_POLICIES"); // numero di policy violate
-	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_VIOLATE_WARNING_ONLY = Map.newMapKey("CT_VIOLATED_WARNING_ONLY_POLICIES"); // numero di policy violate in warning only mode
-	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_IN_ERRORE = Map.newMapKey("CT_ERROR_POLICIES"); // numero di policy la cui verifica ha provocato un errore
+	public static final MapKey<String> PDD_CONTEXT_ACTIVE_THREADS = Map.newMapKey("CT_ACTIVE_THREADS"); // threads attivi
+	public static final MapKey<String> PDD_CONTEXT_NUMERO_POLICY = Map.newMapKey("CT_POLICIES"); // numero di policy configurate
+	public static final MapKey<String> PDD_CONTEXT_NUMERO_POLICY_DISABILITATE = Map.newMapKey("CT_DISABLED_POLICIES"); // numero di policy disabilitate
+	public static final MapKey<String> PDD_CONTEXT_NUMERO_POLICY_FILTRATE = Map.newMapKey("CT_FILTERED_POLICIES"); // numero di policy filtrate
+	public static final MapKey<String> PDD_CONTEXT_NUMERO_POLICY_NON_APPLICATE = Map.newMapKey("CT_NOT_APPLICABLED_POLICIES"); // numero di policy non applicabili
+	public static final MapKey<String> PDD_CONTEXT_NUMERO_POLICY_RISPETTATE = Map.newMapKey("CT_RESPECTED_POLICIES"); // numero di policy rispettate
+	public static final MapKey<String> PDD_CONTEXT_NUMERO_POLICY_VIOLATE = Map.newMapKey("CT_VIOLATED_POLICIES"); // numero di policy violate
+	public static final MapKey<String> PDD_CONTEXT_NUMERO_POLICY_VIOLATE_WARNING_ONLY = Map.newMapKey("CT_VIOLATED_WARNING_ONLY_POLICIES"); // numero di policy violate in warning only mode
+	public static final MapKey<String> PDD_CONTEXT_NUMERO_POLICY_IN_ERRORE = Map.newMapKey("CT_ERROR_POLICIES"); // numero di policy la cui verifica ha provocato un errore
 	
 	
 	/* ***** FAULT ****** */

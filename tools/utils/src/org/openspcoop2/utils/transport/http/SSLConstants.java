@@ -29,13 +29,13 @@ package org.openspcoop2.utils.transport.http;
  */
 public class SSLConstants {
 	
-	public final static String PROTOCOL_SSL = "SSL";
-	public final static String PROTOCOL_SSL_V2_HELLO = "SSLv2Hello";
-	public final static String PROTOCOL_SSL_V3 = "SSLv3";
-	public final static String PROTOCOL_TLS = "TLS";
-	public final static String PROTOCOL_TLS_V1 = "TLSv1";
-	public final static String PROTOCOL_TLS_V1_1 = "TLSv1.1";
-	public final static String PROTOCOL_TLS_V1_2 = "TLSv1.2";
-	public final static String PROTOCOL_TLS_V1_3 = "TLSv1.3";
+	public static final String PROTOCOL_SSL = "SSL";
+	public static final String PROTOCOL_SSL_V2_HELLO = "SSLv2Hello";
+	public static final String PROTOCOL_SSL_V3 = "SSLv3";
+	public static final String PROTOCOL_TLS = "TLS";
+	public static final String PROTOCOL_TLS_V1 = "TLSv1";
+	public static final String PROTOCOL_TLS_V1_1 = "TLSv1.1";
+	public static final String PROTOCOL_TLS_V1_2 = "TLSv1.2";
+	public static final String PROTOCOL_TLS_V1_3 = "TLSv1.3";
 	
 }

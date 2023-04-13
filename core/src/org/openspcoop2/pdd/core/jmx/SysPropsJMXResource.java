@@ -53,19 +53,19 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 public class SysPropsJMXResource extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Nomi proprietà */
-	public final static String OPENSPCOOP2_SYSTEM_PROPERTIES = "OpenSPCoop2Properties";
+	public static final String OPENSPCOOP2_SYSTEM_PROPERTIES = "OpenSPCoop2Properties";
 	
 	/** Nomi metodi */
-	public final static String REFRESH_PERSISTENT_SYSTEM_PROPERTIES = "refreshPersistentConfiguration"; 
-	public final static String READ_ALL_SYSTEM_PROPERTIES = "readAllProperties"; 
-	public final static String READ_OPENSPCOOP2_SYSTEM_PROPERTIES = "readOpenSPCoop2Properties"; 
-	public final static String GET_SYSTEM_PROPERTY_VALUE = "getPropertyValue"; 
-	public final static String REMOVE_SYSTEM_PROPERTY = "removeProperty";
-	public final static String UPDATE_SYSTEM_PROPERTY = "updateProperty";
-	public final static String INSERT_SYSTEM_PROPERTY = "insertProperty";
+	public static final String REFRESH_PERSISTENT_SYSTEM_PROPERTIES = "refreshPersistentConfiguration"; 
+	public static final String READ_ALL_SYSTEM_PROPERTIES = "readAllProperties"; 
+	public static final String READ_OPENSPCOOP2_SYSTEM_PROPERTIES = "readOpenSPCoop2Properties"; 
+	public static final String GET_SYSTEM_PROPERTY_VALUE = "getPropertyValue"; 
+	public static final String REMOVE_SYSTEM_PROPERTY = "removeProperty";
+	public static final String UPDATE_SYSTEM_PROPERTY = "updateProperty";
+	public static final String INSERT_SYSTEM_PROPERTY = "insertProperty";
 	
-	public final static String EFFETTUATO_SUCCESSO = "Operazione effettuata con successo";
-	public final static String EFFETTUATO_SUCCESSO_INFO = "Operazione effettuata con successo (Nota la Modifica non è persistente, inoltre in caso di invocazione del pulsante 'refreshPersistentConfiguration' questa impostazione non viene mantenuta)";
+	public static final String EFFETTUATO_SUCCESSO = "Operazione effettuata con successo";
+	public static final String EFFETTUATO_SUCCESSO_INFO = "Operazione effettuata con successo (Nota la Modifica non è persistente, inoltre in caso di invocazione del pulsante 'refreshPersistentConfiguration' questa impostazione non viene mantenuta)";
 
 		
 	/** getAttribute */

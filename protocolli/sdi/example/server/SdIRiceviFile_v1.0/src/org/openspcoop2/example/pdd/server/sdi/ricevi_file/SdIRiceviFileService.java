@@ -40,10 +40,10 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0") 
 public class SdIRiceviFileService extends Service {
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0", "SdIRiceviFile_service");
-    public final static QName SdIRiceviFilePort = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0", "SdIRiceviFile_port");
+    public static final QName SERVICE = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0", "SdIRiceviFile_service");
+    public static final QName SdIRiceviFilePort = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0", "SdIRiceviFile_port");
     static {
         URL url = SdIRiceviFileService.class.getResource("SdIRiceviFile_v1.0.wsdl");
         if (url == null) {

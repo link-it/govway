@@ -35,12 +35,12 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourException;
  */
 public class GestioneConsegnaNotificheUtils  {
 	
-	public final static String LABEL_CODE = "Code";
-	public final static String LABEL_ACTOR = "Actor";
-	public final static String LABEL_MESSAGE = "Message";
-	public final static String LABEL_TYPE = "Type";
-	public final static String LABEL_STATUS = "Status";
-	public final static String LABEL_CLAIMS = "Claims";
+	public static final String LABEL_CODE = "Code";
+	public static final String LABEL_ACTOR = "Actor";
+	public static final String LABEL_MESSAGE = "Message";
+	public static final String LABEL_TYPE = "Type";
+	public static final String LABEL_STATUS = "Status";
+	public static final String LABEL_CLAIMS = "Claims";
 	
 	public static ConfigurazioneGestioneConsegnaNotifiche getGestioneDefault() throws BehaviourException {
 		

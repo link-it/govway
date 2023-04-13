@@ -39,9 +39,9 @@ import javax.xml.ws.WebServiceFeature;
                   targetNamespace = "http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione") 
 public class ComunicazioneVariazioneService extends Service {
 
-    public final static URL WSDL_LOCATION;
-    public final static QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneService");
-    public final static QName ComunicazioneVariazioneInterfaceEndpoint = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneInterfaceEndpoint");
+    public static final URL WSDL_LOCATION;
+    public static final QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneService");
+    public static final QName ComunicazioneVariazioneInterfaceEndpoint = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneInterfaceEndpoint");
     static {
         URL url = null;
         try {

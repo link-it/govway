@@ -92,7 +92,7 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "SOAPMessageScorretti";
 
-	private final static int READ_TIMEOUT = 20000;
+	private static final int READ_TIMEOUT = 20000;
 
 	
 	

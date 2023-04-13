@@ -95,30 +95,30 @@ import com.sun.xml.messaging.saaj.soap.SOAPDocumentImpl;
 public class ConfigurazioneSistema extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Nomi metodi */
-	public final static String VERSIONE_PDD = "getVersionePdD";
-	public final static String VERSIONE_BASE_DATI = "getVersioneBaseDati";
-	public final static String VERSIONE_JAVA = "getVersioneJava";
-	public final static String VENDOR_JAVA = "getVendorJava";
-	public final static String TIPO_DATABASE = "getTipoDatabase";	
-	public final static String INFORMAZIONI_DATABASE = "getInformazioniDatabase";
-	public final static String INFORMAZIONI_SSL = "getInformazioniSSL";
-	public final static String INFORMAZIONI_COMPLETE_SSL = "getInformazioniCompleteSSL";
-	public final static String INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH = "getInformazioniCryptographyKeyLength";
-	public final static String INFORMAZIONI_CHARSET = "getInformazioniCharset";
-	public final static String INFORMAZIONI_INTERNAZIONALIZZAZIONE = "getInformazioniInternazionalizzazione";
-	public final static String INFORMAZIONI_COMPLETE_INTERNAZIONALIZZAZIONE = "getInformazioniCompleteInternazionalizzazione";
-	public final static String INFORMAZIONI_TIMEZONE= "getInformazioniTimeZone";
-	public final static String INFORMAZIONI_COMPLETE_TIMEZONE = "getInformazioniCompleteTimeZone";
-	public final static String INFORMAZIONI_PROPRIETA_JAVA_NETWORKING= "getInformazioniProprietaJavaNetworking";
-	public final static String INFORMAZIONI_COMPLETE_PROPRIETA_JAVA_NETWORKING= "getInformazioniCompleteProprietaJavaNetworking";
-	public final static String INFORMAZIONI_PROPRIETA_JAVA_ALTRO= "getInformazioniProprietaJavaAltro";
-	public final static String INFORMAZIONI_PROPRIETA_SISTEMA= "getInformazioniProprietaSistema";
-	public final static String MESSAGE_FACTORY = "getMessageFactory";
-	public final static String DIRECTORY_CONFIGURAZIONE = "getDirectoryConfigurazione";
-	public final static String PROTOCOLS = "getPluginProtocols";
-	public final static String INFORMAZIONI_INSTALLAZIONE = "getInformazioniInstallazione";
-	public final static String FILE_TRACE_CONFIG = "getFileTrace";
-	public final static String FILE_TRACE_UPDATE = "updateFileTrace";
+	public static final String VERSIONE_PDD = "getVersionePdD";
+	public static final String VERSIONE_BASE_DATI = "getVersioneBaseDati";
+	public static final String VERSIONE_JAVA = "getVersioneJava";
+	public static final String VENDOR_JAVA = "getVendorJava";
+	public static final String TIPO_DATABASE = "getTipoDatabase";	
+	public static final String INFORMAZIONI_DATABASE = "getInformazioniDatabase";
+	public static final String INFORMAZIONI_SSL = "getInformazioniSSL";
+	public static final String INFORMAZIONI_COMPLETE_SSL = "getInformazioniCompleteSSL";
+	public static final String INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH = "getInformazioniCryptographyKeyLength";
+	public static final String INFORMAZIONI_CHARSET = "getInformazioniCharset";
+	public static final String INFORMAZIONI_INTERNAZIONALIZZAZIONE = "getInformazioniInternazionalizzazione";
+	public static final String INFORMAZIONI_COMPLETE_INTERNAZIONALIZZAZIONE = "getInformazioniCompleteInternazionalizzazione";
+	public static final String INFORMAZIONI_TIMEZONE= "getInformazioniTimeZone";
+	public static final String INFORMAZIONI_COMPLETE_TIMEZONE = "getInformazioniCompleteTimeZone";
+	public static final String INFORMAZIONI_PROPRIETA_JAVA_NETWORKING= "getInformazioniProprietaJavaNetworking";
+	public static final String INFORMAZIONI_COMPLETE_PROPRIETA_JAVA_NETWORKING= "getInformazioniCompleteProprietaJavaNetworking";
+	public static final String INFORMAZIONI_PROPRIETA_JAVA_ALTRO= "getInformazioniProprietaJavaAltro";
+	public static final String INFORMAZIONI_PROPRIETA_SISTEMA= "getInformazioniProprietaSistema";
+	public static final String MESSAGE_FACTORY = "getMessageFactory";
+	public static final String DIRECTORY_CONFIGURAZIONE = "getDirectoryConfigurazione";
+	public static final String PROTOCOLS = "getPluginProtocols";
+	public static final String INFORMAZIONI_INSTALLAZIONE = "getInformazioniInstallazione";
+	public static final String FILE_TRACE_CONFIG = "getFileTrace";
+	public static final String FILE_TRACE_UPDATE = "updateFileTrace";
 
 	private static boolean includePassword = false;
 	public static boolean isIncludePassword() {

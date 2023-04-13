@@ -213,7 +213,7 @@ public class RicezioneContenutiApplicativi {
 	 * Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop
 	 * rappresentato da questa classe
 	 */
-	public final static String ID_MODULO = "RicezioneContenutiApplicativi";
+	public static final String ID_MODULO = "RicezioneContenutiApplicativi";
 
 	/** Indicazione se sono state inizializzate le variabili del servizio */
 	public static boolean initializeService = false;

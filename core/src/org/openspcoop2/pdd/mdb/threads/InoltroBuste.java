@@ -34,7 +34,7 @@ package org.openspcoop2.pdd.mdb.threads;
 
 public class InoltroBuste extends ModuloAlternativoMain {
 
-	private final static String idModulo = "InoltroBuste";
+	private static final String idModulo = "InoltroBuste";
 	
 	public InoltroBuste(){
 		super(InoltroBuste.idModulo);

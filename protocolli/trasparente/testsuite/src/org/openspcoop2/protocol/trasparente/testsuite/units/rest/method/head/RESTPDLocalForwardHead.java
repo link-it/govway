@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPDLocalForwardHead {
 
-	private final static String ID_GRUPPO = "REST.PD.LOCAL_FORWARD.HEAD";
+	private static final String ID_GRUPPO = "REST.PD.LOCAL_FORWARD.HEAD";
 	private HttpRequestMethod method = HttpRequestMethod.HEAD;
 
 	private RESTCore restCore;

@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPAPost {
 
-	private final static String ID_GRUPPO = "REST.PA.POST";
+	private static final String ID_GRUPPO = "REST.PA.POST";
 	private HttpRequestMethod method = HttpRequestMethod.POST;
 
 	private RESTCore restCore;

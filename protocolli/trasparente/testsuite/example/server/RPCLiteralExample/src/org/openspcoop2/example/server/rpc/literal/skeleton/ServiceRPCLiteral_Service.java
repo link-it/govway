@@ -38,10 +38,10 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://openspcoop2.org/ValidazioneContenutiWS/Service")
 public class ServiceRPCLiteral_Service extends Service {
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service", "ServiceRPCLiteral");
-    public final static QName ServiceRPCLiteral = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service", "ServiceRPCLiteral");
+    public static final QName SERVICE = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service", "ServiceRPCLiteral");
+    public static final QName ServiceRPCLiteral = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service", "ServiceRPCLiteral");
     static {
         URL url = null;
         try {

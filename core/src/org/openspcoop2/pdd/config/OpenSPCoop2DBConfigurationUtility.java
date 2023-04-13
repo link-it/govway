@@ -63,8 +63,8 @@ import org.slf4j.Logger;
 
 public class OpenSPCoop2DBConfigurationUtility {
 
-	private final static String TIPOLOGIA_ELIMINAZIONE_FRUIZIONE = "fruizione";
-	private final static String TIPOLOGIA_ELIMINAZIONE_EROGAZIONE = "erogazione";
+	private static final String TIPOLOGIA_ELIMINAZIONE_FRUIZIONE = "fruizione";
+	private static final String TIPOLOGIA_ELIMINAZIONE_EROGAZIONE = "erogazione";
 
 	public static void main(String[] args) throws Exception {
 

@@ -368,9 +368,9 @@ public class HttpUtilities {
 	
 	
 	
-	public final static String HEADER_X_DOWNLOAD = "application/x-download";
-	public final static String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
-	public final static String HEADER_ATTACH_FILE = "attachment; filename=";
+	public static final String HEADER_X_DOWNLOAD = "application/x-download";
+	public static final String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
+	public static final String HEADER_ATTACH_FILE = "attachment; filename=";
 	
 	public static void setOutputFile(HttpServletResponse response, boolean noCache, String fileName) throws UtilsException{
 		

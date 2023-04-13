@@ -34,8 +34,8 @@ import org.slf4j.Logger;
  */
 public class IdentificativoIM {
 
-	private final static String DATE_PREFIX_SEPARATOR = "@";
-	private final static String FORMAT = "yyyyMMddHHmmssSSS";
+	private static final String DATE_PREFIX_SEPARATOR = "@";
+	private static final String FORMAT = "yyyyMMddHHmmssSSS";
 	
 	private String id;
 	private Date data;

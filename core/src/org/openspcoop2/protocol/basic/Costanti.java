@@ -39,11 +39,11 @@ public class Costanti {
 		
 	public static final String ERRORE_INTEGRAZIONE_NAMESPACE = org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TARGET_NAMESPACE; // uso stesso namespace; 
 	public static final String ERRORE_INTEGRAZIONE_PREFIX = "integration";
-	public final static String ERRORE_INTEGRAZIONE_PREFIX_CODE = "GOVWAY-";
+	public static final String ERRORE_INTEGRAZIONE_PREFIX_CODE = "GOVWAY-";
 	
 	public static final String ERRORE_PROTOCOLLO_NAMESPACE =  "http://govway.org/protocol/fault";
 	public static final String ERRORE_PROTOCOLLO_PREFIX = "protocol";
-	public final static String ERRORE_PROTOCOLLO_PREFIX_CODE = ERRORE_INTEGRAZIONE_PREFIX_CODE; // e' stato deciso di usare lo stesso dell'integrazione. Viene differenziato per namespace
+	public static final String ERRORE_PROTOCOLLO_PREFIX_CODE = ERRORE_INTEGRAZIONE_PREFIX_CODE; // e' stato deciso di usare lo stesso dell'integrazione. Viene differenziato per namespace
 	
 	
 	
@@ -534,18 +534,18 @@ public class Costanti {
 	
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL = "wsdl";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_INTERFACCIA_DEFINITORIA = "InterfacciaDefinitoria.xsd";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0_JSON = "InterfacciaOpenAPI.json";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0_YAML = "InterfacciaOpenAPI.yaml";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0_JSON = "InterfacciaSwagger.json";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0_YAML = "InterfacciaSwagger.yaml";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WADL = "Interfaccia.wadl";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_CONCETTUALE_WSDL = "InterfacciaConcettuale.wsdl";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_LOGICO_EROGATORE_WSDL = "InterfacciaLogicaErogatore.wsdl";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_LOGICO_FRUITORE_WSDL = "InterfacciaLogicaFruitore.wsdl";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_EROGATORE_WSDL = "InterfacciaImplementativaErogatore.wsdl";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_FRUITORE_WSDL = "InterfacciaImplementativaFruitore.wsdl";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_XSD_SCHEMA_COLLECTION = "XSDSchemaCollection.zip";
-	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_XSD_SCHEMA_COLLECTION_ERROR = "XSDSchemaCollection.buildError.txt";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0_JSON = "InterfacciaOpenAPI.json";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0_YAML = "InterfacciaOpenAPI.yaml";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0_JSON = "InterfacciaSwagger.json";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0_YAML = "InterfacciaSwagger.yaml";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WADL = "Interfaccia.wadl";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_CONCETTUALE_WSDL = "InterfacciaConcettuale.wsdl";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_LOGICO_EROGATORE_WSDL = "InterfacciaLogicaErogatore.wsdl";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_LOGICO_FRUITORE_WSDL = "InterfacciaLogicaFruitore.wsdl";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_EROGATORE_WSDL = "InterfacciaImplementativaErogatore.wsdl";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_FRUITORE_WSDL = "InterfacciaImplementativaFruitore.wsdl";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_XSD_SCHEMA_COLLECTION = "XSDSchemaCollection.zip";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_XSD_SCHEMA_COLLECTION_ERROR = "XSDSchemaCollection.buildError.txt";
 	
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_CONVERSAZIONI = "specificheConversazioni";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SPECIFICA_CONVERSIONE_CONCETTUALE = "ConversazioneConcettuale.xml";

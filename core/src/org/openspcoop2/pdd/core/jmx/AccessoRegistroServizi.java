@@ -60,18 +60,18 @@ import org.openspcoop2.protocol.registry.RegistroServiziManager;
 public class AccessoRegistroServizi extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Nomi proprieta' */
-	public final static String REGISTRI_SERVIZI = "registriServizi";
+	public static final String REGISTRI_SERVIZI = "registriServizi";
 
 	/** Nomi metodi' */
-	public final static String CHECK_CONNETTORE_BY_ID = "checkConnettoreById";
-	public final static String CHECK_CONNETTORE_BY_NOME = "checkConnettoreByNome";
-	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID = "checkCertificatiConnettoreHttpsById";
-	public final static String GET_CERTIFICATI_CONNETTORE_BY_ID = "getCertificatiConnettoreById";
-	public final static String GET_CERTIFICATI_CONNETTORE_BY_NOME = "getCertificatiConnettoreByNome";
-	public final static String CHECK_CERTIFICATO_SOGGETTO_BY_ID = "checkCertificatoSoggettoById";
-	public final static String CHECK_CERTIFICATO_SOGGETTO_BY_NOME = "checkCertificatoSoggettoByNome";
-	public final static String CHECK_CERTIFICATI_MODI_EROGAZIONE_BY_ID = "checkCertificatiModIErogazioneById";
-	public final static String CHECK_CERTIFICATI_MODI_FRUIZIONE_BY_ID = "checkCertificatiModIFruizioneById";
+	public static final String CHECK_CONNETTORE_BY_ID = "checkConnettoreById";
+	public static final String CHECK_CONNETTORE_BY_NOME = "checkConnettoreByNome";
+	public static final String CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID = "checkCertificatiConnettoreHttpsById";
+	public static final String GET_CERTIFICATI_CONNETTORE_BY_ID = "getCertificatiConnettoreById";
+	public static final String GET_CERTIFICATI_CONNETTORE_BY_NOME = "getCertificatiConnettoreByNome";
+	public static final String CHECK_CERTIFICATO_SOGGETTO_BY_ID = "checkCertificatoSoggettoById";
+	public static final String CHECK_CERTIFICATO_SOGGETTO_BY_NOME = "checkCertificatoSoggettoByNome";
+	public static final String CHECK_CERTIFICATI_MODI_EROGAZIONE_BY_ID = "checkCertificatiModIErogazioneById";
+	public static final String CHECK_CERTIFICATI_MODI_FRUIZIONE_BY_ID = "checkCertificatiModIFruizioneById";
 	
 	/** Attributi */
 	private boolean cacheAbilitata = false;

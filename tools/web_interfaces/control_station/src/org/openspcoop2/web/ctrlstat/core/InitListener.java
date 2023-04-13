@@ -84,7 +84,7 @@ public class InitListener implements ServletContextListener {
 
 	//private static String IDMODULO = "ControlStation";
 	protected static Logger log = null;
-	private final static Semaphore semaphoreInitListener = new Semaphore("InitListener");
+	private static final Semaphore semaphoreInitListener = new Semaphore("InitListener");
 	private static boolean initialized = false;
 	static {
 		InitListener.log = LoggerWrapperFactory.getLogger(InitListener.class);

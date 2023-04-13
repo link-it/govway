@@ -31,15 +31,15 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 */
 public class AuthorizationServerValidazioneTest extends ConfigLoader {
 
-	public final static String api_validazione = "TestValidazioneAuthorizationServer";
+	public static final String api_validazione = "TestValidazioneAuthorizationServer";
 	
-	public final static String PKCS11_ValidazioneJWS_none = "PKCS11-ValidazioneJWS-none";
-	public final static String PKCS11_ValidazioneJWS = "PKCS11-ValidazioneJWS";
-	public final static String PKCS11_ValidazioneJWE = "PKCS11-ValidazioneJWE";
+	public static final String PKCS11_ValidazioneJWS_none = "PKCS11-ValidazioneJWS-none";
+	public static final String PKCS11_ValidazioneJWS = "PKCS11-ValidazioneJWS";
+	public static final String PKCS11_ValidazioneJWE = "PKCS11-ValidazioneJWE";
 	
-	public final static String PKCS11_ForwardGovWayJWS = "PKCS11-ForwardGovWayJWS";
-	public final static String PKCS11_ForwardJWS = "PKCS11-ForwardJWS";
-	public final static String PKCS11_ForwardJWE = "PKCS11-ForwardJWE";
+	public static final String PKCS11_ForwardGovWayJWS = "PKCS11-ForwardGovWayJWS";
+	public static final String PKCS11_ForwardJWS = "PKCS11-ForwardJWS";
+	public static final String PKCS11_ForwardJWE = "PKCS11-ForwardJWE";
 	
 	
 	@Test

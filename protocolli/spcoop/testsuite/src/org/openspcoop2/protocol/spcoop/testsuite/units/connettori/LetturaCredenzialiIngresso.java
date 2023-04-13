@@ -114,33 +114,33 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 		}
 	} 
 	
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername '@ID1@' ) fornite da GestoreCredenziali di test anonimo";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da GestoreCredenziali di test anonimo";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_BASIC_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername '@ID1@' ) fornite da GestoreCredenziali di test ( BasicUsername '@ID2@' )";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_BASIC_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da GestoreCredenziali di test ( BasicUsername '@ID2@' )";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_SSL_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername '@ID1@' ) fornite da GestoreCredenziali di test ( SSL-Subject '@ID2@' )";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_SSL_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da GestoreCredenziali di test ( SSL-Subject '@ID2@' )";
+	private static final String MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername '@ID1@' ) fornite da GestoreCredenziali di test anonimo";
+	private static final String MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da GestoreCredenziali di test anonimo";
+	private static final String MSG_LETTURA_NUOVE_CREDENZIALI_BASIC_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername '@ID1@' ) fornite da GestoreCredenziali di test ( BasicUsername '@ID2@' )";
+	private static final String MSG_LETTURA_NUOVE_CREDENZIALI_BASIC_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da GestoreCredenziali di test ( BasicUsername '@ID2@' )";
+	private static final String MSG_LETTURA_NUOVE_CREDENZIALI_SSL_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername '@ID1@' ) fornite da GestoreCredenziali di test ( SSL-Subject '@ID2@' )";
+	private static final String MSG_LETTURA_NUOVE_CREDENZIALI_SSL_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da GestoreCredenziali di test ( SSL-Subject '@ID2@' )";
 	
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_ENTERPRISE_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername 'ID1@' ) fornite da Proxy";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_ENTERPRISE_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da Proxy";
+	private static final String MSG_LETTURA_NUOVE_CREDENZIALI_ENTERPRISE_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername 'ID1@' ) fornite da Proxy";
+	private static final String MSG_LETTURA_NUOVE_CREDENZIALI_ENTERPRISE_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da Proxy";
 	
-	private final static String MSG_IDENTIFICAZIONE_SA_BASIC_AUTH_IN_CORSO = "Autenticazione [basic] in corso ( BasicUsername '@ID@' ) ...";	
-	private final static String MSG_IDENTIFICAZIONE_SA_BASIC_AUTH_COMPLETATA = "Autenticazione [basic] effettuata con successo";
-	private final static String MSG_IDENTIFICAZIONE_SA_BASIC_RICEVUTA = "Ricevuta richiesta di servizio dal Servizio Applicativo @ID_SIL@ verso la porta delegata @PD@";
+	private static final String MSG_IDENTIFICAZIONE_SA_BASIC_AUTH_IN_CORSO = "Autenticazione [basic] in corso ( BasicUsername '@ID@' ) ...";	
+	private static final String MSG_IDENTIFICAZIONE_SA_BASIC_AUTH_COMPLETATA = "Autenticazione [basic] effettuata con successo";
+	private static final String MSG_IDENTIFICAZIONE_SA_BASIC_RICEVUTA = "Ricevuta richiesta di servizio dal Servizio Applicativo @ID_SIL@ verso la porta delegata @PD@";
 	
-	private final static String MSG_IDENTIFICAZIONE_SA_SSL_AUTH_IN_CORSO = "Autenticazione [ssl] in corso ( SSL-Subject '@ID@' ) ...";
-	private final static String MSG_IDENTIFICAZIONE_SA_SSL_AUTH_COMPLETATA = "Autenticazione [ssl] effettuata con successo";
-	private final static String MSG_IDENTIFICAZIONE_SA_SSL_RICEVUTA = "Ricevuta richiesta di servizio dal Servizio Applicativo @ID_SIL@ verso la porta delegata @PD@";
+	private static final String MSG_IDENTIFICAZIONE_SA_SSL_AUTH_IN_CORSO = "Autenticazione [ssl] in corso ( SSL-Subject '@ID@' ) ...";
+	private static final String MSG_IDENTIFICAZIONE_SA_SSL_AUTH_COMPLETATA = "Autenticazione [ssl] effettuata con successo";
+	private static final String MSG_IDENTIFICAZIONE_SA_SSL_RICEVUTA = "Ricevuta richiesta di servizio dal Servizio Applicativo @ID_SIL@ verso la porta delegata @PD@";
 	
-	private final static String MSG_IDENTIFICAZIONE_SOGGETTO_BASIC = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviato dalla parte mittente [@TIPO_MITTENTE@/@MITTENTE@]";
-	private final static String MSG_IDENTIFICAZIONE_SOGGETTO_SSL = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviato dalla parte mittente [@TIPO_MITTENTE@/@MITTENTE@]";
+	private static final String MSG_IDENTIFICAZIONE_SOGGETTO_BASIC = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviato dalla parte mittente [@TIPO_MITTENTE@/@MITTENTE@]";
+	private static final String MSG_IDENTIFICAZIONE_SOGGETTO_SSL = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviato dalla parte mittente [@TIPO_MITTENTE@/@MITTENTE@]";
 	
-	private final static String MSG_IDENTIFICAZIONE_FALLITA_IM_BASIC = "Autenticazione del servizio applicativo non riuscita ( BasicUsername '@ID@' )";
-	private final static String MSG_IDENTIFICAZIONE_FALLITA_IM_SSL = "Autenticazione del servizio applicativo non riuscita ( SSL-Subject '@ID@' )";
-	private final static String MSG_IDENTIFICAZIONE_FALLITA_IM_BASIC_CREDENZIALI_NON_CORRETTE = "(Autenticazione basic) Autenticazione fallita, credenziali fornite non corrette";	
-	private final static String MSG_IDENTIFICAZIONE_FALLITA_IM_BASIC_CREDENZIALI_NON_FORNITE = "(Autenticazione basic) Autenticazione fallita, credenziali non fornite";	
-	private final static String MSG_IDENTIFICAZIONE_FALLITA_IM_SSL_CREDENZIALI_NON_CORRETTE = "(Autenticazione ssl) non ha identificato alcun servizio applicativo";	
-	private final static String MSG_IDENTIFICAZIONE_FALLITA_IM_SSL_CREDENZIALI_NON_FORNITE = "(Autenticazione ssl) Autenticazione fallita, credenziali non fornite";	
+	private static final String MSG_IDENTIFICAZIONE_FALLITA_IM_BASIC = "Autenticazione del servizio applicativo non riuscita ( BasicUsername '@ID@' )";
+	private static final String MSG_IDENTIFICAZIONE_FALLITA_IM_SSL = "Autenticazione del servizio applicativo non riuscita ( SSL-Subject '@ID@' )";
+	private static final String MSG_IDENTIFICAZIONE_FALLITA_IM_BASIC_CREDENZIALI_NON_CORRETTE = "(Autenticazione basic) Autenticazione fallita, credenziali fornite non corrette";	
+	private static final String MSG_IDENTIFICAZIONE_FALLITA_IM_BASIC_CREDENZIALI_NON_FORNITE = "(Autenticazione basic) Autenticazione fallita, credenziali non fornite";	
+	private static final String MSG_IDENTIFICAZIONE_FALLITA_IM_SSL_CREDENZIALI_NON_CORRETTE = "(Autenticazione ssl) non ha identificato alcun servizio applicativo";	
+	private static final String MSG_IDENTIFICAZIONE_FALLITA_IM_SSL_CREDENZIALI_NON_FORNITE = "(Autenticazione ssl) Autenticazione fallita, credenziali non fornite";	
 	
 	private boolean checkFaultCode(String faultCode,Element[] faults) throws ProtocolException{
 		Reporter.log("check...["+faults.length+"]");

@@ -47,11 +47,11 @@ public class StatisticsForceIndexConfig {
 	
 	public StatisticsForceIndexConfig(){}
 	
-	private final static String pRepo = "statistiche.generazione.forceIndex.repository";
-	private final static String pGroupBy_numero_dimensione = "statistiche.generazione.forceIndex.groupBy.numero_dimensione";
-	private final static String pGroupBy_latenza = "statistiche.generazione.forceIndex.groupBy.latenza";
-	private final static String pGroupBy_custom_numero_dimensione = "statistiche.generazione.forceIndex.groupBy.custom.numero_dimensione";
-	private final static String pGroupBy_custom_latenza = "statistiche.generazione.forceIndex.groupBy.custom.latenza";
+	private static final String pRepo = "statistiche.generazione.forceIndex.repository";
+	private static final String pGroupBy_numero_dimensione = "statistiche.generazione.forceIndex.groupBy.numero_dimensione";
+	private static final String pGroupBy_latenza = "statistiche.generazione.forceIndex.groupBy.latenza";
+	private static final String pGroupBy_custom_numero_dimensione = "statistiche.generazione.forceIndex.groupBy.custom.numero_dimensione";
+	private static final String pGroupBy_custom_latenza = "statistiche.generazione.forceIndex.groupBy.custom.latenza";
 	
 	public StatisticsForceIndexConfig(Properties p) throws Exception{
 		

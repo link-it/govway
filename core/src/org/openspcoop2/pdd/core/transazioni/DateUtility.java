@@ -36,7 +36,7 @@ import org.slf4j.Logger;
  */
 public class DateUtility {
 
-	private final static String dateformatPattern = "yyyyMMddHHmm"; // utile per il filtro duplicati
+	private static final String dateformatPattern = "yyyyMMddHHmm"; // utile per il filtro duplicati
 
 	public static Timestamp getTimestampIntoIdProtocollo(Logger log, IBustaBuilder<?> bustaBuilder, String idMessaggio){
 		

@@ -41,11 +41,11 @@ public class ApiResponse extends BaseBean implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private final static int defaultHttpReturnCode = -2;
-	public final static int getDefaultHttpReturnCode() {
+	private static final int defaultHttpReturnCode = -2;
+	public static final int getDefaultHttpReturnCode() {
 		return defaultHttpReturnCode;
 	}
-	public final static boolean isDefaultHttpReturnCode(int value) {
+	public static final boolean isDefaultHttpReturnCode(int value) {
 		return defaultHttpReturnCode==value;
 	}
 	

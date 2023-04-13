@@ -53,7 +53,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Transazione_QNAME = new QName("http://www.openspcoop2.org/web/monitor/transazioni/core/header", "transazione");
+    private static final QName _Transazione_QNAME = new QName("http://www.openspcoop2.org/web/monitor/transazioni/core/header", "transazione");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.web.monitor.transazioni.core.header

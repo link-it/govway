@@ -40,7 +40,7 @@ public class API {
 	private String id;
 	private Map<String, Azione> actions;
 	private Map<String, Map<String, Azione>> actionsByPortType;
-	protected final static String PORT_TYPE_NON_ESISTENTE = "@@ACCORDO_DIRETTO@@";
+	protected static final String PORT_TYPE_NON_ESISTENTE = "@@ACCORDO_DIRETTO@@";
 	
 	public API(org.openspcoop2.core.registry.AccordoServizioParteComune base, String id, Index index, 
 			PayloadProfiles payloadProfiles, Properties properties) throws Exception {

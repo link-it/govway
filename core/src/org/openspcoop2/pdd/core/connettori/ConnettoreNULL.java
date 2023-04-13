@@ -61,7 +61,7 @@ public class ConnettoreNULL extends ConnettoreBase {
     	return "";
     }
 	
-	public final static String LOCATION = "govway://dev/null";
+	public static final String LOCATION = "govway://dev/null";
     
 	
 

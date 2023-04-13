@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPAOptions {
 
-	private final static String ID_GRUPPO = "REST.PA.OPTIONS";
+	private static final String ID_GRUPPO = "REST.PA.OPTIONS";
 	private HttpRequestMethod method = HttpRequestMethod.OPTIONS;
 
 	private RESTCore restCore;

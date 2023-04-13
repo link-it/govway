@@ -407,12 +407,12 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	// ---- Per salvare
 	
-	private final static String ZIP_POLICY_PREFIX = "policy-";
-	private final static String ZIP_POLICY_ID_ACTIVE_SUFFIX = "-id-active.txt";
-	private final static String ZIP_POLICY_CONFIGURAZIONE_POLICY_SUFFIX = "ConfigurazionePolicy.xml";
-	private final static String ZIP_POLICY_ATTIVAZIONE_POLICY_SUFFIX = "AttivazionePolicy.xml";
-	private final static String ZIP_POLICY_ID_DATI_COLLEZIONATI_POLICY_SUFFIX = "-id-datiCollezionati.txt";
-	private final static String ZIP_POLICY_DATI_COLLEZIONATI_POLICY_SUFFIX = "-datiCollezionati.txt";
+	private static final String ZIP_POLICY_PREFIX = "policy-";
+	private static final String ZIP_POLICY_ID_ACTIVE_SUFFIX = "-id-active.txt";
+	private static final String ZIP_POLICY_CONFIGURAZIONE_POLICY_SUFFIX = "ConfigurazionePolicy.xml";
+	private static final String ZIP_POLICY_ATTIVAZIONE_POLICY_SUFFIX = "AttivazionePolicy.xml";
+	private static final String ZIP_POLICY_ID_DATI_COLLEZIONATI_POLICY_SUFFIX = "-id-datiCollezionati.txt";
+	private static final String ZIP_POLICY_DATI_COLLEZIONATI_POLICY_SUFFIX = "-datiCollezionati.txt";
 	
 	@Override
 	public void serialize(OutputStream out) throws PolicyException{

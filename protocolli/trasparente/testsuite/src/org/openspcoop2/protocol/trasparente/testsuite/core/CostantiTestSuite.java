@@ -1030,7 +1030,7 @@ public class CostantiTestSuite {
 	public static final String TEST_CORS_EXPOSE_HDR2 = "X-GovWayTest-HDR2";
 	public static final String TEST_CORS_EXPOSE_HEADERS = TEST_CORS_EXPOSE_HDR1+", "+TEST_CORS_EXPOSE_HDR2;
     
-	private final static List<String> TEST_CORS_ALLOW_METHOD_DEFAULT = new ArrayList<String> ();
+	private static final List<String> TEST_CORS_ALLOW_METHOD_DEFAULT = new ArrayList<String> ();
 	static {
 		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.GET.name());
 		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.POST.name());
@@ -1038,16 +1038,16 @@ public class CostantiTestSuite {
 		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.DELETE.name());
 		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.PATCH.name());
 	}
-	public final static String TEST_CORS_ALLOW_METHOD_DEFAULT_AS_STRING = TEST_CORS_ALLOW_METHOD_DEFAULT.toString().substring(1, TEST_CORS_ALLOW_METHOD_DEFAULT.toString().length()-1);
+	public static final String TEST_CORS_ALLOW_METHOD_DEFAULT_AS_STRING = TEST_CORS_ALLOW_METHOD_DEFAULT.toString().substring(1, TEST_CORS_ALLOW_METHOD_DEFAULT.toString().length()-1);
 
-	private final static List<String> TEST_CORS_ALLOW_HEADER_DEFAULT = new ArrayList<String> ();
+	private static final List<String> TEST_CORS_ALLOW_HEADER_DEFAULT = new ArrayList<String> ();
 	static {
 		TEST_CORS_ALLOW_HEADER_DEFAULT.add(HttpConstants.AUTHORIZATION);
 		TEST_CORS_ALLOW_HEADER_DEFAULT.add(HttpConstants.CONTENT_TYPE);
 		TEST_CORS_ALLOW_HEADER_DEFAULT.add(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
 		TEST_CORS_ALLOW_HEADER_DEFAULT.add(HttpConstants.CACHE_STATUS_HTTP_1_1);
 	}
-	public final static String TEST_CORS_ALLOW_HEADERS_DEFAULT_AS_STRING = TEST_CORS_ALLOW_HEADER_DEFAULT.toString().substring(1, TEST_CORS_ALLOW_HEADER_DEFAULT.toString().length()-1);
+	public static final String TEST_CORS_ALLOW_HEADERS_DEFAULT_AS_STRING = TEST_CORS_ALLOW_HEADER_DEFAULT.toString().substring(1, TEST_CORS_ALLOW_HEADER_DEFAULT.toString().length()-1);
 
 	
 	public static final String APIKEY_QUERY_CUSTOM = "c_key";

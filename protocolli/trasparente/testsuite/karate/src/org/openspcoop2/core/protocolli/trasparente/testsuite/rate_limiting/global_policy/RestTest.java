@@ -42,12 +42,12 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 */
 public class RestTest extends ConfigLoader {
 	
-	protected final static String HEADER_GLOBAL_POLICY_VALUE = "TestPolicyGlobale";
-	protected final static String HEADER_GLOBAL_POLICY = "GovWay-TestSuite-RL-GlobalPolicy";
-	protected final static String HEADER_GLOBAL_POLICY_FILTRO_TAG = "GovWay-TestSuite-RL-GlobalPolicy-FiltroTag";
+	protected static final String HEADER_GLOBAL_POLICY_VALUE = "TestPolicyGlobale";
+	protected static final String HEADER_GLOBAL_POLICY = "GovWay-TestSuite-RL-GlobalPolicy";
+	protected static final String HEADER_GLOBAL_POLICY_FILTRO_TAG = "GovWay-TestSuite-RL-GlobalPolicy-FiltroTag";
 	
-	protected final static String ID_POLICY_GLOBALE = "EsempioPolicyGlobale-Orario";
-	protected final static String ID_POLICY_GLOBALE_FILTRO_TAG = "EsempioPolicyGlobale-Orario-FiltroTag";
+	protected static final String ID_POLICY_GLOBALE = "EsempioPolicyGlobale-Orario";
+	protected static final String ID_POLICY_GLOBALE_FILTRO_TAG = "EsempioPolicyGlobale-Orario-FiltroTag";
 	
 	@BeforeClass
 	public static void initTest() {

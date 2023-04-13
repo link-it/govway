@@ -65,7 +65,7 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
  */
 public class ImbustamentoRisposte extends GenericLib {
 
-	public final static String ID_MODULO = "ImbustamentoRisposte";
+	public static final String ID_MODULO = "ImbustamentoRisposte";
 
 	public ImbustamentoRisposte(Logger log) throws GenericLibException {
 		super(ImbustamentoRisposte.ID_MODULO, log);

@@ -29,7 +29,7 @@ package org.openspcoop2.pdd_test;
  */
 public class Costanti {
 
-	public final static String GRUPPO_PDD = "pdd";
-	public final static String GRUPPO_PDD_SQL = "pdd.sql";
+	public static final String GRUPPO_PDD = "pdd";
+	public static final String GRUPPO_PDD_SQL = "pdd.sql";
 	
 }

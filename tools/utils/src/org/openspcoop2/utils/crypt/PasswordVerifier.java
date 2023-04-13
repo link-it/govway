@@ -49,18 +49,18 @@ public class PasswordVerifier implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private final static String PROPERTY_REGULAR_EXPRESSIONS_PREFIX = "passwordVerifier.regularExpression.";
-	private final static String PROPERTY_LOGIN_CONTAINS = "passwordVerifier.notContainsLogin";
-	private final static String PROPERTY_RESTRICTED_WORDS = "passwordVerifier.restrictedWords";
-	private final static String PROPERTY_MIN_LENGTH = "passwordVerifier.minLength";
-	private final static String PROPERTY_MAX_LENGTH = "passwordVerifier.maxLength";
-	private final static String PROPERTY_INCLUDE_LOWER_CASE_LETTER = "passwordVerifier.lowerCaseLetter";
-	private final static String PROPERTY_INCLUDE_UPPER_CASE_LETTER = "passwordVerifier.upperCaseLetter";
-	private final static String PROPERTY_INCLUDE_NUMBER = "passwordVerifier.includeNumber";
-	private final static String PROPERTY_INCLUDE_NOT_ALPHANUMERIC_SYMBOL = "passwordVerifier.includeNotAlphanumericSymbol";
-	private final static String PROPERTY_ALL_DISTINCT_CHARACTERS = "passwordVerifier.allDistinctCharacters";
-	private final static String PROPERTY_EXPIRE = "passwordVerifier.expireDays";
-	private final static String PROPERTY_HISTORY = "passwordVerifier.history";
+	private static final String PROPERTY_REGULAR_EXPRESSIONS_PREFIX = "passwordVerifier.regularExpression.";
+	private static final String PROPERTY_LOGIN_CONTAINS = "passwordVerifier.notContainsLogin";
+	private static final String PROPERTY_RESTRICTED_WORDS = "passwordVerifier.restrictedWords";
+	private static final String PROPERTY_MIN_LENGTH = "passwordVerifier.minLength";
+	private static final String PROPERTY_MAX_LENGTH = "passwordVerifier.maxLength";
+	private static final String PROPERTY_INCLUDE_LOWER_CASE_LETTER = "passwordVerifier.lowerCaseLetter";
+	private static final String PROPERTY_INCLUDE_UPPER_CASE_LETTER = "passwordVerifier.upperCaseLetter";
+	private static final String PROPERTY_INCLUDE_NUMBER = "passwordVerifier.includeNumber";
+	private static final String PROPERTY_INCLUDE_NOT_ALPHANUMERIC_SYMBOL = "passwordVerifier.includeNotAlphanumericSymbol";
+	private static final String PROPERTY_ALL_DISTINCT_CHARACTERS = "passwordVerifier.allDistinctCharacters";
+	private static final String PROPERTY_EXPIRE = "passwordVerifier.expireDays";
+	private static final String PROPERTY_HISTORY = "passwordVerifier.history";
 	
 	protected List<String> regulaExpressions = new ArrayList<>();
 	protected boolean notContainsLogin = false;

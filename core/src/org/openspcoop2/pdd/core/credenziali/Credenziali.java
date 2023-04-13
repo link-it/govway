@@ -39,10 +39,10 @@ import org.slf4j.Logger;
 
 public class Credenziali  extends HttpServletCredential implements java.io.Serializable  {
 
-	public final static boolean SHOW_BASIC_PASSWORD = true;
-	public final static boolean SHOW_ISSUER = true;
-	public final static boolean SHOW_DIGEST_CLIENT_CERT = true;
-	public final static boolean SHOW_SERIAL_NUMBER_CLIENT_CERT = true;
+	public static final boolean SHOW_BASIC_PASSWORD = true;
+	public static final boolean SHOW_ISSUER = true;
+	public static final boolean SHOW_DIGEST_CLIENT_CERT = true;
+	public static final boolean SHOW_SERIAL_NUMBER_CLIENT_CERT = true;
 	
 	/**
 	 * 

@@ -180,7 +180,7 @@ public class ObjectFactory {
         return new FatturaElettronicaBodyType();
     }
 
-    private final static QName _FatturaElettronicaSemplificata = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.0", "FatturaElettronicaSemplificata");
+    private static final QName _FatturaElettronicaSemplificata = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.0", "FatturaElettronicaSemplificata");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FatturaElettronicaType }{@code >}}

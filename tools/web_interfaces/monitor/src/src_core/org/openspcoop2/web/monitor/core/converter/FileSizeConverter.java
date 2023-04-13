@@ -35,8 +35,8 @@ import javax.faces.convert.Converter;
  */
 public class FileSizeConverter implements Converter {
 	
-	private final static double KB = 1024;
-	private final static double MB = 1048576;
+	private static final double KB = 1024;
+	private static final double MB = 1048576;
 	
 	@Override
 	public Object getAsObject(FacesContext ctx, UIComponent component, String value) {

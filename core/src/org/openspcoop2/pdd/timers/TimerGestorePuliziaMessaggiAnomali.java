@@ -39,7 +39,7 @@ public interface TimerGestorePuliziaMessaggiAnomali extends javax.ejb.EJBObject 
     /* ********  F I E L D S  P R I V A T I   S T A T I C I  ******** */
     
     /** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-    public final static String ID_MODULO = "GestoreConsistenzaDatabase";
+    public static final String ID_MODULO = "GestoreConsistenzaDatabase";
 
     /**
      * Inizializza il Timer di gestione 

@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPDPut {
 
-	private final static String ID_GRUPPO = "REST.PD.PUT";
+	private static final String ID_GRUPPO = "REST.PD.PUT";
 	private HttpRequestMethod method = HttpRequestMethod.PUT;
 
 	private RESTCore restCore;

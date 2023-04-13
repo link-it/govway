@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPDLocalForwardTrace {
 
-	private final static String ID_GRUPPO = "REST.PD.LOCAL_FORWARD.TRACE";
+	private static final String ID_GRUPPO = "REST.PD.LOCAL_FORWARD.TRACE";
 	private HttpRequestMethod method = HttpRequestMethod.TRACE;
 
 	private RESTCore restCore;

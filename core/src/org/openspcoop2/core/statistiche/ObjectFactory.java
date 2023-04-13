@@ -103,7 +103,7 @@ public class ObjectFactory {
         return new Statistica();
     }
 
-    private final static QName _StatisticaOrariaContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-oraria-contenuti");
+    private static final QName _StatisticaOrariaContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-oraria-contenuti");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StatisticaContenuti }{@code >}}
@@ -116,7 +116,7 @@ public class ObjectFactory {
         return new JAXBElement<StatisticaContenuti>(_StatisticaOrariaContenuti, StatisticaContenuti.class, null, statisticaOrariaContenuti);
     }
 
-    private final static QName _StatisticaMensileContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-mensile-contenuti");
+    private static final QName _StatisticaMensileContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-mensile-contenuti");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StatisticaContenuti }{@code >}}
@@ -129,7 +129,7 @@ public class ObjectFactory {
         return new JAXBElement<StatisticaContenuti>(_StatisticaMensileContenuti, StatisticaContenuti.class, null, statisticaMensileContenuti);
     }
 
-    private final static QName _StatisticaGiornalieraContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-giornaliera-contenuti");
+    private static final QName _StatisticaGiornalieraContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-giornaliera-contenuti");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StatisticaContenuti }{@code >}}
@@ -142,7 +142,7 @@ public class ObjectFactory {
         return new JAXBElement<StatisticaContenuti>(_StatisticaGiornalieraContenuti, StatisticaContenuti.class, null, statisticaGiornalieraContenuti);
     }
 
-    private final static QName _StatisticaSettimanaleContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-settimanale-contenuti");
+    private static final QName _StatisticaSettimanaleContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-settimanale-contenuti");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StatisticaContenuti }{@code >}}

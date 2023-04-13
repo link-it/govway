@@ -117,7 +117,7 @@ public class ObjectFactory {
         return new Dominio();
     }
 
-    private final static QName _Fault = new QName("http://govway.org/integration/fault", "fault");
+    private static final QName _Fault = new QName("http://govway.org/integration/fault", "fault");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ErroreApplicativo }{@code >}}

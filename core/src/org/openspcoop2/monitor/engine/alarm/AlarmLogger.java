@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 public class AlarmLogger implements IAlarmLogger {
 
 	private CircularFifoQueue<String> logHistory; 
-	private final static int NUMERO_EVENTI = 20;
+	private static final int NUMERO_EVENTI = 20;
 	
 	private String threadName;
 	public void setThreadName(String threadName) {

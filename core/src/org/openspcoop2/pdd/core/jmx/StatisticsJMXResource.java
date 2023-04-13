@@ -56,87 +56,87 @@ import org.openspcoop2.utils.date.DateUtils;
 public class StatisticsJMXResource extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Nomi proprieta' */
-	public final static String INTERVALLO_STATISTICO = "Intervallo Temporale dei dati Statistici";
+	public static final String INTERVALLO_STATISTICO = "Intervallo Temporale dei dati Statistici";
 	
-	public final static String NUMERO_TRANSAZIONI = "Numero transazioni PdD";
-	public final static String TXT_NUMERO_TRANSAZIONI = "Numero di transazioni (totale/ok/inErrore) gestite dalla PdD";
+	public static final String NUMERO_TRANSAZIONI = "Numero transazioni PdD";
+	public static final String TXT_NUMERO_TRANSAZIONI = "Numero di transazioni (totale/ok/inErrore) gestite dalla PdD";
 	
-	public final static String NUMERO_TRANSAZIONI_PD = "Numero transazioni PortaDelegata";
-	public final static String TXT_NUMERO_TRANSAZIONI_PD = "Numero di transazioni (totale/ok/inErrore) gestite sulla PortaDelegata";
+	public static final String NUMERO_TRANSAZIONI_PD = "Numero transazioni PortaDelegata";
+	public static final String TXT_NUMERO_TRANSAZIONI_PD = "Numero di transazioni (totale/ok/inErrore) gestite sulla PortaDelegata";
 	
-	public final static String NUMERO_TRANSAZIONI_PA = "Numero transazioni PortaApplicativa";
-	public final static String TXT_NUMERO_TRANSAZIONI_PA = "Numero di transazioni (totale/ok/inErrore) gestite sulla PortaApplicativa";
+	public static final String NUMERO_TRANSAZIONI_PA = "Numero transazioni PortaApplicativa";
+	public static final String TXT_NUMERO_TRANSAZIONI_PA = "Numero di transazioni (totale/ok/inErrore) gestite sulla PortaApplicativa";
 	
-	public final static String LATENZA_ATTRAVERSAMENTO = "Tempo attraversamento PdD";
-	public final static String TXT_LATENZA_ATTRAVERSAMENTO = "Tempo di attraversamento (min/avg/max) della PdD";
-	public final static String LATENZA_ATTRAVERSAMENTO_REQUEST = 
+	public static final String LATENZA_ATTRAVERSAMENTO = "Tempo attraversamento PdD";
+	public static final String TXT_LATENZA_ATTRAVERSAMENTO = "Tempo di attraversamento (min/avg/max) della PdD";
+	public static final String LATENZA_ATTRAVERSAMENTO_REQUEST = 
 		"Tempo attraversamento richieste";
-	public final static String TXT_LATENZA_ATTRAVERSAMENTO_REQUEST = 
+	public static final String TXT_LATENZA_ATTRAVERSAMENTO_REQUEST = 
 		"Tempo di attraversamento (min/avg/max) della PdD per i messaggi di richiesta";
-	public final static String LATENZA_ATTRAVERSAMENTO_RESPONSE = 
+	public static final String LATENZA_ATTRAVERSAMENTO_RESPONSE = 
 		"Tempo attraversamento risposte";
-	public final static String TXT_LATENZA_ATTRAVERSAMENTO_RESPONSE = 
+	public static final String TXT_LATENZA_ATTRAVERSAMENTO_RESPONSE = 
 		"Tempo di attraversamento (min/avg/max) della PdD per i messaggi di risposta";
 	
-	public final static String LATENZA_ATTRAVERSAMENTO_PD = "Tempo attraversamento PortaDelegata";
-	public final static String TXT_LATENZA_ATTRAVERSAMENTO_PD = "Tempo di attraversamento (min/avg/max) della PortaDelegata";
-	public final static String LATENZA_ATTRAVERSAMENTO_PD_REQUEST = 
+	public static final String LATENZA_ATTRAVERSAMENTO_PD = "Tempo attraversamento PortaDelegata";
+	public static final String TXT_LATENZA_ATTRAVERSAMENTO_PD = "Tempo di attraversamento (min/avg/max) della PortaDelegata";
+	public static final String LATENZA_ATTRAVERSAMENTO_PD_REQUEST = 
 		"Tempo attraversamento richieste sulla PortaDelegata";
-	public final static String TXT_LATENZA_ATTRAVERSAMENTO_PD_REQUEST = 
+	public static final String TXT_LATENZA_ATTRAVERSAMENTO_PD_REQUEST = 
 		"Tempo di attraversamento (min/avg/max) della PortaDelegata per i messaggi di richiesta";
-	public final static String LATENZA_ATTRAVERSAMENTO_PD_RESPONSE = 
+	public static final String LATENZA_ATTRAVERSAMENTO_PD_RESPONSE = 
 		"Tempo attraversamento risposte sulla PortaDelegata";
-	public final static String TXT_LATENZA_ATTRAVERSAMENTO_PD_RESPONSE = 
+	public static final String TXT_LATENZA_ATTRAVERSAMENTO_PD_RESPONSE = 
 		"Tempo di attraversamento (min/avg/max) della PortaDelegata per i messaggi di risposta";
 	
-	public final static String LATENZA_ATTRAVERSAMENTO_PA = "Tempo attraversamento PortaApplicativa";
-	public final static String TXT_LATENZA_ATTRAVERSAMENTO_PA = "Tempo di attraversamento (min/avg/max) della PortaApplicativa";
-	public final static String LATENZA_ATTRAVERSAMENTO_PA_REQUEST = 
+	public static final String LATENZA_ATTRAVERSAMENTO_PA = "Tempo attraversamento PortaApplicativa";
+	public static final String TXT_LATENZA_ATTRAVERSAMENTO_PA = "Tempo di attraversamento (min/avg/max) della PortaApplicativa";
+	public static final String LATENZA_ATTRAVERSAMENTO_PA_REQUEST = 
 		"Tempo attraversamento richieste sulla PortaApplicativa";
-	public final static String TXT_LATENZA_ATTRAVERSAMENTO_PA_REQUEST = 
+	public static final String TXT_LATENZA_ATTRAVERSAMENTO_PA_REQUEST = 
 		"Tempo di attraversamento (min/avg/max) della PortaApplicativa per i messaggi di richiesta";
-	public final static String LATENZA_ATTRAVERSAMENTO_PA_RESPONSE = 
+	public static final String LATENZA_ATTRAVERSAMENTO_PA_RESPONSE = 
 		"Tempo attraversamento risposte sulla PortaApplicativa";
-	public final static String TXT_LATENZA_ATTRAVERSAMENTO_PA_RESPONSE = 
+	public static final String TXT_LATENZA_ATTRAVERSAMENTO_PA_RESPONSE = 
 		"Tempo di attraversamento (min/avg/max) della PortaApplicativa per i messaggi di risposta";
 	
-	public final static String DIMENSIONE_MESSAGGI = "Dimensione messaggi PdD";
-	public final static String DIMENSIONE_MESSAGGI_IN_REQUEST = "Dimensione richieste in ingresso sulla PdD";
-	public final static String DIMENSIONE_MESSAGGI_OUT_REQUEST = "Dimensione richieste in uscita dalla PdD";
-	public final static String DIMENSIONE_MESSAGGI_IN_RESPONSE = "Dimensione risposte in ingresso sulla PdD";
-	public final static String DIMENSIONE_MESSAGGI_OUT_RESPONSE = "Dimensione risposte in uscita dalla PdD";
-	public final static String TXT_DIMENSIONE_MESSAGGI = "Dimensione dei messaggi (min/avg/max) gestiti dalla PdD";
-	public final static String TXT_DIMENSIONE_MESSAGGI_IN_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in ingresso sulla PdD";
-	public final static String TXT_DIMENSIONE_MESSAGGI_OUT_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in uscita dalla PdD";
-	public final static String TXT_DIMENSIONE_MESSAGGI_IN_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in ingresso sulla PdD";
-	public final static String TXT_DIMENSIONE_MESSAGGI_OUT_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in uscita dalla PdD";
+	public static final String DIMENSIONE_MESSAGGI = "Dimensione messaggi PdD";
+	public static final String DIMENSIONE_MESSAGGI_IN_REQUEST = "Dimensione richieste in ingresso sulla PdD";
+	public static final String DIMENSIONE_MESSAGGI_OUT_REQUEST = "Dimensione richieste in uscita dalla PdD";
+	public static final String DIMENSIONE_MESSAGGI_IN_RESPONSE = "Dimensione risposte in ingresso sulla PdD";
+	public static final String DIMENSIONE_MESSAGGI_OUT_RESPONSE = "Dimensione risposte in uscita dalla PdD";
+	public static final String TXT_DIMENSIONE_MESSAGGI = "Dimensione dei messaggi (min/avg/max) gestiti dalla PdD";
+	public static final String TXT_DIMENSIONE_MESSAGGI_IN_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in ingresso sulla PdD";
+	public static final String TXT_DIMENSIONE_MESSAGGI_OUT_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in uscita dalla PdD";
+	public static final String TXT_DIMENSIONE_MESSAGGI_IN_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in ingresso sulla PdD";
+	public static final String TXT_DIMENSIONE_MESSAGGI_OUT_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in uscita dalla PdD";
 	
-	public final static String DIMENSIONE_MESSAGGI_PD = "Dimensione messaggi PortaDelegata";
-	public final static String DIMENSIONE_MESSAGGI_PD_IN_REQUEST = "Dimensione richieste in ingresso sulla PortaDelegata";
-	public final static String DIMENSIONE_MESSAGGI_PD_OUT_REQUEST = "Dimensione richieste in uscita dalla PortaDelegata";
-	public final static String DIMENSIONE_MESSAGGI_PD_IN_RESPONSE = "Dimensione risposte in ingresso sulla PortaDelegata";
-	public final static String DIMENSIONE_MESSAGGI_PD_OUT_RESPONSE = "Dimensione risposte in uscita dalla PortaDelegata";
-	public final static String TXT_DIMENSIONE_MESSAGGI_PD = "Dimensione dei messaggi (min/avg/max) gestiti dalla PortaDelegata";
-	public final static String TXT_DIMENSIONE_MESSAGGI_PD_IN_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in ingresso sulla PortaDelegata";
-	public final static String TXT_DIMENSIONE_MESSAGGI_PD_OUT_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in uscita dalla PortaDelegata";
-	public final static String TXT_DIMENSIONE_MESSAGGI_PD_IN_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in ingresso sulla PortaDelegata";
-	public final static String TXT_DIMENSIONE_MESSAGGI_PD_OUT_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in uscita dalla PortaDelegata";
+	public static final String DIMENSIONE_MESSAGGI_PD = "Dimensione messaggi PortaDelegata";
+	public static final String DIMENSIONE_MESSAGGI_PD_IN_REQUEST = "Dimensione richieste in ingresso sulla PortaDelegata";
+	public static final String DIMENSIONE_MESSAGGI_PD_OUT_REQUEST = "Dimensione richieste in uscita dalla PortaDelegata";
+	public static final String DIMENSIONE_MESSAGGI_PD_IN_RESPONSE = "Dimensione risposte in ingresso sulla PortaDelegata";
+	public static final String DIMENSIONE_MESSAGGI_PD_OUT_RESPONSE = "Dimensione risposte in uscita dalla PortaDelegata";
+	public static final String TXT_DIMENSIONE_MESSAGGI_PD = "Dimensione dei messaggi (min/avg/max) gestiti dalla PortaDelegata";
+	public static final String TXT_DIMENSIONE_MESSAGGI_PD_IN_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in ingresso sulla PortaDelegata";
+	public static final String TXT_DIMENSIONE_MESSAGGI_PD_OUT_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in uscita dalla PortaDelegata";
+	public static final String TXT_DIMENSIONE_MESSAGGI_PD_IN_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in ingresso sulla PortaDelegata";
+	public static final String TXT_DIMENSIONE_MESSAGGI_PD_OUT_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in uscita dalla PortaDelegata";
 		
-	public final static String DIMENSIONE_MESSAGGI_PA = "Dimensione messaggi PortaApplicativa";
-	public final static String DIMENSIONE_MESSAGGI_PA_IN_REQUEST = "Dimensione richieste in ingresso sulla PortaApplicativa";
-	public final static String DIMENSIONE_MESSAGGI_PA_OUT_REQUEST = "Dimensione richieste in uscita dalla PortaApplicativa";
-	public final static String DIMENSIONE_MESSAGGI_PA_IN_RESPONSE = "Dimensione risposte in ingresso sulla PortaApplicativa";
-	public final static String DIMENSIONE_MESSAGGI_PA_OUT_RESPONSE = "Dimensione risposte in uscita dalla PortaApplicativa";
-	public final static String TXT_DIMENSIONE_MESSAGGI_PA = "Dimensione dei messaggi (min/avg/max) gestiti dalla PortaApplicativa";
-	public final static String TXT_DIMENSIONE_MESSAGGI_PA_IN_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in ingresso sulla PortaApplicativa";
-	public final static String TXT_DIMENSIONE_MESSAGGI_PA_OUT_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in uscita dalla PortaApplicativa";
-	public final static String TXT_DIMENSIONE_MESSAGGI_PA_IN_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in ingresso sulla PortaApplicativa";
-	public final static String TXT_DIMENSIONE_MESSAGGI_PA_OUT_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in uscita dalla PortaApplicativa";
+	public static final String DIMENSIONE_MESSAGGI_PA = "Dimensione messaggi PortaApplicativa";
+	public static final String DIMENSIONE_MESSAGGI_PA_IN_REQUEST = "Dimensione richieste in ingresso sulla PortaApplicativa";
+	public static final String DIMENSIONE_MESSAGGI_PA_OUT_REQUEST = "Dimensione richieste in uscita dalla PortaApplicativa";
+	public static final String DIMENSIONE_MESSAGGI_PA_IN_RESPONSE = "Dimensione risposte in ingresso sulla PortaApplicativa";
+	public static final String DIMENSIONE_MESSAGGI_PA_OUT_RESPONSE = "Dimensione risposte in uscita dalla PortaApplicativa";
+	public static final String TXT_DIMENSIONE_MESSAGGI_PA = "Dimensione dei messaggi (min/avg/max) gestiti dalla PortaApplicativa";
+	public static final String TXT_DIMENSIONE_MESSAGGI_PA_IN_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in ingresso sulla PortaApplicativa";
+	public static final String TXT_DIMENSIONE_MESSAGGI_PA_OUT_REQUEST = "Dimensione dei messaggi di richiesta (min/avg/max) in uscita dalla PortaApplicativa";
+	public static final String TXT_DIMENSIONE_MESSAGGI_PA_IN_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in ingresso sulla PortaApplicativa";
+	public static final String TXT_DIMENSIONE_MESSAGGI_PA_OUT_RESPONSE = "Dimensione dei messaggi di risposta (min/avg/max) in uscita dalla PortaApplicativa";
 	
 	
 	/** Nomi metodi */
-	public final static String REFRESH = "refresh"; 
-	public final static String RESET = "reset"; 
+	public static final String REFRESH = "refresh"; 
+	public static final String RESET = "reset"; 
 	
 
 

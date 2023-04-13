@@ -81,7 +81,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 	public static Exception risorsaNonDisponibile = null;
 	
 	 /** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-    public final static String ID_MODULO = "MonitoraggioRisorse";
+    public static final String ID_MODULO = "MonitoraggioRisorse";
 	 
     
 	/** Properties Reader */

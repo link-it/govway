@@ -42,9 +42,9 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 */
 public class SoapTest extends ConfigLoader {
 
-	private final static String soapaction11 = "http://govway.org/testSoapAction/v11";
-	private final static String soapaction12 = "http://govway.org/testSoapAction/v12";
-	private final static String soapaction12_nonQuotata = "testNonQuotatasoap12";
+	private static final String soapaction11 = "http://govway.org/testSoapAction/v11";
+	private static final String soapaction12 = "http://govway.org/testSoapAction/v12";
+	private static final String soapaction12_nonQuotata = "testNonQuotatasoap12";
 	
 	@Test
 	public void erogazione_soap11() throws Exception {

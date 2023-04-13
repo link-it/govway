@@ -61,7 +61,7 @@ public class StatisticByResource extends StatisticProcessing {
 	public static final String DESCRIZIONE = "Informazioni Statistiche sulle Risorse associate alle Transazioni";
 	
 	
-	public final static String PARAM_RESOURCE = "Risorsa";
+	public static final String PARAM_RESOURCE = "Risorsa";
 	
 
 	// popolamento

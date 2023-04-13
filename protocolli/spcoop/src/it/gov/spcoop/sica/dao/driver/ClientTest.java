@@ -115,7 +115,7 @@ import it.gov.spcoop.sica.wscp.constants.ProfiloDiCollaborazioneType;
 public class ClientTest {
 
 	
-	public final static String wsdlImplementativo = "<wsdl:definitions targetNamespace=\"http://openspcoop.org/Example/service\" \n" +
+	public static final String wsdlImplementativo = "<wsdl:definitions targetNamespace=\"http://openspcoop.org/Example/service\" \n" +
 			"xmlns:apachesoap=\"http://xml.apache.org/xml-soap\" xmlns:service=\"http://openspcoop.org/Example/service\"\n" +
 			" xmlns:types=\"http://openspcoop.org/Example/types\" xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\"\n" +
 			" xmlns:wsdlsoap=\"http://schemas.xmlsoap.org/wsdl/soap/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" >\n" +

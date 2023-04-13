@@ -741,9 +741,9 @@ public class Utilities {
 	
 
 
-	private final static double KB = 1024;
-	private final static double MB = 1048576;
-	private final static double GB = 1073741824;
+	private static final double KB = 1024;
+	private static final double MB = 1048576;
+	private static final double GB = 1073741824;
 	public static String convertBytesToFormatString(long value) {
 		return convertBytesToFormatString(value, false, "");
 	}

@@ -33,7 +33,7 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 */
 public class RestAutenticazioneTest extends ConfigLoader {
 
-	private final static String API = "TestAutenticazioneTokenREST";
+	private static final String API = "TestAutenticazioneTokenREST";
 	
 	
 	// ** pubblico **

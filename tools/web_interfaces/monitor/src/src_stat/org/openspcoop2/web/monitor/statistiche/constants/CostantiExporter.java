@@ -39,16 +39,16 @@ import org.openspcoop2.web.monitor.core.constants.Costanti;
  */
 public class CostantiExporter {
 
-	public final static int ERRORE_SERVER = 503;
-	public final static int DATI_NON_CORRETTI = 404;
-	public final static int DATI_NON_TROVATI = 404;
-	public final static int CREDENZIALI_NON_FORNITE = 401;
-	public final static int AUTENTICAZIONE_FALLITA = 403;
+	public static final int ERRORE_SERVER = 503;
+	public static final int DATI_NON_CORRETTI = 404;
+	public static final int DATI_NON_TROVATI = 404;
+	public static final int CREDENZIALI_NON_FORNITE = 401;
+	public static final int AUTENTICAZIONE_FALLITA = 403;
 	
-	public final static String USER = "user";
-	public final static String PASSWORD = "password";
+	public static final String USER = "user";
+	public static final String PASSWORD = "password";
 	
-	public final static String TIPO_DISTRIBUZIONE = "distribuzione";
+	public static final String TIPO_DISTRIBUZIONE = "distribuzione";
 	public static final String TIPO_DISTRIBUZIONE_TEMPORALE = "temporale";
 	public static final String TIPO_DISTRIBUZIONE_ESITI = "esiti";
 	public static final String TIPO_DISTRIBUZIONE_ERRORI = "errori";
@@ -77,12 +77,12 @@ public class CostantiExporter {
 		// TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_PERSONALIZZATA); TODO
 	}
 	
-	public final static String TIPO_FORMATO = "formato";
-	public final static String TIPO_FORMATO_CSV = "csv";
-	public final static String TIPO_FORMATO_XLS = "xls";
-	public final static String TIPO_FORMATO_PDF = "pdf";
-	public final static String TIPO_FORMATO_XML = "xml";
-	public final static String TIPO_FORMATO_JSON = "json";
+	public static final String TIPO_FORMATO = "formato";
+	public static final String TIPO_FORMATO_CSV = "csv";
+	public static final String TIPO_FORMATO_XLS = "xls";
+	public static final String TIPO_FORMATO_PDF = "pdf";
+	public static final String TIPO_FORMATO_XML = "xml";
+	public static final String TIPO_FORMATO_JSON = "json";
 	public static final List<String> TIPI_FORMATO = new ArrayList<String> ();
 	static{
 		TIPI_FORMATO.add(TIPO_FORMATO_CSV);
@@ -92,29 +92,29 @@ public class CostantiExporter {
 		TIPI_FORMATO.add(TIPO_FORMATO_JSON);
 	}
 	
-	public final static String DATA_INIZIO = "dataInizio";
-	public final static String DATA_FINE = "dataFine";
+	public static final String DATA_INIZIO = "dataInizio";
+	public static final String DATA_FINE = "dataFine";
 	
-	public final static String PROTOCOLLO  = "protocollo";
-	public final static String MITTENTE  = "mittente";
-	public final static String DESTINATARIO  = "destinatario";
-	public final static String SOGGETTO_LOCALE  = "soggettoLocale";
-	public final static String TRAFFICO_PER_SOGGETTO  = "trafficoPerSoggetto";
+	public static final String PROTOCOLLO  = "protocollo";
+	public static final String MITTENTE  = "mittente";
+	public static final String DESTINATARIO  = "destinatario";
+	public static final String SOGGETTO_LOCALE  = "soggettoLocale";
+	public static final String TRAFFICO_PER_SOGGETTO  = "trafficoPerSoggetto";
 	
-	public final static String GRUPPO  = "tag";
+	public static final String GRUPPO  = "tag";
 	
-	public final static String API  = "api";
-	public final static String API_DISTINGUI_IMPLEMENTAZIONE  = "api_distingui_implementazione";
-	public final static String API_DISTINGUI_IMPLEMENTAZIONE_TRUE = "true";
-	public final static String API_DISTINGUI_IMPLEMENTAZIONE_FALSE = "false";
+	public static final String API  = "api";
+	public static final String API_DISTINGUI_IMPLEMENTAZIONE  = "api_distingui_implementazione";
+	public static final String API_DISTINGUI_IMPLEMENTAZIONE_TRUE = "true";
+	public static final String API_DISTINGUI_IMPLEMENTAZIONE_FALSE = "false";
 	
-	public final static String SERVIZIO  = "servizio";
-	public final static String AZIONE  = "azione";
+	public static final String SERVIZIO  = "servizio";
+	public static final String AZIONE  = "azione";
 	
-	public final static String TIPOLOGIA  = "tipologia";
-	public final static String TIPOLOGIA_EROGAZIONE  = "Erogazione";
-	public final static String TIPOLOGIA_FRUIZIONE  = "Fruizione";
-	public final static String TIPOLOGIA_EROGAZIONE_FRUIZIONE  = "Erogazione/Fruizione";
+	public static final String TIPOLOGIA  = "tipologia";
+	public static final String TIPOLOGIA_EROGAZIONE  = "Erogazione";
+	public static final String TIPOLOGIA_FRUIZIONE  = "Fruizione";
+	public static final String TIPOLOGIA_EROGAZIONE_FRUIZIONE  = "Erogazione/Fruizione";
 	public static final List<String> TIPOLOGIE = new ArrayList<String> ();
 	static{
 		TIPOLOGIE.add(TIPOLOGIA_EROGAZIONE);
@@ -122,9 +122,9 @@ public class CostantiExporter {
 		TIPOLOGIE.add(TIPOLOGIA_EROGAZIONE_FRUIZIONE);
 	}
 	
-	public final static String ID_CLUSTER  = "idCluster";
+	public static final String ID_CLUSTER  = "idCluster";
 	
-	public final static String TIPO_RICERCA_MITTENTE  = "tipoRicercaMittente";
+	public static final String TIPO_RICERCA_MITTENTE  = "tipoRicercaMittente";
 	public static final String TIPO_RICERCA_MITTENTE_TOKEN_INFO = Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO;
 	public static final String TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO = Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO;
 	public static final String TIPO_RICERCA_MITTENTE_INDIRIZZO_IP = Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP;
@@ -139,21 +139,21 @@ public class CostantiExporter {
 		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_SOGGETTO);
 	}
 	
-	public final static String TIPO_IDENTIFICAZIONE_APPLICATIVO  = "tipo_identificazione_applicativo";
-	public final static String TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO = "trasporto";
-	public final static String TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN = "token";
+	public static final String TIPO_IDENTIFICAZIONE_APPLICATIVO  = "tipo_identificazione_applicativo";
+	public static final String TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO = "trasporto";
+	public static final String TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN = "token";
 	public static final List<String> TIPI_IDENTIFICAZIONE_APPLICATIVO = new ArrayList<String> ();
 	static{
 		TIPI_IDENTIFICAZIONE_APPLICATIVO.add(TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO);
 		TIPI_IDENTIFICAZIONE_APPLICATIVO.add(TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN);
 	}
 	
-	public final static String APPLICATIVO  = "applicativo";
+	public static final String APPLICATIVO  = "applicativo";
 	
-	public final static String TIPO_AUTENTICAZIONE  = "tipoAutenticazioneRicercaMittente";
-	public final static String TIPO_AUTENTICAZIONE_BASIC  = TipoAutenticazione.BASIC.getValue();
-	public final static String TIPO_AUTENTICAZIONE_SSL  = TipoAutenticazione.SSL.getValue();
-	public final static String TIPO_AUTENTICAZIONE_PRINCIPAL  = TipoAutenticazione.PRINCIPAL.getValue();
+	public static final String TIPO_AUTENTICAZIONE  = "tipoAutenticazioneRicercaMittente";
+	public static final String TIPO_AUTENTICAZIONE_BASIC  = TipoAutenticazione.BASIC.getValue();
+	public static final String TIPO_AUTENTICAZIONE_SSL  = TipoAutenticazione.SSL.getValue();
+	public static final String TIPO_AUTENTICAZIONE_PRINCIPAL  = TipoAutenticazione.PRINCIPAL.getValue();
 	public static final List<String> TIPI_AUTENTICAZIONE = new ArrayList<String> ();
 	static{
 		TIPI_AUTENTICAZIONE.add(TIPO_AUTENTICAZIONE_BASIC);
@@ -161,38 +161,38 @@ public class CostantiExporter {
 		TIPI_AUTENTICAZIONE.add(TIPO_AUTENTICAZIONE_PRINCIPAL);
 	}
 	
-	public final static String TIPO_INDIRIZZO_IP  = "tipoIndirizzoIP";
-	public final static String TIPO_INDIRIZZO_IP_SOCKET  = org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_SOCKET;
-	public final static String TIPO_INDIRIZZO_IP_TRANSPORT  = org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_TRASPORTO;
+	public static final String TIPO_INDIRIZZO_IP  = "tipoIndirizzoIP";
+	public static final String TIPO_INDIRIZZO_IP_SOCKET  = org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_SOCKET;
+	public static final String TIPO_INDIRIZZO_IP_TRANSPORT  = org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_TRASPORTO;
 	public static final List<String> TIPI_INDIRIZZI_IP = new ArrayList<String> ();
 	static{
 		TIPI_INDIRIZZI_IP.add(TIPO_INDIRIZZO_IP_SOCKET);
 		TIPI_INDIRIZZI_IP.add(TIPO_INDIRIZZO_IP_TRANSPORT);
 	}
 	
-	public final static String TIPO_RICERCA_MITTENTE_ESATTA  = "ricercaMittenteEsatta";
-	public final static String TIPO_RICERCA_MITTENTE_ESATTA_TRUE  = "true";
-	public final static String TIPO_RICERCA_MITTENTE_ESATTA_FALSE  = "false";
+	public static final String TIPO_RICERCA_MITTENTE_ESATTA  = "ricercaMittenteEsatta";
+	public static final String TIPO_RICERCA_MITTENTE_ESATTA_TRUE  = "true";
+	public static final String TIPO_RICERCA_MITTENTE_ESATTA_FALSE  = "false";
 	
-	public final static String TIPO_RICERCA_MITTENTE_CASE_SENSITIVE  = "ricercaMittenteCaseSensitive";
-	public final static String TIPO_RICERCA_MITTENTE_CASE_SENSITIVE_TRUE  = "true";
-	public final static String TIPO_RICERCA_MITTENTE_CASE_SENSITIVE_FALSE  = "false";
+	public static final String TIPO_RICERCA_MITTENTE_CASE_SENSITIVE  = "ricercaMittenteCaseSensitive";
+	public static final String TIPO_RICERCA_MITTENTE_CASE_SENSITIVE_TRUE  = "true";
+	public static final String TIPO_RICERCA_MITTENTE_CASE_SENSITIVE_FALSE  = "false";
 	
-	public final static String IDENTIFICATIVO_RICERCA_MITTENTE  = "identificativoRicercaMittente";
+	public static final String IDENTIFICATIVO_RICERCA_MITTENTE  = "identificativoRicercaMittente";
 	
-	public final static String RICERCA_MITTENTE_TIPO_CLAIM  = "claimRicercaMittente";
+	public static final String RICERCA_MITTENTE_TIPO_CLAIM  = "claimRicercaMittente";
 		
-	public final static String RICERCA_ALL  = "all";
-	public final static String RICERCA_INGRESSO  = "ingresso";
-	public final static String RICERCA_USCITA  = "uscita";
+	public static final String RICERCA_ALL  = "all";
+	public static final String RICERCA_INGRESSO  = "ingresso";
+	public static final String RICERCA_USCITA  = "uscita";
 		
-	public final static String ESITO_GRUPPO  = "esitoGruppo";
-	public final static String ESITO_GRUPPO_OK  = "ok";
-	public final static String ESITO_GRUPPO_FAULT_APPLICATIVO  = "fault";
-	public final static String ESITO_GRUPPO_FALLITE  = "fallite";
-	public final static String ESITO_GRUPPO_FALLITE_E_FAULT_APPLICATIVO  = "fallite_e_fault";
-	public final static String ESITO_GRUPPO_ERRORI_CONSEGNA  = "errori_consegna";
-	public final static String ESITO_GRUPPO_RICHIESTE_SCARTATE  = "richieste_scartate";
+	public static final String ESITO_GRUPPO  = "esitoGruppo";
+	public static final String ESITO_GRUPPO_OK  = "ok";
+	public static final String ESITO_GRUPPO_FAULT_APPLICATIVO  = "fault";
+	public static final String ESITO_GRUPPO_FALLITE  = "fallite";
+	public static final String ESITO_GRUPPO_FALLITE_E_FAULT_APPLICATIVO  = "fallite_e_fault";
+	public static final String ESITO_GRUPPO_ERRORI_CONSEGNA  = "errori_consegna";
+	public static final String ESITO_GRUPPO_RICHIESTE_SCARTATE  = "richieste_scartate";
 
 	public static final List<String> ESITI_GRUPPO = new ArrayList<String> ();
 	static{
@@ -204,36 +204,36 @@ public class CostantiExporter {
 		ESITI_GRUPPO.add(ESITO_GRUPPO_RICHIESTE_SCARTATE);
 	}
 	
-	public final static String ESCLUDI_RICHIESTE_SCARTATE  = "escludiRichiesteScartate";
-	public final static String ESCLUDI_RICHIESTE_SCARTATE_TRUE  = "true";
-	public final static String ESCLUDI_RICHIESTE_SCARTATE_FALSE  = "false";
+	public static final String ESCLUDI_RICHIESTE_SCARTATE  = "escludiRichiesteScartate";
+	public static final String ESCLUDI_RICHIESTE_SCARTATE_TRUE  = "true";
+	public static final String ESCLUDI_RICHIESTE_SCARTATE_FALSE  = "false";
 	
-	public final static String ESITO  = "esito";
+	public static final String ESITO  = "esito";
 	
-	public final static String ESITO_CONTESTO  = "contesto";
-	
-	
-	public final static String TIPO_REPORT = "report";
-	public final static TipoReport TIPO_REPORT_DISTRIBUZIONE_TEMPORALE_DEFAULT = TipoReport.LINE_CHART;
-	public final static TipoReport TIPO_REPORT_DISTRIBUZIONE_OTHER_DEFAULT = TipoReport.BAR_CHART;
+	public static final String ESITO_CONTESTO  = "contesto";
 	
 	
-	public final static String TIPO_UNITA_TEMPORALE = "unitaTemporale";
+	public static final String TIPO_REPORT = "report";
+	public static final TipoReport TIPO_REPORT_DISTRIBUZIONE_TEMPORALE_DEFAULT = TipoReport.LINE_CHART;
+	public static final TipoReport TIPO_REPORT_DISTRIBUZIONE_OTHER_DEFAULT = TipoReport.BAR_CHART;
 	
 	
-	public final static String TIPO_INFORMAZIONE_VISUALIZZATA = "visualizza";
-	public final static TipoVisualizzazione TIPO_INFORMAZIONE_VISUALIZZATA_DEFAULT = TipoVisualizzazione.NUMERO_TRANSAZIONI;
-	public final static String TIPO_BANDA_VISUALIZZATA = "banda";
-	public final static TipoBanda TIPO_BANDA_VISUALIZZATA_DEFAULT = TipoBanda.COMPLESSIVA;
-	public final static String TIPO_LATENZA_VISUALIZZATA = "latenza";
-	public final static TipoLatenza TIPO_LATENZA_VISUALIZZATA_DEFAULT = TipoLatenza.LATENZA_TOTALE;
+	public static final String TIPO_UNITA_TEMPORALE = "unitaTemporale";
 	
-	public final static String CLAIM = "claim";
-	public final static String CLAIM_SUBJECT = "subject";
-	public final static String CLAIM_ISSUER = "issuer";
-	public final static String CLAIM_USERNAME = "username";
-	public final static String CLAIM_EMAIL = "eMail";
-	public final static String CLAIM_CLIENT_ID = "clientId";
+	
+	public static final String TIPO_INFORMAZIONE_VISUALIZZATA = "visualizza";
+	public static final TipoVisualizzazione TIPO_INFORMAZIONE_VISUALIZZATA_DEFAULT = TipoVisualizzazione.NUMERO_TRANSAZIONI;
+	public static final String TIPO_BANDA_VISUALIZZATA = "banda";
+	public static final TipoBanda TIPO_BANDA_VISUALIZZATA_DEFAULT = TipoBanda.COMPLESSIVA;
+	public static final String TIPO_LATENZA_VISUALIZZATA = "latenza";
+	public static final TipoLatenza TIPO_LATENZA_VISUALIZZATA_DEFAULT = TipoLatenza.LATENZA_TOTALE;
+	
+	public static final String CLAIM = "claim";
+	public static final String CLAIM_SUBJECT = "subject";
+	public static final String CLAIM_ISSUER = "issuer";
+	public static final String CLAIM_USERNAME = "username";
+	public static final String CLAIM_EMAIL = "eMail";
+	public static final String CLAIM_CLIENT_ID = "clientId";
 	public static final List<String> CLAIMS = new ArrayList<String> ();
 	static{
 		CLAIMS.add(CLAIM_SUBJECT);

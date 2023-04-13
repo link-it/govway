@@ -37,10 +37,10 @@ public class Costanti {
 	public static final String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT+": {0}";
 	public static final String LABEL_MENU_SOGGETTO_CORRENTE_WITH_PARAM = "Soggetto: {0}";
 	
-	public final static String LABEL_PARAMETRO_SOGGETTI_OPERATIVI = "Soggetti Operativi";
-	public final static String LABEL_PARAMETRO_SOGGETTO_OPERATIVO = "Soggetto Operativo";
-	public final static String LABEL_PARAMETRO_SOGGETTO_COMPACT = "Soggetto Operativo";
-	public final static String LABEL_PARAMETRO_SOGGETTI_COMPACT = "Soggetti Operativi";
+	public static final String LABEL_PARAMETRO_SOGGETTI_OPERATIVI = "Soggetti Operativi";
+	public static final String LABEL_PARAMETRO_SOGGETTO_OPERATIVO = "Soggetto Operativo";
+	public static final String LABEL_PARAMETRO_SOGGETTO_COMPACT = "Soggetto Operativo";
+	public static final String LABEL_PARAMETRO_SOGGETTI_COMPACT = "Soggetti Operativi";
 	public static final String LABEL_PROFILO = "Profilo";
 	
 	public static final String LABEL_PARAMETRO_MODALITA_ALL = "Tutti";
@@ -86,11 +86,11 @@ public class Costanti {
 	public static final String ICONA_ID_TRANSAZIONE = "swap_horiz";
 	public static final String ICONA_INFO_WHITE = "info_outline";
 
-	public final static String LABEL_OPENSPCOOP2_WEB = "https://govway.org";
+	public static final String LABEL_OPENSPCOOP2_WEB = "https://govway.org";
 	
-	public final static Integer SELECT_ITEM_VALORE_MASSIMO_ENTRIES = Integer.valueOf(1000);
+	public static final Integer SELECT_ITEM_VALORE_MASSIMO_ENTRIES = Integer.valueOf(1000);
 	
-	public final static List<SelectItem> SELECT_ITEM_ENTRIES = new ArrayList<>();
+	public static final List<SelectItem> SELECT_ITEM_ENTRIES = new ArrayList<>();
 	static {
 		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(25), "25 Entries"));  
 		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(75), "75 Entries"));
@@ -149,26 +149,26 @@ public class Costanti {
 	/* Home page utente*/
 	
 	/* */
-	public final static String OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE =  NomiTabelle.WELCOME_SCREEN.toString(); 
-	public final static String OGGETTO_STATO_UTENTE_HOME_PAGE = "HOME_PAGE";
+	public static final String OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE =  NomiTabelle.WELCOME_SCREEN.toString(); 
+	public static final String OGGETTO_STATO_UTENTE_HOME_PAGE = "HOME_PAGE";
 	
-	public final static String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI_KEY = "utenti.profilo.homePage.transazioni";
-	public final static String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE_KEY = "utenti.profilo.homePage.statistiche";
+	public static final String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI_KEY = "utenti.profilo.homePage.transazioni";
+	public static final String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE_KEY = "utenti.profilo.homePage.statistiche";
 	
-	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO_KEY = "utenti.profilo.intervalloTemporaleHomePage.noGrafico";
-	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultime24ore";
-	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultimi7giorni";
-	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultimi30giorni";
-	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultimoAnno";
+	public static final String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO_KEY = "utenti.profilo.intervalloTemporaleHomePage.noGrafico";
+	public static final String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultime24ore";
+	public static final String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultimi7giorni";
+	public static final String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultimi30giorni";
+	public static final String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultimoAnno";
 	
-	public final static String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI = "transazioni";
-	public final static String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE = "summary";
+	public static final String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI = "transazioni";
+	public static final String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE = "summary";
 	
-	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO = "--";
-	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE = "Ultime 24 ore";
-	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI = "Ultimi 7 giorni";
-	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI = "Ultimi 30 giorni";
-	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO = "Ultimo anno";
+	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO = "--";
+	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE = "Ultime 24 ore";
+	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI = "Ultimi 7 giorni";
+	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI = "Ultimi 30 giorni";
+	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO = "Ultimo anno";
 	
 	/* CSRF */
 	

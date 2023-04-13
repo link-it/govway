@@ -37,10 +37,10 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management") 
 public class StatoPddSoap11Service extends Service {
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://www.openspcoop2.org/pdd/monitor/management", "StatoPddSoap11Service");
-    public final static QName StatoPddPortSoap11 = new QName("http://www.openspcoop2.org/pdd/monitor/management", "StatoPddPortSoap11");
+    public static final QName SERVICE = new QName("http://www.openspcoop2.org/pdd/monitor/management", "StatoPddSoap11Service");
+    public static final QName StatoPddPortSoap11 = new QName("http://www.openspcoop2.org/pdd/monitor/management", "StatoPddPortSoap11");
     static {
         URL url = StatoPddSoap11Service.class.getResource("deploy/wsdl/StatoPddAll_PortSoap11.wsdl");
         if (url == null) {

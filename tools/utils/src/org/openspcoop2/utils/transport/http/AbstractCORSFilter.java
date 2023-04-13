@@ -46,7 +46,7 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 
-	public final static String CORS_REQUEST_TYPE = "CORSRequestType";
+	public static final String CORS_REQUEST_TYPE = "CORSRequestType";
 	
 	protected abstract CORSFilterConfiguration getConfig() throws IOException;
 	protected abstract Logger getLog();

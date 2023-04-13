@@ -41,29 +41,29 @@ import org.slf4j.Logger;
  */
 public class EsitoUtils {
 
-	public final static String ALL_LABEL  = "[Qualsiasi]";
-	public final static String ALL_ERROR_LABEL  = "Fallite";
-	public final static String ALL_OK_LABEL  = "Completate con successo";
-	public final static String ALL_FAULT_APPLICATIVO_LABEL  = "Fault Applicativo";
-	public final static String ALL_PERSONALIZZATO_LABEL  = "Personalizzato";
-	public final static String ALL_ERROR_FAULT_APPLICATIVO_LABEL  = "Fallite - Fault Applicativo";
-	public final static String ALL_ERROR_CONSEGNA_LABEL  = "Errori di Consegna";
-	public final static String ALL_ERROR_RICHIESTE_SCARTATE_LABEL  = "Richieste Scartate";
+	public static final String ALL_LABEL  = "[Qualsiasi]";
+	public static final String ALL_ERROR_LABEL  = "Fallite";
+	public static final String ALL_OK_LABEL  = "Completate con successo";
+	public static final String ALL_FAULT_APPLICATIVO_LABEL  = "Fault Applicativo";
+	public static final String ALL_PERSONALIZZATO_LABEL  = "Personalizzato";
+	public static final String ALL_ERROR_FAULT_APPLICATIVO_LABEL  = "Fallite - Fault Applicativo";
+	public static final String ALL_ERROR_CONSEGNA_LABEL  = "Errori di Consegna";
+	public static final String ALL_ERROR_RICHIESTE_SCARTATE_LABEL  = "Richieste Scartate";
 	
-	public final static String ALL_VALUE_AS_STRING = "-";
+	public static final String ALL_VALUE_AS_STRING = "-";
 	
-	public final static Integer ALL_VALUE = -1;
-	public final static Integer ALL_ERROR_VALUE = -2;
-	public final static Integer ALL_OK_VALUE = -3;
-	public final static Integer ALL_FAULT_APPLICATIVO_VALUE = -4;
-	public final static Integer ALL_PERSONALIZZATO_VALUE = -5;
-	public final static Integer ALL_ERROR_FAULT_APPLICATIVO_VALUE = -6;
-	public final static Integer ALL_ERROR_CONSEGNA_VALUE = -7;
-	public final static Integer ALL_ERROR_RICHIESTE_SCARTATE_VALUE = -8;
+	public static final Integer ALL_VALUE = -1;
+	public static final Integer ALL_ERROR_VALUE = -2;
+	public static final Integer ALL_OK_VALUE = -3;
+	public static final Integer ALL_FAULT_APPLICATIVO_VALUE = -4;
+	public static final Integer ALL_PERSONALIZZATO_VALUE = -5;
+	public static final Integer ALL_ERROR_FAULT_APPLICATIVO_VALUE = -6;
+	public static final Integer ALL_ERROR_CONSEGNA_VALUE = -7;
+	public static final Integer ALL_ERROR_RICHIESTE_SCARTATE_VALUE = -8;
 	
-	public final static boolean DEFAULT_VALUE_ESCLUDI_RICHIESTE_SCARTATE = true;
+	public static final boolean DEFAULT_VALUE_ESCLUDI_RICHIESTE_SCARTATE = true;
 	
-	public final static String LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI = "Consegna Multipla";
+	public static final String LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI = "Consegna Multipla";
 	
 	private Logger logger;
 	private EsitiProperties esitiProperties;

@@ -236,7 +236,7 @@ public class ObjectFactory {
         return new Operazione();
     }
 
-    private final static QName _AccordoServizioComposto = new QName("http://www.openspcoop2.org/protocol/information_missing", "accordo-servizio-composto");
+    private static final QName _AccordoServizioComposto = new QName("http://www.openspcoop2.org/protocol/information_missing", "accordo-servizio-composto");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AccordoServizioParteComune }{@code >}}
@@ -249,7 +249,7 @@ public class ObjectFactory {
         return new JAXBElement<AccordoServizioParteComune>(_AccordoServizioComposto, AccordoServizioParteComune.class, null, accordoServizioComposto);
     }
 
-    private final static QName _Header = new QName("http://www.openspcoop2.org/protocol/information_missing", "header");
+    private static final QName _Header = new QName("http://www.openspcoop2.org/protocol/information_missing", "header");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Description }{@code >}}
@@ -262,7 +262,7 @@ public class ObjectFactory {
         return new JAXBElement<Description>(_Header, Description.class, null, header);
     }
 
-    private final static QName _Footer = new QName("http://www.openspcoop2.org/protocol/information_missing", "footer");
+    private static final QName _Footer = new QName("http://www.openspcoop2.org/protocol/information_missing", "footer");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Description }{@code >}}

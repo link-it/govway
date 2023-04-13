@@ -321,14 +321,14 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA;
     public static final boolean MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_DEFAULT_VALUE = false;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_HEADER = "Questa funzionalità consente di estendere il pattern aggiungendo all’interno del token di sicurezza le informazioni sull’utente che ha effettuato la richiesta. Le informazioni sono veicolate nei seguenti claims:";
-    public final static List<String> MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_VALORI = new ArrayList<>();
+    public static final List<String> MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_VALORI = new ArrayList<>();
 	static {
 		MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_VALORI.add("<b>iss</b>: dominio di appartenenza dell’utente");
 		MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_VALORI.add("<b>sub</b>: identificativo univoco dell’utente all’interno del dominio indicato nel claim 'iss'");
 		MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_VALORI.add("<b>user_ip</b>: postazione da cui l’utente ha effettuato la richiesta");
 	}
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SOAP_INFO_HEADER = "Questa funzionalità consente di estendere il pattern aggiungendo all’interno dell'header di sicurezza un'asserzione SAML firmata contenente le informazioni sull’utente che ha effettuato la richiesta. Le informazioni sono presenti, all'interno dell'asserzione, nelle seguenti posizioni:";
-    public final static List<String> MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SOAP_INFO_VALORI = new ArrayList<>();
+    public static final List<String> MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SOAP_INFO_VALORI = new ArrayList<>();
 	static {
 		MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SOAP_INFO_VALORI.add("<b>saml2:Subject/NameID</b>: dominio di appartenenza dell’utente");
 		MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SOAP_INFO_VALORI.add("<b>saml2:Attribute/User</b>: identificativo univoco dell’utente all’interno del dominio indicato nel claim 'iss'");
@@ -394,9 +394,9 @@ public class ModIConsoleCostanti {
    	
    	public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_LABEL = "Codice Risposta";
    	public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID = ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID;
-   	public final static String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID_INFO = "Lista di codici di risposta HTTP per i quali la sicurezza messaggio verrà utilizzata; è possibile indicare un codice http puntuale (es. 200) o un intervallo fornendo due codici separati dal trattino (es. 200-299).";
+   	public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID_INFO = "Lista di codici di risposta HTTP per i quali la sicurezza messaggio verrà utilizzata; è possibile indicare un codice http puntuale (es. 200) o un intervallo fornendo due codici separati dal trattino (es. 200-299).";
    		
-   	public final static String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_O_RISPOSTA_CONTENT_TYPE_MODE_ID_INFO_CONTENT_TYPE = "Lista di Content-Type per i quali la sicurezza messaggio verrà utilizzata; di seguito i formati utilizzabili:";
+   	public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_O_RISPOSTA_CONTENT_TYPE_MODE_ID_INFO_CONTENT_TYPE = "Lista di Content-Type per i quali la sicurezza messaggio verrà utilizzata; di seguito i formati utilizzabili:";
    	
 	// EROGAZIONI / FRUIZIONI
 	

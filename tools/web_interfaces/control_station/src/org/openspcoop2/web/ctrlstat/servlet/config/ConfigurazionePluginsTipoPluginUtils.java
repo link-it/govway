@@ -49,9 +49,9 @@ import org.slf4j.Logger;
  */
 public class ConfigurazionePluginsTipoPluginUtils {
 
-	public final static boolean addTransazioni = false;
-	public final static boolean addRicerche = false;
-	public final static boolean addStatistiche = false;
+	public static final boolean addTransazioni = false;
+	public static final boolean addRicerche = false;
+	public static final boolean addStatistiche = false;
 	
 	public static List<String> getValuesTipoPlugin(boolean addAllarmi) {
 		List<String> valori = new ArrayList<>();

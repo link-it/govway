@@ -242,7 +242,7 @@ import org.slf4j.Logger;
 public class RicezioneBuste {
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public final static String ID_MODULO = "RicezioneBuste";
+	public static final String ID_MODULO = "RicezioneBuste";
 
 	/** Indicazione se sono state inizializzate le variabili del servizio */
 	public static boolean initializeService = false;

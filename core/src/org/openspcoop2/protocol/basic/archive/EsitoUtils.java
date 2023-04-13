@@ -796,11 +796,11 @@ public class EsitoUtils {
 		
 		return bfEsito.toString();
 	}
-	public final static String LABEL_IMPORT_POLICY = "Policy di Configurazione";
-	public final static String LABEL_DELETE_POLICY =  LABEL_IMPORT_POLICY;
-	public final static String LABEL_IMPORT_PLUGIN = "Plugins";
-	public final static String LABEL_DELETE_PLUGIN =  LABEL_IMPORT_PLUGIN;
-	public final static String LABEL_IMPORT_CONFIGURAZIONE = "Configurazione di GovWay";
+	public static final String LABEL_IMPORT_POLICY = "Policy di Configurazione";
+	public static final String LABEL_DELETE_POLICY =  LABEL_IMPORT_POLICY;
+	public static final String LABEL_IMPORT_PLUGIN = "Plugins";
+	public static final String LABEL_DELETE_PLUGIN =  LABEL_IMPORT_PLUGIN;
+	public static final String LABEL_IMPORT_CONFIGURAZIONE = "Configurazione di GovWay";
 	public void serializeStato(ArchiveEsitoImportDetail detail,StringBuilder bfEsito, boolean importOperation){
 		String stateDetail = "";
 		if(detail.getStateDetail()!=null){

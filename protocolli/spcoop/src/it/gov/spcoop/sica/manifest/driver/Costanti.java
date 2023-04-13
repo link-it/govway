@@ -29,6 +29,6 @@ package it.gov.spcoop.sica.manifest.driver;
 */
 public class Costanti {
 
-	public final static int LUNGHEZZA_MAX_NOME_ACCORDO = 32;
+	public static final int LUNGHEZZA_MAX_NOME_ACCORDO = 32;
 	
 }

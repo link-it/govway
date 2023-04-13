@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPAGet {
 
-	private final static String ID_GRUPPO = "REST.PA.GET";
+	private static final String ID_GRUPPO = "REST.PA.GET";
 	private HttpRequestMethod method = HttpRequestMethod.GET;
 
 	private RESTCore restCore;
