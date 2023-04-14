@@ -93,7 +93,7 @@ public class VectorCheck {
 				else if( f.getAbsolutePath().contains("tools/utils/src/org/openspcoop2/utils/beans/BaseBean.java") )
 					jumpCheck = true;
 
-				else if( f.getAbsolutePath().contains("testsuite/src/org/openspcoop2/testsuite/src/org/openspcoop2/testsuite/axis14/Axis14") )
+				else if( f.getAbsolutePath().contains("testsuite/src/org/openspcoop2/testsuite/axis14/Axis14") )
 					jumpCheck = true;
 				else if( f.getAbsolutePath().contains("protocolli/spcoop/testsuite/example/registroServizi/wsdl/src/org/openspcoop2/core/registry/wsdl/testsuite") )
 					jumpCheck = true;
