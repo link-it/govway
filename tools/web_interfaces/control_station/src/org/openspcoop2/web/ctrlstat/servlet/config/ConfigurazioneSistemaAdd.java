@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -132,7 +131,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 
 					if(error) {
 						// setto la barra del titolo
-						List<Parameter> lstParam = new ArrayList<Parameter>();
+						List<Parameter> lstParam = new ArrayList<>();
 	
 						//lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 						lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
@@ -141,8 +140,8 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						ServletUtils.setPageDataTitle(pd, lstParam);
 						
 						// preparo i campi
-						Vector<DataElement> dati = new Vector<DataElement>();
-						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+						List<DataElement> dati = new ArrayList<>();
+						dati.add(ServletUtils.getDataElementForEditModeFinished());
 						
 						pd.setLabelBottoneInvia(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME_ACCEDI);
 						
@@ -202,7 +201,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							}
 							bfExternal.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER).append(" ").append(descrizione).append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 							List<String> caches = confCore.getJmxPdD_caches(aliasForResetCache);
-							if(caches!=null && caches.size()>0){
+							if(caches!=null && !caches.isEmpty()){
 								
 								StringBuilder bfCaches = new StringBuilder();
 								for (String cache : caches) {
@@ -270,7 +269,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					}
 						
 					// setto la barra del titolo
-					List<Parameter> lstParam = new ArrayList<Parameter>();
+					List<Parameter> lstParam = new ArrayList<>();
 
 					//lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
@@ -279,8 +278,8 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					ServletUtils.setPageDataTitle(pd, lstParam);
 					
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					List<DataElement> dati = new ArrayList<>();
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 					
 					pd.setLabelBottoneInvia(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME_ACCEDI);
 					
@@ -748,7 +747,6 @@ public final class ConfigurazioneSistemaAdd extends Action {
 									nuovoStato);
 						}
 						String tmp = "Configurazione aggiornata con successo ("+tipo+"): "+nuovoStato;
-						//tmp += ConfigurazioneCostanti.TEMPORANEE;
 						noteDialog = ConfigurazioneCostanti.TEMPORANEE;
 						if(messagePerOperazioneEffettuata!=null){
 							messagePerOperazioneEffettuata+="\n"+tmp;
@@ -763,7 +761,6 @@ public final class ConfigurazioneSistemaAdd extends Action {
 								nomeRisorsa, 
 								nomeMetodoJmx);
 						if(!ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE_UPDATE.equals(nomeParametroPostBack)){
-							//tmp += ConfigurazioneCostanti.PERSISTENTI;
 							noteDialog = ConfigurazioneCostanti.PERSISTENTI;
 						}
 						if(messagePerOperazioneEffettuata!=null){
@@ -812,7 +809,6 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					Dialog dialog = new Dialog();
 					
 					dialog.setTitolo(rilevatoErrore ? Costanti.MESSAGE_TYPE_ERROR_TITLE : Costanti.MESSAGE_TYPE_WARN_TITLE);
-					//dialog.setIcona(icona);
 					dialog.setHeaderRiga1(labelDialog);
 					dialog.setHeaderRiga2(messageDialog);
 					
@@ -835,10 +831,9 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			}
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			if(confCore.isSinglePdD()){
-				//lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				if(aliases.size()>1){
 					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD));
@@ -857,8 +852,8 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			dati = confHelper.addConfigurazioneSistema(dati, alias);
 

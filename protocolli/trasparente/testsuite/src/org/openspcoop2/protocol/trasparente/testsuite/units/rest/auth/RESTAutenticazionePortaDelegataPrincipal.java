@@ -21,7 +21,7 @@
 package org.openspcoop2.protocol.trasparente.testsuite.units.rest.auth;
 
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
@@ -59,7 +59,7 @@ public class RESTAutenticazionePortaDelegataPrincipal {
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegataPrincipal.ID_GRUPPO_PRINCIPAL})
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){

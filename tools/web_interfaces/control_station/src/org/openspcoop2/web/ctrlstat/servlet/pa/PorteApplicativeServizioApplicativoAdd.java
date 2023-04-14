@@ -23,7 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +42,6 @@ import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -133,7 +132,6 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				tipoSoggettoProprietario = soggetto.getTipo();
 				nomeSoggettoProprietario = soggetto.getNome();
 			}
-			// String pdd = soggetto.getServer();
 
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
@@ -141,26 +139,25 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				throw new Exception("PortaApplicativa con id '"+idInt+"' non trovata");
 			}
 			String nomePorta = pa.getNome();
-			// long idPorta = pa.getId();
 			PortaApplicativaServizio pas = pa.getServizio();
 			int idServizio = -1;
-			String tipo_servizio = null;
-			String nome_servizio = null;
-			Integer versione_servizio = null;
+			String tipoServizio = null;
+			String nomeServizio = null;
+			Integer versioneServizio = null;
 			if (pas != null) {
 				idServizio = pas.getId().intValue();
-				tipo_servizio = pas.getTipo();
-				nome_servizio = pas.getNome();
-				versione_servizio = pas.getVersione();
+				tipoServizio = pas.getTipo();
+				nomeServizio = pas.getNome();
+				versioneServizio = pas.getVersione();
 			}
 			PortaApplicativaSoggettoVirtuale pasv = pa.getSoggettoVirtuale();
-			long id_soggetto_virtuale = -1;
-			String tipo_soggetto_virtuale = null;
-			String nome_soggetto_virtuale = null;
+			long idSoggettoVirtuale = -1;
+			String tipoSoggettoVirtuale = null;
+			String nomeSoggettoVirtuale = null;
 			if (pasv != null) {
-				id_soggetto_virtuale = pasv.getId();
-				tipo_soggetto_virtuale = pasv.getTipo();
-				nome_soggetto_virtuale = pasv.getNome();
+				idSoggettoVirtuale = pasv.getId();
+				tipoSoggettoVirtuale = pasv.getTipo();
+				nomeSoggettoVirtuale = pasv.getNome();
 			}
 			PortaApplicativaAzione paa = pa.getAzione();
 			String nomeAzione = "";
@@ -176,15 +173,15 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 			if(porteApplicativeCore.isRegistroServiziLocale()){
 				if (idServizio <= 0) {
 					long idSoggettoServizio = -1;
-					if (id_soggetto_virtuale > 0) {
-						idSoggettoServizio = id_soggetto_virtuale;
-					} else if (tipo_soggetto_virtuale != null && (!("".equals(tipo_soggetto_virtuale))) && nome_soggetto_virtuale != null && (!("".equals(nome_soggetto_virtuale)))) {
-						idSoggettoServizio = soggettiCore.getIdSoggetto(nome_soggetto_virtuale, tipo_soggetto_virtuale);
+					if (idSoggettoVirtuale > 0) {
+						idSoggettoServizio = idSoggettoVirtuale;
+					} else if (tipoSoggettoVirtuale != null && (!("".equals(tipoSoggettoVirtuale))) && nomeSoggettoVirtuale != null && (!("".equals(nomeSoggettoVirtuale)))) {
+						idSoggettoServizio = soggettiCore.getIdSoggetto(nomeSoggettoVirtuale, tipoSoggettoVirtuale);
 					} else {
 						idSoggettoServizio = soggInt;
 					}
 					Soggetto soggServ = soggettiCore.getSoggetto(idSoggettoServizio);
-					idServizio = (int) apsCore.getIdAccordoServizioParteSpecifica(nome_servizio, tipo_servizio, versione_servizio, soggServ.getNome(), soggServ.getTipo()); 
+					idServizio = (int) apsCore.getIdAccordoServizioParteSpecifica(nomeServizio, tipoServizio, versioneServizio, soggServ.getNome(), soggServ.getTipo()); 
 				}
 			}
 			
@@ -216,14 +213,12 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// Controllo vincolo profilo_collaborazione
 				boolean isProfiloOneWay = true;
 
-				// select profilo_collaborazione from servizi s, accordi a where
-				// s.id_accordo=a.id and s.id=1;
 				AccordoServizioParteSpecifica servSp = null;
 				if(porteApplicativeCore.isRegistroServiziLocale()){
 					servSp = apsCore.getAccordoServizioParteSpecifica(idServizio);
@@ -237,12 +232,13 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					}else{
 						soggettoErogatoreServizio = new IDSoggetto(tipoSoggettoProprietario,nomeSoggettoProprietario);
 					}
-					IDServizio idServ = IDServizioFactory.getInstance().getIDServizioFromValues(tipo_servizio, nome_servizio, 
+					IDServizio idServ = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, 
 							soggettoErogatoreServizio, 
-							versione_servizio); 
+							versioneServizio); 
 					try{
 						servSp = apsCore.getServizio(idServ);
 					}catch(DriverRegistroServiziNotFound dNot){
+						// ignore
 					}
 					if(servSp==null) {
 						throw new Exception("AccordoServizioParteSpecifica con id '"+idServ+"' non trovato");
@@ -372,16 +368,14 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// Controllo vincolo profilo_collaborazione
 				@SuppressWarnings("unused")
 				boolean isProfiloOneWay = true;
 
-				// select profilo_collaborazione from servizi s, accordi a where
-				// s.id_accordo=a.id and s.id=1;
 				AccordoServizioParteSpecifica servSp = null;
 				if(porteApplicativeCore.isRegistroServiziLocale()){
 					servSp = apsCore.getAccordoServizioParteSpecifica(idServizio);
@@ -395,12 +389,13 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					}else{
 						soggettoErogatoreServizio = new IDSoggetto(tipoSoggettoProprietario,nomeSoggettoProprietario);
 					}
-					IDServizio idServ = IDServizioFactory.getInstance().getIDServizioFromValues(tipo_servizio, nome_servizio, 
+					IDServizio idServ = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, 
 							soggettoErogatoreServizio, 
-							versione_servizio); 
+							versioneServizio); 
 					try{
 						servSp = apsCore.getServizio(idServ);
 					}catch(DriverRegistroServiziNotFound dNot){
+						// ignore
 					}
 					if(servSp==null) {
 						throw new Exception("AccordoServizioParteSpecifica con id '"+idServ+"' non trovato");
@@ -414,7 +409,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				else{
 					as = apcCore.getAccordoServizioSintetico(IDAccordoFactory.getInstance().getIDAccordoFromUri(servSp.getAccordoServizioParteComune()));
 				}
-				//				String nomeAccordo = as.getNome();
+
 				// recupero profilo collaborazione accordo
 				String profiloCollaborazioneAccordo = as.getProfiloCollaborazione().toString();
 				if (profiloCollaborazioneAccordo.equals(CostantiRegistroServizi.ONEWAY.getValue())) {
@@ -458,7 +453,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					}
 				}
 
-				// recupero il numero di servizi applicativi gia associati alla
+				/** recupero il numero di servizi applicativi gia associati alla
 				// porta applicativa
 				// se il profilo non e' oneway allora ne posso avere solo uno
 				// associato
@@ -476,12 +471,11 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				//						pd.setMessage("E' possibile associare un solo Servizio Applicativo alla Porta Applicativa [" + nomePorta + "] in quanto l'Accordo di Servizio e' stato definito con profilo [" + profiloCollaborazioneAccordo + "]");
 				//					}
 				//					
-				//					//[TODO] controllare in fase di esecuzione il comportamento di questo punto
 				//					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				//					// Forward control to the specified success URI
 				//					return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO, 
 				//							ForwardParams.ADD());
-				//				}
+				//				}*/
 
 				String[] servizioApplicativoList = PorteApplicativeServizioApplicativoAdd.loadSAErogatori(pa, saCore, soggInt, true);
 
@@ -529,10 +523,10 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 	}
 	
 	
-	public static String[] loadSAErogatori(PortaApplicativa pa, ServiziApplicativiCore saCore, long soggInt, boolean addSAEsistenti) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public static String[] loadSAErogatori(PortaApplicativa pa, ServiziApplicativiCore saCore, long soggInt, boolean addSAEsistenti) throws DriverConfigurazioneException{
 		// recupero nome dei servizi applicativi gia associati alla
 		// porta applicativa
-		HashSet<String> saEsistenti = new HashSet<String>();
+		HashSet<String> saEsistenti = new HashSet<>();
 		if(addSAEsistenti){
 			for (int i = 0; i < pa.sizeServizioApplicativoList(); i++) {
 				PortaApplicativaServizioApplicativo tmpSA = pa.getServizioApplicativo(i);

@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -116,7 +116,7 @@ public class RestTest extends ConfigLoader {
 			bandwidthQuotaRemaining[i] = Integer.valueOf(firstResp.getHeaderFirstValue(Headers.BandWidthQuotaRemaining));
 						
 			// Faccio n richieste
-			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, nrequests);
+			List<HttpResponse> responses = Utils.makeParallelRequests(request, nrequests);
 
 			// Le richieste devono essere andate tutte bene
 			assertEquals(nrequests, responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count()); 

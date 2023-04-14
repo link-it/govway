@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
@@ -81,7 +81,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?returnCode=500");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, firstBatch);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, firstBatch);
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, firstBatch, 0);
 
 		
@@ -107,7 +107,7 @@ public class RestTest extends ConfigLoader {
 
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
-		Vector<HttpResponse>  failedResponses = Utils.makeParallelRequests(request, toFailRequests);
+		List<HttpResponse>  failedResponses = Utils.makeParallelRequests(request, toFailRequests);
 
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests);
 		
@@ -143,7 +143,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?returnCode=500");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, firstBatch);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, firstBatch);
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, firstBatch, 0);
 
 		
@@ -169,7 +169,7 @@ public class RestTest extends ConfigLoader {
 
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
-		Vector<HttpResponse>  failedResponses = Utils.makeParallelRequests(request, toFailRequests);
+		List<HttpResponse>  failedResponses = Utils.makeParallelRequests(request, toFailRequests);
 
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests);
 		
@@ -291,12 +291,12 @@ public class RestTest extends ConfigLoader {
 			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE);
 					
-			Vector<HttpResponse> responses = null;
+			List<HttpResponse> responses = null;
 			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
-//				responses = new Vector<HttpResponse>();
+//				responses = new List<HttpResponse>();
 //				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 //				for (int i = 0; i < maxRequests; i++) {
-//					Vector<HttpResponse> tmp = Utils.makeSequentialRequests(request, 1);
+//					List<HttpResponse> tmp = Utils.makeSequentialRequests(request, 1);
 //					responses.addAll(tmp);
 //					Utilities.sleep(1000);
 //				}
@@ -308,12 +308,12 @@ public class RestTest extends ConfigLoader {
 				
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE);
 			
-			Vector<HttpResponse>  failedResponses = null;
+			List<HttpResponse>  failedResponses = null;
 			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
-//				failedResponses = new Vector<HttpResponse>();
+//				failedResponses = new List<HttpResponse>();
 //				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 //				for (int i = 0; i < toFailRequests; i++) {
-//					Vector<HttpResponse> tmp = Utils.makeSequentialRequests(request, 1);
+//					List<HttpResponse> tmp = Utils.makeSequentialRequests(request, 1);
 //					failedResponses.addAll(tmp);
 //					Utilities.sleep(1000);
 //				}
@@ -389,12 +389,12 @@ public class RestTest extends ConfigLoader {
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE);
 					
-			Vector<HttpResponse> responses = null;
+			List<HttpResponse> responses = null;
 			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
-//				responses = new Vector<HttpResponse>();
+//				responses = new List<HttpResponse>();
 //				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 //				for (int i = 0; i < maxRequests; i++) {
-//					Vector<HttpResponse> tmp = Utils.makeSequentialRequests(request, 1);
+//					List<HttpResponse> tmp = Utils.makeSequentialRequests(request, 1);
 //					responses.addAll(tmp);
 //					Utilities.sleep(1000);
 //				}
@@ -406,12 +406,12 @@ public class RestTest extends ConfigLoader {
 	
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE);
 			
-			Vector<HttpResponse>  failedResponses = null;
+			List<HttpResponse>  failedResponses = null;
 			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
-//				failedResponses = new Vector<HttpResponse>();
+//				failedResponses = new List<HttpResponse>();
 //				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 //				for (int i = 0; i < toFailRequests; i++) {
-//					Vector<HttpResponse> tmp = Utils.makeSequentialRequests(request, 1);
+//					List<HttpResponse> tmp = Utils.makeSequentialRequests(request, 1);
 //					failedResponses.addAll(tmp);
 //					Utilities.sleep(1000);
 //				}
@@ -471,12 +471,12 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?returnCode=500");
 						
-		Vector<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests, idPolicy);
+		List<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests, idPolicy);
 		Utils.checkHeaderRemaining(responses, Headers.FailedRemaining, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
-		Vector<HttpResponse> failedResponses = Utils.makeParallelRequests(request, toFailRequests);
+		List<HttpResponse> failedResponses = Utils.makeParallelRequests(request, toFailRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests);
 		
@@ -503,12 +503,12 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?returnCode=500");
 						
-		Vector<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests, idPolicy);
+		List<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests, idPolicy);
 		Utils.checkHeaderRemaining(responses, Headers.FailedRemaining, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
-		Vector<HttpResponse> failedResponses = Utils.makeParallelRequests(request, toFailRequests);
+		List<HttpResponse> failedResponses = Utils.makeParallelRequests(request, toFailRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests);
 		
@@ -517,10 +517,10 @@ public class RestTest extends ConfigLoader {
 	}
 	
 	
-	private void checkOkRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests) {
+	private void checkOkRequests(List<HttpResponse> responses, int windowSize, int maxRequests) {
 		checkOkRequests(responses, windowSize, maxRequests, PolicyGroupByActiveThreadsType.LOCAL);
 	}
-	private void checkOkRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) {
+	private void checkOkRequests(List<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) {
 		// Delle richieste ok Controllo lo header *-Limit, *-Reset e lo status code
 		
 		responses.forEach( r -> {
@@ -537,10 +537,10 @@ public class RestTest extends ConfigLoader {
 		});
 	}
 	
-	private void checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests) throws Exception {
+	private void checkFailedRequests(List<HttpResponse> responses, int windowSize, int maxRequests) throws Exception {
 		checkFailedRequests(responses, windowSize, maxRequests, PolicyGroupByActiveThreadsType.LOCAL);
 	}
-	private void checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void checkFailedRequests(List<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
 		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
@@ -562,7 +562,7 @@ public class RestTest extends ConfigLoader {
 		}
 	}
 	
-	private void _checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void _checkFailedRequests(List<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
 		JsonPathExpressionEngine jsonPath = new JsonPathExpressionEngine();
 		

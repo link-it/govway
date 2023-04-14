@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -226,11 +225,11 @@ public final class Monitor extends Action {
 			
 			monitorHelper = new MonitorHelper(request, pd, session);
 
-			ArrayList<String> errors = new ArrayList<String>();
+			ArrayList<String> errors = new ArrayList<>();
 
 			String metodo = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD);
 			String ns = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
-			String[] tipoProfcoll = MonitorCostanti.DEFAULT_VALUES_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE;
+			String[] tipoProfcoll = MonitorCostanti.getDefaultValuesParametroTipoProfiloCollaborazione();
 			String actionConfirm = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ACTION_CONFIRM);
 
 			if (monitorHelper.isEditModeInProgress() && (metodo == null || !metodo.equals(MonitorCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS))&&
@@ -412,15 +411,15 @@ public final class Monitor extends Action {
 				String msgOK = "Cancellato Messaggio : <br>";
 				for (int i = 0; i < idToRemove.length; i++) {
 
-					Vector<?> dataElements = (Vector<?>) pdold.getDati().elementAt(idToRemove[i]);
+					List<?> dataElements = (List<?>) pdold.getDati().get(idToRemove[i]);
 					
 					// ID PARAMETRO_MONITOR_ID_MESSAGGIO alla posizione 2
-					DataElement de = (DataElement) dataElements.elementAt(1);
+					DataElement de = (DataElement) dataElements.get(1);
 					String idMessaggio = de.getValue();
 					filter.setIdMessaggio(idMessaggio);
 					
 					// TIPO (inbox/outbox) PARAMETRO_MONITOR_TIPO alla posizione 3
-					de = (DataElement) dataElements.elementAt(2);
+					de = (DataElement) dataElements.get(2);
 					String tipo = de.getValue();
 					filter.setTipo(tipo);
 					
@@ -777,7 +776,7 @@ public final class Monitor extends Action {
 									Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
 						pd.setBottoni(bottoni);
 						
-						Vector<DataElement>dati = new Vector<DataElement>();
+						List<DataElement>dati = new ArrayList<>();
 						dati.add(ServletUtils.getDataElementForEditModeFinished());
 						pd.setDati(dati);
 						
@@ -1158,20 +1157,20 @@ public final class Monitor extends Action {
 			//User user = ServletUtils.getUserFromSession(session);
 
 			// setto la barra del titolo
-			Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
+			List<GeneralLink> titlelist = new ArrayList<>();
 			GeneralLink tl1 = new GeneralLink();
 			tl1.setLabel(MonitorCostanti.LABEL_MONITOR);
-			titlelist.addElement(tl1);
+			titlelist.add(tl1);
 			pd.setTitleList(titlelist);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(MonitorCostanti.LABEL_MONITOR);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// select method
 			de = new DataElement();
@@ -1181,7 +1180,7 @@ public final class Monitor extends Action {
 			de.setSelected(mb != null ? mb.getMethod() : "");
 			de.setValues(metodiMonitor);
 			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(singlePdD){
 				de = new DataElement();
@@ -1198,13 +1197,13 @@ public final class Monitor extends Action {
                 	de.setType(DataElementType.HIDDEN);
                 	de.setValue(sorgenteSelezionata);
                 }
-                dati.addElement(de);
+                dati.add(de);
 			}
 			else {
                 String user = ServletUtils.getUserLoginFromSession(session);
                 List<PdDControlStation> pdds = pddCore.pddList(user, new ConsoleSearch(true));
                 // String[] nomiPdD = new String[];
-                Vector<String> nomiPdD = new Vector<String>();
+                List<String> nomiPdD = new ArrayList<>();
                 for (PdDControlStation pdd : pdds) {
                         // visualizzo tutte le pdd che non sono esterne
                         if (!pdd.getTipo().equals(PddTipologia.ESTERNO.toString())) {
@@ -1217,14 +1216,14 @@ public final class Monitor extends Action {
                 de.setName(MonitorCostanti.PARAMETRO_MONITOR_PDD);
                 de.setValues(nomiPdD.toArray(new String[nomiPdD.size()]));
                 de.setSelected(mb != null ? mb.getPdd() : consoleProperties.getGestioneCentralizzata_WSMonitor_pddDefault());
-                dati.addElement(de);
+                dati.add(de);
 			}
 			
 			boolean showFilterConsegnaAsincrona = (mb==null || mb.getMethod()==null || mb.getMethod().equals(MonitorMethods.STATO_CONSEGNE_ASINCRONE.getNome())); 
 					
 			if(showFilterConsegnaAsincrona) {
 				
-				List<String> values = new ArrayList<String>();
+				List<String> values = new ArrayList<>();
 				values.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CODA);
 				values.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_RICONSEGNA);
 				values.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_MESSAGE_BOX);
@@ -1235,7 +1234,7 @@ public final class Monitor extends Action {
                 de.setName(MonitorCostanti.PARAMETRO_MONITOR_ORDER_BY_CONSEGNA_ASINCRONA);
                 de.setValues(values);
                 de.setSelected(mb != null && mb.getOrderByConsegnaAsincrona()!=null ? mb.getOrderByConsegnaAsincrona() : MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CODA);
-                dati.addElement(de);
+                dati.add(de);
                 
 			}
 			
@@ -1248,7 +1247,7 @@ public final class Monitor extends Action {
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_FILTRO_RICERCA);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 	
 				// CorrelazioneApplicativa
 				de = new DataElement();
@@ -1257,7 +1256,7 @@ public final class Monitor extends Action {
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setValue(mb != null ? mb.getCorrelazioneApplicativa() : "");
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 	
 				// Message Pattern
 	//			de = new DataElement();
@@ -1266,7 +1265,7 @@ public final class Monitor extends Action {
 	//			de.setType(DataElementType.TEXT_EDIT);
 	//			de.setValue(mb != null ? mb.getMessagePattern() : "");
 	//			de.setSize(monitorHelper.getSize());
-	//			dati.addElement(de);
+	//			dati.add(de);
 	
 				// Soglia
 				de = new DataElement();
@@ -1276,11 +1275,11 @@ public final class Monitor extends Action {
 				de.setSize(monitorHelper.getSize());
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_SOGLIA);
 				de.setValue(mb != null ? "" + mb.getSoglia() : soglia);
-				dati.addElement(de);
+				dati.add(de);
 	
 				// Stato
 				if(monitorCore.isShowJ2eeOptions()) {
-					String stati[] = MonitorCostanti.DEFAULT_VALUES_PARAMETRO_STATO;
+					String [] stati = MonitorCostanti.getDefaultValuesParametroStato();
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO);
 					de.setType(DataElementType.SELECT);
@@ -1293,7 +1292,7 @@ public final class Monitor extends Action {
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 	
 				// ID Messaggio
 				de = new DataElement();
@@ -1302,7 +1301,7 @@ public final class Monitor extends Action {
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setValue(mb != null ? mb.getIdMessaggio() : "");
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 	
 				// Profilo Collaborazione
 				de = new DataElement();
@@ -1323,7 +1322,7 @@ public final class Monitor extends Action {
 					de.setSelected(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ONEWAY);
 				}
 	
-				dati.addElement(de);
+				dati.add(de);
 	
 				// riscontro
 				de = new DataElement();
@@ -1337,7 +1336,7 @@ public final class Monitor extends Action {
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_SOGGETTO_MITTENTE);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 	
 				// Tipo Mittente
 	//			if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
@@ -1347,7 +1346,7 @@ public final class Monitor extends Action {
 	//				de.setSize(monitorHelper.getSize());
 	//				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
 	//				de.setValue("");
-	//				dati.addElement(de);
+	//				dati.add(de);
 	//			} else {
 				
 				SoggettiCore soggettiCore = new SoggettiCore(monitorCore);
@@ -1366,7 +1365,7 @@ public final class Monitor extends Action {
 				de.setSelected(mb != null ? (mb.getMittente() != null ? mb.getMittente().getTipo() : "") : "");
 				de.setValues(tipiSoggetti);
 				de.setLabels(tipiSoggetti_label);
-				dati.addElement(de);
+				dati.add(de);
 				
 	//			de = new DataElement();
 	//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE);
@@ -1374,7 +1373,7 @@ public final class Monitor extends Action {
 	//			de.setSize(monitorHelper.getSize());
 	//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
 	//			de.setValue(mb != null ? (mb.getMittente() != null ? mb.getMittente().getTipoSoggetto() : "") : "");
-	//			dati.addElement(de);
+	//			dati.add(de);
 				//}
 	
 				de = new DataElement();
@@ -1383,13 +1382,13 @@ public final class Monitor extends Action {
 				de.setSize(monitorHelper.getSize());
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_MITTENTE);
 				de.setValue(mb != null ? (mb.getMittente() != null ? mb.getMittente().getNome() : "") : "");
-				dati.addElement(de);
+				dati.add(de);
 	
 				// Destinatario
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_SOGGETTO_DESTINATARIO);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// Destinatario
 	//			if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
@@ -1399,7 +1398,7 @@ public final class Monitor extends Action {
 	//				de.setSize(monitorHelper.getSize());
 	//				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
 	//				de.setValue("");
-	//				dati.addElement(de);
+	//				dati.add(de);
 	//			} else {
 	//			de = new DataElement();
 	//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO);
@@ -1407,7 +1406,7 @@ public final class Monitor extends Action {
 	//			de.setSize(monitorHelper.getSize());
 	//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
 	//			de.setValue(mb != null ? (mb.getDestinatario() != null ? mb.getDestinatario().getTipoSoggetto() : "") : "");
-	//			dati.addElement(de);
+	//			dati.add(de);
 				//}
 	
 				de = new DataElement();
@@ -1418,7 +1417,7 @@ public final class Monitor extends Action {
 				de.setSelected(mb != null ? (mb.getDestinatario() != null ? mb.getDestinatario().getTipo() : "") : "");
 				de.setValues(tipiSoggetti);
 				de.setLabels(tipiSoggetti_label);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_DESTINATARIO );
@@ -1426,13 +1425,13 @@ public final class Monitor extends Action {
 				de.setSize(monitorHelper.getSize());
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_DESTINATARIO);
 				de.setValue(mb != null ? (mb.getDestinatario() != null ? mb.getDestinatario().getNome() : "") : "");
-				dati.addElement(de);
+				dati.add(de);
 	
 				// Servizio
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_SERVIZIO);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// Servizio
 	//			if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
@@ -1442,7 +1441,7 @@ public final class Monitor extends Action {
 	//				de.setSize(monitorHelper.getSize());
 	//				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
 	//				de.setValue("");
-	//				dati.addElement(de);
+	//				dati.add(de);
 	//			} else {
 	//			de = new DataElement();
 	//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO);
@@ -1450,7 +1449,7 @@ public final class Monitor extends Action {
 	//			de.setSize(monitorHelper.getSize());
 	//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
 	//			de.setValue(mb != null ? (mb.getServizio() != null ? mb.getServizio().getTipo() : "") : "");
-	//			dati.addElement(de);
+	//			dati.add(de);
 				
 				AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(monitorCore);
 				List<String> tipiServizi = new ArrayList<String>();
@@ -1480,7 +1479,7 @@ public final class Monitor extends Action {
 				de.setSelected(mb != null ? (mb.getServizio() != null ? mb.getServizio().getTipo() : "") : "");
 				de.setValues(tipiServizi);
 				de.setLabels(tipiServizi_label);
-				dati.addElement(de);
+				dati.add(de);
 				//}
 	
 				de = new DataElement();
@@ -1489,7 +1488,7 @@ public final class Monitor extends Action {
 				de.setSize(monitorHelper.getSize());
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_SERVIZIO);
 				de.setValue(mb != null ? (mb.getServizio() != null ? mb.getServizio().getNome() : "") : "");
-				dati.addElement(de);
+				dati.add(de);
 	
 				String versione = null;
 				if(mb!=null && mb.getServizio()!=null && mb.getServizio().getVersione()!=null) {
@@ -1499,7 +1498,7 @@ public final class Monitor extends Action {
 				de = monitorHelper.getVersionDataElement(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VERSIONE_SERVIZIO, 
 						MonitorCostanti.PARAMETRO_MONITOR_VERSIONE_SERVIZIO, 
 						versione, false);
-				dati.addElement(de);
+				dati.add(de);
 	
 				
 				// Azione
@@ -1507,7 +1506,7 @@ public final class Monitor extends Action {
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_AZIONE);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_AZIONE);
@@ -1515,7 +1514,7 @@ public final class Monitor extends Action {
 				de.setSize(monitorHelper.getSize());
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_AZIONE);
 				de.setValue(mb != null ? mb.getAzione() : azione);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 
@@ -1537,7 +1536,7 @@ public final class Monitor extends Action {
 			pd.setPageSize(20);
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR,
 					this.createSearchString(monitorFormBean).toArray(new Parameter[lstParam.size()])));
@@ -1549,7 +1548,7 @@ public final class Monitor extends Action {
 
 			// totale
 			DataElement de = new DataElement();
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			// Se statoNal e' null allora nessuna informazione presente
 			if (statoPdD == null) {
@@ -1557,7 +1556,7 @@ public final class Monitor extends Action {
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_NESSUNA_INFORMAZIONE_PRESENTE);
 				de.setType(DataElementType.TEXT);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 			} else {
 
 				// Stampo informazioni relative al numero di messaggi
@@ -1566,7 +1565,7 @@ public final class Monitor extends Action {
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_STATO_PORTA_DOMINIO);
 				de.setType(DataElementType.TITLE);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 
 				/* Totali */
 				de = new DataElement();
@@ -1575,7 +1574,7 @@ public final class Monitor extends Action {
 				long totMsg = statoPdD.getTotMessaggi();
 				de.setValue(totMsg > 0 ? "" + totMsg : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 
 				if (totMsg > 0) {
 					// Max
@@ -1584,14 +1583,14 @@ public final class Monitor extends Action {
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesa() * 1000, false));
 					de.setSize(monitorHelper.getSize());
-					dati.addElement(de);
+					dati.add(de);
 					// Medio
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesa() * 1000, false));
 					de.setSize(monitorHelper.getSize());
-					dati.addElement(de);
+					dati.add(de);
 
 				}
 
@@ -1600,7 +1599,7 @@ public final class Monitor extends Action {
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_MESSAGGI_CONSEGNA);
 				de.setType(DataElementType.TITLE);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI);
@@ -1608,7 +1607,7 @@ public final class Monitor extends Action {
 				long inConsegna = statoPdD.getNumMsgInConsegna();
 				de.setValue(inConsegna > 0 ? "" + inConsegna : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO_CONSEGNA);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				if (inConsegna > 0) {
 					// Max
 					de = new DataElement();
@@ -1616,14 +1615,14 @@ public final class Monitor extends Action {
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesaInConsegna() * 1000, false));
 					de.setSize(monitorHelper.getSize());
-					dati.addElement(de);
+					dati.add(de);
 					// Medio
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesaInConsegna() * 1000, false));
 					de.setSize(monitorHelper.getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}
 
 				/* Spedizione */
@@ -1631,15 +1630,15 @@ public final class Monitor extends Action {
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_MESSAGGI_SPEDIZIONE);
 				de.setType(DataElementType.TITLE);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI);
 				de.setType(DataElementType.TEXT);
 				long inSpedizione = statoPdD.getNumMsgInSpedizione();
-				de.setValue(inSpedizione > 0 ? "" + inSpedizione : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO_SPEDIZIONE_);
+				de.setValue(inSpedizione > 0 ? "" + inSpedizione : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO_SPEDIZIONE);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				if (inSpedizione > 0) {
 					// Max
 					de = new DataElement();
@@ -1647,14 +1646,14 @@ public final class Monitor extends Action {
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesaInSpedizione() * 1000, false));
 					de.setSize(monitorHelper.getSize());
-					dati.addElement(de);
+					dati.add(de);
 					// Medio
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesaInSpedizione() * 1000, false));
 					de.setSize(monitorHelper.getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}
 
 				/* Processamento */
@@ -1662,7 +1661,7 @@ public final class Monitor extends Action {
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_MESSAGGI_PROCESSAMENTO);
 				de.setType(DataElementType.TITLE);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI_PROCESSAMENTO);
@@ -1670,7 +1669,7 @@ public final class Monitor extends Action {
 				long inProcess = statoPdD.getNumMsgInProcessamento();
 				de.setValue(inProcess > 0 ? "" + inProcess : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO_PROCESSAMENTO);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				if (inProcess > 0) {
 					// Max
 					de = new DataElement();
@@ -1678,14 +1677,14 @@ public final class Monitor extends Action {
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesaInProcessamento() * 1000, false));
 					de.setSize(monitorHelper.getSize());
-					dati.addElement(de);
+					dati.add(de);
 					// Medio
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesaInProcessamento() * 1000, false));
 					de.setSize(monitorHelper.getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}
 
 				/* Messaggi Duplicati */
@@ -1693,14 +1692,14 @@ public final class Monitor extends Action {
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_MESSAGGI_DUPLICATI);
 				de.setType(DataElementType.TITLE);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI);
 				de.setType(DataElementType.TEXT);
 				long duplicati = statoPdD.getTotMessaggiDuplicati();
 				de.setValue(duplicati > 0 ? "" + duplicati : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO_DUPLICATO);
 				de.setSize(monitorHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 
 			}
 			pd.setInserisciBottoni(false);
@@ -1725,7 +1724,7 @@ public final class Monitor extends Action {
 			newSearchFalse.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH, MonitorCostanti.DEFAULT_VALUE_FALSE));
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR,
 					this.createSearchString(monitorFormBean).toArray(new Parameter[lstParam.size()])));
 			lstParam.add(new Parameter(MonitorMethods.LISTA_RICHIESTE_PENDENTI.getNome(), MonitorCostanti.SERVLET_NAME_MONITOR,
@@ -1736,7 +1735,7 @@ public final class Monitor extends Action {
 
 			monitorHelper.makeMenu();
 			
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 			
 			DataElement de = new DataElement();
 			de.setLabel(MonitorCostanti.LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO);
@@ -2147,7 +2146,7 @@ public final class Monitor extends Action {
 //			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_MESSAGE_BOX_RECENTE);
 			pd.setLabels(labels.toArray(new String[1]));
 			
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (statoConsegneAsincrone != null && statoConsegneAsincrone.size()>0) {
 				// aggiungo i messaggi
@@ -2160,13 +2159,13 @@ public final class Monitor extends Action {
 				List<String> servizi = statoConsegneAsincrone.getServiziApplicativi();
 				for (String servizioApplicativo : servizi) {
 					
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					StatoConsegnaAsincrona stato = statoConsegneAsincrone.getStato(servizioApplicativo);
 					
 //					de = new DataElement();
 //					de.setValue(formatter.format(stato.getNow()));
-//					e.addElement(de);
+//					e.add(de);
 					
 					de = new DataElement();
 					IDServizio idServizio = monitorCore.getLabelNomeServizioApplicativo(stato.getServizioApplicativo());
@@ -2184,7 +2183,7 @@ public final class Monitor extends Action {
 						}
 					}
 					de.setToolTip(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOW+": "+formatter.format(stato.getNow()));
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					if(stato.getInCoda()>0) {
@@ -2209,7 +2208,7 @@ public final class Monitor extends Action {
 					else {
 						de.setValue(stato.getInCoda()+"");
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					if(stato.getInRiconsegna()>0) {
@@ -2234,7 +2233,7 @@ public final class Monitor extends Action {
 					else {
 						de.setValue(stato.getInRiconsegna()+"");
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					if(stato.getInMessageBox()>0) {
@@ -2259,10 +2258,10 @@ public final class Monitor extends Action {
 					else {
 						de.setValue(stato.getInMessageBox()+"");
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2423,7 +2422,7 @@ public final class Monitor extends Action {
 				pd.setMessage(sb.toString(), Costanti.MESSAGE_TYPE_INFO);
 			}
 
-			List<String> labels = new ArrayList<String>();
+			List<String> labels = new ArrayList<>();
 			//labels.add(MonitorCostanti.LABEL_MONITOR_IDMESSAGGIO);
 			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ORA_REGISTRAZIONE);
 			if(monitorCore.isShowJ2eeOptions()) {
@@ -2433,7 +2432,7 @@ public final class Monitor extends Action {
 			labels.add(MonitorCostanti.LABEL_MONITOR_DETTAGLIO);
 			pd.setLabels(labels.toArray(new String[1]));
 
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			boolean existsMessaggioInConsegna = false;
 
@@ -2444,12 +2443,12 @@ public final class Monitor extends Action {
 				SimpleDateFormat formatter = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm");
 				SimpleDateFormat formatterRispedizione = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss");
 
-				Map<String,PortaApplicativa> mapPA = new HashMap<String, PortaApplicativa>();
-				Map<String,Boolean> mapConsegnaMultipla = new HashMap<String, Boolean>(); 
-				Map<String,Boolean> mapServer = new HashMap<String, Boolean>(); 
-				Map<String,String> mapConnettori = new HashMap<String, String>(); 
-				Map<String,String> mapEndpointConnettori = new HashMap<String, String>(); 
-				Map<String,String> mapErogazione = new HashMap<String, String>(); 
+				Map<String,PortaApplicativa> mapPA = new HashMap<>();
+				Map<String,Boolean> mapConsegnaMultipla = new HashMap<>(); 
+				Map<String,Boolean> mapServer = new HashMap<>(); 
+				Map<String,String> mapConnettori = new HashMap<>(); 
+				Map<String,String> mapEndpointConnettori = new HashMap<>(); 
+				Map<String,String> mapErogazione = new HashMap<>(); 
 				
 				PorteApplicativeCore paCore = new PorteApplicativeCore(monitorCore);
 				ServiziApplicativiCore saCore = new ServiziApplicativiCore(monitorCore);
@@ -2457,7 +2456,7 @@ public final class Monitor extends Action {
 				
 				for (int i = 0; i < listaMessaggi.size(); i++) {
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					Messaggio messaggio = listaMessaggi.get(i);
 
@@ -2483,26 +2482,26 @@ public final class Monitor extends Action {
 					//de.setValue(messaggio.getIdMessaggio());
 					//NON SERVE SALVO IL PAGE DATA //de.setIdToRemove(messaggio.getIdMessaggio());
 					de.setToolTip(messaggio.getIdMessaggio());
-					//e.addElement(de);
+					//e.add(de);
 
 					// Ora Registrazione come label
 					Date oraRegistrazione = messaggio.getOraRegistrazione();
 					//de = new DataElement();
 					de.setValue(formatter.format(oraRegistrazione));
-					e.addElement(de);
+					e.add(de);
 				
 					// serve per l'eliminazione (posizione 2 e 3)
 					de = new DataElement();
 					de.setType(DataElementType.HIDDEN);
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
 					de.setValue(messaggio.getIdMessaggio());
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setType(DataElementType.HIDDEN);
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO);
 					de.setValue(tipo);
-					e.addElement(de);
+					e.add(de);
 					
 					// Stato
 					if(monitorCore.isShowJ2eeOptions()) {
@@ -2512,7 +2511,7 @@ public final class Monitor extends Action {
 						if(stato!=null)
 							statoS = stato.getValue();
 						de.setValue(statoS);
-						e.addElement(de);
+						e.add(de);
 					}
 
 					// Erogazione
@@ -2567,7 +2566,7 @@ public final class Monitor extends Action {
 					else {
 						de.setValue("-");
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					// Dettaglio
 					StringBuilder sbDestinatari = new StringBuilder();
@@ -2745,9 +2744,9 @@ public final class Monitor extends Action {
 					}
 					de = new DataElement();
 					de.setValue(sbDestinatari.toString());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2758,16 +2757,16 @@ public final class Monitor extends Action {
 			pd.setAddButton(false);
 			
 			if (listaMessaggi != null && !listaMessaggi.isEmpty() && existsMessaggioInConsegna) {
-				Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+				List<AreaBottoni> bottoni = new ArrayList<>();
 				AreaBottoni ab = new AreaBottoni();
-				Vector<DataElement> otherbott = new Vector<DataElement>();
+				List<DataElement> otherbott = new ArrayList<>();
 				DataElement de = new DataElement();
 				de.setValue(MonitorCostanti.LABEL_ACTION_RICONSEGNA_IMMEDIATA);
 				de.setOnClick(MonitorCostanti.ACTION_RICONSEGNA_IMMEDIATA_ONCLICK);
 				de.setDisabilitaAjaxStatus();
-				otherbott.addElement(de);
+				otherbott.add(de);
 				ab.setBottoni(otherbott);
-				bottoni.addElement(ab);
+				bottoni.add(ab);
 				pd.setAreaBottoni(bottoni);
 			}
 			

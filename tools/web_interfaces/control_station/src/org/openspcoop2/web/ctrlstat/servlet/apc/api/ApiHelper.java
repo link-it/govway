@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.apc.api;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -111,7 +110,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			boolean showServices = true;
 			if( !showProtocolli ) {
 				List<String> l = this.core.getProtocolli(this.request, this.session);
-				if(l.size()>0) {
+				if(!l.isEmpty()) {
 					IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(l.get(0));
 					if(p.getManifest().getBinding().getRest()==null) {
 						showResources=false;
@@ -147,14 +146,14 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			boolean profiloModipaSelezionato = false;
 			// solo se il protocollo modipa e' caricato faccio la verifica
 			if(this.core.getProtocolli().contains(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA)) {
-				List<String> profiloModipaSelezionato_opzioniAccettate = new ArrayList<String>();
-				profiloModipaSelezionato_opzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA);
+				List<String> profiloModipaSelezionatoOpzioniAccettate = new ArrayList<>();
+				profiloModipaSelezionatoOpzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA);
 				if(this.core.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi()) {
-					profiloModipaSelezionato_opzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI);
+					profiloModipaSelezionatoOpzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI);
 				}
-				if( (filterProtocol!=null && profiloModipaSelezionato_opzioniAccettate.contains(filterProtocol))
+				if( (filterProtocol!=null && profiloModipaSelezionatoOpzioniAccettate.contains(filterProtocol))
 						||
-					(filterProtocol==null && protocolloS!=null && profiloModipaSelezionato_opzioniAccettate.contains(protocolloS))
+					(filterProtocol==null && protocolloS!=null && profiloModipaSelezionatoOpzioniAccettate.contains(protocolloS))
 					) {
 					profiloModipaSelezionato = true;
 				}
@@ -176,11 +175,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				addFilterCanale(canali, filterCanale, false);
 			}
 			
-			if(this.isShowGestioneWorkflowStatoDocumenti()){
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
-					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
-					this.addFilterStatoAccordo(filterStatoAccordo,false);
-				}
+			if(this.isShowGestioneWorkflowStatoDocumenti() &&
+				this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+				this.addFilterStatoAccordo(filterStatoAccordo,false);
 			}
 				
 			
@@ -234,13 +232,13 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			
 			List<String> labelLst = new ArrayList<>();
 			labelLst.add("");//AccordiServizioParteComuneCostanti.LABEL_APC_STATO); // colonna stato
-			labelLst.add(termine); // AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+			labelLst.add(termine); 
 			
 			String [] labels = labelLst.toArray(new String[labelLst.size()]);
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 			
 			// colleziono i tags registrati
 			List<String> tagsDisponibili = this.gruppiCore.getAllGruppiOrdinatiPerDataRegistrazione();
@@ -255,7 +253,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 
 			for (int i = 0; i < lista.size(); i++) {
-				Vector<DataElement> e = new Vector<DataElement>();
+				List<DataElement> e = new ArrayList<>();
 				AccordoServizioParteComuneSintetico accordoServizio = lista.get(i);
 				
 				Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, accordoServizio.getId()+"");
@@ -278,8 +276,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				String labelAccordo = getLabelIdAccordo(protocollo, idAccordo);
 				de.setValue(labelAccordo);
 				de.setIdToRemove("" + accordoServizio.getId());
-//				de.setToolTip(accordoServizio.getDescrizione());
-				e.addElement(de);
+				e.add(de);
 				
 				// Metadati Servizio 
 				de = new DataElement();
@@ -318,7 +315,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				}
 				
 				de.setType(DataElementType.SUBTITLE);
-				e.addElement(de);
+				e.add(de);
 				
 				de = new DataElement();
 				de.setName(ApiCostanti.APC_API_PARAMETRO_STATO_SERVIZI);
@@ -378,11 +375,11 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				}
 				
 				de.setWidthPx(16); 
-				e.addElement(de);
+				e.add(de);
 				
 				// tags
 				List<GruppoSintetico> gruppo = accordoServizio.getGruppo();
-				if(gruppo != null && gruppo.size() > 0) {
+				if(gruppo != null && !gruppo.isEmpty()) {
 					for (int j = 0; j < gruppo.size(); j++) {
 						GruppoSintetico gruppoSintetico = gruppo.get(j);
 						de = new DataElement();
@@ -398,7 +395,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 						
 						de.setStyleClass("label-info-"+indexOf);
 						
-						e.addElement(de);
+						e.add(de);
 					}
 				}
 								
@@ -408,7 +405,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
 				if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
 					
-					List<Parameter> listaParametriChange = new ArrayList<Parameter>();				
+					List<Parameter> listaParametriChange = new ArrayList<>();				
 					listaParametriChange.add(pIdAccordo);
 					listaParametriChange.add(pNomeAccordo);
 					listaParametriChange.add(pTipoAccordo);
@@ -417,7 +414,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				}
 
 				// aggiungo entry
-				dati.addElement(e);
+				dati.add(e);
 			}
 
 
@@ -425,7 +422,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			this.pd.setAddButton(true);
 
 			// preparo bottoni
-			if(lista!=null && lista.size()>0){
+			if(lista!=null && !lista.isEmpty()){
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
@@ -438,10 +435,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 					}
 					if(exists){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(AccordiServizioParteComuneCostanti.LABEL_APC_ESPORTA_SELEZIONATI);
 						if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
@@ -451,9 +448,9 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 							de.setOnClick(AccordiServizioParteComuneCostanti.LABEL_ASC_ESPORTA_SELEZIONATI_ONCLICK);
 						}
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -481,7 +478,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		ServletUtils.setObjectIntoSession(this.request, this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 		
 		// setto la barra del titolo
-		List<Parameter> lstParm = new ArrayList<Parameter>();
+		List<Parameter> lstParm = new ArrayList<>();
 		String termine = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo);
 		lstParm.add(new Parameter(termine, ApiCostanti.SERVLET_NAME_APC_API_LIST,pTipoAccordo));
 		lstParm.add(new Parameter(labelASTitle, null));
@@ -492,10 +489,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		// Preparo il menu
 		this.makeMenu();
 		
-		Vector<Vector<DataElement>> datiPagina = new Vector<Vector<DataElement>>();
-		Vector<DataElement> dati = new Vector<DataElement>();
+		List<List<DataElement>> datiPagina = new ArrayList<>();
+		List<DataElement> dati = new ArrayList<>();
 		datiPagina.add(dati);
-		dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+		dati.add(ServletUtils.getDataElementForEditModeFinished());
 		
 		ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(as.getServiceBinding());
 		
@@ -520,7 +517,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);	
 		
 		// setto la barra del titolo
-		List<Parameter> lstParm = new ArrayList<Parameter>();
+		List<Parameter> lstParm = new ArrayList<>();
 		String termine = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo);
 		lstParm.add(new Parameter(termine, ApiCostanti.SERVLET_NAME_APC_API_LIST,pTipoAccordo));
 		lstParm.add(new Parameter(labelASTitle, null));
@@ -586,7 +583,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 	}
 
 
-	private Vector<Vector<DataElement>> addApiToDati(Vector<Vector<DataElement>> datiPagina, TipoOperazione tipoOp,
+	private List<List<DataElement>> addApiToDati(List<List<DataElement>> datiPagina, TipoOperazione tipoOp,
 			AccordoServizioParteComune as, String tipoAccordo, String tipoProtocollo, ServiceBinding serviceBinding) throws Exception {
 		
 		this.pd.setCustomListViewName(ApiCostanti.APC_API_NOME_VISTA_CUSTOM_FORM_API);
@@ -602,7 +599,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		// nome accordo + link edit
 		// nome soggetto referente + link edit
 		// tipo interfaccia + link wsdl change + link download
-		Vector<DataElement> dati = datiPagina.elementAt(0);
+		List<DataElement> dati = datiPagina.get(0);
 		
 		List<Parameter> listParametersApi = new ArrayList<>();
 		listParametersApi.add(new Parameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE, "")); // lasciare per primo
@@ -615,7 +612,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 
 		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
 		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
-			List<Parameter> listaParametriChange = new ArrayList<Parameter>();				
+			List<Parameter> listaParametriChange = new ArrayList<>();				
 			listaParametriChange.add(pIdAccordo);
 			listaParametriChange.add(pNomeAccordo);
 			listaParametriChange.add(pTipoAccordo);
@@ -689,7 +686,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			break;
 		}
 		
-		dati.addElement(de);
+		dati.add(de);
 		
 
 		
@@ -708,7 +705,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE));
 			image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 			de.setImage(image);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// ProtocolProperties
@@ -740,7 +737,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				de.setImage(image);
 			}
 			
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// interfaccia
@@ -841,7 +838,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 		}
 		
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		// Descrizione
@@ -868,15 +865,15 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 		de.setImage(image);
 		
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Gruppi 
 		de = new DataElement();
 		de.setType(DataElementType.BUTTON);
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI);
 
-		List<String> labelsGruppi = new ArrayList<String>();
-		List<String> valuesGruppi = new ArrayList<String>();
+		List<String> labelsGruppi = new ArrayList<>();
+		List<String> valuesGruppi = new ArrayList<>();
 		
 		GruppiAccordo gruppi = as.getGruppi();
 		if(gruppi != null) {
@@ -909,7 +906,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 		de.setImage(image);
 		
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Canale
 		CanaliConfigurazione gestioneCanali = this.confCore.getCanaliConfigurazione(false);
@@ -930,7 +927,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 			de.setImage(image);
 			
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// link
@@ -943,7 +940,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, listParametersApi.toArray(new Parameter[1]));
 				de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_RISORSE);
 				de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_RISORSE);
-				dati.addElement(de);
+				dati.add(de);
 			break;
 		case SOAP:
 		default:
@@ -954,7 +951,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, listParametersApi.toArray(new Parameter[1]));
 			de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_SERVIZI);
 			de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_SERVIZI);
-			dati.addElement(de);
+			dati.add(de);
 			break;
 		
 		}
@@ -966,7 +963,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST, listParametersApi.toArray(new Parameter[1]));
 		de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_ALLEGATI);
 		de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_ALLEGATI);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// 3. opzioni avanzate
 		if(this.isModalitaAvanzata()) {
@@ -976,7 +973,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
 			de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE);
 			de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_OPZIONI_AVANZATE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -989,7 +986,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		de.setValue(ApiCostanti.APC_API_LABEL_NUOVA_VERSIONE_API);
 		de.setIcon(ApiCostanti.APC_API_ICONA_NUOVA_VERSIONE_API);
 		de.spostaLinkADestra();
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		return datiPagina;

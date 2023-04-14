@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.Cookie;
@@ -56,6 +55,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ServletUtils {
+	
+	private ServletUtils() {}
 
 
 	/* ------ STRUTS -FORWARD -ERROR */
@@ -220,9 +221,9 @@ public class ServletUtils {
 	}
 	private static void setPageDataTitle(PageData pd, boolean append, Parameter ... param){
 
-		Vector<GeneralLink> titlelist = null;
+		List<GeneralLink> titlelist = null;
 		if(!append){
-			titlelist = new Vector<GeneralLink>();
+			titlelist = new ArrayList<>();
 		}
 		else{
 			titlelist = pd.getTitleList();
@@ -236,7 +237,7 @@ public class ServletUtils {
 			if(param[i].getValue()!=null){
 				tl.setUrl(param[i].getValue());
 			}
-			titlelist.addElement(tl);
+			titlelist.add(tl);
 		}
 
 		pd.setTitleList(titlelist);

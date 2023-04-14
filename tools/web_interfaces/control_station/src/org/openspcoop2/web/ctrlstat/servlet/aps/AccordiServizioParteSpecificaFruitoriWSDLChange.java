@@ -25,7 +25,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -148,7 +147,8 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			if(strutsBean.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE)){
 				wsdlbyte = myFru.getByteWsdlImplementativoErogatore();
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_EROGATORE;
-			}if(strutsBean.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE)){
+			}
+			if(strutsBean.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE)){
 				wsdlbyte = myFru.getByteWsdlImplementativoFruitore();
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_FRUITORE;
 			}
@@ -194,7 +194,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, ""+ strutsBean.idSoggettoFruitore)
 					);
 			if (ServletUtils.isEditModeInProgress(strutsBean.editMode)) {
-				List<Parameter> lstParm = new ArrayList<Parameter>();
+				List<Parameter> lstParm = new ArrayList<>();
 
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + titleServizio, 
@@ -209,8 +209,8 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, strutsBean.id, null, null, dati);
 
@@ -229,7 +229,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.accordiParteSpecificaFruitoreWSDLCheckData(pd, strutsBean.tipo, strutsBean.wsdl, myFru, asps, as, strutsBean.validazioneDocumenti);
 			if (!isOk) {
-				List<Parameter> lstParm = new ArrayList<Parameter>();
+				List<Parameter> lstParm = new ArrayList<>();
 
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + titleServizio, 
@@ -244,9 +244,9 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, strutsBean.id, null, null, dati);
 
@@ -296,7 +296,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 					);
 
 			// setto la barra del titolo
-			List<Parameter> lstParm = new ArrayList<Parameter>();
+			List<Parameter> lstParm = new ArrayList<>();
 
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + titleServizio, 
@@ -309,10 +309,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParm );
-			
-//			strutsBean.wsdlimpler = new BinaryParameter();
-//			strutsBean.wsdlimplfru = new BinaryParameter();
-			
+						
 			protocollo = apsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
 			
 			strutsBean.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
@@ -338,7 +335,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, "");
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, strutsBean.id, null, null, dati);
 

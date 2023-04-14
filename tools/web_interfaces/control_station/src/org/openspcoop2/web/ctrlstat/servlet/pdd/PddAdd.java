@@ -21,8 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pdd;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -125,19 +125,19 @@ public final class PddAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_LIST);
 	
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				if (nome == null)
 				    dati = pddHelper.addPddToDati(dati, "", null,  ip, "", "", "", 
 				    		PddTipologia.OPERATIVO, TipoOperazione.ADD, 
-				    		PddCostanti.DEFAULT_PDD_PROTOCOLLI, PddCostanti.DEFAULT_PDD_PROTOCOLLO, PddCostanti.DEFAULT_PDD_PROTOCOLLO, 
+				    		PddCostanti.getDefaultPddProtocolli(), PddCostanti.DEFAULT_PDD_PROTOCOLLO, PddCostanti.DEFAULT_PDD_PROTOCOLLO, 
 				    		portaInt, descrizione, ipGestione, portaGestioneInt, implementazione, CostantiConfigurazione.DISABILITATO.toString(), false);
 				else
 				    dati = pddHelper.addPddToDati(dati, nome, null,  ip, subject, "", "", 
 				    		PddTipologia.toPddTipologia(tipo), TipoOperazione.ADD, 
-				    		PddCostanti.DEFAULT_PDD_PROTOCOLLI, protocollo,  protocolloGestione,
+				    		PddCostanti.getDefaultPddProtocolli(), protocollo,  protocolloGestione,
 				    		portaInt, descrizione, ipGestione, portaGestioneInt, implementazione, clientAuth, false);
 	
 				pd.setDati(dati);
@@ -156,13 +156,13 @@ public final class PddAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_LIST);
 	
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				dati = pddHelper.addPddToDati(dati, nome, null, ip, subject, "" /* password */, ""/* confpw */, 
 						PddTipologia.toPddTipologia(tipo), TipoOperazione.ADD,
-						PddCostanti.DEFAULT_PDD_PROTOCOLLI, protocollo,  protocolloGestione,
+						PddCostanti.getDefaultPddProtocolli(), protocollo,  protocolloGestione,
 						portaInt, descrizione, ipGestione, portaGestioneInt, implementazione, clientAuth, false);
 	
 				pd.setDati(dati);
@@ -194,7 +194,6 @@ public final class PddAdd extends Action {
 			pdd.setImplementazione(implementazione);
 			pdd.setClientAuth(StatoFunzionalita.toEnumConstant(clientAuth));
 			if (tipo.equals(PddTipologia.OPERATIVO.toString()) || tipo.equals(PddTipologia.NONOPERATIVO.toString())) {
-				// pdd.setPassword(password);
 				pdd.setIp(ip);
 				pdd.setProtocollo(protocollo);
 				pdd.setPorta(portaInt);

@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -88,8 +87,8 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 
 			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			String idServizioComponente = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_COMPONENTE);
-			long idAccordoLong = Long.valueOf(idAccordo);
-			//String portType = apcHelper.getParameter("port_type");
+			long idAccordoLong = Long.parseLong(idAccordo);
+			/**String portType = apcHelper.getParameter("port_type");*/
 
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_TIPO_SICA );
 			if("".equals(tipoAccordo))
@@ -108,7 +107,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			ServiceBinding serviceBinding = org.openspcoop2.protocol.basic.Utilities.convert(as.getServiceBinding());
 
 
-			//String profiloReferente = soggettiCore.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getVersioneProtocollo();
+			/**String profiloReferente = soggettiCore.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getVersioneProtocollo();*/
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			List<String> tipiServiziCompatibili = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 			List<String> tipiSoggettiCompatibili = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
@@ -117,14 +116,13 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			//calcolo la lista dei servizi da visualizzare
 			String[] serviziList = null;
 			String[] serviziListLabel = null;
-			//String[] ptList = null;
 			List<String[]> lst = apcCore.getAccordiServizioCompostoLabels(as, idAccordoLong, userLogin, tipiServiziCompatibili, tipiSoggettiCompatibili, apcHelper);
 
 			serviziList = lst.get(0);
 			serviziListLabel = lst.get(1);
 
 			// Lista port-type associati all'accordo di servizio
-			//			AccordoServizioParteSpecifica ssComponente = null;
+			/**			AccordoServizioParteSpecifica ssComponente = null;
 			//			if (idServizioComponente != null && !"".equals(idServizioComponente)) {
 			//				ssComponente = core.getAccordoServizioParteSpecifica(Long.parseLong(idServizioComponente));
 			//			} else {
@@ -143,7 +141,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			//						i++;
 			//					}
 			//				}
-			//			}
+			//			}*/
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
@@ -151,7 +149,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 
 
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo), 
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST,
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
@@ -165,24 +163,13 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = 	apcHelper.addAccordiServizioComponentiToDati(TipoOperazione.ADD,idAccordo,
 						idServizioComponente, tipoAccordo, serviziList,
 						serviziListLabel, dati);
-
-				//				if (ptList != null) {
-				//					de = new DataElement();
-				//					de.setLabel("Servizio");
-				//					de.setType("select");
-				//					de.setName("port_type");
-				//					de.setValues(ptList);
-				//					de.setLabels(ptList);
-				//					de.setSelected(portType);
-				//					dati.addElement(de);
-				//				}
 
 				pd.setDati(dati);
 
@@ -196,7 +183,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			boolean isOk = apcHelper.accordiComponentiCheckData(TipoOperazione.ADD,idServizioComponente);
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo), 
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST,
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
@@ -210,22 +197,11 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
 				dati = apcHelper.addAccordiServizioComponentiToDati(TipoOperazione.ADD,idAccordo,
 						idServizioComponente, tipoAccordo, serviziList,
 						serviziListLabel, dati);
-
-				//				if (ptList != null) {
-				//					de = new DataElement();
-				//					de.setLabel("Servizio");
-				//					de.setType("select");
-				//					de.setName("port_type");
-				//					de.setValues(ptList);
-				//					de.setLabels(ptList);
-				//					de.setSelected(portType);
-				//					dati.addElement(de);
-				//				}
 
 				pd.setDati(dati);
 

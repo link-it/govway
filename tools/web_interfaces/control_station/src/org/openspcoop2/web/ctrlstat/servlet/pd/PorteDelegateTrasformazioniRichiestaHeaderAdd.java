@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -171,7 +170,7 @@ public class PorteDelegateTrasformazioniRichiestaHeaderAdd extends Action {
 			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdAsps);
@@ -181,7 +180,7 @@ public class PorteDelegateTrasformazioniRichiestaHeaderAdd extends Action {
 			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA,
 					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA,parametriInvocazioneServletTrasformazioniRichiesta));
 						
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdAsps);
@@ -199,8 +198,8 @@ public class PorteDelegateTrasformazioniRichiestaHeaderAdd extends Action {
 			// dati
 			if (porteDelegateHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addTrasformazioneRichiestaHeaderToDati(TipoOperazione.ADD, protocollo, true, dati, idTrasformazioneS, null, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				
@@ -228,9 +227,9 @@ public class PorteDelegateTrasformazioniRichiestaHeaderAdd extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addTrasformazioneRichiestaHeaderToDati(TipoOperazione.ADD, protocollo, true, dati, idTrasformazioneS, null, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				
@@ -271,8 +270,8 @@ public class PorteDelegateTrasformazioniRichiestaHeaderAdd extends Action {
 			
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
 			
-			// ricaricare id trasformazione
-			portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(id));
+			/** ricaricare id trasformazione
+			portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(id)); */
 
 			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(Long.parseLong(id), regola.getNome());
 

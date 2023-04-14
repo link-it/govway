@@ -23,7 +23,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.warn
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -95,12 +95,12 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(url);
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);		
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		Utils.checkConditionsNumeroRichieste(idPolicy2, 0, maxRequests, 0);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkOkRequests(responses, windowSize, maxRequests);
 		
-		Vector<HttpResponse>  warningResponses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse>  warningResponses = Utils.makeParallelRequests(request, maxRequests);
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests*2, 0);
 		Utils.checkConditionsNumeroRichieste(idPolicy2, 0, maxRequests, 0);
 

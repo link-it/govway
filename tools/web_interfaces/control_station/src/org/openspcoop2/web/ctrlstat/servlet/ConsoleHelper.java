@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.UUID;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 import javax.mail.BodyPart;
@@ -1694,7 +1693,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			List<IExtendedMenu> extendedMenu = this.core.getExtendedMenu();
 
-			Vector<MenuEntry> menu = new Vector<MenuEntry>();
+			List<MenuEntry> menu = new ArrayList<>();
 
 			boolean showAccordiCooperazione = pu.isAccordiCooperazione() && this.core.isAccordiCooperazioneEnabled();
 			
@@ -1943,7 +1942,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 
 				me.setEntries(entries);
-				menu.addElement(me);
+				menu.add(me);
 			}
 
 
@@ -2033,7 +2032,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 
 					me.setEntries(entries);
-					menu.addElement(me);
+					menu.add(me);
 				}
 				
 				
@@ -2178,7 +2177,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 
 					me.setEntries(entries);
-					menu.addElement(me);
+					menu.add(me);
 
 				}else {
 
@@ -2268,7 +2267,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 
 						me.setEntries(entries);
-						menu.addElement(me);
+						menu.add(me);
 					}
 				}
 
@@ -2371,7 +2370,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 
 					me.setEntries(entries);
-					menu.addElement(me);
+					menu.add(me);
 
 				}else {
 
@@ -2463,7 +2462,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 
 						me.setEntries(entries);
-						menu.addElement(me);
+						menu.add(me);
 					}
 
 				}
@@ -2535,7 +2534,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 
 					me.setEntries(entries);
-					menu.addElement(me);
+					menu.add(me);
 				}
 			}
 
@@ -2695,7 +2694,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 
-	public Vector<DataElement> addNomeValoreToDati( TipoOperazione tipoOp,Vector<DataElement> dati, String nome, String valore, boolean enableUpdate) {
+	public List<DataElement> addNomeValoreToDati( TipoOperazione tipoOp,List<DataElement> dati, String nome, String valore, boolean enableUpdate) {
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
 		de.setValue(nome);
@@ -2707,7 +2706,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		de.setName(CostantiControlStation.PARAMETRO_NOME);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
@@ -2716,24 +2715,24 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_VALORE);
 		de.setSize(this.getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 		
-	public Vector<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta,
-			Vector<DataElement> dati) {
+	public List<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta,
+			List<DataElement> dati) {
 		return addHiddenFieldsToDati(tipoOp, id, idsogg, idPorta, null, dati);
 	}
 	
-	public Vector<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta, String idAsps,
-			Vector<DataElement> dati) {
+	public List<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta, String idAsps,
+			List<DataElement> dati) {
 		return addHiddenFieldsToDati(tipoOp, id, idsogg, idPorta, idAsps, null, null, null, dati);
 	}
 
-	public Vector<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta, String idAsps, 
+	public List<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta, String idAsps, 
 			String idFruizione, String tipoSoggettoFruitore, String nomeSoggettoFruitore,
-			Vector<DataElement> dati) {
+			List<DataElement> dati) {
 
 		DataElement de = new DataElement();
 		if(id!= null){
@@ -2741,7 +2740,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		if(idsogg != null){
 			de = new DataElement();
@@ -2749,7 +2748,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(idsogg);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID_SOGGETTO);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		if(idPorta != null){
 			de = new DataElement();
@@ -2757,7 +2756,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(idPorta);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID_PORTA);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(idAsps != null){
@@ -2766,7 +2765,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(idAsps);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID_ASPS);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(idFruizione != null){
@@ -2775,7 +2774,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(idFruizione);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID_FRUIZIONE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(tipoSoggettoFruitore != null){
@@ -2783,7 +2782,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(tipoSoggettoFruitore);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(nomeSoggettoFruitore != null){
@@ -2791,7 +2790,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(nomeSoggettoFruitore);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		return dati;
@@ -2973,7 +2972,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	// *** Utilities condivise tra Porte Delegate e Porte Applicative ***
 	
-	public Vector<DataElement> addPorteServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
+	public List<DataElement> addPorteServizioApplicativoToDati(TipoOperazione tipoOp, List<DataElement> dati, 
 			String servizioApplicativo, String[] servizioApplicativoList, int sizeAttuale, 
 			boolean addMsgServiziApplicativoNonDisponibili, boolean addTitle,
 			boolean isToken) {
@@ -2983,7 +2982,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_TOKEN_AUTHORIZATION);
 			de.setValue("true");
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(servizioApplicativoList!=null && servizioApplicativoList.length>0){
@@ -2997,7 +2996,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(labelApplicativo);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			DataElement de = new DataElement();
@@ -3006,7 +3005,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
 			de.setValues(servizioApplicativoList);
 			de.setSelected(servizioApplicativo);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}else{
 			if(addMsgServiziApplicativoNonDisponibili){
@@ -3023,7 +3022,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addPorteSoggettoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
+	public List<DataElement> addPorteSoggettoToDati(TipoOperazione tipoOp, List<DataElement> dati, 
 			String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
 				boolean addMsgSoggettiNonDisponibili, boolean addTitle) {
 			
@@ -3033,7 +3032,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					DataElement de = new DataElement();
 					de.setType(DataElementType.TITLE);
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				DataElement de = new DataElement();
@@ -3043,7 +3042,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabels(soggettiLabelList);
 				de.setValues(soggettiList);
 				de.setSelected(soggetto);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}else{
 				if(addMsgSoggettiNonDisponibili){
@@ -3060,7 +3059,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return dati;
 		}
 
-	public Vector<DataElement> addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
+	public List<DataElement> addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, List<DataElement> dati, 
 			String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
 			Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi, String sa,
 			boolean addMsgApplicativiNonDisponibili, boolean showTitle, boolean isAutorizzazioneModi,
@@ -3072,7 +3071,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
 			de.setValue("true");
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(isToken) {
@@ -3080,7 +3079,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_TOKEN_AUTHORIZATION);
 			de.setValue("true");
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(soggettiList!=null && soggettiList.length>0 && listServiziApplicativi!=null && listServiziApplicativi.size()>0){
@@ -3089,7 +3088,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			DataElement de = new DataElement();
@@ -3106,7 +3105,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			else {
 				de.setType(DataElementType.HIDDEN);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			List<IDServizioApplicativoDB> listSA = null;
 			if(soggetto!=null && !"".equals(soggetto)) {
@@ -3136,7 +3135,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabels(saLabels);
 				de.setValues(saValues);
 				de.setSelected(sa);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			else {
@@ -3192,7 +3191,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 
-	public Vector<DataElement> addMessageSecurityToDati(Vector<DataElement> dati,boolean delegata,long idPorta,
+	public List<DataElement> addMessageSecurityToDati(List<DataElement> dati,boolean delegata,long idPorta,
                 String messageSecurity, String url1, String url2, Boolean contaListe, int numWSreq, int numWSres, boolean showApplicaMTOMReq, String applicaMTOMReq,
                 boolean showApplicaMTOMRes, String applicaMTOMRes,String idPropConfigReq, String idPropConfigRes, 
                 String[] propConfigReqLabelList, String[] propConfigReqList, String[] propConfigResLabelList, String[] propConfigResList,String oldIdPropConfigReq, String oldIdPropConfigRes) {
@@ -3201,7 +3200,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_MESSAGE_SECURITY);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		de = new DataElement();
@@ -3216,19 +3215,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValues(tipoWS);
 		de.setSelected(messageSecurity);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_SECURITY_ABILITATO.equals(messageSecurity)){
 			//			de = new DataElement();
 			//			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_MESSAGE_SECURITY);
 			//			de.setType(DataElementType.TITLE);
-			//			dati.addElement(de);
+			//			dati.add(de);
 
 			// Sezione Richiesta
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RICHIESTA);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			// Applica MTOM Richiesta
 			de = new DataElement();
@@ -3243,7 +3242,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(applicaMTOMReq); 
 			}
 			de.setName(CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
@@ -3258,7 +3257,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(idPropConfigReq); 
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 			if(idPropConfigReq.equals(oldIdPropConfigReq) && !idPropConfigReq.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) { // finche' non applico la modifica questi due valori saranno diversi
 				de = new DataElement();
@@ -3287,7 +3286,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							note.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA_LABEL);
 							note.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA);
 							note.setType(DataElementType.NOTE);
-							dati.addElement(note);
+							dati.add(note);
 							
 							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_COMPLETA);
 						}
@@ -3319,14 +3318,14 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			// Sezione Risposta
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RISPOSTA);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			// Applica MTOM Risposta
 			de = new DataElement();
@@ -3341,7 +3340,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(applicaMTOMRes); 
 			}
 			de.setName(CostantiControlStation.PARAMETRO_APPLICA_MTOM_RISPOSTA);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
@@ -3356,7 +3355,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(idPropConfigReq); 
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 			if(idPropConfigRes.equals(oldIdPropConfigRes) && !idPropConfigRes.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) { // finche' non applico la modifica questi due valori saranno diversi
 				de = new DataElement();
@@ -3385,7 +3384,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							note.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA_LABEL);
 							note.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA);
 							note.setType(DataElementType.NOTE);
-							dati.addElement(note);
+							dati.add(note);
 							
 							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_COMPLETA);
 						}
@@ -3417,7 +3416,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 
@@ -3426,7 +3425,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 
-	public Vector<DataElement> addMTOMToDati(Vector<DataElement> dati, String[] modeMtomListReq,String[] modeMtomListRes,
+	public List<DataElement> addMTOMToDati(List<DataElement> dati, String[] modeMtomListReq,String[] modeMtomListRes,
 			String mtomRichiesta,String mtomRisposta, String url1, String url2, Boolean contaListe, int numMTOMreq, int numMTOMres) {
 
 		DataElement de = new DataElement();
@@ -3435,7 +3434,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RICHIESTA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		// Stato
 		de = new DataElement();
@@ -3445,7 +3444,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValues(modeMtomListReq);
 		de.setSelected(mtomRichiesta);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		// Link
 		if(url1 != null){
@@ -3456,7 +3455,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI +"(" + numMTOMreq + ")");
 			else
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 
@@ -3464,7 +3463,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RISPOSTA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		// Stato
 		de = new DataElement();
@@ -3474,7 +3473,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValues(modeMtomListRes);
 		de.setSelected(mtomRisposta);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		// Link
 		if(url2 != null){
@@ -3485,7 +3484,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI +"(" + numMTOMres + ")");
 			else
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		dati = addParameterApplicaModifica(dati);
@@ -3502,20 +3501,20 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 
 	// Dati schermata correlazione applicativa
-	public Vector<DataElement> addCorrelazioneApplicativaToDati(Vector<DataElement> dati,boolean portaDelegata,
+	public List<DataElement> addCorrelazioneApplicativaToDati(List<DataElement> dati,boolean portaDelegata,
 			boolean riusoID,String scadcorr, String urlRichiesta, String urlRisposta, Boolean contaListe, int numCorrelazioneReq, int numCorrelazioneRes) {
 
 		DataElement de = new DataElement();
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.SUBTITLE);
 		//de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RICHIESTA);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(portaDelegata){		
 			if (riusoID && numCorrelazioneReq > 0 && this.isModalitaAvanzata()) {
@@ -3525,7 +3524,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(scadcorr);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(CostantiControlStation.PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		} else {
 			if (riusoIdCorrelazioneApplicativaPA && numCorrelazioneReq > 0 && this.isModalitaAvanzata()) {
@@ -3535,7 +3534,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(scadcorr);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(CostantiControlStation.PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
-				dati.addElement(de);
+				dati.add(de);
 			} 
 		}
 		
@@ -3548,14 +3547,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		} else
 			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RICHIESTA);
 
-		dati.addElement(de);
+		dati.add(de);
 
 		
 		de = new DataElement();
 		de.setType(DataElementType.SUBTITLE);
 		//de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RISPOSTA);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.LINK);
@@ -3566,20 +3565,20 @@ public class ConsoleHelper implements IConsoleHelper {
 		} else
 			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RISPOSTA);
 
-		dati.addElement(de);
+		dati.add(de);
 		
 		dati = addParameterApplicaModifica(dati);
 
 		return dati;
 	}
 
-	public Vector<DataElement> addParameterApplicaModifica(Vector<DataElement> dati) {
+	public List<DataElement> addParameterApplicaModifica(List<DataElement> dati) {
 		DataElement de;
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_APPLICA_MODIFICA); 
 		de.setValue(Costanti.CHECK_BOX_ENABLED);
-		dati.addElement(de);
+		dati.add(de);
 		return dati;
 	}
 	
@@ -3994,7 +3993,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 
-	public Vector<DataElement> addMTOMParameterToDati(TipoOperazione tipoOp,Vector<DataElement> dati,boolean enableUpdate, String nome, String pattern,
+	public List<DataElement> addMTOMParameterToDati(TipoOperazione tipoOp,List<DataElement> dati,boolean enableUpdate, String nome, String pattern,
 			String contentType, String obbligatorio, MTOMProcessorType type) {
 
 		// Nome
@@ -4021,7 +4020,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			break;
 		}
 		de.setInfo(dInfoPattern);
-		dati.addElement(de);
+		dati.add(de);
 
 		// Pattern
 		de = new DataElement();
@@ -4044,7 +4043,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			break;
 		}
 		de.setInfo(dInfoPattern);
-		dati.addElement(de);
+		dati.add(de);
 
 		// Content-type
 		de = new DataElement();
@@ -4066,7 +4065,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			break;
 		}
 		de.setInfo(dInfoPattern);
-		dati.addElement(de);
+		dati.add(de);
 
 		// Obbligatorio
 		de = new DataElement();
@@ -4076,16 +4075,16 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSelected(true);
 		}
 		de.setName(CostantiControlStation.PARAMETRO_OBBLIGATORIO);
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 
-	public Vector<DataElement> addProtocolPropertiesToDatiRegistry(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+	public List<DataElement> addProtocolPropertiesToDatiRegistry(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ProtocolProperties protocolProperties) throws Exception{
 		return addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration, consoleOperationType, protocolProperties, null, null);
 	}
-	public Vector<DataElement> addProtocolPropertiesToDatiRegistry(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+	public List<DataElement> addProtocolPropertiesToDatiRegistry(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
 		
 		String titleId = null;
@@ -4143,11 +4142,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addProtocolPropertiesToDatiConfig(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+	public List<DataElement> addProtocolPropertiesToDatiConfig(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ProtocolProperties protocolProperties) throws Exception{
 		return addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration, consoleOperationType, protocolProperties, null, null);
 	}
-	public Vector<DataElement> addProtocolPropertiesToDatiConfig(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+	public List<DataElement> addProtocolPropertiesToDatiConfig(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ProtocolProperties protocolProperties, List<org.openspcoop2.core.config.ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
 	
 		String titleId = null;
@@ -4206,12 +4205,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public Vector<DataElement> addProtocolPropertiesToDatiAsHidden(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+	public List<DataElement> addProtocolPropertiesToDatiAsHidden(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ProtocolProperties protocolProperties) throws Exception{
 		return addProtocolPropertiesToDatiAsHidden(dati, consoleConfiguration, consoleOperationType, protocolProperties, null, null);
 	}
 
-	public Vector<DataElement> addProtocolPropertiesToDatiAsHidden(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+	public List<DataElement> addProtocolPropertiesToDatiAsHidden(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
 		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
 			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
@@ -4370,7 +4369,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 
 	
-	public Vector<DataElement> addRuoliToDati(TipoOperazione tipoOp,Vector<DataElement> dati,boolean enableUpdate, FiltroRicercaRuoli filtroRuoli, String nome, 
+	public List<DataElement> addRuoliToDati(TipoOperazione tipoOp,List<DataElement> dati,boolean enableUpdate, FiltroRicercaRuoli filtroRuoli, String nome, 
 			List<String> ruoliGiaConfigurati, boolean addSelezioneVuota, boolean addMsgServiziApplicativoNonDisponibili, 
 			boolean addTitoloSezione, 
 			String accessDaChangeTmp,
@@ -4380,7 +4379,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				addTitoloSezione, accessDaChangeTmp,
 				isToken);
 	}
-	public Vector<DataElement> addRuoliToDati(TipoOperazione tipoOp,Vector<DataElement> dati,boolean enableUpdate, FiltroRicercaRuoli filtroRuoli, String nome, 
+	public List<DataElement> addRuoliToDati(TipoOperazione tipoOp,List<DataElement> dati,boolean enableUpdate, FiltroRicercaRuoli filtroRuoli, String nome, 
 			List<String> ruoliGiaConfigurati, boolean addSelezioneVuota, boolean addMsgServiziApplicativoNonDisponibili, String labelParametro,
 			boolean addTitoloSezione,
 			String accessDaChangeTmp,
@@ -4403,14 +4402,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ACCESSO_DA_CHANGE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(accessDaChangeTmp);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(isToken) {
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_TOKEN_AUTHORIZATION);
 			de.setValue("true");
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// Nome
@@ -4420,7 +4419,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de = new DataElement();
 				de.setLabel(RuoliCostanti.LABEL_RUOLO);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			List<String> ruoli = new ArrayList<>();
@@ -4441,7 +4440,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			de.setName(CostantiControlStation.PARAMETRO_RUOLO);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		else{
 			if(addMsgServiziApplicativoNonDisponibili){
@@ -4457,14 +4456,14 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		return dati;
 	}
-	public Vector<DataElement> addScopeToDati(TipoOperazione tipoOp,Vector<DataElement> dati,boolean enableUpdate, FiltroRicercaScope filtroScope, String nome, 
+	public List<DataElement> addScopeToDati(TipoOperazione tipoOp,List<DataElement> dati,boolean enableUpdate, FiltroRicercaScope filtroScope, String nome, 
 			List<String> ruoliGiaConfigurati, boolean addSelezioneVuota, boolean addMsgServiziApplicativoNonDisponibili, 
 			boolean addTitoloSezione) throws DriverRegistroServiziException {
 		return this.addScopeToDati(tipoOp, dati, enableUpdate, filtroScope, nome, ruoliGiaConfigurati, 
 				addSelezioneVuota, addMsgServiziApplicativoNonDisponibili, CostantiControlStation.LABEL_PARAMETRO_SCOPE, 
 				addTitoloSezione);
 	}
-	public Vector<DataElement> addScopeToDati(TipoOperazione tipoOp,Vector<DataElement> dati,boolean enableUpdate, FiltroRicercaScope filtroScope, String nome, 
+	public List<DataElement> addScopeToDati(TipoOperazione tipoOp,List<DataElement> dati,boolean enableUpdate, FiltroRicercaScope filtroScope, String nome, 
 			List<String> scopeGiaConfigurati, boolean addSelezioneVuota, boolean addMsgServiziApplicativoNonDisponibili, String labelParametro,
 			boolean addTitoloSezione) throws DriverRegistroServiziException {
 
@@ -4488,7 +4487,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				DataElement de = new DataElement();
 				de.setLabel(ScopeCostanti.LABEL_SCOPE);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			List<String> ruoli = new ArrayList<>();
@@ -4509,7 +4508,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			de.setName(CostantiControlStation.PARAMETRO_SCOPE);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		else{
 			if(addMsgServiziApplicativoNonDisponibili){
@@ -4558,11 +4557,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void controlloAccessi(Vector<DataElement> dati) throws Exception{
+	public void controlloAccessi(List<DataElement> dati) throws Exception{
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI);
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
 	public List<String> convertFromDataElementValue_parametroAutenticazioneList(String autenticazione, TipoAutenticazionePrincipal autenticazionePrincipal) throws Exception{
@@ -4735,7 +4734,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return l;
 	}
 	
-	public void controlloAccessiAdd(Vector<DataElement> dati, TipoOperazione tipoOperazione, String statoControlloAccessiAdd, boolean forceAutenticato) {
+	public void controlloAccessiAdd(List<DataElement> dati, TipoOperazione tipoOperazione, String statoControlloAccessiAdd, boolean forceAutenticato) {
 		
 		if(!this.isModalitaCompleta() && TipoOperazione.ADD.equals(tipoOperazione)) {
 			
@@ -4743,7 +4742,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				DataElement de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI );
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			DataElement de = new DataElement();
@@ -4759,14 +4758,14 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabels(CostantiControlStation.SELECT_VALUES_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
 				de.setSelected(statoControlloAccessiAdd);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 		
 	}
 			
 	
-	public void controlloAccessiAutenticazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
+	public void controlloAccessiAutenticazione(List<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
 			String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
 			TipoAutenticazionePrincipal autenticazionePrincipal,  List<String> autenticazioneParametroList,
 			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata,
@@ -4845,7 +4844,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					DataElement de = new DataElement();
 					de.setType(DataElementType.SUBTITLE); //SUBTITLE);
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TOKEN_CLAIMS);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				DataElement de = new DataElement();
@@ -4859,7 +4858,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenIssuer));
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
@@ -4872,7 +4871,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenClientId));
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT);
@@ -4885,7 +4884,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenSubject));
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
@@ -4898,7 +4897,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenUsername));
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
@@ -4911,7 +4910,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenEMail));
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			
@@ -4927,7 +4926,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE+" "+CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TRASPORTO);
 				}
 				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.APERTO);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(isSupportatoAutenticazioneSoggetti){
@@ -4936,7 +4935,7 @@ public class ConsoleHelper implements IConsoleHelper {
 //					DataElement de = new DataElement();
 //					de.setType(DataElementType.SUBTITLE); //SUBTITLE);
 //					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TRASPORTO);
-//					dati.addElement(de);
+//					dati.add(de);
 //				}
 			
 				List<String> autenticazioneValues = TipoAutenticazione.getValues();
@@ -4965,7 +4964,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(forceHttps) {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(autenticazione);
-						dati.addElement(de);
+						dati.add(de);
 						
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
@@ -4977,7 +4976,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					else if(existsAutorizzazioniPuntuali) {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(autenticazione);
-						dati.addElement(de);
+						dati.add(de);
 						
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
@@ -5003,7 +5002,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setValoreDefaultSelect(TipoAutenticazione.DISABILITATO.getValue());
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 		
 				String tipoAutenticazioneCustom = isPortaDelegata ? Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE : Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE;
 				boolean autenticazioneCustomHidden = (allHidden || (autenticazione == null) || (!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)));
@@ -5030,7 +5029,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 				de.setValue(autenticazioneCustom);
-				dati.addElement(de);
+				dati.add(de);
 				*/
 				
 				// se ho salvato il tipo custom faccio vedere il link alle proprieta'
@@ -5046,7 +5045,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						} else {
 							ServletUtils.setDataElementCustomLabel(de,labelCustomProperties);
 						}
-						dati.addElement(de);
+						dati.add(de);
 					}
 				}
 						
@@ -5082,7 +5081,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneParametro));
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 				else if(TipoAutenticazione.PRINCIPAL.equals(autenticazione)) {
 										
@@ -5105,7 +5104,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setPostBack(true);
 						de.setSelected(autenticazionePrincipal.getValue());
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					switch (autenticazionePrincipal) {
 					case CONTAINER:
@@ -5136,7 +5135,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							de.setType(DataElementType.TEXT_EDIT);
 							de.setRequired(true);
 						}
-						dati.addElement(de);
+						dati.add(de);
 						
 						// posizione 1: clean
 						if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty() &&
@@ -5161,7 +5160,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							de.setType(DataElementType.CHECKBOX);
 							de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneParametro));
 						}
-						dati.addElement(de);
+						dati.add(de);
 						
 						break;
 						
@@ -5183,7 +5182,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							de.setType(DataElementType.TEXT_AREA);
 							de.setRequired(true);
 						}
-						dati.addElement(de);
+						dati.add(de);
 						
 						break;
 						
@@ -5221,7 +5220,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							de.setRequired(true);
 							de.setPostBack(true);
 						}
-						dati.addElement(de);
+						dati.add(de);
 						
 						// posizione 1: nome claim proprietario
 						boolean claimProprietario = ParametriAutenticazionePrincipal.TOKEN_CLAIM_CUSTOM.equals(autenticazioneParametro);
@@ -5244,7 +5243,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								de.setType(DataElementType.TEXT_EDIT);
 								de.setRequired(true);
 							}
-							dati.addElement(de);
+							dati.add(de);
 						}
 						
 						break;
@@ -5279,7 +5278,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setSelected(apiKeyState.appIdSelected);
 						de.setPostBack(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// opzionale
 					addOpzionale(dati, allHidden, forceDisableOptional, autenticazioneOpzionale, autenticazione);
@@ -5301,7 +5300,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setRows(3);
 						de.setPostBack(!apiKeyState.useOAS3NamesSelected);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// useOAS3Names				
 					de = new DataElement();
@@ -5316,14 +5315,14 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setSelected(apiKeyState.useOAS3NamesSelected);
 						de.setPostBack(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// ** sezione apiKey **
 					if(!apiKeyState.useOAS3NamesSelected) {
 						de = new DataElement();
 						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
 						de.setType(DataElementType.SUBTITLE);
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 					// forwardApiKey
@@ -5344,7 +5343,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.CHECKBOX);
 						de.setSelected(apiKeyState.forwardApiKeySelected);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// queryParameterApiKey
 					de = new DataElement();
@@ -5359,7 +5358,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setValue(apiKeyState.queryParameterApiKey);
 						de.setRequired(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// headerApiKey
 					de = new DataElement();
@@ -5374,7 +5373,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setValue(apiKeyState.headerApiKey);
 						de.setRequired(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// cookieApiKey
 					de = new DataElement();
@@ -5389,7 +5388,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setValue(apiKeyState.cookieApiKey);
 						de.setRequired(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					
 					
@@ -5398,7 +5397,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de = new DataElement();
 						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 						de.setType(DataElementType.SUBTITLE);
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 					// forwardAppId
@@ -5419,7 +5418,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.CHECKBOX);
 						de.setSelected(apiKeyState.forwardAppIdSelected);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// queryParameterAppId
 					de = new DataElement();
@@ -5434,7 +5433,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setValue(apiKeyState.queryParameterAppId);
 						de.setRequired(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// headerAppId
 					de = new DataElement();
@@ -5449,7 +5448,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setValue(apiKeyState.headerAppId);
 						de.setRequired(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// cookieAppId
 					de = new DataElement();
@@ -5464,7 +5463,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setValue(apiKeyState.cookieAppId);
 						de.setRequired(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				if(addOpzionale) {
@@ -5483,11 +5482,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 			de.setValue(TipoAutenticazione.DISABILITATO.getValue());
-			dati.addElement(de);
+			dati.add(de);
 		}
 	}
 	
-	private void addOpzionale(Vector<DataElement> dati, boolean allHidden, boolean forceDisableOptional, String autenticazioneOpzionale, String autenticazione) {
+	private void addOpzionale(List<DataElement> dati, boolean allHidden, boolean forceDisableOptional, String autenticazioneOpzionale, String autenticazione) {
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
 		de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
@@ -5503,10 +5502,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue("");
 		}
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
-	public void controlloAccessiGestioneToken(Vector<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
+	public void controlloAccessiGestioneToken(List<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
 			String gestioneTokenPolicy, String gestioneTokenOpzionale, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto, String protocolloParam ,boolean isPortaDelegata) throws Exception {
 		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
@@ -5519,7 +5518,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
 			de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
-			dati.addElement(de);
+			dati.add(de);
 			
 			String [] valoriAbilitazione = {StatoFunzionalita.DISABILITATO.getValue(), StatoFunzionalita.ABILITATO.getValue()};
 			
@@ -5532,7 +5531,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
 			de.setPostBack(true);
 			de.setSelected(gestioneToken);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)){
 				// nome della policy da utilizzare
@@ -5545,7 +5544,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setSelected(gestioneTokenPolicy);
 				de.setRequired(true);
 				de.setPostBack(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 					
@@ -5564,7 +5563,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.CHECKBOX);
 						de.setSelected(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale));
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// validazione input
 					de = new DataElement();
@@ -5579,7 +5578,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// introspection
 					de = new DataElement();
@@ -5594,7 +5593,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// userInfo
 					de = new DataElement();
@@ -5609,7 +5608,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// token forward
 					de = new DataElement();
@@ -5624,7 +5623,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			
@@ -5637,11 +5636,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 			de.setValue(gestioneToken);
-			dati.addElement(de);
+			dati.add(de);
 		}
 	}
 	
-	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
+	public void controlloAccessiAutorizzazione(List<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
 			String autenticazione, String autenticazioneCustom, 
 			String autorizzazione, String autorizzazioneCustom, 
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, String autenticato,
@@ -5669,7 +5668,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
+	public void controlloAccessiAutorizzazione(List<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
 			String autenticazione, String autenticazioneCustom, 
 			String autorizzazione, String autorizzazioneCustom, 
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, List<String> autenticatiLabel, String autenticato,
@@ -5767,7 +5766,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO_TITLE);
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_TITLE);
 				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
-				dati.addElement(de);
+				dati.add(de);
 			
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_STATO);
@@ -5785,7 +5784,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setSelected(identificazioneAttributiStato);
 					de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
@@ -5802,7 +5801,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setPostBack(true); // cambia la descrizione in autorizzazione per claims
 					de.setSelezionati(attributeAuthoritySelezionate);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
@@ -5824,7 +5823,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setType(DataElementType.TEXT_EDIT);
 					de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI_NOTE_SINGLE_AA);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO_TITLE);
 			}
@@ -5843,7 +5842,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_DIFFERENTE_DA_TRASPORTO_E_TOKEN);
 				//}
 				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.APERTO);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			List<String> auturizzazioneValues = AutorizzazioneUtilities.getStati();
@@ -5883,7 +5882,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setSelected(autorizzazione);
 				de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			String tipoAutorizzazioneCustom = isPortaDelegata ? Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE : Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE;
 			boolean autorizzazioneCustomHidden = (allHidden || (autorizzazione == null) || (!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)));
@@ -5910,7 +5909,7 @@ public class ConsoleHelper implements IConsoleHelper {
 //			}
 //			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
 //			de.setValue(autorizzazioneCustom);
-//			dati.addElement(de);
+//			dati.add(de);
 			
 			boolean old_autorizzazione_autenticazione = false;
 			boolean old_autorizzazione_ruoli = false;
@@ -5978,7 +5977,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					} else {
 						ServletUtils.setDataElementCustomLabel(de,labelCustomProperties);
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 
@@ -6021,7 +6020,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								de.setLabel(labelSoggetti);
 							}
 							labelAutorizzazioneTrasportoAttuata=true;
-							dati.addElement(de);
+							dati.add(de);
 						}
 					}
 					
@@ -6050,7 +6049,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(Costanti.CHECK_BOX_DISABLED);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 				}
 				
@@ -6091,7 +6090,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								} else
 									ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
 							}
-							dati.addElement(de);
+							dati.add(de);
 						}
 						
 						if(!isPortaDelegata && this.saCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo) 
@@ -6118,7 +6117,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								} else {
 									ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
 								}
-								dati.addElement(de);
+								dati.add(de);
 							}
 						}
 					}
@@ -6161,7 +6160,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TRASPORTO);
-						dati.addElement(de);
+						dati.add(de);
 					}
 				
 					autorizzazione_ruoli = ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli);
@@ -6178,7 +6177,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setSelected(autorizzazione_ruoli);
 						de.setPostBack(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 				
 				}
 						
@@ -6198,8 +6197,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 					else {
 						de.setType(DataElementType.SELECT);
-						de.setValues(RuoliCostanti.RUOLI_TIPOLOGIA);
-						de.setLabels(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL);
+						de.setValues(RuoliCostanti.getRuoliTipologia());
+						de.setLabels(RuoliCostanti.getRuoliTipologiaLabel());
 						de.setSelected(autorizzazioneRuoliTipologia);
 						if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante)){
@@ -6272,7 +6271,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,Long.valueOf(numRuoli));
 						} else
 							ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI);
-						dati.addElement(de);
+						dati.add(de);
 									
 					}
 				}
@@ -6326,7 +6325,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						de.setLabel(labelToken);
 						labelAutorizzazioneTokenAttuata=true;
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 					autorizzazione_autenticazione_token = ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticatiToken);
@@ -6350,7 +6349,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setSelected(autorizzazione_autenticazione_token);
 						de.setPostBack(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 									
 					if(TipoOperazione.CHANGE.equals(tipoOperazione)){
@@ -6381,7 +6380,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							} else {
 								ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
 							}
-							dati.addElement(de);
+							dati.add(de);
 						}
 						
 					}
@@ -6403,7 +6402,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						
 						de.setLabel(labelToken);
-						dati.addElement(de);
+						dati.add(de);
 					}
 				
 					autorizzazione_ruoli_token = ServletUtils.isCheckBoxEnabled(autorizzazioneRuoliToken);
@@ -6420,7 +6419,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setSelected(autorizzazione_ruoli_token);
 						de.setPostBack(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 							
 					if(autorizzazione_ruoli_token){
@@ -6434,8 +6433,8 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						else {
 							de.setType(DataElementType.SELECT);
-							de.setValues(RuoliCostanti.RUOLI_TIPOLOGIA);
-							de.setLabels(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL);
+							de.setValues(RuoliCostanti.getRuoliTipologia());
+							de.setLabels(RuoliCostanti.getRuoliTipologiaLabel());
 							de.setSelected(autorizzazioneRuoliTipologiaToken);
 							if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
 									AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante)){
@@ -6482,7 +6481,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,Long.valueOf(numRuoliToken));
 							} else
 								ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI);
-							dati.addElement(de);
+							dati.add(de);
 										
 						}
 					}
@@ -6499,7 +6498,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_CLAIMS_SUBTITLE);
-						dati.addElement(de);
+						dati.add(de);
 					}
 
 					boolean autorizzazioneTokenEnabled = ServletUtils.isCheckBoxEnabled(autorizzazione_token);
@@ -6516,7 +6515,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setSelected(autorizzazioneTokenEnabled);
 						de.setPostBack(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(autorizzazioneTokenEnabled) {
 						de = new DataElement();
@@ -6562,7 +6561,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						de.setInfo(dInfoTokenClaims);
 						
-						dati.addElement(de);
+						dati.add(de);
 					}
 				}
 				
@@ -6577,7 +6576,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
-						dati.addElement(de);
+						dati.add(de);
 					}
 				
 					autorizzazione_scope = ServletUtils.isCheckBoxEnabled(autorizzazioneScope);
@@ -6594,7 +6593,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setSelected(autorizzazione_scope);
 						de.setPostBack(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 				
 					if(autorizzazione_scope){
 						String[] tipoScope = { ScopeTipoMatch.ALL.getValue(),	ScopeTipoMatch.ANY.getValue() };
@@ -6625,7 +6624,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								ServletUtils.setDataElementCustomLabel(de,ScopeCostanti.LABEL_SCOPE,Long.valueOf(numScope));
 							} else
 								ServletUtils.setDataElementCustomLabel(de,ScopeCostanti.LABEL_SCOPE);
-							dati.addElement(de);
+							dati.add(de);
 										
 						}
 					}
@@ -6669,12 +6668,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
 			de.setValue(AutorizzazioneUtilities.STATO_DISABILITATO);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 	}
 	
-	public void controlloAccessiAutorizzazioneContenuti(Vector<DataElement> dati, TipoOperazione tipoOperazione, boolean isPortaDelegata, Object oggetto, String protocolloParam,
+	public void controlloAccessiAutorizzazioneContenuti(List<DataElement> dati, TipoOperazione tipoOperazione, boolean isPortaDelegata, Object oggetto, String protocolloParam,
 			String autorizzazioneContenutiStato, String autorizzazioneContenuti, String autorizzazioneContenutiProperties, ServiceBinding serviceBinding,
 			boolean old_autorizzazione_contenuti_custom, String urlAutorizzazioneContenutiCustomPropertiesList, int numAutorizzazioneContenutiCustomPropertiesList,
 			boolean confPers) throws Exception{
@@ -6700,7 +6699,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 		de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO_TITLE);
 		de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
-		dati.addElement(de);
+		dati.add(de);
 		
 		List<String> authContenutiLabels = new ArrayList<>();
 		List<String> authContenutiValues = new ArrayList<>();
@@ -6722,7 +6721,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
 		de.setPostBack(true);
 		de.setValoreDefaultSelect(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_DISABILITATO); 
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_DISABILITATO)) {
 			// abilitato 
@@ -6732,7 +6731,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 				de.setValue(autorizzazioneContenuti);
-				dati.addElement(de);
+				dati.add(de);
 				
 				
 				de = new DataElement();
@@ -6751,7 +6750,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				de.setValoreDefault("");
 				de.setInfo(info );
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// custom
@@ -6774,7 +6773,7 @@ public class ConsoleHelper implements IConsoleHelper {
 //				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 //				de.setValue(autorizzazioneContenuti);
 //				de.setRequired(true); 
-//				dati.addElement(de);
+//				dati.add(de);
 				
 				// link proprieta
 				if(old_autorizzazione_contenuti_custom) {
@@ -6788,7 +6787,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					} else {
 						ServletUtils.setDataElementCustomLabel(de,labelCustomProperties);
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 		}
@@ -11433,7 +11432,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return ServiceBinding.REST.equals(serviceBinding) ? CostantiControlStation.LABEL_AGGIUNTA_RISORSE_COMPLETATA : CostantiControlStation.LABEL_AGGIUNTA_AZIONI_COMPLETATA;
 	}
 	
-	public Vector<DataElement> addPorteAzioneToDati(TipoOperazione add, Vector<DataElement> dati, String string,
+	public List<DataElement> addPorteAzioneToDati(TipoOperazione add, List<DataElement> dati, String string,
 			String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, ServiceBinding serviceBinding) {
 		
 		String label = this.getLabelAzioni(serviceBinding);
@@ -11441,7 +11440,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de = new DataElement();
 		de.setLabel(label);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Azione
 		de = new DataElement();
@@ -11453,7 +11452,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_AZIONI);
 		de.setRows(15);
 		de.setRequired(true); 
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
@@ -11617,7 +11616,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (listaAzioni != null) {
 				
@@ -11625,20 +11624,20 @@ public class ConsoleHelper implements IConsoleHelper {
 				while (it.hasNext()) {
 					String nomeAzione = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					if(ServiceBinding.SOAP.equals(serviceBinding)) {
 						DataElement de = new DataElement();
 						de.setValue(nomeAzione);
 						de.setIdToRemove(nomeAzione);
-						e.addElement(de);
+						e.add(de);
 					}
 					else {
 						ResourceSintetica risorsa = mapToResource.get(nomeAzione);
 						String labelParametroApcResourcesHttpMethodQualsiasi = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
 						//HTTP Method
 						DataElement de = getDataElementHTTPMethodResource(risorsa, labelParametroApcResourcesHttpMethodQualsiasi);   
-						e.addElement(de);
+						e.add(de);
 						
 						de = new DataElement();
 						if(risorsa.getPath()==null || "".equals(risorsa.getPath())) {
@@ -11649,10 +11648,10 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						de.setToolTip(risorsa.getNome());
 						de.setIdToRemove(risorsa.getNome());
-						e.addElement(de);
+						e.add(de);
 					}
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -11944,13 +11943,15 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void addFilterDominio(String dominio, boolean postBack) throws Exception{
 		try {
 			
-			String [] values = new String[SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length + 1];
-			String [] labels = new String[SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length + 1];
+			String [] sdValues = SoggettiCostanti.getSoggettiDominiValue();
+			String [] sdLabels = SoggettiCostanti.getSoggettiDominiLabel();			
+			String [] values = new String[sdValues.length + 1];
+			String [] labels = new String[sdValues.length + 1];
 			labels[0] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI;
 			values[0] = SoggettiCostanti.DEFAULT_VALUE_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI;
-			for (int i =0; i < SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length ; i ++) {
-				labels[i+1] = SoggettiCostanti.SOGGETTI_DOMINI_LABEL[i];
-				values[i+1] = SoggettiCostanti.SOGGETTI_DOMINI_VALUE[i];
+			for (int i =0; i < sdValues.length ; i ++) {
+				labels[i+1] = sdLabels[i];
+				values[i+1] = sdValues[i];
 			}
 			
 			String selectedValue = dominio != null ? dominio : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
@@ -12833,7 +12834,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String pluginValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AUTENTICAZIONE_TRASPORTO_TIPO_PLUGIN);
 				String pluginLabel = "";
 			
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
 				String tipoAutenticazioneCustom = fruizioni ? Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE : Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE;
 				this.addCustomFieldSearchForm(TipoPlugin.AUTENTICAZIONE,
@@ -13254,7 +13255,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String pluginValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);
 				String pluginLabel = "";
 			
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
 				this.addCustomFieldSearchForm(TipoPlugin.CONNETTORE,
 						null,
@@ -13946,12 +13947,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	// Validazione contenuti
 	
-	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
+	public void validazioneContenuti(TipoOperazione tipoOperazione,List<DataElement> dati, boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
 			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica) throws Exception{
 		validazioneContenuti(tipoOperazione, dati, true,isPortaDelegata,xsd,tipoValidazione,applicaMTOM, serviceBinding, formatoSpecifica);
 	}
 	
-	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean addSezione,boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
+	public void validazioneContenuti(TipoOperazione tipoOperazione,List<DataElement> dati, boolean addSezione,boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
 			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica) {
 		DataElement de = new DataElement();
 		
@@ -13959,7 +13960,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		String[] tipoXsd = { CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO,
@@ -13974,7 +13975,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		//		de.setOnChange("CambiaMode('" + tipoOp + "')");
 		de.setPostBack(true);
 		de.setSelected(xsd);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO.equals(xsd) ||
 				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_WARNING_ONLY.equals(xsd)) {
@@ -14020,7 +14021,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabels(labelTipiValidazione);
 				de.setSelected(tipoValidazione);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP.equals(tipoValidazione) && this.isModalitaStandard()) {
 				de = new DataElement();
@@ -14028,7 +14029,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE+"__LABEL");
 				de.setType(DataElementType.TEXT);
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_REGISTRO_OPENSPCOOP);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			
@@ -14046,7 +14047,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(applicaMTOM);
 			}		 
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_APPLICA_MTOM);
-			dati.addElement(de);
+			dati.add(de);
 		}
 	}
 	
@@ -14106,7 +14107,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public void addConfigurazioneDumpToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,
+	public void addConfigurazioneDumpToDati(TipoOperazione tipoOperazione,List<DataElement> dati, boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,
 			String dumpRichiestaIngressoHeader, String dumpRichiestaIngressoPayload, String dumpRichiestaIngressoPayloadParsing, String dumpRichiestaIngressoBody, String dumpRichiestaIngressoAttachments, 
 			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaPayload, String dumpRichiestaUscitaPayloadParsing, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
 			String dumpRispostaIngressoHeader, String dumpRispostaIngressoPayload, String dumpRispostaIngressoPayloadParsing, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
@@ -14118,13 +14119,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_DUMP_TIPO_CONFIGURAZIONE); 
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(portaApplicativa ? TipoPdD.APPLICATIVA.getTipo() : TipoPdD.DELEGATA.getTipo());
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(showStato || showRealtime) {
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_GENERALE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 			
 		String valuesProp [] = {StatoFunzionalita.ABILITATO.getValue(), StatoFunzionalita.DISABILITATO.getValue()};
@@ -14147,7 +14148,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statoDump);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!showStato || statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
 		
@@ -14164,13 +14165,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(realtime);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Sezione Richiesta
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA);
-			dati.addElement(de);
+			dati.add(de);
 
 			// Stato Dump Richiesta
 			de = new DataElement();
@@ -14181,7 +14182,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabels(labelsProp);
 			de.setValues(valuesProp);
 			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				
@@ -14215,7 +14216,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA);
-			dati.addElement(de);
+			dati.add(de);
 
 			// Stato Dump Richiesta
 			de = new DataElement();
@@ -14226,7 +14227,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabels(labelsProp);
 			de.setValues(valuesProp);
 			de.setPostBack(true);	
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				
@@ -14257,7 +14258,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	private void addSottoSezioneDump(Vector<DataElement> dati, String valuesProp [], String labelsProp [], 
+	private void addSottoSezioneDump(List<DataElement> dati, String valuesProp [], String labelsProp [], 
 			String labelSezione,
 			String paramHeaders, String labelHeaders, String dumpHeader,
 			String paramPayload, String labelPayload, String dumpPayload,
@@ -14268,7 +14269,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de = new DataElement();
 		de.setType(DataElementType.SUBTITLE);
 		de.setLabel(labelSezione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// header 
 		de = new DataElement();
@@ -14278,7 +14279,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setSelected(dumpHeader);
 		de.setLabels(labelsProp);
 		de.setValues(valuesProp);
-		dati.addElement(de);
+		dati.add(de);
 		
 		boolean multipartPayloadParsing = this.core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
 		if(!multipartPayloadParsing) {
@@ -14300,7 +14301,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(multipartPayloadParsing) {
 			de.setPostBack(true);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// payload parsing ingresso
 		de = new DataElement();
@@ -14318,7 +14319,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// body ingresso
 		de = new DataElement();
@@ -14335,7 +14336,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// attachments ingresso
 		de = new DataElement();
@@ -14352,7 +14353,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 		}
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
 	protected String getGestioneCorsLabelDefault(boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
@@ -14537,7 +14538,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return labelDefault;
 	}
 	
-	public void addConfigurazioneDumpToDatiAsHidden(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,
+	public void addConfigurazioneDumpToDatiAsHidden(TipoOperazione tipoOperazione,List<DataElement> dati, boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,
 			String dumpRichiestaIngressoHeader, String dumpRichiestaIngressoPayload, String dumpRichiestaIngressoPayloadParsing, String dumpRichiestaIngressoBody, String dumpRichiestaIngressoAttachments, 
 			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaPayload, String dumpRichiestaUscitaPayloadParsing, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
 			String dumpRispostaIngressoHeader, String dumpRispostaIngressoPayload, String dumpRispostaIngressoPayloadParsing, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
@@ -14550,14 +14551,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(statoDump);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// TipoPdD
 		de = new DataElement();
 		de.setName(CostantiControlStation.PARAMETRO_DUMP_TIPO_CONFIGURAZIONE); 
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(portaApplicativa ? TipoPdD.APPLICATIVA.getTipo() : TipoPdD.DELEGATA.getTipo());
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!showStato || statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
 		
@@ -14567,7 +14568,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_REALTIME);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(realtime);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Stato Dump Richiesta
 			de = new DataElement();
@@ -14575,7 +14576,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_STATO);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statoDumpRichiesta);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				
@@ -14607,7 +14608,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_STATO);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statoDumpRisposta);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				
@@ -14634,7 +14635,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	private void addSottoSezioneDumpHidden(Vector<DataElement> dati, 
+	private void addSottoSezioneDumpHidden(List<DataElement> dati, 
 			String paramHeaders, String labelHeaders, String dumpHeader,
 			String paramPayload, String labelPayload, String dumpPayload,
 			String paramPayloadParsing, String labelPayloadParsing, String dumpPayloadParsing,
@@ -14647,7 +14648,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(labelHeaders);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(dumpHeader);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// payload
 		de = new DataElement();
@@ -14655,7 +14656,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(labelPayload);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(dumpPayload);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// payload parsing
 		de = new DataElement();
@@ -14663,7 +14664,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(labelPayloadParsing);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(dumpPayloadParsing);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// body
 		de = new DataElement();
@@ -14671,7 +14672,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(labelBody);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(dumpBody);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// attachments
 		de = new DataElement();
@@ -14679,7 +14680,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(labelAttachments);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(dumpAttachments);
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
 	public boolean checkDataConfigurazioneDump(TipoOperazione tipoOperazione,boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,
@@ -15164,18 +15165,18 @@ public class ConsoleHelper implements IConsoleHelper {
 			DBManager.getInstance().releaseConnection(con);
 		}
 	}
-	public Vector<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String configName, ConfigBean configurazioneBean) throws Exception {
+	public List<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String configName, ConfigBean configurazioneBean) throws Exception {
 		return addPropertiesConfigToDati(tipoOperazione, dati, configName, configurazioneBean, true);
 	}
 	
-	public Vector<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String configName, ConfigBean configurazioneBean, boolean addHiddenConfigName) throws Exception {
+	public List<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String configName, ConfigBean configurazioneBean, boolean addHiddenConfigName) throws Exception {
 		if(addHiddenConfigName) {
 			DataElement de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PROPERTIES_CONFIG_NAME);
 			de.setValue(configName);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_PROPERTIES_CONFIG_NAME);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		if(configurazioneBean != null) {
 			ExternalResources externalResources = new ExternalResources();
@@ -15187,7 +15188,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				Map<String, String> mapNameValue = new HashMap<String, String>();
 				for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
 					if(item.isVisible())
-						dati.addElement(item.toDataElement(configurazioneBean, mapNameValue, externalResources));
+						dati.add(item.toDataElement(configurazioneBean, mapNameValue, externalResources));
 				}
 			}finally {
 				DBManager.getInstance().releaseConnection(con);
@@ -15236,12 +15237,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	public void addToDatiFirstTimeDisabled(Vector<DataElement> dati,String firstTimeParameter){
+	public void addToDatiFirstTimeDisabled(List<DataElement> dati,String firstTimeParameter){
 		DataElement de = new DataElement();
 		de.setName(firstTimeParameter);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue("false");
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
 	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws Exception {
@@ -15425,7 +15426,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return listCors;
 	}
 	
-	public void addToDatiRegistrazioneEsiti(Vector<DataElement> dati, TipoOperazione tipoOperazione, 
+	public void addToDatiRegistrazioneEsiti(List<DataElement> dati, TipoOperazione tipoOperazione, 
 			String tracciamentoEsitiStato,
 			String nuovaConfigurazioneEsiti,
 			boolean selectAll,
@@ -15438,7 +15439,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 				
 		if(tracciamentoEsitiStato!=null) {
 			de = new DataElement();
@@ -15451,7 +15452,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabels(labelsStato);
 			de.setValues(valuesStato); 
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(tracciamentoEsitiStato==null || CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoEsitiStato) ) {
@@ -15459,7 +15460,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setValue(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
 			de.setType(DataElementType.NOTE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			
 			List<String> attivi = new ArrayList<String>();
@@ -15493,7 +15494,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.CHECKBOX);
 			de.setSelected(selectAll);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			
 			// ok
@@ -15505,7 +15506,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 					
 			de = new DataElement();
@@ -15523,7 +15524,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
 			}
-			dati.addElement(de);
+			dati.add(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
@@ -15568,7 +15569,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue("true");
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			
@@ -15583,7 +15584,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 					
 			de = new DataElement();
@@ -15607,7 +15608,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tracciamentoEsitiSelezionePersonalizzataFault);
 			}
-			dati.addElement(de);
+			dati.add(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
@@ -15626,7 +15627,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue("true");
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			
@@ -15641,7 +15642,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 					
 			de = new DataElement();
@@ -15659,7 +15660,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tracciamentoEsitiSelezionePersonalizzataFallite);
 			}
-			dati.addElement(de);
+			dati.add(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
@@ -15694,7 +15695,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue("true");
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			
@@ -15709,7 +15710,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 					
 			de = new DataElement();
@@ -15727,7 +15728,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tracciamentoEsitiSelezionePersonalizzataScartate);
 			}
-			dati.addElement(de);
+			dati.add(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate) ||
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate) ||
@@ -15762,7 +15763,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue("true");
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 					
@@ -15776,7 +15777,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING);
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			String esitoViolazioneRateLimitingAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA) + "";
@@ -15796,7 +15797,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tracciamentoEsitiSelezionePersonalizzataRateLimiting);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataRateLimiting) ||
 					selectAll) {
@@ -15804,7 +15805,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esitoViolazioneRateLimitingAsString);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue("true");
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			
@@ -15818,7 +15819,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS);
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			String esitoViolazioneAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS) + "";
@@ -15838,7 +15839,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tracciamentoEsitiSelezionePersonalizzataMax);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataMax) ||
 					selectAll) {
@@ -15846,7 +15847,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esitoViolazioneAsString);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue("true");
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			
@@ -15859,7 +15860,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			de = new DataElement();
@@ -15877,7 +15878,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tracciamentoEsitiSelezionePersonalizzataCors);
 			}
-			dati.addElement(de);
+			dati.add(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
@@ -15909,7 +15910,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue("true");
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			
@@ -15917,7 +15918,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	}
 	
-	public void addToDatiRegistrazioneTransazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, 
+	public void addToDatiRegistrazioneTransazione(List<DataElement> dati, TipoOperazione tipoOperazione, 
 			String transazioniTempiElaborazione, String transazioniToken) throws Exception {
 		
 		if(!this.isModalitaStandard()) {
@@ -15925,7 +15926,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			DataElement de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 			
@@ -15946,7 +15947,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(transazioniTempiElaborazione);
 		}
-		dati.addElement(de);	
+		dati.add(de);	
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE_TOKEN);
@@ -15961,17 +15962,17 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(transazioniToken);
 		}
-		dati.addElement(de);	
+		dati.add(de);	
 		
 	}
 	
-	public void addSeveritaMessaggiDiagnosticiToDati(String severita, String severita_log4j, Vector<DataElement> dati) {
+	public void addSeveritaMessaggiDiagnosticiToDati(String severita, String severita_log4j, List<DataElement> dati) {
 		
 		DataElement de;
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		//					String[] tipoMsg = { "off", "fatalOpenspcoop", "errorSpcoop", "errorOpenspcoop", "infoSpcoop", "infoOpenspcoop",
 		//							"debugLow", "debugMedium", "debugHigh", "all" };
@@ -15986,7 +15987,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
 		de.setValues(tipoMsg);
 		de.setSelected(severita);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		//		de.setLabel("Livello Severita Log4J");
@@ -16001,17 +16002,17 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(severita_log4j);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
-	public void addPortaSeveritaMessaggiDiagnosticiToDati(String stato, String severita, Vector<DataElement> dati) {
+	public void addPortaSeveritaMessaggiDiagnosticiToDati(String stato, String severita, List<DataElement> dati) {
 		
 		DataElement de;
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
@@ -16023,7 +16024,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabels(labelsStato);
 		de.setValues(valuesStato); 
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		//					String[] tipoMsg = { "off", "fatalOpenspcoop", "errorSpcoop", "errorOpenspcoop", "infoSpcoop", "infoOpenspcoop",
 		//							"debugLow", "debugMedium", "debugHigh", "all" };
@@ -16039,17 +16040,17 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
 			de.setValues(tipoMsg);
 			de.setSelected(severita);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 	}
 
-	public Vector<DataElement> configurazioneCambiaNome(Vector<DataElement> dati, TipoOperazione other, String nomeGruppo,boolean isPortaDelegata) throws Exception{
+	public List<DataElement> configurazioneCambiaNome(List<DataElement> dati, TipoOperazione other, String nomeGruppo,boolean isPortaDelegata) throws Exception{
 		 
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Azione
 		de = new DataElement();
@@ -16058,7 +16059,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_NOME_GRUPPO);
 		de.setValue(nomeGruppo);  
 		de.setRequired(true); 
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
@@ -16096,7 +16097,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return label;
 	}
 	
-	public void addConfigurazioneCorsPorteToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoCorsPorta, boolean corsStato, TipoGestioneCORS corsTipo,
+	public void addConfigurazioneCorsPorteToDati(TipoOperazione tipoOperazione,List<DataElement> dati, boolean showStato, String statoCorsPorta, boolean corsStato, TipoGestioneCORS corsTipo,
 			boolean corsAllAllowOrigins, boolean corsAllAllowHeaders, boolean corsAllAllowMethods,
 			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods,
 			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds) throws Exception {
@@ -16105,7 +16106,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			DataElement de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CORS);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// stato generale cors
@@ -16125,7 +16126,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statoCorsPorta);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!showStato || statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO)) {
 			this.addConfigurazioneCorsToDati(dati, corsStato, corsTipo, 
@@ -16139,7 +16140,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 	
 	// CORS
-	public void addConfigurazioneCorsToDati(Vector<DataElement> dati, boolean corsStato, TipoGestioneCORS corsTipo,
+	public void addConfigurazioneCorsToDati(List<DataElement> dati, boolean corsStato, TipoGestioneCORS corsTipo,
 			boolean corsAllAllowOrigins, boolean corsAllAllowHeaders, boolean corsAllAllowMethods, 
 			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods,
 			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds,
@@ -16151,7 +16152,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CORS);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -16167,7 +16168,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSelected(corsStato ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
 		}
 		de.setValue(corsStato ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(corsStato) {
 			
@@ -16198,7 +16199,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			else {
 				de.setType(DataElementType.HIDDEN);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(TipoGestioneCORS.GATEWAY.equals(corsTipo)) {
 				
@@ -16206,7 +16207,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de = new DataElement();
 					de.setType(DataElementType.SUBTITLE);
 					de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_ACCESS_CONTROL);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				
@@ -16222,7 +16223,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setPostBack(true);
 				}
 				de.setValue(corsAllAllowOrigins+"");
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(!corsAllAllowOrigins) {
 					de = new DataElement();
@@ -16236,7 +16237,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.enableTags();
 					}
 					de.setValue(corsAllowOrigins);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				else {
 					corsAllAllowMethods = false;
@@ -16255,7 +16256,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setPostBack(true);
 				}
 				de.setValue(corsAllAllowMethods+"");
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(!corsAllAllowMethods || corsAllAllowOrigins) {
 					de = new DataElement();
@@ -16269,7 +16270,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.enableTags();
 					}
 					de.setValue(corsAllowMethods);
-					dati.addElement(de);
+					dati.add(de);
 				}
 							
 				de = new DataElement();
@@ -16284,7 +16285,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setPostBack(true);
 				}
 				de.setValue(corsAllAllowHeaders+"");
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(!corsAllAllowHeaders || corsAllAllowOrigins) {
 					de = new DataElement();
@@ -16298,7 +16299,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.enableTags();
 					}
 					de.setValue(corsAllowHeaders);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				de = new DataElement();
@@ -16311,7 +16312,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setSelected(corsAllowCredential);
 				}
 				de.setValue(corsAllowCredential+"");
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS);
@@ -16323,7 +16324,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.enableTags();
 				}
 				de.setValue(corsExposeHeaders);
-				dati.addElement(de);
+				dati.add(de);
 				
 				
 				de = new DataElement();
@@ -16338,7 +16339,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setPostBack(true);
 				}
 				de.setValue(corsMaxAge+"");
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(corsMaxAge) {
 					de = new DataElement();
@@ -16354,7 +16355,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setMaxValue(Integer.MAX_VALUE);
 						de.setNote(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS_NOTE);
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 		}
@@ -16585,7 +16586,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public void addDescrizioneVerificaConnettoreToDati(Vector<DataElement> dati, String server, String labelConnettore, 
+	public void addDescrizioneVerificaConnettoreToDati(List<DataElement> dati, String server, String labelConnettore, 
 			Connettore connettore, boolean registro, String aliasConnettore) throws Exception {
 		
 		List<Parameter> downloadCertServerParameters = new ArrayList<Parameter>();
@@ -16599,7 +16600,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	public void addVerificaConnettoreSceltaAlias(List<String> aliases,Vector<DataElement> dati) throws Exception {
+	public void addVerificaConnettoreSceltaAlias(List<String> aliases,List<DataElement> dati) throws Exception {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.SELECT);
@@ -16617,11 +16618,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setSize(this.getSize());
 		//de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
-	public void addVerificaConnettoreHidden(Vector<DataElement> dati,
+	public void addVerificaConnettoreHidden(List<DataElement> dati,
 			String id, String idsogg,  String idAsps, String idFruizione,
 			long idConnettore, boolean accessoDaGruppi, boolean connettoreRegistro) throws Exception {
 
@@ -16629,43 +16630,43 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_ID);
 		de.setValue(id);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_ID_SOGGETTO);
 		de.setValue(idsogg);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_ID_ASPS);
 		de.setValue(idAsps);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_ID_FRUIZIONE);
 		de.setValue(idFruizione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID);
 		de.setValue(idConnettore+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
 		de.setValue(accessoDaGruppi+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
 		de.setValue(connettoreRegistro+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
@@ -16864,7 +16865,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return urlConnettore;
 	}
 	
-	public void addConfigurazioneResponseCachingPorteToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoResponseCachingPorta, boolean responseCachingEnabled, int responseCachingSeconds,
+	public void addConfigurazioneResponseCachingPorteToDati(TipoOperazione tipoOperazione,List<DataElement> dati, boolean showStato, String statoResponseCachingPorta, boolean responseCachingEnabled, int responseCachingSeconds,
 			boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
 			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,
 			boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter, String responseCachingDigestNomiParametriQuery, 
@@ -16875,7 +16876,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			DataElement de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// stato generale cors
@@ -16895,7 +16896,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statoResponseCachingPorta);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!showStato || statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO)) {
 			this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, 
@@ -16906,7 +16907,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void addResponseCachingToDati(Vector<DataElement> dati, boolean responseCachingEnabled, int responseCachingSeconds,
+	public void addResponseCachingToDati(List<DataElement> dati, boolean responseCachingEnabled, int responseCachingSeconds,
 			boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
 			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,
 			boolean responseCachingDigestPayload, boolean addTitle, String responseCachingDigestHeadersNomiHeaders, StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter, String responseCachingDigestNomiParametriQuery,  
@@ -16918,7 +16919,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -16934,7 +16935,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSelected(responseCachingEnabled ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
 		}
 		de.setValue(responseCachingEnabled ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(responseCachingEnabled) {
 			de = new DataElement();
@@ -16949,7 +16950,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setMinValue(1);
 				de.setMaxValue(Integer.MAX_VALUE);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			
 			de = new DataElement();
@@ -16964,7 +16965,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setPostBack(true);
 			}
 			de.setValue(responseCachingMaxResponseSize+"");
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(responseCachingMaxResponseSize) {
 				de = new DataElement();
@@ -16979,14 +16980,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setMinValue(1);
 					de.setMaxValue(Integer.MAX_VALUE);
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(!allHidden) {
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
 				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_GENERAZIONE_HASH);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			de = new DataElement();
@@ -17001,7 +17002,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setSelected(responseCachingDigestUrlInvocazione ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
 			}
 			de.setValue(responseCachingDigestUrlInvocazione ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS);
@@ -17020,7 +17021,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(responseCachingDigestQueryParameter!=null) {
 				de.setValue(responseCachingDigestQueryParameter.getValue());
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingDigestQueryParameter)) {
 				de = new DataElement();
@@ -17036,7 +17037,7 @@ public class ConsoleHelper implements IConsoleHelper {
 //					de.setRequired(true);
 				}
 				de.setValue(responseCachingDigestNomiParametriQuery);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			de = new DataElement();
@@ -17051,7 +17052,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setSelected(responseCachingDigestPayload ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
 			}
 			de.setValue(responseCachingDigestPayload ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
@@ -17066,7 +17067,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setPostBack(true);
 			}
 			de.setValue(responseCachingDigestHeaders ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(responseCachingDigestHeaders) {
 				de = new DataElement();
@@ -17082,14 +17083,14 @@ public class ConsoleHelper implements IConsoleHelper {
 //					de.setRequired(true);
 				}
 				de.setValue(responseCachingDigestHeadersNomiHeaders);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(!allHidden) {
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
 				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			de = new DataElement();
@@ -17103,7 +17104,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setSelected(responseCachingCacheControlNoCache);
 			}
 			de.setValue(responseCachingCacheControlNoCache+"");
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE);
@@ -17116,7 +17117,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setSelected(responseCachingCacheControlMaxAge);
 			}
 			de.setValue(responseCachingCacheControlMaxAge+"");
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_STORE);
@@ -17129,7 +17130,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setSelected(responseCachingCacheControlNoStore);
 			}
 			de.setValue(responseCachingCacheControlNoStore+"");
-			dati.addElement(de);
+			dati.add(de);
 			
 			
 						
@@ -17138,7 +17139,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
 				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIOME_AVANZATA);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
@@ -17148,7 +17149,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				else
 					de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE);
 				de.setUrl(servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList.toArray(new Parameter[paramsResponseCachingConfigurazioneRegolaList.size()]));
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 	}
@@ -17443,7 +17444,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public Vector<DataElement> addResponseCachingConfigurazioneRegola(TipoOperazione tipoOP, String returnCode, String statusMin, String statusMax, String fault, String cacheSeconds, Vector<DataElement> dati) {
+	public List<DataElement> addResponseCachingConfigurazioneRegola(TipoOperazione tipoOP, String returnCode, String statusMin, String statusMax, String fault, String cacheSeconds, List<DataElement> dati) {
 		
 		DataElement dataElement = new DataElement();
 		dataElement.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA);
@@ -17458,14 +17459,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
 		de.setPostBack(true);
 		de.setSelected(returnCode);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI.equals(returnCode)) {
 			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO.equals(returnCode)) {
 				de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_EMPTY, 
 						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN, 
 						statusMin, true);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO.equals(returnCode)) {
@@ -17475,7 +17476,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						statusMin,
 						statusMax,
 						true);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		} 
 		
@@ -17487,7 +17488,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setSize( getSize());
 		de.setMinValue(1);
 		de.reloadMinValue(false);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
@@ -17495,12 +17496,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.CHECKBOX);
 		de.setSelected(fault);
 		de.setValue(fault+"");
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRispostaToDatiOpAdd(String protocollo, Vector<DataElement> dati, String idTrasformazione, 
+	public List<DataElement> addTrasformazioneRispostaToDatiOpAdd(String protocollo, List<DataElement> dati, String idTrasformazione, 
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
 			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType) throws Exception {
 		return addTrasformazioneRispostaToDati(TipoOperazione.ADD, protocollo, dati, 0, null, false, idTrasformazione, null, 
@@ -17515,7 +17516,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				null,null,null);
 	}
 	
-	public Vector<DataElement> addTrasformazioneRispostaToDati(TipoOperazione tipoOP, String protocollo, Vector<DataElement> dati, long idPorta, TrasformazioneRegolaRisposta risposta, boolean isPortaDelegata, String idTrasformazione, String idTrasformazioneRisposta,
+	public List<DataElement> addTrasformazioneRispostaToDati(TipoOperazione tipoOP, String protocollo, List<DataElement> dati, long idPorta, TrasformazioneRegolaRisposta risposta, boolean isPortaDelegata, String idTrasformazione, String idTrasformazioneRisposta,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBindingParam,
 			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType,
 			String servletTrasformazioniRispostaHeadersList, List<Parameter> parametriInvocazioneServletTrasformazioniRispostaHeaders, int numeroTrasformazioniRispostaHeaders,
@@ -17549,7 +17550,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Nome
 		de = new DataElement();
@@ -17558,12 +17559,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME);
 		de.setRequired(true); 
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Id trasformazione hidden
 		de = new DataElement();
@@ -17571,21 +17572,21 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// First
 		de = new DataElement();
 		de.setValue("first");
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_FIRST);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazioneRisposta);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
@@ -17595,14 +17596,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
 		de.setPostBack(true);
 		de.setSelected(returnCode);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI.equals(returnCode)) {
 			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO.equals(returnCode)) {
 				de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_EMPTY, 
 						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN, 
 						statusMin, true);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO.equals(returnCode)) {
@@ -17612,7 +17613,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						statusMin,
 						statusMax,
 						true);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		} 
 				
@@ -17628,7 +17629,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dInfoCT.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE);
 		dInfoCT.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI);
 		de.setInfo(dInfoCT);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Pattern
 		de = new DataElement();
@@ -17648,7 +17649,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_SOAP_RISPOSTA);
 		}
 		de.setInfo(dInfoPattern);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		// in edit faccio vedere i link per configurare la richiesta e le risposte
@@ -17663,13 +17664,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_REGOLE_TRASFORMAZIONE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// sezione trasporto
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_TRASPORTO);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Return Code e Header Risposta
 			
@@ -17686,7 +17687,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSize(getSize());
 			de.setInfo(dInfoPatternTrasporto);
 			de.setRequired(false); 
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
@@ -17696,13 +17697,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			else
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADERS);
 			de.setUrl(servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders.toArray(new Parameter[parametriInvocazioneServletTrasformazioniRispostaHeaders.size()]));
-			dati.addElement(de);
+			dati.add(de);
 			
 			// sezione contenuto
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENUTO);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// abilitato
 			de = new DataElement();
@@ -17716,7 +17717,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			//de.setType(DataElementType.HIDDEN);
 			//}
 			de.setValue(trasformazioneContenutoRispostaAbilitato+"");
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(trasformazioneContenutoRispostaAbilitato) {
 				// tipo
@@ -17730,7 +17731,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setSelected(trasformazioneContenutoRispostaTipo.getValue());
 				setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO, trasformazioneContenutoRispostaTipo, infoServiceBinding, true,
 						protocollo, isPortaDelegata);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(trasformazioneContenutoRispostaTipo.isTemplateRequired()) {	
 					
@@ -17762,7 +17763,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO_CHECK);
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(trasformazioneContenutoRispostaTipoCheck);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(StringUtils.isNotEmpty(trasformazioneContenutoRispostaTipoCheck) && trasformazioneContenutoRispostaTipoCheck.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO))
 						templateRequired = true;
@@ -17815,7 +17816,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					else {
 						de.setInfo(dInfoPatternTrasporto);
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 								
 				if(trasformazioneContenutoRispostaTipo.isTrasformazioneProtocolloEnabled() && trasformazioneRichiestaRestAbilitato &&
@@ -17828,7 +17829,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP);
 					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
+					dati.add(de);
 					
 					// abilitato
 					de = new DataElement();
@@ -17836,7 +17837,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION);
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(trasformazioneRispostaSoapAbilitato+"");
-					dati.addElement(de);
+					dati.add(de);
 					
 					//if(trasformazioneRispostaSoapAbilitato) {
 					// Envelope
@@ -17848,7 +17849,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setType(DataElementType.SELECT);
 					de.setSelected(trasformazioneRispostaSoapEnvelope);
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 											
 					if(trasformazioneRispostaSoapEnvelope!=null && CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneRispostaSoapEnvelope)) {
 						
@@ -17860,12 +17861,12 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setValue(trasformazioneContenutoRispostaContentType);
 						de.setInfo(dInfoPatternTrasporto);
 						de.setRequired(true);
-						dati.addElement(de);
+						dati.add(de);
 						
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY);
 						de.setType(DataElementType.SUBTITLE);
-						dati.addElement(de);	
+						dati.add(de);	
 						
 						// tipo envelope attachement
 						de = new DataElement();
@@ -17880,7 +17881,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setPostBack(true);
 						setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO, trasformazioneRispostaSoapEnvelopeTipo, infoServiceBinding, true,
 								protocollo, isPortaDelegata);
-						dati.addElement(de);
+						dati.add(de);
 						
 						if(trasformazioneRispostaSoapEnvelopeTipo!=null && trasformazioneRispostaSoapEnvelopeTipo.isTemplateRequired()) {
 							
@@ -17913,7 +17914,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO_CHECK);
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(trasformazioneRispostaSoapEnvelopeTipoCheck);
-							dati.addElement(de);
+							dati.add(de);
 							
 							if(StringUtils.isNotEmpty(trasformazioneRispostaSoapEnvelopeTipoCheck) && trasformazioneRispostaSoapEnvelopeTipoCheck.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO))
 								templateRequired = true;
@@ -18344,7 +18345,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public Vector<DataElement> addTrasformazioneToDatiOpAdd(Vector<DataElement> dati, Object oggetto, String nome, 
+	public List<DataElement> addTrasformazioneToDatiOpAdd(List<DataElement> dati, Object oggetto, String nome, 
 			String stato, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
 			String [] connettoriDisponibiliList, String [] connettoriDisponibiliLabelList, String [] connettori,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding, boolean isPortaDelegata) throws Exception {
@@ -18355,7 +18356,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				null, null, null, null, 0, isPortaDelegata, null,null,0,null,null,0);
 	}
 	
-	public Vector<DataElement> addTrasformazioneToDati(TipoOperazione tipoOP, Vector<DataElement> dati, Object oggetto, String idTrasformazione, String nome, 
+	public List<DataElement> addTrasformazioneToDati(TipoOperazione tipoOP, List<DataElement> dati, Object oggetto, String idTrasformazione, String nome, 
 			String stato, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType, 
 			String [] connettoriDisponibiliList, String [] connettoriDisponibiliLabelList, String [] connettori,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
@@ -18369,19 +18370,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// First
 		de = new DataElement();
 		de.setValue("first");
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_FIRST);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Nome
 		de = new DataElement();
@@ -18390,7 +18391,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME);
 		de.setRequired(true); 
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Stato
 		de = new DataElement();
@@ -18403,12 +18404,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_STATO);
 		de.setValues(ConfigurazioneCostanti.STATI);
 		de.setLabels(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATI);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 				
 		// Azione
 		
@@ -18435,7 +18436,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
 		}
 		de.setType(DataElementType.SELECT);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!azioniAll) {
 			de = new DataElement();
@@ -18447,7 +18448,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
 			de.setRows(15);
 	//		de.setRequired(true); 
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// Content-type
@@ -18462,7 +18463,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dInfoCT.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE);
 		dInfoCT.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI);
 		de.setInfo(dInfoCT);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Pattern
 		de = new DataElement();
@@ -18482,7 +18483,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_SOAP_RICHIESTA);
 		}
 		de.setInfo(dInfoPattern);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(connettoriDisponibiliList!=null && connettoriDisponibiliList.length>0) {
 			de = new DataElement();
@@ -18494,7 +18495,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI);
 			de.setRows(10);
 	//		de.setRequired(true); 
-			dati.addElement(de);
+			dati.add(de);
 		}
 						
 		// in edit faccio vedere i link per configurare la richiesta e le risposte
@@ -18571,7 +18572,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					} else
 						ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// servizi applicativi
@@ -18597,13 +18598,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				} else {
 					ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 		
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_REGOLE_TRASFORMAZIONE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Richiesta
 			de = new DataElement();
@@ -18657,7 +18658,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA+" (" + CostantiConfigurazione.DISABILITATO.getValue().toLowerCase()+ ")");
 			}
 			de.setUrl(servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta.toArray(new Parameter[parametriInvocazioneServletTrasformazioniRichiesta.size()]));
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Risposta
 			de = new DataElement();
@@ -18668,20 +18669,20 @@ public class ConsoleHelper implements IConsoleHelper {
 			else
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTE);
 			de.setUrl(servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta.toArray(new Parameter[parametriInvocazioneServletTrasformazioniRisposta.size()]));
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRichiestaHeaderToDati(TipoOperazione tipoOP, String protocollo, boolean isPortaDelegata, Vector<DataElement> dati, 
+	public List<DataElement> addTrasformazioneRichiestaHeaderToDati(TipoOperazione tipoOP, String protocollo, boolean isPortaDelegata, List<DataElement> dati, 
 			String idTrasformazione, String idTrasformazioneRichiestaHeader, String nome, String tipo, String valore, String identificazione,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Id trasformazione hidden
 		de = new DataElement();
@@ -18689,7 +18690,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// id trasformazione richiesta header
 		de = new DataElement();
@@ -18697,7 +18698,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RICHIESTA_HEADER);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazioneRichiestaHeader);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Tipo
 		de = new DataElement();
@@ -18714,7 +18715,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		//	de.setType(DataElementType.TEXT);
 		//	de.setValue(tipo);
 		//}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Nome
 		de = new DataElement();
@@ -18727,7 +18728,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		//	de.setType(DataElementType.TEXT);
 		//}
 		de.setValue(nome);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Valore
 		de = new DataElement();
@@ -18753,7 +18754,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(valore);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Identificazione Risorsa Fallita
 		de = new DataElement();
@@ -18773,19 +18774,19 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(identificazione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione tipoOP, String protocollo, boolean isPortaDelegata, Vector<DataElement> dati, 
+	public List<DataElement> addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione tipoOP, String protocollo, boolean isPortaDelegata, List<DataElement> dati, 
 			String idTrasformazione, String idTrasformazioneRichiestaUrlParameter, String nome, String tipo, String valore, String identificazione,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Id trasformazione hidden
 		de = new DataElement();
@@ -18793,7 +18794,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// id trasformazione richiesta header
 		de = new DataElement();
@@ -18801,7 +18802,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RICHIESTA_PARAMETRO);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazioneRichiestaUrlParameter);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Tipo
 		de = new DataElement();
@@ -18818,7 +18819,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		//de.setType(DataElementType.TEXT);
 		//de.setValue(tipo);
 		//}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Nome
 		de = new DataElement();
@@ -18831,7 +18832,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		//	de.setType(DataElementType.TEXT);
 		//}
 		de.setValue(nome);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Valore
 		de = new DataElement();
@@ -18857,7 +18858,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(valore);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Identificazione Risorsa Fallita
 		de = new DataElement();
@@ -18877,19 +18878,19 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(identificazione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRispostaHeaderToDati(TipoOperazione tipoOP, String protocollo, boolean isPortaDelegata, Vector<DataElement> dati, 
+	public List<DataElement> addTrasformazioneRispostaHeaderToDati(TipoOperazione tipoOP, String protocollo, boolean isPortaDelegata, List<DataElement> dati, 
 			String idTrasformazione, String idTrasformazioneRisposta, String idTrasformazioneRispostaHeader, String nome, String tipo, String valore, String identificazione,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Id trasformazione hidden
 		de = new DataElement();
@@ -18897,7 +18898,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// id trasformazione risposta
 		de = new DataElement();
@@ -18905,7 +18906,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazioneRisposta);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// id trasformazione risposta header
 		de = new DataElement();
@@ -18913,7 +18914,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA_HEADER);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazioneRispostaHeader);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Tipo
 		de = new DataElement();
@@ -18929,7 +18930,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		//	de.setType(DataElementType.TEXT);
 		//	de.setValue(tipo);
 		//}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Nome
 		de = new DataElement();
@@ -18943,7 +18944,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		//}
 		
 		de.setValue(nome);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Valore
 		de = new DataElement();
@@ -18968,7 +18969,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(valore);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Identificazione Risorsa Fallita
 		de = new DataElement();
@@ -18988,7 +18989,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(identificazione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
@@ -18999,7 +19000,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				false, null, null);
 	}
 	
-	public Vector<DataElement> addTrasformazioneRichiestaToDati(TipoOperazione tipoOP, String protocollo, Vector<DataElement> dati, long idPorta, TrasformazioneRegolaRichiesta richiesta, boolean isPortaDelegata, String idTrasformazione,
+	public List<DataElement> addTrasformazioneRichiestaToDati(TipoOperazione tipoOP, String protocollo, List<DataElement> dati, long idPorta, TrasformazioneRegolaRichiesta richiesta, boolean isPortaDelegata, String idTrasformazione,
 			boolean trasformazioneContenutoAbilitato, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoTipo, BinaryParameter trasformazioneContenutoTemplate, String trasformazioneContenutoTipoCheck,
 			String trasformazioneRichiestaContentType, 
 			ServiceBinding serviceBindingMessage, boolean trasformazioneRestAbilitato, String trasformazioneRestMethod, String trasformazioneRestPath,
@@ -19024,18 +19025,18 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// sezione trasporto
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_TRASPORTO);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding) && !trasformazioneSoapAbilitato) {
 			
@@ -19047,7 +19048,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD);
 			de.setSize(this.getSize());
 			de.setInfo(dInfoPatternTrasporto);
-			dati.addElement(de);
+			dati.add(de);
 			
 			//  path
 			de = new DataElement();
@@ -19059,7 +19060,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSize(this.getSize());
 			de.setInfo(dInfoPatternTrasporto);
 			de.setNote(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH_NOTE);
-			dati.addElement(de);
+			dati.add(de);
 						
 		}
 		
@@ -19073,7 +19074,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		else
 			de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADERS);
 		de.setUrl(servletTrasformazioniRichiestaHeadersList, parametriInvocazioneServletTrasformazioniRichiestaHeaders.toArray(new Parameter[parametriInvocazioneServletTrasformazioniRichiestaHeaders.size()]));
-		dati.addElement(de);
+		dati.add(de);
 		
 		// url parameters
 		de = new DataElement();
@@ -19083,7 +19084,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		else
 			de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRI);
 		de.setUrl(servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri.toArray(new Parameter[parametriInvocazioneServletTrasformazioniRichiestaParametri.size()]));
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -19092,7 +19093,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_CONTENUTO);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// abilitato
 		de = new DataElement();
@@ -19102,7 +19103,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setSelected(trasformazioneContenutoAbilitato);
 		de.setValue(trasformazioneContenutoAbilitato+"");
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String postbackElement = this.getPostBackElementName();
 		
@@ -19148,7 +19149,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSelected(trasformazioneContenutoTipo.getValue());
 			setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO, trasformazioneContenutoTipo, serviceBinding, false,
 					protocollo, isPortaDelegata);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(trasformazioneContenutoTipo.isTemplateRequired()) {
 				
@@ -19180,7 +19181,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(trasformazioneContenutoTipoCheck);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(StringUtils.isNotEmpty(trasformazioneContenutoTipoCheck) && trasformazioneContenutoTipoCheck.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO))
 					templateRequired = true;
@@ -19247,7 +19248,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					break;
 				}
 		
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(trasformazioneContenutoTipo.isTrasformazioneProtocolloEnabled()) {
@@ -19257,7 +19258,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_SOAP);
 					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
+					dati.add(de);
 					
 					// abilitato
 					de = new DataElement();
@@ -19267,7 +19268,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setSelected(trasformazioneSoapAbilitato);
 					de.setValue(trasformazioneSoapAbilitato+"");
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(trasformazioneSoapAbilitato) {
 						// soap versione
@@ -19280,7 +19281,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.SELECT);
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_VERSION);
 						de.setSelected(trasformazioneSoapVersion);
-						dati.addElement(de);
+						dati.add(de);
 						
 						// soap action
 						de = new DataElement();
@@ -19289,7 +19290,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.TEXT_EDIT);
 						de.setValue(trasformazioneSoapAction);
 						de.setInfo(dInfoPatternTrasporto);
-						dati.addElement(de);
+						dati.add(de);
 						
 						if(!TipoTrasformazione.EMPTY.equals(trasformazioneContenutoTipo)) {
 							// Envelope
@@ -19301,7 +19302,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							de.setType(DataElementType.SELECT);
 							de.setSelected(trasformazioneSoapEnvelope);
 							de.setPostBack(true);
-							dati.addElement(de);
+							dati.add(de);
 													
 							if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) {
 								
@@ -19313,12 +19314,12 @@ public class ConsoleHelper implements IConsoleHelper {
 								de.setValue(trasformazioneRichiestaContentType);
 								de.setInfo(dInfoPatternTrasporto);
 								de.setRequired(true);
-								dati.addElement(de);
+								dati.add(de);
 								
 								de = new DataElement();
 								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY);
 								de.setType(DataElementType.SUBTITLE);
-								dati.addElement(de);							
+								dati.add(de);							
 								
 								// tipo envelope attachement
 								de = new DataElement();
@@ -19331,7 +19332,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								de.setPostBack(true);
 								setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO, trasformazioneSoapEnvelopeTipo, serviceBinding, false,
 										protocollo, isPortaDelegata);
-								dati.addElement(de);
+								dati.add(de);
 								
 								if(trasformazioneSoapEnvelopeTipo.isTemplateRequired()) {
 									
@@ -19364,7 +19365,7 @@ public class ConsoleHelper implements IConsoleHelper {
 									de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO_CHECK);
 									de.setType(DataElementType.HIDDEN);
 									de.setValue(trasformazioneSoapEnvelopeTipoCheck);
-									dati.addElement(de);
+									dati.add(de);
 									
 									if(StringUtils.isNotEmpty(trasformazioneSoapEnvelopeTipoCheck) && trasformazioneSoapEnvelopeTipoCheck.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO))
 										templateRequired = true;
@@ -19403,7 +19404,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_REST);
 					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
+					dati.add(de);
 	
 					// abilitato
 					de = new DataElement();
@@ -19413,7 +19414,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setSelected(trasformazioneRestAbilitato);
 					de.setValue(trasformazioneRestAbilitato+"");
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(trasformazioneRestAbilitato) {
 						//  path
@@ -19426,11 +19427,11 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setSize(this.getSize());
 						de.setRequired(true);
 						de.setInfo(dInfoPatternTrasporto);
-						dati.addElement(de);
+						dati.add(de);
 						
 						// method
 						de = getHttpMethodDataElementTrasformazione(tipoOP, trasformazioneRestMethod);
-						dati.addElement(de);
+						dati.add(de);
 						
 					}
 					
@@ -19700,7 +19701,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public Vector<DataElement> addPorteTrasformazioniServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, boolean fromList,
+	public List<DataElement> addPorteTrasformazioniServizioApplicativoToDati(TipoOperazione tipoOp, List<DataElement> dati, String idTrasformazione, boolean fromList,
 		String servizioApplicativo, String[] servizioApplicativoList, int sizeAttuale, 
 		boolean addMsgServiziApplicativoNonDisponibili, boolean addTitle) {
 		
@@ -19709,7 +19710,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_LIST);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(fromList+"");
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		DataElement  de = new DataElement();
@@ -19717,7 +19718,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(servizioApplicativoList!=null && servizioApplicativoList.length>0){
 		
@@ -19730,7 +19731,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(labelApplicativo);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			de = new DataElement();
@@ -19739,7 +19740,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
 			de.setValues(servizioApplicativoList);
 			de.setSelected(servizioApplicativo);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}else{
 			if(addMsgServiziApplicativoNonDisponibili){
@@ -19756,7 +19757,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addPorteTrasformazioniSoggettoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, boolean fromList,
+	public List<DataElement> addPorteTrasformazioniSoggettoToDati(TipoOperazione tipoOp, List<DataElement> dati, String idTrasformazione, boolean fromList,
 		String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
 			boolean addMsgSoggettiNonDisponibili, boolean addTitle) {
 		
@@ -19765,7 +19766,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_LIST);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(fromList+"");
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		DataElement  de = new DataElement();
@@ -19773,7 +19774,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
-		dati.addElement(de);
+		dati.add(de);
 			
 		if(soggettiList!=null && soggettiList.length>0){
 		
@@ -19781,7 +19782,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				  de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			  de = new DataElement();
@@ -19791,7 +19792,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabels(soggettiLabelList);
 			de.setValues(soggettiList);
 			de.setSelected(soggetto);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}else{
 			if(addMsgSoggettiNonDisponibili){
@@ -19808,7 +19809,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 
-	public Vector<DataElement> addPorteTrasformazioniServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, boolean fromList, 
+	public List<DataElement> addPorteTrasformazioniServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, List<DataElement> dati, String idTrasformazione, boolean fromList, 
 		String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
 		Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi, String sa,
 			boolean addMsgApplicativiNonDisponibili) {
@@ -19818,7 +19819,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_LIST);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(fromList+"");
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(soggettiList!=null && soggettiList.length>0 && listServiziApplicativi!=null && listServiziApplicativi.size()>0){
@@ -19826,14 +19827,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 			de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(idTrasformazione);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
@@ -19849,7 +19850,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			else {
 				de.setType(DataElementType.HIDDEN);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			List<IDServizioApplicativoDB> listSA = null;
 			if(soggetto!=null && !"".equals(soggetto)) {
@@ -19874,7 +19875,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabels(saLabels);
 				de.setValues(saValues);
 				de.setSelected(sa);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			else {
@@ -20146,12 +20147,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public Vector<DataElement>  addProprietaAutorizzazioneCustomToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String nome, String valore) {
+	public List<DataElement>  addProprietaAutorizzazioneCustomToDati(List<DataElement> dati, TipoOperazione tipoOp, String nome, String valore) {
 
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CUSTOM_PROPERTIES);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
@@ -20165,7 +20166,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		de.setName(CostantiControlStation.PARAMETRO_NOME);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
@@ -20174,17 +20175,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_VALORE);
 		de.setValue(valore);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 	
-	public Vector<DataElement>  addProprietaAutenticazioneCustomToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String nome, String valore) {
+	public List<DataElement>  addProprietaAutenticazioneCustomToDati(List<DataElement> dati, TipoOperazione tipoOp, String nome, String valore) {
 
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTENTICAZIONE_CUSTOM_PROPERTIES);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
@@ -20198,7 +20199,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		de.setName(CostantiControlStation.PARAMETRO_NOME);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
@@ -20207,7 +20208,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_VALORE);
 		de.setValue(valore);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 		
@@ -20238,7 +20239,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return false;
 	}
 
-	public Vector<DataElement> addProxyPassConfigurazioneRegola(TipoOperazione tipoOp, Vector<DataElement> dati,
+	public List<DataElement> addProxyPassConfigurazioneRegola(TipoOperazione tipoOp, List<DataElement> dati,
 			String idRegolaS, String nome, String descrizione, String stato, boolean regExpr, String regolaText,
 			String contestoEsterno, String baseUrl, String protocollo, List<String> protocolli, String soggetto,
 			List<IDSoggetto> soggetti, String ruolo, String serviceBinding, boolean multiTenant) throws Exception {
@@ -20267,7 +20268,7 @@ public class ConsoleHelper implements IConsoleHelper {
 //		}
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		// stato
 		de = new DataElement();
@@ -20279,7 +20280,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO);
 		de.setSelected(stato);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// descrizione
 		de = new DataElement();
@@ -20288,7 +20289,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.TEXT_AREA);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_DESCRIZIONE);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		dataElement = new DataElement();
@@ -20304,7 +20305,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setSelected(regExpr);
 		de.setValue(regExpr+"");
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// regola
 		de = new DataElement();
@@ -20323,7 +20324,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		de.setInfo(deInfo);
 		
-		dati.addElement(de);
+		dati.add(de);
 				
 		// profilo
 		de = new DataElement();
@@ -20348,7 +20349,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO);
 		de.setPostBack(true);
 		de.setSelected(protocollo);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// soggetto
 		de = new DataElement();
@@ -20376,7 +20377,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(soggetto);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// ruolo
 		de = new DataElement();
@@ -20386,7 +20387,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO);
 		de.setSelected(ruolo);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// serviceBinding
 		de = new DataElement();
@@ -20396,7 +20397,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING);
 		de.setSelected(serviceBinding);
-		dati.addElement(de);
+		dati.add(de);
 
 		dataElement = new DataElement();
 		dataElement.setLabel(CostantiControlStation.LABEL_PROXY_PASS_REGOLA_NUOVA_URL);
@@ -20424,7 +20425,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		deInfo.setHeaderBody(CostantiControlStation.MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL);
 		deInfo.setHeaderBody(deInfo.getHeaderBody()+sb.toString());
 		de.setInfo(deInfo);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// contesto
 		de = new DataElement();
@@ -20438,7 +20439,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		deInfo.setHeaderBody(CostantiControlStation.MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO);
 		deInfo.setHeaderBody(deInfo.getHeaderBody()+sb.toString());
 		de.setInfo(deInfo);
-		dati.addElement(de);
+		dati.add(de);
 				
 		return dati;
 	}
@@ -20529,7 +20530,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return sbConnettoriMultipli.toString();
 	}
 	
-	public Vector<DataElement> addInformazioniGruppiAsHiddenToDati(TipoOperazione tipoOp, Vector<DataElement> dati,	
+	public List<DataElement> addInformazioniGruppiAsHiddenToDati(TipoOperazione tipoOp, List<DataElement> dati,	
 			String idTabGruppo, String idTabConnettoriMultipli, String accessoDaAPS, String connettoreAccessoDaGruppi, String connettoreRegistro, String connettoreAccessoDaListaConnettoriMultipli) {
 		
 		if(idTabGruppo != null) {
@@ -20829,28 +20830,28 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	public void addInUsoButtonVisualizzazioneClassica(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+	public void addInUsoButtonVisualizzazioneClassica(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
 		this.addInUsoButton(e, DataElementType.BUTTON, titolo, id, inUsoType,
 				CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
 				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
 				true, true);
 	}
 	
-	public void addInUsoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+	public void addInUsoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
 		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
 				CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
 				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
 				true, true);
 	}
 	
-	public void addInUsoInfoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+	public void addInUsoInfoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
 		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
 				CostantiControlStation.LABEL_IN_USO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
 				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_INFORMAZIONI, 
 				true, true);
 	}
 	
-	private void addInUsoButton(Vector<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType,
+	private void addInUsoButton(List<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType,
 			String tooltip, String icon, String headerRiga1, 
 			Boolean resizable, Boolean draggable) {
 		
@@ -20861,13 +20862,13 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public void addComandoInUsoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+	public void addComandoInUsoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
 		 addComandoInUsoElementoButton(titolo, id, inUsoType,
 				 CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
 					CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
 					true, true);
 	}
-	public void addComandoInUsoInfoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+	public void addComandoInUsoInfoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
 		 addComandoInUsoElementoButton(titolo, id, inUsoType,
 				 CostantiControlStation.LABEL_IN_USO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
 					CostantiControlStation.LABEL_IN_USO_BODY_HEADER_INFORMAZIONI, 
@@ -20882,7 +20883,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				resizable, draggable);
 	}
 	
-	public void addComandoVerificaCertificatiButton(Vector<DataElement> e, String nomeElementoSuCuiEffettuareLaVerifica, String servletName, List<Parameter> parameters) {
+	public void addComandoVerificaCertificatiButton(List<DataElement> e, String nomeElementoSuCuiEffettuareLaVerifica, String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
 			parameters = new ArrayList<Parameter>();
 		}
@@ -20892,7 +20893,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				CostantiControlStation.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
 	}
 	
-	public void addComandoResetCacheButton(Vector<DataElement> e, String nomeElementoSuCuiEffettuareIlReset, String servletName, List<Parameter> parameters) {
+	public void addComandoResetCacheButton(List<DataElement> e, String nomeElementoSuCuiEffettuareIlReset, String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
 			parameters = new ArrayList<Parameter>();
 		}
@@ -20904,19 +20905,19 @@ public class ConsoleHelper implements IConsoleHelper {
 				Costanti.ICONA_RESET_CACHE_ELEMENTO, servletName,parameters);
 	}
 	
-	public void addVerificaCertificatiButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
+	public void addVerificaCertificatiButton(List<DataElement> e, String servletName, List<Parameter> parameters) {
 		this.addAzioneButton(e, DataElementType.IMAGE, 
 				MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CERTIFICATI.toLowerCase()),
 				CostantiControlStation.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
 	}
 	
-	public void addVerificaConnettivitaButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
+	public void addVerificaConnettivitaButton(List<DataElement> e, String servletName, List<Parameter> parameters) {
 		this.addAzioneButton(e, DataElementType.IMAGE, 
 				MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA.toLowerCase()),
 				CostantiControlStation.ICONA_VERIFICA, servletName,parameters);
 	}
 	
-	protected void addAzioneButton(Vector<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters) {
+	protected void addAzioneButton(List<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters) {
 		DataElement de = new DataElement();
 		de.setType(deType);
 		de.setToolTip(tooltip);
@@ -20927,15 +20928,15 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		de.setIcon(icon);
 		
-		e.addElement(de);
+		e.add(de);
 	}
 	
-	public void addCanaleToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale, String canaleAPI,
+	public void addCanaleToDati(List<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale, String canaleAPI,
 			List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled) throws DriverConfigurazioneNotFound {
 		this.addCanaleToDati(dati, tipoOperazione, canaleStato, canale, canaleAPI, canaleList, gestioneCanaliEnabled, true);
 	}
 	
-	public void addCanaleToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale, String canaleAPI,
+	public void addCanaleToDati(List<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale, String canaleAPI,
 			List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled, boolean addTitle) throws DriverConfigurazioneNotFound {
 		DataElement de;
 		// canale
@@ -20968,7 +20969,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO);
 			de.setSize(this.getSize());
 			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 				de = new DataElement();
@@ -20980,12 +20981,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setSelected(canale);
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE);
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 	}
 	
-	public void addCanaleToDatiAsHidden(Vector<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale, boolean gestioneCanaliEnabled) {
+	public void addCanaleToDatiAsHidden(List<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale, boolean gestioneCanaliEnabled) {
 		DataElement de;
 		// canale
 		if(gestioneCanaliEnabled) {
@@ -20995,7 +20996,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(canaleStato);
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 				de = new DataElement();
@@ -21004,7 +21005,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(canale);
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE);
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 	}
@@ -21026,7 +21027,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
 			String nomeParametroSelezioneTipo,
-			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			String nomeParametro, String label, String value, boolean hidden, List<DataElement> dati,
 			boolean postBack_viaPOST) throws Exception {
 		addCustomField(tipoPlugin,
 				ruolo,
@@ -21042,7 +21043,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
 			String nomeParametroSelezioneTipo,
-			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			String nomeParametro, String label, String value, boolean hidden, List<DataElement> dati,
 			boolean postBack_viaPOST) throws Exception {
 		this.addCustomFieldConValoreDefault(tipoPlugin,
 				ruolo,
@@ -21058,7 +21059,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
 			String nomeParametroSelezioneTipo,
-			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			String nomeParametro, String label, String value, boolean hidden, List<DataElement> dati,
 			boolean postBack_viaPOST, String valoreDefault) throws Exception {
 		addCustomField(tipoPlugin,
 				ruolo,
@@ -21073,7 +21074,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
 			String nomeParametroSelezioneTipo,
-			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			String nomeParametro, String label, String value, boolean hidden, List<DataElement> dati,
 			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati) throws Exception {
 		this.addCustomFieldConValoriDaEscludereConValoreDefault(tipoPlugin,ruolo,fase,nomeParametroSelezioneTipo,nomeParametro, label,
 				value, hidden, dati,postBack_viaPOST, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati, null);
@@ -21082,7 +21083,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
 			String nomeParametroSelezioneTipo,
-			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			String nomeParametro, String label, String value, boolean hidden, List<DataElement> dati,
 			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati, String valoreDefault) throws Exception {
 		addCustomField(tipoPlugin,
 				ruolo,
@@ -21098,7 +21099,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
 			String nomeParametroSelezioneTipo,
-			String nomeParametro, String label, String [] value, boolean hidden, Vector<DataElement> dati,
+			String nomeParametro, String label, String [] value, boolean hidden, List<DataElement> dati,
 			boolean postBack_viaPOST) throws Exception {
 		addMultiSelectCustomFieldConValoreDefault(tipoPlugin,
 				ruolo,
@@ -21114,7 +21115,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
 			String nomeParametroSelezioneTipo,
-			String nomeParametro, String label, String [] value, boolean hidden, Vector<DataElement> dati,
+			String nomeParametro, String label, String [] value, boolean hidden, List<DataElement> dati,
 			boolean postBack_viaPOST, String [] valoriDefault) throws Exception {
 		addCustomField(tipoPlugin,
 				ruolo,
@@ -21131,7 +21132,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, 
 			String value, String [] multiValue, boolean multiSelect,
-			boolean hidden, Vector<DataElement> dati,
+			boolean hidden, List<DataElement> dati,
 			boolean postBack_viaPOST, boolean mostraSempreLabel, List<String> listaValuesDaEscludere, 
 			String messaggioErroreValoriDisponibiliTerminati, boolean isSearch, String valoreDefault, String[] valoriDefault) throws Exception {
 		
@@ -21312,11 +21313,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
-	public void addOpzioniAvanzateRateLimitingToDati(Vector<DataElement> dati,
+	public void addOpzioniAvanzateRateLimitingToDati(List<DataElement> dati,
 			boolean addTitle,
 			boolean nascondiSezioneOpzioniAvanzate, 
 			String ctModalitaSincronizzazione, String ctImplementazione, String ctContatori, String ctTipologia,
@@ -21327,7 +21328,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		DataElement de = new DataElement();
@@ -21343,7 +21344,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(true);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		de = new DataElement();
@@ -21359,7 +21360,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(true);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		List<String> implValues = null;
@@ -21371,7 +21372,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_CONFIGURAZIONE_SICRONIZZAZIONE_DISTRIBUITA);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -21399,7 +21400,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setPostBack(true);
 			}
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		de = new DataElement();
@@ -21437,7 +21438,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				deLABEL.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_CONTATORI);
 				deLABEL.setValue(label);
 				deLABEL.setType(DataElementType.TEXT);
-				dati.addElement(deLABEL);
+				dati.add(deLABEL);
 			}
 			else {
 				de.setValues(values);
@@ -21450,7 +21451,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setPostBack(true);
 			}
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		de = new DataElement();
@@ -21481,7 +21482,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setPostBack(false);
 			}
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -21489,7 +21490,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_CONFIGURAZIONE_HEADER_HTTP);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -21506,7 +21507,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(false);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 			
 		de = new DataElement();
@@ -21522,7 +21523,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(false);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		de = new DataElement();
@@ -21538,7 +21539,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(false);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		de = new DataElement();
@@ -21554,7 +21555,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(true);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 
@@ -21571,7 +21572,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setMinValue(1);
 			de.setRequired(true);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
@@ -21660,9 +21661,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public void addIntegrazioneMetadatiToDati(Vector<DataElement> dati, String integrazioneStato, String integrazione,
+	public void addIntegrazioneMetadatiToDati(List<DataElement> dati, String integrazioneStato, String integrazione,
 			String[] integrazioneGruppi, List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare,
-			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi, Vector<DataElement> deIntegrazione,
+			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi, List<DataElement> deIntegrazione,
 			boolean nascondiSezioneOpzioniAvanzate, boolean isPortaDelegata,
 			ServiceBinding serviceBinding) throws Exception {
 		String ruoloConfigurazione = isPortaDelegata ? Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE : 	Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE;
@@ -21675,7 +21676,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO);
 		if(nascondiSezioneOpzioniAvanzate ){
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		} else {
 			de.setType(DataElementType.SELECT);
 			de.setValues(CostantiControlStation.VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO);
@@ -21685,7 +21686,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			DataElementInfo dInfo = new DataElementInfo(CostantiControlStation.LABEL_METADATI);
 			dInfo.setBody(CostantiControlStation.LABEL_METADATI_INFO);
 			de.setInfo(dInfo);
-			deIntegrazione.addElement(de);
+			deIntegrazione.add(de);
 		}
 		
 		if(nascondiSezioneOpzioniAvanzate ){
@@ -21694,7 +21695,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(integrazione);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}else{
 			// valore del campo integrazione 
 			if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO)) {
@@ -21703,14 +21704,14 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(integrazione);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
 				de.setType(DataElementType.HIDDEN);
-				deIntegrazione.addElement(de);
+				deIntegrazione.add(de);
 			} else if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
 				de.setValue(integrazione);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
 				de.setType(DataElementType.HIDDEN);
-				deIntegrazione.addElement(de);
+				deIntegrazione.add(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI_GRUPPO);
@@ -21731,7 +21732,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					break;
 				}
 				de.setInfo(dInfo);
-				deIntegrazione.addElement(de);
+				deIntegrazione.add(de);
 				
 				// gruppi singoli
 				boolean subtitleOp2 = false;
@@ -21762,7 +21763,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								DataElement deSub = new DataElement();
 								deSub.setLabel(CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_2);
 								deSub.setType(DataElementType.SUBTITLE);
-								deIntegrazione.addElement(deSub);
+								deIntegrazione.add(deSub);
 								
 								subtitleOp2 = true;
 							}
@@ -21786,7 +21787,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								DataElement deSub = new DataElement();
 								deSub.setLabel(CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_1);
 								deSub.setType(DataElementType.SUBTITLE);
-								deIntegrazione.addElement(deSub);
+								deIntegrazione.add(deSub);
 								
 								subtitleOp1 = true;
 							}
@@ -21835,7 +21836,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							de.setLabels(TipoIntegrazione.toLabels(group));
 							de.setRequired(true);
 						}
-						deIntegrazione.addElement(de);
+						deIntegrazione.add(de);
 						
 					} else {
 						if(group.isMulti()) {
@@ -21918,14 +21919,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public void visualizzaLinkHandlers(Vector<DataElement> dati, boolean isConfigurazione, TipoPdD ruoloPorta, Long idPorta, ServiceBinding serviceBinding) throws DriverConfigurazioneException {
+	public void visualizzaLinkHandlers(List<DataElement> dati, boolean isConfigurazione, TipoPdD ruoloPorta, Long idPorta, ServiceBinding serviceBinding) throws DriverConfigurazioneException {
 		DataElement de;
 		boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		List<Parameter> listaParametriComuni = new ArrayList<Parameter>();
 		
@@ -21950,7 +21951,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RICHIESTA);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		for (int i = 0; i < PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA.size(); i++) {
 			String valueRichiesta = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA.get(i);
@@ -21971,14 +21972,14 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(labelRichiesta +" (" + numeroHandlersRichiesta + ")");
 			else
 				de.setValue(labelRichiesta);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// handler risposta
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RISPOSTA);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		for (int i = 0; i < PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA.size(); i++) {
 			String valueRisposta = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA.get(i);
@@ -21999,7 +22000,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(labelRisposta+" (" + numeroHandlersRisposta + ")");
 			else
 				de.setValue(labelRisposta);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(isConfigurazione) {
@@ -22007,7 +22008,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_SERVIZIO);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			boolean integrationManagerEnabled = this.confCore.isIntegrationManagerEnabled();
 			
@@ -22031,7 +22032,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setValue(labelServizio +" (" + numeroHandlersServizio + ")");
 					else
 						de.setValue(labelServizio);
-					dati.addElement(de);
+					dati.add(de);
 				}
 			} else {
 				for (int i = 0; i < PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_SENZA_INTEGRATION_MANAGER.size(); i++) {
@@ -22053,7 +22054,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setValue(labelServizio +" (" + numeroHandlersServizio + ")");
 					else
 						de.setValue(labelServizio);
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 		}
@@ -22157,23 +22158,23 @@ public class ConsoleHelper implements IConsoleHelper {
 		return false;
 	}
 	
-	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName) throws Exception{
+	public void impostaAperturaTitle(List<DataElement> dati, String titleName) throws Exception{
 		this.impostaAperturaTitle(dati, titleName, DataElementType.TITLE, null, this.getPostBackElementName());
 	}
 	
-	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
+	public void impostaAperturaTitle(List<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
 		this.impostaAperturaTitle(dati, titleName, DataElementType.TITLE, visualizzaSottosezioneAperta, this.getPostBackElementName());
 	}
 	
-	public void impostaAperturaSubTitle(Vector<DataElement> dati, String titleName) throws Exception{
+	public void impostaAperturaSubTitle(List<DataElement> dati, String titleName) throws Exception{
 		this.impostaAperturaTitle(dati, titleName, DataElementType.SUBTITLE, null, this.getPostBackElementName());
 	}
 	
-	public void impostaAperturaSubTitle(Vector<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
+	public void impostaAperturaSubTitle(List<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
 		this.impostaAperturaTitle(dati, titleName, DataElementType.SUBTITLE, visualizzaSottosezioneAperta, this.getPostBackElementName());
 	}
 	
-	private void impostaAperturaTitle(Vector<DataElement> dati, String titleName, DataElementType titleType, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
+	private void impostaAperturaTitle(List<DataElement> dati, String titleName, DataElementType titleType, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
 		if(dati != null) {
 			int idxSubtitle = -1;
 			for (int i = 0; i < dati.size(); i++) {
@@ -22228,7 +22229,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void addVerificaCertificatoSceltaAlias(List<String> aliases,Vector<DataElement> dati) throws Exception {
+	public void addVerificaCertificatoSceltaAlias(List<String> aliases,List<DataElement> dati) throws Exception {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.SELECT);
@@ -22246,11 +22247,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setSize(this.getSize());
 		//de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
-	public void addDescrizioneVerificaConnettivitaToDati(Vector<DataElement> dati, Connettore connettore,
+	public void addDescrizioneVerificaConnettivitaToDati(List<DataElement> dati, Connettore connettore,
 			String server, boolean registro, String aliasConnettore,
 			List<Parameter> downloadCertServerParameters,
 			boolean setTitle, boolean useLabelEndpoint) throws Exception {
@@ -22428,7 +22429,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLS);
 				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs));
 				dati.add(de);
 				

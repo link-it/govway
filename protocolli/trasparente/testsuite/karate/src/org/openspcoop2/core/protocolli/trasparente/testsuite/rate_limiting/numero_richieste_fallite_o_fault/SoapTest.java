@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -80,7 +80,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1?returnCode=500");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, firstBatch);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, firstBatch);
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, firstBatch, 0);
 		
 		// Faccio un batch di richieste che non devono essere conteggiate
@@ -100,7 +100,7 @@ public class SoapTest extends ConfigLoader {
 
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
-		Vector<HttpResponse>  failedResponses = Utils.makeParallelRequests(request, toBlockRequests);
+		List<HttpResponse>  failedResponses = Utils.makeParallelRequests(request, toBlockRequests);
 
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toBlockRequests);
 		
@@ -214,7 +214,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1?returnCode=500");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, first_batch);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, first_batch);
 		
 		for (var r : responses) {
 			String idTransazione = r.getHeaderFirstValue(Headers.TransactionId);
@@ -237,7 +237,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1?fault=true");
 		
-		Vector<HttpResponse> faultedResponses = Utils.makeParallelRequests(request, last_batch);
+		List<HttpResponse> faultedResponses = Utils.makeParallelRequests(request, last_batch);
 		responses.addAll(faultedResponses);
 		
 		for (var r : faultedResponses) {
@@ -258,7 +258,7 @@ public class SoapTest extends ConfigLoader {
 
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
-		Vector<HttpResponse>  blockedResponses = Utils.makeParallelRequests(request, toBlockRequests);
+		List<HttpResponse>  blockedResponses = Utils.makeParallelRequests(request, toBlockRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toBlockRequests);
 		
@@ -292,7 +292,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1?returnCode=500");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, first_batch);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, first_batch);
 		
 		for (var r : responses) {
 			String idTransazione = r.getHeaderFirstValue(Headers.TransactionId);
@@ -315,7 +315,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1?fault=true");
 		
-		Vector<HttpResponse> faultedResponses = Utils.makeParallelRequests(request, last_batch);
+		List<HttpResponse> faultedResponses = Utils.makeParallelRequests(request, last_batch);
 		responses.addAll(faultedResponses);
 		
 		for (var r : faultedResponses) {
@@ -336,7 +336,7 @@ public class SoapTest extends ConfigLoader {
 
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
-		Vector<HttpResponse>  blockedResponses = Utils.makeParallelRequests(request, toBlockRequests);
+		List<HttpResponse>  blockedResponses = Utils.makeParallelRequests(request, toBlockRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toBlockRequests);
 		
@@ -366,12 +366,12 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1?fault=true");
 						
-		Vector<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests, idPolicy);
+		List<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests, idPolicy);
 		Utils.checkHeaderRemaining(responses, Headers.FailedOrFaultRemaining, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
-		Vector<HttpResponse> failedResponses = Utils.makeParallelRequests(request, toBlockRequests);
+		List<HttpResponse> failedResponses = Utils.makeParallelRequests(request, toBlockRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toBlockRequests);
 		
@@ -400,12 +400,12 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1?fault=true");
 						
-		Vector<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests, idPolicy);
+		List<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests, idPolicy);
 		Utils.checkHeaderRemaining(responses, Headers.FailedOrFaultRemaining, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
-		Vector<HttpResponse> failedResponses = Utils.makeParallelRequests(request, toBlockRequests);
+		List<HttpResponse> failedResponses = Utils.makeParallelRequests(request, toBlockRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toBlockRequests);
 		
@@ -415,7 +415,7 @@ public class SoapTest extends ConfigLoader {
 	
 	
 	
-	private void checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests) throws Exception {
+	private void checkFailedRequests(List<HttpResponse> responses, int windowSize, int maxRequests) throws Exception {
 		
 		for (var r: responses) {
 			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedOrFaultLimit, r.getHeaderFirstValue(Headers.FailedOrFaultLimit), maxRequests);			
@@ -438,7 +438,7 @@ public class SoapTest extends ConfigLoader {
 	}
 
 
-	private void checkOkRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests) throws DynamicException {
+	private void checkOkRequests(List<HttpResponse> responses, int windowSize, int maxRequests) throws DynamicException {
 	
 		// Per ogni richiesta controllo gli headers e anche che il body
 		// sia effettivamente un fault.

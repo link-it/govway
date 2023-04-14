@@ -74,11 +74,6 @@ public final class ServiziApplicativiProprietaDel extends Action {
 		try {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
-			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
-			
-			parentSA = useIdSogg ? ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO : ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			
 			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
@@ -98,9 +93,6 @@ public final class ServiziApplicativiProprietaDel extends Action {
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nome = de.getValue();
 				nome = idsToRemove.get(i);
 
 				for (int j = 0; j < sa.sizeProprietaList(); j++) {

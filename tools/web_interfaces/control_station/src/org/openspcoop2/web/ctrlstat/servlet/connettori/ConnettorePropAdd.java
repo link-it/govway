@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -141,9 +140,9 @@ public final class ConnettorePropAdd extends Action {
 						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,idPorta);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, versioneservizio,
 						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta);
@@ -164,9 +163,9 @@ public final class ConnettorePropAdd extends Action {
 						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,idPorta);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, versioneservizio,
 						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta);
@@ -181,7 +180,8 @@ public final class ConnettorePropAdd extends Action {
 			// Aggiorno il connettore nel db
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
-			String saveNomeFru = "", saveTipoFru = "";
+			String saveNomeFru = "";
+			String saveTipoFru = "";
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
 				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
 				Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
@@ -201,7 +201,6 @@ public final class ConnettorePropAdd extends Action {
 				// Elimino il vecchio fruitore ed aggiungo il nuovo
 				for (int i = 0; i < serviziosp.sizeFruitoreList(); i++) {
 					Fruitore tmpFru = serviziosp.getFruitore(i);
-					//System.out.println("["+tmpFru.getId().longValue()+"]==["+servFru.getId().longValue()+"]");
 					if (tmpFru.getId().longValue() == servFru.getId().longValue()) {
 						serviziosp.removeFruitore(i);
 						break;
@@ -290,9 +289,8 @@ public final class ConnettorePropAdd extends Action {
 				connettore = servizio.getConfigurazioneServizio().getConnettore();
 			}
 			else if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
-				//int idServizioFruitoreInt = Integer.parseInt(myId);
-				int idServizioInt = Integer.parseInt(id);
-				AccordoServizioParteSpecifica serviziosp = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
+				long idServizioLong = Long.parseLong(id);
+				AccordoServizioParteSpecifica serviziosp = apsCore.getAccordoServizioParteSpecifica(idServizioLong);
 				for (int i = 0; i < serviziosp.sizeFruitoreList(); i++) {
 					Fruitore tmpFru = serviziosp.getFruitore(i);
 					if (saveNomeFru.equals(tmpFru.getNome()) &&
@@ -329,19 +327,19 @@ public final class ConnettorePropAdd extends Action {
 				connettore = ss.getConnettore();
 			}
 			
-			List<Object> lista = new ArrayList<Object>();
+			List<Object> lista = new ArrayList<>();
 			if (connettore != null) {
 				for (int i = 0; i<connettore.sizePropertyList(); i++){
-					if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
-							connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+					if(!CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())  &&
+							!connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
 						lista.add(connettore.getProperty(i));
 					}
 				}
 			}
 			if (connettoreC != null) {
 				for (int i = 0; i<connettoreC.sizePropertyList(); i++){
-					if(CostantiDB.CONNETTORE_DEBUG.equals(connettoreC.getProperty(i).getNome())==false  &&
-							connettoreC.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+					if(!CostantiDB.CONNETTORE_DEBUG.equals(connettoreC.getProperty(i).getNome())  &&
+							!connettoreC.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
 						lista.add(connettoreC.getProperty(i));
 					}
 				}

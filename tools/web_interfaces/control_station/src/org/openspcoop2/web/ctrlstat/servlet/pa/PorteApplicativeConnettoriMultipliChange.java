@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -183,27 +182,27 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			// token policy
 			String autenticazioneTokenS = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
-			String token_policy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			String tokenPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 
 			// proxy
-			String proxy_enabled = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-			String proxy_hostname = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-			String proxy_port = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-			String proxy_username = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxy_password = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyEnabled = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxyHostname = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxyPort = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxyUsername = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxyPassword = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 
 			// tempi risposta
-			String tempiRisposta_enabled = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-			String tempiRisposta_connectionTimeout = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
-			String tempiRisposta_readTimeout = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
-			String tempiRisposta_tempoMedioRisposta = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+			String tempiRispostaEnabled = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			String tempiRispostaConnectionTimeout = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			String tempiRispostaReadTimeout = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			String tempiRispostaTempoMedioRisposta = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 
 			// opzioni avanzate
-			String transfer_mode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-			String transfer_mode_chunk_size = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-			String redirect_mode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-			String redirect_max_hop = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transfer_mode, redirect_mode);
+			String transferMode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transferModeChunkSize = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirectMode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirectMaxHop = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transferMode, redirectMode);
 
 			String user= null;
 			String password =null;
@@ -256,9 +255,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 			// file
 			String requestOutputFileName = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
-			String requestOutputFileName_permissions = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+			String requestOutputFileNamePermissions = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			String requestOutputFileNameHeaders = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
-			String requestOutputFileNameHeaders_permissions = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+			String requestOutputFileNameHeadersPermissions = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			String requestOutputParentDirCreateIfNotExists = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			String requestOutputOverwriteIfExists = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			String responseInputMode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -407,8 +406,6 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)) {
 							
 							if(isDefault) {
-							
-								//tipoauthRichiesta = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
 								
 								idSA.setNome(pa.getServizioApplicativoDefault());
 								idSADB.setNome(pa.getServizioApplicativoDefault());
@@ -442,27 +439,27 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								// token policy
 								autenticazioneTokenS = null;
 								autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
-								token_policy = null;
+								tokenPolicy = null;
 	
 								// proxy
-								proxy_enabled = null;
-								proxy_hostname = null;
-								proxy_port = null;
-								proxy_username = null;
-								proxy_password = null;
+								proxyEnabled = null;
+								proxyHostname = null;
+								proxyPort = null;
+								proxyUsername = null;
+								proxyPassword = null;
 	
 								// tempi risposta
-								tempiRisposta_enabled = null;
-								tempiRisposta_connectionTimeout = null;
-								tempiRisposta_readTimeout = null;
-								tempiRisposta_tempoMedioRisposta = null;
+								tempiRispostaEnabled = null;
+								tempiRispostaConnectionTimeout = null;
+								tempiRispostaReadTimeout = null;
+								tempiRispostaTempoMedioRisposta = null;
 	
 								// opzioni avanzate
-								transfer_mode = null;
-								transfer_mode_chunk_size = null;
-								redirect_mode = null;
-								redirect_max_hop = null;
-								opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transfer_mode, redirect_mode);
+								transferMode = null;
+								transferModeChunkSize = null;
+								redirectMode = null;
+								redirectMaxHop = null;
+								opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transferMode, redirectMode);
 	
 								// http
 								url = null;
@@ -502,9 +499,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 	
 								// file
 								requestOutputFileName = null;
-								requestOutputFileName_permissions = null;
+								requestOutputFileNamePermissions = null;
 								requestOutputFileNameHeaders = null;
-								requestOutputFileNameHeaders_permissions = null;
+								requestOutputFileNameHeadersPermissions = null;
 								requestOutputParentDirCreateIfNotExists = null;
 								requestOutputOverwriteIfExists = null;
 								responseInputMode = null;
@@ -535,23 +532,23 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				
 				// Tempi di risposta
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE)) {
-					if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+					if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
 							|| 
-							tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+							tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) 
 							|| 
-							tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
+							tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ){
 						
 						ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
 						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 												
-						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
-							tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+						if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
+							tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 						}
-						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
-							tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+						if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
+							tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
 						}
-						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
-							tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+						if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
+							tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 						}
 					}
 				}
@@ -743,30 +740,30 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 					autenticazioneHttp = porteApplicativeHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 
-					tempiRisposta_enabled = null;
+					tempiRispostaEnabled = null;
 					ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
 					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
-					tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
-					tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
-					tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+					tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+					tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+					tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 
 
 					// Devo cmq rileggere i valori se non definiti
 					//					ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
 					//					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
-					if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+					if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
 							|| 
-							tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+							tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) 
 							|| 
-							tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
-						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
-							tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+							tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ){
+						if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
+							tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 						}
-						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
-							tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+						if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
+							tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
 						}
-						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
-							tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+						if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
+							tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 						}
 					}
 				}
@@ -880,136 +877,136 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						}
 					}
 
-					if(proxy_enabled==null && props!=null){
+					if(proxyEnabled==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_PROXY_TYPE);
 						if(v!=null && !"".equals(v)){
-							proxy_enabled = Costanti.CHECK_BOX_ENABLED_TRUE;
+							proxyEnabled = Costanti.CHECK_BOX_ENABLED_TRUE;
 
 							// raccolgo anche altre proprietà
 							v = props.get(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
 							if(v!=null && !"".equals(v)){
-								proxy_hostname = v.trim();
+								proxyHostname = v.trim();
 							}
 							v = props.get(CostantiDB.CONNETTORE_PROXY_PORT);
 							if(v!=null && !"".equals(v)){
-								proxy_port = v.trim();
+								proxyPort = v.trim();
 							}
 							v = props.get(CostantiDB.CONNETTORE_PROXY_USERNAME);
 							if(v!=null && !"".equals(v)){
-								proxy_username = v.trim();
+								proxyUsername = v.trim();
 							}
 							v = props.get(CostantiDB.CONNETTORE_PROXY_PASSWORD);
 							if(v!=null && !"".equals(v)){
-								proxy_password = v.trim();
+								proxyPassword = v.trim();
 							}
 						}
 					}
 
-					if(tempiRisposta_enabled == null ||
-							tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+					if(tempiRispostaEnabled == null ||
+							tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
 							|| 
-							tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+							tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) 
 							|| 
-							tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
+							tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ){
 
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
 						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 
 						if( props!=null ) {
-							if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
+							if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
 								String v = props.get(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT);
 								if(v!=null && !"".equals(v)){
-									tempiRisposta_connectionTimeout = v.trim();
-									tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+									tempiRispostaConnectionTimeout = v.trim();
+									tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 								}
 								else {
-									tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+									tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 								}
 							}
 
-							if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
+							if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
 								String v = props.get(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT);
 								if(v!=null && !"".equals(v)){
-									tempiRisposta_readTimeout = v.trim();
-									tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+									tempiRispostaReadTimeout = v.trim();
+									tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 								}
 								else {
-									tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+									tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
 								}
 							}
 
-							if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
+							if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
 								String v = props.get(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA);
 								if(v!=null && !"".equals(v)){
-									tempiRisposta_tempoMedioRisposta = v.trim();
-									tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+									tempiRispostaTempoMedioRisposta = v.trim();
+									tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 								}
 								else {
-									tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+									tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 								}
 							}
 						}
 						else {
-							if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
-								tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+							if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
+								tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 							}
-							if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
-								tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+							if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
+								tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
 							}
-							if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
-								tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+							if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
+								tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 							}
 						}
 					}
 
-					if(transfer_mode==null && props!=null){
+					if(transferMode==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
 						if(v!=null && !"".equals(v)){
 
-							transfer_mode = v.trim();
+							transferMode = v.trim();
 
-							if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+							if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transferMode)){
 								// raccolgo anche altra proprietà correlata
 								v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
 								if(v!=null && !"".equals(v)){
-									transfer_mode_chunk_size = v.trim();
+									transferModeChunkSize = v.trim();
 								}
 							}
 
 						}
 					}
 
-					if(redirect_mode==null && props!=null){
+					if(redirectMode==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
 						if(v!=null && !"".equals(v)){
 
 							if("true".equalsIgnoreCase(v.trim()) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v.trim())){
-								redirect_mode = CostantiConfigurazione.ABILITATO.getValue();
+								redirectMode = CostantiConfigurazione.ABILITATO.getValue();
 							}
 							else{
-								redirect_mode = CostantiConfigurazione.DISABILITATO.getValue();
+								redirectMode = CostantiConfigurazione.DISABILITATO.getValue();
 							}					
 
-							if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
+							if(CostantiConfigurazione.ABILITATO.getValue().equals(redirectMode)){
 								// raccolgo anche altra proprietà correlata
 								v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
 								if(v!=null && !"".equals(v)){
-									redirect_max_hop = v.trim();
+									redirectMaxHop = v.trim();
 								}
 							}
 
 						}
 					}
 
-					if(token_policy==null && props!=null){
+					if(tokenPolicy==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 						if(v!=null && !"".equals(v)){
-							token_policy = v;
+							tokenPolicy = v;
 							autenticazioneToken = true;
 						}
 					}
 
-					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transfer_mode, redirect_mode);
+					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transferMode, redirectMode);
 
 					autenticazioneHttp = porteApplicativeHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 
@@ -1121,9 +1118,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					if(responseInputMode==null && props!=null){
 
 						requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
-						requestOutputFileName_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);	
+						requestOutputFileNamePermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);	
 						requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
-						requestOutputFileNameHeaders_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);	
+						requestOutputFileNameHeadersPermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);	
 						String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 						if(v!=null && !"".equals(v)){
 							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
@@ -1164,7 +1161,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					integrationManagerEnabled = true;
 					if(erogazioneServizioApplicativoServerEnabled && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)) {
 						if(listaIdSAServer==null) {
-							listaIdSAServer = new ArrayList<IDServizioApplicativoDB>();
+							listaIdSAServer = new ArrayList<>();
 						}
 						boolean found = false;
 						for (IDServizioApplicativoDB idServizioApplicativo : listaIdSAServer) {
@@ -1181,8 +1178,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliToDati(dati, TipoOperazione.CHANGE, beaBehaviourType, nomeSAConnettore,
 						nomeConnettore, descrizioneConnettore, statoConnettore, behaviourConFiltri, filtriConnettore, visualizzaDatiGenerali, visualizzaDescrizione, visualizzaFiltri, visualizzaConnettore,
@@ -1228,13 +1225,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							null, // elem8 
 							true,
 							isConnettoreCustomUltimaImmagineSalvata, 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken,token_policy,
+							autenticazioneToken,tokenPolicy,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
@@ -1271,13 +1268,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							oldSA.getId()+"", // elem6 
 							pIdConTab.getValue(), // elem7 
 							null, // elem8 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken,token_policy);
+							autenticazioneToken,tokenPolicy);
 				}
 
 				pd.setDati(dati);
@@ -1304,13 +1301,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						httpspwdprivatekey, httpsalgoritmokey,
 						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 						tipoconn,autenticazioneHttp,
-						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,token_policy,
+						autenticazioneToken,tokenPolicy,
 						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,	erogazioneServizioApplicativoServer);
 			}
 
@@ -1319,9 +1316,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliToDati(dati, TipoOperazione.CHANGE, beaBehaviourType, nomeSAConnettore,
 						nomeConnettore, descrizioneConnettore, statoConnettore, behaviourConFiltri, filtriConnettore,  visualizzaDatiGenerali, visualizzaDescrizione, visualizzaFiltri, visualizzaConnettore,
@@ -1367,13 +1364,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							null, // elem8 
 							true,
 							isConnettoreCustomUltimaImmagineSalvata, 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken,token_policy,
+							autenticazioneToken,tokenPolicy,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
@@ -1410,13 +1407,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							oldSA.getId()+"", // elem6 
 							pIdConTab.getValue(), // elem7 
 							null, // elem8 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken,token_policy);
+							autenticazioneToken,tokenPolicy);
 				}
 
 				pd.setDati(dati);
@@ -1428,9 +1425,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			}
 
 
-			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
-			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
-			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+			List<Object> listaOggettiDaCreare = new ArrayList<>();
+			List<Object> listaOggettiDaModificare = new ArrayList<>();
+			List<Object> listaOggettiDaEliminare = new ArrayList<>();
 
 			// valora iniziale della configurazione
 			PortaApplicativaServizioApplicativo paSA = null;
@@ -1475,15 +1472,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
 										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa);
 
-								if(configurazioneMultiDeliver != null) {
-									if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
-										if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
-											// modifica riferimento
-											configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
-											boolean differenziazioneConsegnaDaNotifiche = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
-											org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver, differenziazioneConsegnaDaNotifiche);
-										}
-									}
+								if(configurazioneMultiDeliver != null &&
+									configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null &&
+										configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
+									// modifica riferimento
+									configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
+									boolean differenziazioneConsegnaDaNotifiche = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
+									org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver, differenziazioneConsegnaDaNotifiche);
 								}
 							}
 
@@ -1494,35 +1489,31 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 								for (String nomeRegola : configurazioneCondizionale.getRegoleOrdinate()) {
 									ConfigurazioneSelettoreCondizioneRegola regola = configurazioneCondizionale.getRegola(nomeRegola);
-									if(!configurazioneCondizionale.isByFilter()) {
-										if(regola.getStaticInfo() != null) {
-											if(regola.getStaticInfo().equals(nomeConnettore)) {
-												regola.setStaticInfo(nomeConnettore);
-											}
-										}
+									if(!configurazioneCondizionale.isByFilter() &&
+										regola.getStaticInfo() != null &&
+											regola.getStaticInfo().equals(nomeConnettore)) {
+										regola.setStaticInfo(nomeConnettore);
 									}
 								}
 
 								org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione condizioneNonIdentificata =
 										configurazioneCondizionale.getCondizioneNonIdentificata();
 
-								if(condizioneNonIdentificata.getNomeConnettore() != null) {
-									if(condizioneNonIdentificata.getNomeConnettore().equals(oldNomeConnettore)) {
-										// modifica riferimento
-										condizioneNonIdentificata.setNomeConnettore(nomeConnettore);
-										save = true;
-									}
+								if(condizioneNonIdentificata.getNomeConnettore() != null &&
+									condizioneNonIdentificata.getNomeConnettore().equals(oldNomeConnettore)) {
+									// modifica riferimento
+									condizioneNonIdentificata.setNomeConnettore(nomeConnettore);
+									save = true;
 								}
 
 								org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione connettoreNonTrovato = 
 										configurazioneCondizionale.getNessunConnettoreTrovato();
 
-								if(connettoreNonTrovato.getNomeConnettore() != null) {
-									if(connettoreNonTrovato.getNomeConnettore().equals(oldNomeConnettore)) {
-										// modifica riferimento
-										connettoreNonTrovato.setNomeConnettore(nomeConnettore);
-										save = true;
-									}
+								if(connettoreNonTrovato.getNomeConnettore() != null &&
+									connettoreNonTrovato.getNomeConnettore().equals(oldNomeConnettore)) {
+									// modifica riferimento
+									connettoreNonTrovato.setNomeConnettore(nomeConnettore);
+									save = true;
 								}
 
 								if(save) {
@@ -1558,9 +1549,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			}
 
 			boolean secret = false;
-			String secret_password  = null;
-			String secret_user = null;
-			boolean secret_appId = false;
+			String secretPassword  = null;
+			String secretUser = null;
+			boolean secretAppId = false;
 			
 			if(visualizzaSezioneConnettore) {
 				// la modifica del connettore  
@@ -1650,7 +1641,6 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							}
 
 							paSA.setNome(oldServizioApplicativoDefault);
-							//					paSA.setNome(pa.getNome());
 							pa.getServizioApplicativoList().add(paSA);
 							pa.setServizioApplicativoDefault(null);
 
@@ -1728,13 +1718,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								httpspwdkey, httpspwdprivatekey,
 								httpsalgoritmokey,
 								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
-								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								token_policy,
+								tokenPolicy,
 								listExtendedConnettore);
 						is.setConnettore(connis);
 						sa.setInvocazioneServizio(is);
@@ -1787,9 +1777,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 										}
 										
 										if(secret) {
-											secret_user = c.getUser();
-											secret_password = c.getPassword();
-											secret_appId = c.isAppId();
+											secretUser = c.getUser();
+											secretPassword = c.getPassword();
+											secretAppId = c.isAppId();
 										}
 									}
 								}
@@ -1810,9 +1800,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								}
 								
 								if(secret) {
-									secret_user = c.getUser();
-									secret_password = c.getPassword();
-									secret_appId = c.isAppId();
+									secretUser = c.getUser();
+									secretPassword = c.getPassword();
+									secretAppId = c.isAppId();
 								}
 								
 								invocazionePorta.addCredenziali(c);
@@ -1820,11 +1810,10 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						}
 						else {
 							// Fix: altrimenti rimaneva assegnate le credenziali quando si disabilitava l'integration manager
-							if(!porteApplicativeHelper.isModalitaCompleta()) {
-								if(invocazionePorta!=null) {
-									while (invocazionePorta.sizeCredenzialiList()>0) {
-										invocazionePorta.removeCredenziali(0);
-									}
+							if(!porteApplicativeHelper.isModalitaCompleta() &&
+								invocazionePorta!=null) {
+								while (invocazionePorta.sizeCredenzialiList()>0) {
+									invocazionePorta.removeCredenziali(0);
 								}
 							}
 						}
@@ -1836,7 +1825,6 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 						// Connettore
 						connettore = new Connettore();
-						// this.nomeservizio);
 						if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
 							connettore.setTipo(tipoconn);
 						else
@@ -1853,13 +1841,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								httpspwdkey, httpspwdprivatekey,
 								httpsalgoritmokey,
 								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
-								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								token_policy, listExtendedConnettore);
+								tokenPolicy, listExtendedConnettore);
 
 						// creare un servizio applicativo
 						String nomeServizioApplicativoErogatore = pa.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX + 
@@ -1957,7 +1945,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			
 			// Messaggio 'Please Copy'
 			if(secret) {
-				porteApplicativeHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.CONNETTORE_MULTIPLO, nomeConnettore);
+				porteApplicativeHelper.setSecretPleaseCopy(secretPassword, secretUser, secretAppId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.CONNETTORE_MULTIPLO, nomeConnettore);
 			}
 			
 			// Preparo la lista

@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.protocol_properties;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -32,13 +33,18 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class ProtocolPropertiesCostanti {
+	
+	private ProtocolPropertiesCostanti() {}
 
 	public static final String OBJECT_NAME_PP = "protocolProperty";
 	
 	public static final ForwardParams TIPO_OPERAZIONE_BINARY_PROPERTY_CHANGE = ForwardParams.OTHER("BinaryPropertyChange");
 	public static final String SERVLET_NAME_BINARY_PROPERTY_CHANGE = OBJECT_NAME_PP+"BinaryPropertyChange.do";
 	
-	public static final Vector<String> SERVLET_PP = new Vector<String>();
+	private static final List<String> SERVLET_PP = new ArrayList<>();
+	public static List<String> getServletPp() {
+		return SERVLET_PP;
+	}
 	static{
 		SERVLET_PP.add(SERVLET_NAME_BINARY_PROPERTY_CHANGE);
 	}
@@ -92,7 +98,7 @@ public class ProtocolPropertiesCostanti {
 	public static final String LABEL_DOCUMENTO_NUOVO = "Nuovo Documento";
 	public static final String LABEL_CONTENUTO_NUOVO = "Nuovo Contenuto";
 	public static final String LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING = "Warning: ";
-	public static final String LABEL_DOCUMENTO_CHANGE_CLEAR = "Se si desidera eliminare un contenuto precedentemente caricato cliccare su 'Salva' senza selezionare alcun file"; //fornirne un'altra versione";
+	public static final String LABEL_DOCUMENTO_CHANGE_CLEAR = "Se si desidera eliminare un contenuto precedentemente caricato cliccare su 'Salva' senza selezionare alcun file";
 
 	/* VALORI PARAMETRI */
 	public static final String PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_SERVIZIO_APPLICATIVO = "SERVIZIO_APPLICATIVO";

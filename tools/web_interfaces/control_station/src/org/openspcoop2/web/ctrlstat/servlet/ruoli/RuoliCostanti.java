@@ -21,12 +21,12 @@ package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
  * RuoliCostanti
@@ -36,14 +36,19 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
  * @version $Rev$, $Date$
  */
 public class RuoliCostanti {
+	
+	private RuoliCostanti() {}
 
 	public static final String OBJECT_NAME_RUOLI = "ruoli";
 
-	public static final String SERVLET_NAME_RUOLI_ADD = OBJECT_NAME_RUOLI+"Add.do";
-	public static final String SERVLET_NAME_RUOLI_CHANGE = OBJECT_NAME_RUOLI+"Change.do";
-	public static final String SERVLET_NAME_RUOLI_DELETE = OBJECT_NAME_RUOLI+"Del.do";
-	public static final String SERVLET_NAME_RUOLI_LIST = OBJECT_NAME_RUOLI+"List.do";
-	public static final Vector<String> SERVLET_RUOLI = new Vector<String>();
+	public static final String SERVLET_NAME_RUOLI_ADD = OBJECT_NAME_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_RUOLI_CHANGE = OBJECT_NAME_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_RUOLI_DELETE = OBJECT_NAME_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_RUOLI_LIST = OBJECT_NAME_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_RUOLI = new ArrayList<>();
+	public static List<String> getServletRuoli() {
+		return SERVLET_RUOLI;
+	}
 	static{
 		SERVLET_RUOLI.add(SERVLET_NAME_RUOLI_ADD);
 		SERVLET_RUOLI.add(SERVLET_NAME_RUOLI_CHANGE);
@@ -87,7 +92,10 @@ public class RuoliCostanti {
 	public static final String DEFAULT_VALUE_PARAMETRO_RUOLO_CONTESTO_UTILIZZO = RuoloContesto.QUALSIASI.getValue();
 	
 	
-	public static final List<String> RUOLI_TIPOLOGIA = new ArrayList<String>();
+	private static final List<String> RUOLI_TIPOLOGIA = new ArrayList<>();
+	public static List<String> getRuoliTipologia() {
+		return RUOLI_TIPOLOGIA;
+	}
 	static {
 		RUOLI_TIPOLOGIA.add(RuoloTipologia.QUALSIASI.getValue());
 		RUOLI_TIPOLOGIA.add(RuoloTipologia.INTERNO.getValue());
@@ -97,14 +105,20 @@ public class RuoliCostanti {
 	public static final String RUOLI_TIPOLOGIA_LABEL_INTERNO = CostantiControlStation.RUOLI_TIPOLOGIA_LABEL_INTERNO;
 	public static final String RUOLI_TIPOLOGIA_LABEL_ESTERNO = CostantiControlStation.RUOLI_TIPOLOGIA_LABEL_ESTERNO;
 	public static final String RUOLI_TIPOLOGIA_LABEL_QUALSIASI = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI;
-	public static final List<String> RUOLI_TIPOLOGIA_LABEL = new ArrayList<String>();
+	private static final List<String> RUOLI_TIPOLOGIA_LABEL = new ArrayList<>();
+	public static List<String> getRuoliTipologiaLabel() {
+		return RUOLI_TIPOLOGIA_LABEL;
+	}
 	static {
 		RUOLI_TIPOLOGIA_LABEL.add(RUOLI_TIPOLOGIA_LABEL_QUALSIASI);
 		RUOLI_TIPOLOGIA_LABEL.add(RUOLI_TIPOLOGIA_LABEL_INTERNO);
 		RUOLI_TIPOLOGIA_LABEL.add(RUOLI_TIPOLOGIA_LABEL_ESTERNO);
 	}
 	
-	public static final List<String> RUOLI_CONTESTO_UTILIZZO = new ArrayList<String>();
+	private static final List<String> RUOLI_CONTESTO_UTILIZZO = new ArrayList<>();
+	public static List<String> getRuoliContestoUtilizzo() {
+		return RUOLI_CONTESTO_UTILIZZO;
+	}
 	static {
 		RUOLI_CONTESTO_UTILIZZO.add(RuoloContesto.QUALSIASI.getValue());
 		RUOLI_CONTESTO_UTILIZZO.add(RuoloContesto.PORTA_APPLICATIVA.getValue());
@@ -113,7 +127,10 @@ public class RuoliCostanti {
 	public static final String RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = CostantiControlStation.RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
 	public static final String RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = CostantiControlStation.RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
 	public static final String RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI = CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO_QUALSIASI;
-	public static final List<String> RUOLI_CONTESTO_UTILIZZO_LABEL = new ArrayList<String>();
+	private static final List<String> RUOLI_CONTESTO_UTILIZZO_LABEL = new ArrayList<>();
+	public static List<String> getRuoliContestoUtilizzoLabel() {
+		return RUOLI_CONTESTO_UTILIZZO_LABEL;
+	}
 	static {
 		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI);
 		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE);

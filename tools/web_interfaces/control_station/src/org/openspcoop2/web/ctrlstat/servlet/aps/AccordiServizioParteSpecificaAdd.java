@@ -25,7 +25,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -436,9 +435,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 				pd.disableEditMode();
 
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				pd.setDati(dati);
 
@@ -755,9 +754,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				
 				pd.disableEditMode();
 
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				pd.setDati(dati);
 
@@ -787,9 +786,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						pd.setMessage("Non risultano registrate API", Costanti.MESSAGE_TYPE_INFO);
 						pd.disableEditMode();
 
-						Vector<DataElement> dati = new Vector<DataElement>();
+						List<DataElement> dati = new ArrayList<>();
 
-						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+						dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 						pd.setDati(dati);
 
@@ -867,9 +866,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						pd.setMessage("Non esistono soggetti nel dominio interno", Costanti.MESSAGE_TYPE_INFO);
 						pd.disableEditMode();
 
-						Vector<DataElement> dati = new Vector<DataElement>();
+						List<DataElement> dati = new ArrayList<>();
 
-						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+						dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 						pd.setDati(dati);
 
@@ -918,9 +917,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						
 						pd.disableEditMode();
 	
-						Vector<DataElement> dati = new Vector<DataElement>();
+						List<DataElement> dati = new ArrayList<>();
 	
-						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+						dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 						pd.setDati(dati);
 	
@@ -1453,9 +1452,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
 				if(gestioneFruitori) {
@@ -1672,7 +1671,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, labelList, servletList);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
 				// update della configurazione 
 				if(gestioneFruitori) {
@@ -1684,7 +1683,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							strutsBean.registryReader, strutsBean.configRegistryReader, idAps);
 				}
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apsHelper.addServiziToDati(dati, strutsBean.nomeservizio, strutsBean.tiposervizio, null, null,  
 						strutsBean.provider, null, null, 
@@ -1934,7 +1933,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					ServletUtils.setPageDataTitle_ServletAdd(pd, labelList,servletList);
 
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 
 					// update della configurazione 
 					if(gestioneFruitori) {
@@ -1946,7 +1945,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.registryReader, strutsBean.configRegistryReader, idAps);
 					}
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 					
 					dati = apsHelper.addServiziToDati(dati, strutsBean.nomeservizio, strutsBean.tiposervizio, null, null,  
 							strutsBean.provider, null, null, 

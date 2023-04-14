@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -176,7 +175,7 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdAsps);
@@ -186,7 +185,7 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA,
 					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA,parametriInvocazioneServletTrasformazioniRichiesta));
 						
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaUrlParameters = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaUrlParameters = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaUrlParameters.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiestaUrlParameters.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiestaUrlParameters.add(pIdAsps);
@@ -204,8 +203,8 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 			// dati
 			if (porteDelegateHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// primo accesso
 				if(nome == null) {
@@ -239,9 +238,9 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione.CHANGE, protocollo, true, dati, idTrasformazioneS, idTrasformazioneRichiestaUrlParameterS, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				

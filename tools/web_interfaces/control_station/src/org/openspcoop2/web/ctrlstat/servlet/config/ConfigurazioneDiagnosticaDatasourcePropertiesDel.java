@@ -82,15 +82,6 @@ public final class ConfigurazioneDiagnosticaDatasourcePropertiesDel extends Acti
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			// Elimino i registri dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
-
 			int idPropInt = 0;
 
 			Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
@@ -106,9 +97,6 @@ public final class ConfigurazioneDiagnosticaDatasourcePropertiesDel extends Acti
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nome = de.getValue();
 				idPropInt = Integer.parseInt(idsToRemove.get(i));
 
 				List<Property> lista1 = od.getPropertyList();

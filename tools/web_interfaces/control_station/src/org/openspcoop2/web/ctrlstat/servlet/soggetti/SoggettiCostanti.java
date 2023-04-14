@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
@@ -36,6 +37,8 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class SoggettiCostanti {
+	
+	private SoggettiCostanti() {}
 
 	/* OBJECT NAME */
 
@@ -54,16 +57,19 @@ public class SoggettiCostanti {
 	/* SERVLET NAME */
 
 	public static final String SERVLET_NAME_SOGGETTI_ADD = OBJECT_NAME_SOGGETTI
-			+ "Add.do";
+			+ org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
 	public static final String SERVLET_NAME_SOGGETTI_CHANGE = OBJECT_NAME_SOGGETTI
-			+ "Change.do";
+			+ org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
 	public static final String SERVLET_NAME_SOGGETTI_DELETE = OBJECT_NAME_SOGGETTI
-			+ "Del.do";
+			+ org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
 	public static final String SERVLET_NAME_SOGGETTI_LIST = OBJECT_NAME_SOGGETTI
-			+ "List.do";
+			+ org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	public static final String SERVLET_NAME_SOGGETTI_ENDPOINT = OBJECT_NAME_SOGGETTI
 			+ TIPO_OPERAZIONE_ENDPOINT.getOtherContext()+".do";
-	public static final Vector<String> SERVLET_SOGGETTI = new Vector<String>();
+	private static final List<String> SERVLET_SOGGETTI = new ArrayList<>();
+	public static List<String> getServletSoggetti() {
+		return SERVLET_SOGGETTI;
+	}
 	static {
 		SERVLET_SOGGETTI.add(SERVLET_NAME_SOGGETTI_ADD);
 		SERVLET_SOGGETTI.add(SERVLET_NAME_SOGGETTI_CHANGE);
@@ -73,23 +79,29 @@ public class SoggettiCostanti {
 	}
 	
 	public static final String SERVLET_NAME_SOGGETTI_RUOLI_ADD = OBJECT_NAME_SOGGETTI_RUOLI
-			+ "Add.do";
+			+ org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
 	public static final String SERVLET_NAME_SOGGETTI_RUOLI_DELETE = OBJECT_NAME_SOGGETTI_RUOLI
-			+ "Del.do";
+			+ org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
 	public static final String SERVLET_NAME_SOGGETTI_RUOLI_LIST = OBJECT_NAME_SOGGETTI_RUOLI
-			+ "List.do";
-	public static final Vector<String> SERVLET_SOGGETTI_RUOLI = new Vector<String>();
+			+ org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_SOGGETTI_RUOLI = new ArrayList<>();
+	public static List<String> getServletSoggettiRuoli() {
+		return SERVLET_SOGGETTI_RUOLI;
+	}
 	static {
 		SERVLET_SOGGETTI_RUOLI.add(SERVLET_NAME_SOGGETTI_RUOLI_ADD);
 		SERVLET_SOGGETTI_RUOLI.add(SERVLET_NAME_SOGGETTI_RUOLI_DELETE);
 		SERVLET_SOGGETTI_RUOLI.add(SERVLET_NAME_SOGGETTI_RUOLI_LIST);
 	}
 	
-	public static final String SERVLET_NAME_SOGGETTI_CREDENZIALI_ADD = OBJECT_NAME_SOGGETTI_CREDENZIALI + "Add.do";
-	public static final String SERVLET_NAME_SOGGETTI_CREDENZIALI_CHANGE = OBJECT_NAME_SOGGETTI_CREDENZIALI + "Change.do";
-	public static final String SERVLET_NAME_SOGGETTI_CREDENZIALI_DELETE = OBJECT_NAME_SOGGETTI_CREDENZIALI + "Del.do";
-	public static final String SERVLET_NAME_SOGGETTI_CREDENZIALI_LIST = OBJECT_NAME_SOGGETTI_CREDENZIALI + "List.do";
-	public static final Vector<String> SERVLET_SOGGETTI_CREDENZIALI = new Vector<String>();
+	public static final String SERVLET_NAME_SOGGETTI_CREDENZIALI_ADD = OBJECT_NAME_SOGGETTI_CREDENZIALI + org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_SOGGETTI_CREDENZIALI_CHANGE = OBJECT_NAME_SOGGETTI_CREDENZIALI + org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_SOGGETTI_CREDENZIALI_DELETE = OBJECT_NAME_SOGGETTI_CREDENZIALI + org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_SOGGETTI_CREDENZIALI_LIST = OBJECT_NAME_SOGGETTI_CREDENZIALI + org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_SOGGETTI_CREDENZIALI = new ArrayList<>();
+	public static List<String> getServletSoggettiCredenziali() {
+		return SERVLET_SOGGETTI_CREDENZIALI;
+	}
 	static {
 		SERVLET_SOGGETTI_CREDENZIALI.add(SERVLET_NAME_SOGGETTI_CREDENZIALI_ADD);
 		SERVLET_SOGGETTI_CREDENZIALI.add(SERVLET_NAME_SOGGETTI_CREDENZIALI_CHANGE);
@@ -97,11 +109,14 @@ public class SoggettiCostanti {
 		SERVLET_SOGGETTI_CREDENZIALI.add(SERVLET_NAME_SOGGETTI_CREDENZIALI_LIST);
 	}
 	
-	public static final String SERVLET_NAME_SOGGETTI_PROPRIETA_ADD = OBJECT_NAME_SOGGETTI_PROPRIETA + "Add.do";
-	public static final String SERVLET_NAME_SOGGETTI_PROPRIETA_CHANGE = OBJECT_NAME_SOGGETTI_PROPRIETA + "Change.do";
-	public static final String SERVLET_NAME_SOGGETTI_PROPRIETA_DELETE = OBJECT_NAME_SOGGETTI_PROPRIETA + "Del.do";
-	public static final String SERVLET_NAME_SOGGETTI_PROPRIETA_LIST = OBJECT_NAME_SOGGETTI_PROPRIETA + "List.do";
-	public static final Vector<String> SERVLET_SOGGETTI_PROPRIETA = new Vector<String>();
+	public static final String SERVLET_NAME_SOGGETTI_PROPRIETA_ADD = OBJECT_NAME_SOGGETTI_PROPRIETA + org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_SOGGETTI_PROPRIETA_CHANGE = OBJECT_NAME_SOGGETTI_PROPRIETA + org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_SOGGETTI_PROPRIETA_DELETE = OBJECT_NAME_SOGGETTI_PROPRIETA + org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_SOGGETTI_PROPRIETA_LIST = OBJECT_NAME_SOGGETTI_PROPRIETA + org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_SOGGETTI_PROPRIETA = new ArrayList<>();
+	public static List<String> getServletSoggettiProprieta() {
+		return SERVLET_SOGGETTI_PROPRIETA;
+	}
 	static {
 		SERVLET_SOGGETTI_PROPRIETA.add(SERVLET_NAME_SOGGETTI_PROPRIETA_ADD);
 		SERVLET_SOGGETTI_PROPRIETA.add(SERVLET_NAME_SOGGETTI_PROPRIETA_CHANGE);
@@ -119,8 +134,6 @@ public class SoggettiCostanti {
 	public static final String LABEL_SOGGETTI = "Soggetti";
 	public static final String LABEL_SOGGETTO = "Soggetto";
 	public static final String LABEL_SOGGETTO_EROGATORE = "Soggetto Erogatore";
-	//public static final String LABEL_CLIENT = "Fruizioni";
-	//public static final String LABEL_SERVER = "Erogazioni";
 	public static final String LABEL_CLIENT = "Porte Delegate";
 	public static final String LABEL_SERVER = "Porte Applicative";
 	public static final String LABEL_SOGGETTI_ESPORTA_SELEZIONATI = "Esporta";
@@ -185,23 +198,37 @@ public class SoggettiCostanti {
 	public static final String SOGGETTO_RUOLO_ENTRAMBI = CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_ENTRAMBI;
 	public static final String SOGGETTO_RUOLO_FRUITORE = CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_FRUITORE;
 	public static final String SOGGETTO_RUOLO_EROGATORE = CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_EROGATORE;
-	public static final String[] SOGGETTI_RUOLI = { SOGGETTO_RUOLO_EROGATORE, 
+	private static final String[] SOGGETTI_RUOLI = { SOGGETTO_RUOLO_EROGATORE, 
 		SOGGETTO_RUOLO_FRUITORE, SOGGETTO_RUOLO_ENTRAMBI };
-	
+	public static String[] getSoggettiRuoli() {
+		return SOGGETTI_RUOLI;
+	}
+
 	public static final String LABEL_PARAMETRO_FILTRO_SOGGETTO_TIPO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public static final String DEFAULT_VALUE_PARAMETRO_FILTRO_SOGGETTO_TIPO_QUALSIASI = "";
-	public static final String[] LABELS_SOGGETTO_RUOLO_TIPO = { CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_FRUITORE, CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_EROGATORE };
-	public static final String[] VALUES_SOGGETTO_RUOLO_TIPO = { CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_FRUITORE, CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_EROGATORE };
-	
-	
+	private static final String[] LABELS_SOGGETTO_RUOLO_TIPO = { CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_FRUITORE, CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_EROGATORE };
+	public static String[] getLabelsSoggettoRuoloTipo() {
+		return LABELS_SOGGETTO_RUOLO_TIPO;
+	}
+	private static final String[] VALUES_SOGGETTO_RUOLO_TIPO = { CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_FRUITORE, CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_EROGATORE };
+	public static String[] getValuesSoggettoRuoloTipo() {
+		return VALUES_SOGGETTO_RUOLO_TIPO;
+	}
+
 	public static final String SOGGETTO_DOMINIO_OPERATIVO_VALUE = PddTipologia.OPERATIVO.toString();
 	public static final String SOGGETTO_DOMINIO_ESTERNO_VALUE = PddTipologia.ESTERNO.toString();
 	public static final String SOGGETTO_DOMINIO_OPERATIVO_LABEL = "Interno";
 	public static final String SOGGETTO_DOMINIO_ESTERNO_LABEL = "Esterno";
-	public static final String[] SOGGETTI_DOMINI_LABEL = { SOGGETTO_DOMINIO_ESTERNO_LABEL, 
+	private static final String[] SOGGETTI_DOMINI_LABEL = { SOGGETTO_DOMINIO_ESTERNO_LABEL, 
 			SOGGETTO_DOMINIO_OPERATIVO_LABEL };
-	public static final String[] SOGGETTI_DOMINI_VALUE = { SOGGETTO_DOMINIO_ESTERNO_VALUE, 
+	public static String[] getSoggettiDominiLabel() {
+		return SOGGETTI_DOMINI_LABEL;
+	}
+	private static final String[] SOGGETTI_DOMINI_VALUE = { SOGGETTO_DOMINIO_ESTERNO_VALUE, 
 			SOGGETTO_DOMINIO_OPERATIVO_VALUE};
+	public static String[] getSoggettiDominiValue() {
+		return SOGGETTI_DOMINI_VALUE;
+	}
 
 	public static final String MESSAGE_METADATI_SOGGETTO_VUOTI = "";
 	public static final String MESSAGE_METADATI_SOGGETTO_SOLO_PROFILO = "Profilo Interoperabilit&agrave;: {0}";

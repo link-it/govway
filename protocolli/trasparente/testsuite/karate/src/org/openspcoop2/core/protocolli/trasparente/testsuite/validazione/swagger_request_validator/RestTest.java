@@ -27,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -319,7 +318,7 @@ public class RestTest extends ConfigLoader {
 		int THREADS = 5;
 		
 		@SuppressWarnings("unchecked")
-		Vector<HttpResponse> responses = (Vector<HttpResponse>) org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, THREADS).clone();
+		List<HttpResponse> responses = (List<HttpResponse>) ((ArrayList<HttpResponse>) org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, THREADS)).clone();
 		for (var resp : responses) {
 			
 			long returnDate = DateManager.getTimeMillis();

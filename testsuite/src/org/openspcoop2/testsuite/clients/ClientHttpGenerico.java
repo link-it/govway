@@ -31,12 +31,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyStore;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -599,7 +599,7 @@ public class ClientHttpGenerico extends ClientCore{
 						SOAPFault fault = (SOAPFault) this.receivedMessage.getSOAPBody().getFault();
 						
 						Element [] details = null;
-						Vector<Element> elementsW3C = new Vector<Element>();
+						List<Element> elementsW3C = new ArrayList<>();
 						Iterator<?> childs = this.receivedMessage.getSOAPBody().getChildElements();
 						if(childs!=null){
 							while(childs.hasNext()){
@@ -721,7 +721,7 @@ public class ClientHttpGenerico extends ClientCore{
 											 * <env:Detail>....</env:Detail>
 											 */
 											Element [] details = null;
-											Vector<Element> elementsW3C = new Vector<Element>();
+											List<Element> elementsW3C = new ArrayList<>();
 											Object objectDetails = null;
 											try{
 												objectDetails = xpathEngine.getMatchPattern(xml, dnc, "//{"+namespaceSoapEnvelope12+"}:Detail", XPathReturnType.NODE);

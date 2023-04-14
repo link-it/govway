@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.ac;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,13 +89,13 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 
 			String idAccordo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
-			long idAccordoLong = Long.valueOf(idAccordo);
+			long idAccordoLong = Long.parseLong(idAccordo);
 			String ruolo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO);
 			String tipoFile = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_FILE);
 			FormFile ff = fileUpload.getTheFile();
-			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
+			/**String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
-				tipoSICA = null;
+				tipoSICA = null;*/
 			
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 
@@ -122,7 +121,8 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 						tipiAmmessi = TipiDocumentoSemiformale.toEnumNameArray();
 						tipiAmmessiLabel=TipiDocumentoSemiformale.toStringArray();
 						break;
-					
+					default:
+						break;
 				}
 			}
 			
@@ -130,7 +130,7 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 			// dati
 			if (acHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ titleAS,
 						AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_LIST,
@@ -141,9 +141,9 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = acHelper.addAllegatoToDati(TipoOperazione.ADD, idAccordo, ruolo, ruoli, tipiAmmessi,
 						tipiAmmessiLabel, dati);
@@ -168,6 +168,8 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 				case specificaSemiformale:
 					documento.setTipo(TipiDocumentoSemiformale.valueOf(tipoFile).getNome());				
 					break;
+				default:
+					break;
 			}
 			
 			
@@ -177,7 +179,7 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 			boolean isOk = archiviHelper.accordiAllegatiCheckData(TipoOperazione.ADD,ff,documento,ProprietariDocumento.accordoCooperazione, pf);
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ titleAS,
 						AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_LIST,
@@ -188,9 +190,9 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = acHelper.addAllegatoToDati(TipoOperazione.ADD, idAccordo, ruolo, ruoli, tipiAmmessi,
 						tipiAmmessiLabel, dati);

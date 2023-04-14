@@ -21,12 +21,11 @@ package org.openspcoop2.web.ctrlstat.servlet.scope;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
-//import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
  * ScopeCostanti
@@ -37,14 +36,19 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
  * @version $Rev$, $Date$
  */
 public class ScopeCostanti {
+	
+	private ScopeCostanti() {}
 
 	public static final String OBJECT_NAME_SCOPE = "scope";
 
-	public static final String SERVLET_NAME_SCOPE_ADD = OBJECT_NAME_SCOPE+"Add.do";
-	public static final String SERVLET_NAME_SCOPE_CHANGE = OBJECT_NAME_SCOPE+"Change.do";
-	public static final String SERVLET_NAME_SCOPE_DELETE = OBJECT_NAME_SCOPE+"Del.do";
-	public static final String SERVLET_NAME_SCOPE_LIST = OBJECT_NAME_SCOPE+"List.do";
-	public static final Vector<String> SERVLET_SCOPE = new Vector<String>();
+	public static final String SERVLET_NAME_SCOPE_ADD = OBJECT_NAME_SCOPE+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_SCOPE_CHANGE = OBJECT_NAME_SCOPE+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_SCOPE_DELETE = OBJECT_NAME_SCOPE+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_SCOPE_LIST = OBJECT_NAME_SCOPE+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_SCOPE = new ArrayList<>();
+	public static List<String> getServletScope() {
+		return SERVLET_SCOPE;
+	}
 	static{
 		SERVLET_SCOPE.add(SERVLET_NAME_SCOPE_ADD);
 		SERVLET_SCOPE.add(SERVLET_NAME_SCOPE_CHANGE);
@@ -81,17 +85,17 @@ public class ScopeCostanti {
 	public static final String LABEL_SCOPE_ESPORTA_SELEZIONATI = "Esporta";
 	public static final String LABEL_SCOPE_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.SCOPE.name()+"')";
 	
-	
-	public static final String DEFAULT_VALUE_PARAMETRO_SCOPE_TIPOLOGIA = "qualsiasi" ; //ScopeTipologia.QUALSIASI.getValue();
+	private static final String VALUE_PARAMETRO_SCOPE_TIPOLOGIA_QUALSIASI = "qualsiasi" ;
+	public static final String DEFAULT_VALUE_PARAMETRO_SCOPE_TIPOLOGIA = VALUE_PARAMETRO_SCOPE_TIPOLOGIA_QUALSIASI ;
 	public static final String DEFAULT_VALUE_PARAMETRO_SCOPE_CONTESTO_UTILIZZO = ScopeContesto.QUALSIASI.getValue();
 	
 	
-	public static final List<String> SCOPE_TIPOLOGIA = new ArrayList<String>();
+	private static final List<String> SCOPE_TIPOLOGIA = new ArrayList<>();
+	public static List<String> getScopeTipologia() {
+		return SCOPE_TIPOLOGIA;
+	}
 	static {
-//		SCOPE_TIPOLOGIA.add(ScopeTipologia.QUALSIASI.getValue());
-//		SCOPE_TIPOLOGIA.add(ScopeTipologia.INTERNO.getValue());
-//		SCOPE_TIPOLOGIA.add(ScopeTipologia.ESTERNO.getValue());
-		SCOPE_TIPOLOGIA.add("qualsiasi");
+		SCOPE_TIPOLOGIA.add(VALUE_PARAMETRO_SCOPE_TIPOLOGIA_QUALSIASI);
 		SCOPE_TIPOLOGIA.add("interno");
 		SCOPE_TIPOLOGIA.add("esterno");
 	}
@@ -99,14 +103,20 @@ public class ScopeCostanti {
 	public static final String SCOPE_TIPOLOGIA_LABEL_INTERNO = CostantiControlStation.SCOPE_TIPOLOGIA_LABEL_INTERNO;
 	public static final String SCOPE_TIPOLOGIA_LABEL_ESTERNO = CostantiControlStation.SCOPE_TIPOLOGIA_LABEL_ESTERNO;
 	public static final String SCOPE_TIPOLOGIA_LABEL_QUALSIASI = CostantiControlStation.LABEL_PARAMETRO_SCOPE_TIPOLOGIA_QUALSIASI;
-	public static final List<String> SCOPE_TIPOLOGIA_LABEL = new ArrayList<String>();
+	private static final List<String> SCOPE_TIPOLOGIA_LABEL = new ArrayList<>();
+	public static List<String> getScopeTipologiaLabel() {
+		return SCOPE_TIPOLOGIA_LABEL;
+	}
 	static {
 		SCOPE_TIPOLOGIA_LABEL.add(SCOPE_TIPOLOGIA_LABEL_QUALSIASI);
 		SCOPE_TIPOLOGIA_LABEL.add(SCOPE_TIPOLOGIA_LABEL_INTERNO);
 		SCOPE_TIPOLOGIA_LABEL.add(SCOPE_TIPOLOGIA_LABEL_ESTERNO);
 	}
 	
-	public static final List<String> SCOPE_CONTESTO_UTILIZZO = new ArrayList<String>();
+	private static final List<String> SCOPE_CONTESTO_UTILIZZO = new ArrayList<>();
+	public static List<String> getScopeContestoUtilizzo() {
+		return SCOPE_CONTESTO_UTILIZZO;
+	}
 	static {
 		SCOPE_CONTESTO_UTILIZZO.add(ScopeContesto.QUALSIASI.getValue());
 		SCOPE_CONTESTO_UTILIZZO.add(ScopeContesto.PORTA_APPLICATIVA.getValue());
@@ -115,7 +125,10 @@ public class ScopeCostanti {
 	public static final String SCOPE_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = CostantiControlStation.SCOPE_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
 	public static final String SCOPE_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = CostantiControlStation.SCOPE_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
 	public static final String SCOPE_CONTESTO_UTILIZZO_LABEL_QUALSIASI = CostantiControlStation.LABEL_PARAMETRO_SCOPE_CONTESTO_QUALSIASI;
-	public static final List<String> SCOPE_CONTESTO_UTILIZZO_LABEL = new ArrayList<String>();
+	private static final List<String> SCOPE_CONTESTO_UTILIZZO_LABEL = new ArrayList<>();
+	public static List<String> getScopeContestoUtilizzoLabel() {
+		return SCOPE_CONTESTO_UTILIZZO_LABEL;
+	}
 	static {
 		SCOPE_CONTESTO_UTILIZZO_LABEL.add(SCOPE_CONTESTO_UTILIZZO_LABEL_QUALSIASI);
 		SCOPE_CONTESTO_UTILIZZO_LABEL.add(SCOPE_CONTESTO_UTILIZZO_LABEL_EROGAZIONE);

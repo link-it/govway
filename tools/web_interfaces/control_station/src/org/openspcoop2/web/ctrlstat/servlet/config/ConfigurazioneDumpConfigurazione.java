@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -163,7 +162,7 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			}
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -242,8 +241,8 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				confHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
 						dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
@@ -270,8 +269,8 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
 						dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
@@ -349,8 +348,8 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 					ServletUtils.setPageDataTitle(pd, lstParam);
 
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					List<DataElement> dati = new ArrayList<>();
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 					
 					confHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
 							dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
@@ -470,7 +469,7 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 			
 			confHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
 					dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 

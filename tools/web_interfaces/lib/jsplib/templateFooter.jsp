@@ -19,7 +19,7 @@
 
 
 
-<%@ page session="true" import="java.util.Vector, org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";

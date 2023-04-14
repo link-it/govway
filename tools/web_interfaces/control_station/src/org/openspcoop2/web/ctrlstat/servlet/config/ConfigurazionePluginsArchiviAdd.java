@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -98,19 +97,8 @@ public final class ConfigurazionePluginsArchiviAdd extends Action {
 
 			// Preparo il menu
 			confHelper.makeMenu();
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			
-//			String postBackElementName = confHelper.getPostBackElementName();
-//			
-//			// se ho modificato il soggetto ricalcolo il servizio e il service binding
-//			if (postBackElementName != null) {
-//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE)) {
-//				}
-//				
-//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN)) {
-//				}
-//			}
-
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_REGISTRO_ARCHIVI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_LIST));
@@ -133,8 +121,8 @@ public final class ConfigurazionePluginsArchiviAdd extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = confHelper.addRegistroPluginToDati(TipoOperazione.ADD, dati, null, idArchivioS, nome, descrizione, stato, sorgente, jarArchivio, dirArchivio, urlArchivio, classiPlugin, tipoPlugin, numeroArchivi);
 
@@ -153,9 +141,9 @@ public final class ConfigurazionePluginsArchiviAdd extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addRegistroPluginToDati(TipoOperazione.ADD, dati, null, idArchivioS, nome, descrizione, stato, sorgente, jarArchivio, dirArchivio, urlArchivio, classiPlugin, tipoPlugin, numeroArchivi);
 
@@ -205,14 +193,14 @@ public final class ConfigurazionePluginsArchiviAdd extends Action {
 				break;
 			case URL:
 				registroPluginArchivio.setUrl(urlArchivio);
-				//URL url = new URL(urlArchivio);
-				//registroPluginArchivio.setNome(FilenameUtils.getName(url.getPath()));
+				/**URL url = new URL(urlArchivio);
+				//registroPluginArchivio.setNome(FilenameUtils.getName(url.getPath())); */
 				// Fix: usando l'utility, url differenti che terminano con la stessa foglia vanno in errore di duplicate key
 				registroPluginArchivio.setNome(UUIDUtilsGenerator.newUUID());
 				break;
 			case DIR:
 				registroPluginArchivio.setDir(dirArchivio);
-				//registroPluginArchivio.setNome(FilenameUtils.getName(dirArchivio));
+				/** registroPluginArchivio.setNome(FilenameUtils.getName(dirArchivio)); */
 				// Fix: usando l'utility, path differenti che terminano con lo stesso file name vanno in errore di duplicate key
 				registroPluginArchivio.setNome(UUIDUtilsGenerator.newUUID());
 				break;

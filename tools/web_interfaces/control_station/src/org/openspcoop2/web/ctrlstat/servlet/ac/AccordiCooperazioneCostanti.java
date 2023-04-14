@@ -19,10 +19,12 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.ac;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -33,6 +35,8 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class AccordiCooperazioneCostanti {
+	
+	private AccordiCooperazioneCostanti() {}
 
 	/* OBJECT NAME */
 	
@@ -46,11 +50,14 @@ public class AccordiCooperazioneCostanti {
 	
 	/* SERVLET NAME */
 	
-	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_ADD = OBJECT_NAME_ACCORDI_COOPERAZIONE+"Add.do";
-	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_CHANGE = OBJECT_NAME_ACCORDI_COOPERAZIONE+"Change.do";
-	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_DELETE = OBJECT_NAME_ACCORDI_COOPERAZIONE+"Del.do";
-	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST = OBJECT_NAME_ACCORDI_COOPERAZIONE+"List.do";
-	public static final Vector<String> SERVLET_ACCORDI_COOPERAZIONE = new Vector<String>();
+	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_ADD = OBJECT_NAME_ACCORDI_COOPERAZIONE+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_CHANGE = OBJECT_NAME_ACCORDI_COOPERAZIONE+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_DELETE = OBJECT_NAME_ACCORDI_COOPERAZIONE+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST = OBJECT_NAME_ACCORDI_COOPERAZIONE+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_ACCORDI_COOPERAZIONE = new ArrayList<>();
+	public static List<String> getServletAccordiCooperazione() {
+		return SERVLET_ACCORDI_COOPERAZIONE;
+	}
 	static{
 		SERVLET_ACCORDI_COOPERAZIONE.add(SERVLET_NAME_ACCORDI_COOPERAZIONE_ADD);
 		SERVLET_ACCORDI_COOPERAZIONE.add(SERVLET_NAME_ACCORDI_COOPERAZIONE_CHANGE);
@@ -58,12 +65,15 @@ public class AccordiCooperazioneCostanti {
 		SERVLET_ACCORDI_COOPERAZIONE.add(SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 	}
 	
-	public static final String SERVLET_NAME_AC_ALLEGATI_ADD = OBJECT_NAME_AC_ALLEGATI+"Add.do";
-	public static final String SERVLET_NAME_AC_ALLEGATI_CHANGE = OBJECT_NAME_AC_ALLEGATI+"Change.do";
-	public static final String SERVLET_NAME_AC_ALLEGATI_DELETE = OBJECT_NAME_AC_ALLEGATI+"Del.do";
-	public static final String SERVLET_NAME_AC_ALLEGATI_LIST = OBJECT_NAME_AC_ALLEGATI+"List.do";
+	public static final String SERVLET_NAME_AC_ALLEGATI_ADD = OBJECT_NAME_AC_ALLEGATI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_AC_ALLEGATI_CHANGE = OBJECT_NAME_AC_ALLEGATI+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_AC_ALLEGATI_DELETE = OBJECT_NAME_AC_ALLEGATI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_AC_ALLEGATI_LIST = OBJECT_NAME_AC_ALLEGATI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	public static final String SERVLET_NAME_AC_ALLEGATI_VIEW = OBJECT_NAME_AC_ALLEGATI+"View.do";
-	public static final Vector<String> SERVLET_AC_ALLEGATI = new Vector<String>();
+	private static final List<String> SERVLET_AC_ALLEGATI = new ArrayList<>();
+	public static List<String> getServletAcAllegati() {
+		return SERVLET_AC_ALLEGATI;
+	}
 	static{
 		SERVLET_AC_ALLEGATI.add(SERVLET_NAME_AC_ALLEGATI_ADD);
 		SERVLET_AC_ALLEGATI.add(SERVLET_NAME_AC_ALLEGATI_CHANGE);
@@ -72,10 +82,13 @@ public class AccordiCooperazioneCostanti {
 		SERVLET_AC_ALLEGATI.add(SERVLET_NAME_AC_ALLEGATI_VIEW);
 	}
 	
-	public static final String SERVLET_NAME_AC_PARTECIPANTI_ADD = OBJECT_NAME_AC_PARTECIPANTI+"Add.do";
-	public static final String SERVLET_NAME_AC_PARTECIPANTI_DELETE = OBJECT_NAME_AC_PARTECIPANTI+"Del.do";
-	public static final String SERVLET_NAME_AC_PARTECIPANTI_LIST = OBJECT_NAME_AC_PARTECIPANTI+"List.do";
-	public static final Vector<String> SERVLET_AC_PARTECIPANTI = new Vector<String>();
+	public static final String SERVLET_NAME_AC_PARTECIPANTI_ADD = OBJECT_NAME_AC_PARTECIPANTI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_AC_PARTECIPANTI_DELETE = OBJECT_NAME_AC_PARTECIPANTI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_AC_PARTECIPANTI_LIST = OBJECT_NAME_AC_PARTECIPANTI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_AC_PARTECIPANTI = new ArrayList<>();
+	public static List<String> getServletAcPartecipanti() {
+		return SERVLET_AC_PARTECIPANTI;
+	}
 	static{
 		SERVLET_AC_PARTECIPANTI.add(SERVLET_NAME_AC_PARTECIPANTI_ADD);
 		SERVLET_AC_PARTECIPANTI.add(SERVLET_NAME_AC_PARTECIPANTI_DELETE);

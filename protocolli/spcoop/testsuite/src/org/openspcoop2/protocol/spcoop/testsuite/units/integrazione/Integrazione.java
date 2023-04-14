@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
@@ -116,7 +116,7 @@ public class Integrazione extends GestioneViaJmx {
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){

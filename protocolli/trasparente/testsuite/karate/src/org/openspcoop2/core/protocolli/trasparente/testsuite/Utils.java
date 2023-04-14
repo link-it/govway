@@ -31,7 +31,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -236,12 +235,12 @@ public class Utils {
 	}
 	
 	
-	public static Vector<HttpResponse> makeSequentialRequests(HttpRequest request, int count) {
+	public static List<HttpResponse> makeSequentialRequests(HttpRequest request, int count) {
 		Logger log = ConfigLoader.getLoggerCore();
 		return makeSequentialRequests(request, count, log);
 	}
-	public static Vector<HttpResponse> makeSequentialRequests(HttpRequest request, int count, Logger log) {
-		final Vector<HttpResponse> responses = new Vector<>();
+	public static List<HttpResponse> makeSequentialRequests(HttpRequest request, int count, Logger log) {
+		final List<HttpResponse> responses = new java.util.ArrayList<>();
 
 		for(int i=0; i<count;i++) {
 			log.info(request.getMethod() + " " + request.getUrl());
@@ -292,13 +291,13 @@ public class Utils {
 	 * risposte 
 	 * 
 	 */
-	public static Vector<Future<HttpResponse>> makeBackgroundRequests(HttpRequest request, int count, int request_delay) {
+	public static List<Future<HttpResponse>> makeBackgroundRequests(HttpRequest request, int count, int request_delay) {
 		Logger log = ConfigLoader.getLoggerCore();
 		return makeBackgroundRequests(request, count, request_delay, log);
 	}
-	public static Vector<Future<HttpResponse>> makeBackgroundRequests(HttpRequest request, int count, int request_delay, Logger log) {
+	public static List<Future<HttpResponse>> makeBackgroundRequests(HttpRequest request, int count, int request_delay, Logger log) {
 		
-		final Vector<Future<HttpResponse>> responses = new Vector<>();
+		final List<Future<HttpResponse>> responses = new java.util.ArrayList<>();
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(count);
 
 		for (int i = 0; i < count; i++) {
@@ -330,19 +329,19 @@ public class Utils {
 	 * Esegue `count` richieste `request` parallele 
 	 * 
 	 */
-	public static Vector<HttpResponse> makeParallelRequests(HttpRequest request, int count) {
+	public static List<HttpResponse> makeParallelRequests(HttpRequest request, int count) {
 		Logger log = ConfigLoader.getLoggerCore();
 		return makeParallelRequests(request, count, log);
 	}
-	public static Vector<HttpResponse> makeParallelRequests(HttpRequest request, int count, Logger log) {
+	public static List<HttpResponse> makeParallelRequests(HttpRequest request, int count, Logger log) {
 		
 		if (count < 0) {
 			throw new IllegalArgumentException("Request count must be > 0");
 		} else if (count == 0) {
-			return new Vector<>();
+			return new java.util.ArrayList<>();
 		}
 		
-		final Vector<HttpResponse> responses = new Vector<>();
+		final List<HttpResponse> responses = new java.util.ArrayList<>();
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(count);
 
 		for (int i = 0; i < count; i++) {
@@ -377,8 +376,8 @@ public class Utils {
 	
 	
 	
-	public static Vector<HttpResponse> awaitResponses(Vector<Future<HttpResponse>> futureBlockingResponses) {
-		Vector<HttpResponse> responses = new Vector<>();
+	public static List<HttpResponse> awaitResponses(List<Future<HttpResponse>> futureBlockingResponses) {
+		List<HttpResponse> responses = new java.util.ArrayList<>();
 		
 		for(var blockingRespFuture : futureBlockingResponses) {
 			try {

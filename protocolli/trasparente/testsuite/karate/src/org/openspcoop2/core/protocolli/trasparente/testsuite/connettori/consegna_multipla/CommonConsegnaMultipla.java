@@ -45,7 +45,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -302,7 +301,7 @@ public class CommonConsegnaMultipla {
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
 		
 		for (var request : requests) {			
-			responses.put(request, new Vector<>());
+			responses.put(request, new java.util.ArrayList<>());
 			
 			for (int i=0; i<requests_per_batch; i++) {
 				executor.execute( () -> {

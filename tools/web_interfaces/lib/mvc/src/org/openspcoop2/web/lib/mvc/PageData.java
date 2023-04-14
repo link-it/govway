@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
@@ -60,10 +59,10 @@ public class PageData implements Serializable {
 	String message;
 	String messageType;
 	String messageTitle;
-	Vector<GeneralLink> titlelist;
-	Vector<?> dati;
-	Vector<?> menu;
-	Vector<?> areaBottoni;
+	List<GeneralLink> titlelist;
+	List<?> dati;
+	List<?> menu;
+	List<?> areaBottoni;
 	Map<String,String> hidden;
 	String page;
 	String op;
@@ -111,11 +110,11 @@ public class PageData implements Serializable {
 		this.messageTitle = "";
 		this.page = "";
 		this.op = "";
-		this.titlelist = new Vector<GeneralLink>();
-		this.dati = new Vector<Object>();
-		this.menu = new Vector<Object>();
-		this.areaBottoni = new Vector<Object>();
-		this.hidden = new HashMap<String,String>();
+		this.titlelist = new ArrayList<>();
+		this.dati = new ArrayList<>();
+		this.menu = new ArrayList<>();
+		this.areaBottoni = new ArrayList<>();
+		this.hidden = new HashMap<>();
 		this.inserisciBottoni = true;
 		this.addButton = true;
 		this.removeButton = true;
@@ -131,7 +130,7 @@ public class PageData implements Serializable {
 		this.postBackResult=false;
 		this.includiMenuLateraleSx = true;
 		this.paginazione = true;
-		this.comandiAzioneBarraTitoloDettaglioElemento = new ArrayList<DataElement>();
+		this.comandiAzioneBarraTitoloDettaglioElemento = new ArrayList<>();
 	}
 
 	public void setPageDescription(String s) {
@@ -270,31 +269,31 @@ public class PageData implements Serializable {
 		return this.op;
 	}
 
-	public void setTitleList(Vector<GeneralLink> v) {
+	public void setTitleList(List<GeneralLink> v) {
 		this.titlelist = v;
 	}
-	public Vector<GeneralLink> getTitleList() {
+	public List<GeneralLink> getTitleList() {
 		return this.titlelist;
 	}
 
-	public void setDati(Vector<?> v) {
+	public void setDati(List<?> v) {
 		this.dati = v;
 	}
-	public Vector<?> getDati() {
+	public List<?> getDati() {
 		return this.dati;
 	}
 
-	public void setMenu(Vector<?> v) {
+	public void setMenu(List<?> v) {
 		this.menu = v;
 	}
-	public Vector<?> getMenu() {
+	public List<?> getMenu() {
 		return this.menu;
 	}
 
-	public void setAreaBottoni(Vector<?> v) {
+	public void setAreaBottoni(List<?> v) {
 		this.areaBottoni = v;
 	}
-	public Vector<?> getAreaBottoni() {
+	public List<?> getAreaBottoni() {
 		return this.areaBottoni;
 	}
 
@@ -725,8 +724,8 @@ public class PageData implements Serializable {
 					DataElement de = (DataElement) o;
 					if(!de.getType().equals(DataElementType.HIDDEN.toString()))
 						nonHidden ++;
-				} else if(o instanceof Vector<?>) {
-					Vector<?> v = (Vector<?>) o;
+				} else if(o instanceof List<?>) {
+					List<?> v = (List<?>) o;
 					for(int j = 0; j < v.size(); j++){
 						Object o02 = v.get(j);
 						if(o02 instanceof DataElement) {

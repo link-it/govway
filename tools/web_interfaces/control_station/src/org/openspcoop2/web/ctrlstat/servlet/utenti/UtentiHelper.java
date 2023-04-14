@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -128,7 +127,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 	}
 	
-	public Vector<DataElement> addUtentiToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,boolean singlePdD,
+	public List<DataElement> addUtentiToDati(List<DataElement> dati,TipoOperazione tipoOperazione,boolean singlePdD,
 			String nomesu,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			String changepwd, String [] modalitaGateway,
@@ -150,7 +149,7 @@ public class UtentiHelper extends ConsoleHelper {
 		DataElement de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_INFORMAZIONI_UTENTE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
@@ -164,18 +163,18 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PERMESSI_GESTIONE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_REGISTRO_SUBSECTION);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SERVIZI);
@@ -183,7 +182,7 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 		ServletUtils.setCheckBox(de, isServizi);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
@@ -197,13 +196,13 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 		ServletUtils.setCheckBox(de, isAccordiCooperazione);
 		de.setValue(de.getSelected());
-		dati.addElement(de);
+		dati.add(de);
 			
 		if(singlePdD) {
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_GOVWAY_MONITOR_SUBSECTION);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -217,7 +216,7 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA);
@@ -230,12 +229,12 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_STRUMENTI_SUBSECTION);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_MESSAGGI);
@@ -249,7 +248,7 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 		ServletUtils.setCheckBox(de, isMessaggi);
 		de.setValue(de.getSelected());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_AUDITING);
@@ -257,12 +256,12 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
 		ServletUtils.setCheckBox(de, isAuditing);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFIGURAZIONE_SUBSECTION);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SISTEMA);
@@ -270,7 +269,7 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
 		ServletUtils.setCheckBox(de, isSistema);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI);
@@ -278,7 +277,7 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
 		ServletUtils.setCheckBox(de, isUtenti);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 	
 		
 		
@@ -286,7 +285,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			List<String> protocolliRegistratiConsole = this.core.getProtocolli();
 			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
@@ -297,7 +296,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
 				ServletUtils.setCheckBox(de, modalitaGateway[i]);
 				de.setPostBack(true);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 
@@ -313,7 +312,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_VISIBILITA_DATI_GOVWAY_MONITOR);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);	
+			dati.add(de);	
 			
 
 			if(this.utentiCore.isMultitenant()) {
@@ -321,7 +320,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_UTENTI_SOGGETTI);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 //				if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
 //					String valueSoggetti = getLabelSezionePddMonitorSoggettiServizi(isDiagnosticaEnabled, isReportisticaEnabled) + 
@@ -329,7 +328,7 @@ public class UtentiHelper extends ConsoleHelper {
 //					de = new DataElement();
 //					de.setType(DataElementType.NOTE);
 //					de.setValue(valueSoggetti);
-//					dati.addElement(de);
+//					dati.add(de);
 //				}
 				
 				de = new DataElement();
@@ -338,7 +337,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
 				de.setSelected(ServletUtils.isCheckBoxEnabled(isSoggettiAll));
 				de.setPostBack(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(  TipoOperazione.CHANGE.equals(tipoOperazione) && oldImgUser.isPermitAllSoggetti()==false && !ServletUtils.isCheckBoxEnabled(isSoggettiAll)) {
 					
@@ -354,7 +353,7 @@ public class UtentiHelper extends ConsoleHelper {
 					}else {
 						de.setValue(nomeLink);
 					}
-					dati.addElement(de);
+					dati.add(de);
 			
 				}
 			}
@@ -364,7 +363,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
 				de.setValue(isSoggettiAll);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			
@@ -372,7 +371,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_UTENTI_SERVIZI);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 //			if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
 //				String valueServizi = getLabelSezionePddMonitorSoggettiServizi(isDiagnosticaEnabled, isReportisticaEnabled)+ 
@@ -380,7 +379,7 @@ public class UtentiHelper extends ConsoleHelper {
 //				de = new DataElement();
 //				de.setType(DataElementType.NOTE);
 //				de.setValue(valueServizi);
-//				dati.addElement(de);
+//				dati.add(de);
 //			}
 			
 			de = new DataElement();
@@ -389,7 +388,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL);
 			de.setSelected(ServletUtils.isCheckBoxEnabled(isServiziAll));
 			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if((TipoOperazione.CHANGE.equals(tipoOperazione) && oldImgUser.isPermitAllServizi()==false && !ServletUtils.isCheckBoxEnabled(isServiziAll))) {
 				
@@ -405,7 +404,7 @@ public class UtentiHelper extends ConsoleHelper {
 				}else {
 					de.setValue(nomeLink);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			
@@ -427,7 +426,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PROFILO_UTENTE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// se ho selezionato almento un procollo mostro la selezione del protocollo per il profilo utente
 			boolean protocolloSelezionato = false;
@@ -444,7 +443,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_PROFILO_UTENTE_CONSOLE_GESTIONE);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
@@ -479,18 +478,18 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setValues(tipiInterfacce);
 					de.setLabels(tipiInterfacceLabel);
 					de.setSelected(interfaceType.toString());
-					dati.addElement(de);
+					dati.add(de);
 				} else {
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(interfaceType.toString());
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
 					de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI+ "_text");
 					de.setType(DataElementType.TEXT);
 					de.setValue(interfaceType.toString().toLowerCase());
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				if(!onlyUser) { // selezione di modalita' e soggetto solo se non ho selezionato solo la gestione utenti.
@@ -522,7 +521,7 @@ public class UtentiHelper extends ConsoleHelper {
 							
 							de.setSelected(profiloDefaultConsoleGestione);
 							de.setPostBack(true);
-							dati.addElement(de);
+							dati.add(de);
 							
 						} else { // text
 							de = new DataElement();
@@ -530,7 +529,7 @@ public class UtentiHelper extends ConsoleHelper {
 							de.setType(DataElementType.HIDDEN);			
 							de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
 							de.setValue(profiloDefaultConsoleGestione);
-							dati.addElement(de);
+							dati.add(de);
 							
 							de = new DataElement();
 							de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
@@ -541,7 +540,7 @@ public class UtentiHelper extends ConsoleHelper {
 							String labelProt = ConsoleHelper._getLabelProtocollo(protocolloName);
 							de.setValue(labelProt);
 			//				de.setValue(profiloDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : profiloDefaultUtente);
-							dati.addElement(de);
+							dati.add(de);
 						}
 						
 						// select list soggetti
@@ -587,7 +586,7 @@ public class UtentiHelper extends ConsoleHelper {
 								de.setLabels(listaLabel);
 								de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
 								de.setSelected(soggettoDefaultConsoleGestione);
-								dati.addElement(de);
+								dati.add(de);
 								
 							} else { // se ho un solo soggetto visualizzo il text
 								de = new DataElement();
@@ -595,7 +594,7 @@ public class UtentiHelper extends ConsoleHelper {
 								de.setType(DataElementType.HIDDEN);
 								de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
 								de.setValue(soggettoDefaultConsoleGestione);
-								dati.addElement(de);
+								dati.add(de);
 								
 								de = new DataElement();
 								de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
@@ -608,7 +607,7 @@ public class UtentiHelper extends ConsoleHelper {
 									de.setValue(labelSoggetto);
 								}
 			//					de.setValue(soggettoDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoDefaultUtente);
-								dati.addElement(de);
+								dati.add(de);
 							}
 							
 						} else {
@@ -617,7 +616,7 @@ public class UtentiHelper extends ConsoleHelper {
 							de.setType(DataElementType.HIDDEN);
 							de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
 							de.setValue(soggettoDefaultConsoleGestione);
-							dati.addElement(de); 
+							dati.add(de); 
 						}
 					} else {
 						de = new DataElement();
@@ -625,14 +624,14 @@ public class UtentiHelper extends ConsoleHelper {
 						de.setType(DataElementType.HIDDEN);			
 						de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
 						de.setValue(profiloDefaultConsoleGestione);
-						dati.addElement(de);
+						dati.add(de);
 						
 						de = new DataElement();
 						de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
 						de.setType(DataElementType.HIDDEN);
 						de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
 						de.setValue(soggettoDefaultConsoleGestione);
-						dati.addElement(de);
+						dati.add(de);
 					}
 				}
 			}
@@ -642,7 +641,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_PROFILO_UTENTE_CONSOLE_MONITOR);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(protocolloSelezionato) {
 					// select list Profilo Interoperabilità
@@ -672,7 +671,7 @@ public class UtentiHelper extends ConsoleHelper {
 						
 						de.setSelected(profiloDefaultConsoleMonitoraggio);
 						de.setPostBack(true);
-						dati.addElement(de);
+						dati.add(de);
 						
 					} else { // text
 						de = new DataElement();
@@ -680,7 +679,7 @@ public class UtentiHelper extends ConsoleHelper {
 						de.setType(DataElementType.HIDDEN);			
 						de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
 						de.setValue(profiloDefaultConsoleMonitoraggio);
-						dati.addElement(de);
+						dati.add(de);
 						
 						de = new DataElement();
 						de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
@@ -691,7 +690,7 @@ public class UtentiHelper extends ConsoleHelper {
 						String labelProt = ConsoleHelper._getLabelProtocollo(protocolloName);
 						de.setValue(labelProt);
 	//					de.setValue(profiloDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : profiloDefaultUtente);
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 					// select list soggetti
@@ -737,7 +736,7 @@ public class UtentiHelper extends ConsoleHelper {
 							de.setLabels(listaLabel);
 							de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
 							de.setSelected(soggettoDefaultConsoleMonitoraggio);
-							dati.addElement(de);
+							dati.add(de);
 							
 						} else { // se ho un solo soggetto visualizzo il text
 							de = new DataElement();
@@ -745,7 +744,7 @@ public class UtentiHelper extends ConsoleHelper {
 							de.setType(DataElementType.HIDDEN);
 							de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
 							de.setValue(soggettoDefaultConsoleMonitoraggio);
-							dati.addElement(de);
+							dati.add(de);
 							
 							de = new DataElement();
 							de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
@@ -758,7 +757,7 @@ public class UtentiHelper extends ConsoleHelper {
 								de.setValue(labelSoggetto);
 							}
 	//						de.setValue(soggettoDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoDefaultUtente);
-							dati.addElement(de);
+							dati.add(de);
 						}
 						
 					} else {
@@ -767,7 +766,7 @@ public class UtentiHelper extends ConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
 						de.setValue(soggettoDefaultConsoleMonitoraggio);
-						dati.addElement(de); 
+						dati.add(de); 
 					}
 				} else {
 					de = new DataElement();
@@ -775,14 +774,14 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setType(DataElementType.HIDDEN);			
 					de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
 					de.setValue(profiloDefaultConsoleMonitoraggio);
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
 					de.setType(DataElementType.HIDDEN);
 					de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
 					de.setValue(soggettoDefaultConsoleMonitoraggio);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				// Home page console di monitoraggio
@@ -790,12 +789,12 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setType(DataElementType.SELECT);
 				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
 				String[] homePageLabels = { UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI, UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE };
-				de.setValues(UtentiCostanti.VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				de.setValues(UtentiCostanti.getValuesParametroUtentiHomePageMonitoraggio());
 				de.setLabels(homePageLabels);
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
 				de.setPostBack(true);
 				de.setSelected(homePageMonitoraggio);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// select per la selezione dell'intervallo temporale del grafico della home
 				if(homePageMonitoraggio.equals(UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE)) {
@@ -808,18 +807,18 @@ public class UtentiHelper extends ConsoleHelper {
 							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI, 
 							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI, 
 							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO };
-					de.setValues(UtentiCostanti.VALUES_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					de.setValues(UtentiCostanti.getValuesParametroUtentiIntervalloTemporaleHomePageMonitoraggio());
 					de.setLabels(intervalloTemporaleLabels);
 					de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 					de.setSelected(intervalloTemporaleReportStatistico);
-					dati.addElement(de);
+					dati.add(de);
 				} else {
 					de = new DataElement();
 					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 					de.setType(DataElementType.HIDDEN);			
 					de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 					de.setValue(intervalloTemporaleReportStatistico);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 			} else {
@@ -828,28 +827,28 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setType(DataElementType.HIDDEN);			
 				de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
 				de.setValue(profiloDefaultConsoleMonitoraggio);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
 				de.setValue(soggettoDefaultConsoleMonitoraggio);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
 				de.setType(DataElementType.HIDDEN);			
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
 				de.setValue(homePageMonitoraggio);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 				de.setType(DataElementType.HIDDEN);			
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 				de.setValue(intervalloTemporaleReportStatistico);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		} else {
 			de = new DataElement();
@@ -857,28 +856,28 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);			
 			de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
 			de.setValue(profiloDefaultConsoleMonitoraggio);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
 			de.setValue(soggettoDefaultConsoleMonitoraggio);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
 			de.setType(DataElementType.HIDDEN);			
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
 			de.setValue(homePageMonitoraggio);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 			de.setType(DataElementType.HIDDEN);			
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 			de.setValue(intervalloTemporaleReportStatistico);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -889,7 +888,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PASSWORD);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
@@ -934,7 +933,7 @@ public class UtentiHelper extends ConsoleHelper {
 				} 
 			}
 			
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		if(loginApplication && TipoOperazione.CHANGE.equals(tipoOperazione)){
@@ -946,7 +945,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setPostBack(true);
 			de.setSelected(changepwd);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		if( (TipoOperazione.ADD.equals(tipoOperazione)) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){
@@ -971,7 +970,7 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PW);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -980,7 +979,7 @@ public class UtentiHelper extends ConsoleHelper {
 	}
 
 
-	public void addChangeUtenteInfoToDati(Vector<DataElement> dati,
+	public void addChangeUtenteInfoToDati(List<DataElement> dati,
 			String nomesu,String changepwd,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isReportistica, String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			boolean scegliSuServizi,
@@ -993,7 +992,7 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setValue(nomesu);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(ServletUtils.isCheckBoxEnabled(changepwd)){
 
@@ -1002,21 +1001,21 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setValue(pwsu);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PW);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PW);
 			de.setValue(confpwsu);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PW);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CHANGE_PW);
 			de.setValue(changepwd);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PW);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		de = new DataElement();
@@ -1024,105 +1023,105 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);			
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
 		de.setValue(profiloDefaultConsoleGestione);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
 		de.setValue(soggettoDefaultConsoleGestione);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
 		de.setValue(interfaceType.toString());
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
 		de.setType(DataElementType.HIDDEN);			
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
 		de.setValue(profiloDefaultConsoleMonitoraggio);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
 		de.setValue(soggettoDefaultConsoleMonitoraggio);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
 		de.setType(DataElementType.HIDDEN);			
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
 		de.setValue(homePageMonitoraggio);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 		de.setType(DataElementType.HIDDEN);			
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 		de.setValue(intervalloTemporaleReportStatistico);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SERVIZI);
 		de.setValue(isServizi);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SISTEMA);
 		de.setValue(isSistema);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_MESSAGGI);
 		de.setValue(isMessaggi);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA);
 		de.setValue(isDiagnostica);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA);
 		de.setValue(isReportistica);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI);
 		de.setValue(isUtenti);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_AUDITING);
 		de.setValue(isAuditing);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
 		de.setValue(isAccordiCooperazione);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(scegliSuServizi){
 			de = new DataElement();
@@ -1131,7 +1130,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
 			de.setValues(uws);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		if(scegliSuAccordi){
@@ -1141,7 +1140,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
 			de.setValues(uwp);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		List<String> protocolliRegistratiConsole = this.core.getProtocolli();
@@ -1152,12 +1151,12 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
 			de.setValue(modalitaGateway[i]);
-			dati.addElement(de);
+			dati.add(de);
 		}
 	}
 
 
-	public void addChooseUtenteForPermessiSToDati(Vector<DataElement> dati,String objToRemove,boolean scegliSuServizi,
+	public void addChooseUtenteForPermessiSToDati(List<DataElement> dati,String objToRemove,boolean scegliSuServizi,
 			String [] uws, boolean scegliSuAccordi,String [] uwp){
 
 		DataElement de = new DataElement();
@@ -1165,7 +1164,7 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setValue(objToRemove);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(scegliSuServizi){
 			de = new DataElement();
@@ -1174,7 +1173,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
 			de.setValues(uws);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		if(scegliSuAccordi){
@@ -1184,33 +1183,33 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
 			de.setValues(uwp);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 
 
 	}
 
-	public void addUtenteChangeToDati(Vector<DataElement> dati,InterfaceType interfaceType,
+	public void addUtenteChangeToDati(List<DataElement> dati,InterfaceType interfaceType,
 			String changepw, String nomeUtente, String profiloSelezionatoUtente, String soggettoSelezionatoUtente) throws Exception{
 
 		DataElement de = new DataElement();
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue("false");
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_INFO_UTENTE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_LOGIN);
 		de.setType(DataElementType.TEXT);
 		de.setValue(nomeUtente);
-		dati.addElement(de);
+		dati.add(de);
 		
 		User utente = this.utentiCore.getUser(nomeUtente);
 		
@@ -1218,7 +1217,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
 			de.setLabel(UtentiCostanti.LABEL_PROFILO);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// tipo interfaccia
@@ -1235,7 +1234,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setType(DataElementType.TEXT);
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI+"_text");
 				de.setValue(interfaceType.toString().toLowerCase());
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
@@ -1268,7 +1267,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setSelected(interfaceType.toString());
 			}
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
@@ -1276,7 +1275,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
 			de.setValue(profiloSelezionatoUtente);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		else {
 			List<String> protocolliDispondibili = this.core.getProtocolli(this.request, this.session, true);
@@ -1299,13 +1298,13 @@ public class UtentiHelper extends ConsoleHelper {
 				
 				de.setSelected(profiloSelezionatoUtente);
 				de.setPostBack(true);
-				dati.addElement(de);
+				dati.add(de);
 			} else {
 				// solo un protocollo visualizzo il testo e basta
 				de.setType(DataElementType.HIDDEN);
 				de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
 				de.setValue(profiloSelezionatoUtente);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// visualizzo label
 				de = new DataElement();
@@ -1318,7 +1317,7 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setValue(labelProt);
 				}
 //				de.setValue(profiloSelezionatoUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : ConsoleHelper._getLabelProtocollo(profiloSelezionatoUtente));
-				dati.addElement(de);
+				dati.add(de);
 				
 			} 
 		}
@@ -1329,7 +1328,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
 			de.setValue(soggettoSelezionatoUtente);
-			dati.addElement(de);
+			dati.add(de);
 		} else {
 			List<String> protocolliDispondibili = this.core.getProtocolli(this.request, this.session, true);
 			// selezione del soggetto se disponibile		
@@ -1376,7 +1375,7 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setLabels(listaLabel);
 					de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
 					de.setSelected(soggettoSelezionatoUtente);
-					dati.addElement(de);
+					dati.add(de);
 					
 				} else { // se ho un solo soggetto visualizzo il text
 					de = new DataElement();
@@ -1384,7 +1383,7 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
 					de.setValue(soggettoSelezionatoUtente);
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
@@ -1397,7 +1396,7 @@ public class UtentiHelper extends ConsoleHelper {
 						de.setValue(labelSoggetto);
 					}
 //					de.setValue(soggettoSelezionatoUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoSelezionatoUtente);
-					dati.addElement(de);
+					dati.add(de);
 				}
 			} else {
 				de = new DataElement();
@@ -1405,7 +1404,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
 				de.setValue(soggettoSelezionatoUtente);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -1414,7 +1413,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PASSWORD);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 	
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_MODIFICA);
@@ -1424,7 +1423,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setPostBack(true);
 			de.setSelected(changepw);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 	
 	
 			//se e' stato selezionato il link per il cambio password allora mostro i dati
@@ -1441,7 +1440,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setValue("");
 				de.setSize(this.getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 					
 	//			}
 	
@@ -1452,7 +1451,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setSize(this.getSize());
 				de.setValue("");
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 	
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PW);
@@ -1464,7 +1463,7 @@ public class UtentiHelper extends ConsoleHelper {
 				if(passwordVerifier!=null){
 					de.setNote(passwordVerifier.helpUpdate(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 		}
@@ -1472,7 +1471,7 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ESEGUI);
 		de.setValue(UtentiCostanti.PARAMETRO_UTENTE_ESEGUI);
-		dati.addElement(de);
+		dati.add(de);
 	}
 
 
@@ -1723,11 +1722,11 @@ public class UtentiHelper extends ConsoleHelper {
 				String homePageMonitoraggio = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
 				String intervalloTemporaleHomePageConsoleMonitoraggio = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 
-				if(!Arrays.asList(UtentiCostanti.VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO).contains(homePageMonitoraggio)) {
+				if(!Arrays.asList(UtentiCostanti.getValuesParametroUtentiHomePageMonitoraggio()).contains(homePageMonitoraggio)) {
 					this.pd.setMessage(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO + " contiene un valore non valido.");
 					return false;
 				}
-				if(!Arrays.asList(UtentiCostanti.VALUES_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO).contains(intervalloTemporaleHomePageConsoleMonitoraggio)) {
+				if(!Arrays.asList(UtentiCostanti.getValuesParametroUtentiIntervalloTemporaleHomePageMonitoraggio()).contains(intervalloTemporaleHomePageConsoleMonitoraggio)) {
 					this.pd.setMessage(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO + " contiene un valore non valido.");
 					return false;
 				}
@@ -2039,7 +2038,7 @@ public class UtentiHelper extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 			
 			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 
@@ -2048,7 +2047,7 @@ public class UtentiHelper extends ConsoleHelper {
 				while (it.hasNext()) {
 					User mySU = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					// Stato utente
 					DataElement de = new DataElement();
@@ -2076,7 +2075,7 @@ public class UtentiHelper extends ConsoleHelper {
 					
 					de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_CHANGE,
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, mySU.getLogin()));
-					e.addElement(de);
+					e.add(de);
 					
 					// nome utente
 					de = new DataElement();
@@ -2084,7 +2083,7 @@ public class UtentiHelper extends ConsoleHelper {
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, mySU.getLogin()));
 					de.setIdToRemove(mySU.getId().toString());
 					de.setValue(mySU.getLogin());
-					e.addElement(de);
+					e.add(de);
 
 					// modalita interfaccia
 					de = new DataElement();
@@ -2094,7 +2093,7 @@ public class UtentiHelper extends ConsoleHelper {
 					else {
 						de.setValue(mySU.getInterfaceType().toString().toLowerCase());
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					// modalita gateway
 					de = new DataElement();
@@ -2146,7 +2145,7 @@ public class UtentiHelper extends ConsoleHelper {
 							de.setValue(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
 						}
 					}
-					e.addElement(de);
+					e.add(de);
 
 					// permessi utente
 					de = new DataElement();
@@ -2162,7 +2161,7 @@ public class UtentiHelper extends ConsoleHelper {
 						maschera.setAccordiCooperazione(true);
 						de.setValue(mySU.getPermessi().toString(",",maschera));
 					}
-					e.addElement(de);
+					e.add(de);
 
 					// login as su
 					de = new DataElement();
@@ -2173,9 +2172,9 @@ public class UtentiHelper extends ConsoleHelper {
 						de.setValue(UtentiCostanti.LABEL_ACCEDI);
 					} else
 						de.setValue("");
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2346,14 +2345,14 @@ public class UtentiHelper extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 			
 			if (lista != null) {
 				Iterator<IDSoggetto> it = lista.iterator();
 				while (it.hasNext()) {
 					IDSoggetto soggetto = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 					// soggetto
@@ -2361,15 +2360,15 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setValue(this.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome()));
 					de.setIdToRemove(soggetto.getTipo() + "/" + soggetto.getNome());
 					de.setToolTip(this.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome()));
-					e.addElement(de);
+					e.add(de);
 					
 					if(showProtocolli) {
 						de = new DataElement();
 						de.setValue(this.getLabelProtocollo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo())));
-						e.addElement(de);
+						e.add(de);
 					}
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 					
@@ -2436,13 +2435,13 @@ public class UtentiHelper extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 			
 			if (lista != null) {
 				Iterator<IDServizio> it = lista.iterator();
 				while (it.hasNext()) {
 					IDServizio servizio = it.next();
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(servizio.getTipo());
 					String uriASPS = this.idServizioFactory.getUriFromIDServizio(servizio);
@@ -2451,20 +2450,20 @@ public class UtentiHelper extends ConsoleHelper {
 					DataElement de = new DataElement();
 					de.setValue(this.getLabelNomeServizio(protocollo, servizio.getTipo(), servizio.getNome(), servizio.getVersione()));
 					de.setIdToRemove(uriASPS);
-					e.addElement(de);
+					e.add(de);
 					
 					// soggetto
 					de = new DataElement();
 					de.setValue(this.getLabelNomeSoggetto(protocollo, servizio.getSoggettoErogatore().getTipo(), servizio.getSoggettoErogatore().getNome()));
-					e.addElement(de);
+					e.add(de);
 					
 					if(showProtocolli) {
 						de = new DataElement();
 						de.setValue(this.getLabelProtocollo(protocollo));
-						e.addElement(de);
+						e.add(de);
 					}
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 					
@@ -2476,19 +2475,19 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 	}
 
-	public void addUtentiSoggettiToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String nomesu, String soggetto, String[] soggettiValues, String[] soggettiLabels, List<String> listaTipiProtocollo, String tipoProtocollo) throws Exception {
+	public void addUtentiSoggettiToDati(List<DataElement> dati, TipoOperazione tipoOperazione, String nomesu, String soggetto, String[] soggettiValues, String[] soggettiLabels, List<String> listaTipiProtocollo, String tipoProtocollo) throws Exception {
 
 		DataElement de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_UTENTI_SOGGETTI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
 		de.setValue(nomesu);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO);
@@ -2506,7 +2505,7 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 		
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_SOGGETTO);
@@ -2521,23 +2520,23 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setValue(soggetto);
 			de.setType(DataElementType.HIDDEN);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
-	public void addUtentiServiziToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String nomesu, String servizio, String[] serviziValues, String[] serviziLabels, List<String> listaTipiProtocollo, String tipoProtocollo) throws Exception {
+	public void addUtentiServiziToDati(List<DataElement> dati, TipoOperazione tipoOperazione, String nomesu, String servizio, String[] serviziValues, String[] serviziLabels, List<String> listaTipiProtocollo, String tipoProtocollo) throws Exception {
 
 		DataElement de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_UTENTI_SERVIZI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
 		de.setValue(nomesu);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO);
@@ -2554,7 +2553,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_SERVIZIO);
@@ -2569,7 +2568,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setValue(servizio);
 			de.setType(DataElementType.HIDDEN);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 
@@ -2593,18 +2592,18 @@ public class UtentiHelper extends ConsoleHelper {
 		return true;
 	}
 	
-	public void addUtenteChangePasswordScadutaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione) throws Exception{
+	public void addUtenteChangePasswordScadutaToDati(List<DataElement> dati, TipoOperazione tipoOperazione) throws Exception{
 
 		DataElement de = new DataElement();
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue("false");
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PASSWORD);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 		
@@ -2615,7 +2614,7 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setValue("");
 		de.setSize(this.getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 			
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PW);
@@ -2624,7 +2623,7 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setSize(this.getSize());
 		de.setValue("");
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PW);
@@ -2636,13 +2635,13 @@ public class UtentiHelper extends ConsoleHelper {
 		if(passwordVerifier!=null){
 			de.setNote(passwordVerifier.helpUpdate(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ESEGUI);
 		de.setValue(UtentiCostanti.PARAMETRO_UTENTE_ESEGUI);
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
 	boolean changePwScadutaCheckData() throws Exception {

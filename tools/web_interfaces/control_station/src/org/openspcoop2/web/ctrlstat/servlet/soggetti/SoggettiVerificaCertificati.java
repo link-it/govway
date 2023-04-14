@@ -25,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -105,7 +104,7 @@ public class SoggettiVerificaCertificati extends Action {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
 			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
-			int idSogg = Integer.parseInt(id);
+			long idSogg = Long.parseLong(id);
 			String nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 			String tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
 			
@@ -123,7 +122,7 @@ public class SoggettiVerificaCertificati extends Action {
 			
 			// Prendo la lista di aliases
 			List<String> aliases = confCore.getJmxPdD_aliases();
-			if(aliases==null || aliases.size()<=0){
+			if(aliases==null || aliases.isEmpty()){
 				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 			
@@ -131,12 +130,10 @@ public class SoggettiVerificaCertificati extends Action {
 			org.openspcoop2.core.config.Soggetto soggettoConfig = null;
 			
 			if(soggettiCore.isRegistroServiziLocale()){
-				soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);// core.getSoggettoRegistro(new
-				// IDSoggetto(tipoprov,nomeprov));
+				soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);
 			}
 
-			soggettoConfig = soggettiCore.getSoggetto(idSogg);// core.getSoggetto(new
-			// IDSoggetto(tipoprov,nomeprov));
+			soggettoConfig = soggettiCore.getSoggetto(idSogg);
 			
 			if(soggettiCore.isRegistroServiziLocale()){
 				nomeprov = soggettoRegistry.getNome();
@@ -150,7 +147,7 @@ public class SoggettiVerificaCertificati extends Action {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
 			
 			
-			List<Parameter> parametersServletSoggettoChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
 			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, nomeprov);
 			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, tipoprov);
@@ -159,10 +156,8 @@ public class SoggettiVerificaCertificati extends Action {
 			parametersServletSoggettoChange.add(pTipoSoggetto);
 			
 			// setto la barra del titolo
-			List<Parameter> listParameter = new ArrayList<Parameter>();
+			List<Parameter> listParameter = new ArrayList<>();
 			listParameter.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
-//			listParameter.add(new Parameter(soggettiHelper.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome()),
-//							SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()])));
 			
 			String labelSoggetto = null;
 			if(soggettoRegistry!=null) {
@@ -189,8 +184,8 @@ public class SoggettiVerificaCertificati extends Action {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, listParameter );
 			
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			
 			// -- raccolgo dati
@@ -241,17 +236,17 @@ public class SoggettiVerificaCertificati extends Action {
 					}
 			
 					// -- verifica						
-					List<String> aliases_for_check = new ArrayList<>();
+					List<String> aliasesForCheck = new ArrayList<>();
 					boolean all = false;
 					if(aliases.size()==1) {
-						aliases_for_check.add(aliases.get(0));
+						aliasesForCheck.add(aliases.get(0));
 					}
 					else if(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) {
-						aliases_for_check.addAll(aliases);
+						aliasesForCheck.addAll(aliases);
 						all = true;
 					}
 					else {
-						aliases_for_check.add(alias);
+						aliasesForCheck.add(alias);
 					}
 					
 					CertificateChecker certificateChecker = null;
@@ -259,7 +254,7 @@ public class SoggettiVerificaCertificati extends Action {
 						certificateChecker = soggettiCore.getJmxPdD_certificateChecker();
 					}
 					else {
-						certificateChecker = soggettiCore.newJmxPdD_certificateChecker(aliases_for_check);
+						certificateChecker = soggettiCore.newJmxPdD_certificateChecker(aliasesForCheck);
 					}
 					StringBuilder sbDetailsError = new StringBuilder(); 
 					
@@ -270,17 +265,17 @@ public class SoggettiVerificaCertificati extends Action {
 					String extraErrore = null;
 					
 					// verifica sl
-					StringBuilder sbDetailsWarning_ssl = new StringBuilder();
-					String posizioneWarning_ssl = null;
+					StringBuilder sbDetailsWarningSsl = new StringBuilder();
+					String posizioneWarningSsl = null;
 					if(ssl) {
-						certificateChecker.checkSoggetto(sbDetailsError, sbDetailsWarning_ssl,
+						certificateChecker.checkSoggetto(sbDetailsError, sbDetailsWarningSsl,
 						    ssl, soggettoRegistry, 
 						    sogliaWarningGiorni);
 						if(sbDetailsError.length()>0) {
 							posizioneErrore = labelSoggetto;
 						}
-						else if(sbDetailsWarning_ssl.length()>0) {
-							posizioneWarning_ssl = labelSoggetto;
+						else if(sbDetailsWarningSsl.length()>0) {
+							posizioneWarningSsl = labelSoggetto;
 						}
 					}
 					
@@ -288,15 +283,14 @@ public class SoggettiVerificaCertificati extends Action {
 					String warning = null;
 					String posizioneWarning = null;
 					String extraWarning = null;
-					if(sbDetailsError.length()<=0) {
-						if(sbDetailsWarning_ssl.length()>0) {
-							warning = sbDetailsWarning_ssl.toString();
-							posizioneWarning = posizioneWarning_ssl;
-						}
+					if(sbDetailsError.length()<=0 &&
+						sbDetailsWarningSsl.length()>0) {
+						warning = sbDetailsWarningSsl.toString();
+						posizioneWarning = posizioneWarningSsl;
 					}
 					
 					// esito
-					List<String> formatIds = new ArrayList<String>();
+					List<String> formatIds = new ArrayList<>();
 					soggettiCore.formatVerificaCertificatiEsito(pd, formatIds, 
 							(sbDetailsError.length()>0 ? sbDetailsError.toString() : null), extraErrore, posizioneErrore,
 							warning, extraWarning, posizioneWarning,
@@ -325,7 +319,7 @@ public class SoggettiVerificaCertificati extends Action {
 			de.setValue(arrivoDaLista+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA);
-			dati.addElement(de);
+			dati.add(de);
 			
 			pd.setDati(dati);
 
@@ -350,10 +344,9 @@ public class SoggettiVerificaCertificati extends Action {
 					
 					// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 					List<Soggetto> lista = null;
-					if(soggettiCore.isRegistroServiziLocale()){
-						if(!ServletUtils.isSearchDone(soggettiHelper)) {
-							lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Soggetto.class);
-						}
+					if(soggettiCore.isRegistroServiziLocale() &&
+						!ServletUtils.isSearchDone(soggettiHelper)) {
+						lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Soggetto.class);
 					}
 					
 					ricerca = soggettiHelper.checkSearchParameters(idLista, ricerca);
@@ -404,8 +397,16 @@ public class SoggettiVerificaCertificati extends Action {
 							SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, 
 							soggettiHelper.getLabelNomeSoggetto(protocollo, tipoprov , nomeprov));
 
-					String portadom = null, descr= null, versioneProtocollo= null,pdd= null, codiceIpa= null, pd_url_prefix_rewriter= null,pa_url_prefix_rewriter= null,dominio = null;
-					boolean isRouter = false,privato= false; 
+					String portadom = null;
+					String descr = null;
+					String versioneProtocollo = null;
+					String pdd = null;
+					String codiceIpa = null;
+					String pdUrlPrefixRewriter = null;
+					String paUrlPrefixRewriter = null;
+					String dominio = null;
+					boolean isRouter = false;
+					boolean privato = false; 
 					String tipoauthSoggetto = null;
 					String utenteSoggetto = null;
 					String passwordSoggetto = null;
@@ -430,7 +431,7 @@ public class SoggettiVerificaCertificati extends Action {
 					String tipoCredenzialiSSLConfigurazioneManualeSelfSigned= null;
 					org.openspcoop2.utils.certificate.ArchiveType tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.CER; 
 					String tipoCredenzialiSSLFileCertificatoPassword = null;
-					List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+					List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 					
 					String tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD;
 					
@@ -441,7 +442,7 @@ public class SoggettiVerificaCertificati extends Action {
 					boolean isSupportatoIdentificativoPorta = soggettiCore.isSupportatoIdentificativoPorta(protocollo);
 					
 					String nomePddGestioneLocale = null;
-					if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
+					if(!pddCore.isGestionePddAbilitata(soggettiHelper)){
 						nomePddGestioneLocale = pddCore.getNomePddOperativa();
 						if(nomePddGestioneLocale==null) {
 							throw new Exception("Non è stata rilevata una pdd di tipologia 'operativo'");
@@ -453,7 +454,7 @@ public class SoggettiVerificaCertificati extends Action {
 						descr = soggettoRegistry.getDescrizione();
 						pdd = soggettoRegistry.getPortaDominio();
 												
-						if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
+						if(!pddCore.isGestionePddAbilitata(soggettiHelper)){
 							if(pddCore.isPddEsterna(pdd)) {
 								dominio = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE;
 							}
@@ -535,16 +536,14 @@ public class SoggettiVerificaCertificati extends Action {
 						isRouter = soggettoConfig.getRouter();
 					}
 
-					pd_url_prefix_rewriter = soggettoConfig.getPdUrlPrefixRewriter();
-					pa_url_prefix_rewriter = soggettoConfig.getPaUrlPrefixRewriter();
+					pdUrlPrefixRewriter = soggettoConfig.getPdUrlPrefixRewriter();
+					paUrlPrefixRewriter = soggettoConfig.getPaUrlPrefixRewriter();
 					
 					boolean isPddEsterna = pddCore.isPddEsterna(pdd);
-					if(isSupportatoAutenticazioneSoggetti){
-						if(isPddEsterna){
-							if(tipoauthSoggetto==null && ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(tipoauthSoggetto)){
-								tipoauthSoggetto = soggettiCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
-							}
-						}
+					if(isSupportatoAutenticazioneSoggetti &&
+						isPddEsterna &&
+							tipoauthSoggetto==null && ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(tipoauthSoggetto)){
+						tipoauthSoggetto = soggettiCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
 					}
 					
 					IDSoggetto idSoggetto = new IDSoggetto(tipoprov,nomeprov);
@@ -555,7 +554,7 @@ public class SoggettiVerificaCertificati extends Action {
 					if(soggettiHelper.isModalitaAvanzata()){
 						versioniProtocollo = soggettiCore.getVersioniProtocollo(protocollo);
 					}else {
-						versioniProtocollo = new ArrayList<String>();
+						versioniProtocollo = new ArrayList<>();
 						versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(protocollo);
 						versioniProtocollo.add(versioneProtocollo);
 					}
@@ -580,7 +579,8 @@ public class SoggettiVerificaCertificati extends Action {
 						connettore = soggettoRegistry.getConnettore();
 					}
 					
-					int numPA = 0, numPD = 0;
+					int numPA = 0;
+					int numPD = 0;
 					
 					ProtocolProperties protocolProperties = null;
 					List<ProtocolProperty> oldProtocolPropertyList = null;
@@ -599,7 +599,9 @@ public class SoggettiVerificaCertificati extends Action {
 						Soggetto soggetto = registryReader.getSoggetto(idSoggetto);
 						oldProtocolPropertyList = soggetto.getProtocolPropertyList();
 						protocolProperties = soggettiHelper.estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType);
-					}catch(RegistryNotFound r){}
+					}catch(RegistryNotFound r){
+						// ignore
+					}
 					
 					Properties propertiesProprietario = new Properties();
 					propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, id);
@@ -620,12 +622,12 @@ public class SoggettiVerificaCertificati extends Action {
 					
 					String servletCredenzialiList = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_LIST;
 					String servletCredenzialiAdd = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_ADD;
-					List<Parameter> parametersServletCredenzialiList = new ArrayList<Parameter>();
+					List<Parameter> parametersServletCredenzialiList = new ArrayList<>();
 					parametersServletCredenzialiList.add(pIdSoggetto);
 					parametersServletCredenzialiList.add(pNomeSoggetto);
 					parametersServletCredenzialiList.add(pTipoSoggetto);
 					
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 					// update della configurazione 
 					consoleDynamicConfiguration.updateDynamicConfigSoggetto(consoleConfiguration, consoleOperationType, soggettiHelper, protocolProperties, 
@@ -635,7 +637,7 @@ public class SoggettiVerificaCertificati extends Action {
 							isRouter, tipiSoggetti, versioneProtocollo, privato, codiceIpa, versioniProtocollo,
 							isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
 							pddList,pddEsterneList,nomePddGestioneLocale,pdd,id,nomeprov,tipoprov,connettore,
-							numPD,pd_url_prefix_rewriter,numPA,pa_url_prefix_rewriter,listaTipiProtocollo,protocollo,
+							numPD,pdUrlPrefixRewriter,numPA,paUrlPrefixRewriter,listaTipiProtocollo,protocollo,
 							isSupportatoAutenticazioneSoggetti,utenteSoggetto,passwordSoggetto,subjectSoggetto,principalSoggetto,tipoauthSoggetto,
 							isPddEsterna,null,dominio,tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
 							tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,

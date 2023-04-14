@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.ProtocolProperty;
@@ -71,7 +70,7 @@ public class ProtocolPropertiesUtilities {
 		return ConsoleInterfaceType.AVANZATA;
 	}
 
-	public static Vector<DataElement> itemToDataElement(Vector<DataElement> dati ,
+	public static List<DataElement> itemToDataElement(List<DataElement> dati ,
 			ConsoleHelper consoleHelper,
 			BaseConsoleItem item, Object defaultItemValue,
 			ConsoleOperationType consoleOperationType, 
@@ -85,7 +84,7 @@ public class ProtocolPropertiesUtilities {
 				size,
 				protocolProperty!=null ? (protocolProperty.getByteFile()!=null) : false);
 	}
-	public static Vector<DataElement> itemToDataElement(Vector<DataElement> dati ,
+	public static List<DataElement> itemToDataElement(List<DataElement> dati ,
 			ConsoleHelper consoleHelper,
 			BaseConsoleItem item, Object defaultItemValue,
 			ConsoleOperationType consoleOperationType, 
@@ -99,7 +98,7 @@ public class ProtocolPropertiesUtilities {
 				size,
 				protocolProperty!=null ? (protocolProperty.getByteFile()!=null) : false);
 	}
-	private static Vector<DataElement> _itemToDataElement(Vector<DataElement> dati ,
+	private static List<DataElement> _itemToDataElement(List<DataElement> dati ,
 			ConsoleHelper consoleHelper,
 			BaseConsoleItem item, Object defaultItemValue,
 			ConsoleOperationType consoleOperationType, 
@@ -176,7 +175,7 @@ public class ProtocolPropertiesUtilities {
 		return dati;
 	}
 	
-	public static Vector<DataElement> itemToDataElementAsHidden(Vector<DataElement> dati ,BaseConsoleItem item, Object defaultItemValue,
+	public static List<DataElement> itemToDataElementAsHidden(List<DataElement> dati ,BaseConsoleItem item, Object defaultItemValue,
 			ConsoleOperationType consoleOperationType, 
 			Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
 		if(item == null)
@@ -219,7 +218,7 @@ public class ProtocolPropertiesUtilities {
 		return dati;
 	}
 
-	public static Vector<DataElement> getTitle(Vector<DataElement> dati ,BaseConsoleItem item, int size, DataElementType type) throws Exception{
+	public static List<DataElement> getTitle(List<DataElement> dati ,BaseConsoleItem item, int size, DataElementType type) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(type);
@@ -241,12 +240,12 @@ public class ProtocolPropertiesUtilities {
 		}
 		
 		
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 
-	public static Vector<DataElement> getText(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size, DataElementType type) throws Exception{
+	public static List<DataElement> getText(List<DataElement> dati ,AbstractConsoleItem<?> item, int size, DataElementType type) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(type);
@@ -293,12 +292,12 @@ public class ProtocolPropertiesUtilities {
 			de.setValoreDefault(s);
 		}		
 
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 
-	public static Vector<DataElement> getFile(Vector<DataElement> dati ,
+	public static List<DataElement> getFile(List<DataElement> dati ,
 			ConsoleHelper consoleHelper,
 			AbstractConsoleItem<?> item, int size, ConsoleOperationType consoleOperationType, 
 			Properties binaryChangeProperties,
@@ -325,7 +324,7 @@ public class ProtocolPropertiesUtilities {
 //			deChange.setName(nameRechange);
 //			deChange.setValue("true");
 //			deChange.setType(DataElementType.HIDDEN);
-//			dati.addElement(deChange);
+//			dati.add(deChange);
 //		}
 		
 		boolean addDE = true;
@@ -386,14 +385,14 @@ public class ProtocolPropertiesUtilities {
 		}
 
 		if(addDE) {
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(df != null)
 			dati.addAll(df);
 
 		if(de2 != null)
-			dati.addElement(de2);
+			dati.add(de2);
 
 		return dati;
 	}
@@ -452,7 +451,7 @@ public class ProtocolPropertiesUtilities {
 		return selectedStringValue;
 	}
 	
-	public static Vector<DataElement> getCheckbox(Vector<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
+	public static List<DataElement> getCheckbox(List<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.CHECKBOX);
@@ -493,12 +492,12 @@ public class ProtocolPropertiesUtilities {
 			de.setValoreDefaultCheckbox(b);
 		}
 
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 
-	public static Vector<DataElement> getHidden(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size) throws Exception{
+	public static List<DataElement> getHidden(List<DataElement> dati ,AbstractConsoleItem<?> item, int size) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.HIDDEN);
@@ -533,23 +532,23 @@ public class ProtocolPropertiesUtilities {
 			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come una Hidden");
 		}
 
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 	
-	public static Vector<DataElement> getHidden(Vector<DataElement> dati ,BaseConsoleItem item, int size) throws Exception{
+	public static List<DataElement> getHidden(List<DataElement> dati ,BaseConsoleItem item, int size) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.HIDDEN);
 		de.setLabel(item.getLabel());
 		de.setSize(size);
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 
-	public static Vector<DataElement> getSelect(Vector<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
+	public static List<DataElement> getSelect(List<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.SELECT);
@@ -614,12 +613,12 @@ public class ProtocolPropertiesUtilities {
 			de.setValoreDefaultSelect(s);
 		}
 		
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 	
-	public static Vector<DataElement> getMultiSelect(Vector<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
+	public static List<DataElement> getMultiSelect(List<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.MULTI_SELECT);
@@ -671,7 +670,7 @@ public class ProtocolPropertiesUtilities {
 			de.setValoreDefaultMultiSelect(new String [] {s});
 		}
 		
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}

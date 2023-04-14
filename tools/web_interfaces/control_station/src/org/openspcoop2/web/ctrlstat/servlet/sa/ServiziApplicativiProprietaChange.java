@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,9 +82,7 @@ public final class ServiziApplicativiProprietaChange extends Action {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
-			
-			parentSA = useIdSogg ? ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO : ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
+			boolean useIdSogg = (parentSA!=null && parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO);
 			
 			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
@@ -107,7 +104,7 @@ public final class ServiziApplicativiProprietaChange extends Action {
 			oldIdServizioApplicativo.setNome(oldNome);
 			int idProv = sa.getIdSoggetto().intValue();
 			
-			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSAChange = new ArrayList<>();
 			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
 			parametersServletSAChange.add(pIdSA);
 			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProv+"");
@@ -134,12 +131,12 @@ public final class ServiziApplicativiProprietaChange extends Action {
 			
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
-			if(saHelper.isModalitaCompleta()==false) {
+			if(!saHelper.isModalitaCompleta()) {
 				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
 
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			if(useIdSogg){
 				lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 				lstParam.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)));
@@ -163,15 +160,15 @@ public final class ServiziApplicativiProprietaChange extends Action {
 					Proprieta ssp = sa.getProprieta(i);
 					if (nome.equals(ssp.getNome())) {
 						if(ssp.getValore()!=null){
-							valore = ssp.getValore().toString();
+							valore = ssp.getValore();
 						}
 						break;
 					}
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = saHelper.addServizioApplicativoHiddenToDati(dati, id, idProv+"", dominio, sa.getNome());
 				
@@ -192,9 +189,9 @@ public final class ServiziApplicativiProprietaChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = saHelper.addServizioApplicativoHiddenToDati(dati, id, idProv+"", dominio, sa.getNome());
 				

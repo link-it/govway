@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.gruppi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -113,8 +112,8 @@ public final class GruppiChange extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = gruppiHelper.addGruppoToDati(TipoOperazione.CHANGE, gruppoId, nome, descrizione, serviceBinding, dati);
 
@@ -136,9 +135,9 @@ public final class GruppiChange extends Action {
 						GruppiCostanti.SERVLET_NAME_GRUPPI_LIST, gruppo.getNome());
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = gruppiHelper.addGruppoToDati(TipoOperazione.CHANGE, gruppoId, nome, descrizione, serviceBinding, dati);
 
@@ -167,7 +166,7 @@ public final class GruppiChange extends Action {
 			
 			listOggettiDaAggiornare.add(gruppoNEW);
 			
-			if(gruppo.getNome().equals(nome)==false){
+			if(!gruppo.getNome().equals(nome)){
 				
 				// e' stato modificato il nome
 				

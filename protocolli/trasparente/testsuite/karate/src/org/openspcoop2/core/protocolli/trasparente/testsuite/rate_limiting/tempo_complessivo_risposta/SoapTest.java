@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -54,8 +54,8 @@ public class SoapTest extends ConfigLoader {
 	 * e quella che fa scattare la policy metto un'attesa sui contatori tramite jmx. 
 	 * 
 	 */
-	private Vector<HttpResponse> makeRequests(HttpRequest request, String idPolicy) throws UtilsException {
-		Vector<HttpResponse> responses = new Vector<>();
+	private List<HttpResponse> makeRequests(HttpRequest request, String idPolicy) throws UtilsException {
+		List<HttpResponse> responses = new java.util.ArrayList<>();
 		
 		HttpResponse response = HttpUtilities.httpInvoke(request);
 		responses.add(response);
@@ -102,7 +102,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempoComplessivoRispostaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = makeRequests(request,idPolicy);
+		List<HttpResponse> responses = makeRequests(request,idPolicy);
 
 		checkAssertions(responses, 1, 60);		
 		
@@ -135,7 +135,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempoComplessivoRispostaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = makeRequests(request,idPolicy);
+		List<HttpResponse> responses = makeRequests(request,idPolicy);
 
 		checkAssertions(responses, 1, 3600);		
 		
@@ -168,7 +168,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempoComplessivoRispostaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = makeRequests(request,idPolicy);
+		List<HttpResponse> responses = makeRequests(request,idPolicy);
 
 		checkAssertions(responses, 1, 86400);		
 		
@@ -201,7 +201,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempoComplessivoRispostaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = makeRequests(request,idPolicy);
+		List<HttpResponse> responses = makeRequests(request,idPolicy);
 
 		checkAssertions(responses, 1, 60);		
 		
@@ -234,7 +234,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempoComplessivoRispostaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = makeRequests(request,idPolicy);
+		List<HttpResponse> responses = makeRequests(request,idPolicy);
 
 		checkAssertions(responses, 1, 3600);		
 		
@@ -267,7 +267,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempoComplessivoRispostaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = makeRequests(request,idPolicy);
+		List<HttpResponse> responses = makeRequests(request,idPolicy);
 
 		checkAssertions(responses, 1, 86400);		
 		
@@ -276,7 +276,7 @@ public class SoapTest extends ConfigLoader {
 	
 
 	
-	private void checkAssertions(Vector<HttpResponse> responses, int maxSeconds, int windowSize) throws DynamicException {
+	private void checkAssertions(List<HttpResponse> responses, int maxSeconds, int windowSize) throws DynamicException {
 	
 		responses.forEach(r -> { 			
 			assertNotEquals(null,Integer.valueOf(r.getHeaderFirstValue(Headers.RateLimitTimeResponseQuotaReset)));

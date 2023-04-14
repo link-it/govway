@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -52,8 +51,8 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 public final class ConfigurazioneListExtendedChange extends AbstractServletListExtendedChange {
 	
 	@Override
-	public void addToHiddenDati(Vector<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
-		
+	public void addToHiddenDati(List<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
+		// NOP
 	}
 	
 	
@@ -82,7 +81,7 @@ public final class ConfigurazioneListExtendedChange extends AbstractServletListE
 
 	@Override
 	protected List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
-		List<Parameter> lstParam = new ArrayList<Parameter>();
+		List<Parameter> lstParam = new ArrayList<>();
 		lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 		return lstParam;
 	}
@@ -94,7 +93,8 @@ public final class ConfigurazioneListExtendedChange extends AbstractServletListE
 
 	@Override
 	protected Parameter[] getParameterList(ConsoleHelper consoleHelper) throws Exception {
-		return null;
+		Parameter[] p = null;
+		return p;
 	}
 
 	@Override

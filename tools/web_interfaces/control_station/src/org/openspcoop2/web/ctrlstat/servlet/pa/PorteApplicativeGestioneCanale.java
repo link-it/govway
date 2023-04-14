@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -120,13 +119,6 @@ public class PorteApplicativeGestioneCanale extends Action {
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			
-			/*String postBackElementName = porteApplicativeHelper.getPostBackElementName();
-			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO)){
-					// nop
-				}
-			}*/
-
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 
 			String labelPerPorta = null;
@@ -163,8 +155,8 @@ public class PorteApplicativeGestioneCanale extends Action {
 				} 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addCanaleToDati(dati, tipoOperazione, canaleStato, canale, as.getCanale(), canaleList, gestioneCanaliEnabled);
 
@@ -184,8 +176,8 @@ public class PorteApplicativeGestioneCanale extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addCanaleToDati(dati, TipoOperazione.OTHER, canaleStato, canale, as.getCanale(), canaleList, gestioneCanaliEnabled);
 				
@@ -220,8 +212,8 @@ public class PorteApplicativeGestioneCanale extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			// ricarico la configurazione
 			

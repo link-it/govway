@@ -78,15 +78,6 @@ public final class ConfigurazioneDiagnosticaDatasourceDel extends Action {
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			// Elimino i registri dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
-
 			int idInt = 0;
 
 			Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
@@ -94,9 +85,6 @@ public final class ConfigurazioneDiagnosticaDatasourceDel extends Action {
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nome = de.getValue();
 				idInt = Integer.parseInt(idsToRemove.get(i));
 
 				List<OpenspcoopSorgenteDati> lista = md.getOpenspcoopSorgenteDatiList();

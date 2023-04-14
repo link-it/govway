@@ -79,14 +79,6 @@ public final class PorteApplicativeServizioApplicativoDel extends Action {
 			int idInt = Integer.parseInt(idPorta);
 			String objToRemove = porteApplicativeHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			// Elimino il servizioApplicativo della porta applicativa dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 
 			String servizioApplicativo = "";
 
@@ -96,9 +88,6 @@ public final class PorteApplicativeServizioApplicativoDel extends Action {
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// servizioApplicativo = de.getValue();
 				servizioApplicativo = idsToRemove.get(i);
 				for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
 					PortaApplicativaServizioApplicativo sa = pa.getServizioApplicativo(j);

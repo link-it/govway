@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
@@ -90,7 +90,7 @@ public class RestTest extends ConfigLoader {
 			
 			// Aspetto lo scoccare del minuto
 			
-			Vector<HttpResponse> responses = makeRequests(url, idPolicy);
+			List<HttpResponse> responses = makeRequests(url, idPolicy);
 			
 			if(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.isJenkins() && policyType!=null && policyType.useNearCache()) {
 				try {
@@ -129,7 +129,7 @@ public class RestTest extends ConfigLoader {
 				
 		Utils.waitForNewHour();
 		
-		Vector<HttpResponse> responses = makeRequests(System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempoComplessivoRisposta/v1/orario?sleep=2000", idPolicy);
+		List<HttpResponse> responses = makeRequests(System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempoComplessivoRisposta/v1/orario?sleep=2000", idPolicy);
 
 		checkAssertions(responses, 1, 3600);
 		
@@ -148,7 +148,7 @@ public class RestTest extends ConfigLoader {
 				
 		Utils.waitForNewDay();
 		
-		Vector<HttpResponse> responses = makeRequests(System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempoComplessivoRisposta/v1/giornaliero?sleep=2000",idPolicy);
+		List<HttpResponse> responses = makeRequests(System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempoComplessivoRisposta/v1/giornaliero?sleep=2000",idPolicy);
 
 		checkAssertions(responses, 1, 86400);
 		
@@ -191,7 +191,7 @@ public class RestTest extends ConfigLoader {
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
 			Commons.checkPreConditionsTempoComplessivoRisposta(idPolicy, policyType); 
 					
-			Vector<HttpResponse> responses = makeRequests(url,idPolicy);
+			List<HttpResponse> responses = makeRequests(url,idPolicy);
 			
 			if(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.isJenkins() && policyType!=null && policyType.useNearCache()) {
 				try {
@@ -229,7 +229,7 @@ public class RestTest extends ConfigLoader {
 				
 		Utils.waitForNewMinute();
 	
-		Vector<HttpResponse> responses = makeRequests(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempoComplessivoRisposta/v1/orario?sleep=2000",idPolicy);
+		List<HttpResponse> responses = makeRequests(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempoComplessivoRisposta/v1/orario?sleep=2000",idPolicy);
 		
 		checkAssertions(responses, 1, 3600);
 		
@@ -248,7 +248,7 @@ public class RestTest extends ConfigLoader {
 				
 		Utils.waitForNewMinute();
 	
-		Vector<HttpResponse> responses = makeRequests(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempoComplessivoRisposta/v1/giornaliero?sleep=2000", idPolicy);
+		List<HttpResponse> responses = makeRequests(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempoComplessivoRisposta/v1/giornaliero?sleep=2000", idPolicy);
 		
 		checkAssertions(responses, 1, 86400);
 		
@@ -257,9 +257,9 @@ public class RestTest extends ConfigLoader {
 
 
 		
-	private Vector<HttpResponse> makeRequests(String url, String idPolicy) throws UtilsException {
+	private List<HttpResponse> makeRequests(String url, String idPolicy) throws UtilsException {
 		
-		Vector<HttpResponse> responses = new Vector<>();
+		List<HttpResponse> responses = new java.util.ArrayList<>();
 		
 		HttpRequest request = new HttpRequest();
 		request.setContentType("application/json");
@@ -285,10 +285,10 @@ public class RestTest extends ConfigLoader {
 		return responses;
 	}
 	
-	private void checkAssertions(Vector<HttpResponse> responses, int maxSeconds, int windowSize) throws Exception {
+	private void checkAssertions(List<HttpResponse> responses, int maxSeconds, int windowSize) throws Exception {
 		checkAssertions(responses, maxSeconds, windowSize, PolicyGroupByActiveThreadsType.LOCAL);
 	}
-	private void checkAssertions(Vector<HttpResponse> responses, int maxSeconds, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void checkAssertions(List<HttpResponse> responses, int maxSeconds, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
 				
 		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
@@ -309,7 +309,7 @@ public class RestTest extends ConfigLoader {
 			}
 		}
 	}
-	private void _checkAssertions(Vector<HttpResponse> responses, int maxSeconds, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void _checkAssertions(List<HttpResponse> responses, int maxSeconds, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
 		responses.forEach(r -> { 			
 				assertNotEquals(null,Integer.valueOf(r.getHeaderFirstValue(Headers.RateLimitTimeResponseQuotaReset)));

@@ -19,10 +19,12 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.gruppi;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
  * GruppiCostanti
@@ -33,14 +35,19 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
  * @version $Rev$, $Date$
  */
 public class GruppiCostanti {
+	
+	private GruppiCostanti() {}
 
 	public static final String OBJECT_NAME_GRUPPI = "gruppi";
 
-	public static final String SERVLET_NAME_GRUPPI_ADD = OBJECT_NAME_GRUPPI+"Add.do";
-	public static final String SERVLET_NAME_GRUPPI_CHANGE = OBJECT_NAME_GRUPPI+"Change.do";
-	public static final String SERVLET_NAME_GRUPPI_DELETE = OBJECT_NAME_GRUPPI+"Del.do";
-	public static final String SERVLET_NAME_GRUPPI_LIST = OBJECT_NAME_GRUPPI+"List.do";
-	public static final Vector<String> SERVLET_GRUPPI = new Vector<String>();
+	public static final String SERVLET_NAME_GRUPPI_ADD = OBJECT_NAME_GRUPPI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_GRUPPI_CHANGE = OBJECT_NAME_GRUPPI+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_GRUPPI_DELETE = OBJECT_NAME_GRUPPI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_GRUPPI_LIST = OBJECT_NAME_GRUPPI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_GRUPPI = new ArrayList<>();
+	public static List<String> getServletGruppi() {
+		return SERVLET_GRUPPI;
+	}
 	static{
 		SERVLET_GRUPPI.add(SERVLET_NAME_GRUPPI_ADD);
 		SERVLET_GRUPPI.add(SERVLET_NAME_GRUPPI_CHANGE);
@@ -84,9 +91,15 @@ public class GruppiCostanti {
 	public static final String DEFAULT_VALUE_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP;
 	public static final String DEFAULT_VALUE_PARAMETRO_GRUPPO_SERVICE_BINDING_REST = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST;
 	
-	public static final String[] VALUES_SELECT_PARAMETRO_GRUPPO_SERVICE_BINDING = {  DEFAULT_VALUE_PARAMETRO_GRUPPO_SERVICE_BINDING_QUALSIASI, DEFAULT_VALUE_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP, DEFAULT_VALUE_PARAMETRO_GRUPPO_SERVICE_BINDING_REST };
-	public static final String[] LABELS_SELECT_PARAMETRO_GRUPPO_SERVICE_BINDING = {  LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_QUALSIASI, LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP, LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_REST  };
-	
+	private static final String[] VALUES_SELECT_PARAMETRO_GRUPPO_SERVICE_BINDING = {  DEFAULT_VALUE_PARAMETRO_GRUPPO_SERVICE_BINDING_QUALSIASI, DEFAULT_VALUE_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP, DEFAULT_VALUE_PARAMETRO_GRUPPO_SERVICE_BINDING_REST };
+	public static String[] getValuesSelectParametroGruppoServiceBinding() {
+		return VALUES_SELECT_PARAMETRO_GRUPPO_SERVICE_BINDING;
+	}
+	private static final String[] LABELS_SELECT_PARAMETRO_GRUPPO_SERVICE_BINDING = {  LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_QUALSIASI, LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP, LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_REST  };
+	public static String[] getLabelsSelectParametroGruppoServiceBinding() {
+		return LABELS_SELECT_PARAMETRO_GRUPPO_SERVICE_BINDING;
+	}
+
 	public static final String LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il tag non risulta utilizzato in alcuna configurazione";	
 	
 	public static final String MESSAGE_METADATI_GRUPPO_TIPO = GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING +": {0}";

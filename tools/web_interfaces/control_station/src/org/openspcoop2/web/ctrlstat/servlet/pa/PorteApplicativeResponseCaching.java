@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -111,7 +110,9 @@ public class PorteApplicativeResponseCaching extends Action {
 			if(responseCachingSecondsTmp != null) {
 				try {
 					responseCachingSeconds = Integer.parseInt(responseCachingSecondsTmp);
-				}catch(Exception e) {} 
+				}catch(Exception e) {
+					// ignore
+				} 
 			}
 			
 			
@@ -123,7 +124,9 @@ public class PorteApplicativeResponseCaching extends Action {
 			if(responseCachingMaxResponseSizeBytesTmp != null) {
 				try {
 					responseCachingMaxResponseSizeBytes = Integer.parseInt(responseCachingMaxResponseSizeBytesTmp);
-				}catch(Exception e) {} 
+				}catch(Exception e) {
+					// ignore
+				} 
 			}
 			String responseCachingDigestUrlInvocazioneTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_URI_INVOCAZIONE);
 			boolean responseCachingDigestUrlInvocazione = ServletUtils.isCheckBoxEnabled(responseCachingDigestUrlInvocazioneTmp);
@@ -152,7 +155,7 @@ public class PorteApplicativeResponseCaching extends Action {
 			}
 			
 			String servletResponseCachingConfigurazioneRegolaList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_LIST;
-			List<Parameter> paramsResponseCachingConfigurazioneRegolaList = new ArrayList<Parameter>();
+			List<Parameter> paramsResponseCachingConfigurazioneRegolaList = new ArrayList<>();
 			paramsResponseCachingConfigurazioneRegolaList.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id));
 			paramsResponseCachingConfigurazioneRegolaList.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			paramsResponseCachingConfigurazioneRegolaList.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
@@ -293,7 +296,6 @@ public class PorteApplicativeResponseCaching extends Action {
 								responseCachingCacheControlNoStore = oldConfigurazione.getControl().isNoStore();
 							}
 							
-							//visualizzaLinkConfigurazioneRegola = true;
 							visualizzaLinkConfigurazioneRegola = porteApplicativeHelper.isResponseCachingAbilitato(oldConfigurazione) && responseCachingEnabled;
 							listaRegoleCachingConfigurazione = oldConfigurazione.getRegolaList();
 							numeroResponseCachingConfigurazioneRegola = porteApplicativeHelper.numeroRegoleResponseCaching(oldConfigurazione);
@@ -353,7 +355,6 @@ public class PorteApplicativeResponseCaching extends Action {
 									responseCachingCacheControlNoStore = oldConfigurazione.getControl().isNoStore();
 								}
 								
-								//numeroResponseCachingConfigurazioneRegola = oldConfigurazione.sizeRegolaList();
 							}
 							else {
 								
@@ -414,8 +415,8 @@ public class PorteApplicativeResponseCaching extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addConfigurazioneResponseCachingPorteToDati(tipoOperazione, dati, showStato, statoResponseCachingPorta,
 						responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes,
@@ -439,8 +440,8 @@ public class PorteApplicativeResponseCaching extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addConfigurazioneResponseCachingPorteToDati(tipoOperazione, dati, showStato, statoResponseCachingPorta,
 						responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes,
@@ -476,8 +477,8 @@ public class PorteApplicativeResponseCaching extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			// ricarico la configurazione
 

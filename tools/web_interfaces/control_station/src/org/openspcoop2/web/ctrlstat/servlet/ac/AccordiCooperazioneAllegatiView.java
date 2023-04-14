@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.ac;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,12 +78,12 @@ public final class AccordiCooperazioneAllegatiView extends Action {
 			String idAllegato = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO);
 			String idAccordo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO);
 			String nomeDocumento = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO);
-			long idAllegatoLong = Long.valueOf(idAllegato);
-			long idAccordoLong = Long.valueOf(idAccordo);
+			long idAllegatoLong = Long.parseLong(idAllegato);
+			long idAccordoLong = Long.parseLong(idAccordo);
 
-			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
+			/**String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
-				tipoSICA = null;
+				tipoSICA = null;*/
 
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 			ArchiviCore archiviCore = new ArchiviCore(acCore);
@@ -102,7 +101,7 @@ public final class AccordiCooperazioneAllegatiView extends Action {
 			String errore = Utilities.getTestoVisualizzabile(doc.getByteContenuto(),contenutoAllegato);
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ titleAS,
 					AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_LIST,
@@ -113,7 +112,7 @@ public final class AccordiCooperazioneAllegatiView extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			dati=	acHelper.addAllegatiToDati(TipoOperazione.OTHER,
 					idAllegato, idAccordo, doc, contenutoAllegato, errore, dati,null,false);

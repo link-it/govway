@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -86,7 +85,7 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
+			boolean useIdSogg = (parentSA!=null && parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO);
 			
 			String idsil = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 			int idSilInt = Integer.parseInt(idsil);
@@ -109,7 +108,7 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 			filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
 			
 			List<String> ruoli = new ArrayList<>();
-			if(sa.getInvocazionePorta().getRuoli()!=null && sa.getInvocazionePorta().getRuoli().getRuoloList()!=null && sa.getInvocazionePorta().getRuoli().getRuoloList().size()>0){
+			if(sa.getInvocazionePorta().getRuoli()!=null && sa.getInvocazionePorta().getRuoli().getRuoloList()!=null && !sa.getInvocazionePorta().getRuoli().getRuoloList().isEmpty()){
 				for (Ruolo ruolo : sa.getInvocazionePorta().getRuoli().getRuoloList()) {
 					ruoli.add(ruolo.getNome());	
 				}
@@ -123,22 +122,14 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(Long.parseLong(provider)); 
 				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
 			}
-			
-			@SuppressWarnings("unused")
-			long soggLong = -1;
-			// se ho fatto la add 
-			if(useIdSogg)
-				if(provider != null && !provider.equals("")){
-				soggLong = Long.parseLong(provider);
-			}
-			
+						
 			
 			// Preparo il menu
 			saHelper.makeMenu();
 
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
-			if(saHelper.isModalitaCompleta()==false) {
+			if(!saHelper.isModalitaCompleta()) {
 				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
@@ -189,21 +180,21 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				DataElement de = new DataElement();
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 				de.setValue(idsil);
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(useIdSogg){
 					de = new DataElement();
 					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 					de.setValue(provider);
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				dati = saHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, accessDaChangeTmp, false);
@@ -235,21 +226,21 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 				ServletUtils.setPageDataTitle(pd,lstParm); 
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				DataElement de = new DataElement();
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 				de.setValue(idsil);
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(useIdSogg){
 					de = new DataElement();
 					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 					de.setValue(provider);
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				dati = saHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, accessDaChangeTmp, false);

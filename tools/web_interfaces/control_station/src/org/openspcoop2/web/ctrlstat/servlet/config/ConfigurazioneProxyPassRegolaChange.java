@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -132,14 +131,6 @@ public final class ConfigurazioneProxyPassRegolaChange extends Action {
 			if(StringUtils.isNotEmpty(protocollo)) {
 				soggetti = soggettiCore.getIdSoggettiOperativi(protocollo);
 			} 
-			
-//			String postBackElementName = confHelper.getPostBackElementName();
-//			
-//			// se ho modificato il soggetto ricalcolo il servizio e il service binding
-//			if (postBackElementName != null) {
-//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO)) {
-//				}
-//			}
 
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
@@ -197,8 +188,8 @@ public final class ConfigurazioneProxyPassRegolaChange extends Action {
 						serviceBinding = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI; 
 				}
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = confHelper.addProxyPassConfigurazioneRegola(TipoOperazione.CHANGE, dati, idRegolaS, nome, descrizione, stato, regExpr, regolaText, contestoEsterno, baseUrl, protocollo, protocolli, soggetto, soggetti, ruolo, serviceBinding, multiTenant);
 
@@ -216,9 +207,9 @@ public final class ConfigurazioneProxyPassRegolaChange extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addProxyPassConfigurazioneRegola(TipoOperazione.CHANGE, dati, idRegolaS, nome, descrizione, stato, regExpr, regolaText, contestoEsterno, baseUrl, protocollo, protocolli, soggetto, soggetti, ruolo, serviceBinding, multiTenant);
 
@@ -309,7 +300,6 @@ public final class ConfigurazioneProxyPassRegolaChange extends Action {
 				}
 			}
 			
-			//confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneGenerale);
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), regolaModificata);
 			
 			// Preparo la lista

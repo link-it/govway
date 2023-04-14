@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.rpc.Stub;
 import javax.xml.soap.MimeHeader;
@@ -136,7 +136,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){
@@ -657,7 +657,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	@DataProvider (name="gestioneUtentiWrappedDocumentLiteral")
 	public Object[][]testGestioneUtentiWrappedDocumentLiteral()throws Exception{
 		String [] ids = new String[1];
-		Vector<String> idsV = new Vector<String>();
+		List<String> idsV = new java.util.ArrayList<String>();
 		String id = null;
 		while( (id=this.repositoryGestioneUtentiWrappedDocumentLiteral.getNext()) != null){
 			idsV.add(id);
@@ -925,7 +925,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	@DataProvider (name="aggiornamentoUtentiWrappedDocumentLiteral")
 	public Object[][]testAggiornamentoUtentiWrappedDocumentLiteral()throws Exception{
 		String [] ids = new String[1];
-		Vector<String> idsV = new Vector<String>();
+		List<String> idsV = new java.util.ArrayList<String>();
 		String id = null;
 		while( (id=this.repositoryAggiornamentoUtentiWrappedDocumentLiteral.getNext()) != null){
 			idsV.add(id);
@@ -1124,7 +1124,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	@DataProvider (name="AsincronoSimmetricoWrappedDocumentLiteral")
 	public Object[][]testAsincronoSimmetricoWrappedDocumentLiteral()throws Exception{
 		String [] ids = new String[1];
-		Vector<String> idsV = new Vector<String>();
+		List<String> idsV = new java.util.ArrayList<String>();
 		String id = null;
 		// Ripristino index
 		this.repositoryAsincronoSimmetricoWrappedDocumentLiteral.setIndex(0);
@@ -1276,7 +1276,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	@DataProvider (name="AsincronoAsimmetricoWrappedDocumentLiteral")
 	public Object[][]testAsincronoAsimmetricoWrappedDocumentLiteral()throws Exception{
 		String [] ids = new String[1];
-		Vector<String> idsV = new Vector<String>();
+		List<String> idsV = new java.util.ArrayList<String>();
 		String id = null;
 		// Ripristino index
 		this.repositoryAsincronoAsimmetricoWrappedDocumentLiteral.setIndex(0);
@@ -1450,7 +1450,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	@DataProvider (name="gestioneUtentiDocumentLiteral")
 	public Object[][]testGestioneUtentiDocumentLiteral()throws Exception{
 		String [] ids = new String[1];
-		Vector<String> idsV = new Vector<String>();
+		List<String> idsV = new java.util.ArrayList<String>();
 		String id = null;
 		while( (id=this.repositoryGestioneUtentiDocumentLiteral.getNext()) != null){
 			idsV.add(id);
@@ -1826,7 +1826,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	@DataProvider (name="gestioneUtentiDocumentLiteralContenutiErrato")
 	public Object[][]testGestioneUtentiDocumentLiteralContenutiErrato()throws Exception{
 		String [] ids = new String[1];
-		Vector<String> idsV = new Vector<String>();
+		List<String> idsV = new java.util.ArrayList<String>();
 		String id = null;
 		while( (id=this.repositoryGestioneUtentiDocumentLiteralContenutiErrato.getNext()) != null){
 			idsV.add(id);
@@ -1950,7 +1950,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	@DataProvider (name="gestioneUtentiRPCLiteral")
 	public Object[][]testGestioneUtentiRPCLiteral()throws Exception{
 		String [] ids = new String[1];
-		Vector<String> idsV = new Vector<String>();
+		List<String> idsV = new java.util.ArrayList<String>();
 		String id = null;
 		while( (id=this.repositoryGestioneUtentiRPCLiteral.getNext()) != null){
 			idsV.add(id);
@@ -2101,7 +2101,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	@DataProvider (name="gestioneUtentiRPCEncoded")
 	public Object[][]testGestioneUtentiRPCEncoded()throws Exception{
 		String [] ids = new String[1];
-		Vector<String> idsV = new Vector<String>();
+		List<String> idsV = new java.util.ArrayList<String>();
 		String id = null;
 		while( (id=this.repositoryGestioneUtentiRPCEncoded.getNext()) != null){
 			idsV.add(id);
@@ -2271,7 +2271,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	@DataProvider (name="gestioneUtentiOverloadedOperations")
 	public Object[][]testGestioneUtentiOverloadedOperations()throws Exception{
 		String [] ids = new String[1];
-		Vector<String> idsV = new Vector<String>();
+		List<String> idsV = new java.util.ArrayList<String>();
 		String id = null;
 		while( (id=this.repositoryGestioneUtentiOverloadedOperations.getNext()) != null){
 			idsV.add(id);
@@ -2441,7 +2441,7 @@ public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 	@DataProvider (name="gestioneUtentiStileIbrido")
 	public Object[][]testGestioneUtentiStileIbrido()throws Exception{
 		String [] ids = new String[1];
-		Vector<String> idsV = new Vector<String>();
+		List<String> idsV = new java.util.ArrayList<String>();
 		String id = null;
 		while( (id=this.repositoryGestioneUtentiStileIbrido.getNext()) != null){
 			idsV.add(id);

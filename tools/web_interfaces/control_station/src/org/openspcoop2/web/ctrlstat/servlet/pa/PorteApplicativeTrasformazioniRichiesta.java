@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -180,9 +179,9 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 					porteApplicativeHelper.deleteBinaryParameters(trasformazioneContenutoTemplate);
 				}
 				
-				if(postBackElementName.equals(trasformazioneContenutoTemplate.getName())) {
-					if(StringUtils.isEmpty(trasformazioneContenutoTipoCheck))
-						trasformazioneContenutoTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+				if(postBackElementName.equals(trasformazioneContenutoTemplate.getName()) &&
+					StringUtils.isEmpty(trasformazioneContenutoTipoCheck)) {
+					trasformazioneContenutoTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
 				}
 				
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_TRANSFORMATION)) {
@@ -207,16 +206,15 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 					porteApplicativeHelper.deleteBinaryParameters(trasformazioneSoapEnvelopeTemplate);
 				}
 				
-				if(postBackElementName.equals(trasformazioneSoapEnvelopeTemplate.getName())) {
-					if(StringUtils.isEmpty(trasformazioneSoapEnvelopeTipoCheck))
-						trasformazioneSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+				if(postBackElementName.equals(trasformazioneSoapEnvelopeTemplate.getName()) &&
+					StringUtils.isEmpty(trasformazioneSoapEnvelopeTipoCheck)) {
+					trasformazioneSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
 				}
 				
-				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_TRANSFORMATION)) {
-					if(trasformazioneRestAbilitato) {
-						trasformazioneRestMethod = "";
-						trasformazioneRestPath = ""; 
-					}
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_TRANSFORMATION) &&
+					trasformazioneRestAbilitato) {
+					trasformazioneRestMethod = "";
+					trasformazioneRestPath = ""; 
 				}
 			}
 			
@@ -230,12 +228,12 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			int numeroTrasformazioniRichiestaHeaders= oldRichiesta != null ? oldRichiesta.sizeHeaderList() : 0;
 			int numeroTrasformazioniRichiestaParametri = oldRichiesta != null ? oldRichiesta.sizeParametroUrlList() : 0;
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdTrasformazione);
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaParametri = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaParametri = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
@@ -274,8 +272,8 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// primo accesso
 				if(trasformazioneContenutoAbilitatoS == null) {
@@ -374,9 +372,9 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, protocollo, dati, idInt, oldRichiesta, false, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
 						trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
@@ -517,12 +515,12 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			numeroTrasformazioniRichiestaHeaders= trasformazioneAggiornata.getRichiesta() != null ? trasformazioneAggiornata.getRichiesta().sizeHeaderList() : 0;
 			numeroTrasformazioniRichiestaParametri = trasformazioneAggiornata.getRichiesta() != null ? trasformazioneAggiornata.getRichiesta().sizeParametroUrlList() : 0;
 			
-			parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<Parameter>();
+			parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdTrasformazione);
-			parametriInvocazioneServletTrasformazioniRichiestaParametri = new ArrayList<Parameter>();
+			parametriInvocazioneServletTrasformazioniRichiestaParametri = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
@@ -558,7 +556,7 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 			
 			TrasformazioneRegolaRichiesta richiesta = trasformazioneAggiornata.getRichiesta();
 			
@@ -650,8 +648,7 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			pd.setDati(dati);
 						
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-			//pd.disableEditMode();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			

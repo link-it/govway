@@ -20,7 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -121,17 +121,14 @@ public class PorteApplicativeMTOMRequestAdd extends Action {
 			));
 			lstParam.add(ServletUtils.getParameterAggiungi());
 			
-			// Se nome = null, devo visualizzare la pagina per l'inserimento
-			// dati
-//			if (nome == null) {
-				if(	porteApplicativeHelper.isEditModeInProgress()){
+			if(	porteApplicativeHelper.isEditModeInProgress()){
 					
 					// setto la barra del titolo
 					ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio,
 						pa.getMtomProcessor().getRequestFlow().getMode());
@@ -153,9 +150,9 @@ public class PorteApplicativeMTOMRequestAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio,
 						pa.getMtomProcessor().getRequestFlow().getMode());

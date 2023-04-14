@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.BindingStyle;
@@ -41,6 +42,8 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class AccordiServizioParteComuneCostanti {
+	
+	private AccordiServizioParteComuneCostanti() {}
 
 	/* OBJECT NAME */
 
@@ -73,12 +76,12 @@ public class AccordiServizioParteComuneCostanti {
 	
 	/* SERVLET NAME */
 
-	public static final String SERVLET_NAME_APC_ADD = OBJECT_NAME_APC+"Add.do";
-	public static final String SERVLET_NAME_APC_CHANGE = OBJECT_NAME_APC+"Change.do";
-	public static final String SERVLET_NAME_APC_DELETE = OBJECT_NAME_APC+"Del.do";
-	public static final String SERVLET_NAME_APC_LIST = OBJECT_NAME_APC+"List.do";
+	public static final String SERVLET_NAME_APC_ADD = OBJECT_NAME_APC+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_CHANGE = OBJECT_NAME_APC+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_DELETE = OBJECT_NAME_APC+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_LIST = OBJECT_NAME_APC+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	public static final String SERVLET_NAME_APC_WSDL_CHANGE = OBJECT_NAME_APC+"WSDLChange.do";
-	public static final Vector<String> SERVLET_APC = new Vector<String>();
+	public static final List<String> SERVLET_APC = new ArrayList<>();
 	static{
 		SERVLET_APC.add(SERVLET_NAME_APC_ADD);
 		SERVLET_APC.add(SERVLET_NAME_APC_CHANGE);
@@ -87,11 +90,11 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC.add(SERVLET_NAME_APC_WSDL_CHANGE);
 	}
 
-	public static final String SERVLET_NAME_APC_AZIONI_ADD = OBJECT_NAME_APC_AZIONI+"Add.do";
-	public static final String SERVLET_NAME_APC_AZIONI_CHANGE = OBJECT_NAME_APC_AZIONI+"Change.do";
-	public static final String SERVLET_NAME_APC_AZIONI_DELETE = OBJECT_NAME_APC_AZIONI+"Del.do";
-	public static final String SERVLET_NAME_APC_AZIONI_LIST = OBJECT_NAME_APC_AZIONI+"List.do";
-	public static final Vector<String> SERVLET_APC_AZIONI = new Vector<String>();
+	public static final String SERVLET_NAME_APC_AZIONI_ADD = OBJECT_NAME_APC_AZIONI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_AZIONI_CHANGE = OBJECT_NAME_APC_AZIONI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_AZIONI_DELETE = OBJECT_NAME_APC_AZIONI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_AZIONI_LIST = OBJECT_NAME_APC_AZIONI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final List<String> SERVLET_APC_AZIONI = new ArrayList<>();
 	static{
 		SERVLET_APC_AZIONI.add(SERVLET_NAME_APC_AZIONI_ADD);
 		SERVLET_APC_AZIONI.add(SERVLET_NAME_APC_AZIONI_CHANGE);
@@ -99,11 +102,11 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_AZIONI.add(SERVLET_NAME_APC_AZIONI_LIST);
 	}
 
-	public static final String SERVLET_NAME_APC_PORT_TYPES_ADD = OBJECT_NAME_APC_PORT_TYPES+"Add.do";
-	public static final String SERVLET_NAME_APC_PORT_TYPES_CHANGE = OBJECT_NAME_APC_PORT_TYPES+"Change.do";
-	public static final String SERVLET_NAME_APC_PORT_TYPES_DELETE = OBJECT_NAME_APC_PORT_TYPES+"Del.do";
-	public static final String SERVLET_NAME_APC_PORT_TYPES_LIST = OBJECT_NAME_APC_PORT_TYPES+"List.do";
-	public static final Vector<String> SERVLET_APC_PORT_TYPES = new Vector<String>();
+	public static final String SERVLET_NAME_APC_PORT_TYPES_ADD = OBJECT_NAME_APC_PORT_TYPES+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_PORT_TYPES_CHANGE = OBJECT_NAME_APC_PORT_TYPES+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_PORT_TYPES_DELETE = OBJECT_NAME_APC_PORT_TYPES+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_PORT_TYPES_LIST = OBJECT_NAME_APC_PORT_TYPES+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final List<String> SERVLET_APC_PORT_TYPES = new ArrayList<>();
 	static{
 		SERVLET_APC_PORT_TYPES.add(SERVLET_NAME_APC_PORT_TYPES_ADD);
 		SERVLET_APC_PORT_TYPES.add(SERVLET_NAME_APC_PORT_TYPES_CHANGE);
@@ -111,11 +114,11 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_PORT_TYPES.add(SERVLET_NAME_APC_PORT_TYPES_LIST);
 	}
 
-	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_ADD = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS+"Add.do";
-	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_CHANGE = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS+"Change.do";
-	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_DELETE = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS+"Del.do";
-	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_LIST = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS+"List.do";
-	public static final Vector<String> SERVLET_APC_PORT_TYPE_OPERATIONS = new Vector<String>();
+	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_ADD = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_CHANGE = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_DELETE = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_LIST = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final List<String> SERVLET_APC_PORT_TYPE_OPERATIONS = new ArrayList<>();
 	static{
 		SERVLET_APC_PORT_TYPE_OPERATIONS.add(SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_ADD);
 		SERVLET_APC_PORT_TYPE_OPERATIONS.add(SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_CHANGE);
@@ -123,12 +126,12 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_PORT_TYPE_OPERATIONS.add(SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_LIST);
 	}
 
-	public static final String SERVLET_NAME_APC_ALLEGATI_ADD = OBJECT_NAME_APC_ALLEGATI+"Add.do";
-	public static final String SERVLET_NAME_APC_ALLEGATI_CHANGE = OBJECT_NAME_APC_ALLEGATI+"Change.do";
-	public static final String SERVLET_NAME_APC_ALLEGATI_DELETE = OBJECT_NAME_APC_ALLEGATI+"Del.do";
-	public static final String SERVLET_NAME_APC_ALLEGATI_LIST = OBJECT_NAME_APC_ALLEGATI+"List.do";
+	public static final String SERVLET_NAME_APC_ALLEGATI_ADD = OBJECT_NAME_APC_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_ALLEGATI_CHANGE = OBJECT_NAME_APC_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_ALLEGATI_DELETE = OBJECT_NAME_APC_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_ALLEGATI_LIST = OBJECT_NAME_APC_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	public static final String SERVLET_NAME_APC_ALLEGATI_VIEW = OBJECT_NAME_APC_ALLEGATI+"View.do";
-	public static final Vector<String> SERVLET_APC_ALLEGATI = new Vector<String>();
+	public static final List<String> SERVLET_APC_ALLEGATI = new ArrayList<>();
 	static{
 		SERVLET_APC_ALLEGATI.add(SERVLET_NAME_APC_ALLEGATI_ADD);
 		SERVLET_APC_ALLEGATI.add(SERVLET_NAME_APC_ALLEGATI_CHANGE);
@@ -137,29 +140,29 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_ALLEGATI.add(SERVLET_NAME_APC_ALLEGATI_VIEW);
 	}
 
-	public static final String SERVLET_NAME_APC_EROGATORI_LIST = OBJECT_NAME_APC_EROGATORI+"List.do";
-	public static final Vector<String> SERVLET_APC_EROGATORI = new Vector<String>();
+	public static final String SERVLET_NAME_APC_EROGATORI_LIST = OBJECT_NAME_APC_EROGATORI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final List<String> SERVLET_APC_EROGATORI = new ArrayList<>();
 	static{
 		SERVLET_APC_EROGATORI.add(SERVLET_NAME_APC_EROGATORI_LIST);
 	}
 
-	public static final String SERVLET_NAME_APC_COMPONENTI_ADD = OBJECT_NAME_APC_COMPONENTI+"Add.do";
-	public static final String SERVLET_NAME_APC_COMPONENTI_DELETE = OBJECT_NAME_APC_COMPONENTI+"Del.do";
-	public static final String SERVLET_NAME_APC_COMPONENTI_LIST = OBJECT_NAME_APC_COMPONENTI+"List.do";
-	public static final Vector<String> SERVLET_APC_COMPONENTI = new Vector<String>();
+	public static final String SERVLET_NAME_APC_COMPONENTI_ADD = OBJECT_NAME_APC_COMPONENTI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_COMPONENTI_DELETE = OBJECT_NAME_APC_COMPONENTI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_COMPONENTI_LIST = OBJECT_NAME_APC_COMPONENTI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final List<String> SERVLET_APC_COMPONENTI = new ArrayList<>();
 	static{
 		SERVLET_APC_COMPONENTI.add(SERVLET_NAME_APC_COMPONENTI_ADD);
 		SERVLET_APC_COMPONENTI.add(SERVLET_NAME_APC_COMPONENTI_DELETE);
 		SERVLET_APC_COMPONENTI.add(SERVLET_NAME_APC_COMPONENTI_LIST);
 	}
 
-	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_CHANGE = OBJECT_NAME_ACCORDI_COOPERAZIONE+"Change.do";
+	public static final String SERVLET_NAME_ACCORDI_COOPERAZIONE_CHANGE = OBJECT_NAME_ACCORDI_COOPERAZIONE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
 	
-	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_ADD = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE+"Add.do";
-	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_CHANGE = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE+"Change.do";
-	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_DELETE = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE+"Del.do";
-	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_LIST = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE+"List.do";
-	public static final Vector<String> SERVLET_APC_PORT_TYPE_OPERATIONS_MESSAGE = new Vector<String>();
+	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_ADD = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_CHANGE = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_DELETE = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_LIST = OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final List<String> SERVLET_APC_PORT_TYPE_OPERATIONS_MESSAGE = new ArrayList<>();
 	static{
 		SERVLET_APC_PORT_TYPE_OPERATIONS_MESSAGE.add(SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_ADD);
 		SERVLET_APC_PORT_TYPE_OPERATIONS_MESSAGE.add(SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_CHANGE);
@@ -167,11 +170,11 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_PORT_TYPE_OPERATIONS_MESSAGE.add(SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_LIST);
 	}
 
-	public static final String SERVLET_NAME_APC_RESOURCES_ADD = OBJECT_NAME_APC_RESOURCES+"Add.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_CHANGE = OBJECT_NAME_APC_RESOURCES+"Change.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_DELETE = OBJECT_NAME_APC_RESOURCES+"Del.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_LIST = OBJECT_NAME_APC_RESOURCES+"List.do";
-	public static final Vector<String> SERVLET_APC_RESOURCES = new Vector<String>();
+	public static final String SERVLET_NAME_APC_RESOURCES_ADD = OBJECT_NAME_APC_RESOURCES+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_RESOURCES_CHANGE = OBJECT_NAME_APC_RESOURCES+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_RESOURCES_DELETE = OBJECT_NAME_APC_RESOURCES+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_RESOURCES_LIST = OBJECT_NAME_APC_RESOURCES+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final List<String> SERVLET_APC_RESOURCES = new ArrayList<>();
 	static{
 		SERVLET_APC_RESOURCES.add(SERVLET_NAME_APC_RESOURCES_ADD);
 		SERVLET_APC_RESOURCES.add(SERVLET_NAME_APC_RESOURCES_CHANGE);
@@ -179,11 +182,11 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_RESOURCES.add(SERVLET_NAME_APC_RESOURCES_LIST);
 	}
 	
-	public static final String SERVLET_NAME_APC_RESOURCES_RISPOSTE_ADD = OBJECT_NAME_APC_RESOURCES_RISPOSTE+"Add.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_RISPOSTE_CHANGE = OBJECT_NAME_APC_RESOURCES_RISPOSTE+"Change.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_RISPOSTE_DELETE = OBJECT_NAME_APC_RESOURCES_RISPOSTE+"Del.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST = OBJECT_NAME_APC_RESOURCES_RISPOSTE+"List.do";
-	public static final Vector<String> SERVLET_APC_RESOURCES_RISPOSTE = new Vector<String>();
+	public static final String SERVLET_NAME_APC_RESOURCES_RISPOSTE_ADD = OBJECT_NAME_APC_RESOURCES_RISPOSTE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_RESOURCES_RISPOSTE_CHANGE = OBJECT_NAME_APC_RESOURCES_RISPOSTE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_RESOURCES_RISPOSTE_DELETE = OBJECT_NAME_APC_RESOURCES_RISPOSTE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST = OBJECT_NAME_APC_RESOURCES_RISPOSTE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final List<String> SERVLET_APC_RESOURCES_RISPOSTE = new ArrayList<>();
 	static{
 		SERVLET_APC_RESOURCES_RISPOSTE.add(SERVLET_NAME_APC_RESOURCES_RISPOSTE_ADD);
 		SERVLET_APC_RESOURCES_RISPOSTE.add(SERVLET_NAME_APC_RESOURCES_RISPOSTE_CHANGE);
@@ -191,11 +194,11 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_RESOURCES_RISPOSTE.add(SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST);
 	}
 	
-	public static final String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_ADD = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+"Add.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_CHANGE = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+"Change.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_DELETE = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+"Del.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_LIST = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+"List.do";
-	public static final Vector<String> SERVLET_APC_RESOURCES_REPRESENTATIONS = new Vector<String>();
+	public static final String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_ADD = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_CHANGE = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_DELETE = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_LIST = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final List<String> SERVLET_APC_RESOURCES_REPRESENTATIONS = new ArrayList<>();
 	static{
 		SERVLET_APC_RESOURCES_REPRESENTATIONS.add(SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_ADD);
 		SERVLET_APC_RESOURCES_REPRESENTATIONS.add(SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_CHANGE);
@@ -203,11 +206,11 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_RESOURCES_REPRESENTATIONS.add(SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_LIST);
 	}
 	
-	public static final String SERVLET_NAME_APC_RESOURCES_PARAMETERS_ADD = OBJECT_NAME_APC_RESOURCES_PARAMETERS+"Add.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_PARAMETERS_CHANGE = OBJECT_NAME_APC_RESOURCES_PARAMETERS+"Change.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_PARAMETERS_DELETE = OBJECT_NAME_APC_RESOURCES_PARAMETERS+"Del.do";
-	public static final String SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST = OBJECT_NAME_APC_RESOURCES_PARAMETERS+"List.do";
-	public static final Vector<String> SERVLET_APC_RESOURCES_PARAMETERS = new Vector<String>();
+	public static final String SERVLET_NAME_APC_RESOURCES_PARAMETERS_ADD = OBJECT_NAME_APC_RESOURCES_PARAMETERS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_RESOURCES_PARAMETERS_CHANGE = OBJECT_NAME_APC_RESOURCES_PARAMETERS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_RESOURCES_PARAMETERS_DELETE = OBJECT_NAME_APC_RESOURCES_PARAMETERS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST = OBJECT_NAME_APC_RESOURCES_PARAMETERS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final List<String> SERVLET_APC_RESOURCES_PARAMETERS = new ArrayList<>();
 	static{
 		SERVLET_APC_RESOURCES_PARAMETERS.add(SERVLET_NAME_APC_RESOURCES_PARAMETERS_ADD);
 		SERVLET_APC_RESOURCES_PARAMETERS.add(SERVLET_NAME_APC_RESOURCES_PARAMETERS_CHANGE);

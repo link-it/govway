@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.ac;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -94,13 +93,13 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 			String idAllegato = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO);
 			String idAccordo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO);
 			String nomeDocumento = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO);
-			long idAllegatoLong = Long.valueOf(idAllegato);
-			long idAccordoLong = Long.valueOf(idAccordo);
+			long idAllegatoLong = Long.parseLong(idAllegato);
+			long idAccordoLong = Long.parseLong(idAccordo);
 			String tipoFile = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_FILE);
 			
-			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
+			/**String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
-				tipoSICA = null;
+				tipoSICA = null;*/
 			
 			FormFile ff = fileUpload.getTheFile();
 
@@ -121,7 +120,7 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 			// modifica dati
 			if (acHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ titleAS,
 						AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_LIST,
@@ -132,8 +131,8 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = acHelper.addAllegatiToDati(TipoOperazione.CHANGE, idAllegato, idAccordo, doc, null,null, dati, ac.getStatoPackage(), true);
 				
@@ -157,6 +156,8 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 				case specificaSemiformale:
 					toCheck.setTipo(TipiDocumentoSemiformale.toEnumConstant(tipoFile).getNome());
 					break;
+				default:
+					break;
 			}
 			toCheck.setIdProprietarioDocumento(ac.getId());
 			toCheck.setOraRegistrazione(new Date());
@@ -166,7 +167,7 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 			if (!isOk) {
 				 
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ titleAS,
 						AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_LIST,
@@ -177,9 +178,9 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 			 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = acHelper.addAllegatiToDati(TipoOperazione.CHANGE, idAllegato, idAccordo, doc, null,null, 
 						dati, null, false);

@@ -20,12 +20,14 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.protocol.basic.archive.EsitoUtils;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -36,6 +38,8 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class ArchiviCostanti {
+	
+	private ArchiviCostanti() {}
 
 	/* OBJECT NAME */
 	
@@ -71,22 +75,31 @@ public class ArchiviCostanti {
 	/* SERVLET NAME */
 	
 	public static final String SERVLET_NAME_ARCHIVI_IMPORT = OBJECT_NAME_ARCHIVI_IMPORT+".do";
-	public static final Vector<String> SERVLET_ARCHIVI_IMPORT = new Vector<String>();
+	private static final List<String> SERVLET_ARCHIVI_IMPORT = new ArrayList<>();
+	public static List<String> getServletArchiviImport() {
+		return SERVLET_ARCHIVI_IMPORT;
+	}
 	static{
 		SERVLET_ARCHIVI_IMPORT.add(SERVLET_NAME_ARCHIVI_IMPORT);
 	}
 	
 	public static final String SERVLET_NAME_ARCHIVI_EXPORT = OBJECT_NAME_ARCHIVI_EXPORT+".do";
-	public static final Vector<String> SERVLET_ARCHIVI_EXPORT = new Vector<String>();
+	private static final List<String> SERVLET_ARCHIVI_EXPORT = new ArrayList<>();
+	public static List<String> getServletArchiviExport() {
+		return SERVLET_ARCHIVI_EXPORT;
+	}
 	static{
 		SERVLET_ARCHIVI_EXPORT.add(SERVLET_NAME_ARCHIVI_EXPORT);
 		SERVLET_ARCHIVI_EXPORT.add(SERVLET_NAME_PACKAGE_EXPORT);
 	}
 	
 	public static final String SERVLET_NAME_ARCHIVI_DIAGNOSTICA = OBJECT_NAME_ARCHIVI_DIAGNOSTICA+".do";
-	public static final String SERVLET_NAME_ARCHIVI_DIAGNOSTICA_LIST = OBJECT_NAME_ARCHIVI_DIAGNOSTICA+"List.do";
+	public static final String SERVLET_NAME_ARCHIVI_DIAGNOSTICA_LIST = OBJECT_NAME_ARCHIVI_DIAGNOSTICA+Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	public static final String SERVLET_NAME_ARCHIVI_DIAGNOSTICA_TESTO = OBJECT_NAME_ARCHIVI_DIAGNOSTICA_TESTO+".do";
-	public static final Vector<String> SERVLET_ARCHIVI_DIAGNOSTICA = new Vector<String>();
+	private static final List<String> SERVLET_ARCHIVI_DIAGNOSTICA = new ArrayList<>();
+	public static List<String> getServletArchiviDiagnostica() {
+		return SERVLET_ARCHIVI_DIAGNOSTICA;
+	}
 	static{
 		SERVLET_ARCHIVI_DIAGNOSTICA.add(SERVLET_NAME_ARCHIVI_DIAGNOSTICA);
 		SERVLET_ARCHIVI_DIAGNOSTICA.add(SERVLET_NAME_ARCHIVI_DIAGNOSTICA_LIST);
@@ -94,9 +107,12 @@ public class ArchiviCostanti {
 	}
 	
 	public static final String SERVLET_NAME_ARCHIVI_TRACCIAMENTO = OBJECT_NAME_ARCHIVI_TRACCIAMENTO+".do";
-	public static final String SERVLET_NAME_ARCHIVI_TRACCIAMENTO_LIST = OBJECT_NAME_ARCHIVI_TRACCIAMENTO+"List.do";
+	public static final String SERVLET_NAME_ARCHIVI_TRACCIAMENTO_LIST = OBJECT_NAME_ARCHIVI_TRACCIAMENTO+Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	public static final String SERVLET_NAME_ARCHIVI_TRACCIAMENTO_TESTO = OBJECT_NAME_ARCHIVI_TRACCIAMENTO_TESTO+".do";
-	public static final Vector<String> SERVLET_ARCHIVI_TRACCIAMENTO = new Vector<String>();
+	private static final List<String> SERVLET_ARCHIVI_TRACCIAMENTO = new ArrayList<>();
+	public static List<String> getServletArchiviTracciamento() {
+		return SERVLET_ARCHIVI_TRACCIAMENTO;
+	}
 	static{
 		SERVLET_ARCHIVI_TRACCIAMENTO.add(SERVLET_NAME_ARCHIVI_TRACCIAMENTO);
 		SERVLET_ARCHIVI_TRACCIAMENTO.add(SERVLET_NAME_ARCHIVI_TRACCIAMENTO_LIST);
@@ -357,10 +373,14 @@ public class ArchiviCostanti {
 		
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ARCHIVIO_JAR = "jar";
 	
-	public static final String[] PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP = { ArchiveType.ALL.toString(), ArchiveType.ALL_WITHOUT_CONFIGURAZIONE.toString(), ArchiveType.CONFIGURAZIONE.toString() };
-	public static final String[] PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP = { "Esportazione completa", ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO , ConfigurazioneCostanti.LABEL_CONFIGURAZIONE };
-			//"Dati applicativi", "Parametri di configurazione" };
-	
+	private static final String[] PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP = { ArchiveType.ALL.toString(), ArchiveType.ALL_WITHOUT_CONFIGURAZIONE.toString(), ArchiveType.CONFIGURAZIONE.toString() };
+	public static String[] getParametroValoriArchiviExportTipoDump() {
+		return PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP;
+	}
+	private static final String[] PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP = { "Esportazione completa", ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO , ConfigurazioneCostanti.LABEL_CONFIGURAZIONE };
+	public static String[] getParametroLabelArchiviExportTipoDump() {
+		return PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP;
+	}
 	public static final String DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA = "interfaccia";
 	public static final String DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA_STANDARD = "standard";
 	public static final String DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA_AVANZATA = "avanzata";

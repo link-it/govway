@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -160,8 +159,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String autenticazioneTokenUsername = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
 			String autenticazioneTokenEMail = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
 
-			String autorizzazione_token = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
-			String autorizzazione_tokenOptions = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
+			String autorizzazioneToken = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
+			String autorizzazioneTokenOptions = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 
@@ -223,13 +222,13 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String oldAutorizzazioneContenuto = pa.getAutorizzazioneContenuto() ;
 			String oldAutorizzazioneContenutoStato = StatoFunzionalita.DISABILITATO.getValue();
 			
-			boolean old_autenticazione_custom = pa.getAutenticazione() != null && !TipoAutenticazione.getValues().contains(pa.getAutenticazione());
-			boolean old_autorizzazione_contenuti_custom = false;
+			boolean oldAutenticazioneCustom = pa.getAutenticazione() != null && !TipoAutenticazione.getValues().contains(pa.getAutenticazione());
+			boolean oldAutorizzazioneContenutiCustom = false;
 			if(oldAutorizzazioneContenuto != null) {
 				if(oldAutorizzazioneContenuto.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
 					oldAutorizzazioneContenutoStato = StatoFunzionalita.ABILITATO.getValue();
 				} else { // custom
-					old_autorizzazione_contenuti_custom = true;
+					oldAutorizzazioneContenutiCustom = true;
 					oldAutorizzazioneContenutoStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
 				}
 			}
@@ -373,10 +372,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 			}
 
 			// La XACML Policy, se definita nella porta delegata può solo essere cambiata, non annullata.
-			if(allegatoXacmlPolicy!=null && allegatoXacmlPolicy.getValue()==null) {
-				if(pa.getXacmlPolicy()!=null && !"".equals(pa.getXacmlPolicy())) {
-					allegatoXacmlPolicy.setValue(pa.getXacmlPolicy().getBytes());
-				}
+			if(allegatoXacmlPolicy!=null && allegatoXacmlPolicy.getValue()==null &&
+				pa.getXacmlPolicy()!=null && !"".equals(pa.getXacmlPolicy())) {
+				allegatoXacmlPolicy.setValue(pa.getXacmlPolicy().getBytes());
 			}
 			
 			// AttributeAuthority
@@ -392,10 +390,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 			// postback
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
 			if(postBackElementName != null) {
-				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE)) {
-					if(autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
-						autenticazioneCustom = "";
-					}
+				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE) &&
+					autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
+					autenticazioneCustom = "";
 				}
 				
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_STATO)) {
@@ -423,10 +420,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 				if(autenticazioneOpzionale==null){
 					autenticazioneOpzionale = "";
-					if(pa.getAutenticazioneOpzionale()!=null){
-						if (pa.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
-							autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
-						}
+					if(pa.getAutenticazioneOpzionale()!=null &&
+						pa.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+						autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
 					}
 				}
 				if (autorizzazione == null) {
@@ -445,32 +441,27 @@ public class PorteApplicativeControlloAccessi extends Action {
 					}
 				}
 				
-				if (ruoloMatch == null) {
-					if(pa.getRuoli()!=null && pa.getRuoli().getMatch()!=null){
-						ruoloMatch = pa.getRuoli().getMatch().getValue();
-					}
+				if (ruoloMatch == null &&
+					pa.getRuoli()!=null && pa.getRuoli().getMatch()!=null){
+					ruoloMatch = pa.getRuoli().getMatch().getValue();
 				}
 
-				if(autorizzazioneAutenticatiToken==null) {
-					if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null) {
-						autorizzazioneAutenticatiToken = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
-					}
+				if(autorizzazioneAutenticatiToken==null &&
+					pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null) {
+					autorizzazioneAutenticatiToken = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
 				}
 				
-				if(autorizzazioneRuoliToken==null) {
-					if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null) {
-						autorizzazioneRuoliToken = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneRuoli()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
-					}
+				if(autorizzazioneRuoliToken==null &&
+					pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null) {
+					autorizzazioneRuoliToken = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneRuoli()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
 				}
-				if(autorizzazioneRuoliTipologiaToken==null) {
-					if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
-						autorizzazioneRuoliTipologiaToken = pa.getAutorizzazioneToken().getTipologiaRuoli().getValue();
-					}
+				if(autorizzazioneRuoliTipologiaToken==null &&
+					pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
+					autorizzazioneRuoliTipologiaToken = pa.getAutorizzazioneToken().getTipologiaRuoli().getValue();
 				}
-				if (autorizzazioneRuoliMatchToken == null) {
-					if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getRuoli()!=null && pa.getAutorizzazioneToken().getRuoli().getMatch()!=null){
-						autorizzazioneRuoliMatchToken = pa.getAutorizzazioneToken().getRuoli().getMatch().getValue();
-					}
+				if (autorizzazioneRuoliMatchToken == null &&
+					pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getRuoli()!=null && pa.getAutorizzazioneToken().getRuoli().getMatch()!=null){
+					autorizzazioneRuoliMatchToken = pa.getAutorizzazioneToken().getRuoli().getMatch().getValue();
 				}
 				
 				if(autorizzazioneContenutiStato==null){
@@ -533,12 +524,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 							gestioneTokenTokenForward = tokenForward.getValue();
 						}
 
-						autorizzazione_tokenOptions = pa.getGestioneToken().getOptions();
-						if((autorizzazione_tokenOptions!=null && !"".equals(autorizzazione_tokenOptions))) {
-							autorizzazione_token = Costanti.CHECK_BOX_ENABLED;
+						autorizzazioneTokenOptions = pa.getGestioneToken().getOptions();
+						if((autorizzazioneTokenOptions!=null && !"".equals(autorizzazioneTokenOptions))) {
+							autorizzazioneToken = Costanti.CHECK_BOX_ENABLED;
 						}
 						else {
-							autorizzazione_token = Costanti.CHECK_BOX_DISABLED;
+							autorizzazioneToken = Costanti.CHECK_BOX_DISABLED;
 						}
 
 						if(pa.getGestioneToken().getAutenticazione() != null) {
@@ -613,10 +604,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 					}
 				}
 
-				if(autorizzazioneScopeMatch == null) {
-					if(pa.getScope()!=null && pa.getScope().getMatch()!=null){
-						autorizzazioneScopeMatch = pa.getScope().getMatch().getValue();
-					}
+				if(autorizzazioneScopeMatch == null &&
+					pa.getScope()!=null && pa.getScope().getMatch()!=null){
+					autorizzazioneScopeMatch = pa.getScope().getMatch().getValue();
 				}
 				
 				if(identificazioneAttributiStato==null) {
@@ -628,8 +618,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale, 
@@ -638,7 +628,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,pa,protocollo,
 						autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
+						oldAutenticazioneCustom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
 						forceHttps, forceDisableOptional);
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
@@ -649,7 +639,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-						gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+						gestioneToken, gestioneTokenPolicy, autorizzazioneToken, autorizzazioneTokenOptions,allegatoXacmlPolicy,
 						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
 						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
 						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
@@ -658,7 +648,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, pa,protocollo, 
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
-						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
+						oldAutorizzazioneContenutiCustom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 						confPers); 
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
@@ -678,7 +668,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					isSupportatoAutenticazione, isPortaDelegata, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 					autorizzazioneAutenticatiToken, autorizzazioneRuoliToken, 
-					autorizzazione_token,autorizzazione_tokenOptions,
+					autorizzazioneToken,autorizzazioneTokenOptions,
 					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 					protocollo,
@@ -686,9 +676,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 			
 			if (!isOk) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,protocollo,false);
@@ -696,7 +686,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,pa,protocollo,
 						autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
+						oldAutenticazioneCustom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
 						forceHttps, forceDisableOptional);
 				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
@@ -708,7 +698,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, false, false,
 						autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-						gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+						gestioneToken, gestioneTokenPolicy, autorizzazioneToken, autorizzazioneTokenOptions,allegatoXacmlPolicy,
 						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
 						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
 						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
@@ -717,7 +707,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, pa,protocollo,
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
-						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
+						oldAutorizzazioneContenutiCustom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 						confPers); 
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
@@ -737,7 +727,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			else {
 				pa.setAutenticazione(autenticazioneCustom);
 				
-				if(!old_autenticazione_custom)
+				if(!oldAutenticazioneCustom)
 					pa.getProprietaAutenticazioneList().clear();
 			}
 			if(autenticazioneOpzionale != null){
@@ -763,7 +753,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticatiToken), 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoliToken),
 						ServletUtils.isCheckBoxEnabled(autorizzazioneScope),
-						autorizzazione_tokenOptions,
+						autorizzazioneTokenOptions,
 						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
 				pa.getProprietaAutorizzazioneList().clear();
 			}else {
@@ -871,7 +861,6 @@ public class PorteApplicativeControlloAccessi extends Action {
 				pa.setAutorizzazioneContenuto(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
 				pa.getProprietaAutorizzazioneContenutoList().clear();
 				// Fix: non rispettava l'ordine
-				//Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);
 				SortedMap<List<String>> convertTextToProperties = PropertiesUtilities.convertTextToSortedListMap(autorizzazioneContenutiProperties, true);
 				porteApplicativeCore.addFromSortedListMap(pa.getProprietaAutorizzazioneContenutoList(), convertTextToProperties);
 			} else {
@@ -895,7 +884,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 				pa.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
 				pa.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));
 				pa.getGestioneToken().setForward(StatoFunzionalita.toEnumConstant(gestioneTokenTokenForward)); 
-				pa.getGestioneToken().setOptions(autorizzazione_tokenOptions);
+				pa.getGestioneToken().setOptions(autorizzazioneTokenOptions);
 				if(pa.getGestioneToken().getAutenticazione()==null) {
 					pa.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
 				}
@@ -934,7 +923,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			porteApplicativeHelper.deleteBinaryParameters(allegatoXacmlPolicy);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			if(pa==null) {
@@ -967,8 +956,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 			numAutenticazioneCustomPropertiesList = pa.sizeProprietaAutenticazioneList();
 			numAutorizzazioneCustomPropertiesList = pa.sizeProprietaAutorizzazioneList();
 			numAutorizzazioneContenutiCustomPropertiesList = pa.sizeProprietaAutorizzazioneContenutoList();
-			old_autorizzazione_contenuti_custom = pa.getAutorizzazioneContenuto() != null && !pa.getAutorizzazioneContenuto().equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
-			old_autenticazione_custom = pa.getAutenticazione() != null && !TipoAutenticazione.getValues().contains(pa.getAutenticazione());
+			oldAutorizzazioneContenutiCustom = pa.getAutorizzazioneContenuto() != null && !pa.getAutorizzazioneContenuto().equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
+			oldAutenticazioneCustom = pa.getAutenticazione() != null && !TipoAutenticazione.getValues().contains(pa.getAutenticazione());
 			
 			if (autenticazione == null) {
 				autenticazione = pa.getAutenticazione();
@@ -983,10 +972,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 			}
 			if(autenticazioneOpzionale==null){
 				autenticazioneOpzionale = "";
-				if(pa.getAutenticazioneOpzionale()!=null){
-					if (pa.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
-						autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
-					}
+				if(pa.getAutenticazioneOpzionale()!=null &&
+					pa.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+					autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
 				}
 			}
 			if (autorizzazione == null) {
@@ -1005,32 +993,27 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 			}
 
-			if (ruoloMatch == null) {
-				if(pa.getRuoli()!=null && pa.getRuoli().getMatch()!=null){
-					ruoloMatch = pa.getRuoli().getMatch().getValue();
-				}
+			if (ruoloMatch == null &&
+				pa.getRuoli()!=null && pa.getRuoli().getMatch()!=null){
+				ruoloMatch = pa.getRuoli().getMatch().getValue();
 			}
 
-			if(autorizzazioneAutenticatiToken==null) {
-				if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null) {
-					autorizzazioneAutenticatiToken = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
-				}
+			if(autorizzazioneAutenticatiToken==null &&
+				pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null) {
+				autorizzazioneAutenticatiToken = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
 			}
 			
-			if(autorizzazioneRuoliToken==null) {
-				if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null) {
-					autorizzazioneRuoliToken = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneRuoli()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
-				}
+			if(autorizzazioneRuoliToken==null &&
+				pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null) {
+				autorizzazioneRuoliToken = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneRuoli()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
 			}
-			if(autorizzazioneRuoliTipologiaToken==null) {
-				if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
-					autorizzazioneRuoliTipologiaToken = pa.getAutorizzazioneToken().getTipologiaRuoli().getValue();
-				}
+			if(autorizzazioneRuoliTipologiaToken==null &&
+				pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
+				autorizzazioneRuoliTipologiaToken = pa.getAutorizzazioneToken().getTipologiaRuoli().getValue();
 			}
-			if (autorizzazioneRuoliMatchToken == null) {
-				if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getRuoli()!=null && pa.getAutorizzazioneToken().getRuoli().getMatch()!=null){
-					autorizzazioneRuoliMatchToken = pa.getAutorizzazioneToken().getRuoli().getMatch().getValue();
-				}
+			if (autorizzazioneRuoliMatchToken == null &&
+				pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getRuoli()!=null && pa.getAutorizzazioneToken().getRuoli().getMatch()!=null){
+				autorizzazioneRuoliMatchToken = pa.getAutorizzazioneToken().getRuoli().getMatch().getValue();
 			}
 			
 			autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
@@ -1090,7 +1073,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					gestioneTokenTokenForward = tokenForward.getValue();
 				}
 
-				autorizzazione_tokenOptions = pa.getGestioneToken().getOptions();
+				autorizzazioneTokenOptions = pa.getGestioneToken().getOptions();
 
 				if(pa.getGestioneToken().getAutenticazione() != null) {
 
@@ -1163,10 +1146,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 			}
 
-			if(autorizzazioneScopeMatch == null) {
-				if(pa.getScope()!=null && pa.getScope().getMatch()!=null){
-					autorizzazioneScopeMatch = pa.getScope().getMatch().getValue();
-				}
+			if(autorizzazioneScopeMatch == null &&
+				pa.getScope()!=null && pa.getScope().getMatch()!=null){
+				autorizzazioneScopeMatch = pa.getScope().getMatch().getValue();
 			}
 
 			if(identificazioneAttributiStato==null) {
@@ -1184,7 +1166,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,pa,protocollo,
 					autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,confPers, isSupportatoAutenticazione,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
+					oldAutenticazioneCustom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
 					forceHttps, forceDisableOptional);
 			
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
@@ -1196,7 +1178,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazione, contaListe, false, false
 					,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-					gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+					gestioneToken, gestioneTokenPolicy, autorizzazioneToken, autorizzazioneTokenOptions,allegatoXacmlPolicy,
 					urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
 					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
 					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
@@ -1205,7 +1187,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, pa,protocollo,
 					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
-					old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
+					oldAutorizzazioneContenutiCustom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 					confPers); 
 
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
@@ -1213,8 +1195,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 			pd.setDati(dati);
 
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-			//pd.disableEditMode();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

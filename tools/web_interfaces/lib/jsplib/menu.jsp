@@ -19,7 +19,7 @@
 
 
 
-<%@ page session="true" import="java.util.Vector, org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";
@@ -46,11 +46,11 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 <td class="td1PageBody" valign='top'>
 	<div id="menuct">
 		<% 
-			Vector<?> v = pd.getMenu(); 
+			List<?> v = pd.getMenu(); 
 			MenuEntry m = null;
 	
 			for (int i = 0; i <  v.size(); i++) {
-				  m = (MenuEntry) v.elementAt(i);
+				  m = (MenuEntry) v.get(i);
 		%>
 			<div class="sezioneMenu">
 				<div class="titoloSezione">

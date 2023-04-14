@@ -22,7 +22,8 @@
 
 package org.openspcoop2.testsuite.core;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Repository degli id utilizzati nelle istanze di profili non asincroni.
@@ -33,11 +34,11 @@ import java.util.Vector;
  */
 
 public class Repository {
-	private Vector<String> vet;
+	private List<String> vet;
 	private int index;
 
 	public Repository(){
-		this.vet=new Vector<String>();
+		this.vet=new ArrayList<>();
 		this.index=0;
 	}
 
@@ -50,7 +51,7 @@ public class Repository {
 	public synchronized String getNext(){
 		String str;
 		try{
-			str= this.vet.elementAt(this.index);
+			str= this.vet.get(this.index);
 			this.index++;
 		}
 		catch(ArrayIndexOutOfBoundsException nil){

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -48,6 +47,8 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @version $Rev$, $Date$
  */
 public class ServletExtendedConnettoreUtils {
+	
+	private ServletExtendedConnettoreUtils() {}
 
 	public static List<ExtendedConnettore> getExtendedConnettore(org.openspcoop2.core.config.Connettore connettore,
 			ConnettoreServletType servletType, ConsoleHelper consoleHelper,
@@ -77,7 +78,7 @@ public class ServletExtendedConnettoreUtils {
 		}
 		
 		List<ExtendedConnettore> l = getExtendedConnettore(servletType, consoleHelper, connettoreDisabilitato, tipoConnettore);
-		if(l!=null && l.size()>0){
+		if(!l.isEmpty()){
 			if(first)
 				ExtendedConnettoreConverter.readExtendedInfoFromConnettore(l, connettore);
 			else 
@@ -110,7 +111,7 @@ public class ServletExtendedConnettoreUtils {
 		}
 					
 		List<ExtendedConnettore> l = getExtendedConnettore(servletType, consoleHelper, connettoreDisabilitato, tipoConnettore);
-		if(l!=null && l.size()>0){
+		if(!l.isEmpty()){
 			if(first)
 				ExtendedConnettoreConverter.readExtendedInfoFromConnettore(l, connettore);
 			else
@@ -121,15 +122,15 @@ public class ServletExtendedConnettoreUtils {
 	}
 	private static List<ExtendedConnettore> getExtendedConnettore(ConnettoreServletType servletType, ConsoleHelper consoleHelper,
 			boolean connettoreDisabilitato, String tipoConnettore) throws ExtendedException{
-		List<ExtendedConnettore> list = new ArrayList<ExtendedConnettore>();
-		if(consoleHelper.getCore().getExtendedConnettore()!=null && consoleHelper.getCore().getExtendedConnettore().size()>0){
+		List<ExtendedConnettore> list = new ArrayList<>();
+		if(consoleHelper.getCore().getExtendedConnettore()!=null && !consoleHelper.getCore().getExtendedConnettore().isEmpty()){
 		
 			boolean interfacciaAvanzata =consoleHelper.isModalitaAvanzata();
 			
 			for (IExtendedConnettore ext : consoleHelper.getCore().getExtendedConnettore()) {
 				
 				List<ExtendedConnettore> l = ext.getExtendedConnettore(servletType,interfacciaAvanzata,connettoreDisabilitato,tipoConnettore);
-				if(l!=null && l.size()>0){
+				if(l!=null && !l.isEmpty()){
 					list.addAll(l);
 				}
 
@@ -138,7 +139,7 @@ public class ServletExtendedConnettoreUtils {
 		return list;
 	}
 	
-	public static void addToDatiEnabled(Vector<DataElement> dati,List<ExtendedConnettore> list){
+	public static void addToDatiEnabled(List<DataElement> dati,List<ExtendedConnettore> list){
 		
 		if(list!=null){
 			for (ExtendedConnettore extendedConnettore : list) {
@@ -163,7 +164,7 @@ public class ServletExtendedConnettoreUtils {
 		
 	}
 	
-	public static void addToDatiExtendedInfo(Vector<DataElement> dati,List<ExtendedConnettore> list){
+	public static void addToDatiExtendedInfo(List<DataElement> dati,List<ExtendedConnettore> list){
 		
 		if(list!=null){
 			for (ExtendedConnettore extendedConnettore : list) {
@@ -177,7 +178,7 @@ public class ServletExtendedConnettoreUtils {
 					de.setType(DataElementType.TITLE);
 					dati.add(de);
 									
-					if(extendedConnettore.getListItem()!=null && extendedConnettore.getListItem().size()>0){
+					if(extendedConnettore.getListItem()!=null && !extendedConnettore.getListItem().isEmpty()){
 						for (ExtendedConnettoreItem extendedConnettoreItem : extendedConnettore.getListItem()) {
 							
 							String id = ExtendedConnettoreConverter.buildId(extendedConnettore.getId(), extendedConnettoreItem.getId());
@@ -220,7 +221,7 @@ public class ServletExtendedConnettoreUtils {
 					boolean changeRidefinizione = oldValue != extendedConnettore.isEnabled(); 
 					
 					if(extendedConnettore.isEnabled() && !changeRidefinizione){ // altrimenti devo mantenere i valori di default
-						if(extendedConnettore.getListItem()!=null && extendedConnettore.getListItem().size()>0){
+						if(extendedConnettore.getListItem()!=null && !extendedConnettore.getListItem().isEmpty()){
 							for (ExtendedConnettoreItem extendedConnettoreItem : extendedConnettore.getListItem()) {
 						
 								String id = ExtendedConnettoreConverter.buildId(extendedConnettore.getId(), extendedConnettoreItem.getId());
@@ -245,7 +246,7 @@ public class ServletExtendedConnettoreUtils {
 		if(parametersPOST!=null && parametersPOST.size()>0){
 			Enumeration<?> enKeys = parametersPOST.keys();
 			while (enKeys.hasMoreElements()) {
-				Object object = (Object) enKeys.nextElement();
+				Object object = enKeys.nextElement();
 				if(object instanceof String){
 					String s = (String) object;
 					if (s.indexOf("\""+idParameter+"\"") != -1) {
@@ -262,7 +263,7 @@ public class ServletExtendedConnettoreUtils {
 			for (ExtendedConnettore extendedConnettore : list) {
 				
 				if(extendedConnettore.isEnabled()){
-					if(extendedConnettore.getListItem()!=null && extendedConnettore.getListItem().size()>0){
+					if(extendedConnettore.getListItem()!=null && !extendedConnettore.getListItem().isEmpty()){
 						for (ExtendedConnettoreItem extendedConnettoreItem : extendedConnettore.getListItem()) {
 					
 							if(extendedConnettoreItem.getValue()==null || "".equals(extendedConnettoreItem.getValue())){

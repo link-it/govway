@@ -22,7 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -87,7 +87,6 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestChange extends 
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session, request);
 			if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 			
-			//String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
@@ -177,26 +176,26 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestChange extends 
 				if (elemxml == null) {
 					elemxml = StringEscapeUtils.escapeHtml(cae.getNome());
 				}
-				if (mode == null) {
-					if(cae.getIdentificazione()!=null)
-						mode = cae.getIdentificazione().toString();
+				if (mode == null &&
+					cae.getIdentificazione()!=null) {
+					mode = cae.getIdentificazione().toString();
 				}
 				if (pattern == null) {
 					pattern = StringEscapeUtils.escapeHtml(cae.getPattern());
 				}
-				if (gif == null){
-					if(cae.getIdentificazioneFallita()!=null)
-						gif = cae.getIdentificazioneFallita().toString();
+				if (gif == null &&
+					cae.getIdentificazioneFallita()!=null) {
+					gif = cae.getIdentificazioneFallita().toString();
 				}
-				if (riusoIdMessaggio == null){
-					if(cae.getRiusoIdentificativo()!=null)
-						riusoIdMessaggio = cae.getRiusoIdentificativo().toString();
+				if (riusoIdMessaggio == null &&
+					cae.getRiusoIdentificativo()!=null) {
+					riusoIdMessaggio = cae.getRiusoIdentificativo().toString();
 				}
 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addHiddenFieldCorrelazioneApplicativaToDati(TipoOperazione.CHANGE, idcorrString, dati);
 
@@ -222,9 +221,9 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestChange extends 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addHiddenFieldCorrelazioneApplicativaToDati(TipoOperazione.CHANGE, idcorrString, dati);
 
@@ -249,7 +248,6 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestChange extends 
 			for (int i = 0; i < ca.sizeElementoList(); i++) {
 				cae = ca.getElemento(i);
 				if (idcorr == cae.getId().intValue()) {
-					//ca.removeElemento(i);
 					caeNew = cae;
 					break;
 				}

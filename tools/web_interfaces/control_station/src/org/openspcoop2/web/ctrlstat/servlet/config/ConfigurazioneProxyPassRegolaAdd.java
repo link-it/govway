@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -114,24 +113,16 @@ public final class ConfigurazioneProxyPassRegolaAdd extends Action {
 
 			// Preparo il menu
 			confHelper.makeMenu();
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			
 			
 			List<String> protocolli = confCore.getProtocolli();
 			List<IDSoggetto> soggetti = new ArrayList<>();
 			// soggetti per profilo
 			if(StringUtils.isNotEmpty(protocollo)) {
-				  soggetti = soggettiCore.getIdSoggettiOperativi(protocollo);
-				} 
+				soggetti = soggettiCore.getIdSoggettiOperativi(protocollo);
+			} 
 			
-//			String postBackElementName = confHelper.getPostBackElementName();
-//			
-//			// se ho modificato il soggetto ricalcolo il servizio e il service binding
-//			if (postBackElementName != null) {
-//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO)) {
-//				}
-//			}
-
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROXY_PASS_REGOLE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST));
@@ -157,8 +148,8 @@ public final class ConfigurazioneProxyPassRegolaAdd extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = confHelper.addProxyPassConfigurazioneRegola(TipoOperazione.ADD, dati, idRegolaS, nome, descrizione, stato, regExpr, regolaText, contestoEsterno, baseUrl, protocollo, protocolli, soggetto, soggetti, ruolo, serviceBinding, multiTenant);
 
@@ -176,9 +167,9 @@ public final class ConfigurazioneProxyPassRegolaAdd extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addProxyPassConfigurazioneRegola(TipoOperazione.ADD, dati, idRegolaS, nome, descrizione, stato, regExpr, regolaText, contestoEsterno, baseUrl, protocollo, protocolli, soggetto, soggetti, ruolo, serviceBinding, multiTenant);
 
@@ -248,12 +239,7 @@ public final class ConfigurazioneProxyPassRegolaAdd extends Action {
 				regola.setStato(StatoFunzionalita.DISABILITATO);
 			
 			regola.setPosizione(posizione);
-			
-			
-//			configurazioneGenerale.getUrlInvocazione().addRegola(regola);
-//			
-//			confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneGenerale);
-			
+						
 			confCore.performCreateOperation(userLogin, confHelper.smista(), regola);
 			
 			// Preparo la lista

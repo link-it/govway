@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -168,10 +167,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			// patch per version spinner fino a che non si trova un modo piu' elegante
 			// Veniva sempre impostato false, lo lascio commentato in questo punto perche' veniva passato nella decode della richiesta multipart...
-			//			if(this.isBackwardCompatibilityAccordo11){
+			/**			if(this.isBackwardCompatibilityAccordo11){
 			//				if("0".equals(strutsBean.versione))
 			//					strutsBean.versione = "";
-			//			}
+			//			} */
 
 			String priv = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PRIVATO);
 			strutsBean.privato = ServletUtils.isCheckBoxEnabled(priv);
@@ -193,12 +192,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				}
 			}
 
-			//			String ct = request.getContentType();
-			//			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
 			if (apcHelper.isMultipart()) {
-				//this.decodeRequest(request,ch.core.isBackwardCompatibilityAccordo11());
+				/** this.decodeRequest(request,ch.core.isBackwardCompatibilityAccordo11());
 				//				strutsBean.decodeRequestValidazioneDocumenti = false; // init
-				//				this.decodeRequest(request,false);
+				//				this.decodeRequest(request,false); */
 
 				//Quando trovava la linea corrispondente a AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI  
 				//eseguiva questo codice 
@@ -207,7 +204,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				strutsBean.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
 			}
 
-			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){// && apcHelper.isEditModeInProgress()){
+			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){
 				// primo accesso alla servlet
 				strutsBean.validazioneDocumenti = true;
 			}else{
@@ -241,15 +238,15 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			
 			String nuovaVersioneTmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE);
 			strutsBean.nuovaVersione = ServletUtils.isCheckBoxEnabled(nuovaVersioneTmp);
-			int gestioneNuovaVersione_min = 1;
+			int gestioneNuovaVersioneMin = 1;
 			boolean nuovaVersioneRidefinisciInterfaccia = true;
-			long gestioneNuovaVersione_oldIdApc = -1;
-			List<ProtocolProperty> gestioneNuovaVersione_oldProtocolProperties = null;
+			long gestioneNuovaVersioneOldIdApc = -1;
+			List<ProtocolProperty> gestioneNuovaVersioneOldProtocolProperties = null;
 			if(strutsBean.nuovaVersione) {
 				
-				String nuovaVersioneTmp_minVersion = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_MIN);
-				if(!StringUtils.isEmpty(nuovaVersioneTmp_minVersion)) {
-					gestioneNuovaVersione_min = Integer.parseInt(nuovaVersioneTmp_minVersion);
+				String nuovaVersioneTmpMinVersion = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_MIN);
+				if(!StringUtils.isEmpty(nuovaVersioneTmpMinVersion)) {
+					gestioneNuovaVersioneMin = Integer.parseInt(nuovaVersioneTmpMinVersion);
 				}
 								
 				String tmpIdPrecedenteAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -260,10 +257,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					nuovaVersioneRidefinisciInterfaccia = true; // default
 					
 					// fisso alcuni valori
-					long idAccordoPrec = Long.valueOf(tmpIdPrecedenteAccordo);
-					gestioneNuovaVersione_oldIdApc = idAccordoPrec;
+					long idAccordoPrec = Long.parseLong(tmpIdPrecedenteAccordo);
+					gestioneNuovaVersioneOldIdApc = idAccordoPrec;
 					AccordoServizioParteComune aspc = apcCore.getAccordoServizioFull(idAccordoPrec);
-					gestioneNuovaVersione_oldProtocolProperties = aspc.getProtocolPropertyList();
+					gestioneNuovaVersioneOldProtocolProperties = aspc.getProtocolPropertyList();
 					IDAccordo idAccordoPrecedente = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspc);
 					strutsBean.nome = aspc.getNome();
 					strutsBean.referente = soggettiCore.getSoggetto(aspc.getSoggettoReferente().toIDSoggetto()).getId().longValue()+"";
@@ -283,11 +280,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					if(strutsBean.descr==null || StringUtils.isEmpty(strutsBean.descr)) {
 						strutsBean.descr = aspc.getDescrizione();
 					}
-					if(strutsBean.gruppi==null || StringUtils.isEmpty(strutsBean.gruppi)) {
-						if(aspc.getGruppi()!=null && aspc.getGruppi().getGruppoList()!=null && !aspc.getGruppi().getGruppoList().isEmpty()) {
-							List<String> nomiGruppi = aspc.getGruppi().getGruppoList().stream().flatMap(e-> Stream.of(e.getNome())).collect(Collectors.toList());
-							strutsBean.gruppi = StringUtils.join(nomiGruppi, ",");
-						}
+					if((strutsBean.gruppi==null || StringUtils.isEmpty(strutsBean.gruppi)) &&
+						aspc.getGruppi()!=null && aspc.getGruppi().getGruppoList()!=null && !aspc.getGruppi().getGruppoList().isEmpty()) {
+						List<String> nomiGruppi = aspc.getGruppi().getGruppoList().stream().flatMap(e-> Stream.of(e.getNome())).collect(Collectors.toList());
+						strutsBean.gruppi = StringUtils.join(nomiGruppi, ",");
 					}
 					if(strutsBean.profcoll==null || StringUtils.isEmpty(strutsBean.profcoll)) {
 						strutsBean.profcoll = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(aspc.getProfiloCollaborazione());
@@ -311,9 +307,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						strutsBean.scadenza = aspc.getScadenza() != null ? aspc.getScadenza() : "";
 					}
 					
-					gestioneNuovaVersione_min = apcCore.getAccordoServizioParteComuneNextVersion(idAccordoPrecedente);
+					gestioneNuovaVersioneMin = apcCore.getAccordoServizioParteComuneNextVersion(idAccordoPrecedente);
 					if(strutsBean.versione==null || StringUtils.isEmpty(strutsBean.versione)) {
-						strutsBean.versione = gestioneNuovaVersione_min+"";
+						strutsBean.versione = gestioneNuovaVersioneMin+"";
 					}
 					if(strutsBean.canale==null || StringUtils.isEmpty(strutsBean.canale)) {
 						strutsBean.canale = aspc.getCanale();
@@ -327,11 +323,11 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					} 
 				}
 				else {
-					String nuovaVersioneRidefinisciInterfaccia_tmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
-					nuovaVersioneRidefinisciInterfaccia = ServletUtils.isCheckBoxEnabled(nuovaVersioneRidefinisciInterfaccia_tmp);
+					String nuovaVersioneRidefinisciInterfacciaTmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
+					nuovaVersioneRidefinisciInterfaccia = ServletUtils.isCheckBoxEnabled(nuovaVersioneRidefinisciInterfacciaTmp);
 				
-					String nuovaVersioneOldIdApc_tmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_OLD_ID_APC);
-					gestioneNuovaVersione_oldIdApc = Long.valueOf(nuovaVersioneOldIdApc_tmp);
+					String nuovaVersioneOldIdApcTmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_OLD_ID_APC);
+					gestioneNuovaVersioneOldIdApc = Long.valueOf(nuovaVersioneOldIdApcTmp);
 				}
 			}
 			
@@ -367,13 +363,13 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					
 			strutsBean.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(strutsBean.consoleConfiguration, strutsBean.consoleOperationType);
 			
-			if(strutsBean.nuovaVersione && gestioneNuovaVersione_oldProtocolProperties!=null && !gestioneNuovaVersione_oldProtocolProperties.isEmpty()){
-				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(strutsBean.protocolProperties, gestioneNuovaVersione_oldProtocolProperties, strutsBean.consoleOperationType);
+			if(strutsBean.nuovaVersione && gestioneNuovaVersioneOldProtocolProperties!=null && !gestioneNuovaVersioneOldProtocolProperties.isEmpty()){
+				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(strutsBean.protocolProperties, gestioneNuovaVersioneOldProtocolProperties, strutsBean.consoleOperationType);
 			}
 
 			// Flag per controllare il mapping automatico di porttype e operation
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
-			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
+			boolean enableAutoMappingEstraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
 			
 			
@@ -383,11 +379,11 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			// Preparo il menu
 			apcHelper.makeMenu();
 				
-			if(listaTipiProtocollo.size()<=0) {
+			if(listaTipiProtocollo.isEmpty()) {
 				boolean msg = true;
 				if(strutsBean.isServizioComposto) {
 					List<String> listaTipiProtocolloSenzaAccordiCooperazione = apcCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false, false);
-					if(listaTipiProtocolloSenzaAccordiCooperazione.size()>0) {
+					if(!listaTipiProtocolloSenzaAccordiCooperazione.isEmpty()) {
 						pd.setMessage("Non risultano registrati accordi di cooperazione", Costanti.MESSAGE_TYPE_INFO);
 						msg = false;
 					}
@@ -402,9 +398,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				}
 				pd.disableEditMode();
 
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				pd.setDati(dati);
 
@@ -423,16 +419,16 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			String[] providersList = null;
 			String[] providersListLabel = null;
 
-			List<String> soggettiListTmp = new ArrayList<String>();
-			List<String> soggettiListLabelTmp = new ArrayList<String>();
+			List<String> soggettiListTmp = new ArrayList<>();
+			List<String> soggettiListLabelTmp = new ArrayList<>();
 			soggettiListTmp.add("-");
 			soggettiListLabelTmp.add("-");
 
-			if (listaSoggetti.size() > 0) {
+			if (!listaSoggetti.isEmpty()) {
 				for (Soggetto soggetto : listaSoggetti) {
 					if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
 						soggettiListTmp.add(soggetto.getId().toString());
-						//soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+						/** soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome()); */
 						soggettiListLabelTmp.add(apcHelper.getLabelNomeSoggetto(strutsBean.tipoProtocollo, soggetto.getTipo() , soggetto.getNome() ));
 					}
 				}
@@ -494,7 +490,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			}catch(Exception e){
 				// ignore
 			}
-			List<String> tipiSoggettiCompatibili = new ArrayList<String>();
+			List<String> tipiSoggettiCompatibili = new ArrayList<>();
 			if(soggettoReferente!=null){
 				String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoReferente.getTipo());
 				tipiSoggettiCompatibili = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
@@ -507,15 +503,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				}else{
 					listaTmp = acCore.accordiCooperazioneList(userLogin, new ConsoleSearch(true));
 				}
-				List<AccordoCooperazione> listaAccordoCooperazione = new ArrayList<AccordoCooperazione>();
+				List<AccordoCooperazione> listaAccordoCooperazione = new ArrayList<>();
 				for (AccordoCooperazione accordoCooperazione : listaTmp) {
-					if(accordoCooperazione.getSoggettoReferente()!=null){
-						if(tipiSoggettiCompatibili!=null && tipiSoggettiCompatibili.contains(accordoCooperazione.getSoggettoReferente().getTipo())){
-							listaAccordoCooperazione.add(accordoCooperazione);
-						}
+					if(accordoCooperazione.getSoggettoReferente()!=null &&
+						tipiSoggettiCompatibili!=null && tipiSoggettiCompatibili.contains(accordoCooperazione.getSoggettoReferente().getTipo())){
+						listaAccordoCooperazione.add(accordoCooperazione);
 					}
 				}
-				if (listaAccordoCooperazione != null && listaAccordoCooperazione.size() > 0) {
+				if (listaAccordoCooperazione != null && !listaAccordoCooperazione.isEmpty()) {
 					accordiCooperazioneEsistenti = new String[listaAccordoCooperazione.size()+1];
 					accordiCooperazioneEsistentiLabel = new String[listaAccordoCooperazione.size()+1];
 					int i = 1;
@@ -553,14 +548,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			}
 
 			// Se nome = null, devo visualizzare la pagina per l'inserimento dati
-			String servletNameApcList = isModalitaVistaApiCustom ? ApiCostanti.SERVLET_NAME_APC_API_LIST : AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST; 
+			String servletNameApcList = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? ApiCostanti.SERVLET_NAME_APC_API_LIST : AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST; 
 			Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(strutsBean.tipoAccordo);
 			List<Parameter> listaParams = new ArrayList<>();
 			listaParams.add(new Parameter(labelAccordoServizio, servletNameApcList, pTipoAccordo));
 			listaParams.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI,null));
 			
 			
-			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){ // && apcHelper.isEditModeInProgress()){
+			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){ 
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, listaParams);
@@ -615,11 +610,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					}else{
 						strutsBean.statoPackage=StatiAccordo.finale.toString();
 					}
-					//if(core.isBackwardCompatibilityAccordo11()){
+					/**if(core.isBackwardCompatibilityAccordo11()){
 					//	strutsBean.versione="0";
-					//}else{
+					//}else{*/
 					strutsBean.versione="1";
-					//}
 					
 					strutsBean.gruppi = "";
 					strutsBean.canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
@@ -627,9 +621,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
 				if(strutsBean.tipoAccordo==null || strutsBean.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
@@ -648,7 +642,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						strutsBean.accordoCooperazione, strutsBean.statoPackage, strutsBean.statoPackage, strutsBean.tipoAccordo, strutsBean.validazioneDocumenti, 
 						strutsBean.tipoProtocollo, listaTipiProtocollo,false,false,strutsBean.protocolFactory,
 						strutsBean.serviceBinding,strutsBean.messageType,strutsBean.interfaceType, strutsBean.gruppi, elencoGruppi,
-						strutsBean.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc,
+						strutsBean.nuovaVersione, gestioneNuovaVersioneMin, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersioneOldIdApc,
 						false, strutsBean.canaleStato, strutsBean.canale, canaleList, gestioneCanaliEnabled);
 
 				// aggiunta campi custom
@@ -663,7 +657,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			}
 
 			boolean visibilitaAccordoCooperazione=false;
-			if("-".equals(strutsBean.accordoCooperazione)==false && "".equals(strutsBean.accordoCooperazione)==false  && strutsBean.accordoCooperazione!=null){
+			if(!"-".equals(strutsBean.accordoCooperazione) && !"".equals(strutsBean.accordoCooperazione)  && strutsBean.accordoCooperazione!=null){
 				AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(strutsBean.accordoCooperazione));
 				visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato();
 			}
@@ -723,9 +717,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
 				if(strutsBean.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
@@ -744,7 +738,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						strutsBean.accordoCooperazione, strutsBean.statoPackage, strutsBean.statoPackage, strutsBean.tipoAccordo, strutsBean.validazioneDocumenti, 
 						strutsBean.tipoProtocollo, listaTipiProtocollo,false,false,strutsBean.protocolFactory,
 						strutsBean.serviceBinding,strutsBean.messageType,strutsBean.interfaceType, strutsBean.gruppi, elencoGruppi,
-						strutsBean.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc,
+						strutsBean.nuovaVersione, gestioneNuovaVersioneMin, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersioneOldIdApc,
 						false, strutsBean.canaleStato, strutsBean.canale, canaleList, gestioneCanaliEnabled);
 
 				// aggiunta campi custom
@@ -784,10 +778,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			// Se un utente ha impostato solo il logico erogatore (avviene automaticamente nel caso non venga visualizzato il campo concettuale)
 			// imposto lo stesso wsdl anche per il concettuale. Tanto Rappresenta la stessa informazione, ma e' utile per lo stato dell'accordo
-			boolean facilityUnicoWSDL_interfacciaStandard = false;
+			boolean facilityUnicoWSDLInterfacciaStandard = false;
 			if(as.getByteWsdlLogicoErogatore()!=null && as.getByteWsdlLogicoFruitore()==null && as.getByteWsdlConcettuale()==null){
 				as.setByteWsdlConcettuale(as.getByteWsdlLogicoErogatore());
-				facilityUnicoWSDL_interfacciaStandard = true;
+				facilityUnicoWSDLInterfacciaStandard = true;
 			}
 
 			// Conversione Abilitato/Disabilitato
@@ -887,7 +881,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			}
 
 			if(strutsBean.nuovaVersione && !nuovaVersioneRidefinisciInterfaccia) {
-				IDAccordo idAcc = apcCore.getIdAccordoServizio(gestioneNuovaVersione_oldIdApc);
+				IDAccordo idAcc = apcCore.getIdAccordoServizio(gestioneNuovaVersioneOldIdApc);
 				AccordoServizioParteComune aspcOld = apcCore.getAccordoServizioFull(idAcc, true); // devo leggere anche gli allegati
 				as.setAllegatoList(aspcOld.getAllegatoList());
 				as.setSpecificaSemiformaleList(aspcOld.getSpecificaSemiformaleList());
@@ -919,9 +913,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					ServletUtils.setPageDataTitle(pd, listaParams);
 
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 					// update della configurazione 
 					if(strutsBean.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
@@ -940,7 +934,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 							strutsBean.accordoCooperazione, strutsBean.statoPackage, strutsBean.statoPackage, strutsBean.tipoAccordo, strutsBean.validazioneDocumenti, 
 							strutsBean.tipoProtocollo, listaTipiProtocollo,false,false,strutsBean.protocolFactory,
 							strutsBean.serviceBinding,strutsBean.messageType,strutsBean.interfaceType, strutsBean.gruppi, elencoGruppi,
-							strutsBean.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc,
+							strutsBean.nuovaVersione, gestioneNuovaVersioneMin, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersioneOldIdApc,
 							false, strutsBean.canaleStato, strutsBean.canale, canaleList, gestioneCanaliEnabled);
 
 					// aggiunta campi custom
@@ -958,7 +952,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			// Automapping
 			if(!strutsBean.nuovaVersione || nuovaVersioneRidefinisciInterfaccia) {
 				AccordiServizioParteComuneUtilities.mapppingAutomaticoInterfaccia(as, apcCore, 
-						enableAutoMapping, strutsBean.validazioneDocumenti, enableAutoMapping_estraiXsdSchemiFromWsdlTypes, facilityUnicoWSDL_interfacciaStandard, 
+						enableAutoMapping, strutsBean.validazioneDocumenti, enableAutoMappingEstraiXsdSchemiFromWsdlTypes, facilityUnicoWSDLInterfacciaStandard, 
 						strutsBean.tipoProtocollo, strutsBean.interfaceType);
 			}
 
@@ -984,7 +978,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			
 			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, strutsBean.tipoAccordo);
 
-			if(isModalitaVistaApiCustom) {
+			if(isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) {
 				apcHelper.prepareApiList(lista, ricerca, strutsBean.tipoAccordo); 
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.ADD());

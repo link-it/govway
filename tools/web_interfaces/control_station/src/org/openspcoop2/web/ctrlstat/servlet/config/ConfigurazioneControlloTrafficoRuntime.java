@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -72,15 +71,15 @@ public class ConfigurazioneControlloTrafficoRuntime  extends Action {
 			confHelper.makeMenu();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME, null));
 
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			// Set First is false
 			confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);

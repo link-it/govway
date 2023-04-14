@@ -25,7 +25,6 @@ package org.openspcoop2.web.lib.audit.web;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -77,11 +76,11 @@ public class AuditHelper {
 		AuditHelper.useXml = useXml;
 	}
 
-	public Vector<DataElement> addAuditingToDati(String statoaudit,
+	public List<DataElement> addAuditingToDati(String statoaudit,
 			String stato, String dump, String formatodump, String log4j,
 			int numFiltri) throws Exception {
 		try {
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			String[] tipi = {  AuditCostanti.DEFAULT_VALUE_ABILITATO, AuditCostanti.DEFAULT_VALUE_DISABILITATO };
 			String[] tipiLabels = { AuditCostanti.DEFAULT_VALUE_ABILITATO, AuditCostanti.DEFAULT_VALUE_DISABILITATO };
@@ -89,7 +88,7 @@ public class AuditHelper {
 			DataElement de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_AUDIT);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_STATO_AUDIT);
@@ -101,13 +100,13 @@ public class AuditHelper {
 				de.setSelected(statoaudit);
 			//			de.setOnChange("CambiaStatoAudit()");
 			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 
 			if (statoaudit != null && statoaudit.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO)) {
 				de = new DataElement();
 				de.setLabel(AuditCostanti.LABEL_AUDIT_COMPORTAMENTO_DI_DEFAULT);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			de = new DataElement();
@@ -123,7 +122,7 @@ public class AuditHelper {
 				de.setValue(stato);
 			}
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_STATO);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_DUMP);
@@ -138,7 +137,7 @@ public class AuditHelper {
 				de.setValue(dump);
 			}
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_DUMP);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipiFormato =
 				{ Costanti.DUMP_JSON_FORMAT, Costanti.DUMP_XML_FORMAT };
@@ -157,7 +156,7 @@ public class AuditHelper {
 				de.setValue(formatodump);
 			}
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_FORMATO_DUMP);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_LOG4J);
@@ -172,20 +171,20 @@ public class AuditHelper {
 				de.setValue(log4j);
 			}
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_LOG4J);
-			dati.addElement(de);
+			dati.add(de);
 
 			if (statoaudit != null && statoaudit.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO)) {
 				de = new DataElement();
 				de.setLabel(AuditCostanti.LABEL_AUDIT_FILTRI);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 
 				de = new DataElement();
 				de.setLabel(AuditCostanti.LABEL_AUDIT_VISUALIZZA);
 				de.setType(DataElementType.LINK);
 				de.setUrl(AuditCostanti.SERVLET_NAME_AUDIT_FILTRI_LIST);
 				ServletUtils.setDataElementVisualizzaLabel(de,  (long)numFiltri);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			return dati;
@@ -273,14 +272,14 @@ public class AuditHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Filtro> it = lista.iterator();
 				while (it.hasNext()) {
 					Filtro f = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<DataElement>();
 
 					DataElement de = new DataElement();
 					de.setUrl(
@@ -289,17 +288,17 @@ public class AuditHelper {
 							);
 					de.setValue(f.toString());
 					de.setIdToRemove(""+f.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(f.isAuditEnabled() ? AuditCostanti.DEFAULT_VALUE_ABILITATO : AuditCostanti.DEFAULT_VALUE_DISABILITATO);
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(f.isDumpEnabled() ? AuditCostanti.DEFAULT_VALUE_ABILITATO : AuditCostanti.DEFAULT_VALUE_DISABILITATO);
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -310,18 +309,18 @@ public class AuditHelper {
 		}
 	}
 
-	public Vector<DataElement> addFiltroToDati(Tipologia tipoOp, String utente,
+	public List<DataElement> addFiltroToDati(Tipologia tipoOp, String utente,
 			String tipooperazione, String[] tipiOgg, String tipooggetto,
 			String statooperazione, String stato,
 			String tipofiltro, String dump, String statoazione,
 			String dumpazione, String id) throws Exception {
 		try {
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			String[] tipi = { AuditCostanti.DEFAULT_VALUE_ABILITATO, AuditCostanti.DEFAULT_VALUE_DISABILITATO };
 			String[] tipiLabels = { AuditCostanti.DEFAULT_VALUE_ABILITATO, AuditCostanti.DEFAULT_VALUE_DISABILITATO };
 
-			DataElement de = new DataElement();
+			DataElement de = null;
 
 
 			if (tipoOp.equals(Tipologia.CHANGE)) {
@@ -329,20 +328,20 @@ public class AuditHelper {
 				de.setValue(id);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(AuditCostanti.PARAMETRO_AUDIT_ID);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_AUDIT_FILTRO_GENERICO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_UTENTE);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(utente);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipiOp =
 				{ "-", Tipologia.ADD.toString(),
@@ -355,7 +354,7 @@ public class AuditHelper {
 			de.setValues(tipiOp);
 			if (tipooperazione != null)
 				de.setSelected(tipooperazione);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_TIPO_OGGETTO);
@@ -364,7 +363,7 @@ public class AuditHelper {
 			de.setValues(tipiOgg);
 			if (tipooggetto != null)
 				de.setSelected(tipooggetto);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipiStatoOp =
 				{ "-", Stato.REQUESTING.toString(),
@@ -377,12 +376,12 @@ public class AuditHelper {
 			de.setValues(tipiStatoOp);
 			if (statooperazione != null)
 				de.setSelected(statooperazione);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_AUDIT_FILTRO_CONTENUTO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_STATO);
@@ -394,7 +393,7 @@ public class AuditHelper {
 				de.setSelected(stato);
 			//			de.setOnChange("CambiaStatoFiltro('" + tipoOp + "')");
 			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipiFiltro =
 				{	AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TIPO_FILTRO_NORMALE,
@@ -413,7 +412,7 @@ public class AuditHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tipofiltro);
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_DUMP);
@@ -426,12 +425,12 @@ public class AuditHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dump);
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_AUDIT_AZIONE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_STATO);
@@ -441,7 +440,7 @@ public class AuditHelper {
 			de.setLabels(tipiLabels);
 			if (statoazione != null)
 				de.setSelected(statoazione);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_DUMP);
@@ -451,7 +450,7 @@ public class AuditHelper {
 			de.setLabels(tipiLabels);
 			if (dumpazione != null)
 				de.setSelected(dumpazione);
-			dati.addElement(de);
+			dati.add(de);
 
 			return dati;
 		} catch (Exception e) {
@@ -547,18 +546,18 @@ public class AuditHelper {
 		}
 	}
 
-	public Vector<DataElement> addAuditReportToDati(String datainizio,
+	public List<DataElement> addAuditReportToDati(String datainizio,
 			String datafine, String tipooperazione, String[] tipiOgg,
 			String tipooggetto, String id, String oldid,
 			String utente, String statooperazione, String contoggetto)
 					throws Exception {
 		try {
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<DataElement>();
 
 			DataElement de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_AUDIT_CRITERI_RICERCA);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			int valueSize = 40;
 
@@ -569,7 +568,7 @@ public class AuditHelper {
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
 			de.setSize(valueSize);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_DATA_FINE_LABEL);
@@ -578,7 +577,7 @@ public class AuditHelper {
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
 			de.setSize(valueSize);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_UTENTE);
@@ -586,12 +585,12 @@ public class AuditHelper {
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(utente);
 			de.setSize(valueSize);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_AUDIT_OPERAZIONE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipiOp =
 				{ "-", Tipologia.ADD.toString(),
@@ -607,7 +606,7 @@ public class AuditHelper {
 			if (tipooperazione != null)
 				de.setSelected(tipooperazione);
 			de.setSize(valueSize);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipiStatoOp =
 				{ "-", Stato.REQUESTING.toString(),
@@ -621,12 +620,12 @@ public class AuditHelper {
 			if (statooperazione != null)
 				de.setSelected(statooperazione);
 			de.setSize(valueSize);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_OGGETTO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_TIPO);
@@ -636,7 +635,7 @@ public class AuditHelper {
 			if (tipooggetto != null)
 				de.setSelected(tipooggetto);
 			de.setSize(valueSize);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_ID);
@@ -644,7 +643,7 @@ public class AuditHelper {
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(id);
 			de.setSize(valueSize);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_OPERATION_OLD_ID);
@@ -652,7 +651,7 @@ public class AuditHelper {
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(oldid);
 			de.setSize(valueSize);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
@@ -660,7 +659,7 @@ public class AuditHelper {
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(contoggetto);
 			de.setSize(valueSize);
-			dati.addElement(de);
+			dati.add(de);
 
 			return dati;
 		} catch (Exception e) {
@@ -879,14 +878,14 @@ public class AuditHelper {
 			String params = ServletUtils.getParametersAsString(false, pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto, pEditModeFin);
 
 			// setto la barra del titolo
-			Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
+			List<GeneralLink> titlelist = new ArrayList<>();
 			GeneralLink tl1 = new GeneralLink();
 			tl1.setLabel(AuditCostanti.LABEL_AUDIT);
 			tl1.setUrl(AuditCostanti.SERVLET_NAME_AUDITING);
-			titlelist.addElement(tl1);
+			titlelist.add(tl1);
 			GeneralLink tl2 = new GeneralLink();
 			tl2.setLabel(AuditCostanti.LABEL_AUDIT_OPERAZIONI);
-			titlelist.addElement(tl2);
+			titlelist.add(tl2);
 			this.pd.setTitleList(titlelist);
 
 			this.pd.setSearch("off");
@@ -903,14 +902,14 @@ public class AuditHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Operation> it = lista.iterator();
 				while (it.hasNext()) {
 					Operation op = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setUrl(
@@ -921,19 +920,19 @@ public class AuditHelper {
 							);
 					de.setValue(DateUtils.getSimpleDateFormatMs().format(op.getTimeExecute())); //+ " ["+op.getId()+"]");
 					de.setIdToRemove(""+op.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(op.getTipologia().getValue());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(op.getStato().getValue());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(op.getTipoOggetto());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					if(op.getObjectId()!=null && op.getObjectId().length()>60){
@@ -942,13 +941,13 @@ public class AuditHelper {
 					}else{
 						de.setValue(op.getObjectId());
 					}
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(op.getUtente());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -961,10 +960,10 @@ public class AuditHelper {
 		}
 	}
 
-	public Vector<DataElement> addAuditReportDettaglioToDati(Operation op, boolean showLinkDocumentiBinari,
+	public List<DataElement> addAuditReportDettaglioToDati(Operation op, boolean showLinkDocumentiBinari,
 			Parameter ... params) throws Exception {
 		try {
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 			Parameter pIdOp = new Parameter(AuditCostanti.PARAMETRO_AUDIT_OPERATION_ID_OP, op.getId() + "");
 			Parameter pTypeOggetto = new Parameter(AuditCostanti.PARAMETRO_AUDIT_TYPE, AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TYPE_OGGETTO);
 			Parameter pTypeErrore = new Parameter(AuditCostanti.PARAMETRO_AUDIT_TYPE, AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TYPE_ERROR);
@@ -972,49 +971,49 @@ public class AuditHelper {
 			DataElement de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_AUDIT_DETTAGLIO_OPERAZIONE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_OPERATION_TIME_REQUEST);
 			de.setValue(""+op.getTimeRequest());
 			de.setType(DataElementType.TEXT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_OPERATION_TIME_REQUEST);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_OPERATION_TIME_EXECUTE);
 			de.setValue(""+op.getTimeExecute());
 			de.setType(DataElementType.TEXT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_OPERATION_TIME_EXECUTE);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_ID_OPERAZIONE);
 			de.setValue(""+op.getId());
 			de.setType(DataElementType.TEXT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_OPERATION_ID_OPERAZIONE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_TIPO_OPERAZIONE);
 			de.setValue(op.getTipologia().getValue());
 			de.setType(DataElementType.TEXT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_OPERATION_TIPO_OPERAZIONE);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_TIPO_OGGETTO);
 			de.setValue(op.getTipoOggetto());
 			de.setType(DataElementType.TEXT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_OPERATION_TIPO_OGGETTO);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_ID);
 			de.setValue(op.getObjectId());
 			de.setType(DataElementType.TEXT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_OPERATION_OBJECT_ID);
-			dati.addElement(de);
+			dati.add(de);
 
 			if (op.getObjectOldId() != null) {
 				de = new DataElement();
@@ -1022,7 +1021,7 @@ public class AuditHelper {
 				de.setValue(op.getObjectOldId());
 				de.setType(DataElementType.TEXT);
 				de.setName(AuditCostanti.PARAMETRO_AUDIT_OPERATION_OBJECT_OLD_ID  );
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			de = new DataElement();
@@ -1030,14 +1029,14 @@ public class AuditHelper {
 			de.setValue(op.getUtente());
 			de.setType(DataElementType.TEXT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_STATO);
 			de.setValue(op.getStato().getValue());
 			de.setType(DataElementType.TEXT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_STATO);
-			dati.addElement(de);
+			dati.add(de);
 
 			int size2 = params != null ? params.length +2 : 2;
 			Parameter [] paramsErr = new Parameter[size2];
@@ -1062,7 +1061,7 @@ public class AuditHelper {
 						AuditCostanti.SERVLET_NAME_AUDITING_DETTAGLIO_INFO, paramsErr);
 				de.setValue(AuditCostanti.LABEL_AUDIT_MOTIVO_ERRORE);
 				de.setType(DataElementType.LINK);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			de = new DataElement();
@@ -1076,7 +1075,7 @@ public class AuditHelper {
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setValue(AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO);
-			dati.addElement(de);
+			dati.add(de);
 
 			int size = params != null ? params.length +1 : 1;
 			Parameter [] params2 = new Parameter[size];
@@ -1094,7 +1093,7 @@ public class AuditHelper {
 				de.setUrl(AuditCostanti.SERVLET_NAME_AUDITING_DETTAGLIO_DOCUMENTI_BINARI, params2);
 				de.setValue(AuditCostanti.LABEL_AUDIT_DOCUMENTI_BINARI + " ("+op.sizeBinaryList()+")");
 				de.setType(DataElementType.LINK);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			return dati;
@@ -1103,15 +1102,15 @@ public class AuditHelper {
 		}
 	}
 
-	public Vector<DataElement> addAuditReportInfoToDati(String type,
+	public List<DataElement> addAuditReportInfoToDati(String type,
 			String info) throws Exception {
 		try {
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			DataElement de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			if (type.equals(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TYPE_ERROR))
@@ -1122,7 +1121,7 @@ public class AuditHelper {
 			de.setValue(info);
 			de.setRows(30);
 			de.setCols(80);
-			dati.addElement(de);
+			dati.add(de);
 
 			return dati;
 		} catch (Exception e) {
@@ -1168,22 +1167,22 @@ public class AuditHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			for (int i=0; i<singleOp.sizeBinaryList(); i++) {
 				Binary bin = singleOp.getBinary(i);
 
-				Vector<DataElement> e = new Vector<DataElement>();
+				List<DataElement> e = new ArrayList<>();
 
 				DataElement de = new DataElement();
 				de.setValue(bin.getBinaryId());
-				e.addElement(de);
+				e.add(de);
 
 				de = new DataElement();
 				de.setValue(""+bin.getChecksum());
-				e.addElement(de);
+				e.add(de);
 
-				dati.addElement(e);
+				dati.add(e);
 			}
 
 			this.pd.setDati(dati);

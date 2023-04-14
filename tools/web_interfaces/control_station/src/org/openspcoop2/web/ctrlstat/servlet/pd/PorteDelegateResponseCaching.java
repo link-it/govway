@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -122,7 +121,9 @@ public class PorteDelegateResponseCaching extends Action {
 			if(responseCachingSecondsTmp != null) {
 				try {
 					responseCachingSeconds = Integer.parseInt(responseCachingSecondsTmp);
-				}catch(Exception e) {} 
+				}catch(Exception e) {
+					// ignore
+				} 
 			}
 			
 			
@@ -134,7 +135,9 @@ public class PorteDelegateResponseCaching extends Action {
 			if(responseCachingMaxResponseSizeBytesTmp != null) {
 				try {
 					responseCachingMaxResponseSizeBytes = Integer.parseInt(responseCachingMaxResponseSizeBytesTmp);
-				}catch(Exception e) {} 
+				}catch(Exception e) {
+					// ignore
+				} 
 			}
 			String responseCachingDigestUrlInvocazioneTmp = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_URI_INVOCAZIONE);
 			boolean responseCachingDigestUrlInvocazione = ServletUtils.isCheckBoxEnabled(responseCachingDigestUrlInvocazioneTmp);
@@ -159,7 +162,7 @@ public class PorteDelegateResponseCaching extends Action {
 			boolean responseCachingCacheControlNoStore = ServletUtils.isCheckBoxEnabled(responseCachingCacheControlNoStoreTmp);
 			
 			String servletResponseCachingConfigurazioneRegolaList = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_LIST;
-			List<Parameter> paramsResponseCachingConfigurazioneRegolaList = new ArrayList<Parameter>();
+			List<Parameter> paramsResponseCachingConfigurazioneRegolaList = new ArrayList<>();
 			paramsResponseCachingConfigurazioneRegolaList.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id));
 			paramsResponseCachingConfigurazioneRegolaList.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idSoggFruitore));
 			paramsResponseCachingConfigurazioneRegolaList.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps));
@@ -302,7 +305,6 @@ public class PorteDelegateResponseCaching extends Action {
 								responseCachingCacheControlNoStore = oldConfigurazione.getControl().isNoStore();
 							}
 							
-							//visualizzaLinkConfigurazioneRegola = true;
 							visualizzaLinkConfigurazioneRegola = porteDelegateHelper.isResponseCachingAbilitato(oldConfigurazione) && responseCachingEnabled;
 							listaRegoleCachingConfigurazione = oldConfigurazione.getRegolaList();
 							numeroResponseCachingConfigurazioneRegola = porteDelegateHelper.numeroRegoleResponseCaching(oldConfigurazione);
@@ -362,7 +364,6 @@ public class PorteDelegateResponseCaching extends Action {
 									responseCachingCacheControlNoStore = oldConfigurazione.getControl().isNoStore();
 								}
 								
-								//numeroResponseCachingConfigurazioneRegola= oldConfigurazione.sizeRegolaList();
 							}
 							else {
 								
@@ -423,8 +424,8 @@ public class PorteDelegateResponseCaching extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteDelegateHelper.addConfigurazioneResponseCachingPorteToDati(tipoOperazione, dati, showStato, statoResponseCachingPorta,
 						responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes,
@@ -449,8 +450,8 @@ public class PorteDelegateResponseCaching extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				porteDelegateHelper.addConfigurazioneResponseCachingPorteToDati(tipoOperazione, dati, showStato, statoResponseCachingPorta,
 						responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes,
@@ -488,8 +489,8 @@ public class PorteDelegateResponseCaching extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			ResponseCachingConfigurazione configurazioneAggiornata  = portaDelegata.getResponseCaching();
 			

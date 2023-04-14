@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.monitor;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -32,6 +33,8 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class MonitorCostanti {
+	
+	private MonitorCostanti() {}
 
 	/* OBJECT NAME */
 		
@@ -45,7 +48,10 @@ public class MonitorCostanti {
 	/* SERVLET NAME */
 	
 	public static final String SERVLET_NAME_MONITOR = OBJECT_NAME_MONITOR+".do";
-	public static final Vector<String> SERVLET_MONITOR = new Vector<String>();
+	private static final List<String> SERVLET_MONITOR = new ArrayList<>();
+	public static List<String> getServletMonitor() {
+		return SERVLET_MONITOR;
+	}
 	static{
 		SERVLET_MONITOR.add(SERVLET_NAME_MONITOR);
 	}
@@ -62,7 +68,6 @@ public class MonitorCostanti {
 	/* LABEL GENERALI */
 	
 	public static final String LABEL_MONITOR = "Coda Messaggi";
-//	public static final String LABEL_MONITOR_ESTESO = "Monitoraggio Applicativo";
 	public static final String LABEL_MONITOR_FILTRO_RICERCA = "Filtro Ricerca";
 	public static final String LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO = "Informazioni Protocollo";
 	public static final String LABEL_MONITOR_DETTAGLIO_MESSAGGIO = "Dettaglio Messaggio";	
@@ -76,7 +81,6 @@ public class MonitorCostanti {
 	public static final String LABEL_MONITOR_SOGGETTO_DESTINATARIO = "Soggetto Destinatario";
 	public static final String LABEL_MONITOR_SERVIZIO = "Servizio";
 	public static final String LABEL_MONITOR_AZIONE = "Azione";
-	//public static final String LABEL_MONITOR_RICERCA = "Ricerca";
 	public static final String LABEL_MONITOR_STATO_PORTA_DOMINIO = "Stato Porta di Dominio";
 	public static final String LABEL_MONITOR_NESSUNA_INFORMAZIONE_PRESENTE = "Nessuna informazione presente!";
 	public static final String LABEL_MONITOR_TOTALE_MESSAGGI = "Totale Messaggi";
@@ -86,7 +90,7 @@ public class MonitorCostanti {
 	public static final String LABEL_MONITOR_MESSAGGI_CONSEGNA = "Messaggi in Consegna";
 	public static final String LABEL_MONITOR_MESSAGGI_SPEDIZIONE = "Messaggi in Spedizione";
 	public static final String LABEL_MONITOR_NESSUN_MESSAGGIO_CONSEGNA = "Nessun Messaggio in Consegna";
-	public static final String LABEL_MONITOR_NESSUN_MESSAGGIO_SPEDIZIONE_ = "Nessun Messaggio in Spedizione";
+	public static final String LABEL_MONITOR_NESSUN_MESSAGGIO_SPEDIZIONE = "Nessun Messaggio in Spedizione";
 	public static final String LABEL_MONITOR_MESSAGGI_PROCESSAMENTO = "Messaggi in Processamento";
 	public static final String LABEL_MONITOR_TOTALE_MESSAGGI_PROCESSAMENTO = "Totale Messaggi";
 	public static final String LABEL_MONITOR_NESSUN_MESSAGGIO_PROCESSAMENTO =  "Nessun Messaggio in Processamento";
@@ -96,21 +100,12 @@ public class MonitorCostanti {
 	public static final String LABEL_MONITOR_DETTAGLIO = "Dettaglio"; 
 	public static final String LABEL_MONITOR_DETTAGLI_CONSEGNA = "Dettagli Consegna";
 	public static final String LABEL_MONITOR_IDMESSAGGIO = "IDMessaggio";
-//	public static final String LABEL_MONITOR_INTEGRATION_MANAGER = "IntegrationManager";
 	
 	
 	/*LABEL PULSANTI */
 
 	public static final String LABEL_ACCEDI = "Conferma";
-//	public static final String LABEL_MONITOR_BUTTON_CONFERMA = "Conferma"; // TODO cancellami
-	
-//	public static final String LABEL_MONITOR_BUTTON_OK = "Ok";
-//	public static final String LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_1 = "EseguiOp(1)";
-//	public static final String LABEL_MONITOR_BUTTON_ANNULLA = "Annulla";
-//	public static final String LABEL_MONITOR_BUTTON_ANNULLA_1 = "Annulla(1)"; 
-//	
-//	public static final String LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_PARAM = "EseguiOp({0})";
-//	public static final String LABEL_MONITOR_BUTTON_ANNULLA_OPERAZIONE_PARAM = "Annulla({0})";
+
 	
 	/* PARAMETRI */
 	
@@ -138,7 +133,6 @@ public class MonitorCostanti {
 	public static final String PARAMETRO_MONITOR_PDD = "pdd";
 	public static final String PARAMETRO_MONITOR_SORGENTE = "sorgente";
 	public static final String PARAMETRO_MONITOR_RISCONTRO = "riscontro";
-	//public static final String PARAMETRO_MONITOR_PATTERN = "pattern";
 	public static final String PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA = "correlazioneApplicativa";
 	public static final String PARAMETRO_MONITOR_MODULO = "modulo";
 	public static final String PARAMETRO_MONITOR_ERRORE = "errore";
@@ -183,7 +177,6 @@ public class MonitorCostanti {
 	public static final String LABEL_PARAMETRO_MONITOR_STATO = "Stato";
 	public static final String LABEL_PARAMETRO_MONITOR_PDD = "Pdd";
 	public static final String LABEL_PARAMETRO_MONITOR_RISCONTRO = "In Attesa di Riscontro";
-	//public static final String LABEL_PARAMETRO_MONITOR_PATTERN = "Contenuto messaggio";
 	public static final String LABEL_PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA = "ID Applicativo";
 	public static final String LABEL_PARAMETRO_MONITOR_ID_MESSAGGIO = "ID";
 	public static final String LABEL_PARAMETRO_MONITOR_MODULO = "ID Modulo";
@@ -234,13 +227,15 @@ public class MonitorCostanti {
 	public static final String DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO = "asincrono-simmetrico";
 	public static final String DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO = "asincrono-asimmetrico";
 	
-	public static final String[]  DEFAULT_VALUES_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE = {
+	private static final String[] DEFAULT_VALUES_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE = {
 		DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ANY, DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ONEWAY,
 		DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_SINCRONO, DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,
 		DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO
 	};
-	
-	
+	public static String[] getDefaultValuesParametroTipoProfiloCollaborazione() {
+		return DEFAULT_VALUES_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE;
+	}
+
 	public static final String DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS = "details";
 	
 	public static final String DEFAULT_VALUE_PARAMETRO_MONITOR_ACTION_DELETE = "delete";
@@ -254,11 +249,14 @@ public class MonitorCostanti {
 	public static final String DEFAULT_VALUE_PARAMETRO_STATO_SPEDIZIONE = "spedizione";
 	public static final String DEFAULT_VALUE_PARAMETRO_STATO_PROCESSAMENTO = "processamento";
 	 
-	public static final String[]  DEFAULT_VALUES_PARAMETRO_STATO = {
+	private static final String[] DEFAULT_VALUES_PARAMETRO_STATO = {
 		DEFAULT_VALUE_PARAMETRO_STATO_NONE,DEFAULT_VALUE_PARAMETRO_STATO_CONSEGNA,
 		DEFAULT_VALUE_PARAMETRO_STATO_SPEDIZIONE, DEFAULT_VALUE_PARAMETRO_STATO_PROCESSAMENTO
 	};
-	 	
+	public static String[] getDefaultValuesParametroStato() {
+		return DEFAULT_VALUES_PARAMETRO_STATO;
+	}
+
 	public static final String LABEL_ACTION_RICONSEGNA_IMMEDIATA = "Riconsegna Immediata";
 	public static final String ACTION_RICONSEGNA_IMMEDIATA = "resend";
 	public static final String ACTION_RICONSEGNA_IMMEDIATA_ONCLICK = "RemoveEntries('"+ACTION_RICONSEGNA_IMMEDIATA+"')";

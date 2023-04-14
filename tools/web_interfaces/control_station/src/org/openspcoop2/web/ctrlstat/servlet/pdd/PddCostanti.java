@@ -19,9 +19,11 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.pdd;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
  * PddCostanti
@@ -31,6 +33,8 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
  * @version $Rev$, $Date$
  */
 public class PddCostanti {
+	
+	private PddCostanti() {}
 
 	/* OBJECT NAME */
 	
@@ -43,11 +47,14 @@ public class PddCostanti {
 	
 	/* SERVLET NAME */
 	
-	public static final String SERVLET_NAME_PDD_ADD = OBJECT_NAME_PDD+"Add.do";
-	public static final String SERVLET_NAME_PDD_CHANGE = OBJECT_NAME_PDD+"Change.do";
-	public static final String SERVLET_NAME_PDD_DELETE = OBJECT_NAME_PDD+"Del.do";
-	public static final String SERVLET_NAME_PDD_LIST = OBJECT_NAME_PDD+"List.do";
-	public static final Vector<String> SERVLET_PDD = new Vector<String>();
+	public static final String SERVLET_NAME_PDD_ADD = OBJECT_NAME_PDD+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PDD_CHANGE = OBJECT_NAME_PDD+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PDD_DELETE = OBJECT_NAME_PDD+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PDD_LIST = OBJECT_NAME_PDD+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PDD = new ArrayList<>();
+	public static List<String> getServletPdd() {
+		return SERVLET_PDD;
+	}
 	static{
 		SERVLET_PDD.add(SERVLET_NAME_PDD_ADD);
 		SERVLET_PDD.add(SERVLET_NAME_PDD_CHANGE);
@@ -55,11 +62,14 @@ public class PddCostanti {
 		SERVLET_PDD.add(SERVLET_NAME_PDD_LIST);
 	}
 	
-	public static final String SERVLET_NAME_PDD_SINGLEPDD_ADD = OBJECT_NAME_PDD_SINGLEPDD+"Add.do";
-	public static final String SERVLET_NAME_PDD_SINGLEPDD_CHANGE = OBJECT_NAME_PDD_SINGLEPDD+"Change.do";
-	public static final String SERVLET_NAME_PDD_SINGLEPDD_DELETE = OBJECT_NAME_PDD_SINGLEPDD+"Del.do";
-	public static final String SERVLET_NAME_PDD_SINGLEPDD_LIST = OBJECT_NAME_PDD_SINGLEPDD+"List.do";
-	public static final Vector<String> SERVLET_PDD_SINGLEPDD = new Vector<String>();
+	public static final String SERVLET_NAME_PDD_SINGLEPDD_ADD = OBJECT_NAME_PDD_SINGLEPDD+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PDD_SINGLEPDD_CHANGE = OBJECT_NAME_PDD_SINGLEPDD+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PDD_SINGLEPDD_DELETE = OBJECT_NAME_PDD_SINGLEPDD+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PDD_SINGLEPDD_LIST = OBJECT_NAME_PDD_SINGLEPDD+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PDD_SINGLEPDD = new ArrayList<>();
+	public static List<String> getServletPddSinglepdd() {
+		return SERVLET_PDD_SINGLEPDD;
+	}
 	static{
 		SERVLET_PDD_SINGLEPDD.add(SERVLET_NAME_PDD_SINGLEPDD_ADD);
 		SERVLET_PDD_SINGLEPDD.add(SERVLET_NAME_PDD_SINGLEPDD_CHANGE);
@@ -67,8 +77,11 @@ public class PddCostanti {
 		SERVLET_PDD_SINGLEPDD.add(SERVLET_NAME_PDD_SINGLEPDD_LIST);
 	}
 	
-	public static final String SERVLET_NAME_PDD_SOGGETTI_LIST = OBJECT_NAME_PDD_SOGGETTI+"List.do";
-	public static final Vector<String> SERVLET_PDD_SOGGETTI = new Vector<String>();
+	public static final String SERVLET_NAME_PDD_SOGGETTI_LIST = OBJECT_NAME_PDD_SOGGETTI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PDD_SOGGETTI = new ArrayList<>();
+	public static List<String> getServletPddSoggetti() {
+		return SERVLET_PDD_SOGGETTI;
+	}
 	static{
 		SERVLET_PDD_SOGGETTI.add(SERVLET_NAME_PDD_SOGGETTI_LIST);
 	}
@@ -120,16 +133,31 @@ public class PddCostanti {
 	public static final String LABEL_PDD_SOGGETTI = "Soggetti";
 	public static final String LABEL_PDD_CONFIGURAZIONE_SISTEMA = "Configurazione";
 	
-	public static final String[] LABEL_TIPI = { PddTipologia.OPERATIVO.toString(), PddTipologia.NONOPERATIVO.toString(), PddTipologia.ESTERNO.toString() };
-	public static final String[] LABEL_TIPI_SOLO_OPERATIVI = { PddTipologia.OPERATIVO.toString(), PddTipologia.NONOPERATIVO.toString() };
-	public static final String[] LABEL_TIPO_SOLO_ESTERNO = {  PddTipologia.ESTERNO.toString() };
+	private static final String[] LABEL_TIPI = { PddTipologia.OPERATIVO.toString(), PddTipologia.NONOPERATIVO.toString(), PddTipologia.ESTERNO.toString() };
+	public static String[] getLabelTipi() {
+		return LABEL_TIPI;
+	}
+
+	private static final String[] LABEL_TIPI_SOLO_OPERATIVI = { PddTipologia.OPERATIVO.toString(), PddTipologia.NONOPERATIVO.toString() };
+	public static String[] getLabelTipiSoloOperativi() {
+		return LABEL_TIPI_SOLO_OPERATIVI;
+	}
+
+	private static final String[] LABEL_TIPO_SOLO_ESTERNO = {  PddTipologia.ESTERNO.toString() };
 	
 	
 	
 	/* DEFAULT VALUE PARAMETRI */
 	
+	public static String[] getLabelTipoSoloEsterno() {
+		return LABEL_TIPO_SOLO_ESTERNO;
+	}
+
 	public static final String DEFAULT_PDD_PORTA = "80";
 	public static final String DEFAULT_PDD_IMPLEMENTAZIONE = "standard";
 	public static final String DEFAULT_PDD_PROTOCOLLO = "http";
-	public static final String[] DEFAULT_PDD_PROTOCOLLI = { "http", "https" };
+	private static final String[] DEFAULT_PDD_PROTOCOLLI = { "http", "https" };
+	public static String[] getDefaultPddProtocolli() {
+		return DEFAULT_PDD_PROTOCOLLI;
+	}
 }

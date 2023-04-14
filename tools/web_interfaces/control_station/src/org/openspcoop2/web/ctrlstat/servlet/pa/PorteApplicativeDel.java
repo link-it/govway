@@ -87,7 +87,7 @@ public final class PorteApplicativeDel extends Action {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session, request);
 			if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
-			Boolean useIdSogg = parentPA == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO;
+			boolean useIdSogg = parentPA!=null && parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO;
 			
 			int soggInt = -1 ;
 			if(useIdSogg){
@@ -99,25 +99,13 @@ public final class PorteApplicativeDel extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			// Elimino le porte applicative dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 			IExtendedListServlet extendedServlet = porteApplicativeCore.getExtendedServletPortaApplicativa();
-			List<Object> listPerformOperations = new ArrayList<Object>();
+			List<Object> listPerformOperations = new ArrayList<>();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
-
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// int idporta = Integer.parseInt(de.getValue());
 
 				// Elimino la porta applicativa
 				PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idsToRemove.get(i)));
@@ -129,7 +117,7 @@ public final class PorteApplicativeDel extends Action {
 					}catch(Exception e){
 						ControlStationCore.logError(e.getMessage(), e);
 					}
-					if(listExt!=null && listExt.size()>0){
+					if(listExt!=null && !listExt.isEmpty()){
 						for (IExtendedBean iExtendedBean : listExt) {
 							WrapperExtendedBean wrapper = new WrapperExtendedBean();
 							wrapper.setExtendedBean(iExtendedBean);

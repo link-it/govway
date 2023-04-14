@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -106,14 +105,6 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 			// Preparo il menu
 			confHelper.makeMenu();
 			List<Parameter> lstParam = new ArrayList<Parameter>();
-			
-//			String postBackElementName = confHelper.getPostBackElementName();
-//			
-//			// se ho modificato il soggetto ricalcolo il servizio e il service binding
-//			if (postBackElementName != null) {
-//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO_PLUGIN)) {
-//				}
-//			}
 
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
@@ -141,8 +132,8 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = confHelper.addPluginClassiToDati(TipoOperazione.CHANGE, dati, idPluginS, tipoPlugin, tipo, label, className, stato, descrizione, ruolo, shTipo, mhTipo, mhRuolo, applicabilita);
 
@@ -160,9 +151,9 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addPluginClassiToDati(TipoOperazione.CHANGE, dati, idPluginS, tipoPlugin, tipo, label, className, stato, descrizione, ruolo, shTipo, mhTipo, mhRuolo, applicabilita);
 
@@ -189,13 +180,13 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 			plugin.setTipo(tipo);
 			plugin.setTipoPlugin(tipoPluginS);
 			plugin.setDescrizione(descrizione);
-			plugin.setStato(stato.equals(StatoFunzionalita.ABILITATO.getValue()) ? true : false);
+			plugin.setStato(stato.equals(StatoFunzionalita.ABILITATO.getValue()));
 			plugin.setClassName(className);
 			
 			plugin.getPluginProprietaCompatibilitaList().clear();
 			List<PluginProprietaCompatibilita> listaProprieta = ConfigurazionePluginsTipoPluginUtils.getApplicabilitaClassePlugin(tipoPlugin, ruolo, shTipo, mhTipo, mhRuolo, applicabilita);
 			
-			if(listaProprieta.size() > 0) {
+			if(!listaProprieta.isEmpty()) {
 				plugin.getPluginProprietaCompatibilitaList().addAll(listaProprieta);
 			}
 			
@@ -207,7 +198,7 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 					||
 				(!tipo.equals(oldIdPlugin.getTipo())) 
 					||
-				(!tipoPluginS.equals(oldIdPlugin.getTipoPlugin())) 
+				(tipoPluginS!=null && !tipoPluginS.equals(oldIdPlugin.getTipoPlugin())) 
 				){
 				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.CONFIGURAZIONE_PLUGINS_CLASSI);
 			}

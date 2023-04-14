@@ -20,7 +20,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.util.List;
-import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -46,6 +45,8 @@ import org.openspcoop2.web.lib.mvc.DataElementType;
  * @version $Rev$, $Date$
  */
 public class ConnettoreHTTPSUtils {
+	
+	private ConnettoreHTTPSUtils() {}
 
 	public static void fillConnettoreConfig(org.openspcoop2.core.config.Connettore connettore,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
@@ -123,13 +124,12 @@ public class ConnettoreHTTPSUtils {
 			prop.setValore(httpsTrustStoreOCSPPolicy);
 			connettore.addProperty(prop);
 			
-			if(!httpsTrustVerifyCert) {
-				if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
-					prop = new org.openspcoop2.core.config.Property();
-					prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
-					prop.setValore(httpsTrustStoreCRLs);
-					connettore.addProperty(prop);
-				}
+			if(!httpsTrustVerifyCert &&
+				httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
+				prop = new org.openspcoop2.core.config.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				prop.setValore(httpsTrustStoreCRLs);
+				connettore.addProperty(prop);
 			}
 		}
 
@@ -289,13 +289,12 @@ public class ConnettoreHTTPSUtils {
 			prop.setValore(httpsTrustStoreOCSPPolicy);
 			connettore.addProperty(prop);
 			
-			if(!httpsTrustVerifyCert) {
-				if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
-					prop = new org.openspcoop2.core.registry.Property();
-					prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
-					prop.setValore(httpsTrustStoreCRLs);
-					connettore.addProperty(prop);
-				}
+			if(!httpsTrustVerifyCert &&
+				httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
+				prop = new org.openspcoop2.core.registry.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				prop.setValore(httpsTrustStoreCRLs);
+				connettore.addProperty(prop);
 			}
 		}
 		
@@ -363,7 +362,7 @@ public class ConnettoreHTTPSUtils {
 		}
 	}
 	
-	public static void addHTTPSDati(Vector<DataElement> dati,
+	public static void addHTTPSDati(List<DataElement> dati,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
 			boolean httpsTrustVerifyCert, String httpspath, String httpstipo, String httpspwd,
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
@@ -404,7 +403,7 @@ public class ConnettoreHTTPSUtils {
 			}
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			de.setSize(pageSize);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		if(prefix==null){
@@ -414,7 +413,7 @@ public class ConnettoreHTTPSUtils {
 		DataElement de = new DataElement();
 		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
@@ -433,7 +432,7 @@ public class ConnettoreHTTPSUtils {
 		de.setValues(tipologie);
 		de.setSelected(httpstipologia);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
@@ -441,12 +440,12 @@ public class ConnettoreHTTPSUtils {
 		de.setSelected(httpshostverify);
 		de.setType(DataElementType.CHECKBOX);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_SERVER);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
@@ -455,7 +454,7 @@ public class ConnettoreHTTPSUtils {
 		de.setSelected(httpsTrustVerifyCert);
 		de.setType(DataElementType.CHECKBOX);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		boolean truststoreHsm = false;
 		de = new DataElement();
@@ -495,7 +494,7 @@ public class ConnettoreHTTPSUtils {
 		else {
 			de.setType(DataElementType.HIDDEN);
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
@@ -520,7 +519,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -542,12 +541,12 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
-		dati.addElement(de);
+		dati.add(de);
 
 		OCSPProvider ocspProvider = new OCSPProvider();
 		boolean ocspEnabled = ocspProvider.isOcspEnabled();
-		List<String> ocsp_types = ocspProvider.getValues();
-		List<String> ocsp_labels = ocspProvider.getLabels();
+		List<String> ocspTypes = ocspProvider.getValues();
+		List<String> ocspLabels = ocspProvider.getLabels();
 				
 		boolean crlWithOCSPEnabledTrustAllHttpsServer = 
 				ocspEnabled &&
@@ -561,8 +560,8 @@ public class ConnettoreHTTPSUtils {
 		if(ocspEnabled && (httpsTrustVerifyCert || core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata())) {
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setType(DataElementType.SELECT);
-				de.setValues(ocsp_types);
-				de.setLabels(ocsp_labels);
+				de.setValues(ocspTypes);
+				de.setLabels(ocspLabels);
 				de.setPostBack(core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata());
 				if(httpsTrustStoreOCSPPolicy==null) {
 					httpsTrustStoreOCSPPolicy = "";
@@ -575,10 +574,10 @@ public class ConnettoreHTTPSUtils {
 						!"".equals(httpsTrustStoreOCSPPolicy)){
 					
 					String label = null;
-					for (int i = 0; i < ocsp_types.size(); i++) {
-						String type = ocsp_types.get(i);
+					for (int i = 0; i < ocspTypes.size(); i++) {
+						String type = ocspTypes.get(i);
 						if(type!=null && type.equals(httpsTrustStoreOCSPPolicy)) {
-							label = ocsp_labels.get(i);
+							label = ocspLabels.get(i);
 						}
 					}
 					if(label!=null) {
@@ -587,7 +586,7 @@ public class ConnettoreHTTPSUtils {
 						deLABEL.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 						deLABEL.setValue(label);
 						deLABEL.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY+"__LABEL");
-						dati.addElement(deLABEL);
+						dati.add(deLABEL);
 					}
 				}
 			}
@@ -597,7 +596,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(httpsTrustStoreOCSPPolicy);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
@@ -616,7 +615,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
@@ -639,12 +638,12 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_CLIENT);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_STATO);
@@ -660,7 +659,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.CHECKBOX);
 			de.setPostBack(true);
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 
 		de = new DataElement();
@@ -672,7 +671,6 @@ public class ConnettoreHTTPSUtils {
 				de.setValues(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODES);
 				de.setLabels(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_LABEL_MODES);
 				de.setSelected(httpskeystore);
-				//				de.setOnChange("CambiaKeyStore('" + tipoOp + "')");
 				de.setPostBack(true);
 			}
 			else {
@@ -684,7 +682,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue("");
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
@@ -701,7 +699,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		boolean keystoreHsm = false;
 		de = new DataElement();
@@ -743,7 +741,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue("");
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
@@ -767,7 +765,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
@@ -788,7 +786,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
@@ -809,7 +807,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
@@ -824,7 +822,7 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
@@ -840,10 +838,10 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
-	public static void addHTTPSDatiAsHidden(Vector<DataElement> dati,
+	public static void addHTTPSDatiAsHidden(List<DataElement> dati,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
 			boolean httpsTrustVerifyCert, String httpspath, String httpstipo, String httpspwd,
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
@@ -860,7 +858,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 
 		de = new DataElement();
@@ -868,14 +866,14 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(httpstipologia);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 		de.setValue(httpshostverify ? Costanti.CHECK_BOX_ENABLED : "");
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
@@ -883,7 +881,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
@@ -891,14 +889,14 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(httpstipo);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -906,7 +904,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
@@ -914,7 +912,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
@@ -922,7 +920,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
@@ -930,14 +928,14 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_STATO);
 		de.setValue(httpsstato ? Costanti.CHECK_BOX_ENABLED : "");
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
-		dati.addElement(de);
+		dati.add(de);
 
 
 		de = new DataElement();
@@ -949,7 +947,7 @@ public class ConnettoreHTTPSUtils {
 		} else {
 			de.setValue("");
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
@@ -957,7 +955,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
@@ -965,7 +963,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
@@ -978,7 +976,7 @@ public class ConnettoreHTTPSUtils {
 			de.setValue("");
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
@@ -986,7 +984,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
@@ -994,7 +992,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
@@ -1002,7 +1000,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
@@ -1010,7 +1008,7 @@ public class ConnettoreHTTPSUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
 }

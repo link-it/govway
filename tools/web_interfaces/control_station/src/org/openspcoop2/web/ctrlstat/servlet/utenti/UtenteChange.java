@@ -21,9 +21,9 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,7 +95,6 @@ public final class UtenteChange extends Action {
 
 			InterfaceType interfaceType = null;
 			if(tipogui==null) {
-				//interfaceType = utentiHelper.getTipoInterfaccia();
 				interfaceType = utentiCore.getUser(user.getLogin()).getInterfaceType();
 			}
 			else {
@@ -133,11 +132,9 @@ public final class UtenteChange extends Action {
 
 				String postBackElementName = utentiHelper.getPostBackElementName();
 
-				if (postBackElementName != null) {
-					// cambio del profilo, reset del valore del soggetto
-					if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA)) {
-						idSoggetto = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
-					}
+				if (postBackElementName != null &&
+					postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA)) { // cambio del profilo, reset del valore del soggetto
+					idSoggetto = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
 				}
 			} else {
 				// modifica del profilo utente passando dai link del menu'
@@ -145,18 +142,20 @@ public final class UtenteChange extends Action {
 					// prelevo il vecchio valore del protocollo
 					soggettoSelezionatoUtente = user.getSoggettoSelezionatoPddConsole();
 				} else {
-					// il caso all viene gestito impostando il valore del soggetto selezionato = null;
-					if(!idSoggetto.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL))
-						soggettoSelezionatoUtente  = idSoggetto;
+					
+					if(!idSoggetto.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL)) {
+						soggettoSelezionatoUtente  = idSoggetto; // il caso all viene gestito impostando il valore del soggetto selezionato = null;
+					}
 				}
 
 				if(tipoModalita == null) {
 					// prelevo il vecchio valore del protocollo
 					protocolloSelezionatoUtente = oldProtocolloSelezionatoUtente;
 				} else {
-					// il caso all viene gestito impostando il valore del protocollo selezionato = null;
-					if(!tipoModalita.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL)) 
-						protocolloSelezionatoUtente  = tipoModalita;
+					
+					if(!tipoModalita.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL)) {
+						protocolloSelezionatoUtente  = tipoModalita; // il caso ALL viene gestito impostando il valore del protocollo selezionato a null;
+					}
 
 					// 	reset soggetto scelto se cambia il protocollo
 					// 1. se ho messo tutti oppure se ho cambiato modalita'
@@ -164,10 +163,6 @@ public final class UtenteChange extends Action {
 						soggettoSelezionatoUtente = null;
 						updateSoggetto = true;
 					}
-					//				else {
-					//					soggettoSelezionatoUtente = null;
-					//					updateSoggetto = true;
-					//				}
 				}
 			}
 			// Preparo il menu
@@ -181,7 +176,7 @@ public final class UtenteChange extends Action {
 
 			User myS = null;
 			// Se idhid != null, modifico i dati della porta di dominio nel db
-			if(utentiHelper.isEditModeInProgress() == false){
+			if(!utentiHelper.isEditModeInProgress()){
 
 				//se e' richiesta la modifica pwd allora controllo dati inseriti per modifica pwd
 
@@ -191,9 +186,9 @@ public final class UtenteChange extends Action {
 					boolean isOk = utentiHelper.changePwCheckData();
 					if (!isOk) {
 						// preparo i campi
-						Vector<DataElement> dati = new Vector<DataElement>();
+						List<DataElement> dati = new ArrayList<>();
 
-						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+						dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 						utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, tipoModalita, idSoggetto);
 
@@ -316,9 +311,9 @@ public final class UtenteChange extends Action {
 
 				pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 			} else if(changeModalita != null) { // clic sul link cambia modalita gateway 
 				// messaggio di cambiamento del protocollo:
 				List<String> protocolli = utentiCore.getProtocolli(request, session);
@@ -328,29 +323,20 @@ public final class UtenteChange extends Action {
 					String webSiteProtocollo = utentiHelper.getWebSiteProtocollo(protocollo);
 					String labelProtocollo = utentiHelper.getLabelProtocollo(protocollo); 
 
-					//					if(sbProtocolli.length() > 0)
-					//						sbProtocolli.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-
 					sbProtocolli.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					sbProtocolli.append("<li style=\"list-style-type:disc; margin-left:12px;\">");
 					sbProtocolli.append("<p><i>");
 					String linkSito = "<a href=\""+webSiteProtocollo+"\" target=\"_blank\">"+labelProtocollo+"</a>";
 					sbProtocolli.append(linkSito);
-					//sbProtocolli.append(""+labelProtocollo+": ");
 					sbProtocolli.append("</i></p>");
 					sbProtocolli.append("<p>");
 					sbProtocolli.append(descrizioneProtocollo);
-					//					sbProtocolli.append(" (");
-					//					String linkSito = "<a href=\""+webSiteProtocollo+"\" target=\"_blank\">"+webSiteProtocollo+"</a>";
-					//					sbProtocolli.append(linkSito);
-					//					sbProtocolli.append(")");
 					sbProtocolli.append("</p>");
 
 					sbProtocolli.append("</li>");
 				}
 				sbProtocolli.append("</ul>");
 
-				//String labelProt = protocolloSelezionatoUtente != null ?  ConsoleHelper.getLabelProtocollo(protocolloSelezionatoUtente) : UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
 				String pdMsg = "";
 				String pdMsgTitle= "Passaggio al "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE+" selezionato effettuato con successo.";
 				if(protocolloSelezionatoUtente == null) {
@@ -363,9 +349,9 @@ public final class UtenteChange extends Action {
 
 				pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 			} else if(changeSoggetto != null) { // clic sul link cambia soggetto
 
 				String pdMsg = "";
@@ -381,15 +367,15 @@ public final class UtenteChange extends Action {
 
 				pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 			}else {
 				// provengo dalla maschera di modifica utente
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, tipoModalita,idSoggetto);
 

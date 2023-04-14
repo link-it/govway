@@ -23,7 +23,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.ragg
 
 import java.util.Date;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -223,7 +223,7 @@ public class RestTest extends ConfigLoader {
 		//	per assicurarmi che il conteggio sia corretto anche in caso di
 		//	richieste parallele e quindi codice concorrente lato server
 		
-		final Vector<HttpResponse> responsesOk = new Vector<>();
+		final List<HttpResponse> responsesOk = new java.util.ArrayList<>();
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(maxRequests*requests.length);
 
 		for (int i = 0; i < maxRequests; i++) {
@@ -264,7 +264,7 @@ public class RestTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkOkRequests(responsesOk, windowSize, maxRequests);
 		
 		
-		final Vector<HttpResponse> responsesFailed = new Vector<>();
+		final List<HttpResponse> responsesFailed = new java.util.ArrayList<>();
 		executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(maxRequests*requests.length);
 		for (int i = 0; i < maxRequests; i++) {
 			

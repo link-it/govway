@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -142,27 +141,27 @@ public class PorteApplicativeConnettoreDefault extends Action {
 			// token policy
 			String autenticazioneTokenS = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
-			String token_policy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			String tokenPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 
 			// proxy
-			String proxy_enabled = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-			String proxy_hostname = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-			String proxy_port = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-			String proxy_username = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxy_password = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyEnabled = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxyHostname = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxyPort = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxyUsername = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxyPassword = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 
 			// tempi risposta
-			String tempiRisposta_enabled = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-			String tempiRisposta_connectionTimeout = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
-			String tempiRisposta_readTimeout = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
-			String tempiRisposta_tempoMedioRisposta = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+			String tempiRispostaEnabled = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			String tempiRispostaConnectionTimeout = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			String tempiRispostaReadTimeout = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			String tempiRispostaTempoMedioRisposta = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 
 			// opzioni avanzate
-			String transfer_mode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-			String transfer_mode_chunk_size = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-			String redirect_mode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-			String redirect_max_hop = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transfer_mode, redirect_mode);
+			String transferMode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transferModeChunkSize = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirectMode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirectMaxHop = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transferMode, redirectMode);
 
 			String user= null;
 			String password =null;
@@ -215,9 +214,9 @@ public class PorteApplicativeConnettoreDefault extends Action {
 
 			// file
 			String requestOutputFileName = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
-			String requestOutputFileName_permissions = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+			String requestOutputFileNamePermissions = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			String requestOutputFileNameHeaders = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
-			String requestOutputFileNameHeaders_permissions = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+			String requestOutputFileNameHeadersPermissions = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			String requestOutputParentDirCreateIfNotExists = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			String requestOutputOverwriteIfExists = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			String responseInputMode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -264,7 +263,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 			List<IDServizioApplicativoDB> listaIdSAServer = null;
 			//String [] saSoggetti = null;	
 			if ((idsogg != null) && !idsogg.equals("")) {
-				long idErogatore = Long.valueOf(idsogg);
+				long idErogatore = Long.parseLong(idsogg);
 
 				// I servizi applicativi da visualizzare sono quelli che hanno
 				// -Integration Manager (getMessage abilitato)
@@ -398,37 +397,37 @@ public class PorteApplicativeConnettoreDefault extends Action {
 
 					autenticazioneHttp = porteApplicativeHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 
-					tempiRisposta_enabled = null;
+					tempiRispostaEnabled = null;
 					ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
 					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
-					tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
-					tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
-					tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+					tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+					tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+					tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 
 				}
 				// Devo cmq rileggere i valori se non definiti
-				if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+				if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
 						|| 
-						tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+						tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) 
 						|| 
-						tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
+						tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ){
 					ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
 					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
-					if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
-						tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+					if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
+						tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 					}
-					if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
-						tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+					if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
+						tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
 					}
-					if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
-						tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+					if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
+						tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 					}
 				}
 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
@@ -452,13 +451,13 @@ public class PorteApplicativeConnettoreDefault extends Action {
 							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT, null, null,
 							null, null, null, null, null, null, false,
 							isConnettoreCustomUltimaImmagineSalvata, 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken,token_policy,
+							autenticazioneToken,tokenPolicy,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
@@ -490,22 +489,22 @@ public class PorteApplicativeConnettoreDefault extends Action {
 						httpspwdprivatekey, httpsalgoritmokey,
 						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 						tipoconn,autenticazioneHttp,
-						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,token_policy,
+						autenticazioneToken,tokenPolicy,
 						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer);
 			}
 
 			if(!isOk) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
@@ -529,13 +528,13 @@ public class PorteApplicativeConnettoreDefault extends Action {
 							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT, null, null,
 							null, null, null, null, null, null, false,
 							isConnettoreCustomUltimaImmagineSalvata, 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken,token_policy,
+							autenticazioneToken,tokenPolicy,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
@@ -553,7 +552,6 @@ public class PorteApplicativeConnettoreDefault extends Action {
 
 			// Connettore
 			Connettore connettore = new Connettore();
-			// this.nomeservizio);
 			if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
 				connettore.setTipo(tipoconn);
 			else
@@ -570,17 +568,17 @@ public class PorteApplicativeConnettoreDefault extends Action {
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
 					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
-					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					token_policy,
+					tokenPolicy,
 					listExtendedConnettore);
 
-			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
-			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+			List<Object> listaOggettiDaCreare = new ArrayList<>();
+			List<Object> listaOggettiDaModificare = new ArrayList<>();
 
 			// creare un servizio applicativo
 			String nomeServizioApplicativoErogatore = portaApplicativa.getNome();
@@ -642,10 +640,9 @@ public class PorteApplicativeConnettoreDefault extends Action {
 					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
 					String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-					if(tipologia!=null) {
-						if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
-							ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
-						}
+					if(tipologia!=null &&
+						AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
 					}
 
 					boolean [] permessi = new boolean[2];

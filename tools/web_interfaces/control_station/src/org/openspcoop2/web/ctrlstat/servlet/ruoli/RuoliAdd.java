@@ -21,8 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,8 +36,8 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -100,8 +100,8 @@ public final class RuoliAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, RuoliCostanti.LABEL_RUOLI, RuoliCostanti.SERVLET_NAME_RUOLI_LIST);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 
 				dati = ruoliHelper.addRuoloToDati(TipoOperazione.ADD, null, nome != null ? nome : "", descrizione != null ? descrizione : "",
@@ -124,9 +124,9 @@ public final class RuoliAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, RuoliCostanti.LABEL_RUOLI, RuoliCostanti.SERVLET_NAME_RUOLI_LIST);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = ruoliHelper.addRuoloToDati(TipoOperazione.ADD, null, nome, descrizione, tipologia, nomeEsterno, contesto, dati, null);
 

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -124,7 +123,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 			String protocolPropertiesSet = apcHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			long idAccordoLong = Long.valueOf(id);
+			long idAccordoLong = Long.parseLong(id);
 			String nomeaz = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_NOME);
 			if (nomeaz == null) {
 				nomeaz = "";
@@ -188,18 +187,16 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 			List<Azione> azioniCorrelate = apcCore.accordiAzioniList(idAccordoLong, CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.toString(), new ConsoleSearch(true));
 			List<String> azioniCorrelateUniche = null;
 			String[] azioniList = null;
-			if (azioniCorrelate.size() > 0) {
-				azioniCorrelateUniche = new ArrayList<String>();
+			if (!azioniCorrelate.isEmpty()) {
+				azioniCorrelateUniche = new ArrayList<>();
 				azioniCorrelateUniche.add("-");
 				for (Iterator<Azione> iterator = azioniCorrelate.iterator(); iterator.hasNext();) {
 					Azione azione = iterator.next();
-					if (!nomeaz.equals(azione.getNome())) {
-						if ( 
-								(azione.getCorrelata()==null||"".equals(azione.getCorrelata())) &&
-								(!apcCore.isAzioneCorrelata(idAccordoLong, azione.getNome(), nomeaz))
-								) {
-							azioniCorrelateUniche.add(azione.getNome());
-						}
+					if (!nomeaz.equals(azione.getNome()) &&
+							(azione.getCorrelata()==null||"".equals(azione.getCorrelata())) &&
+							(!apcCore.isAzioneCorrelata(idAccordoLong, azione.getNome(), nomeaz))
+							) {
+						azioniCorrelateUniche.add(azione.getNome());
 					}
 				}
 			}
@@ -297,9 +294,9 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// update della configurazione 
 				consoleDynamicConfiguration.updateDynamicConfigAzione(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
@@ -375,9 +372,9 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 						);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// update della configurazione 
 				consoleDynamicConfiguration.updateDynamicConfigAzione(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 

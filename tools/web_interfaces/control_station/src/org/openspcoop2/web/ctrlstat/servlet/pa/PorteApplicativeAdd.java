@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -203,8 +202,8 @@ public final class PorteApplicativeAdd extends Action {
 			String autorizzazioneRuoliTipologiaToken = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA_TOKEN);
 			String autorizzazioneRuoliMatchToken = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH_TOKEN);
 			
-			String autorizzazione_token = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
-			String autorizzazione_tokenOptions = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
+			String autorizzazioneToken = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
+			String autorizzazioneTokenOptions = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			
@@ -220,11 +219,11 @@ public final class PorteApplicativeAdd extends Action {
 			String ctContatori = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI);
 			String ctTipologia = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_TIPOLOGIA);
 			String ctHeaderHttp = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP);
-			String ctHeaderHttp_limit = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
-			String ctHeaderHttp_remaining = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
-			String ctHeaderHttp_reset = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
-			String ctHeaderHttp_retryAfter = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
-			String ctHeaderHttp_retryAfterBackoff = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+			String ctHeaderHttpLimit = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+			String ctHeaderHttpRemaining = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+			String ctHeaderHttpReset = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+			String ctHeaderHttpRetryAfter = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+			String ctHeaderHttpRetryAfterBackoff = porteApplicativeHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
@@ -269,11 +268,11 @@ public final class PorteApplicativeAdd extends Action {
 				} 
 			}
 			
-			List<String> tipiServizioCompatibiliAccordo = new ArrayList<String>();
+			List<String> tipiServizioCompatibiliAccordo = new ArrayList<>();
 			if(serviceBinding == null) {
 				List<ServiceBinding> serviceBindingListProtocollo = apsCore.getServiceBindingListProtocollo(protocollo);
 				
-				if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
+				if(serviceBindingListProtocollo != null && !serviceBindingListProtocollo.isEmpty()) {
 					for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
 						List<String> tipiServizioCompatibiliAccordoTmp = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding2);
 						
@@ -302,10 +301,10 @@ public final class PorteApplicativeAdd extends Action {
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
 			Boolean soggVirt = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
-			if (soggVirt) {
+			if (soggVirt!=null && soggVirt.booleanValue()) {
 				List<IDServizio> list = null;
-				List<IDSoggetto> listSoggetti = new ArrayList<IDSoggetto>();
-				Vector<String> identitaSoggetti = new Vector<String>();
+				List<IDSoggetto> listSoggetti = new ArrayList<>();
+				List<String> identitaSoggetti = new ArrayList<>();
 				try{
 					list = apsCore.getAllIdServizi(new FiltroRicercaServizi());
 				}catch(DriverRegistroServiziNotFound dNotFound){}
@@ -313,7 +312,7 @@ public final class PorteApplicativeAdd extends Action {
 					for (int i = 0; i < list.size(); i++) {
 						String idSoggetto = list.get(i).getSoggettoErogatore().toString();
 						if (!idSoggetto.equals(tipoNomeSoggettoProprietario)){ // non aggiungo il soggetto proprietario della porta applicativa
-							if(identitaSoggetti.contains(idSoggetto)==false){
+							if(!identitaSoggetti.contains(idSoggetto)){
 								identitaSoggetti.add(idSoggetto);
 								IDSoggetto soggettoErogatore = list.get(i).getSoggettoErogatore();
 								String protocolloSoggettoErogatore = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoErogatore.getTipo());
@@ -329,8 +328,8 @@ public final class PorteApplicativeAdd extends Action {
 				soggettiListLabel = new String[totEl];
 				soggettiList[0] = "-";
 				soggettiListLabel[0] = "-";
-				Map<String, String> soggettiMapTmp = new HashMap<String,String>();
-				List<String> listSoggettiOrdered = new ArrayList<String>();
+				Map<String, String> soggettiMapTmp = new HashMap<>();
+				List<String> listSoggettiOrdered = new ArrayList<>();
 				for (IDSoggetto idSoggetto : listSoggetti) {
 					listSoggettiOrdered.add(idSoggetto.getTipo() + "/" + idSoggetto.getNome());
 					soggettiMapTmp.put(idSoggetto.getTipo() + "/" + idSoggetto.getNome(), porteApplicativeHelper.getLabelNomeSoggetto(protocollo,
@@ -360,10 +359,12 @@ public final class PorteApplicativeAdd extends Action {
 			List<IDServizio> listaServizi = null;
 			try{
 				listaServizi = apsCore.getAllIdServizi(filtroServizi);
-			}catch(DriverRegistroServiziNotFound not){}
-			if(listaServizi!=null && listaServizi.size()>0){
-				List<String> serviziListTmp = new ArrayList<String>();
-				Map<String, IDServizio> serviziMapTmp = new HashMap<String,IDServizio>();
+			}catch(DriverRegistroServiziNotFound not){
+				// ignore
+			}
+			if(listaServizi!=null && !listaServizi.isEmpty()){
+				List<String> serviziListTmp = new ArrayList<>();
+				Map<String, IDServizio> serviziMapTmp = new HashMap<>();
 				for (IDServizio idServizio : listaServizi) {
 					if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
 						String keyServizio = idServizio.getSoggettoErogatore().getTipo() + "/" + idServizio.getSoggettoErogatore().getNome() + " " + idServizio.getTipo() + "/" + idServizio.getNome() + "/" + idServizio.getVersione().intValue();
@@ -437,7 +438,7 @@ public final class PorteApplicativeAdd extends Action {
 			String[] azioniList = null;
 			String[] azioniListLabel = null;
 			boolean addTrattinoSelezioneNonEffettuata = false;
-			List<String> filtraAzioniUtilizzate = new ArrayList<String>(); // TODO controllare
+			List<String> filtraAzioniUtilizzate = new ArrayList<>();
 			if ((modeaz != null) && modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {
 			
 				Map<String,String> azioni = porteApplicativeCore.getAzioniConLabel(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
@@ -490,22 +491,21 @@ public final class PorteApplicativeAdd extends Action {
 						);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
 
-				if (statoValidazione == null) {
-					if(porteApplicativeCore.isSinglePdD()){
-						Configurazione config = porteApplicativeCore.getConfigurazioneGenerale();
-						if(config.getValidazioneContenutiApplicativi()!=null){
-							if(config.getValidazioneContenutiApplicativi().getStato()!=null)
-								statoValidazione = config.getValidazioneContenutiApplicativi().getStato().toString();
-							if(config.getValidazioneContenutiApplicativi().getTipo()!=null)
-								tipoValidazione = config.getValidazioneContenutiApplicativi().getTipo().toString();
-							if(StatoFunzionalita.ABILITATO.equals(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage())){
-								applicaMTOM = Costanti.CHECK_BOX_ENABLED_ABILITATO;
-							}
+				if (statoValidazione == null &&
+					porteApplicativeCore.isSinglePdD()){
+					Configurazione config = porteApplicativeCore.getConfigurazioneGenerale();
+					if(config.getValidazioneContenutiApplicativi()!=null){
+						if(config.getValidazioneContenutiApplicativi().getStato()!=null)
+							statoValidazione = config.getValidazioneContenutiApplicativi().getStato().toString();
+						if(config.getValidazioneContenutiApplicativi().getTipo()!=null)
+							tipoValidazione = config.getValidazioneContenutiApplicativi().getTipo().toString();
+						if(StatoFunzionalita.ABILITATO.equals(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage())){
+							applicaMTOM = Costanti.CHECK_BOX_ENABLED_ABILITATO;
 						}
 					}
 				}
@@ -588,15 +588,15 @@ public final class PorteApplicativeAdd extends Action {
 						gestioneTokenPolicy, gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_token, autorizzazione_tokenOptions,
+						autorizzazioneToken, autorizzazioneTokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						null,null,
 						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 						autorizzazioneAutenticatiToken, null, 0,
 						autorizzazioneRuoliToken,  null, 0, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
-						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
-						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff); 
+						ctHeaderHttp, ctHeaderHttpLimit, ctHeaderHttpRemaining, ctHeaderHttpReset,
+						ctHeaderHttpRetryAfter, ctHeaderHttpRetryAfterBackoff); 
 
 				pd.setDati(dati);
 
@@ -621,9 +621,9 @@ public final class PorteApplicativeAdd extends Action {
 						);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
 
@@ -643,15 +643,15 @@ public final class PorteApplicativeAdd extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_token, autorizzazione_tokenOptions,
+						autorizzazioneToken, autorizzazioneTokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						null,null,
 						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 						autorizzazioneAutenticatiToken, null, 0,
 						autorizzazioneRuoliToken,  null, 0, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
-						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
-						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+						ctHeaderHttp, ctHeaderHttpLimit, ctHeaderHttpRemaining, ctHeaderHttpReset,
+						ctHeaderHttpRetryAfter, ctHeaderHttpRetryAfterBackoff);
 
 				pd.setDati(dati);
 
@@ -679,8 +679,6 @@ public final class PorteApplicativeAdd extends Action {
 			} else if(autorizzazioneContenutiStato.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				pa.setAutorizzazioneContenuto(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
 				pa.getProprietaAutorizzazioneContenutoList().clear();
-				// Fix: non rispettava l'ordine
-				//Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);
 				SortedMap<List<String>> convertTextToProperties = PropertiesUtilities.convertTextToSortedListMap(autorizzazioneContenutiProperties, true);
 				porteApplicativeCore.addFromSortedListMap(pa.getProprietaAutorizzazioneContenutoList(), convertTextToProperties);
 			} else {
@@ -712,7 +710,7 @@ public final class PorteApplicativeAdd extends Action {
 						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticatiToken), 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoliToken),
 						ServletUtils.isCheckBoxEnabled(autorizzazioneScope),
-						autorizzazione_tokenOptions,
+						autorizzazioneTokenOptions,
 						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
 			else
 				pa.setAutorizzazione(autorizzazioneCustom);
@@ -760,7 +758,7 @@ public final class PorteApplicativeAdd extends Action {
 				pa.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
 				pa.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));
 				pa.getGestioneToken().setForward(StatoFunzionalita.toEnumConstant(gestioneTokenTokenForward)); 
-				pa.getGestioneToken().setOptions(autorizzazione_tokenOptions);
+				pa.getGestioneToken().setOptions(autorizzazioneTokenOptions);
 				if(pa.getGestioneToken().getAutenticazione()==null) {
 					pa.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
 				}
@@ -819,11 +817,11 @@ public final class PorteApplicativeAdd extends Action {
 			}
 			
 			// se l azione e' settata allora creo il bean
-			if (((!azione.equals("") || 
+			if ((!azione.equals("") || 
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) ||
-							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))) ||
+							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED)) ||
 							!azid.equals("")) {
 				PortaApplicativaAzione paa = new PortaApplicativaAzione();
 

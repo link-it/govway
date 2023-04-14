@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -190,9 +189,9 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 					porteDelegateHelper.deleteBinaryParameters(trasformazioneContenutoTemplate);
 				}
 				
-				if(postBackElementName.equals(trasformazioneContenutoTemplate.getName())) {
-					if(StringUtils.isEmpty(trasformazioneContenutoTipoCheck))
-						trasformazioneContenutoTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+				if(postBackElementName.equals(trasformazioneContenutoTemplate.getName()) &&
+					StringUtils.isEmpty(trasformazioneContenutoTipoCheck)) {
+					trasformazioneContenutoTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
 				}
 				
 				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_SOAP_TRANSFORMATION)) {
@@ -217,16 +216,15 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 					porteDelegateHelper.deleteBinaryParameters(trasformazioneSoapEnvelopeTemplate);
 				}
 				
-				if(postBackElementName.equals(trasformazioneSoapEnvelopeTemplate.getName())) {
-					if(StringUtils.isEmpty(trasformazioneSoapEnvelopeTipoCheck))
-						trasformazioneSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+				if(postBackElementName.equals(trasformazioneSoapEnvelopeTemplate.getName()) &&
+					StringUtils.isEmpty(trasformazioneSoapEnvelopeTipoCheck)) {
+					trasformazioneSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
 				}
 				
-				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_REST_TRANSFORMATION)) {
-					if(trasformazioneRestAbilitato) {
-						trasformazioneRestMethod = "";
-						trasformazioneRestPath = ""; 
-					}
+				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_REST_TRANSFORMATION) &&
+					trasformazioneRestAbilitato) {
+					trasformazioneRestMethod = "";
+					trasformazioneRestPath = ""; 
 				}
 			}
 			
@@ -240,13 +238,13 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			int numeroTrasformazioniRichiestaHeaders= oldRichiesta != null ? oldRichiesta.sizeHeaderList() : 0;
 			int numeroTrasformazioniRichiestaParametri = oldRichiesta != null ? oldRichiesta.sizeParametroUrlList() : 0;
 		 
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdAsps);
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdFruizione);
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdTrasformazione);
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaParametri = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaParametri = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(pIdAsps);
@@ -279,8 +277,8 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			// dati
 			if (porteDelegateHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// primo accesso
 				if(trasformazioneContenutoAbilitatoS == null) {
@@ -380,9 +378,9 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, protocollo, dati, idInt, oldRichiesta, true, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
 						trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
@@ -438,14 +436,14 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 						} else {
 							reg.getRichiesta().setTrasformazioneRest(null);
 							
-							if(ServiceBinding.REST.equals(serviceBindingMessage)) {
-								if(StringUtils.isNotEmpty(trasformazioneRestMethod) || StringUtils.isNotEmpty(trasformazioneRestPath)) {
-									if(reg.getRichiesta().getTrasformazioneRest() == null) 
-										reg.getRichiesta().setTrasformazioneRest(new TrasformazioneRest());
-									
-									reg.getRichiesta().getTrasformazioneRest().setMetodo(trasformazioneRestMethod);
-									reg.getRichiesta().getTrasformazioneRest().setPath(trasformazioneRestPath);
-								} 
+							if(ServiceBinding.REST.equals(serviceBindingMessage) &&
+								(StringUtils.isNotEmpty(trasformazioneRestMethod) || StringUtils.isNotEmpty(trasformazioneRestPath))
+									){
+								if(reg.getRichiesta().getTrasformazioneRest() == null) 
+									reg.getRichiesta().setTrasformazioneRest(new TrasformazioneRest());
+								
+								reg.getRichiesta().getTrasformazioneRest().setMetodo(trasformazioneRestMethod);
+								reg.getRichiesta().getTrasformazioneRest().setPath(trasformazioneRestPath);
 							}
 						}
 						
@@ -524,13 +522,13 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			numeroTrasformazioniRichiestaHeaders= trasformazioneAggiornata.getRichiesta() != null ? trasformazioneAggiornata.getRichiesta().sizeHeaderList() : 0;
 			numeroTrasformazioniRichiestaParametri = trasformazioneAggiornata.getRichiesta() != null ? trasformazioneAggiornata.getRichiesta().sizeParametroUrlList() : 0;
 			
-			parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<Parameter>();
+			parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdAsps);
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdFruizione);
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(pIdTrasformazione);
-			parametriInvocazioneServletTrasformazioniRichiestaParametri = new ArrayList<Parameter>();
+			parametriInvocazioneServletTrasformazioniRichiestaParametri = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiestaParametri.add(pIdAsps);
@@ -561,7 +559,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 			
 			TrasformazioneRegolaRichiesta richiesta = trasformazioneAggiornata.getRichiesta();
 			
@@ -654,8 +652,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			pd.setDati(dati);
 						
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-			//pd.disableEditMode();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			

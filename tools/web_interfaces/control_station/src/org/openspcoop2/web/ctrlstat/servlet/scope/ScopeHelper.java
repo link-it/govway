@@ -23,7 +23,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -37,7 +36,6 @@ import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
-//import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
@@ -70,8 +68,8 @@ public class ScopeHelper extends ConsoleHelper{
 		super(core, request, pd,  session);
 	}
 
-	public Vector<DataElement> addScopeToDati(TipoOperazione tipoOP, Long scopeId, String nome, String descrizione, String tipologia,
-			String nomeEsterno, String contesto, Vector<DataElement> dati, String oldNomeScope) {
+	public List<DataElement> addScopeToDati(TipoOperazione tipoOP, Long scopeId, String nome, String descrizione, String tipologia,
+			String nomeEsterno, String contesto, List<DataElement> dati, String oldNomeScope) {
 		
 		if(TipoOperazione.CHANGE.equals(tipoOP)){
 			
@@ -96,9 +94,8 @@ public class ScopeHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ScopeCostanti.LABEL_SCOPE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
-		de = new DataElement();
 		if(scopeId!=null){
 			de = new DataElement();
 			de.setLabel(ScopeCostanti.PARAMETRO_SCOPE_ID);
@@ -106,22 +103,17 @@ public class ScopeHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ScopeCostanti.PARAMETRO_SCOPE_ID);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
 		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME);
 		de.setValue(nome);
-		//if(TipoOperazione.ADD.equals(tipoOP)){
 		de.setType(DataElementType.TEXT_EDIT);
-		//}
-		//else{
-		//	de.setType(DataElementType.TEXT);
-		//}
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_NOME);
 		de.setSize( getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE);
@@ -129,7 +121,7 @@ public class ScopeHelper extends ConsoleHelper{
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
 		de.setSize( getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_TIPOLOGIA);
@@ -141,7 +133,7 @@ public class ScopeHelper extends ConsoleHelper{
 			de.setType(DataElementType.TEXT_EDIT);
 		else 
 			de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME_ESTERNO);
@@ -149,16 +141,16 @@ public class ScopeHelper extends ConsoleHelper{
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO);
 		de.setSize( getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_CONTESTO);
 		de.setType(DataElementType.SELECT);
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_CONTESTO);
-		de.setLabels(ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL);
-		de.setValues(ScopeCostanti.SCOPE_CONTESTO_UTILIZZO);
+		de.setLabels(ScopeCostanti.getScopeContestoUtilizzoLabel());
+		de.setValues(ScopeCostanti.getScopeContestoUtilizzo());
 		de.setSelected(contesto);
-		dati.addElement(de);
+		dati.add(de);
 	
 		return dati;
 	}
@@ -172,9 +164,6 @@ public class ScopeHelper extends ConsoleHelper{
 			String nome = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME);
 			String descrizione = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
 			String nomeEsterno = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO);
-			//String descrizione = this.scopeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
-			//String tipologia = this.scopeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_SCOPE_TIPOLOGIA);
-			//String contesto = this.scopeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_SCOPE_CONTESTO);
 			
 			// Campi obbligatori
 			if (nome.equals("")) {
@@ -191,22 +180,20 @@ public class ScopeHelper extends ConsoleHelper{
 				this.pd.setMessage("Non inserire spazi nel campo '"+ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME+"'");
 				return false;
 			}
-			if(this.checkNCName(nome, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME)==false){
+			if(!this.checkNCName(nome, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME)){
 				return false;
 			}
-			if(this.checkLength255(nome, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME)==false) {
+			if(!this.checkLength255(nome, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME)) {
 				return false;
 			}
 			
-			if(descrizione!=null && !"".equals(descrizione)) {
-				if(this.checkLength255(descrizione, ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE)==false) {
-					return false;
-				}
+			if(descrizione!=null && !"".equals(descrizione) &&
+				!this.checkLength255(descrizione, ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE)) {
+				return false;
 			}
-			if(nomeEsterno!=null && !"".equals(nomeEsterno)) {
-				if(this.checkLength255(nomeEsterno, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME_ESTERNO)==false) {
-					return false;
-				}
+			if(nomeEsterno!=null && !"".equals(nomeEsterno) &&
+				!this.checkLength255(nomeEsterno, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME_ESTERNO)) {
+				return false;
 			}
 
 			// Se tipoOp = add, controllo che il registro non sia gia' stato
@@ -221,26 +208,10 @@ public class ScopeHelper extends ConsoleHelper{
 			}
 			else{
 				
-				if(scope.getNome().equals(nome)==false){
-					// e' stato modificato ilnome
-					
-					// e' stato implementato l'update
-//					java.util.HashMap<org.openspcoop2.core.commons.ErrorsHandlerCostant, List<String>> whereIsInUso = new java.util.HashMap<org.openspcoop2.core.commons.ErrorsHandlerCostant, List<String>>();
-//					boolean scopeInUso = this.confCore.isScopeInUso(scope.getNome(),whereIsInUso);
-//					if (scopeInUso) {
-//						String msg = "";
-//						msg += org.openspcoop2.core.commons.DBOggettiInUsoUtils.toString(new org.openspcoop2.core.id.IDScope(scope.getNome()), whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,
-//								" non modificabile in '"+nome+"' perch&egrave; risulta utilizzato:");
-//						msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-//						this.pd.setMessage(msg);
-//						return false;
-//					} 
-//					
-					if(this.scopeCore.existsScope(nome)){
-						this.pd.setMessage("Un scope con nome '" + nome + "' risulta gi&agrave; stato registrato");
-						return false;
-					}
-					
+				if(!scope.getNome().equals(nome) &&
+					this.scopeCore.existsScope(nome)){ // e' stato modificato ilnome
+					this.pd.setMessage("Un scope con nome '" + nome + "' risulta gi&agrave; stato registrato");
+					return false;
 				}
 				
 			}
@@ -382,14 +353,14 @@ public class ScopeHelper extends ConsoleHelper{
 			this.setLabelColonne(modalitaCompleta);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Scope> it = lista.iterator();
 				while (it.hasNext()) {
-					Vector<DataElement> e = modalitaCompleta ? this.creaEntry(it) : this.creaEntryCustom(it);
+					List<DataElement> e = modalitaCompleta ? this.creaEntry(it) : this.creaEntryCustom(it);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -397,29 +368,28 @@ public class ScopeHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 			
 			// preparo bottoni
-			if(lista!=null && lista.size()>0){
-				if (this.core.isShowPulsantiImportExport()) {
+			if(lista!=null && !lista.isEmpty() &&
+				this.core.isShowPulsantiImportExport()) {
 
-					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.SCOPE, this.request, this.session)){
+				ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+				if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.SCOPE, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+					List<AreaBottoni> bottoni = new ArrayList<>();
 
-						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
-						DataElement de = new DataElement();
-						de.setValue(ScopeCostanti.LABEL_SCOPE_ESPORTA_SELEZIONATI);
-						de.setOnClick(ScopeCostanti.LABEL_SCOPE_ESPORTA_SELEZIONATI_ONCLICK);
-						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
-						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+					AreaBottoni ab = new AreaBottoni();
+					List<DataElement> otherbott = new ArrayList<>();
+					DataElement de = new DataElement();
+					de.setValue(ScopeCostanti.LABEL_SCOPE_ESPORTA_SELEZIONATI);
+					de.setOnClick(ScopeCostanti.LABEL_SCOPE_ESPORTA_SELEZIONATI_ONCLICK);
+					de.setDisabilitaAjaxStatus();
+					otherbott.add(de);
+					ab.setBottoni(otherbott);
+					bottoni.add(ab);
 
-						this.pd.setAreaBottoni(bottoni);
-
-					}
+					this.pd.setAreaBottoni(bottoni);
 
 				}
+
 			}
 			
 		} catch (Exception e) {
@@ -427,10 +397,10 @@ public class ScopeHelper extends ConsoleHelper{
 			throw new Exception(e);
 		}
 	}
-	private Vector<DataElement> creaEntry(Iterator<Scope> it) {
+	private List<DataElement> creaEntry(Iterator<Scope> it) {
 		Scope scope = it.next();
 
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 
 		DataElement de = new DataElement();
 		Parameter pId = new Parameter(ScopeCostanti.PARAMETRO_SCOPE_ID, scope.getId()+"");
@@ -441,12 +411,12 @@ public class ScopeHelper extends ConsoleHelper{
 		de.setIdToRemove(scope.getNome());
 		de.setToolTip(scope.getDescrizione());
 		de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
-		e.addElement(de);
+		e.add(de);
 		
 		if(mostraFiltroScopeTipologia){
 			de = new DataElement();
 			de.setValue(scope.getTipologia());
-			e.addElement(de);
+			e.add(de);
 		}
 		
 		de = new DataElement();
@@ -459,7 +429,7 @@ public class ScopeHelper extends ConsoleHelper{
 		else{
 			de.setValue(ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_QUALSIASI);
 		}
-		e.addElement(de);
+		e.add(de);
 		return e;
 	}
 	private void setLabelColonne(boolean modalitaCompleta) {
@@ -469,7 +439,7 @@ public class ScopeHelper extends ConsoleHelper{
 			};
 			this.pd.setLabels(labels);
 		} else {
-			List<String> listLabels= new ArrayList<String>();
+			List<String> listLabels= new ArrayList<>();
 			listLabels.add(ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME);
 			if(mostraFiltroScopeTipologia){
 				listLabels.add(ScopeCostanti.LABEL_PARAMETRO_SCOPE_TIPOLOGIA);
@@ -481,10 +451,10 @@ public class ScopeHelper extends ConsoleHelper{
 		}
 	}
 	
-	private Vector<DataElement> creaEntryCustom(Iterator<Scope> it) {
+	private List<DataElement> creaEntryCustom(Iterator<Scope> it) {
 		Scope scope = it.next();
 
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 
 		// Titolo (nome)
 		DataElement de = new DataElement();
@@ -496,7 +466,7 @@ public class ScopeHelper extends ConsoleHelper{
 		de.setIdToRemove(scope.getNome());
 		de.setToolTip(scope.getDescrizione());
 		de.setType(DataElementType.TITLE);
-		e.addElement(de);
+		e.add(de);
 		
 		
 		de = new DataElement();
@@ -523,9 +493,9 @@ public class ScopeHelper extends ConsoleHelper{
 			de.setValue(identificativoEsternoLabelPrefix+MessageFormat.format(ScopeCostanti.MESSAGE_METADATI_SCOPE_SOLO_CONTESTO, contestoLabel));
 		}
 		de.setType(DataElementType.SUBTITLE);
-		e.addElement(de);
+		e.add(de);
 		
-		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		List<Parameter> listaParametriChange = new ArrayList<>();
 		listaParametriChange.add(pId);
 		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA, "true"));
 

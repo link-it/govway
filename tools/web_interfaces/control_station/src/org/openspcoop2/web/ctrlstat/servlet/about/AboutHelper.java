@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.about;
 
-import java.util.Vector;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -54,7 +54,7 @@ public class AboutHelper extends ConsoleHelper {
 		super(request, pd,  session);
 	}
 
-	public Vector<DataElement> addAboutToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione, String userLogin,
+	public List<DataElement> addAboutToDati(List<DataElement> dati,TipoOperazione tipoOperazione, String userLogin,
 			BinaryParameter infoBP) throws UtilsException {
 		 
 		IVersionInfo versionInfo = null;
@@ -71,14 +71,12 @@ public class AboutHelper extends ConsoleHelper {
 				this.pd.setMessage(versionInfo.getWarningMessage(), MessageType.INFO);
 			}
 		}
-		
-		DataElement de = new DataElement();
 
 		// titolo sezione
-		de = new DataElement();
+		DataElement de = new DataElement();
 		de.setLabel(AboutCostanti.LABEL_PRODOTTO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// versione
 		de = new DataElement();
@@ -86,7 +84,7 @@ public class AboutHelper extends ConsoleHelper {
 		de.setType(DataElementType.TEXT);
 		de.setValue(this.core.getProductVersion());
 		de.setStyleClass(Costanti.INPUT_TEXT_DEFAULT_CSS_CLASS_FONT_SIZE_16);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// sito
 		de = new DataElement();
@@ -102,7 +100,7 @@ public class AboutHelper extends ConsoleHelper {
 			de.setUrl(CostantiControlStation.LABEL_OPENSPCOOP2_WEB);
 		}
 		de.setStyleClass(Costanti.INPUT_TEXT_DEFAULT_CSS_CLASS_FONT_SIZE_16);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// copyright
 		de = new DataElement();
@@ -115,7 +113,7 @@ public class AboutHelper extends ConsoleHelper {
 			de.setValue(AboutCostanti.LABEL_COPYRIGHT_VALUE);
 		}
 		de.setStyleClass(Costanti.INPUT_TEXT_DEFAULT_CSS_CLASS_FONT_SIZE_16);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// sito openspcoop
 		de = new DataElement();
@@ -137,14 +135,14 @@ public class AboutHelper extends ConsoleHelper {
 			de.setValue(AboutCostanti.LICENSE);
 			de.setRows(11);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(versionInfo!=null) {
 			
 			de = new DataElement();
 			de.setLabel(AboutCostanti.LABEL_PARAMETRO_ABOUT_INFO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			DataElement deFile = infoBP.getFileDataElement(AboutCostanti.LABEL_PARAMETRO_ABOUT_INFO, "", getSize());
 			deFile.setPostBack(false);
@@ -157,7 +155,7 @@ public class AboutHelper extends ConsoleHelper {
 			de.setName(AboutCostanti.PARAMETRO_ABOUT_INFO_FINISH);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(Costanti.CHECK_BOX_ENABLED);
-			dati.addElement(de);
+			dati.add(de);
 				
 			this.pd.setLabelBottoneInvia(AboutCostanti.BUTTON);
 

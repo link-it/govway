@@ -21,7 +21,7 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.global_policy;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -113,8 +113,8 @@ public class RestTest extends ConfigLoader {
 		request.setUrl(url);
 		request.addHeader(headerName, HEADER_GLOBAL_POLICY_VALUE);
 		
-		Vector<HttpResponse> responseOk = Utils.makeSequentialRequests(request, maxRequests);
-		Vector<HttpResponse> responseBlocked = Utils.makeSequentialRequests(request, maxRequests);
+		List<HttpResponse> responseOk = Utils.makeSequentialRequests(request, maxRequests);
+		List<HttpResponse> responseBlocked = Utils.makeSequentialRequests(request, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		// X-RateLimit-Limit=10, 10;w=3600, X-RateLimit-Remaining=9

@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -158,14 +157,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			strutsBean.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			strutsBean.protocolPropertiesSet = apsHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
-			// int idInt = Integer.parseInt(id);
 			String nomeservizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO);
 			String tiposervizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
 			String accordo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
-			//			String accordoLabel = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO_LABEL);
 			String servcorr = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_SERVIZIO_CORRELATO);
-			// String servpub = apsHelper.getParameter("servpub");
-			//String endpointtype = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
 			
 			String endpointtype = apsHelper.readEndPointType();
 			String tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
@@ -186,27 +181,27 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// token policy
 			String autenticazioneTokenS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
-			String token_policy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			String tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			
 			// proxy
-			String proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-			String proxy_hostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-			String proxy_port = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-			String proxy_username = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxy_password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxyPort = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxyUsername = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxyPassword = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 			
 			// tempi risposta
-			String tempiRisposta_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-			String tempiRisposta_connectionTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
-			String tempiRisposta_readTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
-			String tempiRisposta_tempoMedioRisposta = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+			String tempiRispostaEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			String tempiRispostaConnectionTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			String tempiRispostaReadTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			String tempiRispostaTempoMedioRisposta = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 			
 			// opzioni avanzate
-			String transfer_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-			String transfer_mode_chunk_size = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-			String redirect_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-			String redirect_max_hop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode);
+			String transferMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transferModeChunkSize = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirectMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirectMaxHop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transferMode, redirectMode);
 			
 			// http
 			String url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
@@ -262,9 +257,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			// file
 			String requestOutputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
-			String requestOutputFileName_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+			String requestOutputFileNamePermissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			String requestOutputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
-			String requestOutputFileNameHeaders_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+			String requestOutputFileNameHeadersPermissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			String requestOutputParentDirCreateIfNotExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			String requestOutputOverwriteIfExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			String responseInputMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -432,7 +427,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 				IDAccordo oldIDAccodo = idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 				IDAccordoDB attuale = null;
-				if (listaIdAPI.size() > 0) {
+				if (!listaIdAPI.isEmpty()) {
 					int i = 0;
 					int remove = -1;
 					for (IDAccordo oldIDAccodoCheck : listaIdAPI) {
@@ -453,7 +448,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					accordiList[0] = attuale.getId().toString();
 					accordiListLabel[0] = apsHelper.getLabelIdAccordo(tipoProtocollo, attuale); // Attuale alla posizione 0
 					
-					if (listaIdAPI.size() > 0) {
+					if (!listaIdAPI.isEmpty()) {
 						int i = 1;
 						for (IDAccordoDB as : listaIdAPI) {
 							accordiList[i] = as.getId().toString();
@@ -478,7 +473,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, userLogin, new ConsoleSearch(true), permessi, 
 								soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
 				
-				if (lista.size() > 0) {
+				if (!lista.isEmpty()) {
 					accordiList = new String[lista.size()];
 					accordiListLabel = new String[lista.size()];
 					int i = 0;
@@ -620,7 +615,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				ConsoleSearch searchSoggetti = new ConsoleSearch(true);
 				searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, tipoProtocollo);
-				boolean gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore = false;
+				boolean gestioneFruitoriSoggettiErogatoriEscludiSoggettoFruitore = false;
 				if(gestioneFruitori) {
 					boolean filtraSoloEsterni = true;
 					if(apsCore.isMultitenant() && apsCore.getMultitenantSoggettiFruizioni()!=null) {
@@ -630,7 +625,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							break;
 						case ESCLUDI_SOGGETTO_FRUITORE:
 							filtraSoloEsterni = false;
-							gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore = true;
+							gestioneFruitoriSoggettiErogatoriEscludiSoggettoFruitore = true;
 							break;
 						case TUTTI:
 							filtraSoloEsterni = false;
@@ -651,7 +646,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					list = soggettiCore.soggettiRegistroList(userLogin, searchSoggetti);
 				}
 				
-				if(gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore && list!=null && !list.isEmpty()) {
+				if(gestioneFruitoriSoggettiErogatoriEscludiSoggettoFruitore && list!=null && !list.isEmpty()) {
 					for (int i = 0; i < list.size(); i++) {
 						Soggetto soggettoCheck = list.get(i);
 						if(soggettoCheck.getTipo().equals(tipoSoggettoFruitore) && soggettoCheck.getNome().equals(nomeSoggettoFruitore)) {
@@ -670,7 +665,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						}
 					}
 				}
-				if(list == null || list.size()<=0) {
+				if(list == null || list.isEmpty()) {
 					if(gestioneFruitori) {
 						pd.setMessage("Non risultano registrati altri soggetti che possano erogare API", Costanti.MESSAGE_TYPE_INFO);
 					}
@@ -680,9 +675,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					pd.disableEditMode();
 
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 					pd.setDati(dati);
 
@@ -700,7 +695,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 			}
 			
-			if (list!=null && list.size() > 0) {
+			if (list!=null && !list.isEmpty()) {
 				List<String> soggettiListTmp = new ArrayList<String>();
 				List<String> soggettiListLabelTmp = new ArrayList<String>();
 				if(cambiaErogatore) {
@@ -721,16 +716,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				soggettiList = soggettiListTmp.toArray(new String[1]);
 				soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
 			}
-
-			// if (provider != null && !provider.equals(""))
-			// {
-			// long idErogatore = Long.parseLong(provider);
-			// Soggetto soggetto =
-			// core.getSoggettoRegistro(idErogatore);
-			// nomeSoggettoErogatore = soggetto.getNome();
-			// tipoSoggettoErogatore = soggetto.getTipo();
-			// provString = tipoSoggettoErogatore+"/"+nomeSoggettoErogatore;
-			// }
 
 			nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
 			tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
@@ -760,32 +745,31 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 				uriAccordo = idAccordoFactory.getUriFromAccordo(as);
 
-				if( apsCore.isShowCorrelazioneAsincronaInAccordi() ){
-					if (portType != null && !"".equals(portType) && !"-".equals(portType)){
-						PortTypeSintetico pt = null;
-						for(int i=0; i<as.getPortType().size(); i++){
-							if(portType.equals(as.getPortType().get(i).getNome())){
-								pt = as.getPortType().get(i);
+				if( apsCore.isShowCorrelazioneAsincronaInAccordi() &&
+					portType != null && !"".equals(portType) && !"-".equals(portType)){
+					PortTypeSintetico pt = null;
+					for(int i=0; i<as.getPortType().size(); i++){
+						if(portType.equals(as.getPortType().get(i).getNome())){
+							pt = as.getPortType().get(i);
+							break;
+						}
+					}
+					boolean servizioCorrelato = false;
+					if(pt!=null){
+						for(int i=0; i<pt.getAzione().size(); i++){
+							OperationSintetica op = pt.getAzione().get(i);
+							if(op.getCorrelataServizio()!=null && !pt.getNome().equals(op.getCorrelataServizio()) && op.getCorrelata()!=null){
+								servizioCorrelato = true;
 								break;
 							}
 						}
-						boolean servizioCorrelato = false;
-						if(pt!=null){
-							for(int i=0; i<pt.getAzione().size(); i++){
-								OperationSintetica op = pt.getAzione().get(i);
-								if(op.getCorrelataServizio()!=null && !pt.getNome().equals(op.getCorrelataServizio()) && op.getCorrelata()!=null){
-									servizioCorrelato = true;
-									break;
-								}
-							}
-						}
-						if(servizioCorrelato){
-							servcorr=Costanti.CHECK_BOX_ENABLED;
-						}
-						else{
-							servcorr=Costanti.CHECK_BOX_DISABLED;
-						}							
 					}
+					if(servizioCorrelato){
+						servcorr=Costanti.CHECK_BOX_ENABLED;
+					}
+					else{
+						servcorr=Costanti.CHECK_BOX_DISABLED;
+					}							
 				}
 			}
 
@@ -797,7 +781,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			}
 			else {
 				// filtro pt senza op
-				portTypes = new ArrayList<PortType>();
+				portTypes = new ArrayList<>();
 				for (PortType portTypeCheck : portTypesTmp) {
 					if(portTypeCheck.sizeAzioneList()>0) {
 						portTypes.add(portTypeCheck);
@@ -806,7 +790,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			}
 			
 			
-			if (portTypes.size() > 0) {
+			if (!portTypes.isEmpty()) {
 				ptList = new String[portTypes.size() + 1];
 				ptList[0] = "-";
 				int i = 1;
@@ -820,14 +804,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// Lista dei servizi applicativi per la creazione automatica
 			List<IDServizioApplicativoDB> listaIdSA = null;
 			if (gestioneErogatori && (provider != null) && !provider.equals("") && !cambiaErogatore) {
-				long idErogatore = Long.valueOf(provider);
+				long idErogatore = Long.parseLong(provider);
 				
 				// I servizi applicativi da visualizzare sono quelli che hanno
 				// -Integration Manager (getMessage abilitato)
 				// -connettore != disabilitato
 				listaIdSA = saCore.getIdServiziApplicativiWithIdErogatore(idErogatore, tipoSA, true, true);
 
-				List<IDServizioApplicativoDB> newListaIdSA = new ArrayList<IDServizioApplicativoDB>();
+				List<IDServizioApplicativoDB> newListaIdSA = new ArrayList<>();
 				IDServizioApplicativoDB idSA = new IDServizioApplicativoDB();
 				idSA.setNome("-"); // elemento nullo di default
 				idSA.setIdSoggettoProprietario(new IDSoggetto("-", "-"));
@@ -937,9 +921,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				if(statoPackage==null)
 					statoPackage = asps.getStatoPackage();
 
-				if(versione==null){
-					if(asps.getVersione()!=null)
-						versione=asps.getVersione().intValue()+"";
+				if(versione==null &&
+					asps.getVersione()!=null) {
+					versione=asps.getVersione().intValue()+"";
 				}
 
 				if(tiposervizio==null){
@@ -959,12 +943,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 
 				Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
-
-				// if(endpointtype==null || endpointtype.equals(""))
-				// endpointtype = connettore.getTipo();
-				//			
-				// Map<String,String> properties =
-				// connettore.getProperties();
 
 				if ((endpointtype == null) || (url == null) || (nome == null)) {
 					Map<String, String> props = connettore.getProperties();
@@ -991,136 +969,136 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						}
 					}
 					
-					if(proxy_enabled==null && props!=null){
+					if(proxyEnabled==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_PROXY_TYPE);
 						if(v!=null && !"".equals(v)){
-							proxy_enabled = Costanti.CHECK_BOX_ENABLED_TRUE;
+							proxyEnabled = Costanti.CHECK_BOX_ENABLED_TRUE;
 							
 							// raccolgo anche altre proprietà
 							v = props.get(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
 							if(v!=null && !"".equals(v)){
-								proxy_hostname = v.trim();
+								proxyHostname = v.trim();
 							}
 							v = props.get(CostantiDB.CONNETTORE_PROXY_PORT);
 							if(v!=null && !"".equals(v)){
-								proxy_port = v.trim();
+								proxyPort = v.trim();
 							}
 							v = props.get(CostantiDB.CONNETTORE_PROXY_USERNAME);
 							if(v!=null && !"".equals(v)){
-								proxy_username = v.trim();
+								proxyUsername = v.trim();
 							}
 							v = props.get(CostantiDB.CONNETTORE_PROXY_PASSWORD);
 							if(v!=null && !"".equals(v)){
-								proxy_password = v.trim();
+								proxyPassword = v.trim();
 							}
 						}
 					}
 					
-					if(tempiRisposta_enabled == null ||
-							tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+					if(tempiRispostaEnabled == null ||
+							tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
 							|| 
-							tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+							tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) 
 							|| 
-							tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
+							tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ){
 						
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
 						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 						
 						if( props!=null ) {
-							if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
+							if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
 								String v = props.get(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT);
 								if(v!=null && !"".equals(v)){
-									tempiRisposta_connectionTimeout = v.trim();
-									tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+									tempiRispostaConnectionTimeout = v.trim();
+									tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 								}
 								else {
-									tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+									tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
 								}
 							}
 								
-							if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
+							if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
 								String v = props.get(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT);
 								if(v!=null && !"".equals(v)){
-									tempiRisposta_readTimeout = v.trim();
-									tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+									tempiRispostaReadTimeout = v.trim();
+									tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 								}
 								else {
-									tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+									tempiRispostaReadTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
 								}
 							}
 							
-							if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
+							if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
 								String v = props.get(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA);
 								if(v!=null && !"".equals(v)){
-									tempiRisposta_tempoMedioRisposta = v.trim();
-									tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+									tempiRispostaTempoMedioRisposta = v.trim();
+									tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 								}
 								else {
-									tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
+									tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
 								}
 							}
 						}
 						else {
-							if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
-								tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+							if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
+								tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
 							}
-							if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
-								tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+							if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
+								tempiRispostaReadTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
 							}
-							if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
-								tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
+							if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
+								tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
 							}
 						}
 					}
 					
-					if(transfer_mode==null && props!=null){
+					if(transferMode==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
 						if(v!=null && !"".equals(v)){
 							
-							transfer_mode = v.trim();
+							transferMode = v.trim();
 							
-							if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+							if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transferMode)){
 								// raccolgo anche altra proprietà correlata
 								v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
 								if(v!=null && !"".equals(v)){
-									transfer_mode_chunk_size = v.trim();
+									transferModeChunkSize = v.trim();
 								}
 							}
 							
 						}
 					}
 					
-					if(redirect_mode==null && props!=null){
+					if(redirectMode==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
 						if(v!=null && !"".equals(v)){
 							
 							if("true".equalsIgnoreCase(v.trim()) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v.trim())){
-								redirect_mode = CostantiConfigurazione.ABILITATO.getValue();
+								redirectMode = CostantiConfigurazione.ABILITATO.getValue();
 							}
 							else{
-								redirect_mode = CostantiConfigurazione.DISABILITATO.getValue();
+								redirectMode = CostantiConfigurazione.DISABILITATO.getValue();
 							}					
 							
-							if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
+							if(CostantiConfigurazione.ABILITATO.getValue().equals(redirectMode)){
 								// raccolgo anche altra proprietà correlata
 								v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
 								if(v!=null && !"".equals(v)){
-									redirect_max_hop = v.trim();
+									redirectMaxHop = v.trim();
 								}
 							}
 							
 						}
 					}
 					
-					if(token_policy==null && props!=null){
+					if(tokenPolicy==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 						if(v!=null && !"".equals(v)){
-							token_policy = v;
+							tokenPolicy = v;
 							autenticazioneToken = true;
 						}
 					}
 					
-					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode);
+					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transferMode, redirectMode);
 					
 					if (url == null) {
 						url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
@@ -1190,9 +1168,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					if(responseInputMode==null && props!=null){
 						
 						requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
-						requestOutputFileName_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);	
+						requestOutputFileNamePermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);	
 						requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
-						requestOutputFileNameHeaders_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
+						requestOutputFileNameHeadersPermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
 						String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 						if(v!=null && !"".equals(v)){
 							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
@@ -1268,8 +1246,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				if(backToStato == null && backToConfermaModificaDatiServizio==null){
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					List<DataElement> dati = new ArrayList<>();
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 					
 					// update della configurazione 
 					strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
@@ -1302,9 +1280,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					
 						boolean forceEnableConnettore = false;
-//						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
-//							forceEnableConnettore = true;
-//						}
+						/**if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
+							forceEnableConnettore = true;
+						}*/
 						
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
@@ -1321,13 +1299,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
-								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, token_policy,
+								autenticazioneToken, tokenPolicy,
 								listExtendedConnettore, forceEnableConnettore,
 								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 								erogazioneServizioApplicativoServer, saSoggetti);
@@ -1351,13 +1329,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage,
-								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, token_policy);
+								autenticazioneToken, tokenPolicy);
 						
 					}
 					
@@ -1412,10 +1390,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpspwdprivatekey, httpsalgoritmokey,
 					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 					tipoconn,versione,validazioneDocumenti,backToStato,autenticazioneHttp,
-					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					null,null,null,null,null,
@@ -1425,7 +1403,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					null, null, null, null,
 					tipoProtocollo,null, 
 					descrizione, tipoSoggettoFruitore, nomeSoggettoFruitore,
-					autenticazioneToken, token_policy, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer, 
+					autenticazioneToken, tokenPolicy, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer, 
 					canaleStato, canale, gestioneCanaliEnabled);
 			
 			// updateDynamic
@@ -1468,9 +1446,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// update della configurazione 
 				strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
@@ -1503,9 +1481,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 				
 					boolean forceEnableConnettore = false;
-//					if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
-//						forceEnableConnettore = true;
-//					}
+					/**if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
+						forceEnableConnettore = true;
+					}*/
 					
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
 							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
@@ -1523,13 +1501,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage, true,
 							isConnettoreCustomUltimaImmagineSalvata, 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, token_policy,
+							autenticazioneToken, tokenPolicy,
 							listExtendedConnettore, forceEnableConnettore,
 							tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, saSoggetti);
@@ -1554,13 +1532,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage,
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, token_policy);
+							autenticazioneToken, tokenPolicy);
 					
 				}
 				
@@ -1593,9 +1571,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					}
 
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 					
 					// update della configurazione 
 					strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
@@ -1647,13 +1625,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
-								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, token_policy,
+								autenticazioneToken, tokenPolicy,
 								listExtendedConnettore, forceEnableConnettore,
 								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 								erogazioneServizioApplicativoServer, saSoggetti);
@@ -1683,13 +1661,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage,
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, token_policy);
+							autenticazioneToken, tokenPolicy);
 					
 					if(backToStato != null) {
 						// backtostato per chiudere la modifica dopo la conferma
@@ -1698,7 +1676,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						de.setValue(backToStato);
 						de.setType(DataElementType.HIDDEN);
 						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
-						dati.addElement(de);
+						dati.add(de);
 					}
 					if(backToConfermaModificaDatiServizio != null) {
 						// backtostato per chiudere la modifica dopo la conferma
@@ -1707,7 +1685,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						de.setValue(backToConfermaModificaDatiServizio);
 						de.setType(DataElementType.HIDDEN);
 						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO);
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 					// aggiunta campi custom
@@ -1729,7 +1707,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_MULTI_API_INFLUENZATE_MODIFICA;
 						msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+"Di seguito vengono elencate tutte le configurazioni coinvolte dalla modifica. Vuoi procedere?";
 						msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-						if(listMappingPD.size()>0) {
+						if(!listMappingPD.isEmpty()) {
 							msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 							if(listMappingPD.size()==1) {
 								msg+="La fruizione:";
@@ -1744,7 +1722,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 							}
 						}
-						if(listMappingPA.size()>0) {
+						if(!listMappingPA.isEmpty()) {
 							msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 							if(listMappingPA.size()==1) {
 								msg+="L&#39;erogazione:";
@@ -1802,12 +1780,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
-				//				PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
-				//				
-				//				boolean [] permessi = new boolean[2];
-				//				permessi[0] = pu.isServizi();
-				//				permessi[1] = pu.isAccordiCooperazione();
-
 				List<AccordoServizioParteSpecifica> listaServizi = null;
 				if(apsCore.isVisioneOggettiGlobale(superUser)){
 					listaServizi = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
@@ -1857,7 +1829,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			asps.setNome(nomeservizio);
 			asps.setTipo(tiposervizio);
 			asps.setDescrizione(descrizione);
-			if ("-".equals(profilo) == false)
+			if (!"-".equals(profilo))
 				asps.setVersioneProtocollo(profilo);
 			else
 				asps.setVersioneProtocollo(null);
@@ -1901,13 +1873,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey, httpsalgoritmokey,
 					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
-					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					token_policy,
+					tokenPolicy,
 					listExtendedConnettore);
 
 			asps.getConfigurazioneServizio().setConnettore(newConnettore);
@@ -1959,9 +1931,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					portType = (portType != null && !"".equals(portType) ? portType : asps.getPortType());
 
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 					
 					// update della configurazione 
 					strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
@@ -1994,9 +1966,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					
 						boolean forceEnableConnettore = false;
-//						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
-//							forceEnableConnettore = true;
-//						}
+						/**if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
+							forceEnableConnettore = true;
+						}*/
 						
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
@@ -2015,13 +1987,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								null,
 								oldStatoPackage, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
-								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, token_policy,
+								autenticazioneToken, tokenPolicy,
 								listExtendedConnettore, forceEnableConnettore,
 								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 								erogazioneServizioApplicativoServer, saSoggetti);
@@ -2045,13 +2017,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage,
-								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, token_policy);
+								autenticazioneToken, tokenPolicy);
 						
 					}
 					
@@ -2084,12 +2056,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), oggettiDaAggiornare.toArray());
 
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
-
-			//				PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
-			//				
-			//				boolean [] permessi = new boolean[2];
-			//				permessi[0] = pu.isServizi();
-			//				permessi[1] = pu.isAccordiCooperazione();
 
 			String newUri = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 			String oldUri = IDServizioFactory.getInstance().getUriFromIDServizio(asps.getOldIDServizioForUpdate());

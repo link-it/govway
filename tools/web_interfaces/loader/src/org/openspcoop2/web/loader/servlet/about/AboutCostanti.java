@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.loader.servlet.about;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -33,6 +34,8 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class AboutCostanti {
+	
+	private AboutCostanti() {}
 
 	/* OBJECT NAME */
 
@@ -43,7 +46,10 @@ public class AboutCostanti {
 	/* SERVLET NAME */
 
 	public static final String SERVLET_NAME_ABOUT = OBJECT_NAME_ABOUT+".do";
-	public static final Vector<String> SERVLET_ABOUT = new Vector<String>();
+	private static final List<String> SERVLET_ABOUT = new ArrayList<>();
+	public static List<String> getServletAbout() {
+		return SERVLET_ABOUT;
+	}
 	static{
 		SERVLET_ABOUT.add(SERVLET_NAME_ABOUT);
 	}

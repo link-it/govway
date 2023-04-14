@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,8 +40,8 @@ import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -141,7 +140,7 @@ public final class PorteApplicativeRuoliAdd extends Action {
 				}
 			}
 			else {
-				if(pa.getRuoli()!=null && pa.getRuoli().getRuoloList()!=null && pa.getRuoli().getRuoloList().size()>0){
+				if(pa.getRuoli()!=null && pa.getRuoli().getRuoloList()!=null && !pa.getRuoli().getRuoloList().isEmpty()){
 					for (Ruolo ruolo : pa.getRuoli().getRuoloList()) {
 						ruoli.add(ruolo.getNome());	
 					}
@@ -192,8 +191,8 @@ public final class PorteApplicativeRuoliAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null, isToken);
 				
@@ -215,9 +214,9 @@ public final class PorteApplicativeRuoliAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null, isToken);
 				

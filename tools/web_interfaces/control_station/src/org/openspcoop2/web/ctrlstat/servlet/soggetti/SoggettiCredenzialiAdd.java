@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -118,7 +117,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 			}
 			BinaryParameter tipoCredenzialiSSLFileCertificato = soggettiHelper.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
 			String tipoCredenzialiSSLFileCertificatoPassword = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-			List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+			List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 			String tipoCredenzialiSSLAliasCertificato = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
 			if (tipoCredenzialiSSLAliasCertificato == null) {
 				tipoCredenzialiSSLAliasCertificato = "";
@@ -162,7 +161,6 @@ public final class SoggettiCredenzialiAdd extends Action {
 			boolean visualizzaPromuoviCertificato = true; // ADD sempre true per far spuntare la checkbox
 			String servletCredenzialiChange = null;
 			List<Parameter> parametersServletCredenzialiChange = null;
-//			Integer numeroCertificati = null;
 			String toCall = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_ADD;
 			
 			// Preparo il menu
@@ -175,11 +173,9 @@ public final class SoggettiCredenzialiAdd extends Action {
 			
 			if(soggettiCore.isRegistroServiziLocale()){
 				soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);// core.getSoggettoRegistro(new
-				// IDSoggetto(tipoprov,nomeprov));
 			}
 
 			soggettoConfig = soggettiCore.getSoggetto(idSogg);// core.getSoggetto(new
-			// IDSoggetto(tipoprov,nomeprov));
 			
 			if(soggettiCore.isRegistroServiziLocale()){
 				nomeprov = soggettoRegistry.getNome();
@@ -192,7 +188,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 
 			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
 			
-			List<Parameter> parametersServletSoggettoChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
 			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, nomeprov);
 			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, tipoprov);
@@ -221,7 +217,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
 						tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 						tipoCredenzialiSSLAliasCertificatoNotAfter = "";
-						listaAliasEstrattiCertificato = new ArrayList<String>();
+						listaAliasEstrattiCertificato = new ArrayList<>();
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
 					} else {
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD;
@@ -231,7 +227,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 				// tipo di configurazione SSL
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL) || 
 						postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_MODIFICA)) {
-					listaAliasEstrattiCertificato = new ArrayList<String>();
+					listaAliasEstrattiCertificato = new ArrayList<>();
 					tipoCredenzialiSSLTipoArchivio = ArchiveType.CER;
 					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 					tipoCredenzialiSSLAliasCertificato = "";
@@ -266,7 +262,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 					tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
 					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
-					listaAliasEstrattiCertificato = new ArrayList<String>();
+					listaAliasEstrattiCertificato = new ArrayList<>();
 					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 					tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
 				}
@@ -421,7 +417,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 			if(ServletUtils.isEditModeInProgress(editMode) || checkWizard){
 
 				// setto la barra del titolo
-				List<Parameter> listParameter = new ArrayList<Parameter>();
+				List<Parameter> listParameter = new ArrayList<>();
 				listParameter.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 				if(soggettoRegistry!=null) {
 					listParameter.add(new Parameter(soggettiHelper.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome()),
@@ -435,9 +431,9 @@ public final class SoggettiCredenzialiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, listParameter.toArray(new Parameter[1]));
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = soggettiHelper.addSoggettoHiddenToDati(dati, id,nomeprov, tipoprov);
 				
@@ -464,7 +460,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 			if (!isOk) {
 
 				// setto la barra del titolo
-				List<Parameter> listParameter = new ArrayList<Parameter>();
+				List<Parameter> listParameter = new ArrayList<>();
 				listParameter.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 				if(soggettoRegistry!=null) {
 					listParameter.add(new Parameter(soggettiHelper.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome()),
@@ -478,7 +474,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, listParameter.toArray(new Parameter[1]));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
 				dati = soggettiHelper.addSoggettoHiddenToDati(dati, id,nomeprov, tipoprov);
 				

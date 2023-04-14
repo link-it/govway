@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -75,7 +75,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/OccupazioneBandaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -119,7 +119,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/OccupazioneBandaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -155,7 +155,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/OccupazioneBandaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -192,7 +192,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/OccupazioneBandaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -228,7 +228,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/OccupazioneBandaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
@@ -270,7 +270,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/OccupazioneBandaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, requestToPass);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, requestToPass);
 		
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 		Utils.waitForZeroActiveRequests(idPolicy, requestToPass);
@@ -306,7 +306,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/OccupazioneBandaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -343,7 +343,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/OccupazioneBandaSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -352,7 +352,7 @@ public class SoapTest extends ConfigLoader {
 		Commons.checkPostConditionsOccupazioneBanda(idPolicy);		
 	}
 	
-	private void checkAssertions(Vector<HttpResponse> responses, int maxKb, int windowSize) throws Exception {
+	private void checkAssertions(List<HttpResponse> responses, int maxKb, int windowSize) throws Exception {
 		
 		responses.forEach(r -> { 			
 				assertNotEquals(null,Integer.valueOf(r.getHeaderFirstValue(Headers.BandWidthQuotaReset)));

@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -116,26 +115,24 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 
 			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneErogatori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
-					gestioneErogatori = true;
-				}
+			if(tipologia!=null &&
+				AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+				gestioneErogatori = true;
 			}
 			
 			PddTipologia pddTipologiaSoggettoAutenticati = null;
-			boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = false;
-			if(gestioneErogatori) {
-				if(apsCore.isMultitenant() && apsCore.getMultitenantSoggettiErogazioni()!=null) {
-					switch (apsCore.getMultitenantSoggettiErogazioni()) {
-					case SOLO_SOGGETTI_ESTERNI:
-						pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
-						break;
-					case ESCLUDI_SOGGETTO_EROGATORE:
-						gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = true;
-						break;
-					case TUTTI:
-						break;
-					}
+			boolean gestioneErogatoriSoggettiAutenticatiEscludiSoggettoErogatore = false;
+			if(gestioneErogatori &&
+				apsCore.isMultitenant() && apsCore.getMultitenantSoggettiErogazioni()!=null) {
+				switch (apsCore.getMultitenantSoggettiErogazioni()) {
+				case SOLO_SOGGETTI_ESTERNI:
+					pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
+					break;
+				case ESCLUDI_SOGGETTO_EROGATORE:
+					gestioneErogatoriSoggettiAutenticatiEscludiSoggettoErogatore = true;
+					break;
+				case TUTTI:
+					break;
 				}
 			}
 			
@@ -219,17 +216,17 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 				PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
 				boolean escludiSAServer = saCore.isApplicativiServerEnabled(porteApplicativeHelper);
 				boolean isSupportatoAutenticazioneApplicativiEsterni = saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
-				utilities.buildListTrasformazioniSoggettiToken(portaApplicativa, false, protocollo, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore,
+				utilities.buildListTrasformazioniSoggettiToken(portaApplicativa, false, protocollo, gestioneErogatoriSoggettiAutenticatiEscludiSoggettoErogatore,
 						idSoggettoToAdd,
 						porteApplicativeCore, porteApplicativeHelper, escludiSAServer,
 						isSupportatoAutenticazioneApplicativiEsterni);
-				List<IDSoggettoDB> soggettiList_tmp = utilities.soggettiDBList_trasformazioniSoggettiToken;
-				if(soggettiList_tmp!=null && !soggettiList_tmp.isEmpty()) {
+				List<IDSoggettoDB> soggettiListTmp = utilities.soggettiDBList_trasformazioniSoggettiToken;
+				if(soggettiListTmp!=null && !soggettiListTmp.isEmpty()) {
 					if(list==null) {
-						list = soggettiList_tmp;
+						list = soggettiListTmp;
 					}
 					else {
-						for (IDSoggettoDB idSoggettoDB : soggettiList_tmp) {
+						for (IDSoggettoDB idSoggettoDB : soggettiListTmp) {
 							if(!list.contains(idSoggettoDB)) {
 								list.add(idSoggettoDB);
 							}
@@ -238,7 +235,7 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 				}				
 			}
 			// escludo soggetto erogatore
-			if(list!=null && !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) {
+			if(list!=null && !list.isEmpty() && gestioneErogatoriSoggettiAutenticatiEscludiSoggettoErogatore) {
 				for (int i = 0; i < list.size(); i++) {
 					IDSoggettoDB soggettoCheck = list.get(i);
 					if(soggettoCheck.getTipo().equals(portaApplicativa.getTipoSoggettoProprietario()) && soggettoCheck.getNome().equals(portaApplicativa.getNomeSoggettoProprietario())) {
@@ -252,9 +249,9 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 			
 			List<TrasformazioneRegolaApplicabilitaSoggetto> soggettoList  = applicabilita != null ? applicabilita.getSoggettoList() : null; 
 			int sizeSoggettoList = soggettoList != null ? soggettoList.size() : 0;
-			if (list!=null && list.size() > 0) {
-				List<String> soggettiListTmp = new ArrayList<String>();
-				List<String> soggettiListLabelTmp = new ArrayList<String>();
+			if (list!=null && !list.isEmpty()) {
+				List<String> soggettiListTmp = new ArrayList<>();
+				List<String> soggettiListLabelTmp = new ArrayList<>();
 				for (IDSoggettoDB soggetto : list) {
 					// scartare i soggetti gia associati
 					boolean found = false;
@@ -279,7 +276,7 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 						soggettiListLabelTmp.add(porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome()));
 					}
 				}
-				if(soggettiListTmp!=null && soggettiListTmp.size()>0) {
+				if(soggettiListTmp!=null && !soggettiListTmp.isEmpty()) {
 					soggettiList = soggettiListTmp.toArray(new String[1]);
 					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
 				}
@@ -335,8 +332,8 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addPorteTrasformazioniSoggettoToDati(TipoOperazione.ADD, dati, idTrasformazioneS, fromList, soggettiListLabel, soggettiList, idSoggettoToAdd, sizeSoggettoList, true, true);
 
@@ -370,9 +367,9 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 				String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
 				String connettoriAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getConnettoreList() != null) ? StringUtils.join(regola.getApplicabilita().getConnettoreList(), ",") : "";
 				String connettoriDBCheck = StringUtils.isNotEmpty(connettoriAsString) ? connettoriAsString : null;
-				TrasformazioneRegola trasformazioneDBCheck_criteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, connettoriDBCheck,
+				TrasformazioneRegola trasformazioneDBCheckCriteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, connettoriDBCheck,
 						applicabilitaCheckSoggetti, null, false);
-				if(trasformazioneDBCheck_criteri!=null) {
+				if(trasformazioneDBCheckCriteri!=null) {
 					isOk = false;
 					pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA_SOGGETTO);
 				}
@@ -383,9 +380,9 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addPorteTrasformazioniSoggettoToDati(TipoOperazione.ADD, dati, idTrasformazioneS, fromList, soggettiListLabel, soggettiList, idSoggettoToAdd, sizeSoggettoList, true, true);
 

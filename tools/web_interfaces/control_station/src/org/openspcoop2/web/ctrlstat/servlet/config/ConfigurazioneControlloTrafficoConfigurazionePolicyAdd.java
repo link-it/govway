@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -108,22 +107,16 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 				confHelper.addParsingError(sbParsingError,errorValoriSoglia);
 			}
 			
-			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA.equals(confHelper.getPostBackElementName())) {
-				if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(policy.getRisorsa())) {
-					//if(policy.getValore()==null) {
-					policy.setValore(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA);
-					//}
-					//if(policy.getValore2()==null) {
-					policy.setValore2(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA);
-					//}
-				}
+			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA.equals(confHelper.getPostBackElementName()) &&
+				TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(policy.getRisorsa())) {
+				policy.setValore(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA);
+				policy.setValore2(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA);
 			}
 			
 			List<AttivazionePolicy> listPolicyAttiveConStatoDisabilitato = null;
 			boolean updateValueInSeguitoModificaSogliaPolicy = false;
 			// Read Informazioni riguardante la modifica anche di attivazioni di policy collegate
 			String value = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_RICHIESTA_MODIFICA);
-			//System.out.println("CHECKKKKKK RICHIESTA ["+value+"]");
 			if(value!=null && ServletUtils.isCheckBoxEnabled(value)) {
 				updateValueInSeguitoModificaSogliaPolicy = true;
 			}
@@ -148,37 +141,29 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 				nomePolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME);
 				
 				oldNomeSuggeritoPolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_NOME_SUGGERITO);
-//				if(oldNomeSuggeritoPolicy!=null && !"".equals(oldNomeSuggeritoPolicy)){
-//					if(cc.getOldNomeSuggeritoPolicy()==null){
-//						cc.setOldNomeSuggeritoPolicy(oldNomeSuggeritoPolicy);
-//					}
-//				}
 				
-				if(nomePolicy!=null && !"".equals(nomePolicy)){
-					if(nomePolicy.equals(oldNomeSuggeritoPolicy)){
-						nomePolicy = confHelper.getNomeSuggerito(policy); // aggiorno suggerimento
-						oldNomeSuggeritoPolicy = nomePolicy;
-					}
+				if(nomePolicy!=null && !"".equals(nomePolicy) &&
+					nomePolicy.equals(oldNomeSuggeritoPolicy)){
+					nomePolicy = confHelper.getNomeSuggerito(policy); // aggiorno suggerimento
+					oldNomeSuggeritoPolicy = nomePolicy;
 				}
 			}
 
 			// Nome è l'id
 			
 			String oldIdPolicyS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_ID);
-			if(oldIdPolicyS!=null && !"".equals(oldIdPolicyS)){
-				if(policy.getOldIdPolicy() ==null){
-					IdPolicy oldIdPolicy = new IdPolicy();
-					oldIdPolicy.setNome(oldIdPolicyS);
-					policy.setOldIdPolicy(oldIdPolicy ); 
-				}
+			if(oldIdPolicyS!=null && !"".equals(oldIdPolicyS) &&
+				policy.getOldIdPolicy() ==null){
+				IdPolicy oldIdPolicy = new IdPolicy();
+				oldIdPolicy.setNome(oldIdPolicyS);
+				policy.setOldIdPolicy(oldIdPolicy ); 
 			}
-			if(policy.getIdPolicy()!=null){
-				if(policy.getIdPolicy().equals(oldIdPolicyS)==false){
-					oldIdPolicyS = policy.getIdPolicy();
-					IdPolicy oldIdPolicy = new IdPolicy();
-					oldIdPolicy.setNome(oldIdPolicyS);
-					policy.setOldIdPolicy(oldIdPolicy ); 
-				}
+			if(policy.getIdPolicy()!=null &&
+				!policy.getIdPolicy().equals(oldIdPolicyS)){
+				oldIdPolicyS = policy.getIdPolicy();
+				IdPolicy oldIdPolicy = new IdPolicy();
+				oldIdPolicy.setNome(oldIdPolicyS);
+				policy.setOldIdPolicy(oldIdPolicy ); 
 			}
 			
 			policy.setIdPolicy(nomePolicy);
@@ -186,7 +171,6 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 			
 			
 			value = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_MODIFICA_EFFETTIVA);
-			//System.out.println("CHECKKKKKK UPDATE ["+value+"]");
 			if(value!=null && ServletUtils.isCheckBoxEnabled(value)) {
 				if(oldIdPolicyS !=null){
 					listPolicyAttiveConStatoDisabilitato = confCore.findInUseAttivazioni(oldIdPolicyS, true); // Quelle disabilitate non hanno bisogno di essere aggiornate
@@ -220,17 +204,11 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 			}else{
 				descrizionePolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE);
 				oldDescrizioneSuggeritaPolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_DESCRIZIONE_SUGGERITA);
-//				if(oldDescrizioneSuggeritaPolicy!=null && !"".equals(oldDescrizioneSuggeritaPolicy)){
-//					if(cc.getOldDescrizioneSuggeritaPolicy()==null){
-//						cc.setOldDescrizioneSuggeritaPolicy(oldDescrizioneSuggeritaPolicy);
-//					}
-//				}
 				
-				if(descrizionePolicy!=null && !"".equals(descrizionePolicy)){
-					if(descrizionePolicy.equals(oldDescrizioneSuggeritaPolicy)){
-						descrizionePolicy = confHelper.getDescrizioneSuggerita(policy); // aggiorno suggerimento
-						oldDescrizioneSuggeritaPolicy = descrizionePolicy;
-					}
+				if(descrizionePolicy!=null && !"".equals(descrizionePolicy) &&
+					descrizionePolicy.equals(oldDescrizioneSuggeritaPolicy)){
+					descrizionePolicy = confHelper.getDescrizioneSuggerita(policy); // aggiorno suggerimento
+					oldDescrizioneSuggeritaPolicy = descrizionePolicy;
 				}
 			}
 			
@@ -241,7 +219,7 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 			confHelper.makeMenu();
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_POLICY, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY_LIST));
@@ -254,8 +232,8 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// Dati Generali
 				confHelper.addConfigurazionePolicyToDati(dati, tipoOperazione, policy,	editMode, countPolicyAttiveConQualsiasiStato,oldNomeSuggeritoPolicy,oldDescrizioneSuggeritaPolicy,oldIdPolicyS);
@@ -290,8 +268,8 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// Dati Generali
 				confHelper.addConfigurazionePolicyToDati(dati, tipoOperazione, policy, editMode, countPolicyAttiveConQualsiasiStato,oldNomeSuggeritoPolicy,oldDescrizioneSuggeritaPolicy,oldIdPolicyS); 

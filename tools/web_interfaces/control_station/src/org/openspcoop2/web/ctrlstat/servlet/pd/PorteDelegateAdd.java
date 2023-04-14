@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -125,8 +124,6 @@ public final class PorteDelegateAdd extends Action {
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 			String nomePD = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA);
-			//			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			//			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA);
 			String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String descr = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
@@ -188,8 +185,8 @@ public final class PorteDelegateAdd extends Action {
 			String autorizzazioneRuoliTipologiaToken = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA_TOKEN);
 			String autorizzazioneRuoliMatchToken = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH_TOKEN);
 			
-			String autorizzazione_token = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
-			String autorizzazione_tokenOptions = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
+			String autorizzazioneToken = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
+			String autorizzazioneTokenOptions = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			
@@ -205,11 +202,11 @@ public final class PorteDelegateAdd extends Action {
 			String ctContatori = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI);
 			String ctTipologia = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_TIPOLOGIA);
 			String ctHeaderHttp = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP);
-			String ctHeaderHttp_limit = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
-			String ctHeaderHttp_remaining = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
-			String ctHeaderHttp_reset = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
-			String ctHeaderHttp_retryAfter = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
-			String ctHeaderHttp_retryAfterBackoff = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+			String ctHeaderHttpLimit = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+			String ctHeaderHttpRemaining = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+			String ctHeaderHttpReset = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+			String ctHeaderHttpRetryAfter = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+			String ctHeaderHttpRetryAfterBackoff = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
 
 			if(sp == null) {
 				tiposp = "";
@@ -253,7 +250,8 @@ public final class PorteDelegateAdd extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteDelegateCore);
 
-			String tmpTitle = null, protocollo = null;
+			String tmpTitle = null;
+			String protocollo = null;
 			if(porteDelegateCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
@@ -276,11 +274,11 @@ public final class PorteDelegateAdd extends Action {
 				} 
 			}
 			
-			List<String> tipiServizioCompatibiliAccordo = new ArrayList<String>();
+			List<String> tipiServizioCompatibiliAccordo = new ArrayList<>();
 			if(serviceBinding == null) {
 				List<ServiceBinding> serviceBindingListProtocollo = apsCore.getServiceBindingListProtocollo(protocollo);
 				
-				if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
+				if(serviceBindingListProtocollo != null && !serviceBindingListProtocollo.isEmpty()) {
 					for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
 						List<String> tipiServizioCompatibiliAccordoTmp = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding2);
 						
@@ -302,10 +300,10 @@ public final class PorteDelegateAdd extends Action {
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 
 			List<IDSoggetto> list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
-			if (list!=null && list.size() > 0) {
+			if (list!=null && !list.isEmpty()) {
 
-				List<String> soggettiListTmp = new ArrayList<String>();
-				Map<String, String> soggettiMapTmp = new HashMap<String,String>();
+				List<String> soggettiListTmp = new ArrayList<>();
+				Map<String, String> soggettiMapTmp = new HashMap<>();
 				
 				for (IDSoggetto soggetto : list) {
 					if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
@@ -336,10 +334,12 @@ public final class PorteDelegateAdd extends Action {
 				List<IDServizio> listServTmp = null;
 				try{
 					listServTmp = apsCore.getAllIdServizi(filtro);
-				}catch(DriverRegistroServiziNotFound dNotFound){}
-				if(listServTmp!=null && listServTmp.size()>0){
-					List<String> serviziListTmp = new ArrayList<String>();
-					Map<String, IDServizio> serviziMapTmp = new HashMap<String,IDServizio>();
+				}catch(DriverRegistroServiziNotFound dNotFound){
+					// ignore
+				}
+				if(listServTmp!=null && !listServTmp.isEmpty()){
+					List<String> serviziListTmp = new ArrayList<>();
+					Map<String, IDServizio> serviziMapTmp = new HashMap<>();
 					for (IDServizio idServizio : listServTmp) {
 						if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
 							String keyServizio = idServizio.getTipo() + "/" + idServizio.getNome() + "/" + idServizio.getVersione();
@@ -372,6 +372,7 @@ public final class PorteDelegateAdd extends Action {
 				try{
 					servS = apsCore.getServizio(idServizio);
 				}catch(DriverRegistroServiziNotFound dNotFound){
+					// ignore
 				}
 				if(servS==null){
 					// è cambiato il soggetto erogatore. non è più valido il servizio
@@ -384,6 +385,7 @@ public final class PorteDelegateAdd extends Action {
 						try{
 							servS = apsCore.getServizio(idServizio);
 						}catch(DriverRegistroServiziNotFound dNotFound){
+							// ignore
 						}
 						if(servS==null){
 							servid = null;
@@ -409,7 +411,7 @@ public final class PorteDelegateAdd extends Action {
 			String[] azioniList = null;
 			String[] azioniListLabel = null;
 			boolean addTrattinoSelezioneNonEffettuata = false;
-			List<String> filtraAzioniUtilizzate = new ArrayList<String>(); // TODO controllare
+			List<String> filtraAzioniUtilizzate = new ArrayList<>();
 			if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 			
 				Map<String,String> azioni = porteDelegateCore.getAzioniConLabel(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
@@ -467,8 +469,8 @@ public final class PorteDelegateAdd extends Action {
 						);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				if (nomePD == null) {
 					nomePD = "";
@@ -514,19 +516,18 @@ public final class PorteDelegateAdd extends Action {
 					ricasim = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_ABILITATO;
 				}
 
-				if (statoValidazione == null) {
-					if(porteDelegateCore.isSinglePdD()){
-						Configurazione config = porteDelegateCore.getConfigurazioneGenerale();
-						if(config.getValidazioneContenutiApplicativi()!=null){
-							if(config.getValidazioneContenutiApplicativi().getStato()!=null){
-								statoValidazione = config.getValidazioneContenutiApplicativi().getStato().toString();
-							}
-							if(config.getValidazioneContenutiApplicativi().getTipo()!=null){
-								tipoValidazione = config.getValidazioneContenutiApplicativi().getTipo().toString();
-							}
-							if(StatoFunzionalita.ABILITATO.equals(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage())){
-								applicaMTOM = Costanti.CHECK_BOX_ENABLED_ABILITATO;
-							}
+				if (statoValidazione == null &&
+					porteDelegateCore.isSinglePdD()){
+					Configurazione config = porteDelegateCore.getConfigurazioneGenerale();
+					if(config.getValidazioneContenutiApplicativi()!=null){
+						if(config.getValidazioneContenutiApplicativi().getStato()!=null){
+							statoValidazione = config.getValidazioneContenutiApplicativi().getStato().toString();
+						}
+						if(config.getValidazioneContenutiApplicativi().getTipo()!=null){
+							tipoValidazione = config.getValidazioneContenutiApplicativi().getTipo().toString();
+						}
+						if(StatoFunzionalita.ABILITATO.equals(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage())){
+							applicaMTOM = Costanti.CHECK_BOX_ENABLED_ABILITATO;
 						}
 					}
 				}
@@ -594,15 +595,15 @@ public final class PorteDelegateAdd extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_token, autorizzazione_tokenOptions,
+						autorizzazioneToken, autorizzazioneTokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						null, null,
 						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 						autorizzazioneAutenticatiToken, null, 0,
 						autorizzazioneRuoliToken,  null, 0, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
-						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
-						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+						ctHeaderHttp, ctHeaderHttpLimit, ctHeaderHttpRemaining, ctHeaderHttpReset,
+						ctHeaderHttpRetryAfter, ctHeaderHttpRetryAfterBackoff);
 
 				pd.setDati(dati);
 
@@ -610,7 +611,6 @@ public final class PorteDelegateAdd extends Action {
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, ForwardParams.ADD());
-				//				(mapping.findForward("AddPortaDelegataForm"));
 			}
 			// Controlli sui campi immessi
 			boolean isOk = porteDelegateHelper.porteDelegateCheckData(TipoOperazione.ADD, "", false,
@@ -628,9 +628,9 @@ public final class PorteDelegateAdd extends Action {
 						);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.ADD,
 						PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_NEW_ID,
@@ -657,15 +657,15 @@ public final class PorteDelegateAdd extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_token, autorizzazione_tokenOptions,
+						autorizzazioneToken, autorizzazioneTokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						null, null,
 						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 						autorizzazioneAutenticatiToken, null, 0,
 						autorizzazioneRuoliToken,  null, 0, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
-						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
-						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+						ctHeaderHttp, ctHeaderHttpLimit, ctHeaderHttpRemaining, ctHeaderHttpReset,
+						ctHeaderHttpRetryAfter, ctHeaderHttpRetryAfterBackoff);
 
 				pd.setDati(dati);
 
@@ -705,7 +705,6 @@ public final class PorteDelegateAdd extends Action {
 				portaDelegata.setAutorizzazioneContenuto(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
 				portaDelegata.getProprietaAutorizzazioneContenutoList().clear();
 				// Fix: non rispettava l'ordine
-				//Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);
 				SortedMap<List<String>> convertTextToProperties = PropertiesUtilities.convertTextToSortedListMap(autorizzazioneContenutiProperties, true);
 				porteDelegateCore.addFromSortedListMap(portaDelegata.getProprietaAutorizzazioneContenutoList(), convertTextToProperties);
 			} else {
@@ -737,7 +736,7 @@ public final class PorteDelegateAdd extends Action {
 						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticatiToken), 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoliToken),
 						ServletUtils.isCheckBoxEnabled(autorizzazioneScope),
-						autorizzazione_tokenOptions,
+						autorizzazioneTokenOptions,
 						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
 			else
 				portaDelegata.setAutorizzazione(autorizzazioneCustom);
@@ -785,7 +784,7 @@ public final class PorteDelegateAdd extends Action {
 				portaDelegata.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
 				portaDelegata.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));
 				portaDelegata.getGestioneToken().setForward(StatoFunzionalita.toEnumConstant(gestioneTokenTokenForward)); 
-				portaDelegata.getGestioneToken().setOptions(autorizzazione_tokenOptions);
+				portaDelegata.getGestioneToken().setOptions(autorizzazioneTokenOptions);
 				if(portaDelegata.getGestioneToken().getAutenticazione()==null) {
 					portaDelegata.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
 				}
@@ -847,6 +846,7 @@ public final class PorteDelegateAdd extends Action {
 				asps = apsCore.getServizio(idServizio);
 				pdServizio.setId(asps.getId());
 			}catch(DriverRegistroServiziNotFound dNotFound){
+				// ignore
 			}
 			if(pdServizio.getId()<=0){
 				pdServizio.setId(-2l);
@@ -857,16 +857,16 @@ public final class PorteDelegateAdd extends Action {
 			portaDelegata.setServizio(pdServizio);
 
 			// se l azione e' settata allora creo il bean
-			if (((!azione.equals("") || 
+			if ((!azione.equals("") || 
 							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) ||
 							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
-							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))) ||
+							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED)) ||
 							!azid.equals("")) {
 				PortaDelegataAzione pdAzione = new PortaDelegataAzione();
 
 				if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 					azione = azid;
-//					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+/**					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 //					as = apcCore.getAccordoServizio(idAccordo);
 //
 //					if(asps.getPortType()!=null){
@@ -898,7 +898,7 @@ public final class PorteDelegateAdd extends Action {
 //								}
 //							}
 //						}
-//					}
+//					}*/
 
 					if(pdAzione.getId()<=0){
 						pdAzione.setId(-2l);

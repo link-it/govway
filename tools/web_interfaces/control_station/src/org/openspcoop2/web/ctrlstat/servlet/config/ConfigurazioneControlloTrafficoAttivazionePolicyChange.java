@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -178,13 +177,12 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 				lstParam = lstParamPorta;
 			}
 			else {
-				lstParam = new ArrayList<Parameter>();
+				lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST));
 				lstParam.add(new Parameter(PolicyUtilities.getNomeActivePolicy(policy.getAlias(), policy.getIdPolicy()),null));
 			}
 			
-			//List<InfoPolicy> infoPolicies = confCore.infoPolicyList();
 			List<InfoPolicy> infoPolicies = new ArrayList<>();
 			infoPolicies.add(infoPolicy);
 			
@@ -194,8 +192,8 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 								
 				// Attivazione
 				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, null, type);
@@ -213,17 +211,17 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			}
 			
 			// Controlli sui campi immessi
-			String _modalita = infoPolicy.isBuiltIn() ? ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_BUILT_IN :
+			String modalitaCheck = infoPolicy.isBuiltIn() ? ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_BUILT_IN :
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CUSTOM;
 			boolean isOk = confHelper.attivazionePolicyCheckData(sbParsingError, tipoOperazione, configurazioneControlloTraffico, 
-					policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, _modalita);
+					policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, modalitaCheck);
 			if (!isOk) {
 				
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// Attivazione
 				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, null, type);

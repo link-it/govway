@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -168,7 +167,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					ServletUtils.removeObjectFromSession(request, session, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 			}
 			
-			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){// && apcHelper.isEditModeInProgress()){
+			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){
 				// primo accesso alla servlet
 				strutsBean.validazioneDocumenti = true;
 				strutsBean.aggiornaEsistenti = true;
@@ -188,7 +187,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				}
 			}
 
-			long idAccordoLong = Long.valueOf(strutsBean.id);
+			long idAccordoLong = Long.parseLong(strutsBean.id);
 			
 			String apiGestioneParziale = apcHelper.getParameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
 			if(apiGestioneParziale == null) {
@@ -214,7 +213,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			// Flag per controllare il mapping automatico di porttype e operation 
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
-			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
+			boolean enableAutoMappingEstraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			boolean asWithAllegati = apcHelper.asWithAllegatiXsd(as);
@@ -226,49 +225,32 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 		
 			
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
-			MessageType messageType = apcCore.toMessageMessageType(as.getMessageType());
 			org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
-			String gruppi = "";
-			// leggo i gruppi dall'accordo
-			if(as.getGruppi() != null) {
-				List<String> nomiGruppi = as.getGruppi().getGruppoList().stream().flatMap(e-> Stream.of(e.getNome())).collect(Collectors.toList());
-				gruppi = StringUtils.join(nomiGruppi, ",");
-			}
-			
-			String canale = as.getCanale();
-			String canaleStato =  AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
-			if(canale == null) {
-				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
-			} else {
-				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
-			}
 			
 			isSupportoProfiloAsincrono = acCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 			
 			// fromato specifica default se e' null
-			if(formatoSpecifica == null) {
-				if(serviceBinding != null) {
-					switch(serviceBinding) {
-					case REST:
-						formatoSpecifica = org.openspcoop2.protocol.manifest.constants.InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_REST);
-						break;
-					case SOAP:
-					default:
-						formatoSpecifica = org.openspcoop2.protocol.manifest.constants.InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SOAP);
-						break;
-					}
+			if(formatoSpecifica == null &&
+				serviceBinding != null) {
+				switch(serviceBinding) {
+				case REST:
+					formatoSpecifica = org.openspcoop2.protocol.manifest.constants.InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_REST);
+					break;
+				case SOAP:
+				default:
+					formatoSpecifica = org.openspcoop2.protocol.manifest.constants.InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SOAP);
+					break;
 				}
 			}
 			
 			FiltroRicercaGruppi filtroRicerca = new FiltroRicercaGruppi();
 			filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(serviceBinding));
-			List<String> elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
 			
 			String oldwsdl = "";
 			byte[] wsdlbyte = null;
 			String label = null;
 			String tipologiaDocumentoScaricare = null;
-			boolean facilityUnicoWSDL_interfacciaStandard = false;
+			boolean facilityUnicoWSDLInterfacciaStandard = false;
 			if (strutsBean.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
 				wsdlbyte = as.getByteWsdlDefinitorio();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO;
@@ -297,11 +279,11 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE;
 					}else { 
 						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO;
-						facilityUnicoWSDL_interfacciaStandard = true;
+						facilityUnicoWSDLInterfacciaStandard = true;
 					}
 				} else {
 					label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL;
-					facilityUnicoWSDL_interfacciaStandard = true;
+					facilityUnicoWSDLInterfacciaStandard = true;
 				}
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_EROGATORE;
 			}
@@ -332,7 +314,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			boolean used = true;
 			
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
-			if(!isModalitaVistaApiCustom) {
+			if(isModalitaVistaApiCustom==null || !isModalitaVistaApiCustom.booleanValue()) {
 				label = MessageFormat.format("{0} di {1}", label, labelASTitle);
 			}
 
@@ -344,7 +326,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			String tipoProtocollo = null;
 			// controllo se l'accordo e' utilizzato da qualche asps
 			List<AccordoServizioParteSpecifica> asps = apsCore.serviziByAccordoFilterList(idAccordoOLD);
-			used = asps != null && asps.size() > 0;
+			used = asps != null && !asps.isEmpty();
 
 			// lista dei protocolli supportati
 			List<String> listaTipiProtocollo = apcCore.getProtocolli(request, session);
@@ -367,9 +349,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiWSDLChangeToDati(dati, strutsBean.id,strutsBean.tipoAccordo,strutsBean.tipo,label,
 						oldwsdl,as.getStatoPackage(),strutsBean.validazioneDocumenti,tipologiaDocumentoScaricare,
@@ -391,9 +373,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiWSDLChangeToDati(dati, strutsBean.id,strutsBean.tipoAccordo,strutsBean.tipo,label,
 						oldwsdl,as.getStatoPackage(),strutsBean.validazioneDocumenti,tipologiaDocumentoScaricare,
@@ -433,9 +415,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							ServletUtils.setPageDataTitle(pd, listaParams);
 
 							// preparo i campi
-							Vector<DataElement> dati = new Vector<DataElement>();
+							List<DataElement> dati = new ArrayList<>();
 
-							dati.addElement(ServletUtils.getDataElementForEditModeInProgress());
+							dati.add(ServletUtils.getDataElementForEditModeInProgress());
 
 							// salvo lo stato dell'invio
 							apcHelper.addAccordiWSDLChangeToDati(dati, strutsBean.id,strutsBean.tipoAccordo,strutsBean.tipo,label,
@@ -499,11 +481,11 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}
 			
 			// Arrivo qui quando l'utente ha schiacciato Ok nella maschera di conferma, oppure l'accordo non aveva servizi, o sono in un wsdl definitorio.
-			List<IDResource> risorseEliminate = new ArrayList<IDResource>();
-			List<IDPortType> portTypeEliminati = new ArrayList<IDPortType>();
-			List<IDPortTypeAzione> operationEliminate = new ArrayList<IDPortTypeAzione>();
+			List<IDResource> risorseEliminate = new ArrayList<>();
+			List<IDPortType> portTypeEliminati = new ArrayList<>();
+			List<IDPortTypeAzione> operationEliminate = new ArrayList<>();
 			AccordiServizioParteComuneUtilities.updateInterfacciaAccordoServizioParteComune(strutsBean.tipo, strutsBean.wsdl, as,
-					enableAutoMapping, strutsBean.validazioneDocumenti, enableAutoMapping_estraiXsdSchemiFromWsdlTypes, facilityUnicoWSDL_interfacciaStandard,
+					enableAutoMapping, strutsBean.validazioneDocumenti, enableAutoMappingEstraiXsdSchemiFromWsdlTypes, facilityUnicoWSDLInterfacciaStandard,
 					tipoProtocollo, 
 					apcCore,
 					strutsBean.aggiornaEsistenti, strutsBean.eliminaNonPresentiNuovaInterfaccia,
@@ -546,36 +528,35 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					}
 				}
 			}
-			if(inUsoMessage.length()==0) {
-				if(risorseEliminate!=null && !risorseEliminate.isEmpty()) {
+			if(inUsoMessage.length()==0 &&
+				risorseEliminate!=null && !risorseEliminate.isEmpty()) {
 					
-					AccordoServizioParteComuneSintetico asSintetico = apcCore.getAccordoServizioSintetico(idAccordoLong);
-					
-					boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
-					for (IDResource idRisorsa : risorseEliminate) {
-						HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-						boolean operazioneInUso = apcCore.isRisorsaInUso(idRisorsa,whereIsInUso,normalizeObjectIds);
-						if (operazioneInUso) {
+				AccordoServizioParteComuneSintetico asSintetico = apcCore.getAccordoServizioSintetico(idAccordoLong);
+				
+				boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
+				for (IDResource idRisorsa : risorseEliminate) {
+					HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+					boolean operazioneInUso = apcCore.isRisorsaInUso(idRisorsa,whereIsInUso,normalizeObjectIds);
+					if (operazioneInUso) {
 
-							// traduco nomeRisorsa in path
-							String methodPath = null;
-							if(asSintetico.getResource()!=null) {
-								for (int j = 0; j < asSintetico.getResource().size(); j++) {
-									ResourceSintetica risorsa = asSintetico.getResource().get(j);
-									if (idRisorsa.getNome().equals(risorsa.getNome())) {
-										methodPath = NamingUtils.getLabelResource(risorsa);
-										break;
-									}
+						// traduco nomeRisorsa in path
+						String methodPath = null;
+						if(asSintetico.getResource()!=null) {
+							for (int j = 0; j < asSintetico.getResource().size(); j++) {
+								ResourceSintetica risorsa = asSintetico.getResource().get(j);
+								if (idRisorsa.getNome().equals(risorsa.getNome())) {
+									methodPath = NamingUtils.getLabelResource(risorsa);
+									break;
 								}
 							}
-							if(methodPath==null) {
-								methodPath = idRisorsa.getNome();
-							}
-							
-							inUsoMessage.append(DBOggettiInUsoUtils.toString(idRisorsa, methodPath, whereIsInUso, true, newLine));
-							inUsoMessage.append(newLine);
-						} 
-					}
+						}
+						if(methodPath==null) {
+							methodPath = idRisorsa.getNome();
+						}
+						
+						inUsoMessage.append(DBOggettiInUsoUtils.toString(idRisorsa, methodPath, whereIsInUso, true, newLine));
+						inUsoMessage.append(newLine);
+					} 
 				}
 			}
 			if(inUsoMessage.length()>0) {
@@ -583,9 +564,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiWSDLChangeToDati(dati, strutsBean.id,strutsBean.tipoAccordo,strutsBean.tipo,label,
 						oldwsdl,as.getStatoPackage(),strutsBean.validazioneDocumenti,tipologiaDocumentoScaricare,
@@ -648,12 +629,12 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			String[] providersList = null;
 			String[] providersListLabel = null;
 
-			List<String> soggettiListTmp = new ArrayList<String>();
-			List<String> soggettiListLabelTmp = new ArrayList<String>();
+			List<String> soggettiListTmp = new ArrayList<>();
+			List<String> soggettiListLabelTmp = new ArrayList<>();
 			soggettiListTmp.add("-");
 			soggettiListLabelTmp.add("-");
 
-			if (listaSoggetti.size() > 0) {
+			if (!listaSoggetti.isEmpty()) {
 				for (Soggetto soggetto : listaSoggetti) {
 					if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
 						soggettiListTmp.add(soggetto.getId().toString());
@@ -672,7 +653,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}else{
 				lista = acCore.accordiCooperazioneList(userLogin, new ConsoleSearch(true));
 			}
-			if (lista != null && lista.size() > 0) {
+			if (lista != null && !lista.isEmpty()) {
 				accordiCooperazioneEsistenti = new String[lista.size()+1];
 				accordiCooperazioneEsistentiLabel = new String[lista.size()+1];
 				int i = 1;
@@ -702,7 +683,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			if(as.getVersione()!=null){
 				versione = as.getVersione().intValue()+"";
 			}
-			boolean isServizioComposto = as.getServizioComposto()!=null ? true : false;
+			boolean isServizioComposto = as.getServizioComposto()!=null;
 			String accordoCooperazioneId = "";
 			if(isServizioComposto){
 				accordoCooperazioneId = ""+as.getServizioComposto().getIdAccordoCooperazione();
@@ -736,21 +717,23 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			
 			
 			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
-			messageType = apcCore.toMessageMessageType(as.getMessageType());
+			MessageType messageType = apcCore.toMessageMessageType(as.getMessageType());
 			formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
 			
 			filtroRicerca = new FiltroRicercaGruppi();
 			filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(serviceBinding));
-			elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
+			List<String> elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
 			
+			String gruppi = null;
 			if(as.getGruppi() != null) {
 				List<String> nomiGruppi = as.getGruppi().getGruppoList().stream().flatMap(e-> Stream.of(e.getNome())).collect(Collectors.toList());
 				gruppi = StringUtils.join(nomiGruppi, ",");
 			} else 
 				gruppi = "";
 			
-			canale = as.getCanale();
+			String canale = as.getCanale();
 			
+			String canaleStato = null;
 			if(canale == null) {
 				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
 			} else {
@@ -758,9 +741,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			dati = apcHelper.addAccordiToDati(dati, as.getNome(), descr, profcoll, strutsBean.wsdldef, strutsBean.wsdlconc, strutsBean.wsdlserv, strutsBean.wsdlservcorr,
 					strutsBean.wsblconc,strutsBean.wsblserv,strutsBean.wsblservcorr, 

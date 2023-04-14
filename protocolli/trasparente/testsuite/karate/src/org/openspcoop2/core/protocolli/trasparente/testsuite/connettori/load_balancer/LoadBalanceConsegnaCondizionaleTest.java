@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -713,7 +712,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		
 		Map<String, List<HttpResponse>> responsesByPool = new ConcurrentHashMap<>();
 		for(var e : requestsByPool.keySet()) {
-			responsesByPool.put(e, new Vector<HttpResponse>());
+			responsesByPool.put(e, new ArrayList<>());
 		}
 		
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Common.sogliaRichiesteSimultanee);

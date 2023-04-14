@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
@@ -36,17 +37,22 @@ import org.openspcoop2.web.lib.mvc.Costanti;
  * @version $Rev$, $Date$
  * 
  */
-public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
+public class ErogazioniCostanti {
+	
+	private ErogazioniCostanti() {}
 	
 	public static final String OBJECT_NAME_ASPS_EROGAZIONI = "aspsErogazioni";
 	public static final String OBJECT_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI = "aspsErogazioniVerificaCertificati";
 	
-	public static final String SERVLET_NAME_ASPS_EROGAZIONI_ADD = OBJECT_NAME_ASPS_EROGAZIONI+"Add.do";
-	public static final String SERVLET_NAME_ASPS_EROGAZIONI_CHANGE = OBJECT_NAME_ASPS_EROGAZIONI+"Change.do";
-	public static final String SERVLET_NAME_ASPS_EROGAZIONI_LIST = OBJECT_NAME_ASPS_EROGAZIONI+"List.do";
-	public static final String SERVLET_NAME_ASPS_EROGAZIONI_DEL = OBJECT_NAME_ASPS_EROGAZIONI+"Del.do";
+	public static final String SERVLET_NAME_ASPS_EROGAZIONI_ADD = OBJECT_NAME_ASPS_EROGAZIONI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_ASPS_EROGAZIONI_CHANGE = OBJECT_NAME_ASPS_EROGAZIONI+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_ASPS_EROGAZIONI_LIST = OBJECT_NAME_ASPS_EROGAZIONI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final String SERVLET_NAME_ASPS_EROGAZIONI_DEL = OBJECT_NAME_ASPS_EROGAZIONI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
 	
-	public static final Vector<String> SERVLET_ASPS_EROGAZIONI = new Vector<String>();
+	private static final List<String> SERVLET_ASPS_EROGAZIONI = new ArrayList<>();
+	public static List<String> getServletAspsErogazioni() {
+		return SERVLET_ASPS_EROGAZIONI;
+	}
 	static{
 		SERVLET_ASPS_EROGAZIONI.add(SERVLET_NAME_ASPS_EROGAZIONI_ADD);
 		SERVLET_ASPS_EROGAZIONI.add(SERVLET_NAME_ASPS_EROGAZIONI_CHANGE);
@@ -69,7 +75,7 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public static final String LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_CONNETTORE = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE;
 	public static final String LABEL_ASPS_GESTIONE_CONFIGURAZIONI = "Configurazione";
 	public static final String LABEL_ASPS_GESTIONE_CONFIGURAZIONI_CONFIGURA = "Configura";
-	public static final String LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO = "Gruppi"; // il codice è già agganciato, riscommentare il seguente codice per avere risorse/azioni:  "Gruppi {0}";
+	public static final String LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO = "Gruppi"; /** il codice è già agganciato, riscommentare il seguente codice per avere risorse/azioni:  "Gruppi {0}"; */
 	public static final String LABEL_ASPS_VERIFICA_CERTIFICATI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI;
 	public static final String LABEL_ASPS_VERIFICA_CERTIFICATI_DI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DI;
 	

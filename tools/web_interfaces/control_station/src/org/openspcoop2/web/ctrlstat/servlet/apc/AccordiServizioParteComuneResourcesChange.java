@@ -22,10 +22,10 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -132,7 +132,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			String protocolPropertiesSet = apcHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			long idAccordoLong = Long.valueOf(id);
+			long idAccordoLong = Long.parseLong(id);
 			String nomeRisorsa = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 			
 			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_DESCRIZIONE);
@@ -217,7 +217,10 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 				}
 			}
 			
-			String oldNomeRisorsa =null, oldNomeRisorsaGenerato = null, oldHttpMethod = null, oldPath = null;
+			String oldNomeRisorsa =null;
+			String oldNomeRisorsaGenerato = null;
+			String oldHttpMethod = null;
+			String oldPath = null;
 			if(resourceOLD != null){
 				oldProtocolPropertyList = resourceOLD.getProtocolPropertyList();
 				oldPath = resourceOLD.getPath();
@@ -269,7 +272,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.ADD, as, tipoAccordo, labelASTitle, null, false);
 			
-			String labelRisorse = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_RISORSE : AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle;
+			String labelRisorse = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? AccordiServizioParteComuneCostanti.LABEL_RISORSE : AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle;
 			listaParams.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			if(resourceOLD!=null) {
 				listaParams.add(new Parameter(NamingUtils.getLabelResource(resourceOLD), null));
@@ -319,9 +322,9 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
 				consoleDynamicConfiguration.updateDynamicConfigResource(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
@@ -439,9 +442,9 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
 				consoleDynamicConfiguration.updateDynamicConfigResource(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 

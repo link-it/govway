@@ -20,7 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -104,8 +104,8 @@ public class PorteApplicativeMTOM extends Action {
 
 			boolean visualizzazioneCompletaMTOM = porteApplicativeCore.isShowMTOMVisualizzazioneCompleta();
 
-			String modeMtomListRichiesta[] = null;
-			String modeMtomListRisposta[] = null;
+			String [] modeMtomListRichiesta = null;
+			String [] modeMtomListRisposta = null;
 
 			if(visualizzazioneCompletaMTOM){
 				modeMtomListRichiesta = new String [4];
@@ -186,12 +186,7 @@ public class PorteApplicativeMTOM extends Action {
 				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG_DI+idporta;
 			}
 			
-			//if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
-				lstParam.add(new Parameter(labelPerPorta,  null));
-			//}
-			//else {
-			//	lstParam.add(new Parameter(labelPerPorta,  null));
-			//}
+			lstParam.add(new Parameter(labelPerPorta,  null));
 			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
@@ -207,8 +202,8 @@ public class PorteApplicativeMTOM extends Action {
 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// Parametri per la form di abilitazione
 				dati = porteApplicativeHelper.addMTOMToDati(dati, modeMtomListRichiesta,modeMtomListRisposta, mtomRichiesta, mtomRisposta,
@@ -230,9 +225,9 @@ public class PorteApplicativeMTOM extends Action {
 			boolean isOk = porteApplicativeHelper.MTOMCheckData(TipoOperazione.OTHER);
 			if (!isOk) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// Parametri per la form di abilitazione
 				dati = porteApplicativeHelper.addMTOMToDati(dati, modeMtomListRichiesta, modeMtomListRisposta,mtomRichiesta, mtomRisposta,
@@ -279,7 +274,7 @@ public class PorteApplicativeMTOM extends Action {
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			// Aggiorno valori MTOM request e response
 			pa = porteApplicativeCore.getPortaApplicativa(idInt);
@@ -328,8 +323,7 @@ public class PorteApplicativeMTOM extends Action {
 			pd.setDati(dati);
 			
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-			//pd.disableEditMode();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 

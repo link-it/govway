@@ -24,7 +24,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -110,9 +109,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			
 			// controllo primo accesso
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FIRST_TIME);
-			
-		//	String idAllarmeS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME);
-			
+						
 			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA);
 			RuoloPorta ruoloPorta = null;
 			if(ruoloPortaParam!=null) {
@@ -242,7 +239,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 							try{
 								Context context = confHelper.createAlarmContext(allarme, parameters);	
 								
-								if(confCore.isShowAllarmiFormNomeSuggeritoCreazione()) {
+								if(confCore.isShowAllarmiFormNomeSuggeritoCreazione()!=null && confCore.isShowAllarmiFormNomeSuggeritoCreazione().booleanValue()) {
 									allarme.setAlias(AllarmiUtils.costruisciAliasAllarme(allarme, ControlStationCore.getLog(), context));
 								}
 								
@@ -263,11 +260,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 								}
 											
 								parameters = confCore.getParameters(allarme, context);
-								
-//								for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
-//									par.setValue(par.getRendering().getDefaultValue());
-//								}
-								
+																
 								confHelper.saveParametriIntoSession(request, session, parameters);
 								confHelper.savePluginIntoSession(request, session, allarme.getPlugin());
 							}catch(Exception e){
@@ -286,7 +279,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 				}
 			}
 			
-			List<Parameter> lstParamSession = new ArrayList<Parameter>();
+			List<Parameter> lstParamSession = new ArrayList<>();
 
 			Parameter parRuoloPorta = null;
 			if(ruoloPorta!=null) {
@@ -315,9 +308,9 @@ public class ConfigurazioneAllarmiAdd extends Action {
 				lstParam = lstParamPorta;
 			}
 			else {
-				lstParam = new ArrayList<Parameter>();
+				lstParam = new ArrayList<>();
 				
-				if(lstParamSession.size() > 0) {
+				if(!lstParamSession.isEmpty()) {
 					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST, lstParamSession.toArray(new Parameter[lstParamSession.size()])));
 				} else {
@@ -325,8 +318,6 @@ public class ConfigurazioneAllarmiAdd extends Action {
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST));
 				}
 				
-//			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
-//				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST));
 				lstParam.add(ServletUtils.getParameterAggiungi());
 			}
 			
@@ -336,8 +327,8 @@ public class ConfigurazioneAllarmiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addAllarmeToDati(dati, tipoOperazione, allarme, alarmEngineConfig, listaPlugin, parameters, ruoloPorta, nomePorta, serviceBinding); 
 				
@@ -361,8 +352,8 @@ public class ConfigurazioneAllarmiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addAllarmeToDati(dati, tipoOperazione, allarme, alarmEngineConfig, listaPlugin, parameters, ruoloPorta, nomePorta, serviceBinding);
 				
@@ -379,7 +370,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			}
 				
 			// salvataggio dei parametri
-			if(parameters!=null && parameters.size()>0) {
+			if(parameters!=null && !parameters.isEmpty()) {
 				for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
 					boolean found = false;
 					for (AllarmeParametro parDB : allarme.getAllarmeParametroList()) {
@@ -451,7 +442,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.ADD());
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.ADD());
 		}  

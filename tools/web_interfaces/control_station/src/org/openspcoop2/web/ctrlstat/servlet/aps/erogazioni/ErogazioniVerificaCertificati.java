@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -188,7 +187,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 						
 			// Prendo la lista di aliases
 			List<String> aliases = apsCore.getJmxPdD_aliases();
-			if(aliases==null || aliases.size()<=0){
+			if(aliases==null || aliases.isEmpty()){
 				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 			
@@ -221,7 +220,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 			listParameterChange.add(pTipoServizio);
 			listParameterChange.add(pIdsoggErogatore);
 			
-			List<Parameter> lstParm = new ArrayList<Parameter>();
+			List<Parameter> lstParm = new ArrayList<>();
 
 			if(gestioneFruitori) {
 				lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
@@ -244,8 +243,8 @@ public class ErogazioniVerificaCertificati  extends Action {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParm );
 			
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			
 			// -- raccolgo dati
@@ -285,20 +284,20 @@ public class ErogazioniVerificaCertificati  extends Action {
 				}
 			}
 			
-			List<String> listConnettoriRegistrati = new ArrayList<String>();
-			List<String> listPosizioneConnettoriRegistrati = new ArrayList<String>();
+			List<String> listConnettoriRegistrati = new ArrayList<>();
+			List<String> listPosizioneConnettoriRegistrati = new ArrayList<>();
 			List<org.openspcoop2.core.registry.Connettore> listConnettoriRegistry = new ArrayList<>();
 			List<org.openspcoop2.core.config.Connettore> listConnettoriConfig = new ArrayList<>();
 			
-			List<String> listTokenPolicyValidazione = new ArrayList<String>();
-			List<GestioneToken> listTokenPolicyValidazione_conf = new ArrayList<GestioneToken>();
-			List<String> listPosizioneTokenPolicyValidazione = new ArrayList<String>();
+			List<String> listTokenPolicyValidazione = new ArrayList<>();
+			List<GestioneToken> listTokenPolicyValidazioneConf = new ArrayList<>();
+			List<String> listPosizioneTokenPolicyValidazione = new ArrayList<>();
 			
-			List<String> listTokenPolicyNegoziazione = new ArrayList<String>();
-			List<String> listPosizioneTokenPolicyNegoziazione = new ArrayList<String>();
+			List<String> listTokenPolicyNegoziazione = new ArrayList<>();
+			List<String> listPosizioneTokenPolicyNegoziazione = new ArrayList<>();
 			
-			List<String> listAttributeAuthority = new ArrayList<String>();
-			List<String> listPosizioneAttributeAuthority = new ArrayList<String>();
+			List<String> listAttributeAuthority = new ArrayList<>();
+			List<String> listPosizioneAttributeAuthority = new ArrayList<>();
 			
 			boolean findConnettoreHttpConPrefissoHttps = false;
 			if(!soloModI) {
@@ -316,16 +315,16 @@ public class ErogazioniVerificaCertificati  extends Action {
 							continue;
 						}
 						
-						String _suffixGruppo = "";
+						String suffixGruppo = "";
 						if(!mappingFruizione.isDefault()) {
-							_suffixGruppo = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+							suffixGruppo = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 							"Gruppo: "+mappingFruizione.getDescrizione();
 						}
-						String nomeFruizione = nomeApiImpl+_suffixGruppo;
+						String nomeFruizione = nomeApiImpl+suffixGruppo;
 						
 						if(porta.getGestioneToken()!=null && porta.getGestioneToken().getPolicy()!=null && !listTokenPolicyValidazione.contains(porta.getGestioneToken().getPolicy())) {
 							listTokenPolicyValidazione.add(porta.getGestioneToken().getPolicy());
-							listTokenPolicyValidazione_conf.add(porta.getGestioneToken());
+							listTokenPolicyValidazioneConf.add(porta.getGestioneToken());
 							listPosizioneTokenPolicyValidazione.add(nomeFruizione+
 									org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 									"Token Policy Validazione: "+porta.getGestioneToken().getPolicy());
@@ -407,16 +406,16 @@ public class ErogazioniVerificaCertificati  extends Action {
 							continue;
 						}
 						
-						String _suffixGruppo = "";
+						String suffixGruppo = "";
 						if(!mappingErogazione.isDefault()) {
-							_suffixGruppo = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+							suffixGruppo = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 									"Gruppo: "+mappingErogazione.getDescrizione();
 						}
-						String nomeErogazione = nomeApiImpl+_suffixGruppo;
+						String nomeErogazione = nomeApiImpl+suffixGruppo;
 						
 						if(porta.getGestioneToken()!=null && porta.getGestioneToken().getPolicy()!=null && !listTokenPolicyValidazione.contains(porta.getGestioneToken().getPolicy())) {
 							listTokenPolicyValidazione.add(porta.getGestioneToken().getPolicy());
-							listTokenPolicyValidazione_conf.add(porta.getGestioneToken());
+							listTokenPolicyValidazioneConf.add(porta.getGestioneToken());
 							listPosizioneTokenPolicyValidazione.add(nomeErogazione+
 									org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 									"Token Policy Validazione: "+porta.getGestioneToken().getPolicy());
@@ -462,12 +461,11 @@ public class ErogazioniVerificaCertificati  extends Action {
 										}
 										
 										String nomeErogazioneConnettore = nomeErogazione;
-										if(connettoreMultiploEnabled && paSA.getDatiConnettore()!=null){
-											if(paSA.getDatiConnettore().getNome()!=null) {
-												nomeErogazioneConnettore = nomeErogazioneConnettore + 
-														org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
-														"Connettore Multiplo: "+paSA.getDatiConnettore().getNome();
-											}
+										if(connettoreMultiploEnabled && paSA.getDatiConnettore()!=null &&
+											paSA.getDatiConnettore().getNome()!=null) {
+											nomeErogazioneConnettore = nomeErogazioneConnettore + 
+													org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+													"Connettore Multiplo: "+paSA.getDatiConnettore().getNome();
 										}
 										
 										String tokenPolicy = ConnettoreUtils.getNegoziazioneTokenPolicyConnettore(connettore);
@@ -525,17 +523,17 @@ public class ErogazioniVerificaCertificati  extends Action {
 					}
 															
 					// -- verifica
-					List<String> aliases_for_check = new ArrayList<>();
+					List<String> aliasesForCheck = new ArrayList<>();
 					boolean all = false;
 					if(aliases.size()==1) {
-						aliases_for_check.add(aliases.get(0));
+						aliasesForCheck.add(aliases.get(0));
 					}
 					else if(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) {
-						aliases_for_check.addAll(aliases);
+						aliasesForCheck.addAll(aliases);
 						all = true;
 					}
 					else {
-						aliases_for_check.add(alias);
+						aliasesForCheck.add(alias);
 					}
 					
 					CertificateChecker certificateChecker = null;
@@ -543,7 +541,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 						certificateChecker = apsCore.getJmxPdD_certificateChecker();
 					}
 					else {
-						certificateChecker = apsCore.newJmxPdD_certificateChecker(aliases_for_check);
+						certificateChecker = apsCore.newJmxPdD_certificateChecker(aliasesForCheck);
 					}
 					StringBuilder sbDetailsError = new StringBuilder(); 
 					
@@ -553,19 +551,19 @@ public class ErogazioniVerificaCertificati  extends Action {
 					String extraErrore = null;
 					
 					// verifica modi
-					StringBuilder sbDetailsWarning_modi = new StringBuilder();
-					String posizioneWarning_modi = null;
+					StringBuilder sbDetailsWarningModi = new StringBuilder();
+					String posizioneWarningModi = null;
 					if(sicurezzaModi) {
 						if(gestioneFruitori) {
 							org.openspcoop2.core.registry.Connettore connettore = null;
-							certificateChecker.checkFruizione(sbDetailsError, sbDetailsWarning_modi,
+							certificateChecker.checkFruizione(sbDetailsError, sbDetailsWarningModi,
 									false, connettore,
 									sicurezzaModi, asps, fruitore,
 									sogliaWarningGiorni);
 						}
 						else {
 							org.openspcoop2.core.config.Connettore connettore = null;
-							certificateChecker.checkErogazione(sbDetailsError, sbDetailsWarning_modi,
+							certificateChecker.checkErogazione(sbDetailsError, sbDetailsWarningModi,
 									false, connettore,
 									sicurezzaModi, asps,
 									sogliaWarningGiorni);
@@ -573,14 +571,14 @@ public class ErogazioniVerificaCertificati  extends Action {
 						if(sbDetailsError.length()>0) {
 							posizioneErrore = nomeApiImpl;
 						}
-						else if(sbDetailsWarning_modi.length()>0) {
-							posizioneWarning_modi = nomeApiImpl;
+						else if(sbDetailsWarningModi.length()>0) {
+							posizioneWarningModi = nomeApiImpl;
 						}
 					}
 					
 					// verifica connettori https
-					StringBuilder sbDetailsWarning_connettoriHttps = new StringBuilder(); 
-					String posizioneWarning_connettoriHttps = null;
+					StringBuilder sbDetailsWarningConnettoriHttps = new StringBuilder(); 
+					String posizioneWarningConnettoriHttps = null;
 					boolean connettoreSsl = !listConnettoriRegistrati.isEmpty();
 					if(sbDetailsError.length()<=0 && connettoreSsl) {
 						if(gestioneFruitori) {
@@ -588,8 +586,8 @@ public class ErogazioniVerificaCertificati  extends Action {
 								org.openspcoop2.core.registry.Connettore connettore = listConnettoriRegistry.get(i);
 								String posizione = listPosizioneConnettoriRegistrati.get(i);
 								
-								StringBuilder _sbDetailsWarning_connettoriHttps = new StringBuilder(); 
-								certificateChecker.checkFruizione(sbDetailsError, _sbDetailsWarning_connettoriHttps,
+								StringBuilder sbDetailsWarningConnettoriHttpsSecured = new StringBuilder(); 
+								certificateChecker.checkFruizione(sbDetailsError, sbDetailsWarningConnettoriHttpsSecured,
 										connettoreSsl, connettore,
 										false, asps, fruitore,
 										sogliaWarningGiorni);
@@ -597,9 +595,9 @@ public class ErogazioniVerificaCertificati  extends Action {
 									posizioneErrore = posizione;
 									break;
 								}
-								else if(sbDetailsWarning_connettoriHttps.length()<=0 && _sbDetailsWarning_connettoriHttps.length()>0) {
-									posizioneWarning_modi = nomeApiImpl;
-									sbDetailsWarning_connettoriHttps.append(_sbDetailsWarning_connettoriHttps.toString());
+								else if(sbDetailsWarningConnettoriHttps.length()<=0 && sbDetailsWarningConnettoriHttpsSecured.length()>0) {
+									posizioneWarningModi = nomeApiImpl;
+									sbDetailsWarningConnettoriHttps.append(sbDetailsWarningConnettoriHttpsSecured.toString());
 								}
 							}
 						}
@@ -608,8 +606,8 @@ public class ErogazioniVerificaCertificati  extends Action {
 								org.openspcoop2.core.config.Connettore connettore = listConnettoriConfig.get(i); 
 								String posizione = listPosizioneConnettoriRegistrati.get(i);
 								
-								StringBuilder _sbDetailsWarning_connettoriHttps = new StringBuilder(); 
-								certificateChecker.checkErogazione(sbDetailsError, _sbDetailsWarning_connettoriHttps,
+								StringBuilder sbDetailsWarningConnettoriHttpsSecured = new StringBuilder(); 
+								certificateChecker.checkErogazione(sbDetailsError, sbDetailsWarningConnettoriHttpsSecured,
 										connettoreSsl, connettore,
 										false, asps,
 										sogliaWarningGiorni);
@@ -617,20 +615,20 @@ public class ErogazioniVerificaCertificati  extends Action {
 									posizioneErrore = posizione;
 									break;
 								}
-								else if(sbDetailsWarning_connettoriHttps.length()<=0 && _sbDetailsWarning_connettoriHttps.length()>0) {
-									posizioneWarning_modi = nomeApiImpl;
-									sbDetailsWarning_connettoriHttps.append(_sbDetailsWarning_connettoriHttps.toString()); // tengo solo un warning alla volta, come per gli errori
+								else if(sbDetailsWarningConnettoriHttps.length()<=0 && sbDetailsWarningConnettoriHttpsSecured.length()>0) {
+									posizioneWarningModi = nomeApiImpl;
+									sbDetailsWarningConnettoriHttps.append(sbDetailsWarningConnettoriHttpsSecured.toString()); // tengo solo un warning alla volta, come per gli errori
 								}
 							}
 						}
 					}
 											
 					// verifica token policy validazione
-					StringBuilder sbDetailsWarning_tokenPolicyValidazione = new StringBuilder(); 
-					String posizioneWarning_tokenPolicyValidazione = null;
+					StringBuilder sbDetailsWarningTokenPolicyValidazione = new StringBuilder(); 
+					String posizioneWarningTokenPolicyValidazione = null;
 					if(sbDetailsError.length()<=0 && listTokenPolicyValidazione!=null && !listTokenPolicyValidazione.isEmpty()) {
 						for (int j = 0; j < listTokenPolicyValidazione.size(); j++) {
-							GestioneToken policy = listTokenPolicyValidazione_conf.get(j);
+							GestioneToken policy = listTokenPolicyValidazioneConf.get(j);
 							String posizione = listPosizioneTokenPolicyValidazione.get(j);
 							GenericProperties gp = confCore.getGenericProperties(policy.getPolicy(), org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, false);
 							if(gp!=null) {
@@ -640,28 +638,24 @@ public class ErogazioniVerificaCertificati  extends Action {
 								boolean validazioneJwt = policyToken.isValidazioneJWT();
 								boolean forwardToJwt = policyToken.isForwardToken();
 								
-								if(httpsIntrospection) {
-									if(!policyToken.isEndpointHttps()) {
-										httpsIntrospection = false;
-										
-										String endpoint = policyToken.getIntrospection_endpoint();
-										if(endpoint!=null && StringUtils.isNotEmpty(endpoint)) {
-											if(!findConnettoreHttpConPrefissoHttps) {
-												findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
-											}
-										}
+								if(httpsIntrospection &&
+									!policyToken.isEndpointHttps()) {
+									httpsIntrospection = false;
+									
+									String endpoint = policyToken.getIntrospection_endpoint();
+									if(endpoint!=null && StringUtils.isNotEmpty(endpoint) &&
+										!findConnettoreHttpConPrefissoHttps) {
+										findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
 									}
 								}
-								if(httpsUserInfo) {
-									if(!policyToken.isEndpointHttps()) {
-										httpsUserInfo = false;
-										
-										String endpoint = policyToken.getUserInfo_endpoint();
-										if(endpoint!=null && StringUtils.isNotEmpty(endpoint)) {
-											if(!findConnettoreHttpConPrefissoHttps) {
-												findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
-											}
-										}
+								if(httpsUserInfo &&
+									!policyToken.isEndpointHttps()) {
+									httpsUserInfo = false;
+									
+									String endpoint = policyToken.getUserInfo_endpoint();
+									if(endpoint!=null && StringUtils.isNotEmpty(endpoint) &&
+										!findConnettoreHttpConPrefissoHttps) {
+										findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
 									}
 								}
 								
@@ -676,7 +670,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 										if(keystoreParams==null || "jwk".equalsIgnoreCase(keystoreParams.getType())) {
 											validazioneJwt = false;
 										}
-									}catch(Throwable t) {
+									}catch(Exception t) {
 										throw new DriverConfigurazioneException(t.getMessage(),t);
 									}
 								}
@@ -695,20 +689,20 @@ public class ErogazioniVerificaCertificati  extends Action {
 										if(keystoreParams==null || "jwk".equalsIgnoreCase(keystoreParams.getType())) {
 											forwardToJwt = false;
 										}
-									}catch(Throwable t) {
+									}catch(Exception t) {
 										throw new DriverConfigurazioneException(t.getMessage(),t);
 									}
 								}
 								
 								if(httpsIntrospection || httpsUserInfo || validazioneJwt || forwardToJwt) {
-									StringBuilder _sbDetailsWarning_tokenPolicyValidazione = new StringBuilder(); 
-									certificateChecker.checkTokenPolicyValidazione(sbDetailsError, _sbDetailsWarning_tokenPolicyValidazione, 
+									StringBuilder sbDetailsWarningTokenPolicyValidazioneSecured = new StringBuilder(); 
+									certificateChecker.checkTokenPolicyValidazione(sbDetailsError, sbDetailsWarningTokenPolicyValidazioneSecured, 
 											httpsIntrospection, httpsUserInfo, validazioneJwt, forwardToJwt,
 											gp,
 											sogliaWarningGiorni);
-									if(sbDetailsWarning_tokenPolicyValidazione.length()<=0 && _sbDetailsWarning_tokenPolicyValidazione.length()>0) {
-										posizioneWarning_tokenPolicyValidazione = posizione;
-										sbDetailsWarning_tokenPolicyValidazione.append(_sbDetailsWarning_tokenPolicyValidazione.toString()); // tengo solo un warning alla volta, come per gli errori
+									if(sbDetailsWarningTokenPolicyValidazione.length()<=0 && sbDetailsWarningTokenPolicyValidazioneSecured.length()>0) {
+										posizioneWarningTokenPolicyValidazione = posizione;
+										sbDetailsWarningTokenPolicyValidazione.append(sbDetailsWarningTokenPolicyValidazioneSecured.toString()); // tengo solo un warning alla volta, come per gli errori
 									}
 								}
 							}
@@ -720,8 +714,8 @@ public class ErogazioniVerificaCertificati  extends Action {
 					}
 					
 					// verifica token policy negoziazione
-					StringBuilder sbDetailsWarning_tokenPolicyNegoziazione = new StringBuilder(); 
-					String posizioneWarning_tokenPolicyNegoziazione = null;
+					StringBuilder sbDetailsWarningTokenPolicyNegoziazione = new StringBuilder(); 
+					String posizioneWarningTokenPolicyNegoziazione = null;
 					if(sbDetailsError.length()<=0 && listTokenPolicyNegoziazione!=null && !listTokenPolicyNegoziazione.isEmpty()) {
 						for (int j = 0; j < listTokenPolicyNegoziazione.size(); j++) {
 							String policy = listTokenPolicyNegoziazione.get(j);
@@ -748,7 +742,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 										// JWS Compact   			
 										keystoreParams = TokenUtilities.getSignedJwtKeystoreParams(policyNegoziazione);
 									}
-								}catch(Throwable t) {
+								}catch(Exception t) {
 									throw new DriverConfigurazioneException(t.getMessage(),t);
 								}
 								if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
@@ -760,14 +754,14 @@ public class ErogazioniVerificaCertificati  extends Action {
 								}
 								
 								if(https || signedJwt) {
-									StringBuilder _sbDetailsWarning_tokenPolicyNegoziazione = new StringBuilder(); 
-									certificateChecker.checkTokenPolicyNegoziazione(sbDetailsError, _sbDetailsWarning_tokenPolicyNegoziazione,
+									StringBuilder sbDetailsWarningTokenPolicyNegoziazioneSecured = new StringBuilder(); 
+									certificateChecker.checkTokenPolicyNegoziazione(sbDetailsError, sbDetailsWarningTokenPolicyNegoziazioneSecured,
 										https, signedJwt,
 										gp,
 										sogliaWarningGiorni);
-									if(sbDetailsWarning_tokenPolicyNegoziazione.length()<=0 && _sbDetailsWarning_tokenPolicyNegoziazione.length()>0) {
-										posizioneWarning_tokenPolicyNegoziazione = posizione;
-										sbDetailsWarning_tokenPolicyNegoziazione.append(_sbDetailsWarning_tokenPolicyNegoziazione.toString()); // tengo solo un warning alla volta, come per gli errori
+									if(sbDetailsWarningTokenPolicyNegoziazione.length()<=0 && sbDetailsWarningTokenPolicyNegoziazioneSecured.length()>0) {
+										posizioneWarningTokenPolicyNegoziazione = posizione;
+										sbDetailsWarningTokenPolicyNegoziazione.append(sbDetailsWarningTokenPolicyNegoziazioneSecured.toString()); // tengo solo un warning alla volta, come per gli errori
 									}
 								}
 							}
@@ -779,8 +773,8 @@ public class ErogazioniVerificaCertificati  extends Action {
 					}
 					
 					// attribute authority
-					StringBuilder sbDetailsWarning_attributeAuthority = new StringBuilder(); 
-					String posizioneWarning_attributeAuthority = null;
+					StringBuilder sbDetailsWarningAttributeAuthority = new StringBuilder(); 
+					String posizioneWarningAttributeAuthority = null;
 					if(sbDetailsError.length()<=0 && listAttributeAuthority!=null && !listAttributeAuthority.isEmpty()) {
 						for (int j = 0; j < listAttributeAuthority.size(); j++) {
 							String aa = listAttributeAuthority.get(j);
@@ -829,14 +823,14 @@ public class ErogazioniVerificaCertificati  extends Action {
 								}
 								
 								if(https || jwtRichiesta || jwtRisposta) {
-									StringBuilder _sbDetailsWarning_attributeAuthority = new StringBuilder(); 
-									certificateChecker.checkAttributeAuthority(sbDetailsError, _sbDetailsWarning_attributeAuthority,
+									StringBuilder _sbDetailsWarningAttributeAuthority = new StringBuilder(); 
+									certificateChecker.checkAttributeAuthority(sbDetailsError, _sbDetailsWarningAttributeAuthority,
 										https, jwtRichiesta, jwtRisposta,
 										gp,
 										sogliaWarningGiorni);
-									if(sbDetailsWarning_attributeAuthority.length()<=0 && _sbDetailsWarning_attributeAuthority.length()>0) {
-										posizioneWarning_attributeAuthority = posizione;
-										sbDetailsWarning_attributeAuthority.append(_sbDetailsWarning_attributeAuthority.toString()); // tengo solo un warning alla volta, come per gli errori
+									if(sbDetailsWarningAttributeAuthority.length()<=0 && _sbDetailsWarningAttributeAuthority.length()>0) {
+										posizioneWarningAttributeAuthority = posizione;
+										sbDetailsWarningAttributeAuthority.append(_sbDetailsWarningAttributeAuthority.toString()); // tengo solo un warning alla volta, come per gli errori
 									}
 								}
 							}
@@ -848,18 +842,18 @@ public class ErogazioniVerificaCertificati  extends Action {
 					}
 					
 					// verifica certificati jvm
-					StringBuilder sbDetailsWarning_certificatiJvm = new StringBuilder(); 
-					String posizioneWarning_certificatiJvm = null;
-					String extraWarning_certificatiJvm = null;
+					StringBuilder sbDetailsWarningCertificatiJvm = new StringBuilder(); 
+					String posizioneWarningCertificatiJvm = null;
+					String extraWarningCertificatiJvm = null;
 					if(sbDetailsError.length()<=0 && findConnettoreHttpConPrefissoHttps) {
-						certificateChecker.checkConfigurazioneJvm(sbDetailsError, sbDetailsWarning_certificatiJvm, sogliaWarningGiorni);
+						certificateChecker.checkConfigurazioneJvm(sbDetailsError, sbDetailsWarningCertificatiJvm, sogliaWarningGiorni);
 						if(sbDetailsError.length()>0) {
 							posizioneErrore = nomeApiImpl;
 							extraErrore = "Configurazione https nella JVM";
 						}
-						else if(sbDetailsWarning_certificatiJvm.length()>0) {
-							posizioneWarning_certificatiJvm = nomeApiImpl;
-							extraWarning_certificatiJvm = "Configurazione https nella JVM";
+						else if(sbDetailsWarningCertificatiJvm.length()>0) {
+							posizioneWarningCertificatiJvm = nomeApiImpl;
+							extraWarningCertificatiJvm = "Configurazione https nella JVM";
 						}
 					}
 					
@@ -868,35 +862,35 @@ public class ErogazioniVerificaCertificati  extends Action {
 					String posizioneWarning = null;
 					String extraWarning = null;
 					if(sbDetailsError.length()<=0) {
-						if(sbDetailsWarning_modi.length()>0) {
-							warning = sbDetailsWarning_modi.toString();
-							posizioneWarning = posizioneWarning_modi;
+						if(sbDetailsWarningModi.length()>0) {
+							warning = sbDetailsWarningModi.toString();
+							posizioneWarning = posizioneWarningModi;
 						}
-						else if(sbDetailsWarning_connettoriHttps.length()>0) {
-							warning = sbDetailsWarning_connettoriHttps.toString();
-							posizioneWarning = posizioneWarning_connettoriHttps;
+						else if(sbDetailsWarningConnettoriHttps.length()>0) {
+							warning = sbDetailsWarningConnettoriHttps.toString();
+							posizioneWarning = posizioneWarningConnettoriHttps;
 						}
-						else if(sbDetailsWarning_tokenPolicyValidazione.length()>0) {
-							warning = sbDetailsWarning_tokenPolicyValidazione.toString();
-							posizioneWarning = posizioneWarning_tokenPolicyValidazione;
+						else if(sbDetailsWarningTokenPolicyValidazione.length()>0) {
+							warning = sbDetailsWarningTokenPolicyValidazione.toString();
+							posizioneWarning = posizioneWarningTokenPolicyValidazione;
 						}
-						else if(sbDetailsWarning_tokenPolicyNegoziazione.length()>0) {
-							warning = sbDetailsWarning_tokenPolicyNegoziazione.toString();
-							posizioneWarning = posizioneWarning_tokenPolicyNegoziazione;
+						else if(sbDetailsWarningTokenPolicyNegoziazione.length()>0) {
+							warning = sbDetailsWarningTokenPolicyNegoziazione.toString();
+							posizioneWarning = posizioneWarningTokenPolicyNegoziazione;
 						}
-						else if(sbDetailsWarning_attributeAuthority.length()>0) {
-							warning = sbDetailsWarning_attributeAuthority.toString();
-							posizioneWarning = posizioneWarning_attributeAuthority;
+						else if(sbDetailsWarningAttributeAuthority.length()>0) {
+							warning = sbDetailsWarningAttributeAuthority.toString();
+							posizioneWarning = posizioneWarningAttributeAuthority;
 						}
-						else if(sbDetailsWarning_certificatiJvm.length()>0) {
-							warning = sbDetailsWarning_certificatiJvm.toString();
-							posizioneWarning = posizioneWarning_certificatiJvm;
-							extraWarning = extraWarning_certificatiJvm;
+						else if(sbDetailsWarningCertificatiJvm.length()>0) {
+							warning = sbDetailsWarningCertificatiJvm.toString();
+							posizioneWarning = posizioneWarningCertificatiJvm;
+							extraWarning = extraWarningCertificatiJvm;
 						}
 					}
 												
 					// esito
-					List<String> formatIds = new ArrayList<String>();
+					List<String> formatIds = new ArrayList<>();
 					formatIds.add(RegistroServiziReader.ID_CONFIGURAZIONE_CONNETTORE_HTTPS);
 					formatIds.add(RegistroServiziReader.ID_CONFIGURAZIONE_FIRMA_MODI);
 					formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_JWT);
@@ -938,14 +932,14 @@ public class ErogazioniVerificaCertificati  extends Action {
 			de.setValue(arrivoDaLista+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(soloModI) {
 				de = new DataElement();
 				de.setValue(soloModI+"");
 				de.setType(DataElementType.HIDDEN);
 				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			pd.setDati(dati);

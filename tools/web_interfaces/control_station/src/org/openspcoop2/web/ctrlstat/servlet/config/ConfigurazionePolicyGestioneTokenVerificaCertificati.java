@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -113,7 +112,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 			
 			// Prendo la lista di aliases
 			List<String> aliases = confCore.getJmxPdD_aliases();
-			if(aliases==null || aliases.size()<=0){
+			if(aliases==null || aliases.isEmpty()){
 				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 			
@@ -130,7 +129,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 			boolean verificaConnettivita = "true".equalsIgnoreCase(verificaConnettivitaS);
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			String label = attributeAuthority ?
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
@@ -159,8 +158,8 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam );
 			
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			// -- raccolgo dati
 						
@@ -295,21 +294,21 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						
 						if (!confHelper.isEditModeInProgress()) {
 
-							List<String> aliases_for_check = new ArrayList<>();
+							List<String> aliasesForCheck = new ArrayList<>();
 							if(aliases.size()==1) {
-								aliases_for_check.add(aliases.get(0));
+								aliasesForCheck.add(aliases.get(0));
 							}
 							else if(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) {
-								aliases_for_check.addAll(aliases);
+								aliasesForCheck.addAll(aliases);
 							}
 							else {
-								aliases_for_check.add(alias);
+								aliasesForCheck.add(alias);
 							}
 														
 							boolean rilevatoErrore = false;
 							String messagePerOperazioneEffettuata = "";
 							int index = 0;
-							for (String aliasForVerificaConnettore : aliases_for_check) {
+							for (String aliasForVerificaConnettore : aliasesForCheck) {
 								
 								String risorsa = confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(aliasForVerificaConnettore);
 
@@ -383,17 +382,17 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 					}
 					else {
 					
-						List<String> aliases_for_check = new ArrayList<>();
+						List<String> aliasesForCheck = new ArrayList<>();
 						boolean all = false;
 						if(aliases.size()==1) {
-							aliases_for_check.add(aliases.get(0));
+							aliasesForCheck.add(aliases.get(0));
 						}
 						else if(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) {
-							aliases_for_check.addAll(aliases);
+							aliasesForCheck.addAll(aliases);
 							all = true;
 						}
 						else {
-							aliases_for_check.add(alias);
+							aliasesForCheck.add(alias);
 						}
 						
 						CertificateChecker certificateChecker = null;
@@ -401,7 +400,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 							certificateChecker = confCore.getJmxPdD_certificateChecker();
 						}
 						else {
-							certificateChecker = confCore.newJmxPdD_certificateChecker(aliases_for_check);
+							certificateChecker = confCore.newJmxPdD_certificateChecker(aliasesForCheck);
 						}
 						StringBuilder sbDetailsError = new StringBuilder(); 
 						
@@ -413,22 +412,22 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						String extraErrore = null;
 						
 						// verifica
-						StringBuilder sbDetailsWarning_policy = new StringBuilder();
-						String posizioneWarning_policy = null;
+						StringBuilder sbDetailsWarningPolicy = new StringBuilder();
+						String posizioneWarningPolicy = null;
 						if(attributeAuthority) {
-							certificateChecker.checkAttributeAuthority(sbDetailsError, sbDetailsWarning_policy,
+							certificateChecker.checkAttributeAuthority(sbDetailsError, sbDetailsWarningPolicy,
 								https, jwtRichiesta, jwtRisposta,
 								genericProperties,
 								sogliaWarningGiorni);
 						}
 						else if(validazione) {
-							certificateChecker.checkTokenPolicyValidazione(sbDetailsError, sbDetailsWarning_policy,
+							certificateChecker.checkTokenPolicyValidazione(sbDetailsError, sbDetailsWarningPolicy,
 								httpsIntrospection, httpsUserInfo, validazioneJwt, forwardToJwt,
 								genericProperties,
 								sogliaWarningGiorni);
 						}
 						else if(negoziazione) {
-							certificateChecker.checkTokenPolicyNegoziazione(sbDetailsError, sbDetailsWarning_policy,
+							certificateChecker.checkTokenPolicyNegoziazione(sbDetailsError, sbDetailsWarningPolicy,
 									https, signedJwt,
 									genericProperties,
 									sogliaWarningGiorni);
@@ -436,8 +435,8 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						if(sbDetailsError.length()>0) {
 							posizioneErrore = labelPolicy;
 						}
-						else if(sbDetailsWarning_policy.length()>0) {
-							posizioneWarning_policy = labelPolicy;
+						else if(sbDetailsWarningPolicy.length()>0) {
+							posizioneWarningPolicy = labelPolicy;
 						}
 						
 						
@@ -445,15 +444,14 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						String warning = null;
 						String posizioneWarning = null;
 						String extraWarning = null;
-						if(sbDetailsError.length()<=0) {
-							if(sbDetailsWarning_policy.length()>0) {
-								warning = sbDetailsWarning_policy.toString();
-								posizioneWarning = posizioneWarning_policy;
-							}
+						if(sbDetailsError.length()<=0 &&
+							sbDetailsWarningPolicy.length()>0) {
+							warning = sbDetailsWarningPolicy.toString();
+							posizioneWarning = posizioneWarningPolicy;
 						}
 						
 						// esito
-						List<String> formatIds = new ArrayList<String>();
+						List<String> formatIds = new ArrayList<>();
 						formatIds.add(RegistroServiziReader.ID_CONFIGURAZIONE_CONNETTORE_HTTPS);
 						formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_JWT);
 						formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_FORWARD_TO_JWT);
@@ -498,13 +496,13 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 			de.setValue(arrivoDaLista+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setValue(verificaConnettivita+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA);
-			dati.addElement(de);
+			dati.add(de);
 			
 			pd.setDati(dati);
 			
@@ -535,7 +533,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 								confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
 						configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
 						for (Object oTipo : mapId.keySet()) {
-							if(oTipo!=null && oTipo instanceof String) {
+							if(oTipo instanceof String) {
 								String ti = (String) oTipo;
 								Config config = configManager.getConfigurazione(propertiesSourceConfiguration, ti);
 								ServletUtils.removeConfigurazioneBeanFromSession(request, session, config.getId());
@@ -593,13 +591,13 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 					ConfigBean configurazioneBean = confCore.leggiConfigurazione(configurazione, mappaDB);
 					
 					// non viene supportata la modalità completa. Visualizzo allora solamente il nome
-//					confHelper.aggiornaConfigurazioneProperties(configurazioneBean);
+/**					confHelper.aggiornaConfigurazioneProperties(configurazioneBean);
 //					
 //					configurazioneBean.updateConfigurazione(configurazione);
-//					ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
+//					ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());*/
 					
 					// preparo i campi
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 					
 					dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
 							attributeAuthority, genericProperties);

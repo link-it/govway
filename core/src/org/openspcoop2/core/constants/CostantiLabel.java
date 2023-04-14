@@ -151,7 +151,7 @@ public final class CostantiLabel {
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS = "Autenticazione Https";
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS = "Trust all certificates";
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE = "Auth Server - TrustStore";
-	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs = "Auth Server - CRLs";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLS = "Auth Server - CRLs";
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_OCSP_POLICY = "Auth Server - OCSP Policy";
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE = "Auth Client - KeyStore";
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS = "Auth Client - Key Alias";

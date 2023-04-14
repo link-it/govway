@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -143,7 +142,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
+			boolean useIdSogg = (parentSA!=null && parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO);
 			
 			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
@@ -156,7 +155,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			
 			// Prendo la lista di aliases
 			List<String> aliases = confCore.getJmxPdD_aliases();
-			if(aliases==null || aliases.size()<=0){
+			if(aliases==null || aliases.isEmpty()){
 				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 
@@ -164,9 +163,9 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativo);
 			String nomeSA = sa.getNome();
 			IDSoggetto idSoggettoProprietario = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
-			IDServizioApplicativo IdServizioApplicativo = new IDServizioApplicativo();
-			IdServizioApplicativo.setIdSoggettoProprietario(idSoggettoProprietario);
-			IdServizioApplicativo.setNome(nomeSA);
+			IDServizioApplicativo idServizioApplicativoTmp = new IDServizioApplicativo();
+			idServizioApplicativoTmp.setIdSoggettoProprietario(idSoggettoProprietario);
+			idServizioApplicativoTmp.setNome(nomeSA);
 			String tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			
 			Soggetto soggettoProprietario = soggettiCore.getSoggettoRegistro(idSoggettoProprietario);
@@ -178,7 +177,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 				tokenWithHttsSupportato = protocolFactoryManager.getProtocolFactoryByName(tipoProtocollo).createProtocolConfiguration().isSupportatoAutenticazioneApplicativiHttpsConToken();
 			}
 						
-			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSAChange = new ArrayList<>();
 			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
 			parametersServletSAChange.add(pIdSA);
 			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
@@ -209,10 +208,9 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							|| saCore.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
 				}
 				
-				if(supportAsincroni==false){
-					if (saHelper.isModalitaAvanzata()){
-						supportAsincroni = saCore.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
-					}
+				if(!supportAsincroni &&
+					saHelper.isModalitaAvanzata()){
+					supportAsincroni = saCore.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
 				}
 			}
 			
@@ -227,15 +225,13 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
 			
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			if(!useIdSogg){
 				lstParam.add(new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
-//				lstParam.add(new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
 			} else {
 				String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 				lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 				lstParam.add(new Parameter(labelApplicativiDi + tmpTitle, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)));
-//				lstParam.add(new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
 			}
 			
 			String labelApplicativo = sa.getNome();
@@ -254,8 +250,8 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam );
 						
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			
 			
@@ -301,31 +297,30 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 				}
 				
 				// connettore https
-				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
-					if(sa.getInvocazioneServizio()!=null) {
-						connettore = sa.getInvocazioneServizio().getConnettore();
-						TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
-												
-						if( TipiConnettore.HTTP.equals(tipo) 
-								|| 
-							TipiConnettore.HTTPS.equals(tipo) ) {
-						
-							if(TipiConnettore.HTTPS.equals(tipo)) {
-								serverHttps = true;
-							}
-							else {
-								String endpoint = ConnettoreUtils.getEndpointConnettore(connettore, false);
-								if(endpoint!=null) {
-									findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
-								}
-							}
-							
-							String tokenPolicy = ConnettoreUtils.getNegoziazioneTokenPolicyConnettore(connettore);
-							if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy)) {
-								tokenPolicyNegoziazione = tokenPolicy;
-							}
-							
+				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo()) &&
+					sa.getInvocazioneServizio()!=null) {
+					connettore = sa.getInvocazioneServizio().getConnettore();
+					TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
+											
+					if( TipiConnettore.HTTP.equals(tipo) 
+							|| 
+						TipiConnettore.HTTPS.equals(tipo) ) {
+					
+						if(TipiConnettore.HTTPS.equals(tipo)) {
+							serverHttps = true;
 						}
+						else {
+							String endpoint = ConnettoreUtils.getEndpointConnettore(connettore, false);
+							if(endpoint!=null) {
+								findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+							}
+						}
+						
+						String tokenPolicy = ConnettoreUtils.getNegoziazioneTokenPolicyConnettore(connettore);
+						if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy)) {
+							tokenPolicyNegoziazione = tokenPolicy;
+						}
+						
 					}
 				}
 			}
@@ -376,21 +371,21 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						
 						if (!saHelper.isEditModeInProgress()) {
 
-							List<String> aliases_for_check = new ArrayList<>();
+							List<String> aliasesForCheck = new ArrayList<>();
 							if(aliases.size()==1) {
-								aliases_for_check.add(aliases.get(0));
+								aliasesForCheck.add(aliases.get(0));
 							}
 							else if(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) {
-								aliases_for_check.addAll(aliases);
+								aliasesForCheck.addAll(aliases);
 							}
 							else {
-								aliases_for_check.add(alias);
+								aliasesForCheck.add(alias);
 							}
 														
 							boolean rilevatoErrore = false;
 							String messagePerOperazioneEffettuata = "";
 							int index = 0;
-							for (String aliasForVerificaConnettore : aliases_for_check) {
+							for (String aliasForVerificaConnettore : aliasesForCheck) {
 								
 								String risorsa = confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(aliasForVerificaConnettore);
 
@@ -455,17 +450,17 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					}
 					else {
 					
-						List<String> aliases_for_check = new ArrayList<>();
+						List<String> aliasesForCheck = new ArrayList<>();
 						boolean all = false;
 						if(aliases.size()==1) {
-							aliases_for_check.add(aliases.get(0));
+							aliasesForCheck.add(aliases.get(0));
 						}
 						else if(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) {
-							aliases_for_check.addAll(aliases);
+							aliasesForCheck.addAll(aliases);
 							all = true;
 						}
 						else {
-							aliases_for_check.add(alias);
+							aliasesForCheck.add(alias);
 						}
 									
 						CertificateChecker certificateChecker = null;
@@ -473,7 +468,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							certificateChecker = soggettiCore.getJmxPdD_certificateChecker();
 						}
 						else {
-							certificateChecker = soggettiCore.newJmxPdD_certificateChecker(aliases_for_check);
+							certificateChecker = soggettiCore.newJmxPdD_certificateChecker(aliasesForCheck);
 						}
 						StringBuilder sbDetailsError = new StringBuilder(); 
 						
@@ -484,53 +479,53 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						String extraErrore = null;
 						
 						// verifica ssl
-						StringBuilder sbDetailsWarning_ssl = new StringBuilder();
-						String posizioneWarning_ssl = null;
+						StringBuilder sbDetailsWarningSsl = new StringBuilder();
+						String posizioneWarningSsl = null;
 						if(ssl) {
-							certificateChecker.checkApplicativo(sbDetailsError, sbDetailsWarning_ssl,
+							certificateChecker.checkApplicativo(sbDetailsError, sbDetailsWarningSsl,
 							    ssl, false, false, sa, 
 							    sogliaWarningGiorni);
 							if(sbDetailsError.length()>0) {
 								posizioneErrore = labelApplicativo;
 							}
-							else if(sbDetailsWarning_ssl.length()>0) {
-								posizioneWarning_ssl = labelApplicativo;
+							else if(sbDetailsWarningSsl.length()>0) {
+								posizioneWarningSsl = labelApplicativo;
 							}
 						}
 						
 						// verifica modi
-						StringBuilder sbDetailsWarning_modi = new StringBuilder();
-						String posizioneWarning_modi = null;
+						StringBuilder sbDetailsWarningModi = new StringBuilder();
+						String posizioneWarningModi = null;
 						if(sbDetailsError.length()<=0 && sicurezzaMessaggioModi) {
-							certificateChecker.checkApplicativo(sbDetailsError, sbDetailsWarning_ssl,
+							certificateChecker.checkApplicativo(sbDetailsError, sbDetailsWarningSsl,
 								    false, sicurezzaMessaggioModi, false, sa, 
 								    sogliaWarningGiorni);
 							if(sbDetailsError.length()>0) {
 								posizioneErrore = labelApplicativo;
 							}
-							else if(sbDetailsWarning_modi.length()>0) {
-								posizioneWarning_modi = labelApplicativo;
+							else if(sbDetailsWarningModi.length()>0) {
+								posizioneWarningModi = labelApplicativo;
 							}
 						}
 						
 						// verifica connettore https
-						StringBuilder sbDetailsWarning_https = new StringBuilder();
-						String posizioneWarning_https = null;
+						StringBuilder sbDetailsWarningHttps = new StringBuilder();
+						String posizioneWarningHttps = null;
 						if(sbDetailsError.length()<=0 && serverHttps) {
-							certificateChecker.checkApplicativo(sbDetailsError, sbDetailsWarning_ssl,
+							certificateChecker.checkApplicativo(sbDetailsError, sbDetailsWarningSsl,
 								    false, false, serverHttps, sa, 
 								    sogliaWarningGiorni);
 							if(sbDetailsError.length()>0) {
 								posizioneErrore = labelApplicativo;
 							}
-							else if(sbDetailsWarning_https.length()>0) {
-								posizioneWarning_https = labelApplicativo;
+							else if(sbDetailsWarningHttps.length()>0) {
+								posizioneWarningHttps = labelApplicativo;
 							}
 						}
 						
 						// verifica token policy
-						StringBuilder sbDetailsWarning_policy = new StringBuilder();
-						String posizioneWarning_policy = null;
+						StringBuilder sbDetailsWarningPolicy = new StringBuilder();
+						String posizioneWarningPolicy = null;
 						if(sbDetailsError.length()<=0 && tokenPolicyNegoziazione!=null) {
 							GenericProperties gp = confCore.getGenericProperties(tokenPolicyNegoziazione, org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA_RETRIEVE, false);
 							if(gp!=null) {
@@ -554,7 +549,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 										// JWS Compact   			
 										keystoreParams = TokenUtilities.getSignedJwtKeystoreParams(policyNegoziazione);
 									}
-								}catch(Throwable t) {
+								}catch(Exception t) {
 									throw new DriverConfigurazioneException(t.getMessage(),t);
 								}
 								if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
@@ -562,7 +557,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 								}
 								
 								if(https || signedJwt) {
-									certificateChecker.checkTokenPolicyNegoziazione(sbDetailsError, sbDetailsWarning_policy,
+									certificateChecker.checkTokenPolicyNegoziazione(sbDetailsError, sbDetailsWarningPolicy,
 										https, signedJwt,
 										gp,
 										sogliaWarningGiorni);
@@ -571,24 +566,24 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							if(sbDetailsError.length()>0) {
 								posizioneErrore = labelApplicativo;
 							}
-							else if(sbDetailsWarning_policy.length()>0) {
-								posizioneWarning_policy = labelApplicativo;
+							else if(sbDetailsWarningPolicy.length()>0) {
+								posizioneWarningPolicy = labelApplicativo;
 							}
 						}
 						
 						// verifica jvm
-						StringBuilder sbDetailsWarning_certificatiJvm = new StringBuilder(); 
-						String posizioneWarning_certificatiJvm = null;
-						String extraWarning_certificatiJvm = null;
+						StringBuilder sbDetailsWarningCertificatiJvm = new StringBuilder(); 
+						String posizioneWarningCertificatiJvm = null;
+						String extraWarningCertificatiJvm = null;
 						if(sbDetailsError.length()<=0 && findConnettoreHttpConPrefissoHttps) {
-							certificateChecker.checkConfigurazioneJvm(sbDetailsError, sbDetailsWarning_certificatiJvm, sogliaWarningGiorni);
+							certificateChecker.checkConfigurazioneJvm(sbDetailsError, sbDetailsWarningCertificatiJvm, sogliaWarningGiorni);
 							if(sbDetailsError.length()>0) {
 								posizioneErrore = labelApplicativo;
 								extraErrore = "Configurazione https nella JVM";
 							}
-							else if(sbDetailsWarning_certificatiJvm.length()>0) {
-								posizioneWarning_certificatiJvm = labelApplicativo;
-								extraWarning_certificatiJvm = "Configurazione https nella JVM";
+							else if(sbDetailsWarningCertificatiJvm.length()>0) {
+								posizioneWarningCertificatiJvm = labelApplicativo;
+								extraWarningCertificatiJvm = "Configurazione https nella JVM";
 							}
 						}
 						
@@ -597,31 +592,31 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						String posizioneWarning = null;
 						String extraWarning = null;
 						if(sbDetailsError.length()<=0) {
-							if(sbDetailsWarning_ssl.length()>0) {
-								warning = sbDetailsWarning_ssl.toString();
-								posizioneWarning = posizioneWarning_ssl;
+							if(sbDetailsWarningSsl.length()>0) {
+								warning = sbDetailsWarningSsl.toString();
+								posizioneWarning = posizioneWarningSsl;
 							}
-							else if(sbDetailsWarning_modi.length()>0) {
-								warning = sbDetailsWarning_modi.toString();
-								posizioneWarning = posizioneWarning_modi;
+							else if(sbDetailsWarningModi.length()>0) {
+								warning = sbDetailsWarningModi.toString();
+								posizioneWarning = posizioneWarningModi;
 							}
-							else if(sbDetailsWarning_https.length()>0) {
-								warning = sbDetailsWarning_https.toString();
-								posizioneWarning = posizioneWarning_https;
+							else if(sbDetailsWarningHttps.length()>0) {
+								warning = sbDetailsWarningHttps.toString();
+								posizioneWarning = posizioneWarningHttps;
 							}
-							else if(sbDetailsWarning_policy.length()>0) {
-								warning = sbDetailsWarning_policy.toString();
-								posizioneWarning = posizioneWarning_policy;
+							else if(sbDetailsWarningPolicy.length()>0) {
+								warning = sbDetailsWarningPolicy.toString();
+								posizioneWarning = posizioneWarningPolicy;
 							}
-							else if(sbDetailsWarning_certificatiJvm.length()>0) {
-								warning = sbDetailsWarning_certificatiJvm.toString();
-								posizioneWarning = posizioneWarning_certificatiJvm;
-								extraWarning = extraWarning_certificatiJvm;
+							else if(sbDetailsWarningCertificatiJvm.length()>0) {
+								warning = sbDetailsWarningCertificatiJvm.toString();
+								posizioneWarning = posizioneWarningCertificatiJvm;
+								extraWarning = extraWarningCertificatiJvm;
 							}
 						}
 						
 						// esito
-						List<String> formatIds = new ArrayList<String>();
+						List<String> formatIds = new ArrayList<>();
 						soggettiCore.formatVerificaCertificatiEsito(pd, formatIds, 
 								(sbDetailsError.length()>0 ? sbDetailsError.toString() : null), extraErrore, posizioneErrore,
 								warning, extraWarning, posizioneWarning,
@@ -652,13 +647,13 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			de.setValue(arrivoDaLista+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setValue(verificaConnettivita+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA);
-			dati.addElement(de);
+			dati.add(de);
 			
 			pd.setDati(dati);
 
@@ -744,7 +739,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					IRegistryReader registryReader = soggettiCore.getRegistryReader(protocolFactory); 
 					IConfigIntegrationReader configRegistryReader = soggettiCore.getConfigIntegrationReader(protocolFactory);
 					ConsoleConfiguration consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigServizioApplicativo(consoleOperationType, saHelper, 
-							registryReader, configRegistryReader, IdServizioApplicativo);
+							registryReader, configRegistryReader, idServizioApplicativoTmp);
 					List<ProtocolProperty> oldProtocolPropertyList = sa.getProtocolPropertyList();
 					ProtocolProperties protocolProperties = saHelper.estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType);
 					ProtocolPropertiesUtils.mergeProtocolPropertiesConfig(protocolProperties, oldProtocolPropertyList, consoleOperationType);
@@ -752,7 +747,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					Properties propertiesProprietario = new Properties();
 					propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, idServizioApplicativo+"");
 					propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_SERVIZIO_APPLICATIVO);
-					propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, IdServizioApplicativo.toString());
+					propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, idServizioApplicativoTmp.toString());
 					propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE, URLEncoder.encode( ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE + "?" + request.getQueryString(), "UTF-8"));
 					propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, tipoProtocollo);
 					
@@ -781,7 +776,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						}
 					}
 					
-					parametersServletCredenzialiList = new ArrayList<Parameter>();
+					parametersServletCredenzialiList = new ArrayList<>();
 					parametersServletCredenzialiList.add(pIdSA);
 					parametersServletCredenzialiList.add(pIdSoggettoSA);
 					
@@ -791,18 +786,18 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					}
 					
 					String fault = null;
-					if (ipge != null){
-						if(ipge.getFault()!=null)
-							fault = ipge.getFault().toString();
+					if (ipge != null &&
+						ipge.getFault()!=null) {
+						fault = ipge.getFault().toString();
 					}
 					String faultactor = null;
 					if (ipge != null) {
 						faultactor = ipge.getFaultActor();
 					}
 					String genericfault = null;
-					if (ipge != null){
-						if(ipge.getGenericFaultCode()!=null)
-							genericfault = ipge.getGenericFaultCode().toString();
+					if (ipge != null &&
+						ipge.getGenericFaultCode()!=null) {
+						genericfault = ipge.getGenericFaultCode().toString();
 					}
 					if ((genericfault == null) || "".equals(genericfault)) {
 						genericfault = CostantiConfigurazione.DISABILITATO.toString();
@@ -812,17 +807,17 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						prefixfault = ipge.getPrefixFaultCode();
 					}
 					String invrifRisposta = null;
-					if (ip != null){
-						if(ip.getInvioPerRiferimento()!=null)
-							invrifRisposta = ip.getInvioPerRiferimento().toString();
+					if (ip != null &&
+						ip.getInvioPerRiferimento()!=null) {
+						invrifRisposta = ip.getInvioPerRiferimento().toString();
 					}
 					if ((invrifRisposta == null) || "".equals(invrifRisposta)) {
 						invrifRisposta = CostantiConfigurazione.DISABILITATO.toString();
 					}
 					String sbustamentoInformazioniProtocolloRisposta = null;
-					if (ip != null){
-						if(ip.getSbustamentoInformazioniProtocollo()!=null)
-							sbustamentoInformazioniProtocolloRisposta = ip.getSbustamentoInformazioniProtocollo().toString();
+					if (ip != null &&
+						ip.getSbustamentoInformazioniProtocollo()!=null) {
+						sbustamentoInformazioniProtocolloRisposta = ip.getSbustamentoInformazioniProtocollo().toString();
 					}
 					if ((sbustamentoInformazioniProtocolloRisposta == null) || "".equals(sbustamentoInformazioniProtocolloRisposta)) {
 						sbustamentoInformazioniProtocolloRisposta = CostantiConfigurazione.ABILITATO.toString();
@@ -916,151 +911,151 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						}
 					}
 					
-					String proxy_enabled = null;
-					String proxy_hostname = null;
-					String proxy_port = null;
-					String proxy_username = null;
-					String proxy_password = null;
-					if(proxy_enabled==null && props!=null){
+					String proxyEnabled = null;
+					String proxyHostname = null;
+					String proxyPort = null;
+					String proxyUsername = null;
+					String proxyPassword = null;
+					if(proxyEnabled==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_PROXY_TYPE);
 						if(v!=null && !"".equals(v)){
-							proxy_enabled = Costanti.CHECK_BOX_ENABLED_TRUE;
+							proxyEnabled = Costanti.CHECK_BOX_ENABLED_TRUE;
 							
 							// raccolgo anche altre proprietà
 							v = props.get(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
 							if(v!=null && !"".equals(v)){
-								proxy_hostname = v.trim();
+								proxyHostname = v.trim();
 							}
 							v = props.get(CostantiDB.CONNETTORE_PROXY_PORT);
 							if(v!=null && !"".equals(v)){
-								proxy_port = v.trim();
+								proxyPort = v.trim();
 							}
 							v = props.get(CostantiDB.CONNETTORE_PROXY_USERNAME);
 							if(v!=null && !"".equals(v)){
-								proxy_username = v.trim();
+								proxyUsername = v.trim();
 							}
 							v = props.get(CostantiDB.CONNETTORE_PROXY_PASSWORD);
 							if(v!=null && !"".equals(v)){
-								proxy_password = v.trim();
+								proxyPassword = v.trim();
 							}
 						}
 					}
 					
-					String tempiRisposta_enabled = null;
-					String tempiRisposta_connectionTimeout = null;
-					String tempiRisposta_readTimeout = null;
-					String tempiRisposta_tempoMedioRisposta = null;
-					if(tempiRisposta_enabled == null ||
-							tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+					String tempiRispostaEnabled = null;
+					String tempiRispostaConnectionTimeout = null;
+					String tempiRispostaReadTimeout = null;
+					String tempiRispostaTempoMedioRisposta = null;
+					if(tempiRispostaEnabled == null ||
+							tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
 							|| 
-							tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+							tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) 
 							|| 
-							tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
+							tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ){
 						
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
 						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 						
 						if( props!=null ) {
-							if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
+							if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
 								String v = props.get(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT);
 								if(v!=null && !"".equals(v)){
-									tempiRisposta_connectionTimeout = v.trim();
-									tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+									tempiRispostaConnectionTimeout = v.trim();
+									tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 								}
 								else {
-									tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+									tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 								}
 							}
 								
-							if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
+							if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
 								String v = props.get(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT);
 								if(v!=null && !"".equals(v)){
-									tempiRisposta_readTimeout = v.trim();
-									tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+									tempiRispostaReadTimeout = v.trim();
+									tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 								}
 								else {
-									tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+									tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
 								}
 							}
 							
-							if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
+							if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
 								String v = props.get(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA);
 								if(v!=null && !"".equals(v)){
-									tempiRisposta_tempoMedioRisposta = v.trim();
-									tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+									tempiRispostaTempoMedioRisposta = v.trim();
+									tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 								}
 								else {
-									tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+									tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 								}
 							}
 						}
 						else {
-							if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
-								tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+							if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
+								tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 							}
-							if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
-								tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+							if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
+								tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
 							}
-							if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
-								tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+							if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
+								tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 							}
 						}
 					}
 					
-					String transfer_mode = null;
-					String transfer_mode_chunk_size = null;
-					if(transfer_mode==null && props!=null){
+					String transferMode = null;
+					String transferModeChunkSize = null;
+					if(transferMode==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
 						if(v!=null && !"".equals(v)){
 							
-							transfer_mode = v.trim();
+							transferMode = v.trim();
 							
-							if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+							if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transferMode)){
 								// raccolgo anche altra proprietà correlata
 								v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
 								if(v!=null && !"".equals(v)){
-									transfer_mode_chunk_size = v.trim();
+									transferModeChunkSize = v.trim();
 								}
 							}
 							
 						}
 					}
 					
-					String redirect_mode = null;
-					String redirect_max_hop = null;
-					if(redirect_mode==null && props!=null){
+					String redirectMode = null;
+					String redirectMaxHop = null;
+					if(redirectMode==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
 						if(v!=null && !"".equals(v)){
 							
 							if("true".equalsIgnoreCase(v.trim()) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v.trim())){
-								redirect_mode = CostantiConfigurazione.ABILITATO.getValue();
+								redirectMode = CostantiConfigurazione.ABILITATO.getValue();
 							}
 							else{
-								redirect_mode = CostantiConfigurazione.DISABILITATO.getValue();
+								redirectMode = CostantiConfigurazione.DISABILITATO.getValue();
 							}					
 							
-							if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
+							if(CostantiConfigurazione.ABILITATO.getValue().equals(redirectMode)){
 								// raccolgo anche altra proprietà correlata
 								v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
 								if(v!=null && !"".equals(v)){
-									redirect_max_hop = v.trim();
+									redirectMaxHop = v.trim();
 								}
 							}
 							
 						}
 					}
 					
-					String token_policy = null;
+					String tokenPolicy = null;
 					boolean autenticazioneToken = false;
-					if(token_policy==null && props!=null){
+					if(tokenPolicy==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 						if(v!=null && !"".equals(v)){
-							token_policy = v;
+							tokenPolicy = v;
 							autenticazioneToken = true;
 						}
 					}
 					
-					String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transfer_mode, redirect_mode);
+					String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transferMode, redirectMode);
 					
 					String autenticazioneHttp = saHelper.getAutenticazioneHttp(null, endpointtype, user);
 					
@@ -1076,45 +1071,37 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					if(connis!=null) {
 						for (int i = 0; i < connis.sizePropertyList(); i++) {
 							Property singlecp = cp.get(i);
-							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_HTTP_LOCATION)) {
-								if (url == null) {
-									url = singlecp.getValore();
-								}
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_HTTP_LOCATION) &&
+								url == null) {
+								url = singlecp.getValore();
 							}
-							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_NOME)) {
-								if (nomeCodaJMS == null) {
-									nomeCodaJMS = singlecp.getValore();
-								}
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_NOME) &&
+								nomeCodaJMS == null) {
+								nomeCodaJMS = singlecp.getValore();
 							}
-							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_TIPO)) {
-								if (tipoCodaJMS == null) {
-									tipoCodaJMS = singlecp.getValore();
-								}
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_TIPO) &&
+								tipoCodaJMS == null) {
+								tipoCodaJMS = singlecp.getValore();
 							}
-							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY)) {
-								if (connfact == null) {
-									connfact = singlecp.getValore();
-								}
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY) &&
+								connfact == null) {
+								connfact = singlecp.getValore();
 							}
-							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_SEND_AS)) {
-								if (sendas == null) {
-									sendas = singlecp.getValore();
-								}
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_SEND_AS) &&
+								sendas == null) {
+								sendas = singlecp.getValore();
 							}
-							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL)) {
-								if (initcont == null) {
-									initcont = singlecp.getValore();
-								}
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL) &&
+								initcont == null) {
+								initcont = singlecp.getValore();
 							}
-							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG)) {
-								if (urlpgk == null) {
-									urlpgk = singlecp.getValore();
-								}
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG) &&
+								urlpgk == null) {
+								urlpgk = singlecp.getValore();
 							}
-							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL)) {
-								if (provurl == null) {
-									provurl = singlecp.getValore();
-								}
+							if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL) &&
+								provurl == null) {
+								provurl = singlecp.getValore();
 							}
 						}
 					}
@@ -1203,9 +1190,9 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					// file
 					String responseInputMode = null;
 					String requestOutputFileName = null;
-					String requestOutputFileName_permissions = null;
+					String requestOutputFileNamePermissions = null;
 					String requestOutputFileNameHeaders = null;
-					String requestOutputFileNameHeaders_permissions = null;
+					String requestOutputFileNameHeadersPermissions = null;
 					String requestOutputParentDirCreateIfNotExists = null;
 					String requestOutputOverwriteIfExists = null;
 					String responseInputFileName = null;
@@ -1215,9 +1202,9 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					if(responseInputMode==null && props!=null){
 						
 						requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
-						requestOutputFileName_permissions = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+						requestOutputFileNamePermissions = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 						requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);
-						requestOutputFileNameHeaders_permissions = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+						requestOutputFileNameHeadersPermissions = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 						String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 						if(v!=null && !"".equals(v)){
 							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
@@ -1284,7 +1271,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					String tipoCredenzialiSSLConfigurazioneManualeSelfSigned= null;
 					org.openspcoop2.utils.certificate.ArchiveType tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.CER; 
 					String tipoCredenzialiSSLFileCertificatoPassword = null;
-					List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+					List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 					
 					String tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD;
 					
@@ -1366,10 +1353,10 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.SERVIZIO_APPLICATIVO_CHANGE, saHelper, 
 									(endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 					
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 					consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
-							registryReader, configRegistryReader, IdServizioApplicativo); 
+							registryReader, configRegistryReader, idServizioApplicativoTmp); 
 					
 					dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, tipoENomeSoggetto, fault, 
 							TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider,dominio,
@@ -1391,10 +1378,10 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 							tipoconn, connettoreDebug,
 							isConnettoreCustomUltimaImmagineSalvata, 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							tipoProtocollo, null, listExtendedConnettore,tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
@@ -1404,7 +1391,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
 							changepwd,
 							multipleApiKey, appId, apiKey,
-							autenticazioneToken,token_policy,tipoSA, useAsClient,
+							autenticazioneToken,tokenPolicy,tipoSA, useAsClient,
 							integrationManagerEnabled, 
 							visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 							tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);

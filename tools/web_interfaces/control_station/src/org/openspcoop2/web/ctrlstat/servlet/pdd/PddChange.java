@@ -21,10 +21,10 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pdd;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,14 +40,14 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -55,7 +55,6 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-//import org.openspcoop2.web.ctrlstat.core.SincronizzatoreLib;
 
 /**
  * pddChange
@@ -120,7 +119,6 @@ public final class PddChange extends Action {
 			String oldTipo = "";
 			String oldProtocollo = "";
 			String oldIp = "";
-			// String oldIpGestione="";
 			int oldPortaGestione = 0;
 			int oldPorta = 0;
 			@SuppressWarnings("unused")
@@ -139,7 +137,6 @@ public final class PddChange extends Action {
 				oldPorta = pdd.getPorta();
 				oldIp = pdd.getIp();
 				oldProtocolloGestione = pdd.getProtocolloGestione();
-				// oldIpGestione = pdd.getIpGestione();
 				oldPortaGestione = pdd.getPortaGestione();
 			} catch (Exception ex) {
 				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, request, session, gd, mapping, 
@@ -155,7 +152,6 @@ public final class PddChange extends Action {
 	
 				if (descrizione == null) {
 				    ip = pdd.getIp();
-				    // password = pdd.getPassword();
 				    tipo = pdd.getTipo();
 					protocollo = pdd.getProtocollo();
 					protocolloGestione = pdd.getProtocolloGestione();
@@ -168,27 +164,31 @@ public final class PddChange extends Action {
 				}
 	
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				int portaPUBBLICA = oldPorta;
 				int portaGESTIONE = oldPortaGestione;
 				if(porta!=null && !"".equals(porta)){
 					try{
 						portaPUBBLICA = Integer.parseInt(porta);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				if(portaGestione!=null && !"".equals(portaGestione)){
 					try{
 						portaGESTIONE = Integer.parseInt(portaGestione);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				dati = pddHelper.addPddToDati(dati, nomePdd, id, 
 						ip, subject, ""/* password */, "" /* password */, 
 						PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE,
-						PddCostanti.DEFAULT_PDD_PROTOCOLLI, protocollo, protocolloGestione,
+						PddCostanti.getDefaultPddProtocolli(), protocollo, protocolloGestione,
 						portaPUBBLICA, descrizione, ipGestione, portaGESTIONE, implementazione, clientAuth, false);
 	
 				pd.setDati(dati);
@@ -207,14 +207,14 @@ public final class PddChange extends Action {
 						PddCostanti.SERVLET_NAME_PDD_LIST,nomePdd);
 	
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				dati = pddHelper.addPddToDati(dati, nomePdd, id, 
 						ip, subject, "" /* password */, "" /* confpw */, 
 						PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE,
-						PddCostanti.DEFAULT_PDD_PROTOCOLLI, protocollo, protocolloGestione,  
+						PddCostanti.getDefaultPddProtocolli(), protocollo, protocolloGestione,  
 						portaInt, descrizione, ipGestione, portaGestioneInt, implementazione, clientAuth, false);
 	
 				pd.setDati(dati);
@@ -235,7 +235,6 @@ public final class PddChange extends Action {
 			pdd.setImplementazione(implementazione);
 			pdd.setClientAuth(StatoFunzionalita.toEnumConstant(clientAuth));
 			if (tipo.equals(PddTipologia.OPERATIVO.toString()) || tipo.equals(PddTipologia.NONOPERATIVO.toString())) {
-				// pdd.setPassword(password);
 				pdd.setIp(ip);
 				pdd.setProtocollo(protocollo);
 				pdd.setPorta(portaInt);
@@ -259,7 +258,8 @@ public final class PddChange extends Action {
 					if (TipiConnettore.HTTP.getNome().equals(connettore.getTipo())) {
 
 						// Suffisso connettore
-						ControlStationLogger.getPddConsoleCoreLogger().info("[console] suffissoConnettoreAutomatico impostato al valore: " + pddCore.getSuffissoConnettoreAutomatico());
+						String msg = "[console] suffissoConnettoreAutomatico impostato al valore: " + pddCore.getSuffissoConnettoreAutomatico();
+						ControlStationLogger.getPddConsoleCoreLogger().info(msg);
 
 						Map<String, String> properties = connettore.getProperties();
 						String oldHttpLocation = properties.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
@@ -270,7 +270,7 @@ public final class PddChange extends Action {
 										soggettiCore.getWebContextProtocolAssociatoTipoSoggetto(soggReg.getTipo()));
 						if (oldHttpLocation.equals(oldProtocollo + "://" + oldIp + ":" + oldPorta + "/" + suffisso)) {
 							String newHttpLocation = pdd.getProtocollo() + "://" + pdd.getIp() + ":" + pdd.getPorta() + "/" + suffisso;
-							Map<String, String> newprop = new HashMap<String, String>();
+							Map<String, String> newprop = new HashMap<>();
 							newprop.put(CostantiDB.CONNETTORE_HTTP_LOCATION, newHttpLocation);
 							connettore.setProperties(newprop);
 
@@ -285,27 +285,15 @@ public final class PddChange extends Action {
 
 			// Se passo da non-operativo ad operativo
 			// avvio la sincronizzazione della Porta Di Dominio
-			if (oldTipo.equals(PddTipologia.NONOPERATIVO.toString()) && tipo.equals(PddTipologia.OPERATIVO.toString())) {
-				if (pddCore.isSincronizzazionePddEngineEnabled()) {
-					try {
-						ControlStationCore.logInfo("Avvio sincronizzazione causa passaggio Pdd non-operativo->operativo su Pdd [" + pdd.getNome() + "] da parte dell'utente [" + userLogin + "]");
-						// TODO SINCRONIZZATORE
-						/*SincronizzatoreLib sinc = new SincronizzatoreLib();
-						sinc.setEngineRepositoryAutorizzazioni(false);
-						sinc.setEngineRegistro(false);
-						sinc.setEngineGE(false);
-						sinc.setEnginePDD(true);
-						// resetto la pdd
-						sinc.resetPdD(pdd);
-						// sincronizzo la pdd
-						sinc.syncAll(pdd);
-						 */
-						pd.setMessage("Sincronizzazione Porta di Dominio " + pdd.getNome() + " Effettuata correttamente.",Costanti.MESSAGE_TYPE_INFO);
+			if (oldTipo.equals(PddTipologia.NONOPERATIVO.toString()) && tipo.equals(PddTipologia.OPERATIVO.toString()) &&
+				pddCore.isSincronizzazionePddEngineEnabled()) {
+				try {
+					ControlStationCore.logInfo("Avvio sincronizzazione causa passaggio Pdd non-operativo->operativo su Pdd [" + pdd.getNome() + "] da parte dell'utente [" + userLogin + "]");
+					pd.setMessage("Sincronizzazione Porta di Dominio " + pdd.getNome() + " Effettuata correttamente.",Costanti.MESSAGE_TYPE_INFO);
 
-					} catch (Exception e) {
-						pd.setMessage("Sincronizzazione Porta di Dominio " + pdd.getNome() + " Non effettuata a causa di errori");
-						return ServletUtils.getStrutsForwardGeneralError(mapping, PddCostanti.OBJECT_NAME_PDD, ForwardParams.CHANGE());
-					}
+				} catch (Exception e) {
+					pd.setMessage("Sincronizzazione Porta di Dominio " + pdd.getNome() + " Non effettuata a causa di errori");
+					return ServletUtils.getStrutsForwardGeneralError(mapping, PddCostanti.OBJECT_NAME_PDD, ForwardParams.CHANGE());
 				}
 			}
 			// se tutto e' andato a buon fine scrivo le modifiche sulla pdd

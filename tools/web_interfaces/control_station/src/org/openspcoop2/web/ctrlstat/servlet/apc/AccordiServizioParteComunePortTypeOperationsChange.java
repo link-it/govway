@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -277,7 +276,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.CHANGE, as, tipoAccordo, labelASTitle, null, false);
 			
-			String labelPortTypes = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES  : AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + labelASTitle;
+			String labelPortTypes = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES  : AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + labelASTitle;
 			listaParams.add(new Parameter(labelPortTypes, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			
 			String labelOperations = AccordiServizioParteComuneCostanti.LABEL_AZIONI  + " di " + nomept;
@@ -408,7 +407,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 					// siccome sono in change, aggiungo la mia azione se e' correlata poiche' il metodo sopra non la aggiungera'
 					if(azicorr!=null && !"".equals(azicorr) && !"-".equals(azicorr) ){
 						if(aziCorrList==null){
-							aziCorrList = new ArrayList<String>();
+							aziCorrList = new ArrayList<>();
 							aziCorrList.add("-");
 						}
 						aziCorrList.add(azicorr);
@@ -421,8 +420,8 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 					ArrayList<String> operationCorrelateUniche = null;
 					List<Operation> operationCorrelate = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO, new ConsoleSearch(true));
 
-					if (operationCorrelate.size() > 0) {
-						operationCorrelateUniche = new ArrayList<String>();
+					if (!operationCorrelate.isEmpty()) {
+						operationCorrelateUniche = new ArrayList<>();
 						operationCorrelateUniche.add("-");
 						for (Iterator<Operation> iterator = operationCorrelate.iterator(); iterator.hasNext();) {
 							Operation operation = iterator.next();
@@ -430,8 +429,6 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 								// se l 'operation che sto controllando e' correlata
 								// allora non la visualizzo nella select list
 								// altriment la visualizzo
-								// if(!core.isOperationCorrelata(pt.getId().intValue(),
-								// operation.getCorrelata(),nomeop)){
 								if ( 
 										(operation.getCorrelata()==null||"".equals(operation.getCorrelata())) &&
 										(!apcCore.isOperationCorrelata(pt.getId().intValue(), operation.getNome(), nomeop))
@@ -442,14 +439,14 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 						}
 					}
 
-					if (operationCorrelateUniche != null && operationCorrelateUniche.size() > 0)
+					if (operationCorrelateUniche != null && !operationCorrelateUniche.isEmpty())
 						opCorrelateList = operationCorrelateUniche;
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
 				consoleDynamicConfiguration.updateDynamicConfigOperation(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
@@ -528,7 +525,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 					// siccome sono in change, aggiungo la mia azione se e' correlata poiche' il metodo sopra non la aggiungera'
 					if(azicorr!=null && !"".equals(azicorr) && !"-".equals(azicorr) ){
 						if(aziCorrList==null){
-							aziCorrList = new ArrayList<String>();
+							aziCorrList = new ArrayList<>();
 							aziCorrList.add("-");
 						}
 						aziCorrList.add(azicorr);
@@ -541,8 +538,8 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 					ArrayList<String> operationCorrelateUniche = null;
 					List<Operation> operationCorrelate = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO, new ConsoleSearch(true));
 
-					if (operationCorrelate.size() > 0) {
-						operationCorrelateUniche = new ArrayList<String>();
+					if (!operationCorrelate.isEmpty()) {
+						operationCorrelateUniche = new ArrayList<>();
 						operationCorrelateUniche.add("-");
 						for (Iterator<Operation> iterator = operationCorrelate.iterator(); iterator.hasNext();) {
 							Operation operation = iterator.next();
@@ -550,8 +547,6 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 								// se l 'operation che sto controllando e' correlata
 								// allora non la visualizzo nella select list
 								// altriment la visualizzo
-								// if(!core.isOperationCorrelata(pt.getId().intValue(),
-								// operation.getCorrelata(),nomeop)){
 								if ( 
 										(operation.getCorrelata()==null||"".equals(operation.getCorrelata())) &&
 										(!apcCore.isOperationCorrelata(pt.getId().intValue(), operation.getNome(), nomeop))
@@ -562,12 +557,12 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 						}
 					}
 
-					if (operationCorrelateUniche != null && operationCorrelateUniche.size() > 0)
+					if (operationCorrelateUniche != null && !operationCorrelateUniche.isEmpty())
 						opCorrelateList = operationCorrelateUniche;
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
 				// update della configurazione 
 				consoleDynamicConfiguration.updateDynamicConfigOperation(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
@@ -592,13 +587,6 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			}
 
 			// Modifico i dati dell'operation nel db
-			// if (profProtocolloPT.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
-			// filtrodupop = null;
-			// confricop = null;
-			// idcollop = null;
-			// consordop = null;
-			// scadenzaop = null;
-			// } else {
 			if(ServletUtils.isCheckBoxEnabled(filtrodupop)){
 				filtrodupop = CostantiRegistroServizi.ABILITATO.toString();
 			} else {
@@ -624,7 +612,6 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			} else {
 				consordop = CostantiRegistroServizi.DISABILITATO.toString();
 			}
-			// }
 
 			Operation op = null;
 			for (int i = 0; i < pt.sizeAzioneList(); i++) {

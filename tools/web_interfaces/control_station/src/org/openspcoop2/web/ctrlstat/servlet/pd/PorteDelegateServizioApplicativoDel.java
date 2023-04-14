@@ -83,14 +83,6 @@ public final class PorteDelegateServizioApplicativoDel extends Action {
 			
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			// Elimino il servizioApplicativo della porta delegata dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 
 			String servizioApplicativo = "";
 
@@ -100,9 +92,6 @@ public final class PorteDelegateServizioApplicativoDel extends Action {
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// servizioApplicativo = de.getValue();
 				servizioApplicativo = idsToRemove.get(i);
 				if(isToken) {
 					if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getServiziApplicativi()!=null) {

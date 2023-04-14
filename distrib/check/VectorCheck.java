@@ -90,36 +90,10 @@ public class VectorCheck {
 				else if( f.getAbsolutePath().contains("core/src/org/openspcoop2/core/registry/driver/uddi/UDDILib.java") )
 					jumpCheck = true;
 
-				else if( f.getAbsolutePath().contains("tools/web_interfaces/loader/src/org/openspcoop2/web/loader/servlet") && f.getAbsolutePath().endsWith(".java") )
-					jumpCheck = true;
-
-				else if( f.getAbsolutePath().contains("tools/web_interfaces/lib/audit/src/org/openspcoop2/web/lib/audit/web/AuditHelper.java") )
-					jumpCheck = true;
-
-				else if( f.getAbsolutePath().contains("tools/web_interfaces/lib/mvc/src/org/openspcoop2/web/lib/mvc") )
-					jumpCheck = true;
-
-				else if( f.getAbsolutePath().contains("tools/web_interfaces/control_station/src/org/openspcoop2/web/ctrlstat/plugins") )
-					jumpCheck = true;
-				else if( f.getAbsolutePath().contains("tools/web_interfaces/control_station/src/org/openspcoop2/web/ctrlstat/servlet") )
-					jumpCheck = true;
-				else if( f.getAbsolutePath().contains("tools/web_interfaces/control_station/ClassiDaReInserireDopoWS") )
-					jumpCheck = true;
-				else if( f.getAbsolutePath().contains("tools/web_interfaces/control_station/ServletUtils.java") )
-					jumpCheck = true;
-
 				else if( f.getAbsolutePath().contains("tools/utils/src/org/openspcoop2/utils/beans/BaseBean.java") )
 					jumpCheck = true;
 
-				else if( f.getAbsolutePath().contains("testsuite/src/org/openspcoop2/testsuite") )
-					jumpCheck = true;
-				else if( f.getAbsolutePath().contains("protocolli/trasparente/testsuite/src/org/openspcoop2/protocol/trasparente/testsuite") )
-					jumpCheck = true;
-				else if( f.getAbsolutePath().contains("protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite") )
-					jumpCheck = true;
-				else if( f.getAbsolutePath().contains("protocolli/spcoop/testsuite/src/org/openspcoop2/protocol/trasparente/testsuite") )
-					jumpCheck = true;
-				else if( f.getAbsolutePath().contains("protocolli/spcoop/testsuite/src/org/openspcoop2/protocol/spcoop/testsuite") )
+				else if( f.getAbsolutePath().contains("testsuite/src/org/openspcoop2/testsuite/src/org/openspcoop2/testsuite/axis14/Axis14") )
 					jumpCheck = true;
 				else if( f.getAbsolutePath().contains("protocolli/spcoop/testsuite/example/registroServizi/wsdl/src/org/openspcoop2/core/registry/wsdl/testsuite") )
 					jumpCheck = true;
@@ -141,7 +115,7 @@ public class VectorCheck {
 				}
 
 				// Check
-				if(f.getName().endsWith(".java") && (jumpCheck==false) ){
+				if( (f.getName().endsWith(".java") || f.getName().endsWith(".jsp") || f.getName().endsWith(".js")) && (jumpCheck==false) ){
 
 
 					//System.out.println("check ["+"]");

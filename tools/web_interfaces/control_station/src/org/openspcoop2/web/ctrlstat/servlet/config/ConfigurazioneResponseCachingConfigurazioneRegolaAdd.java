@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -99,16 +98,15 @@ public final class ConfigurazioneResponseCachingConfigurazioneRegolaAdd extends 
 
 			// Preparo il menu
 			confHelper.makeMenu();
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			
 			String postBackElementName = confHelper.getPostBackElementName();
 			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
-			if (postBackElementName != null) {
-				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE)) {
-					statusMin = "";
-					statusMax = "";
-				}
+			if (postBackElementName != null &&
+				postBackElementName.equals(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE)) {
+				statusMin = "";
+				statusMax = "";
 			}
 
 			// setto la barra del titolo
@@ -121,8 +119,8 @@ public final class ConfigurazioneResponseCachingConfigurazioneRegolaAdd extends 
 			// dati
 			if (confHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = confHelper.addResponseCachingConfigurazioneRegola(TipoOperazione.ADD, returnCode, statusMin, statusMax, fault, cacheSeconds, dati);
 
@@ -140,9 +138,9 @@ public final class ConfigurazioneResponseCachingConfigurazioneRegolaAdd extends 
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addResponseCachingConfigurazioneRegola(TipoOperazione.ADD, returnCode, statusMin, statusMax, fault, cacheSeconds, dati);
 

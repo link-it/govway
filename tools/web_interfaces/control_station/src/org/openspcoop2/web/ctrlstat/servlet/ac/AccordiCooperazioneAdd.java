@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.ac;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -127,13 +126,13 @@ public final class AccordiCooperazioneAdd extends Action {
 				strutsBean.tipoProtocollo = acCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 			}
 			
-			if(listaTipiProtocollo.size()<=0) {
+			if(listaTipiProtocollo.isEmpty()) {
 				pd.setMessage("Non risultano registrati soggetti", Costanti.MESSAGE_TYPE_INFO);
 				pd.disableEditMode();
 
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				pd.setDati(dati);
 
@@ -236,9 +235,9 @@ public final class AccordiCooperazioneAdd extends Action {
 						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				if(acHelper.isShowGestioneWorkflowStatoDocumenti()){
 					if(strutsBean.statoPackage==null)
@@ -322,9 +321,9 @@ public final class AccordiCooperazioneAdd extends Action {
 						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(strutsBean.consoleConfiguration,
 						strutsBean.consoleOperationType, acHelper, strutsBean.protocolProperties, 
@@ -390,9 +389,9 @@ public final class AccordiCooperazioneAdd extends Action {
 							AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 					strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(strutsBean.consoleConfiguration,
 							strutsBean.consoleOperationType, acHelper, strutsBean.protocolProperties, 

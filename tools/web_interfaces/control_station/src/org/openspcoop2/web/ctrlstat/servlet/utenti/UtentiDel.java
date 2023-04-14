@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,8 +94,8 @@ public final class UtentiDel extends Action {
 			// Elimino i superutenti dal db
 			StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
 			int[] idToRemove = new int[objTok.countTokens()];
-			List<User> utentiDaRimuovere = new ArrayList<User>();
-			List<String> nomiUtentiDaRimuovere = new ArrayList<String>();
+			List<User> utentiDaRimuovere = new ArrayList<>();
+			List<String> nomiUtentiDaRimuovere = new ArrayList<>();
 	
 			int k = 0;
 			while (objTok.hasMoreElements()) {
@@ -109,13 +108,13 @@ public final class UtentiDel extends Action {
 			
 			// controllo protocolli associati agli utenti che provo ad eliminare
 			String msgErroreModalita = null;
-			List<String> utentiDaNonEliminare = new ArrayList<String>();
+			List<String> utentiDaNonEliminare = new ArrayList<>();
 			for (User user : utentiDaRimuovere) {
 				if(!user.hasOnlyPermessiUtenti())
 					utentiHelper.controlloModalitaUtenteDaEliminare(nomiUtentiDaRimuovere, utentiDaNonEliminare, user);
 			}
 			
-			if(utentiDaNonEliminare.size()> 0) {
+			if(!utentiDaNonEliminare.isEmpty()) {
 				if(utentiDaNonEliminare.size()> 1) {
 					StringBuilder sbUL = new StringBuilder();
 					for (String userL : utentiDaNonEliminare) {
@@ -137,9 +136,9 @@ public final class UtentiDel extends Action {
 					}
 				}
 				if(newList.isEmpty()) {
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 					
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 					
 					pd.disableEditMode();
 					
@@ -164,8 +163,8 @@ public final class UtentiDel extends Action {
 		    List<String> usersWithS = utentiCore.getUsersWithType(Permessi.SERVIZI.toString());
 		    
 		    String[] uws = null;
-		    if (usersWithS != null && usersWithS.size() > 0) {
-		    	List<String> usersWithPermessoS = new Vector<String>();
+		    if (usersWithS != null && !usersWithS.isEmpty()) {
+		    	List<String> usersWithPermessoS = new ArrayList<>();
 		    	Iterator<String> itUWS = usersWithS.iterator();
 		    	while (itUWS.hasNext()) {
 		    		String singleUWS = itUWS.next();
@@ -182,7 +181,7 @@ public final class UtentiDel extends Action {
 		    				usersWithPermessoS.add(singleUWS);
 		    		}
 		    	}
-		    	if(usersWithPermessoS.size()>0){
+		    	if(!usersWithPermessoS.isEmpty()){
 		    		uws = new String[1];
 		    		uws = usersWithPermessoS.toArray(uws);
 		    	}
@@ -192,12 +191,12 @@ public final class UtentiDel extends Action {
 		    List<String> usersWithP = utentiCore.getUsersWithType(Permessi.ACCORDI_COOPERAZIONE.toString());
 		    
 		    String[] uwp = null;
-		    if (usersWithP != null && usersWithP.size() > 0) {
-		    	List<String> usersWithPermessoP = new Vector<String>();
+		    if (usersWithP != null && !usersWithP.isEmpty()) {
+		    	List<String> usersWithPermessoP = new ArrayList<>();
 		    	Iterator<String> itUWS = usersWithP.iterator();
 		    	while (itUWS.hasNext()) {
 		    		String singleUWP = itUWS.next();
-		    		if (nomiUtentiDaRimuovere.contains(singleUWP) == false) {
+		    		if (!nomiUtentiDaRimuovere.contains(singleUWP)) {
 		    			// controllo compatibilita
 		    			boolean compatibile = true;
 		    			for (String user : nomiUtentiDaRimuovere) {
@@ -210,7 +209,7 @@ public final class UtentiDel extends Action {
 		    				usersWithPermessoP.add(singleUWP);
 		    		}
 		    	}
-		    	if(usersWithPermessoP.size()>0){
+		    	if(!usersWithPermessoP.isEmpty()){
 		    		uwp = new String[1];
 		    		uwp = usersWithPermessoP.toArray(uwp);
 		    	}
@@ -241,9 +240,9 @@ public final class UtentiDel extends Action {
 						if (usersWithS.contains(nomesu)) {
 							if(uws==null){
 								
-								Vector<DataElement> dati = new Vector<DataElement>();
+								List<DataElement> dati = new ArrayList<>();
 		
-								dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+								dati.add(ServletUtils.getDataElementForEditModeFinished());
 								
 								pd.disableEditMode();
 								
@@ -337,7 +336,7 @@ public final class UtentiDel extends Action {
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELIMINA,null));
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
 				utentiHelper.addChooseUtenteForPermessiSToDati(dati, objToRemove, paginaSuServizi, uws , paginaSuAccordi , uwp);
 					
@@ -353,9 +352,7 @@ public final class UtentiDel extends Action {
 				// Elimino gli utenti e ritorno la pagina a lista
 				for (int i = 0; i < nomiUtentiDaRimuovere.size(); i++) {
 					nomesu = nomiUtentiDaRimuovere.get(i);
-					
-										//TODO Aggiungi controllo se permesso D e ha servizi /soggetti deve prima eliminarli
-					
+										
 					// Non posso rimuovere me stesso
 					if (nomesu.equals(userLogin))
 						msg += "Non è possibile rimuovere l'utente ("+nomesu+") con cui si è collegati all'interfaccia<br>";
@@ -363,8 +360,9 @@ public final class UtentiDel extends Action {
 						// Non posso rimuovere un utente con permessi U se e' l'unico
 						// presente nel db
 					    if (usersWithU.size() == 1 &&
-					    		usersWithU.get(0).equals(nomesu))
+					    		usersWithU.get(0).equals(nomesu)) {
 							msg += nomesu + " non rimosso perch&egrave; deve esistere almeno un utente con permesso 'Utenti'<br><br>";
+					    }
 					    else {
 							// Elimino l'utente
 							User mySU = utentiCore.getUser(nomesu);
@@ -385,9 +383,9 @@ public final class UtentiDel extends Action {
 									if(checkOggettiAccordi){
 										UserObjects results = utentiCore.countUserCooperazione(nomesu);
 										if(results.accordi_accoperazione>0 || results.accordi_parte_comune>0) {
-											Vector<DataElement> dati = new Vector<DataElement>();
+											List<DataElement> dati = new ArrayList<>();
 											
-											dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+											dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 											pd.disableEditMode();
 	

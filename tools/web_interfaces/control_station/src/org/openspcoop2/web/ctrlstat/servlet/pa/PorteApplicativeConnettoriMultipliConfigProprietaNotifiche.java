@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -341,10 +340,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 							connettoreTipoMessaggioDaNotificare = PorteApplicativeCostanti.VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_RICHIESTA;
 						}
 					}
-					if(connettoreIniettaContestoSincrono==null) {
-						if(oldConfigurazioneGestioneConsegnaNotifiche!=null && oldConfigurazioneGestioneConsegnaNotifiche.isInjectTransactionSyncContext()) {
-							connettoreIniettaContestoSincrono = Costanti.CHECK_BOX_ENABLED;
-						}
+					if(connettoreIniettaContestoSincrono==null &&
+						oldConfigurazioneGestioneConsegnaNotifiche!=null && oldConfigurazioneGestioneConsegnaNotifiche.isInjectTransactionSyncContext()) {
+						connettoreIniettaContestoSincrono = Costanti.CHECK_BOX_ENABLED;
 					}
 					if(httpMethodDaNotificare==null) {
 						if(oldConfigurazioneGestioneConsegnaNotifiche!=null && oldConfigurazioneGestioneConsegnaNotifiche.getHttpMethod()!=null) {
@@ -552,8 +550,8 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
 						codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
@@ -589,9 +587,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
 						codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
@@ -862,9 +860,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 				}
 	
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
 						codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 

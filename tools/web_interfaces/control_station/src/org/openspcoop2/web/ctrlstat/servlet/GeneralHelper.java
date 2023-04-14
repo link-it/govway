@@ -29,7 +29,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -77,7 +76,6 @@ public class GeneralHelper {
 	protected HttpSession session;
 	protected ControlStationCore core;
 	protected PddCore pddCore;
-//	protected UtentiCore utentiCore;
 	protected SoggettiCore soggettiCore;
 	protected Logger log;
 
@@ -86,7 +84,6 @@ public class GeneralHelper {
 		try {
 			this.core = new ControlStationCore();
 			this.pddCore = new PddCore(this.core);
-//			this.utentiCore = new UtentiCore(this.core);
 			this.soggettiCore = new SoggettiCore(this.core);
 		} catch (Exception e) {
 			this.log = ControlStationLogger.getPddConsoleCoreLogger();
@@ -112,22 +109,13 @@ public class GeneralHelper {
 		}
 		return this.initGeneralData_engine(request, baseUrl);
 	}
-//	@Deprecated
-//	public GeneralData initGeneralData(String baseUrl) {
-//		return this.initGeneralData_engine(baseUrl);
-//	}
+
 	private GeneralData initGeneralData_engine(HttpServletRequest request, String baseUrl) {
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);
 		String css = this.core.getConsoleCSS();
 
 		// per avere diversi 'profili' utente per i vari tab leggo l'utente dalla sessione del tab
 		User u = ServletUtils.getUserFromSession(request, this.session);
-//		try {
-//			u = this.utentiCore.getUser(userLogin,false);
-//		} catch (DriverUsersDBException dude) {
-//			// Se arrivo qui, è successo qualcosa di strano
-//			//this.log.error("initGeneralData: " + dude.getMessage(), dude);
-//		}
 
 		boolean displayUtente = false;
 		boolean displayLogin = true;
@@ -154,13 +142,13 @@ public class GeneralHelper {
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
 		if (displayLogin || displayLogout) {
-			Vector<GeneralLink> link = new Vector<GeneralLink>();
+			List<GeneralLink> link = new ArrayList<GeneralLink>();
 			if (displayLogin) {
 				// in questo ramo non si dovrebbe mai passare, l'authorizationfilter blocca le chiamate quando l'utente nn e' loggato
 				GeneralLink gl1 = new GeneralLink();
 				gl1.setLabel(LoginCostanti.LABEL_LOGIN);
 				gl1.setUrl(LoginCostanti.SERVLET_NAME_LOGIN);
-				link.addElement(gl1);
+				link.add(gl1);
 			}else{
 				// Ordine dei link da visualizzare nel menu'
 
@@ -169,7 +157,7 @@ public class GeneralHelper {
 					GeneralLink glUtente = new GeneralLink();
 					glUtente.setLabel(userLogin);
 					glUtente.setUrl("");
-					link.addElement(glUtente);
+					link.add(glUtente);
 				}
 
 				// 2. modalita' standard/avanzata
@@ -195,21 +183,21 @@ public class GeneralHelper {
 								new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
 								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED));
 					}
-					link.addElement(glUtente);
+					link.add(glUtente);
 				}
 
 				// 3. informazioni/about
 				GeneralLink glO = new GeneralLink();
 				glO.setLabel(LoginCostanti.LABEL_MENU_UTENTE_INFORMAZIONI);
 				glO.setUrl(AboutCostanti.SERVLET_NAME_ABOUT);
-				link.addElement(glO);
+				link.add(glO);
 
 				// 4. profilo utente
 				if (displayUtente){
 					GeneralLink glProfiloUtente = new GeneralLink();
 					glProfiloUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_PROFILO_UTENTE);
 					glProfiloUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE);
-					link.addElement(glProfiloUtente);
+					link.add(glProfiloUtente);
 				}
 			}
 
@@ -220,7 +208,7 @@ public class GeneralHelper {
 
 				// se ho definito una url custom viene controllato nella procedura di logout
 				gl2.setUrl(LoginCostanti.SERVLET_NAME_LOGOUT);
-				link.addElement(gl2);
+				link.add(gl2);
 			}
 
 			gd.setHeaderLinks(link);
@@ -244,13 +232,13 @@ public class GeneralHelper {
 	public PageData initPageData(String breadcrumb) {
 		PageData pd = new PageData();
 		if(breadcrumb != null) {
-			Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
+			List<GeneralLink> titlelist = new ArrayList<>();
 			GeneralLink tl1 = new GeneralLink();
 			tl1.setLabel(breadcrumb);
-			titlelist.addElement(tl1);
+			titlelist.add(tl1);
 			pd.setTitleList(titlelist);
 		}
-		Vector<DataElement> dati = new Vector<DataElement>();
+		List<DataElement> dati = new ArrayList<>();
 		// titolo sezione login 
 		DataElement titoloSezione = new DataElement();
 		titoloSezione.setLabel(LoginCostanti.LABEL_LOGIN);
@@ -268,9 +256,9 @@ public class GeneralHelper {
 		pwd.setName(UtentiCostanti.PARAMETRO_UTENTE_PW);
 		pwd.setStyleClass(Costanti.INPUT_CSS_CLASS);
 
-		dati.addElement(titoloSezione);
-		dati.addElement(login);
-		dati.addElement(pwd);
+		dati.add(titoloSezione);
+		dati.add(login);
+		dati.add(pwd);
 		pd.setDati(dati);
 		return pd;
 	}
@@ -281,14 +269,14 @@ public class GeneralHelper {
 		return 50;
 	}
 
-	public Vector<GeneralLink> caricaMenuProtocolliUtente(HttpServletRequest request, User u){
-		Vector<GeneralLink> link = new Vector<GeneralLink>();
+	public List<GeneralLink> caricaMenuProtocolliUtente(HttpServletRequest request, User u){
+		List<GeneralLink> link = new ArrayList<>();
 
 		// 1. controllo se ho piu' di un protocollo disponibile per l'utente
 		try {
 			List<String> protocolliDispondibili = this.core.getProtocolli(request, this.session,true);
 
-			if(protocolliDispondibili != null && protocolliDispondibili.size() > 0) {
+			if(protocolliDispondibili != null && !protocolliDispondibili.isEmpty()) {
 				// prelevo l'eventuale protocollo selezionato
 				String protocolloSelezionato = u.getProtocolloSelezionatoPddConsole();
 				if(protocolliDispondibili.size()==1) {
@@ -301,7 +289,7 @@ public class GeneralHelper {
 				glModalitaCorrente.setLabel(labelSelezionatoCompleta); 
 				glModalitaCorrente.setUrl("");
 				glModalitaCorrente.setLabelWidth(this.core.getFontWidth(labelSelezionatoCompleta,  Font.BOLD, 16)); 
-				link.addElement(glModalitaCorrente);
+				link.add(glModalitaCorrente);
 
 				if(protocolliDispondibili.size()>1) {
 					// popolo la tendina con i protocolli disponibili
@@ -310,8 +298,6 @@ public class GeneralHelper {
 						
 						String labelProt = ConsoleHelper._getLabelProtocollo(protocolloDisponibile);
 						glProt.setLabel(labelProt);
-	//					String iconProt = protocolloSelezionato == null ? LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(protocolloSelezionato) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
-	//					glProt.setIcon(iconProt);
 						if(protocolloSelezionato != null && protocolloSelezionato.equals(protocolloDisponibile)) {
 							glProt.setUrl("");
 						} else {
@@ -323,13 +309,12 @@ public class GeneralHelper {
 						}
 
 						glProt.setLabelWidth(this.core.getFontWidth(glProt.getLabel(), 14)); 
-						link.addElement(glProt);
+						link.add(glProt);
 					}
 				
 					// seleziona tutti 
 					GeneralLink glAll = new GeneralLink();
 					glAll.setLabel(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
-	//				glAll.setIcon((protocolloSelezionato == null) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
 					if((protocolloSelezionato == null)) {
 						glAll.setUrl("");
 					} else {
@@ -340,7 +325,7 @@ public class GeneralHelper {
 							);
 					}
 					glAll.setLabelWidth(this.core.getFontWidth(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL, 14));
-					link.addElement(glAll);
+					link.add(glAll);
 				}
 				
 			}
@@ -351,8 +336,8 @@ public class GeneralHelper {
 		return link;
 	}
 
-	public Vector<GeneralLink> caricaMenuSoggetti(HttpServletRequest request, User u){
-		Vector<GeneralLink> link = new Vector<GeneralLink>();
+	public List<GeneralLink> caricaMenuSoggetti(HttpServletRequest request, User u){
+		List<GeneralLink> link = new ArrayList<>();
 
 		try {
 			// prelevo l'eventuale protocollo selezionato
@@ -367,9 +352,6 @@ public class GeneralHelper {
 			
 			List<IDSoggetto> idSoggettiOperativi = this.soggettiCore.getIdSoggettiOperativi(protocolloSelezionato);
 			// Si e' deciso che i soggetti associati valgono solo per govwayMonitor
-//			if(u.getSoggetti()!=null && !u.getSoggetti().isEmpty()) {
-//				idSoggettiOperativi = u.getSoggetti();
-//			}
 			
 			// visualizzo il menu' soggetti solo se e' stato selezionato un protocollo 
 			if(protocolloSelezionato!=null && !"".equals(protocolloSelezionato) &&
@@ -395,7 +377,7 @@ public class GeneralHelper {
 				
 				glSoggettoCorrente.setUrl("");
 				glSoggettoCorrente.setLabelWidth(this.core.getFontWidth(glSoggettoCorrente.getLabel(),  Font.BOLD, 16)); 
-				link.addElement(glSoggettoCorrente);
+				link.add(glSoggettoCorrente);
 				
 				Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = this.core.getNumeroMassimoSoggettiSelectListSoggettiOperatiti();
 				
@@ -422,9 +404,6 @@ public class GeneralHelper {
 						GeneralLink glSoggetto = new GeneralLink();
 						
 						glSoggetto.setLabel(label);
-//						String iconProt = labelSelezionato == null ? LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED :
-//							(label.equals(labelSelezionato) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
-//						glSoggetto.setIcon(iconProt);
 						if(soggettoOperativoSelezionato != null && mapLabelIds.get(label).toString().equals(idSoggettoOperativo.toString())) {
 							glSoggetto.setUrl("");
 						} else {
@@ -441,14 +420,13 @@ public class GeneralHelper {
 						}
 						
 						glSoggetto.setLabelWidth(this.core.getFontWidth(glSoggetto.getLabel(), 14)); 
-						link.addElement(glSoggetto);
+						link.add(glSoggetto);
 					}
 				
 				
 					// seleziona tutti 
 					GeneralLink glAll = new GeneralLink();
 					glAll.setLabel(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
-//					glAll.setIcon((labelSelezionato == null) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
 					if((soggettoOperativoSelezionato == null)) {
 						glAll.setUrl("");
 					} else {
@@ -459,12 +437,10 @@ public class GeneralHelper {
 								);
 					}
 					glAll.setLabelWidth(this.core.getFontWidth(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL, 14));
-					link.addElement(glAll);
+					link.add(glAll);
 				}
 				
-				if(idSoggettiOperativi.size() <= numeroMassimoSoggettiSelectListSoggettiOperatiti) {	
-					
-				} else {
+				if( idSoggettiOperativi.size() > numeroMassimoSoggettiSelectListSoggettiOperatiti ) {	
 					// Abilita l visualizzazione autocomplete
 					glSoggettoCorrente.setUrl("abilitaAutocomplete");
 				}

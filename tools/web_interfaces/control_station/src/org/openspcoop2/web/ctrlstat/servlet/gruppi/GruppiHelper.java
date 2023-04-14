@@ -20,10 +20,10 @@
 package org.openspcoop2.web.ctrlstat.servlet.gruppi;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -68,7 +68,7 @@ public class GruppiHelper extends ConsoleHelper{
 		super(core, request, pd,  session);
 	}
 
-	public Vector<DataElement> addGruppoToDati(TipoOperazione tipoOP, Long gruppoId, String nome, String descrizione, String serviceBinding, Vector<DataElement> dati) {
+	public List<DataElement> addGruppoToDati(TipoOperazione tipoOP, Long gruppoId, String nome, String descrizione, String serviceBinding, List<DataElement> dati) {
 		
 		if(TipoOperazione.CHANGE.equals(tipoOP)){
 			
@@ -82,7 +82,7 @@ public class GruppiHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(GruppiCostanti.LABEL_GRUPPO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		if(gruppoId!=null){
@@ -92,7 +92,7 @@ public class GruppiHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setName(GruppiCostanti.PARAMETRO_GRUPPO_ID);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -107,7 +107,7 @@ public class GruppiHelper extends ConsoleHelper{
 		de.setName(GruppiCostanti.PARAMETRO_GRUPPO_NOME);
 		de.setSize( getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_DESCRIZIONE);
@@ -115,16 +115,16 @@ public class GruppiHelper extends ConsoleHelper{
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(GruppiCostanti.PARAMETRO_GRUPPO_DESCRIZIONE);
 		de.setSize( getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING);
 		de.setType(DataElementType.SELECT);
 		de.setName(GruppiCostanti.PARAMETRO_GRUPPO_SERVICE_BINDING);
-		de.setLabels(GruppiCostanti.LABELS_SELECT_PARAMETRO_GRUPPO_SERVICE_BINDING);
-		de.setValues(GruppiCostanti.VALUES_SELECT_PARAMETRO_GRUPPO_SERVICE_BINDING);
+		de.setLabels(GruppiCostanti.getLabelsSelectParametroGruppoServiceBinding());
+		de.setValues(GruppiCostanti.getValuesSelectParametroGruppoServiceBinding());
 		de.setSelected(serviceBinding);
-		dati.addElement(de);
+		dati.add(de);
 	
 		return dati;
 	}
@@ -289,14 +289,14 @@ public class GruppiHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Gruppo> it = lista.iterator();
 				while (it.hasNext()) {
-					Vector<DataElement> e = creaEntryGruppoCustom(it);
+					List<DataElement> e = creaEntryGruppoCustom(it);
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -304,23 +304,23 @@ public class GruppiHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 			
 			// preparo bottoni
-			if(lista!=null && lista.size()>0){
+			if(lista!=null && !lista.isEmpty()){
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.GRUPPO, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(GruppiCostanti.LABEL_GRUPPI_ESPORTA_SELEZIONATI);
 						de.setOnClick(GruppiCostanti.LABEL_GRUPPI_ESPORTA_SELEZIONATI_ONCLICK);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -335,10 +335,10 @@ public class GruppiHelper extends ConsoleHelper{
 		}
 	}
 	
-	public Vector<DataElement> creaEntryGruppo(Iterator<Gruppo> it) {
+	public List<DataElement> creaEntryGruppo(Iterator<Gruppo> it) {
 		Gruppo gruppo = it.next();
 
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 
 		DataElement de = new DataElement();
 		Parameter pId = new Parameter(GruppiCostanti.PARAMETRO_GRUPPO_ID, gruppo.getId()+"");
@@ -347,7 +347,7 @@ public class GruppiHelper extends ConsoleHelper{
 		de.setValue(gruppo.getNome());
 		de.setIdToRemove(gruppo.getNome());
 		de.setToolTip(gruppo.getDescrizione());
-		e.addElement(de);
+		e.add(de);
 
 		de = new DataElement();
 		if(gruppo.getServiceBinding() == null) {
@@ -362,16 +362,16 @@ public class GruppiHelper extends ConsoleHelper{
 				break;
 			}
 		}
-		e.addElement(de);
+		e.add(de);
 
 		this.addInUsoButtonVisualizzazioneClassica(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
 		return e;
 	}
 	
-	private Vector<DataElement> creaEntryGruppoCustom(Iterator<Gruppo> it) {
+	private List<DataElement> creaEntryGruppoCustom(Iterator<Gruppo> it) {
 		Gruppo gruppo = it.next();
 
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 		
 		// Titolo (nome)
 		DataElement de = new DataElement();
@@ -381,7 +381,7 @@ public class GruppiHelper extends ConsoleHelper{
 		de.setIdToRemove(gruppo.getNome());
 		de.setToolTip(gruppo.getDescrizione());
 		de.setType(DataElementType.TITLE);
-		e.addElement(de);
+		e.add(de);
 		
 		
 		de = new DataElement();
@@ -399,7 +399,7 @@ public class GruppiHelper extends ConsoleHelper{
 		}
 		
 		de.setType(DataElementType.SUBTITLE);
-		e.addElement(de);
+		e.add(de);
 
 		this.addInUsoButton(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
 		

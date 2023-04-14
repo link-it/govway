@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -233,37 +232,35 @@ public final class PorteDelegateChange extends Action {
 			String integrazione = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
 			String[] integrazioneGruppi = porteDelegateHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
 		
-			List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<GruppoIntegrazione>();  
-			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<String, List<String>>();
+			List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<>();  
+			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<>();
 			boolean isConfigurazione =  parentPD!=null ? (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE) : false; 
 			boolean visualizzaSezioneOpzioniAvanzate = !(porteDelegateHelper.isModalitaStandard() || (isConfigurazione && !datiAltroPorta));
 
 			// dal secondo accesso in poi il calcolo dei gruppi da visualizzare avviene leggendo i parametri dalla richiesta
-			if(integrazioneStato != null && visualizzaSezioneOpzioniAvanzate) {
-				if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
-					if(integrazioneGruppi != null) {
-						for (String gruppoSelezionato : integrazioneGruppi) {
-							integrazioneGruppiDaVisualizzare.add(GruppoIntegrazione.toEnumConstant(gruppoSelezionato));
+			if(integrazioneStato != null && visualizzaSezioneOpzioniAvanzate &&
+				integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO) &&
+					integrazioneGruppi != null) {
+				for (String gruppoSelezionato : integrazioneGruppi) {
+					integrazioneGruppiDaVisualizzare.add(GruppoIntegrazione.toEnumConstant(gruppoSelezionato));
+				}
+				
+				// leggere i valori selezionati per ogni gruppo selezionato
+				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+					List<String> valoriGruppoList = new ArrayList<>();
+					if(group.isMulti()) {
+						String[] valoriGruppo = porteDelegateHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+						if(valoriGruppo != null) {
+							valoriGruppoList.addAll(Arrays.asList(valoriGruppo));
 						}
-						
-						// leggere i valori selezionati per ogni gruppo selezionato
-						for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
-							List<String> valoriGruppoList = new ArrayList<String>();
-							if(group.isMulti()) {
-								String[] valoriGruppo = porteDelegateHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
-								if(valoriGruppo != null) {
-									valoriGruppoList.addAll(Arrays.asList(valoriGruppo));
-								}
-							} else {
-								String valoreGruppo = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
-								if(valoreGruppo != null) {
-									valoriGruppoList.add(valoreGruppo);
-								}
-							}
-							
-							integrazioneGruppiValoriDeiGruppi.put(group.getValue(), valoriGruppoList);							
+					} else {
+						String valoreGruppo = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+						if(valoreGruppo != null) {
+							valoriGruppoList.add(valoreGruppo);
 						}
 					}
+					
+					integrazioneGruppiValoriDeiGruppi.put(group.getValue(), valoriGruppoList);							
 				}
 			}
 			
@@ -273,11 +270,11 @@ public final class PorteDelegateChange extends Action {
 			String ctContatori = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI);
 			String ctTipologia = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_TIPOLOGIA);
 			String ctHeaderHttp = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP);
-			String ctHeaderHttp_limit = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
-			String ctHeaderHttp_remaining = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
-			String ctHeaderHttp_reset = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
-			String ctHeaderHttp_retryAfter = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
-			String ctHeaderHttp_retryAfterBackoff = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+			String ctHeaderHttpLimit = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+			String ctHeaderHttpRemaining = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+			String ctHeaderHttpReset = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+			String ctHeaderHttpRetryAfter = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+			String ctHeaderHttpRetryAfterBackoff = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
 
 			
 			// Prendo la porta delegata
@@ -342,20 +339,18 @@ public final class PorteDelegateChange extends Action {
 			boolean isMTOMAbilitatoReq = false;
 			boolean isMTOMAbilitatoRes= false;
 			if(pde.getMtomProcessor()!= null){
-				if(pde.getMtomProcessor().getRequestFlow() != null){
-					if(pde.getMtomProcessor().getRequestFlow().getMode() != null){
-						MTOMProcessorType mode = pde.getMtomProcessor().getRequestFlow().getMode();
-						if(!mode.equals(MTOMProcessorType.DISABLE))
-							isMTOMAbilitatoReq = true;
-					}
+				if(pde.getMtomProcessor().getRequestFlow() != null &&
+					pde.getMtomProcessor().getRequestFlow().getMode() != null){
+					MTOMProcessorType mode = pde.getMtomProcessor().getRequestFlow().getMode();
+					if(!mode.equals(MTOMProcessorType.DISABLE))
+						isMTOMAbilitatoReq = true;
 				}
 
-				if(pde.getMtomProcessor().getResponseFlow() != null){
-					if(pde.getMtomProcessor().getResponseFlow().getMode() != null){
-						MTOMProcessorType mode = pde.getMtomProcessor().getResponseFlow().getMode();
-						if(!mode.equals(MTOMProcessorType.DISABLE))
-							isMTOMAbilitatoRes = true;
-					}
+				if(pde.getMtomProcessor().getResponseFlow() != null &&
+					pde.getMtomProcessor().getResponseFlow().getMode() != null){
+					MTOMProcessorType mode = pde.getMtomProcessor().getResponseFlow().getMode();
+					if(!mode.equals(MTOMProcessorType.DISABLE))
+						isMTOMAbilitatoRes = true;
 				}
 			}
 
@@ -392,10 +387,9 @@ public final class PorteDelegateChange extends Action {
 				autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 			}
 			String	autenticazioneOpzionale = "";
-			if(pde.getAutenticazioneOpzionale()!=null){
-				if (pde.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
-					autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
-				}
+			if(pde.getAutenticazioneOpzionale()!=null &&
+				pde.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+				autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
 			}
 			TipoAutenticazionePrincipal autenticazionePrincipal = porteDelegateCore.getTipoAutenticazionePrincipal(pde.getProprietaAutenticazioneList());
 			List<String> autenticazioneParametroList = porteDelegateCore.getParametroAutenticazione(autenticazione, pde.getProprietaAutenticazioneList());
@@ -466,9 +460,10 @@ public final class PorteDelegateChange extends Action {
 					tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE ;
 				}
 				
-				if(vx.getAcceptMtomMessage()!=null)
-					if (vx.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
-						applicaMTOM = Costanti.CHECK_BOX_ENABLED;
+				if(vx.getAcceptMtomMessage()!=null &&
+					vx.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) { 
+					applicaMTOM = Costanti.CHECK_BOX_ENABLED;
+				}
 			}
 			
 			String gestioneToken = null;
@@ -490,8 +485,8 @@ public final class PorteDelegateChange extends Action {
 			String autorizzazioneRuoliTipologiaToken = null;
 			String autorizzazioneRuoliMatchToken = null;
 			
-			String autorizzazione_token = null;
-			String autorizzazione_tokenOptions = null;
+			String autorizzazioneToken = null;
+			String autorizzazioneTokenOptions = null;
 			
 			String identificazioneAttributiStato = null;
 			String [] attributeAuthoritySelezionate = null;
@@ -541,12 +536,12 @@ public final class PorteDelegateChange extends Action {
 					gestioneTokenTokenForward = tokenForward.getValue();
 				}
 				
-				autorizzazione_tokenOptions = pde.getGestioneToken().getOptions();
-				if((autorizzazione_tokenOptions!=null && !"".equals(autorizzazione_tokenOptions))) {
-					autorizzazione_token = Costanti.CHECK_BOX_ENABLED;
+				autorizzazioneTokenOptions = pde.getGestioneToken().getOptions();
+				if((autorizzazioneTokenOptions!=null && !"".equals(autorizzazioneTokenOptions))) {
+					autorizzazioneToken = Costanti.CHECK_BOX_ENABLED;
 				}
 				else {
-					autorizzazione_token = Costanti.CHECK_BOX_DISABLED;
+					autorizzazioneToken = Costanti.CHECK_BOX_DISABLED;
 				}
 				
 				if(pde.getGestioneToken().getAutenticazione() != null) {
@@ -659,11 +654,11 @@ public final class PorteDelegateChange extends Action {
 				} 
 			}
 			
-			List<String> tipiServizioCompatibiliAccordo = new ArrayList<String>();
+			List<String> tipiServizioCompatibiliAccordo = new ArrayList<>();
 			if(serviceBinding == null) {
 				List<ServiceBinding> serviceBindingListProtocollo = apsCore.getServiceBindingListProtocollo(protocollo);
 				
-				if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
+				if(serviceBindingListProtocollo != null && !serviceBindingListProtocollo.isEmpty()) {
 					for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
 						List<String> tipiServizioCompatibiliAccordoTmp = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding2);
 						
@@ -683,7 +678,7 @@ public final class PorteDelegateChange extends Action {
 			String nomeBreadCrumb = oldNomePD;
 			
 			if( parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
-//				List<MappingFruizionePortaDelegata> mappingServiziPorteAppList = apsCore.serviziFruitoriMappingList(Long.parseLong(idFruizione), idSoggettoFruitore, idServizioCheck, null);
+/**				List<MappingFruizionePortaDelegata> mappingServiziPorteAppList = apsCore.serviziFruitoriMappingList(Long.parseLong(idFruizione), idSoggettoFruitore, idServizioCheck, null);
 //						
 //				MappingFruizionePortaDelegata mappingFruizionePortaDelegata = null;
 //				for (MappingFruizionePortaDelegata mappingFruizionePortaDelegataTmp : mappingServiziPorteAppList) {
@@ -697,7 +692,7 @@ public final class PorteDelegateChange extends Action {
 //					nomeBreadCrumb = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
 //				} else {
 //					nomeBreadCrumb = mappingFruizionePortaDelegata.getNome(); 
-//				}
+//				} */
 				
 				if(datiInvocazione) {
 					lstParam.remove(lstParam.size()-1);
@@ -721,7 +716,6 @@ public final class PorteDelegateChange extends Action {
 						labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI+pde.getNome();
 					}				
 					lstParam.add(new Parameter(labelPerPorta,  null));
-					//lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
 					nomeBreadCrumb=null;
 				}
 				else if(datiAltroApi) {
@@ -773,10 +767,9 @@ public final class PorteDelegateChange extends Action {
 				if (statoPorta == null) {
 					statoPorta = pde.getStato()!=null ? pde.getStato().getValue() : CostantiConfigurazione.ABILITATO.getValue();
 				}
-				if (stateless == null) {
-					if(pde.getStateless()!=null){
-						stateless = pde.getStateless().toString();
-					}
+				if (stateless == null &&
+					pde.getStateless()!=null){
+					stateless = pde.getStateless().toString();
 				}
 				if (localForward == null) {
 					if(pde.getLocalForward()!=null && pde.getLocalForward().getStato()!=null){
@@ -808,9 +801,9 @@ public final class PorteDelegateChange extends Action {
 							PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_DISABILITATO.equals(scartaBody))
 						gestBody = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_BODY_NONE; 
 				}
-				if (gestManifest == null) {
-					if(pde.getGestioneManifest()!=null)
-						gestManifest = pde.getGestioneManifest().toString();
+				if (gestManifest == null &&
+					pde.getGestioneManifest()!=null) {
+					gestManifest = pde.getGestioneManifest().toString();
 				}
 				if (ricsim == null) {
 					if(pde.getRicevutaAsincronaSimmetrica()!=null)
@@ -841,11 +834,11 @@ public final class PorteDelegateChange extends Action {
 				if (integrazione == null) {
 					integrazione = pde.getIntegrazione();
 					
-					List<String> integrazioneGruppiList = new ArrayList<String>();
+					List<String> integrazioneGruppiList = new ArrayList<>();
 					
 					if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
 						// decodificare il contenuto di integrazione per generare gli elementi grafici necessari.
-						List<String> valoriIntegrazione = integrazione != null ? Arrays.asList(integrazione.split(",")) : new ArrayList<String>();
+						List<String> valoriIntegrazione = integrazione != null ? Arrays.asList(integrazione.split(",")) : new ArrayList<>();
 						for (String valoreIntegrazione : valoriIntegrazione) {
 							TipoIntegrazione tipoIntegrazione = TipoIntegrazione.toEnumConstant(valoreIntegrazione);
 							GruppoIntegrazione group = tipoIntegrazione != null ? tipoIntegrazione.getGroup() : GruppoIntegrazione.PLUGIN;
@@ -855,7 +848,7 @@ public final class PorteDelegateChange extends Action {
 							if(integrazioneGruppiValoriDeiGruppi.containsKey(gruppoValore)) {
 								valoriIntegrazionePerGruppo = integrazioneGruppiValoriDeiGruppi.remove(gruppoValore);
 							} else {
-								valoriIntegrazionePerGruppo = new ArrayList<String>();
+								valoriIntegrazionePerGruppo = new ArrayList<>();
 							}
 							
 							valoriIntegrazionePerGruppo.add(valoreIntegrazione);
@@ -867,7 +860,7 @@ public final class PorteDelegateChange extends Action {
 							}
 						}
 						
-						integrazioneGruppi = integrazioneGruppiList.size() > 0 ? integrazioneGruppiList.toArray(new String[integrazioneGruppiList.size()]) : null;
+						integrazioneGruppi = !integrazioneGruppiList.isEmpty() ? integrazioneGruppiList.toArray(new String[integrazioneGruppiList.size()]) : null;
 					}
 				}
 				
@@ -878,21 +871,20 @@ public final class PorteDelegateChange extends Action {
 					ctContatori = policyConfig.getCount();
 					ctTipologia = policyConfig.getEngineType();
 					ctHeaderHttp = policyConfig.getHttpMode();
-					ctHeaderHttp_limit = policyConfig.getHttpMode_limit();
-					ctHeaderHttp_remaining = policyConfig.getHttpMode_remaining();
-					ctHeaderHttp_reset = policyConfig.getHttpMode_reset();
-					ctHeaderHttp_retryAfter = policyConfig.getHttpMode_retry_after();
-					ctHeaderHttp_retryAfterBackoff = policyConfig.getHttpMode_retry_after_backoff();
+					ctHeaderHttpLimit = policyConfig.getHttpMode_limit();
+					ctHeaderHttpRemaining = policyConfig.getHttpMode_remaining();
+					ctHeaderHttpReset = policyConfig.getHttpMode_reset();
+					ctHeaderHttpRetryAfter = policyConfig.getHttpMode_retry_after();
+					ctHeaderHttpRetryAfterBackoff = policyConfig.getHttpMode_retry_after_backoff();
 				}
 				
-				if (messageEngine == null) {
-					if(pde.getOptions()!=null) {
-						Map<String, List<String>> props = PropertiesSerializator.convertoFromDBColumnValue(pde.getOptions());
-						if(props!=null && props.size()>0) {
-							String msgFactory = TransportUtils.getFirstValue(props,CostantiPdD.OPTIONS_MESSAGE_FACTORY);
-							if(msgFactory!=null) {
-								messageEngine = msgFactory;
-							}
+				if (messageEngine == null &&
+					pde.getOptions()!=null) {
+					Map<String, List<String>> props = PropertiesSerializator.convertoFromDBColumnValue(pde.getOptions());
+					if(props!=null && props.size()>0) {
+						String msgFactory = TransportUtils.getFirstValue(props,CostantiPdD.OPTIONS_MESSAGE_FACTORY);
+						if(msgFactory!=null) {
+							messageEngine = msgFactory;
 						}
 					}
 				}
@@ -926,11 +918,8 @@ public final class PorteDelegateChange extends Action {
 							if (azid != null)
 								azidInt = Integer.parseInt(azid);
 							if ( (azidInt == -2) || (azidInt>0) ) {
-//								modeaz = IdentificazioneView.REGISTER_INPUT.toString();
 								azid = azione;
-							} else {
-//								modeaz = IdentificazioneView.USER_INPUT.toString();
-							}
+							} 
 							break;
 						case INTERFACE_BASED:
 							useForceWSDLBased = false;
@@ -980,10 +969,10 @@ public final class PorteDelegateChange extends Action {
 				String[] soggettiList = null;
 				String[] soggettiListLabel = null;
 				List<IDSoggetto> list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
-				if (list!=null && list.size() > 0) {
+				if (list!=null && !list.isEmpty()) {
 
-					List<String> soggettiListTmp = new ArrayList<String>();
-					Map<String, String> soggettiMapTmp = new HashMap<String,String>();
+					List<String> soggettiListTmp = new ArrayList<>();
+					Map<String, String> soggettiMapTmp = new HashMap<>();
 					
 					for (IDSoggetto soggetto : list) {
 						if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
@@ -1014,11 +1003,13 @@ public final class PorteDelegateChange extends Action {
 					List<IDServizio> listIdServ = null;
 					try{
 						listIdServ = apsCore.getAllIdServizi(filtro);
-					}catch(DriverRegistroServiziNotFound dNotFound){}
+					}catch(DriverRegistroServiziNotFound dNotFound){
+						// ignore
+					}
 					
-					if(listIdServ!=null && listIdServ.size()>0){
-						List<String> serviziListTmp = new ArrayList<String>();
-						Map<String, IDServizio> serviziMapTmp = new HashMap<String,IDServizio>();
+					if(listIdServ!=null && !listIdServ.isEmpty()){
+						List<String> serviziListTmp = new ArrayList<>();
+						Map<String, IDServizio> serviziMapTmp = new HashMap<>();
 						for (IDServizio idServizio : listIdServ) {
 							if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
 								String keyServizio = idServizio.getTipo() + "/" + idServizio.getNome() + "/" + idServizio.getVersione();
@@ -1050,6 +1041,7 @@ public final class PorteDelegateChange extends Action {
 					try{
 						servS = apsCore.getServizio(idServizio);
 					}catch(DriverRegistroServiziNotFound dNotFound){
+						// ignore
 					}
 					if(servS==null){
 						// è cambiato il soggetto erogatore. non è più valido il servizio
@@ -1062,6 +1054,7 @@ public final class PorteDelegateChange extends Action {
 							try{
 								servS = apsCore.getServizio(idServizio);
 							}catch(DriverRegistroServiziNotFound dNotFound){
+								// ignore
 							}
 							if(servS==null){
 								servid = null;
@@ -1086,7 +1079,7 @@ public final class PorteDelegateChange extends Action {
 				// associate a servid e la metto in un array
 				String[] azioniList = null;
 				String[] azioniListLabel = null;
-				List<String> filtraAzioniUtilizzate = new ArrayList<String>();
+				List<String> filtraAzioniUtilizzate = new ArrayList<>();
 				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				
 					Map<String,String> azioni = porteDelegateCore.getAzioniConLabel(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
@@ -1109,9 +1102,9 @@ public final class PorteDelegateChange extends Action {
 				pd.addHidden(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD, oldNomePD);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.CHANGE, idsogg, nomePorta, dati,
 						idPorta, descr, autenticazione,
@@ -1140,15 +1133,15 @@ public final class PorteDelegateChange extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_token,autorizzazione_tokenOptions,
+						autorizzazioneToken,autorizzazioneTokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						messageEngine, pde.getCanale(),
 						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 						autorizzazioneAutenticatiToken, null, numAutenticatiToken, 
 						autorizzazioneRuoliToken,  null, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
-						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
-						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+						ctHeaderHttp, ctHeaderHttpLimit, ctHeaderHttpRemaining, ctHeaderHttpReset,
+						ctHeaderHttpRetryAfter, ctHeaderHttpRetryAfterBackoff);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -1174,10 +1167,10 @@ public final class PorteDelegateChange extends Action {
 				String[] soggettiList = null;
 				String[] soggettiListLabel = null;
 				List<IDSoggetto> list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
-				if (list!=null && list.size() > 0) {
+				if (list!=null && !list.isEmpty()) {
 
-					List<String> soggettiListTmp = new ArrayList<String>();
-					Map<String, String> soggettiMapTmp = new HashMap<String,String>();
+					List<String> soggettiListTmp = new ArrayList<>();
+					Map<String, String> soggettiMapTmp = new HashMap<>();
 					
 					for (IDSoggetto soggetto : list) {
 						if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
@@ -1208,12 +1201,14 @@ public final class PorteDelegateChange extends Action {
 					List<IDServizio> listTmp = null;
 					try{
 						listTmp = apsCore.getAllIdServizi(filtro);
-					}catch(DriverRegistroServiziNotFound dNotFound){}
-					if(listTmp!=null && listTmp.size()>0){
-						List<String> serviziListTmp = new ArrayList<String>();
-						List<String> serviziListLabelTmp = new ArrayList<String>();
+					}catch(DriverRegistroServiziNotFound dNotFound){
+						// ignore
+					}
+					if(listTmp!=null && !listTmp.isEmpty()){
+						List<String> serviziListTmp = new ArrayList<>();
+						List<String> serviziListLabelTmp = new ArrayList<>();
 
-						Map<String, IDServizio> serviziMapTmp = new HashMap<String,IDServizio>();
+						Map<String, IDServizio> serviziMapTmp = new HashMap<>();
 						for (IDServizio idServizio : listTmp) {
 							if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
 								String keyServizio = idServizio.getTipo() + "/" + idServizio.getNome() + "/" + idServizio.getVersione();
@@ -1246,6 +1241,7 @@ public final class PorteDelegateChange extends Action {
 					try{
 						servS = apsCore.getServizio(idServizio);
 					}catch(DriverRegistroServiziNotFound dNotFound){
+						// ignore
 					}
 				}
 				
@@ -1259,7 +1255,7 @@ public final class PorteDelegateChange extends Action {
 				// associate a servid e la metto in un array
 				String[] azioniList = null;
 				String[] azioniListLabel = null;
-				List<String> filtraAzioniUtilizzate = new ArrayList<String>();
+				List<String> filtraAzioniUtilizzate = new ArrayList<>();
 				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				
 					Map<String,String> azioni = porteDelegateCore.getAzioniConLabel(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
@@ -1282,10 +1278,10 @@ public final class PorteDelegateChange extends Action {
 				pd.addHidden(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD, oldNomePD);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				// i pattern sono i nomi
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.CHANGE, idsogg, nomePorta, dati,
 						idPorta, descr, autenticazione,
@@ -1313,15 +1309,15 @@ public final class PorteDelegateChange extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_token,autorizzazione_tokenOptions,
+						autorizzazioneToken,autorizzazioneTokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						messageEngine, pde.getCanale(),
 						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 						autorizzazioneAutenticatiToken, null, numAutenticatiToken, 
 						autorizzazioneRuoliToken,  null, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
-						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
-						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+						ctHeaderHttp, ctHeaderHttpLimit, ctHeaderHttpRemaining, ctHeaderHttpReset,
+						ctHeaderHttpRetryAfter, ctHeaderHttpRetryAfterBackoff);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -1355,7 +1351,6 @@ public final class PorteDelegateChange extends Action {
 			PortaDelegata oldPD = porteDelegateCore.getPortaDelegata(idPA);
 
 			PortaDelegata portaDelegata = (PortaDelegata) oldPD.clone();// new
-			// PortaDelegata();
 			portaDelegata.setId(idPA);
 
 			portaDelegata.setNome(nomePorta);
@@ -1425,6 +1420,7 @@ public final class PorteDelegateChange extends Action {
 				asps = apsCore.getServizio(idServizio);
 				pdServizio.setId(asps.getId());
 			}catch(DriverRegistroServiziNotFound dNotFound){
+				// ignore
 			}
 			if(pdServizio.getId()<=0){
 				pdServizio.setId(-2l);
@@ -1451,7 +1447,7 @@ public final class PorteDelegateChange extends Action {
 
 				if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 					azione = azid;
-//					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+/**					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 //					AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordo);
 //
 //					if(asps.getPortType()!=null){
@@ -1483,7 +1479,7 @@ public final class PorteDelegateChange extends Action {
 //								}
 //							}
 //						}
-//					}
+//					}*/
 
 					if(pdAzione.getId()<=0){
 						pdAzione.setId(-2l);
@@ -1517,11 +1513,6 @@ public final class PorteDelegateChange extends Action {
 			portaDelegata.setIdSoggetto(soggettoCS.getId());
 			portaDelegata.setTipoSoggettoProprietario(soggettoCS.getTipo());
 			portaDelegata.setNomeSoggettoProprietario(soggettoCS.getNome());
-			// servizi applicativi
-			// portaDelegata.setServizioApplicativoList(oldPD.getServizioApplicativoList());
-
-			// ws sec
-			// portaDelegata.setMessageSecurity(oldPD.getMessageSecurity());
 
 			// Cambio i dati della vecchia CorrelazioneApplicativa
 			// Non ne creo una nuova, altrimenti mi perdo le vecchie entry
@@ -1534,7 +1525,7 @@ public final class PorteDelegateChange extends Action {
 			} else if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO)) {
 				portaDelegata.setIntegrazione(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO);
 			} else {
-				List<String> valoriFinaliIntegrazione = new ArrayList<String>();
+				List<String> valoriFinaliIntegrazione = new ArrayList<>();
 				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
 					valoriFinaliIntegrazione.addAll(integrazioneGruppiValoriDeiGruppi.get(group.getValue()));
 				}
@@ -1563,12 +1554,12 @@ public final class PorteDelegateChange extends Action {
 				policyConfig.setCount(ctContatori);
 				policyConfig.setEngineType(ctTipologia);
 				policyConfig.setHttpMode(ctHeaderHttp);
-				policyConfig.setHttpMode_limit(ctHeaderHttp_limit);
-				policyConfig.setHttpMode_remaining(ctHeaderHttp_remaining);
-				policyConfig.setHttpMode_reset(ctHeaderHttp_reset);
-				policyConfig.setHttpMode_retry_after(ctHeaderHttp_retryAfter);
-				policyConfig.setHttpMode_retry_after_backoff(ctHeaderHttp_retryAfterBackoff);
-				portaDelegata.setProprietaRateLimitingList(new ArrayList<Proprieta>());
+				policyConfig.setHttpMode_limit(ctHeaderHttpLimit);
+				policyConfig.setHttpMode_remaining(ctHeaderHttpRemaining);
+				policyConfig.setHttpMode_reset(ctHeaderHttpReset);
+				policyConfig.setHttpMode_retry_after(ctHeaderHttpRetryAfter);
+				policyConfig.setHttpMode_retry_after_backoff(ctHeaderHttpRetryAfterBackoff);
+				portaDelegata.setProprietaRateLimitingList(new ArrayList<>());
 				policyConfig.saveIn(portaDelegata.getProprietaRateLimitingList());
 			}
 			
@@ -1603,10 +1594,9 @@ public final class PorteDelegateChange extends Action {
 					
 					String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 					boolean gestioneFruitori = false;
-					if(tipologia!=null) {
-						if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-							gestioneFruitori = true;
-						}
+					if(tipologia!=null &&
+						AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+						gestioneFruitori = true;
 					}
 					if(gestioneFruitori) {
 						

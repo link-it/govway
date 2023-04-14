@@ -33,7 +33,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -365,11 +364,11 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleXForwardedForByNome";
 		
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(15);
-		Vector<Vector<HttpResponse>> responsesByConnettore = new Vector<>(Common.connettoriAbilitati.size());
+		List<List<HttpResponse>> responsesByConnettore = new java.util.ArrayList<>(Common.connettoriAbilitati.size());
 
 		// Inizializzo le risposte, alla richiesta di indice i verrà assegnato il connettore di indice i
 		// responsesByConnettore.get(i) restituisce le risposte relative all'i-esimo connettore
-		Common.connettoriAbilitati.forEach( c -> responsesByConnettore.add(new Vector<>()));
+		Common.connettoriAbilitati.forEach( c -> responsesByConnettore.add(new java.util.ArrayList<>()));
 
 		// Voglio usare tutti gli headers possibili, quindi pesco ogni volta un nome di header 
 		// appartenente alla classe Forwarded-For diverso.
@@ -536,7 +535,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		}
 
 		// Testo che l'identificazione per client Ip sia andata tutta sullo stesso connettore
-		var clientIpResponses = responsesByConnettore.lastElement();
+		var clientIpResponses = responsesByConnettore.get(responsesByConnettore.size()-1); //lastElement();
 		String connettore = clientIpResponses.get(0).getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
 		for (var resp : clientIpResponses) {
 			assertEquals(200, resp.getResultHTTPOperation());
@@ -708,14 +707,14 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	 * risposte corrisponde al batch di richieste fatte per la prima richiesta della
 	 * lista `requests`
 	 */
-	public static Vector<Vector<HttpResponse>> makeBatchedRequests(List<HttpRequest> requests, int nsequential_requests) {
+	public static List<List<HttpResponse>> makeBatchedRequests(List<HttpRequest> requests, int nsequential_requests) {
 		assertTrue(Common.sogliaRichiesteSimultanee >= requests.size());
 		
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(requests.size());
-		var ret = new Vector<Vector<HttpResponse>>(requests.size());
+		var ret = new ArrayList<List<HttpResponse>>(requests.size());
 	
 		for (int i = 0; i < requests.size(); i++) {
-			ret.add(new Vector<>());
+			ret.add(new java.util.ArrayList<>());
 			int index = i;
 	
 			executor.execute(() -> {
@@ -735,7 +734,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	}
 
 
-	public static void matchResponsesWithConnettoriRest(List<String> connettori, List<Vector<HttpResponse>> responsesByConnettore) {
+	public static void matchResponsesWithConnettoriRest(List<String> connettori, List<List<HttpResponse>> responsesByConnettore) {
 		assertEquals(connettori.size(), responsesByConnettore.size());
 		
 		for (int i = 0; i < connettori.size(); i++) {
@@ -760,7 +759,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	}
 	
 	
-	public static void matchResponsesWithConnettoriSoap(List<String> connettori, List<Vector<HttpResponse>> responsesByConnettore) {
+	public static void matchResponsesWithConnettoriSoap(List<String> connettori, List<List<HttpResponse>> responsesByConnettore) {
 		assertEquals(connettori.size(), responsesByConnettore.size());
 		
 		for (int i = 0; i < connettori.size(); i++) {

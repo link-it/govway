@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,7 +88,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 
 			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
-			long idServizioLong = Long.valueOf(idServizio);
+			long idServizioLong = Long.parseLong(idServizio);
 			String ruolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RUOLO  );
 			String tipoFile = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_FILE  );
 
@@ -101,10 +100,9 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 
 			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					gestioneFruitori = true;
-				}
+			if(tipologia!=null &&
+				AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+				gestioneFruitori = true;
 			}
 			
 			// Preparo il menu
@@ -155,6 +153,8 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 					tipiAmmessi = TipiDocumentoLivelloServizio.toEnumNameArray();
 					tipiAmmessiLabel=TipiDocumentoLivelloServizio.toStringArray();
 					break;
+				default:
+					break;
 
 				}
 			}
@@ -173,7 +173,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			}
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				if(gestioneFruitori) {
@@ -230,8 +230,8 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam );
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idServizio, null, null, null, null, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
 
@@ -253,9 +253,9 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam );
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idServizio, null, null, dati);
 
@@ -294,6 +294,8 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 					case specificaLivelloServizio:
 						documento.setTipo(TipiDocumentoLivelloServizio.valueOf(tipoFile).getNome());
 						asps.addSpecificaLivelloServizio(documento);
+						break;
+					default:
 						break;
 				}
 			}

@@ -21,7 +21,8 @@
 
 package org.openspcoop2.web.loader.servlet;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -41,9 +42,6 @@ import org.openspcoop2.web.loader.servlet.about.AboutCostanti;
 import org.slf4j.Logger;
 
 
-//Questa classe, volendo, potrebbe essere usata anche dalla Porta di Dominio e
-//dal registro servizi, dato che serve per settare pezzi di codice comuni a
-//piu' applicazioni
 /**
  * generalHelper
  * 
@@ -57,7 +55,6 @@ import org.slf4j.Logger;
 public class GeneralHelper {
 
 	HttpSession session;
-	//ControlStationCore core;
 	public Logger log;
 	private LoaderCore loaderCore;
 
@@ -91,10 +88,6 @@ public class GeneralHelper {
 		}
 		return this.initGeneralData_engine(request, baseUrl);
 	}
-//	@Deprecated
-//	public GeneralData initGeneralData(String baseUrl) {
-//		return this.initGeneralData_engine(baseUrl);
-//	}
 	private GeneralData initGeneralData_engine(HttpServletRequest request, String baseUrl) {
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);
 		String css = this.loaderCore.getLoaderCSS();
@@ -122,36 +115,36 @@ public class GeneralHelper {
 		gd.setLogoHeaderTitolo(this.loaderCore.getLogoHeaderTitolo()); 
 		gd.setVisualizzaLinkHome(this.loaderCore.isVisualizzaLinkHomeHeader());
 		if (displayLogin || displayLogout) {
-			Vector<GeneralLink> link = new Vector<GeneralLink>();
+			List<GeneralLink> link = new ArrayList<>();
 			// 1. Utente collegato
 			if (displayUtente){
 				GeneralLink glUtente = new GeneralLink();
 				glUtente.setLabel(userLogin);
 				glUtente.setUrl("");
-				link.addElement(glUtente);
+				link.add(glUtente);
 			}
 			
 			// 3. informazioni/about
 			GeneralLink glO = new GeneralLink();
 			glO.setLabel(Costanti.LABEL_MENU_UTENTE_INFORMAZIONI);
 			glO.setUrl(AboutCostanti.SERVLET_NAME_ABOUT);
-			link.addElement(glO);
+			link.add(glO);
 
 			if (displayLogin) {
 				GeneralLink gl1 = new GeneralLink();
 				gl1.setLabel(Costanti.LABEL_LOGIN);
 				gl1.setUrl(Costanti.SERVLET_NAME_LOGIN);
-				link.addElement(gl1);
+				link.add(gl1);
 			}
 			if (displayLogout) {
 				GeneralLink gl2 = new GeneralLink();
 				gl2.setLabel(Costanti.LABEL_LOGOUT);
 				gl2.setUrl(Costanti.SERVLET_NAME_LOGOUT);
-				link.addElement(gl2);
+				link.add(gl2);
 			}
 			GeneralLink gl4 = new GeneralLink();
 			gl4.setLabel("");
-			link.addElement(gl4);
+			link.add(gl4);
 			gd.setHeaderLinks(link);
 		}
 
@@ -165,10 +158,10 @@ public class GeneralHelper {
 	public PageData initPageData(String breadcrumb) {
 		PageData pd = new PageData();
 		if(breadcrumb != null) {
-			Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
+			List<GeneralLink> titlelist = new ArrayList<>();
 			GeneralLink tl1 = new GeneralLink();
 			tl1.setLabel(breadcrumb);
-			titlelist.addElement(tl1);
+			titlelist.add(tl1);
 			pd.setTitleList(titlelist);
 		}
 		// titolo sezione login 
@@ -177,7 +170,7 @@ public class GeneralHelper {
 		titoloSezione.setType(DataElementType.TITLE);
 		titoloSezione.setName("");
 		
-		Vector<DataElement> dati = new Vector<DataElement>();
+		List<DataElement> dati = new ArrayList<>();
 		DataElement login = new DataElement();
 		login.setLabel(Costanti.LABEL_LOGIN);
 		login.setType(DataElementType.TEXT_EDIT);
@@ -189,9 +182,9 @@ public class GeneralHelper {
 		pwd.setName(Costanti.PARAMETRO_UTENTE_PASSWORD);
 		pwd.setStyleClass(org.openspcoop2.web.lib.mvc.Costanti.INPUT_CSS_CLASS);
 		
-		dati.addElement(titoloSezione);
-		dati.addElement(login);
-		dati.addElement(pwd);
+		dati.add(titoloSezione);
+		dati.add(login);
+		dati.add(pwd);
 		pd.setDati(dati);
 		return pd;
 	}

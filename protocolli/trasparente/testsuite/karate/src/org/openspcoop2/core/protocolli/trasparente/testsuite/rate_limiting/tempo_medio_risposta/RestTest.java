@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
@@ -140,7 +140,7 @@ public class RestTest extends ConfigLoader {
 			
 			// Faccio prima 3 richieste che passano
 				
-			Vector<HttpResponse> notBlockedResponses = null;
+			List<HttpResponse> notBlockedResponses = null;
 			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters() || PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(policyType))) {
 				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 				notBlockedResponses = Utils.makeSequentialRequests(request, small_delay_count);
@@ -170,7 +170,7 @@ public class RestTest extends ConfigLoader {
 			request.setMethod(HttpRequestMethod.GET);
 			request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+small_delay );
 			
-			Vector<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+			List<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
 			
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, small_delay_count, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
 			
@@ -245,7 +245,7 @@ public class RestTest extends ConfigLoader {
 			
 			
 			// Faccio prima richieste che passano
-			Vector<HttpResponse> notBlockedResponses = null;
+			List<HttpResponse> notBlockedResponses = null;
 			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters() || PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(policyType))) {
 				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 				notBlockedResponses = Utils.makeSequentialRequests(request, small_delay_count);
@@ -275,7 +275,7 @@ public class RestTest extends ConfigLoader {
 			request.setMethod(HttpRequestMethod.GET);
 			request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+small_delay );
 			
-			Vector<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+			List<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
 			
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, small_delay_count, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
 			
@@ -309,7 +309,7 @@ public class RestTest extends ConfigLoader {
 		
 	}
 	
-	private void checkPassedRequests(Vector<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) {
+	private void checkPassedRequests(List<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) {
 		
 		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
@@ -331,7 +331,7 @@ public class RestTest extends ConfigLoader {
 		}
 	}
 	
-	private void _checkPassedRequests(Vector<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) {
+	private void _checkPassedRequests(List<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) {
 		
 		// Delle richieste ok Controllo lo header *-Limit, *-Reset e lo status code
 		
@@ -348,7 +348,7 @@ public class RestTest extends ConfigLoader {
 		});
 	}
 	
-	private void checkBlockedRequests(Vector<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void checkBlockedRequests(List<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
 		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
@@ -370,7 +370,7 @@ public class RestTest extends ConfigLoader {
 		}
 	}
 	
-	private void _checkBlockedRequests(Vector<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void _checkBlockedRequests(List<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
 		for (var r: responses) {
 			Utils.checkXLimitHeader(logRateLimiting, Headers.AvgTimeResponseLimit, r.getHeaderFirstValue(Headers.AvgTimeResponseLimit), soglia);			

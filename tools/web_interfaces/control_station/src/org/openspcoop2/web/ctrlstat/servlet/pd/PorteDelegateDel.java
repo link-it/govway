@@ -87,7 +87,7 @@ public final class PorteDelegateDel extends Action {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
-			Boolean useIdSogg = parentPD == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO;
+			boolean useIdSogg = parentPD!=null && parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO;
 			int soggInt = -1;
 			if(useIdSogg){
 				String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
@@ -98,25 +98,13 @@ public final class PorteDelegateDel extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteDelegateCore);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			// Elimino le porte delegate dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			IExtendedListServlet extendedServlet = porteDelegateCore.getExtendedServletPortaDelegata();
-			List<Object> listPerformOperations = new ArrayList<Object>();
+			List<Object> listPerformOperations = new ArrayList<>();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
-
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// int idporta = Integer.parseInt(de.getValue());
 
 				// Elimino la porta delegata
 				PortaDelegata pde = porteDelegateCore.getPortaDelegata(Long.parseLong(idsToRemove.get(i)));
@@ -128,7 +116,7 @@ public final class PorteDelegateDel extends Action {
 					}catch(Exception e){
 						ControlStationCore.logError(e.getMessage(), e);
 					}
-					if(listExt!=null && listExt.size()>0){
+					if(listExt!=null && !listExt.isEmpty()){
 						for (IExtendedBean iExtendedBean : listExt) {
 							WrapperExtendedBean wrapper = new WrapperExtendedBean();
 							wrapper.setExtendedBean(iExtendedBean);

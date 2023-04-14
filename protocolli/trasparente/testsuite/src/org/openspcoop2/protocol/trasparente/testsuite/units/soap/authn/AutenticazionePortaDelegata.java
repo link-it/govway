@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.soap.authn;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
@@ -76,7 +76,7 @@ public class AutenticazionePortaDelegata extends GestioneViaJmx {
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups= {AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL})
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){

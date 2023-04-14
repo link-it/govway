@@ -22,7 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -118,11 +118,10 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 			String postBackElementName = porteDelegateHelper.getPostBackElementName();
 			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
-			if (postBackElementName != null) {
-				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE)) {
-					statusMin = "";
-					statusMax = "";
-				}
+			if (postBackElementName != null &&
+				postBackElementName.equals(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE)) {
+				statusMin = "";
+				statusMax = "";
 			}
 			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
@@ -161,8 +160,8 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 			// dati
 			if (porteDelegateHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addResponseCachingConfigurazioneRegola(TipoOperazione.ADD, returnCode, statusMin, statusMax, fault, cacheSeconds, dati);
 				
@@ -182,9 +181,9 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addResponseCachingConfigurazioneRegola(TipoOperazione.ADD, returnCode, statusMin, statusMax, fault, cacheSeconds, dati);
 				

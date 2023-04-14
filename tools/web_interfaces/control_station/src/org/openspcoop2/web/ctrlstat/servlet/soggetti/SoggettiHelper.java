@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -101,7 +100,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		super(core, request, pd,  session);
 	}
 
-	public Vector<DataElement> addSoggettiToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
+	public List<DataElement> addSoggettiToDati(TipoOperazione tipoOp,List<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
 			boolean isRouter, List<String> tipiSoggetti, String profilo, boolean privato, String codiceIpa, List<String> versioni, 
 			boolean isSupportatoCodiceIPA, boolean isSupportatoIdentificativoPorta,
 			String [] pddList,String[] pddEsterneList,String nomePddGestioneLocale, String pdd, 
@@ -133,7 +132,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				multipleApiKey, appId, apiKey,
 				visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd, 0);
 	}
-	public Vector<DataElement> addSoggettiToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
+	public List<DataElement> addSoggettiToDati(TipoOperazione tipoOp,List<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
 			boolean isRouter, List<String> tipiSoggetti, String profilo, boolean privato, String codiceIpa, List<String> versioni, 
 			boolean isSupportatoCodiceIPA, boolean isSupportatoIdentificativoPorta,
 			String [] pddList,String[] pddEsterneList,String nomePddGestioneLocale,String pdd, 
@@ -194,14 +193,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		
 		DataElement de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_SOGGETTO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		boolean gestionePdd = true;
 		if(this.core.isSinglePdD()){
@@ -244,7 +243,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					}else{
 						de.setRequired(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			else{		
@@ -262,7 +261,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						}
 						de.setSelected(pdd);
 						de.setPostBack(isSupportatoAutenticazioneSoggetti);
-						dati.addElement(de);
+						dati.add(de);
 					}
 				}else{
 					de = new DataElement();
@@ -270,7 +269,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setType(DataElementType.TEXT);
 					de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
 					de.setValue(pdd);
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 		}
@@ -290,16 +289,18 @@ public class SoggettiHelper extends ConnettoriHelper {
 			else if(TipoOperazione.CHANGE.equals(tipoOp) && listOperativoSolamente){
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dominio);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
 				de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO+"__LABEL");
 				String valueDom = dominio;
-				for (int i = 0; i < SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length; i++) {
-					if(SoggettiCostanti.SOGGETTI_DOMINI_VALUE[i].equals(dominio)) {
-						valueDom = SoggettiCostanti.SOGGETTI_DOMINI_LABEL[i];
+				String [] sdValues = SoggettiCostanti.getSoggettiDominiValue();
+				String [] sdLabels = SoggettiCostanti.getSoggettiDominiLabel();
+				for (int i = 0; i < sdValues.length; i++) {
+					if(sdValues[i].equals(dominio)) {
+						valueDom = sdLabels[i];
 						break;
 					}
 				}
@@ -307,12 +308,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 			else {
 				de.setType(DataElementType.SELECT);
-				de.setValues(SoggettiCostanti.SOGGETTI_DOMINI_VALUE);
-				de.setLabels(SoggettiCostanti.SOGGETTI_DOMINI_LABEL);
+				de.setValues(SoggettiCostanti.getSoggettiDominiValue());
+				de.setLabels(SoggettiCostanti.getSoggettiDominiLabel());
 				de.setSelected(dominio);
 				de.setPostBack(isSupportatoAutenticazioneSoggetti);
 			}
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 
@@ -340,7 +341,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				deLABEL.setType(DataElementType.TEXT);
 				deLABEL.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO+"__label");
 				deLABEL.setValue(this.getLabelProtocollo(protocollo));
-				dati.addElement(deLABEL);
+				dati.add(deLABEL);
 				
 				de.setValue(protocollo);
 				de.setType(DataElementType.HIDDEN);
@@ -352,7 +353,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 		}
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		String[] tipiLabel = new String[tipiSoggetti.size()];
 		for (int i = 0; i < tipiSoggetti.size(); i++) {
@@ -388,7 +389,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de.setSize(this.getSize());
 		//		de.setOnChange("CambiaDatiSoggetto('" + tipoOp + "')");
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		//}
 
 		de = new DataElement();
@@ -398,7 +399,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 		de.setSize(this.getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(TipoOperazione.ADD.equals(tipoOp)){
 			de = new DataElement();
@@ -408,7 +409,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setValue(tipologia);
 				de.setSelected(tipologia);
 				de.setType(DataElementType.SELECT);
-				de.setValues(SoggettiCostanti.SOGGETTI_RUOLI);
+				de.setValues(SoggettiCostanti.getSoggettiRuoli());
 				de.setPostBack(true);
 			}
 			else{
@@ -416,7 +417,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 
@@ -434,7 +435,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		}
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_CODICE_IPA);
@@ -450,7 +451,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		}
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DESCRIZIONE);
@@ -458,7 +459,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 
 		de = new DataElement();
@@ -475,7 +476,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		//}
 
 		de = new DataElement();
@@ -488,7 +489,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO);
 		de.setSelected(privato ? "yes" : "");
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_IS_ROUTER);
@@ -504,7 +505,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(Costanti.CHECK_BOX_DISABLED);
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
@@ -531,7 +532,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,oldnomeprov),
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,oldtipoprov));
 				Utilities.setDataElementLabelTipoConnettore(de, connettore);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 		
@@ -642,7 +643,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(RuoliCostanti.LABEL_RUOLI);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
@@ -667,7 +668,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			} else{
 				ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 
@@ -678,7 +679,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setLabel(SoggettiCostanti.LABEL_CLIENT);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			de = new DataElement();
@@ -691,7 +692,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
 			de.setValue(pd_url_prefix_rewriter);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 			
 			if (this.isModalitaCompleta()) {	
 				de = new DataElement();
@@ -704,14 +705,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 					ServletUtils.setDataElementVisualizzaLabel(de,numPD);
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			if (this.isModalitaCompleta()) {	
 				de = new DataElement();
 				de.setLabel(SoggettiCostanti.LABEL_SERVER);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			de = new DataElement();
@@ -724,7 +725,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
 			de.setValue(pa_url_prefix_rewriter);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 			
 			if (this.isModalitaCompleta()) {	
 				de = new DataElement();
@@ -737,7 +738,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					ServletUtils.setDataElementVisualizzaLabel(de,numPA);
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 
@@ -1335,7 +1336,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			setLabelColonne(modalitaCompleta, multiTenant, showProtocolli);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -1354,11 +1355,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(lista!=null) {
 				Iterator<org.openspcoop2.core.registry.Soggetto> it = lista.listIterator();
 				while (it.hasNext()) {
-					Vector<DataElement> e = modalitaCompleta 
+					List<DataElement> e = modalitaCompleta 
 							? this.creaEntry(modalitaCompleta, multiTenant, contaListe, showProtocolli, it) 
 									: this.creaEntryCustom(multiTenant, showProtocolli, it);
 	
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -1372,17 +1373,17 @@ public class SoggettiHelper extends ConnettoriHelper {
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI);
 						de.setOnClick(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI_ONCLICK);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -1396,7 +1397,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
-	private Vector<DataElement> creaEntry(boolean modalitaCompleta, boolean multiTenant, Boolean contaListe,
+	private List<DataElement> creaEntry(boolean modalitaCompleta, boolean multiTenant, Boolean contaListe,
 			boolean showProtocolli, Iterator<org.openspcoop2.core.registry.Soggetto> it)
 			throws DriverControlStationException, DriverControlStationNotFound, DriverRegistroServiziNotFound,
 			DriverRegistroServiziException, Exception, DriverConfigurazioneException, DriverConfigurazioneNotFound {
@@ -1408,7 +1409,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			pdd = this.pddCore.getPdDControlStation(nomePdD);
 		boolean pddEsterna = this.pddCore.isPddEsterna(nomePdD);
 
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 
 		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo());
 							
@@ -1421,12 +1422,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de.setIdToRemove(elem.getId().toString());
 		de.setToolTip(de.getValue());
 		de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
-		e.addElement(de);
+		e.add(de);
 
 		if(showProtocolli) {
 			de = new DataElement();
 			de.setValue(this.getLabelProtocollo(protocollo));
-			e.addElement(de);
+			e.add(de);
 		}
 		
 		if(this.core.isGestionePddAbilitata(this)) {
@@ -1449,7 +1450,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			else{
 				de.setValue("-");
 			}
-			e.addElement(de);
+			e.add(de);
 		}
 		else if(multiTenant) {
 			de = new DataElement();
@@ -1458,7 +1459,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}else {
 				de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_LABEL);
 			}
-			e.addElement(de);
+			e.add(de);
 		}
 
 		if(modalitaCompleta) {
@@ -1478,7 +1479,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setType(DataElementType.TEXT);
 				de.setValue("-");
 			}
-			e.addElement(de);
+			e.add(de);
 		}
 
 		
@@ -1496,7 +1497,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
 		} else
 			ServletUtils.setDataElementVisualizzaLabel(de);
-		e.addElement(de);
+		e.add(de);
 		
 		
 		//Servizi Appicativi
@@ -1521,7 +1522,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
 			}
-			e.addElement(de);
+			e.add(de);
 		}
 		
 		if(modalitaCompleta) {
@@ -1548,7 +1549,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					ServletUtils.setDataElementVisualizzaLabel(de);
 
 			}
-			e.addElement(de);
+			e.add(de);
 
 			de = new DataElement();
 			if (pddEsterna) {
@@ -1572,7 +1573,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
 			}
-			e.addElement(de);
+			e.add(de);
 		}
 		return e;
 	}
@@ -1630,13 +1631,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 		}
 	}
 	
-	private Vector<DataElement> creaEntryCustom(boolean multiTenant, boolean showProtocolli,
+	private List<DataElement> creaEntryCustom(boolean multiTenant, boolean showProtocolli,
 			Iterator<org.openspcoop2.core.registry.Soggetto> it)
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, Exception,
 			DriverControlStationException, DriverControlStationNotFound, DriverConfigurazioneException {
 		org.openspcoop2.core.registry.Soggetto elem = it.next();
 
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 		
 		// Titolo (nome soggetto)
 		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo());
@@ -1652,7 +1653,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de.setIdToRemove(elem.getId().toString());
 		de.setToolTip(de.getValue());
 		de.setType(DataElementType.TITLE);
-		e.addElement(de);
+		e.add(de);
 		
 		
 		String nomePdD = elem.getPortaDominio();
@@ -1691,7 +1692,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.SUBTITLE);
 			
 			if(addMetadati)
-				e.addElement(de);
+				e.add(de);
 		}
 
 		// Ruoli
@@ -1717,7 +1718,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			de.setToolTip(RuoliCostanti.LABEL_RUOLI); 
 			
-			e.addElement(de);
+			e.add(de);
 		}
 		
 		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA, "true"));
@@ -1848,7 +1849,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -1860,7 +1861,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				while (it.hasNext()) {
 					org.openspcoop2.core.config.Soggetto elem = (org.openspcoop2.core.config.Soggetto) it.next();
 	
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					//Soggetto
 					DataElement de = new DataElement();
@@ -1871,12 +1872,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setValue(elem.getTipo() + "/" + elem.getNome());
 					de.setIdToRemove(elem.getId().toString());
 					de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
-					e.addElement(de);
+					e.add(de);
 	
 					if(showProtocolli) {
 						de = new DataElement();
 						de.setValue(this.getLabelProtocollo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo())));
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					//Servizi Appicativi
@@ -1895,7 +1896,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					if(this.isModalitaCompleta()) {
@@ -1915,7 +1916,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
-						e.addElement(de);
+						e.add(de);
 		
 						//Porte Delegate
 						de = new DataElement();
@@ -1933,11 +1934,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
-						e.addElement(de);
+						e.add(de);
 					}
 	
 	
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -1945,23 +1946,23 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 			// preparo bottoni
-			if(lista!=null && lista.size()>0){
+			if(lista!=null && !lista.isEmpty()){
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI);
 						de.setOnClick(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI_ONCLICK);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -2087,14 +2088,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<String> it = lista.iterator();
 				while (it.hasNext()) {
 					String ruolo = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setValue(ruolo);
@@ -2110,9 +2111,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
 					}
 					
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2128,16 +2129,16 @@ public class SoggettiHelper extends ConnettoriHelper {
 	
 	private void addFilterTipoSoggetto(String tipoSoggetto, boolean postBack) throws Exception{
 		try {
-			String [] tmp_labels = SoggettiCostanti.LABELS_SOGGETTO_RUOLO_TIPO;
-			String [] tmp_values = SoggettiCostanti.VALUES_SOGGETTO_RUOLO_TIPO;
+			String [] tmpLabels = SoggettiCostanti.getLabelsSoggettoRuoloTipo();
+			String [] tmpValues = SoggettiCostanti.getValuesSoggettoRuoloTipo();
 			
-			String [] values = new String[tmp_values.length + 1];
-			String [] labels = new String[tmp_labels.length + 1];
+			String [] values = new String[tmpValues.length + 1];
+			String [] labels = new String[tmpLabels.length + 1];
 			labels[0] = SoggettiCostanti.LABEL_PARAMETRO_FILTRO_SOGGETTO_TIPO_QUALSIASI;
 			values[0] = SoggettiCostanti.DEFAULT_VALUE_PARAMETRO_FILTRO_SOGGETTO_TIPO_QUALSIASI;
-			for (int i =0; i < tmp_labels.length ; i ++) {
-				labels[i+1] = tmp_labels[i];
-				values[i+1] = tmp_values[i];
+			for (int i =0; i < tmpLabels.length ; i ++) {
+				labels[i+1] = tmpLabels[i];
+				values[i+1] = tmpValues[i];
 			}
 			
 			String selectedValue = tipoSoggetto != null ? tipoSoggetto : SoggettiCostanti.DEFAULT_VALUE_PARAMETRO_FILTRO_SOGGETTO_TIPO_QUALSIASI;
@@ -2194,7 +2195,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setLabels(labels.toArray(new String[1]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 			
 			List<CredenzialiSoggetto> lista = soggettoRegistry.getCredenzialiList();
 
@@ -2202,7 +2203,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			int i = 0;
 			while (it.hasNext()) {
 				
-				Vector<DataElement> e = new Vector<DataElement>();
+				List<DataElement> e = new ArrayList<>();
 				CredenzialiSoggetto credenziali = it.next();
 				Certificate cSelezionato = ArchiveLoader.load(credenziali.getCertificate());
 				String tipoCredenzialiSSLAliasCertificatoIssuer = cSelezionato.getCertificate().getIssuer().getNameNormalized();
@@ -2225,7 +2226,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setValue(i == 0 ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO);
 				de.allineaTdAlCentro();
 				de.setWidthPx(60);
-				e.addElement(de);
+				e.add(de);
 				
 				// Subject con link edit
 				de = new DataElement();
@@ -2235,7 +2236,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject));
 				de.setToolTip(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject)); 
 				de.setIdToRemove(i+"");
-				e.addElement(de);
+				e.add(de);
 				
 				// Issuer 
 				de = new DataElement();
@@ -2245,7 +2246,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 				de.setValue(issuerValue);
 				de.setToolTip(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer)); 
-				e.addElement(de);
+				e.add(de);
 				
 				// verifica tutti i campi
 				de = new DataElement();
@@ -2254,7 +2255,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI_DISABLE);
 				de.allineaTdAlCentro();
 				de.setWidthPx(70);
-				e.addElement(de);
+				e.add(de);
 				
 				// not before
 				de = new DataElement();
@@ -2272,7 +2273,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setLabelStyleClass(Costanti.INPUT_TEXT_BOLD_CSS_CLASS);
 					de.setWidthPx(150);
 				}
-				e.addElement(de);	
+				e.add(de);	
 				
 				// not after
 				de = new DataElement();
@@ -2289,9 +2290,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setLabelStyleClass(Costanti.INPUT_TEXT_BOLD_RED_CSS_CLASS);
 					de.setWidthPx(150);
 				}
-				e.addElement(de);
+				e.add(de);
 
-				dati.addElement(e);
+				dati.add(e);
 				i++;
 			}
 
@@ -2304,14 +2305,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 		}
 	}
 
-	public Vector<DataElement> addSoggettoHiddenToDati(Vector<DataElement> dati, String id, String nome, String tipo) throws Exception {
+	public List<DataElement> addSoggettoHiddenToDati(List<DataElement> dati, String id, String nome, String tipo) throws Exception {
 		
 		DataElement de = new DataElement();
 		de.setLabel(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 		de.setValue(id);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(nome != null) {
 			de = new DataElement();
@@ -2319,7 +2320,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setValue(nome);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(tipo != null) {
@@ -2328,7 +2329,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setValue(tipo);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		return dati;
@@ -2572,14 +2573,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Proprieta> it = lista.iterator();
 				while (it.hasNext()) {
 					Proprieta ssp = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pNomeProprieta = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME, ssp.getNome());
 					List<Parameter> parametersServletProprietaChange = new ArrayList<Parameter>();
@@ -2591,14 +2592,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 							parametersServletProprietaChange.toArray(new Parameter[parametersServletProprietaChange.size()]));
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getNome());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					if(ssp.getValore()!=null)
 						de.setValue(ssp.getValore().toString());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2612,12 +2613,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 		
 	}
 	
-	public  Vector<DataElement> addProprietaToDati(TipoOperazione tipoOp, int size, String nome, String valore, Vector<DataElement> dati) {
+	public  List<DataElement> addProprietaToDati(TipoOperazione tipoOp, int size, String nome, String valore, List<DataElement> dati) {
 
 		DataElement de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROPRIETA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_NOME);
@@ -2631,7 +2632,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		}
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME);
 		de.setSize(size);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
@@ -2640,7 +2641,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE);
 		de.setValue(valore);
 		de.setSize(size);
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}

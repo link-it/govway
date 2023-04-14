@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -34,6 +35,8 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class AccordiServizioParteSpecificaCostanti {
+	
+	private AccordiServizioParteSpecificaCostanti() {}
 
 	/* OBJECT NAME */
 	
@@ -48,19 +51,24 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 	public static final String OBJECT_NAME_APS_PORTE_APPLICATIVE = "accordiServizioParteSpecificaPorteApplicative";
 	
-	public static final ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE = ForwardParams.OTHER("Configurazione");
+	private static final String CONFIGURAZIONE = "Configurazione";
+	
+	public static final ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE = ForwardParams.OTHER(CONFIGURAZIONE);
 	
 	
 	public static final String OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE = "accordiServizioParteSpecificaFruitoriPorteDelegate";
 	
 	/* SERVLET NAME */
 	
-	public static final String SERVLET_NAME_APS_ADD = OBJECT_NAME_APS+"Add.do";
-	public static final String SERVLET_NAME_APS_CHANGE = OBJECT_NAME_APS+"Change.do";
-	public static final String SERVLET_NAME_APS_DELETE = OBJECT_NAME_APS+"Del.do";
-	public static final String SERVLET_NAME_APS_LIST = OBJECT_NAME_APS+"List.do";
+	public static final String SERVLET_NAME_APS_ADD = OBJECT_NAME_APS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APS_CHANGE = OBJECT_NAME_APS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APS_DELETE = OBJECT_NAME_APS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APS_LIST = OBJECT_NAME_APS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	public static final String SERVLET_NAME_APS_WSDL_CHANGE = OBJECT_NAME_APS+"WSDLChange.do";
-	public static final Vector<String> SERVLET_APS = new Vector<String>();
+	private static final List<String> SERVLET_APS = new ArrayList<>();
+	public static List<String> getServletAps() {
+		return SERVLET_APS;
+	}
 	static{
 		SERVLET_APS.add(SERVLET_NAME_APS_ADD);
 		SERVLET_APS.add(SERVLET_NAME_APS_CHANGE);
@@ -69,12 +77,15 @@ public class AccordiServizioParteSpecificaCostanti {
 		SERVLET_APS.add(SERVLET_NAME_APS_WSDL_CHANGE);
 	}
 	
-	public static final String SERVLET_NAME_APS_FRUITORI_ADD = OBJECT_NAME_APS_FRUITORI+"Add.do";
-	public static final String SERVLET_NAME_APS_FRUITORI_CHANGE = OBJECT_NAME_APS_FRUITORI+"Change.do";
-	public static final String SERVLET_NAME_APS_FRUITORI_DELETE = OBJECT_NAME_APS_FRUITORI+"Del.do";
-	public static final String SERVLET_NAME_APS_FRUITORI_LIST = OBJECT_NAME_APS_FRUITORI+"List.do";
+	public static final String SERVLET_NAME_APS_FRUITORI_ADD = OBJECT_NAME_APS_FRUITORI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APS_FRUITORI_CHANGE = OBJECT_NAME_APS_FRUITORI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APS_FRUITORI_DELETE = OBJECT_NAME_APS_FRUITORI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APS_FRUITORI_LIST = OBJECT_NAME_APS_FRUITORI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	public static final String SERVLET_NAME_APS_FRUITORI_WSDL_CHANGE = OBJECT_NAME_APS_FRUITORI+"WSDLChange.do";
-	public static final Vector<String> SERVLET_APS_FRUITORI = new Vector<String>();
+	private static final List<String> SERVLET_APS_FRUITORI = new ArrayList<>();
+	public static List<String> getServletApsFruitori() {
+		return SERVLET_APS_FRUITORI;
+	}
 	static{
 		SERVLET_APS.add(SERVLET_NAME_APS_FRUITORI_ADD);
 		SERVLET_APS.add(SERVLET_NAME_APS_FRUITORI_CHANGE);
@@ -83,12 +94,15 @@ public class AccordiServizioParteSpecificaCostanti {
 		SERVLET_APS.add(SERVLET_NAME_APS_FRUITORI_WSDL_CHANGE);
 	}
 		
-	public static final String SERVLET_NAME_APS_ALLEGATI_ADD = OBJECT_NAME_APS_ALLEGATI+"Add.do";
-	public static final String SERVLET_NAME_APS_ALLEGATI_CHANGE = OBJECT_NAME_APS_ALLEGATI+"Change.do";
-	public static final String SERVLET_NAME_APS_ALLEGATI_DELETE = OBJECT_NAME_APS_ALLEGATI+"Del.do";
-	public static final String SERVLET_NAME_APS_ALLEGATI_LIST = OBJECT_NAME_APS_ALLEGATI+"List.do";
+	public static final String SERVLET_NAME_APS_ALLEGATI_ADD = OBJECT_NAME_APS_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APS_ALLEGATI_CHANGE = OBJECT_NAME_APS_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APS_ALLEGATI_DELETE = OBJECT_NAME_APS_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APS_ALLEGATI_LIST = OBJECT_NAME_APS_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	public static final String SERVLET_NAME_APS_ALLEGATI_VIEW = OBJECT_NAME_APS_ALLEGATI+"View.do";
-	public static final Vector<String> SERVLET_APS_ALLEGATI = new Vector<String>();
+	private static final List<String> SERVLET_APS_ALLEGATI = new ArrayList<>();
+	public static List<String> getServletApsAllegati() {
+		return SERVLET_APS_ALLEGATI;
+	}
 	static{
 		SERVLET_APS_ALLEGATI.add(SERVLET_NAME_APS_ALLEGATI_ADD);
 		SERVLET_APS_ALLEGATI.add(SERVLET_NAME_APS_ALLEGATI_CHANGE);
@@ -97,20 +111,26 @@ public class AccordiServizioParteSpecificaCostanti {
 		SERVLET_APS_ALLEGATI.add(SERVLET_NAME_APS_ALLEGATI_VIEW);
 	}
 
-	public static final String SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD = OBJECT_NAME_APS_PORTE_APPLICATIVE+"Add.do";
-	public static final String SERVLET_NAME_APS_PORTE_APPLICATIVE_DELETE = OBJECT_NAME_APS_PORTE_APPLICATIVE+"Del.do";
-	public static final String SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST = OBJECT_NAME_APS_PORTE_APPLICATIVE+"List.do";
-	public static final Vector<String> SERVLET_APS_PORTE_APPLICATIVE = new Vector<String>();
+	public static final String SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD = OBJECT_NAME_APS_PORTE_APPLICATIVE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APS_PORTE_APPLICATIVE_DELETE = OBJECT_NAME_APS_PORTE_APPLICATIVE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST = OBJECT_NAME_APS_PORTE_APPLICATIVE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_APS_PORTE_APPLICATIVE = new ArrayList<>();
+	public static List<String> getServletApsPorteApplicative() {
+		return SERVLET_APS_PORTE_APPLICATIVE;
+	}
 	static{
 		SERVLET_APS_PORTE_APPLICATIVE.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD);
 		SERVLET_APS_PORTE_APPLICATIVE.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_DELETE);
 		SERVLET_APS_PORTE_APPLICATIVE.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST);
 	}
 	
-	public static final String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_ADD = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+"Add.do";
-	public static final String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_DELETE = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+"Del.do";
-	public static final String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+"List.do";
-	public static final Vector<String> SERVLET_APS_FRUITORI_PORTE_DELEGATE = new Vector<String>();
+	public static final String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_ADD = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_DELETE = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_APS_FRUITORI_PORTE_DELEGATE = new ArrayList<>();
+	public static List<String> getServletApsFruitoriPorteDelegate() {
+		return SERVLET_APS_FRUITORI_PORTE_DELEGATE;
+	}
 	static{
 		SERVLET_APS_FRUITORI_PORTE_DELEGATE.add(SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_ADD);
 		SERVLET_APS_FRUITORI_PORTE_DELEGATE.add(SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_DELETE);
@@ -140,27 +160,25 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String LABEL_APS_SERVIZIO = "Servizio";
 	public static final String LABEL_APS_SERVIZIO_SOAP = "Servizio ("+CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP+")";
 	public static final String LABEL_APS_RICERCA_SERVIZIO_SOGGETTO = "Servizio / Soggetto";
-	//public static final String LABEL_APS_RICERCA_API_SOGGETTO = "API / Soggetto Erogatore";
-	public static final String LABEL_APS_RICERCA_API_EROGAZIONE = LABEL_APS_SINGOLO; //"API / Erogazione";
-	public static final String LABEL_APS_RICERCA_API_FRUIZIONE = LABEL_APS_FRUITORE; //"API / Fruizione";
+	public static final String LABEL_APS_RICERCA_API_EROGAZIONE = LABEL_APS_SINGOLO; 
+	public static final String LABEL_APS_RICERCA_API_FRUIZIONE = LABEL_APS_FRUITORE; 
 	public static final String LABEL_APS_ALLEGATI = "Allegati";
 	public static final String LABEL_APS_ALLEGATO = "Allegato";
 	public static final String LABEL_APS_CONFIGURAZIONI = "Configurazioni";
-	//public static final String LABEL_APS_CONFIGURAZIONI_DI = "Configurazioni di ";
 	public static final String LABEL_APS_CONFIGURAZIONI_DI = "";
-	public static final String LABEL_APS_PORTE_APPLICATIVE = "Configurazione";
-	public static final String LABEL_APS_PORTE_DELEGATE = "Configurazione";
+	public static final String LABEL_APS_PORTE_APPLICATIVE = CONFIGURAZIONE;
+	public static final String LABEL_APS_PORTE_DELEGATE = CONFIGURAZIONE;
 	public static final String LABEL_APS_DATI_INVOCAZIONE = "URL Invocazione";
-	//public static final String LABEL_APS_DATI_INVOCAZIONE_DI = "URL Invocazione di ";
 	public static final String LABEL_APS_DATI_INVOCAZIONE_DI = "";
 	public static final String LABEL_APS_STATO = "Stato";
 	public static final String LABEL_APS_ESPORTA_SELEZIONATI = "Esporta";
-	public static final String LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name()+"')";
-	public static final String LABEL_EROGAZIONI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.EROGAZIONE.name()+"')";
-	public static final String LABEL_FRUIZIONI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.FRUIZIONE.name()+"')";
+	private static final String LABEL_ESPORTA_SELEZIONATI_ONCLICK_PREFIX = "Esporta('";
+	public static final String LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK = LABEL_ESPORTA_SELEZIONATI_ONCLICK_PREFIX+ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name()+"')";
+	public static final String LABEL_EROGAZIONI_ESPORTA_SELEZIONATI_ONCLICK = LABEL_ESPORTA_SELEZIONATI_ONCLICK_PREFIX+ArchiveType.EROGAZIONE.name()+"')";
+	public static final String LABEL_FRUIZIONI_ESPORTA_SELEZIONATI_ONCLICK = LABEL_ESPORTA_SELEZIONATI_ONCLICK_PREFIX+ArchiveType.FRUIZIONE.name()+"')";
 	public static final String LABEL_APS_USA_VERSIONE_EROGATORE = "usa versione erogatore";
 	public static final String LABEL_APS_SPECIFICA_PORTI_ACCESSO = "Specifica dei Porti di Accesso";
-	public static final String LABEL_APS_SPECIFICA_PORTA_APPLICATIVA = "Configurazione";
+	public static final String LABEL_APS_SPECIFICA_PORTA_APPLICATIVA = CONFIGURAZIONE;
 	public static final String LABEL_APS_SPECIFICA_PORTA_DELEGATA = "Porta Delegata";
 	public static final String LABEL_APS_ALTRE_INFORMAZIONI = "Altre informazioni";
 	public static final String LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE = "Servizio Applicativo Erogatore";
@@ -169,7 +187,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String LABEL_APS_SOGGETTO_FRUITORE = "Soggetto Fruitore";
 	public static final String LABEL_APS_WSDL_IMPLEMENTATIVO_DI = "WSDL Implementativo di ";
 	public static final String LABEL_WSDL_CHANGE_CLEAR_WARNING = "Attenzione";
-	public static final String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invi&agrave; senza selezionare alcun file"; //fornirne un'altra versione";
+	public static final String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invi&agrave; senza selezionare alcun file"; 
 	public static final String LABEL_WSDL_AGGIORNAMENTO = "Aggiornamento WSDL";
 	public static final String LABEL_WSDL_NOT_FOUND = "non fornito";
 	public static final String LABEL_WSDL_ATTUALE = "Attuale";
@@ -293,7 +311,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String LABEL_PARAMETRO_APS_RUOLO = "Ruolo";
 	public static final String LABEL_PARAMETRO_APS_SCOPE = "Scope";
 	public static final String LABEL_PARAMETRO_APS_THE_FILE = "Documento";
-	public static final String LABEL_PARAMETRO_APS_ACCORDO = LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE;//"API";
+	public static final String LABEL_PARAMETRO_APS_ACCORDO = LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE;
 	public static final String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME = "Nome";
 	public static final String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME_ATTUALE = "Attuale";
 	public static final String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME_NUOVO = "Nuovo";
@@ -362,7 +380,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_DOCUMENTO_OBBLIGATORIO = "&Egrave; necessario selezionare un documento.";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_IL_TIPO_DI_DOCUMENTO = "Dati incompleti. &Egrave; necessario indicare il Tipo di documento";
 	public static final String MESSAGGIO_ERRORE_ESISTE_GI_AGRAVE_UN_FRUITORE_DEL_SERVIZIO_CON_LO_STESSO_SOGGETTO = "Esiste gi&agrave; un fruitore del Servizio con lo stesso Soggetto";
-	public static final String MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_ESSERE_DEFINITO_IL_CONNETTORE_BR_IN_ALTERNATIVA_È_POSSIBILE_CONFIGURARE_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE_PRIMA_DI_PROCEDERE_CON_LA_CREAZIONE_DEL_FRUITORE = "Per poter aggiungere il fruitore deve essere definito il connettore.<br/>In alternativa è possibile configurare un connettore sul servizio o sul soggetto erogatore prima di procedere con la creazione del fruitore.";
+	public static final String MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_ESSERE_DEFINITO_IL_CONNETTORE_BR_IN_ALTERNATIVA_E_POSSIBILE_CONFIGURARE_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE_PRIMA_DI_PROCEDERE_CON_LA_CREAZIONE_DEL_FRUITORE = "Per poter aggiungere il fruitore deve essere definito il connettore.<br/>In alternativa è possibile configurare un connettore sul servizio o sul soggetto erogatore prima di procedere con la creazione del fruitore.";
 	public static final String MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE = "Per poter aggiungere il fruitore deve prima essere definito un connettore sul servizio o sul soggetto erogatore.";
 	public static final String MESSAGGIO_ERRORE_PER_POTER_DISABILITARE_IL_CONNETTORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE = "Per poter disabilitare il connettore deve prima essere definito un connettore sul servizio o sul soggetto erogatore";
 	public static final String MESSAGGIO_ERRORE_VALIDAZIONE_PROTOCOLLO_CON_PARAMETRI = "[validazione-{0}] {1}";

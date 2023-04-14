@@ -476,7 +476,7 @@ public class ConnettoreUtils {
 				String trustCRL = getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs, connettore.getPropertyList());
 				if(trustCRL!=null) {
 					sb.append(newLine);
-					sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs);
+					sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLS);
 					sb.append(separator);
 					sb.append(trustCRL);
 				}

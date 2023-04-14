@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -115,13 +114,13 @@ public final class ConfigurazioneRouting extends Action {
 			}
 
 			// Soggetti
-			List<String> tipiSoggetti = new ArrayList<String>();
+			List<String> tipiSoggetti = new ArrayList<>();
 			tipiSoggetti.add("-");
 			tipiSoggetti.addAll(soggettiCore.getTipiSoggettiGestiti());
 			String[] tipiSoggettiLabel = tipiSoggetti.toArray(new String[1]);
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING, null));
@@ -131,10 +130,9 @@ public final class ConfigurazioneRouting extends Action {
 			String postBackElementName = confHelper.getPostBackElementName();
 
 			// Controllo se ho modificato il protocollo, resetto il referente
-			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ROTTA_ENABLED)){
-					applicaModifica = false;
-				}
+			if(postBackElementName != null &&
+				postBackElementName.equalsIgnoreCase(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ROTTA_ENABLED)){
+				applicaModifica = false;
 			}
 
 
@@ -146,9 +144,9 @@ public final class ConfigurazioneRouting extends Action {
 				boolean isOk = confHelper.routingCheckData(registriList);
 				if (!isOk) {
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 					dati = confHelper.addRoutingToDati(TipoOperazione.OTHER, tiporotta, tiposoggrotta,
 							nomesoggrotta, registrorotta, rottaenabled,
@@ -177,7 +175,6 @@ public final class ConfigurazioneRouting extends Action {
 					} else
 						defaultRoute = new Route();
 
-					// Route r = new Route();
 					if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY)) {
 						RouteGateway rg = new RouteGateway();
 						rg.setTipo(tiposoggrotta);
@@ -200,7 +197,7 @@ public final class ConfigurazioneRouting extends Action {
 
 				confCore.performUpdateOperation(userLogin, confHelper.smista(), rt);
 
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
 				dati = confHelper.addRoutingToDati(TipoOperazione.OTHER, tiporotta, tiposoggrotta, nomesoggrotta, 
 						registrorotta, rottaenabled,  registriList, registriListLabel, tipiSoggettiLabel, dati);
@@ -222,7 +219,7 @@ public final class ConfigurazioneRouting extends Action {
 			if (rottaenabled == null) {
 				RoutingTable rt = confCore.getRoutingTable();
 
-				if ((rt == null) || (rt.getAbilitata()==null || rt.getAbilitata()==false)) {
+				if ((rt == null) || (rt.getAbilitata()==null || !rt.getAbilitata())) {
 					rottaenabled = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
 					tiporotta = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY;
 					tiposoggrotta = "";
@@ -252,7 +249,7 @@ public final class ConfigurazioneRouting extends Action {
 			}
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 

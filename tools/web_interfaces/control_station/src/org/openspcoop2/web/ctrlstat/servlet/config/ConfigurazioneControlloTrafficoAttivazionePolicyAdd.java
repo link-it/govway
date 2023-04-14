@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -108,8 +107,6 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 			
 			// uso nome porta per capire se sono entrato per la prima volta nella schermata
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
-			
-			//String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID); 
 			
 			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA);
 			RuoloPolicy ruoloPorta = null;
@@ -225,7 +222,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 				lstParam = lstParamPorta;
 			}
 			else {
-				lstParam = new ArrayList<Parameter>();
+				lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST));
 				lstParam.add(ServletUtils.getParameterAggiungi());
@@ -239,10 +236,11 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// Controllo spostato dentro addAttivazionePolicyToDati
+				/**
 //				if(infoPolicies==null || infoPolicies.size()<=0){
 //					pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_POSSIBILI_COMPLETATE_GLOBALI, MessageType.INFO);
 //					pd.disableEditMode();
@@ -251,7 +249,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 //					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 //
 //					return ServletUtils.getStrutsForwardEditModeInProgress(mapping,	ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY,	ForwardParams.ADD());
-//				}
+//				}*/
 				
 				// Attivazione
 				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, modalita, type);
@@ -276,8 +274,8 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// Attivazione
 				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, modalita, type);

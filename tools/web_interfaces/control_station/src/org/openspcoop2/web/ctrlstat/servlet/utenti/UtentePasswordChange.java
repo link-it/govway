@@ -21,9 +21,9 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -97,9 +97,9 @@ public final class UtentePasswordChange extends Action {
 					pd.setMessage(oldPD.getMessage(), MessageType.fromValue(oldPD.getMessageType()));
 				}
 				
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				utentiHelper.addUtenteChangePasswordScadutaToDati(dati, TipoOperazione.CHANGE);
 				
@@ -118,9 +118,9 @@ public final class UtentePasswordChange extends Action {
 				pd.setIncludiMenuLateraleSx(false);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addUtenteChangePasswordScadutaToDati(dati, TipoOperazione.CHANGE);
 

@@ -25,7 +25,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -91,7 +90,7 @@ public final class SoggettiCredenzialiChange extends Action {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
 			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
-			int idSogg = Integer.parseInt(id);
+			long idSogg = Long.parseLong(id);
 			String nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 			String tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
 			
@@ -120,7 +119,7 @@ public final class SoggettiCredenzialiChange extends Action {
 			}
 			BinaryParameter tipoCredenzialiSSLFileCertificato = soggettiHelper.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
 			String tipoCredenzialiSSLFileCertificatoPassword = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-			List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+			List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 			String tipoCredenzialiSSLAliasCertificato = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
 			if (tipoCredenzialiSSLAliasCertificato == null) {
 				tipoCredenzialiSSLAliasCertificato = "";
@@ -163,7 +162,6 @@ public final class SoggettiCredenzialiChange extends Action {
 			
 			String aggiornatoCertificatoPrecaricatoTmp = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_MULTI_AGGIORNA);
 			
-//			Integer numeroCertificati = null;
 			String toCall = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_CHANGE;
 			
 			// Preparo il menu
@@ -176,11 +174,9 @@ public final class SoggettiCredenzialiChange extends Action {
 			
 			if(soggettiCore.isRegistroServiziLocale()){
 				soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);// core.getSoggettoRegistro(new
-				// IDSoggetto(tipoprov,nomeprov));
 			}
 
 			soggettoConfig = soggettiCore.getSoggetto(idSogg);// core.getSoggetto(new
-			// IDSoggetto(tipoprov,nomeprov));
 			
 			if(soggettiCore.isRegistroServiziLocale()){
 				nomeprov = soggettoRegistry.getNome();
@@ -193,24 +189,22 @@ public final class SoggettiCredenzialiChange extends Action {
 			
 			CredenzialiSoggetto credenziali = null;
 			CredenzialiSoggetto oldCredenziali = null;
-			if (soggettoRegistry != null) {
-//				numeroCertificati = ip.sizeCredenzialiList();
-				if(soggettoRegistry.sizeCredenzialiList()>0) {
-					oldCredenziali = soggettoRegistry.getCredenziali(idxCredenziale);
-					credenziali = soggettoRegistry.getCredenziali(idxCredenziale);
-				}
+			if (soggettoRegistry != null &&
+				soggettoRegistry.sizeCredenzialiList()>0) {
+				oldCredenziali = soggettoRegistry.getCredenziali(idxCredenziale);
+				credenziali = soggettoRegistry.getCredenziali(idxCredenziale);
 			}
 
 			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
 			
-			List<Parameter> parametersServletSoggettoChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
 			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, nomeprov);
 			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, tipoprov);
 			parametersServletSoggettoChange.add(pIdSoggetto);
 			parametersServletSoggettoChange.add(pNomeSoggetto);
 			parametersServletSoggettoChange.add(pTipoSoggetto);
-			List<Parameter> parametersServletCredenzialiChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletCredenzialiChange = new ArrayList<>();
 			Parameter pIdCredenziale = new Parameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CREDENZIALI_ID, idCredenziale);
 			parametersServletCredenzialiChange.add(pIdCredenziale);
 			parametersServletCredenzialiChange.addAll(parametersServletSoggettoChange);
@@ -218,7 +212,7 @@ public final class SoggettiCredenzialiChange extends Action {
 			PddCore pddCore = new PddCore(soggettiCore);
 
 			String nomePddGestioneLocale = null;
-			if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
+			if(!pddCore.isGestionePddAbilitata(soggettiHelper)){
 				nomePddGestioneLocale = pddCore.getNomePddOperativa();
 				if(nomePddGestioneLocale==null) {
 					throw new Exception("Non è stata rilevata una pdd di tipologia 'operativo'");
@@ -235,7 +229,7 @@ public final class SoggettiCredenzialiChange extends Action {
 				// tipo di configurazione SSL
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL) || 
 						postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_MODIFICA)) {
-					listaAliasEstrattiCertificato = new ArrayList<String>();
+					listaAliasEstrattiCertificato = new ArrayList<>();
 					tipoCredenzialiSSLTipoArchivio = ArchiveType.CER;
 					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 					tipoCredenzialiSSLAliasCertificato = "";
@@ -270,7 +264,7 @@ public final class SoggettiCredenzialiChange extends Action {
 					tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
 					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
-					listaAliasEstrattiCertificato = new ArrayList<String>();
+					listaAliasEstrattiCertificato = new ArrayList<>();
 					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 					tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
 				}
@@ -459,9 +453,9 @@ public final class SoggettiCredenzialiChange extends Action {
 						);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = soggettiHelper.addSoggettoHiddenToDati(dati, id,nomeprov, tipoprov);
 				
@@ -572,9 +566,9 @@ public final class SoggettiCredenzialiChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 
 				dati = soggettiHelper.addSoggettoHiddenToDati(dati, id,nomeprov, tipoprov);
@@ -615,7 +609,7 @@ public final class SoggettiCredenzialiChange extends Action {
 						);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
 				dati = soggettiHelper.addSoggettoHiddenToDati(dati, id,nomeprov, tipoprov);
 				
@@ -640,7 +634,6 @@ public final class SoggettiCredenzialiChange extends Action {
 			}
 
 			// Aggiorno credenziali
-			//credenziali = new CredenzialiSoggetto();
 			credenziali.setTipo(CredenzialeTipo.toEnumConstant(tipoauthSoggetto));
 			credenziali.setUser("");
 			credenziali.setPassword("");
@@ -676,16 +669,15 @@ public final class SoggettiCredenzialiChange extends Action {
 				}
 			}
 			
-			if(actionConfirm != null ) {
-				if(actionConfirm.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
-					// switch tra le posizioni
-					// Rimuovo la credenziale principale dalla posizione 0
-					CredenzialiSoggetto exCredenzialiPrincipali = soggettoRegistry.getCredenzialiList().remove(0);
-					// imposto l'attuale credenziale in posizione 0
-					soggettoRegistry.getCredenzialiList().add(0, credenziali); // promozione = set in posizione 0
-					// assegno la posizione attuale all'ex credenziale principale
-					soggettoRegistry.getCredenzialiList().set(idxCredenziale, exCredenzialiPrincipali);
-				}
+			if(actionConfirm != null &&
+				actionConfirm.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+				// switch tra le posizioni
+				// Rimuovo la credenziale principale dalla posizione 0
+				CredenzialiSoggetto exCredenzialiPrincipali = soggettoRegistry.getCredenzialiList().remove(0);
+				// imposto l'attuale credenziale in posizione 0
+				soggettoRegistry.getCredenzialiList().add(0, credenziali); // promozione = set in posizione 0
+				// assegno la posizione attuale all'ex credenziale principale
+				soggettoRegistry.getCredenzialiList().set(idxCredenziale, exCredenzialiPrincipali);
 			}
 
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistry, soggettoConfig);

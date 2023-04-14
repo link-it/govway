@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -130,7 +129,6 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			@SuppressWarnings("unused")
 			Long idSoggFru = Long.parseLong(idSoggFruitoreDelServizio);
 			
-			//String azione = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
 			String [] azioni = apsHelper.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONI);
 			
 			String nome = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
@@ -178,8 +176,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String autorizzazioneRuoliTipologiaToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA_TOKEN);
 			String autorizzazioneRuoliMatchToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH_TOKEN);
 			
-			String autorizzazione_token = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
-			String autorizzazione_tokenOptions = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
+			String autorizzazioneToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
+			String autorizzazioneTokenOptions = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
@@ -201,27 +199,27 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			// token policy
 			String autenticazioneTokenS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
-			String token_policy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			String tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			
 			// proxy
-			String proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-			String proxy_hostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-			String proxy_port = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-			String proxy_username = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxy_password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxyPort = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxyUsername = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxyPassword = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 
 			// tempi risposta
-			String tempiRisposta_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-			String tempiRisposta_connectionTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
-			String tempiRisposta_readTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
-			String tempiRisposta_tempoMedioRisposta = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+			String tempiRispostaEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			String tempiRispostaConnectionTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			String tempiRispostaReadTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			String tempiRispostaTempoMedioRisposta = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 			
 			// opzioni avanzate
-			String transfer_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-			String transfer_mode_chunk_size = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-			String redirect_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-			String redirect_max_hop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode);
+			String transferMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transferModeChunkSize = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirectMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirectMaxHop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transferMode, redirectMode);
 
 			String user= null;
 			String password =null;
@@ -274,9 +272,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			
 			// file
 			String requestOutputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
-			String requestOutputFileName_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+			String requestOutputFileNamePermissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			String requestOutputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
-			String requestOutputFileNameHeaders_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+			String requestOutputFileNameHeadersPermissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			String requestOutputParentDirCreateIfNotExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			String requestOutputOverwriteIfExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			String responseInputMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -398,7 +396,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			boolean escludiSAServer = saCore.isApplicativiServerEnabled(apsHelper);
 			String filtroTipoSA = escludiSAServer ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT : null;
 			
-			List<String> saList = new ArrayList<String>();
+			List<String> saList = new ArrayList<>();
 			saList.add("-");
 			if(idSoggettoFruitore!=null){
 				try{
@@ -413,26 +411,28 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						appId = apiKeyState.appIdSelected;
 					}
 					boolean bothSslAndToken = false;
-					String tokenPolicy = null;
+					String tokenPolicyNull = null;
 					boolean tokenPolicyOR = false;
 					
 					List<IDServizioApplicativoDB> oldSilList = null;
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitore,null,
 								credenziale, appId, filtroTipoSA, 
-								bothSslAndToken, tokenPolicy, tokenPolicyOR);
+								bothSslAndToken, tokenPolicyNull, tokenPolicyOR);
 					}
 					else {
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitore,userLogin,
 								credenziale, appId, filtroTipoSA, 
-								bothSslAndToken, tokenPolicy, tokenPolicyOR);
+								bothSslAndToken, tokenPolicyNull, tokenPolicyOR);
 					}
-					if(oldSilList!=null && oldSilList.size()>0){
+					if(oldSilList!=null && !oldSilList.isEmpty()){
 						for (int i = 0; i < oldSilList.size(); i++) {
 							saList.add(oldSilList.get(i).getNome());		
 						}
 					}
-				}catch(DriverConfigurazioneNotFound dNotFound){}
+				}catch(DriverConfigurazioneNotFound dNotFound){
+					// ignore
+				}
 
 			}
 
@@ -471,8 +471,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				ServletUtils.setPageDataTitle(pd,lstParm); 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				if(azioniDisponibiliList==null || azioniDisponibiliList.length <= sogliaAzioni) {
 					pd.setMessage(porteDelegateHelper.getLabelAllAzioniConfigurate(serviceBinding), Costanti.MESSAGE_TYPE_INFO);
@@ -582,12 +582,12 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 						autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 						
-						tempiRisposta_enabled=null;
+						tempiRispostaEnabled=null;
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
 						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
-						tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
-						tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
-						tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
+						tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+						tempiRispostaReadTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+						tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
 							
 					}
 					
@@ -613,21 +613,21 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					}
 					
 					// Devo cmq rileggere i valori se non definiti
-					if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+					if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
 							|| 
-							tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+							tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) 
 							|| 
-							tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
+							tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ){
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
 						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
-						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
-							tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+						if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
+							tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
 						}
-						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
-							tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+						if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
+							tempiRispostaReadTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
 						}
-						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
-							tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
+						if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
+							tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
 						}
 					}
 					
@@ -645,7 +645,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							gestioneTokenPolicy, gestioneTokenOpzionale,
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-							autorizzazione_token,autorizzazione_tokenOptions,
+							autorizzazioneToken,autorizzazioneTokenOptions,
 							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 							identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 							autorizzazioneAutenticatiToken, 
@@ -669,13 +669,13 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
-								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, token_policy,
+								autenticazioneToken, tokenPolicy,
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null);
 					}
@@ -705,13 +705,13 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						httpspwdprivatekey, httpsalgoritmokey,
 						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 						tipoconn,autenticazioneHttp,
-						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken, token_policy,
+						autenticazioneToken, tokenPolicy,
 						listExtendedConnettore,servizioApplicativoServerEnabled,servizioApplicativoServer);
 			}
 			
@@ -720,9 +720,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				ServletUtils.setPageDataTitle(pd,lstParm); 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, 
 						idFruizione, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
@@ -738,7 +738,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						gestioneTokenPolicy, gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_token,autorizzazione_tokenOptions,
+						autorizzazioneToken,autorizzazioneTokenOptions,
 						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 						autorizzazioneAutenticatiToken, 
@@ -762,13 +762,13 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD, null, null,
 							null, null, null, null, null, null, true,
 							isConnettoreCustomUltimaImmagineSalvata, 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, token_policy,
+							autenticazioneToken, tokenPolicy,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null);
 				}
@@ -815,20 +815,20 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					httpstipokey, httpspwdkey,
 					httpspwdprivatekey, httpsalgoritmokey,
 					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
-					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					autenticazioneToken, token_policy,
+					autenticazioneToken, tokenPolicy,
 					listExtendedConnettore,
 					fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 					fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
 					fruizioneServizioApplicativo, fruizioneRuolo, 
 					autorizzazioneAutenticatiToken, 
 					autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
-					autorizzazione_tokenOptions,
+					autorizzazioneTokenOptions,
 					autorizzazioneScope, scope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					gestioneToken, 
 					gestioneTokenPolicy,  gestioneTokenOpzionale,  

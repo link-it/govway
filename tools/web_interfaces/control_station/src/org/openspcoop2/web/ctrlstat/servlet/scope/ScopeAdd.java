@@ -22,7 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.scope;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
-//import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -101,8 +100,8 @@ public final class ScopeAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, ScopeCostanti.LABEL_SCOPE, ScopeCostanti.SERVLET_NAME_SCOPE_LIST);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 
 				dati = scopeHelper.addScopeToDati(TipoOperazione.ADD, null, nome != null ? nome : "", descrizione != null ? descrizione : "",
@@ -125,9 +124,9 @@ public final class ScopeAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, ScopeCostanti.LABEL_SCOPE, ScopeCostanti.SERVLET_NAME_SCOPE_LIST);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = scopeHelper.addScopeToDati(TipoOperazione.ADD, null, nome, descrizione, tipologia, nomeEsterno, contesto, dati, null);
 

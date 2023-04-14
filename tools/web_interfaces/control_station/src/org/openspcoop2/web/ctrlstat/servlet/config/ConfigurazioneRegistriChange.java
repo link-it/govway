@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -103,7 +102,7 @@ public final class ConfigurazioneRegistriChange extends Action {
 			// modifica dati
 			if (confHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO, 
@@ -128,8 +127,8 @@ public final class ConfigurazioneRegistriChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = confHelper.addRegistroToDati(TipoOperazione.CHANGE, nome, location, tipo, utente, password, confpw, dati);
 
@@ -146,7 +145,7 @@ public final class ConfigurazioneRegistriChange extends Action {
 			boolean isOk = confHelper.registriCheckData(TipoOperazione.CHANGE);
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO, 
@@ -158,9 +157,9 @@ public final class ConfigurazioneRegistriChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addRegistroToDati(TipoOperazione.CHANGE, nome, location, tipo, utente, password, confpw, dati);
 

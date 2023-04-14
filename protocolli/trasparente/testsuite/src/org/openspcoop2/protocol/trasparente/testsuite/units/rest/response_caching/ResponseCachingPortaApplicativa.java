@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.rest.response_cachi
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
@@ -63,7 +63,7 @@ public class ResponseCachingPortaApplicativa {
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups={ResponseCachingPortaApplicativa.ID_GRUPPO})
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){

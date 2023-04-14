@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.apc.api;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -32,17 +33,21 @@ import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ApiCostanti extends AccordiServizioParteComuneCostanti {
+public class ApiCostanti {
 	
+	private ApiCostanti() {}
 	
-	public static final String OBJECT_NAME_APC_API = OBJECT_NAME_APC + "Api";
+	public static final String OBJECT_NAME_APC_API = AccordiServizioParteComuneCostanti.OBJECT_NAME_APC + "Api";
 	
-	public static final String SERVLET_NAME_APC_API_ADD = OBJECT_NAME_APC_API+"Add.do";
-	public static final String SERVLET_NAME_APC_API_CHANGE = OBJECT_NAME_APC_API+"Change.do";
-	public static final String SERVLET_NAME_APC_API_LIST = OBJECT_NAME_APC_API+"List.do";
-	public static final String SERVLET_NAME_APC_API_DEL = OBJECT_NAME_APC_API+"Del.do";
+	public static final String SERVLET_NAME_APC_API_ADD = OBJECT_NAME_APC_API+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APC_API_CHANGE = OBJECT_NAME_APC_API+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APC_API_LIST = OBJECT_NAME_APC_API+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final String SERVLET_NAME_APC_API_DEL = OBJECT_NAME_APC_API+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
 	
-	public static final Vector<String> SERVLET_APC_API = new Vector<String>();
+	private static final List<String> SERVLET_APC_API = new ArrayList<>();
+	public static List<String> getServletApcApi() {
+		return SERVLET_APC_API;
+	}
 	static{
 		SERVLET_APC_API.add(SERVLET_NAME_APC_API_ADD);
 		SERVLET_APC_API.add(SERVLET_NAME_APC_API_CHANGE);

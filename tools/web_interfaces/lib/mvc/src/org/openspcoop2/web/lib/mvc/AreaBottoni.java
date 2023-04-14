@@ -24,7 +24,7 @@
 package org.openspcoop2.web.lib.mvc;
 
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * AreaBottoni
@@ -43,24 +43,24 @@ public class AreaBottoni implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-    String title;
-    Vector<?> bottoni;
+	private String title;
+	private List<? extends Serializable> bottoni;
 
     public AreaBottoni() {
-	this.title = "";
+    	this.title = "";
     }
 
     public void setTitle(String s) {
     	this.title = s;
     }
     public String getTitle() {
-	return this.title;
+    	return this.title;
     }
 
-    public void setBottoni(Vector<?> v) {
+    public void setBottoni(List<? extends Serializable> v) {
     	this.bottoni = v;
     }
-    public Vector<?> getBottoni() {
-	return this.bottoni;
+    public List<? extends Serializable> getBottoni() {
+    	return this.bottoni;
     }
 }

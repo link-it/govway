@@ -22,9 +22,10 @@ package org.openspcoop2.testsuite.clients;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.SOAPException;
@@ -446,7 +447,7 @@ public class ClientCore {
 		Message msg2=this.receivedMessage;
 		
 		Iterator<?> parts=msg.getAttachments();
-		Vector<?> vet=getVector(parts);
+		List<?> vet=asList(parts);
 		Iterator<?> parts2=msg2.getAttachments();
 		HashMap<?,?> hash2=putOnHash(parts2);
 		if(vet.size()!=hash2.size()){
@@ -498,13 +499,13 @@ public class ClientCore {
 	}
 
 	/**
-	 * Ritorna gli attachments presenti nell'iterator in un Vector
+	 * Ritorna gli attachments presenti nell'iterator in un List
 	 * 
 	 * @param it
-	 * @return Vector
+	 * @return List
 	 */
-	private Vector<?> getVector(Iterator<?> it){
-		Vector<AttachmentPart> vet=new Vector<AttachmentPart>();
+	private List<?> asList(Iterator<?> it){
+		List<AttachmentPart> vet=new ArrayList<>();
 		while(it.hasNext()){
 			vet.add((AttachmentPart)it.next());
 		}

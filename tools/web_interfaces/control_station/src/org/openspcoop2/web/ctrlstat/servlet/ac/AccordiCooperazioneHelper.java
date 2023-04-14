@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.ac;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -335,14 +334,14 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<AccordoCooperazione> it = lista.iterator();
 				AccordoCooperazione accordoCooperazione = null;
 				while (it.hasNext()) {
 					accordoCooperazione = it.next();
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(accordoCooperazione.getSoggettoReferente().getTipo());
 					
@@ -356,16 +355,16 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					de.setValue(this.getLabelIdAccordoCooperazione(accordoCooperazione));
 					de.setIdToRemove("" + accordoCooperazione.getId());
 					de.setToolTip(accordoCooperazione.getDescrizione());
-					e.addElement(de);
+					e.add(de);
 
 					/*de = new DataElement();
 						de.setValue(accordoCooperazione.getDescrizione());
-						e.addElement(de);*/
+						e.add(de);*/
 
 					if(showProtocolli) {
 						de = new DataElement();
 						de.setValue(this.getLabelProtocollo(protocollo));
-						e.addElement(de);
+						e.add(de);
 					}
 					
 
@@ -373,7 +372,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 						if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
 							de = new DataElement();
 							de.setValue(StatiAccordo.upper(accordoCooperazione.getStatoPackage()));
-							e.addElement(de);
+							e.add(de);
 						}
 					}
 
@@ -392,7 +391,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					} else {
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					}
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setUrl(
@@ -412,9 +411,9 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					} else {
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					}
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -428,17 +427,17 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_COOPERAZIONE, this.request, this.session)){
 					
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 	
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI);
 						de.setOnClick(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI_CLICK_EVENT);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 	
 						this.pd.setAreaBottoni(bottoni);
 						
@@ -474,21 +473,21 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if(ac.getElencoPartecipanti()!=null){
 				AccordoCooperazionePartecipanti partecipanti = ac.getElencoPartecipanti();
 				for (int i = 0; i < partecipanti.sizeSoggettoPartecipanteList(); i++) {
 					IdSoggetto acep = partecipanti.getSoggettoPartecipante(i);
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setValue(acep.getTipo()+"/"+acep.getNome());
 					de.setIdToRemove(""+acep.getId());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -501,7 +500,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		}
 	}
 
-	public Vector<DataElement> addAccordiCooperazioneToDati(Vector<DataElement> dati, String nome, String descr,
+	public List<DataElement> addAccordiCooperazioneToDati(List<DataElement> dati, String nome, String descr,
 			String id, TipoOperazione tipoOp, String referente, String versione, String[] providersList, String[] providersListLabel,
 			boolean privato , String stato, String oldStato,
 			String tipoProtocollo, List<String> listaTipiProtocollo, boolean used) throws Exception {
@@ -523,7 +522,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
@@ -547,7 +546,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO );
 			}
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		// Gestione del tipo protocollo per la maschera add
@@ -568,14 +567,14 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				deLABEL.setType(DataElementType.TEXT);
 				deLABEL.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO+"__label");
 				deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
-				dati.addElement(deLABEL);
+				dati.add(deLABEL);
 				
 				de.setValue(tipoProtocollo);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO );
 			}
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		de = new DataElement();
@@ -592,7 +591,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		//}
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
 		de.setSize(getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
@@ -602,7 +601,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			de.setValue("");
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
 		de.setSize(getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE);
@@ -633,7 +632,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		}else{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(referente);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE);
@@ -646,7 +645,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				de.setValue("-");
 			}
 		}		
-		dati.addElement(de);
+		dati.add(de);
 
 		if( modificheAbilitate ){
 			de = this.getVersionDataElement(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE, 
@@ -671,7 +670,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		}
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
 		de.setSize(getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		if(this.core.isShowFlagPrivato() && !modificheAbilitate && this.isModalitaAvanzata()){
 			de = new DataElement();
@@ -682,7 +681,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			}else{
 				de.setValue(AccordiCooperazioneCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO_PUBBLICA);
 			}
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 
@@ -696,7 +695,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				deLabel.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
 				deLabel.setValue(StatiAccordo.upper(StatiAccordo.bozza.toString()));
 				deLabel.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+"__label");
-				dati.addElement(deLabel);
+				dati.add(deLabel);
 				
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(StatiAccordo.bozza.toString());
@@ -712,7 +711,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				deLabel.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
 				deLabel.setValue(StatiAccordo.upper(StatiAccordo.finale.toString()));
 				deLabel.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+"__label");
-				dati.addElement(deLabel);
+				dati.add(deLabel);
 				
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(StatiAccordo.finale.toString());
@@ -722,7 +721,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			de.setValue(StatiAccordo.finale.toString());
 		}
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
-		dati.addElement(de);
+		dati.add(de);
 
 
 		if (tipoOp.equals(TipoOperazione.ADD) == false) {
@@ -745,7 +744,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			}else{
 				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_SOGGETTI_PARTECIPANTI);
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
@@ -763,14 +762,14 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			}else{
 				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI);
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 		}
 
 		return dati;
 	}
 
-	public Vector<DataElement> addAccordiCooperazioneToDatiAsHidden(Vector<DataElement> dati, String nome, String descr,
+	public List<DataElement> addAccordiCooperazioneToDatiAsHidden(List<DataElement> dati, String nome, String descr,
 			String id, TipoOperazione tipoOp, String referente, String versione, String[] providersList, String[] providersListLabel,
 			boolean privato , String stato, String oldStato,
 			String tipoProtocollo, List<String> listaTipiProtocollo, boolean used) throws Exception {
@@ -789,7 +788,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 			de = new DataElement();
@@ -797,7 +796,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		de = new DataElement();
@@ -806,7 +805,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
 		de.setSize(getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
@@ -815,7 +814,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setValue(descr);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
 		de.setSize(getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE);
@@ -827,7 +826,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			de.setValue("-");
 		}
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
@@ -855,7 +854,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		//			de.setType(DataElementType.TEXT);
 		//		}
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
@@ -869,7 +868,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		//		}
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
 		de.setSize(getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		//		if(this.core.isShowFlagPrivato() && !modificheAbilitate && !InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
 		de = new DataElement();
@@ -881,7 +880,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		}else{
 			de.setValue(AccordiCooperazioneCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO_PUBBLICA);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		//		}
 
 
@@ -908,7 +907,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(stato);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
@@ -959,19 +958,19 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			for (int i = 0; i < lista.size(); i++) {
 				IDSoggetto idSO = lista.get(i);
 
-				Vector<DataElement> e = new Vector<DataElement>();
+				List<DataElement> e = new ArrayList<>();
 
 				DataElement de = new DataElement();
 				de.setValue(this.getLabelNomeSoggetto(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idSO.getTipo()), idSO.getTipo(),idSO.getNome()));
 				de.setIdToRemove(""+idSO.getTipo()+"/"+idSO.getNome());
-				e.addElement(de);
+				e.add(de);
 
-				dati.addElement(e);
+				dati.add(e);
 			}
 
 			this.pd.setDati(dati);
@@ -1044,14 +1043,14 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Documento> it = lista.iterator();
 				while (it.hasNext()) {
 					Documento doc = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setUrl(
@@ -1064,15 +1063,15 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 							);
 					de.setValue(doc.getFile());
 					de.setIdToRemove(""+doc.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(doc.getRuolo());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(doc.getTipo());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					if(this.core.isShowAllegati()) {
@@ -1097,9 +1096,9 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 						de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_DOWNLOAD.toLowerCase());
 						de.setDisabilitaAjaxStatus();
 					}
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -1121,26 +1120,26 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		}
 	}
 
-	public Vector<DataElement>  addAllegatiToDati(TipoOperazione tipoOp, String idAllegato, String idAccordo,
+	public List<DataElement>  addAllegatiToDati(TipoOperazione tipoOp, String idAllegato, String idAccordo,
 			Documento doc, StringBuilder contenutoAllegato, String errore,
-			Vector<DataElement> dati, String statoPackage, boolean editMode) {
+			List<DataElement> dati, String statoPackage, boolean editMode) {
 		DataElement de = new DataElement();
 
 		de.setValue(idAllegato);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(idAccordo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATO);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(doc.getRuolo());
@@ -1148,7 +1147,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setType(DataElementType.TEXT);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO);
 		de.setSize(getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(doc.getFile());
@@ -1156,7 +1155,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setType(DataElementType.TEXT);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO);
 		de.setSize(getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(doc.getTipo());
@@ -1164,7 +1163,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setType(DataElementType.TEXT);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_FILE);
 		de.setSize(getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		if(tipoOp.equals(TipoOperazione.OTHER)){
 			if(this.core.isShowAllegati()) {
@@ -1175,7 +1174,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					de.setType(DataElementType.TEXT);
 					de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO  );
 					de.setSize( getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}
 				else{
 					de = new DataElement();
@@ -1184,7 +1183,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					de.setValue(contenutoAllegato.toString());
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);
 					de.setCols(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_COLUMNS);
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			
@@ -1211,7 +1210,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
 					de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_THE_FILE);
 					de.setSize(getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}else{
 				de = new DataElement();
@@ -1219,27 +1218,27 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
 				de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_THE_FILE);
 				de.setSize(getSize());
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 
 		return dati;
 	}
 
-	public Vector<DataElement> addAllegatoToDati(TipoOperazione tipoOp, String idAccordo, String ruolo,
+	public List<DataElement> addAllegatoToDati(TipoOperazione tipoOp, String idAccordo, String ruolo,
 			String[] ruoli, String[] tipiAmmessi, String[] tipiAmmessiLabel,
-			Vector<DataElement> dati) {
+			List<DataElement> dati) {
 		DataElement de = new DataElement();
 
 		de.setValue(idAccordo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATO);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO);
@@ -1250,7 +1249,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setPostBack(true);
 		de.setSelected(ruolo!=null ? ruolo : "");
 		de.setSize( getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		if(tipiAmmessi!=null){
 			de = new DataElement();
@@ -1260,7 +1259,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			de.setValues(tipiAmmessi);
 			de.setLabels(tipiAmmessiLabel);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		de = new DataElement();
@@ -1269,24 +1268,24 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setType(DataElementType.FILE);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_THE_FILE);
 		de.setSize( getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 
-	public Vector<DataElement> addPartecipanteToDati(TipoOperazione tipoOp, String id,
-			String[] partecipantiNonInseriti,String[] partecipantiNonInseritiLabels, Vector<DataElement> dati) {
+	public List<DataElement> addPartecipanteToDati(TipoOperazione tipoOp, String id,
+			String[] partecipantiNonInseriti,String[] partecipantiNonInseritiLabels, List<DataElement> dati) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(id);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE);
@@ -1295,7 +1294,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setType(DataElementType.SELECT);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE);
 		de.setSize(getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}

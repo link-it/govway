@@ -108,14 +108,6 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 			// Preparo il menu
 			apsHelper.makeMenu();
 
-			// Elimino i fruitori del servizio dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			String fruitore = "";
 			Fruitore fru = null;
@@ -138,9 +130,7 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				fruitore = idsToRemove.get(i);// de.getValue();
+				fruitore = idsToRemove.get(i);
 
 				int idFru = Integer.parseInt(fruitore);
 
@@ -154,19 +144,13 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 
 				// cancello la porta delegata associata al fruitore
 				// del servizio, se esiste
-//				String nomePD = fru.getTipo() + fru.getNome() + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio;
-//				IDPortaDelegata myidpd = new IDPortaDelegata();
-//				IDSoggetto ids = new IDSoggetto(fru.getTipo(), fru.getNome());
-//				myidpd.setSoggettoFruitore(ids);
-//				myidpd.setLocationPD(nomePD);
-//				if (porteDelegateCore.existsPortaDelegata(myidpd)) {
 				IDServizio idServizioObject = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, mytipoprov, mynomeprov, versioneservzio);
 				IDSoggetto idSoggettoFruitore = new IDSoggetto(fru.getTipo(), fru.getNome());
 				List<IDPortaDelegata> myidpds = porteDelegateCore.getIDPorteDelegateAssociate(idServizioObject, idSoggettoFruitore);
 				
-				if(myidpds!=null && myidpds.size()>0){
+				if(myidpds!=null && !myidpds.isEmpty()){
 					
-					List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+					List<Object> listaOggettiDaEliminare = new ArrayList<>();
 					
 					for (IDPortaDelegata myidpd : myidpds) {
 						
@@ -179,7 +163,7 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 							}catch(Exception e){
 								ControlStationCore.logError(e.getMessage(), e);
 							}
-							if(listExt!=null && listExt.size()>0){
+							if(listExt!=null && !listExt.isEmpty()){
 								for (IExtendedBean iExtendedBean : listExt) {
 									WrapperExtendedBean wrapper = new WrapperExtendedBean();
 									wrapper.setExtendedBean(iExtendedBean);

@@ -22,7 +22,7 @@
 <%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
 <%@page import="java.util.List"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti"%>
-<%@ page session="true" import="java.util.Vector, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, java.util.ArrayList, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 	String iddati = "";
@@ -44,18 +44,18 @@
 	PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 	String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 	
-	Vector<?> datiConGruppi = pd.getDati();
-	Vector<?> dati = (Vector<?>) datiConGruppi.elementAt(0);
+	List<?> datiConGruppi = pd.getDati();
+	List<?> dati = (List<?>) datiConGruppi.get(0);
 	
 	boolean visualizzaPanelLista = !pd.isPageBodyEmpty();
 	
 	String classDivPanelLista = visualizzaPanelLista  ? "panelLista" : "";
 	String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
 	
-	Vector<GeneralLink> titlelist = pd.getTitleList();
+	List<GeneralLink> titlelist = pd.getTitleList();
 	String titoloSezione = null;
 	if (titlelist != null && titlelist.size() > 0) {
-		GeneralLink l = titlelist.elementAt(titlelist.size() -1);
+		GeneralLink l = titlelist.get(titlelist.size() -1);
 		titoloSezione = l.getLabel();
 		
 		if(titoloSezione != null && titoloSezione.equals(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI))
@@ -66,23 +66,23 @@
 	int colFormHeader = (mostraComandiHeader ? 2 : 1);
 	String classPanelTitolo = "panelDettaglioNoForm";
 	
-	Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
-	Vector<DataElement> vectorLink = new Vector<DataElement>();
+	List<DataElement> listRiepilogo = new ArrayList<DataElement>();
+	List<DataElement> listLink = new ArrayList<DataElement>();
 	
 	for (int j = 0; j < dati.size(); j++) {
-	    DataElement de = (DataElement) dati.elementAt(j);
+	    DataElement de = (DataElement) dati.get(j);
 	    
 	    if (de.getType().equals("link")) {
-	    	vectorLink.add(de);
+	    	listLink.add(de);
 	    } else {
-	    	vectorRiepilogo.add(de);
+	    	listRiepilogo.add(de);
 	    }
 	}
 	
 	String classSpanNoEdit="spanNoEdit";
 	String classDivNoEdit="divNoEdit";
 	
-    boolean visualizzaIconeVectorLink = false;
+    boolean visualizzaIconeListLink = false;
     String numeroEntry = "dettaglio";
     String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
@@ -273,8 +273,8 @@
 							<table class="<%=classTabellaPanelLista %>">
 								<%
 									boolean firstText = true;
-							for (int i = 0; i < vectorRiepilogo.size(); i++) {
-								DataElement de = (DataElement) vectorRiepilogo.elementAt(i);
+							for (int i = 0; i < listRiepilogo.size(); i++) {
+								DataElement de = (DataElement) listRiepilogo.get(i);
 							  
 								String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 							  	String type = de.getType();
@@ -660,12 +660,12 @@
 						    		} // end else hidden
 				        		} %>	
 								<tr>
-								<% if(!visualizzaIconeVectorLink){ %>
+								<% if(!visualizzaIconeListLink){ %>
 	                                <td colspan="2" class="buttonrow">
 	                                     <div class="buttonrowlista">
 	                                             <%
-                                                    for (int i = 0; i < vectorLink.size(); i++) {
-                                       	            	DataElement de = (DataElement) vectorLink.elementAt(i);
+                                                    for (int i = 0; i < listLink.size(); i++) {
+                                       	            	DataElement de = (DataElement) listLink.get(i);
 	                                                       
 	                                                    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 	                                                    String type = de.getType();
@@ -700,8 +700,8 @@
 										<div class="riepilogo-links">
 											
 											<%	
-											for (int i = 0; i < vectorLink.size(); i++) {
-												DataElement de = (DataElement) vectorLink.elementAt(i);
+											for (int i = 0; i < listLink.size(); i++) {
+												DataElement de = (DataElement) listLink.get(i);
 											  
 												String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 											  	String type = de.getType();
@@ -746,8 +746,8 @@
 									for (int z = 1; z < datiConGruppi.size(); z++) {
 										boolean groupOpen = false;
 										boolean buttonGroupOpen = false;
-										Vector<?> gruppo = (Vector<?>) datiConGruppi.elementAt(z);	
-										DataElement deAbilitazione =  (DataElement) gruppo.elementAt(gruppo.size() - 2);
+										List<?> gruppo = (List<?>) datiConGruppi.get(z);	
+										DataElement deAbilitazione =  (DataElement) gruppo.get(gruppo.size() - 2);
 										String deAbilitazioneLabel = !deAbilitazione.getLabel().equals("") ? deAbilitazione.getLabel() : "&nbsp;";
 					  					String deAbilitazioneType = deAbilitazione.getType();
 					  					String deAbilitazioneName = !deAbilitazione.getName().equals("") ? deAbilitazione.getName() : "de_name_"+ (gruppo.size() - 2);
@@ -755,7 +755,7 @@
 					  					String deAbilitazioneLabelStyleClass= deAbilitazione.getLabelStyleClass();
 					  					String deAbilitazioneTip =  " title=\"" + deAbilitazione.getToolTip() + "\"";
 					  					
-					  					DataElement deNuovaConfigurazione =  (DataElement) gruppo.elementAt(gruppo.size() - 1);
+					  					DataElement deNuovaConfigurazione =  (DataElement) gruppo.get(gruppo.size() - 1);
 										String deNuovaConfigurazioneLabel = !deNuovaConfigurazione.getLabel().equals("") ? deNuovaConfigurazione.getLabel() : "&nbsp;";
 					  					String deNuovaConfigurazioneType = deNuovaConfigurazione.getType();
 									  	String deNuovaConfigurazioneNote = deNuovaConfigurazione.getNote();
@@ -767,7 +767,7 @@
 					  					int numeroConfigurazioniAttive = 0;
 					  					
 										for (int i = 0; i < (gruppo.size() -2); i++) {
-											DataElement de = (DataElement) gruppo.elementAt(i);
+											DataElement de = (DataElement) gruppo.get(i);
 										  
 											String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 										  	String type = de.getType();

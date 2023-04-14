@@ -22,7 +22,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.filt
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -104,7 +104,7 @@ public class SoapTest extends ConfigLoader {
 		requestNonFiltrata.setPassword(nonFiltrate.password);
 		requestNonFiltrata.setContent(SoapBodies.get(policy).getBytes());
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
 		
 		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -121,13 +121,13 @@ public class SoapTest extends ConfigLoader {
 		requestFiltrata.setContent(SoapBodies.get(policy).getBytes());
 		
 		
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.SoapTest.checkOkRequests(filtrateResponsesOk, windowSize, maxRequests);
 		
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		
@@ -205,7 +205,7 @@ public class SoapTest extends ConfigLoader {
 		requestNonFiltrata.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenNonFiltrato);
 		requestNonFiltrata.setContent(SoapBodies.get(policy).getBytes());
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
 		
 		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -223,13 +223,13 @@ public class SoapTest extends ConfigLoader {
 		requestFiltrata.setContent(SoapBodies.get(policy).getBytes());
 		
 		
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.SoapTest.checkOkRequests(filtrateResponsesOk, windowSize, maxRequests);
 		
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		
@@ -277,7 +277,7 @@ public class SoapTest extends ConfigLoader {
 		requestFiltrata.setPassword(Credenziali.soggettoRuoloFiltrato.password);
 		requestFiltrata.setContent(SoapBodies.get(policy).getBytes());
 
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, 1);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, 1);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 1, 0);
 		
@@ -294,7 +294,7 @@ public class SoapTest extends ConfigLoader {
 		requestNonFiltrata.setContent(SoapBodies.get(policy).getBytes());
 
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
 		
 		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -349,7 +349,7 @@ public class SoapTest extends ConfigLoader {
 		
 		// Faccio altre n richieste che devono essere tutte bloccate.
 		
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		
@@ -397,7 +397,7 @@ public class SoapTest extends ConfigLoader {
 		requestFiltrata.setPassword(Credenziali.applicativoSITFRuoloFiltrato.password);
 		requestFiltrata.setContent(SoapBodies.get(policy).getBytes());
 
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
@@ -414,7 +414,7 @@ public class SoapTest extends ConfigLoader {
 		requestNonFiltrata.setContent(SoapBodies.get(policy).getBytes());
 
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
 		
 		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -423,7 +423,7 @@ public class SoapTest extends ConfigLoader {
 		
 		// Faccio altre n richieste che devono essere tutte bloccate.
 		
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		
@@ -707,16 +707,16 @@ public class SoapTest extends ConfigLoader {
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
 				
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests);
 		assertEquals(maxRequests, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeParallelRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeParallelRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.SoapTest
 				.checkOkRequests(filtrateResponsesOk, windowSize, maxRequests);
 
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.SoapTest

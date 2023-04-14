@@ -29,7 +29,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 
 import java.util.List;
 import java.util.UUID;
-import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -197,7 +196,7 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 					return request;
 				})
 				.collect(Collectors.toList());
-		final Vector<Future<HttpResponse>> oldAsyncResponses = Common.makeBackgroundRequests(requests, requests.size(), Common.delayRichiesteBackground);
+		final List<Future<HttpResponse>> oldAsyncResponses = Common.makeBackgroundRequests(requests, requests.size(), Common.delayRichiesteBackground);
 
 		org.openspcoop2.utils.Utilities.sleep(Common.delayRichiesteBackground);
 		

@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -98,7 +97,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			
 			String nuovaConfigurazioneEsiti = confHelper.readConfigurazioneRegistrazioneEsitiFromHttpParameters(oldConfigurazione.getTracciamento().getEsiti(), first);
 			String severita = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
-			String severita_log4j = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+			String severitaLog4j = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
 			String registrazioneTracce = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
 			String dumpApplicativo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
 			String dumpPD = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
@@ -120,7 +119,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, null));
 			
 			// edit in progress
@@ -131,7 +130,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 					if(oldConfigurazione.getMessaggiDiagnostici().getSeverita()!=null)
 						severita = oldConfigurazione.getMessaggiDiagnostici().getSeverita().toString();
 					if(oldConfigurazione.getMessaggiDiagnostici().getSeveritaLog4j()!=null)
-						severita_log4j = oldConfigurazione.getMessaggiDiagnostici().getSeveritaLog4j().toString();
+						severitaLog4j = oldConfigurazione.getMessaggiDiagnostici().getSeveritaLog4j().toString();
 					if(oldConfigurazione.getDump().getStato()!=null)
 						dumpApplicativo = oldConfigurazione.getDump().getStato().toString();
 					if(oldConfigurazione.getDump().getDumpBinarioPortaDelegata()!=null)
@@ -152,7 +151,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				
 				if(tracciamentoEsitiSelezionePersonalizzataOk==null) {
 					
-					List<String> attivi = new ArrayList<String>();
+					List<String> attivi = new ArrayList<>();
 					if(nuovaConfigurazioneEsiti!=null){
 						String [] tmp = nuovaConfigurazioneEsiti.split(",");
 						if(tmp!=null){
@@ -190,13 +189,13 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
 					}
 					
-					boolean isFalliteSenza_MaxThreads_Scartate_Totale = false;
-					List<Integer> listFalliteSenza_MaxThreads_Scartate = confHelper.getListaEsitiFalliteSenza_RateLimiting_MaxThreads_Scartate(esiti);
-					if(confHelper.isCompleteEnabled(attivi, listFalliteSenza_MaxThreads_Scartate)) {
+					boolean isFalliteSenzaMaxThreadsScartateTotale = false;
+					List<Integer> listFalliteSenzaMaxThreadsScartate = confHelper.getListaEsitiFalliteSenza_RateLimiting_MaxThreads_Scartate(esiti);
+					if(confHelper.isCompleteEnabled(attivi, listFalliteSenzaMaxThreadsScartate)) {
 						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
-						isFalliteSenza_MaxThreads_Scartate_Totale = true;
+						isFalliteSenzaMaxThreadsScartateTotale = true;
 					}
-					else if(confHelper.isCompleteDisabled(attivi, listFalliteSenza_MaxThreads_Scartate)) {
+					else if(confHelper.isCompleteDisabled(attivi, listFalliteSenzaMaxThreadsScartate)) {
 						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
 					}
 					else {
@@ -248,13 +247,13 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 					}
 					
 					selectAll = isOkTotale && isFaultTotale && 
-							isFalliteSenza_MaxThreads_Scartate_Totale && isScartateTotale && 
+							isFalliteSenzaMaxThreadsScartateTotale && isScartateTotale && 
 							isRateLimiting && isMaxThreads && isCorsTotale;
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, null, nuovaConfigurazioneEsiti, 
 						selectAll,
@@ -268,7 +267,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				// Set First is false
 				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);
 				
-				confHelper.addMessaggiDiagnosticiToDati(severita, severita_log4j, oldConfigurazione, dati, contaListe);
+				confHelper.addMessaggiDiagnosticiToDati(severita, severitaLog4j, oldConfigurazione, dati, contaListe);
 
 				confHelper.addTracciamentoToDati(registrazioneTracce, oldConfigurazione, dati, contaListe);
 				
@@ -288,8 +287,8 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, null, nuovaConfigurazioneEsiti, 
 						selectAll,
@@ -300,7 +299,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				confHelper.addToDatiRegistrazioneTransazione(dati, tipoOperazione, 
 						transazioniTempiElaborazione, transazioniToken); 
 				
-				confHelper.addMessaggiDiagnosticiToDati(severita, severita_log4j, oldConfigurazione, dati, contaListe);
+				confHelper.addMessaggiDiagnosticiToDati(severita, severitaLog4j, oldConfigurazione, dati, contaListe);
 
 				confHelper.addTracciamentoToDati(registrazioneTracce, oldConfigurazione, dati, contaListe);
 				
@@ -328,11 +327,11 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			
 			if (newConfigurazione.getMessaggiDiagnostici() != null) {
 				newConfigurazione.getMessaggiDiagnostici().setSeverita(Severita.toEnumConstant(severita));
-				newConfigurazione.getMessaggiDiagnostici().setSeveritaLog4j(Severita.toEnumConstant(severita_log4j));
+				newConfigurazione.getMessaggiDiagnostici().setSeveritaLog4j(Severita.toEnumConstant(severitaLog4j));
 			} else {
 				MessaggiDiagnostici md = new MessaggiDiagnostici();
 				md.setSeverita(Severita.toEnumConstant(severita));
-				md.setSeveritaLog4j(Severita.toEnumConstant(severita_log4j));
+				md.setSeveritaLog4j(Severita.toEnumConstant(severitaLog4j));
 				newConfigurazione.setMessaggiDiagnostici(md);
 			}
 			
@@ -375,7 +374,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 			
 			// ricarico la configurazione
 			newConfigurazione = confCore.getConfigurazioneGenerale();
@@ -383,7 +382,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			if(newConfigurazione.getMessaggiDiagnostici().getSeverita()!=null)
 				severita = newConfigurazione.getMessaggiDiagnostici().getSeverita().toString();
 			if(newConfigurazione.getMessaggiDiagnostici().getSeveritaLog4j()!=null)
-				severita_log4j = newConfigurazione.getMessaggiDiagnostici().getSeveritaLog4j().toString();
+				severitaLog4j = newConfigurazione.getMessaggiDiagnostici().getSeveritaLog4j().toString();
 			if(newConfigurazione.getDump().getStato()!=null)
 				dumpApplicativo = newConfigurazione.getDump().getStato().toString();
 			if(newConfigurazione.getDump().getDumpBinarioPortaDelegata()!=null)
@@ -410,7 +409,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			confHelper.addToDatiRegistrazioneTransazione(dati, tipoOperazione, 
 					transazioniTempiElaborazione, transazioniToken); 
 			
-			confHelper.addMessaggiDiagnosticiToDati(severita, severita_log4j, newConfigurazione, dati, contaListe);
+			confHelper.addMessaggiDiagnosticiToDati(severita, severitaLog4j, newConfigurazione, dati, contaListe);
 
 			confHelper.addTracciamentoToDati(registrazioneTracce, newConfigurazione, dati, contaListe);
 			

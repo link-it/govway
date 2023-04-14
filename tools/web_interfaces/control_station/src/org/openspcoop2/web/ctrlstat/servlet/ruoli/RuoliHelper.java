@@ -23,7 +23,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -67,8 +66,8 @@ public class RuoliHelper extends ConsoleHelper{
 		super(core, request, pd,  session);
 	}
 
-	public Vector<DataElement> addRuoloToDati(TipoOperazione tipoOP, Long ruoloId, String nome, String descrizione, String tipologia,
-			String nomeEsterno, String contesto, Vector<DataElement> dati, String oldNomeRuolo) {
+	public List<DataElement> addRuoloToDati(TipoOperazione tipoOP, Long ruoloId, String nome, String descrizione, String tipologia,
+			String nomeEsterno, String contesto, List<DataElement> dati, String oldNomeRuolo) {
 		
 		if(TipoOperazione.CHANGE.equals(tipoOP)){
 		
@@ -94,9 +93,8 @@ public class RuoliHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_RUOLO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
-		de = new DataElement();
 		if(ruoloId!=null){
 			de = new DataElement();
 			de.setLabel(RuoliCostanti.PARAMETRO_RUOLO_ID);
@@ -104,22 +102,17 @@ public class RuoliHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setName(RuoliCostanti.PARAMETRO_RUOLO_ID);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME);
 		de.setValue(nome);
-		//if(TipoOperazione.ADD.equals(tipoOP)){
 		de.setType(DataElementType.TEXT_EDIT);
-		//}
-		//else{
-		//	de.setType(DataElementType.TEXT);
-		//}
 		de.setName(RuoliCostanti.PARAMETRO_RUOLO_NOME);
 		de.setSize( getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE);
@@ -127,23 +120,25 @@ public class RuoliHelper extends ConsoleHelper{
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
 		de.setSize( getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA);
 		de.setType(DataElementType.SELECT);
 		de.setName(RuoliCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
-		de.setLabels(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL);
-		de.setValues(RuoliCostanti.RUOLI_TIPOLOGIA);
+		de.setLabels(RuoliCostanti.getRuoliTipologiaLabel());
+		de.setValues(RuoliCostanti.getRuoliTipologia());
 		de.setSelected(tipologia);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		RuoloTipologia ruoloTipologia = null;
 		if(tipologia!=null) {
 			try {
 				ruoloTipologia = RuoloTipologia.toEnumConstant(tipologia,false);
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 		de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO);
@@ -156,16 +151,16 @@ public class RuoliHelper extends ConsoleHelper{
 		}
 		de.setName(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
 		de.setSize( getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_CONTESTO);
 		de.setType(DataElementType.SELECT);
 		de.setName(RuoliCostanti.PARAMETRO_RUOLO_CONTESTO);
-		de.setLabels(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL);
-		de.setValues(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO);
+		de.setLabels(RuoliCostanti.getRuoliContestoUtilizzoLabel());
+		de.setValues(RuoliCostanti.getRuoliContestoUtilizzo());
 		de.setSelected(contesto);
-		dati.addElement(de);
+		dati.add(de);
 	
 		return dati;
 	}
@@ -179,8 +174,6 @@ public class RuoliHelper extends ConsoleHelper{
 			String nome = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME);
 			String descrizione = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
 			String nomeEsterno = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
-			//String tipologia = this.ruoliHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
-			//String contesto = this.ruoliHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_RUOLO_CONTESTO);
 			
 			// Campi obbligatori
 			if (nome.equals("")) {
@@ -197,22 +190,20 @@ public class RuoliHelper extends ConsoleHelper{
 				this.pd.setMessage("Non inserire spazi nel campo '"+RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME+"'");
 				return false;
 			}
-			if(this.checkNCName(nome, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME)==false){
+			if(!this.checkNCName(nome, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME)){
 				return false;
 			}
-			if(this.checkLength255(nome, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME)==false) {
+			if(!this.checkLength255(nome, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME)) {
 				return false;
 			}
 			
-			if(descrizione!=null && !"".equals(descrizione)) {
-				if(this.checkLength255(descrizione, RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE)==false) {
-					return false;
-				}
+			if(descrizione!=null && !"".equals(descrizione) &&
+				!this.checkLength255(descrizione, RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE)) {
+				return false;
 			}
-			if(nomeEsterno!=null && !"".equals(nomeEsterno)) {
-				if(this.checkLength255(nomeEsterno, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO)==false) {
-					return false;
-				}
+			if(nomeEsterno!=null && !"".equals(nomeEsterno) &&
+				!this.checkLength255(nomeEsterno, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO)) {
+				return false;
 			}
 
 			// Se tipoOp = add, controllo che il registro non sia gia' stato
@@ -227,26 +218,10 @@ public class RuoliHelper extends ConsoleHelper{
 			}
 			else{
 				
-				if(ruolo.getNome().equals(nome)==false){
-					// e' stato modificato ilnome
-					
-					// e' stato implementato l'update
-//					java.util.HashMap<org.openspcoop2.core.commons.ErrorsHandlerCostant, List<String>> whereIsInUso = new java.util.HashMap<org.openspcoop2.core.commons.ErrorsHandlerCostant, List<String>>();
-//					boolean ruoloInUso = this.confCore.isRuoloInUso(ruolo.getNome(),whereIsInUso);
-//					if (ruoloInUso) {
-//						String msg = "";
-//						msg += org.openspcoop2.core.commons.DBOggettiInUsoUtils.toString(new org.openspcoop2.core.id.IDRuolo(ruolo.getNome()), whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,
-//								" non modificabile in '"+nome+"' perch&egrave; risulta utilizzato:");
-//						msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-//						this.pd.setMessage(msg);
-//						return false;
-//					} 
-//					
-					if(this.ruoliCore.existsRuolo(nome)){
-						this.pd.setMessage("Un ruolo con nome '" + nome + "' risulta gi&agrave; stato registrato");
-						return false;
-					}
-					
+				if(!ruolo.getNome().equals(nome) &&
+					this.ruoliCore.existsRuolo(nome)){ // e' stato modificato ilnome
+					this.pd.setMessage("Un ruolo con nome '" + nome + "' risulta gi&agrave; stato registrato");
+					return false;
 				}
 				
 			}
@@ -402,13 +377,13 @@ public class RuoliHelper extends ConsoleHelper{
 			this.setLabelColonne(modalitaCompleta);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Ruolo> it = lista.iterator();
 				while (it.hasNext()) {
-					Vector<DataElement> e = modalitaCompleta ? this.creaEntry(it) : this.creaEntryCustom(it);
-					dati.addElement(e);
+					List<DataElement> e = modalitaCompleta ? this.creaEntry(it) : this.creaEntryCustom(it);
+					dati.add(e);
 				}
 			}
 
@@ -416,29 +391,28 @@ public class RuoliHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 			
 			// preparo bottoni
-			if(lista!=null && lista.size()>0){
-				if (this.core.isShowPulsantiImportExport()) {
+			if(lista!=null && !lista.isEmpty() &&
+				this.core.isShowPulsantiImportExport()) {
 
-					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.RUOLO, this.request, this.session)){
+				ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+				if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.RUOLO, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+					List<AreaBottoni> bottoni = new ArrayList<>();
 
-						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
-						DataElement de = new DataElement();
-						de.setValue(RuoliCostanti.LABEL_RUOLI_ESPORTA_SELEZIONATI);
-						de.setOnClick(RuoliCostanti.LABEL_RUOLI_ESPORTA_SELEZIONATI_ONCLICK);
-						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
-						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+					AreaBottoni ab = new AreaBottoni();
+					List<DataElement> otherbott = new ArrayList<>();
+					DataElement de = new DataElement();
+					de.setValue(RuoliCostanti.LABEL_RUOLI_ESPORTA_SELEZIONATI);
+					de.setOnClick(RuoliCostanti.LABEL_RUOLI_ESPORTA_SELEZIONATI_ONCLICK);
+					de.setDisabilitaAjaxStatus();
+					otherbott.add(de);
+					ab.setBottoni(otherbott);
+					bottoni.add(ab);
 
-						this.pd.setAreaBottoni(bottoni);
-
-					}
+					this.pd.setAreaBottoni(bottoni);
 
 				}
+
 			}
 			
 		} catch (Exception e) {
@@ -447,9 +421,9 @@ public class RuoliHelper extends ConsoleHelper{
 		}
 	}
 	
-	private Vector<DataElement> creaEntry(Iterator<Ruolo> it) {
+	private List<DataElement> creaEntry(Iterator<Ruolo> it) {
 		Ruolo ruolo = it.next();
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 
 		DataElement de = new DataElement();
 		Parameter pId = new Parameter(RuoliCostanti.PARAMETRO_RUOLO_ID, ruolo.getId()+"");
@@ -460,7 +434,7 @@ public class RuoliHelper extends ConsoleHelper{
 		de.setIdToRemove(ruolo.getNome());
 		de.setToolTip(ruolo.getDescrizione());
 		de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
-		e.addElement(de);
+		e.add(de);
 
 		de = new DataElement();
 		if(RuoloTipologia.INTERNO.getValue().equals(ruolo.getTipologia().getValue())){
@@ -473,7 +447,7 @@ public class RuoliHelper extends ConsoleHelper{
 			de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_QUALSIASI);
 		}
 		
-		e.addElement(de);
+		e.add(de);
 		
 		de = new DataElement();
 		if(RuoloContesto.PORTA_APPLICATIVA.getValue().equals(ruolo.getContestoUtilizzo().getValue())){
@@ -485,13 +459,13 @@ public class RuoliHelper extends ConsoleHelper{
 		else{
 			de.setValue(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI);
 		}
-		e.addElement(de);
+		e.add(de);
 		return e;
 	}
 	
-	private Vector<DataElement> creaEntryCustom(Iterator<Ruolo> it) {
+	private List<DataElement> creaEntryCustom(Iterator<Ruolo> it) {
 		Ruolo ruolo = it.next();
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 
 		// TITOLO (nome)
 
@@ -504,7 +478,7 @@ public class RuoliHelper extends ConsoleHelper{
 		de.setIdToRemove(ruolo.getNome());
 		de.setToolTip(ruolo.getDescrizione());
 		de.setType(DataElementType.TITLE);
-		e.addElement(de);
+		e.add(de);
 		
 		// Metadati (tipologia e contesto)
 
@@ -539,9 +513,9 @@ public class RuoliHelper extends ConsoleHelper{
 		
 		de.setValue(identificativoEsternoLabelPrefix+MessageFormat.format(RuoliCostanti.MESSAGE_METADATI_RUOLO_TIPO_E_CONTESTO, tipologiaRuoloLabel, contestoRuoloLabel));
 		de.setType(DataElementType.SUBTITLE);
-		e.addElement(de);
+		e.add(de);
 		
-		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		List<Parameter> listaParametriChange = new ArrayList<>();
 		listaParametriChange.add(pId);
 		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA, "true"));
 		

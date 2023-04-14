@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.operazioni;
 
 import java.sql.Connection;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
@@ -94,7 +93,7 @@ public class OperazioniCore extends ControlStationCore {
 		ClassQueue driver = null;
 
 		OperationStatus os = formBean.getTipoOperationStatus();
-		Vector<String> utenti = formBean.getUtenti();
+		List<String> utenti = formBean.getUtenti();
 		ricerca.addFilter(this.getIdLista(formBean),Filtri.FILTRO_UTENTE, formBean.getUtente());
 		String hostname = formBean.getHostname() != null ? formBean.getHostname() : "";
 		String pezzoAny = formBean.getPezzoAny()!= null ? formBean.getPezzoAny() : "";

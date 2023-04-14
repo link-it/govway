@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.config.Configurazione;
@@ -110,7 +109,7 @@ public class SoggettoUpdateUtilities {
 			String oldnomeprov,String nomeprov,
 			String oldtipoprov,String tipoprov,
 			SoggettoCtrlStat sog) throws Exception{
-		this.oggettiDaAggiornare = new ArrayList<Object>();
+		this.oggettiDaAggiornare = new ArrayList<>();
 		this.soggettiCore = soggettiCore;
 		this.saCore = new ServiziApplicativiCore(this.soggettiCore);
 		this.apcCore = new AccordiServizioParteComuneCore(this.soggettiCore);
@@ -141,8 +140,8 @@ public class SoggettoUpdateUtilities {
 
 		if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
 
-			List<String> nomeListSA = new ArrayList<String>();
-			List<ServizioApplicativo> listSA = new ArrayList<ServizioApplicativo>();
+			List<String> nomeListSA = new ArrayList<>();
+			List<ServizioApplicativo> listSA = new ArrayList<>();
 			List<IDServizioApplicativoDB> tmpListIDSA = this.saCore.getIdServiziApplicativiWithIdErogatore(this.sog.getId());
 			for (IDServizioApplicativoDB idServizioApplicativo : tmpListIDSA) {
 				if (!nomeListSA.contains(idServizioApplicativo.getNome())) {
@@ -330,12 +329,12 @@ public class SoggettoUpdateUtilities {
 		}
 	}
 
-	private Vector<AccordoServizioParteSpecifica> accordiServizioParteSpecifica = null;
+	private List<AccordoServizioParteSpecifica> accordiServizioParteSpecifica = null;
 	public void checkAccordiServizioParteSpecifica() throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		// SERVIZI
 		// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica dei servizi 
 		// poiche il cambio si riflette sul nome dei connettori del servizio 
-		this.accordiServizioParteSpecifica = new Vector<AccordoServizioParteSpecifica>();
+		this.accordiServizioParteSpecifica = new ArrayList<>();
 		if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
 			FiltroRicercaServizi filtroRicercaServizi = new FiltroRicercaServizi();
 			filtroRicercaServizi.setTipoSoggettoErogatore(this.oldtipoprov);
@@ -389,7 +388,7 @@ public class SoggettoUpdateUtilities {
 		// Porte Delegate
 		// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica delle porte delegate
 		// poiche il cambio si riflette sul nome della porta delegata
-		Map<Long, PortaDelegata> listaPD = new HashMap<Long, PortaDelegata>();
+		Map<Long, PortaDelegata> listaPD = new HashMap<>();
 		
 		if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
 
@@ -400,13 +399,13 @@ public class SoggettoUpdateUtilities {
 			// - pattern (fruitore)/(erogatore)/....
 			//   se (fruitore) contiene tipoNomeSoggetto proprietario della PortaDelegata deve essere modificato
 			//   se (erogatore) contiene tipoNomeSoggetto erogatore definito all'interno della porta delegata deve essere modificato.
-			List<PortaDelegata> list = new ArrayList<PortaDelegata>();
+			List<PortaDelegata> list = new ArrayList<>();
 			
 			FiltroRicercaPorteDelegate filtroRicerca = new FiltroRicercaPorteDelegate();
 			filtroRicerca.setTipoSoggetto(this.oldtipoprov);
 			filtroRicerca.setNomeSoggetto(this.oldnomeprov);
 			List<IDPortaDelegata> listID = this.porteDelegateCore.getAllIdPorteDelegate(filtroRicerca);
-			if(listID!=null && listID.size()>0){
+			if(listID!=null && !listID.isEmpty()){
 				for (IDPortaDelegata idPortaDelegata : listID) {
 					list.add(this.porteDelegateCore.getPortaDelegata(idPortaDelegata));
 				}
@@ -415,14 +414,14 @@ public class SoggettoUpdateUtilities {
 			filtroRicerca.setTipoSoggettoErogatore(this.oldtipoprov);
 			filtroRicerca.setNomeSoggettoErogatore(this.oldnomeprov);
 			listID = this.porteDelegateCore.getAllIdPorteDelegate(filtroRicerca);
-			if(listID!=null && listID.size()>0){
+			if(listID!=null && !listID.isEmpty()){
 				for (IDPortaDelegata idPortaDelegata : listID) {
 					list.add(this.porteDelegateCore.getPortaDelegata(idPortaDelegata));
 				}
 			}
 			
-			if(list!=null && list.size()>0){
-				List<String> checkUnique = new ArrayList<String>();
+			if(list!=null && !list.isEmpty()){
+				List<String> checkUnique = new ArrayList<>();
 				for (PortaDelegata portaDelegata : list) {
 					
 					if(checkUnique.contains((portaDelegata.getId().longValue()+""))){
@@ -438,8 +437,6 @@ public class SoggettoUpdateUtilities {
 						
 						portaDelegata.setTipoSoggettoProprietario(this.tipoprov);
 						portaDelegata.setNomeSoggettoProprietario(this.nomeprov);
-						//portaDelegata.setOldTipoSoggettoProprietarioForUpdate(this.oldtipoprov);
-						//portaDelegata.setOldNomeSoggettoProprietarioForUpdate(this.oldnomeprov);
 					}
 					
 					String nomeAttuale = portaDelegata.getNome();
@@ -919,8 +916,8 @@ public class SoggettoUpdateUtilities {
 
 		// aggiorno le porte delegate
 		
-		Map<String, AttivazionePolicy> listaPolicyPD = new HashMap<String, AttivazionePolicy>();
-		Map<String, ConfigurazioneAllarmeBean> listaAllarmiPD = new HashMap<String, ConfigurazioneAllarmeBean>();
+		Map<String, AttivazionePolicy> listaPolicyPD = new HashMap<>();
+		Map<String, ConfigurazioneAllarmeBean> listaAllarmiPD = new HashMap<>();
 		
 		if(listaPD!=null && !listaPD.isEmpty()) {
 			for (PortaDelegata portaDelegata : listaPD.values()) {
@@ -994,7 +991,7 @@ public class SoggettoUpdateUtilities {
 		
 		// Controllo policy di Rate Limiting di altre porte delegate che utilizzano il soggetto solamente nel filtro.
 		
-		List<AttivazionePolicy> listPolicyDaVerificare = new ArrayList<AttivazionePolicy>();
+		List<AttivazionePolicy> listPolicyDaVerificare = new ArrayList<>();
 		
 		IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
 		ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
@@ -1066,7 +1063,7 @@ public class SoggettoUpdateUtilities {
 			
 			// Controllo policy di Rate Limiting di altre porte delegate che utilizzano il soggetto solamente nel filtro.
 			
-			List<ConfigurazioneAllarmeBean> listAllarmiDaVerificare = new ArrayList<ConfigurazioneAllarmeBean>();
+			List<ConfigurazioneAllarmeBean> listAllarmiDaVerificare = new ArrayList<>();
 			
 			filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
 			ConsoleSearch ricercaAllarmi = new ConsoleSearch(true);
@@ -1162,10 +1159,10 @@ public class SoggettoUpdateUtilities {
 			// PORTE APPLICATIVE
 			// Se e' cambiato il tipo o il nome del soggetto virtuale devo effettuare la modifica delle porte applicative
 			// poiche il cambio si riflette all'interno delle informazioni delle porte applicative
-			Map<String, PortaApplicativa> listaPA = new HashMap<String, PortaApplicativa>();
-			Map<String, ServizioApplicativo> listaPA_SA = new HashMap<String, ServizioApplicativo>();
-			Map<String, AttivazionePolicy> listaPolicyPA = new HashMap<String, AttivazionePolicy>();
-			Map<String, ConfigurazioneAllarmeBean> listaAllarmiPA = new HashMap<String, ConfigurazioneAllarmeBean>();
+			Map<String, PortaApplicativa> listaPA = new HashMap<>();
+			Map<String, ServizioApplicativo> listaPAeSA = new HashMap<>();
+			Map<String, AttivazionePolicy> listaPolicyPA = new HashMap<>();
+			Map<String, ConfigurazioneAllarmeBean> listaAllarmiPA = new HashMap<>();
 
 			
 			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
@@ -1389,7 +1386,7 @@ public class SoggettoUpdateUtilities {
 								//NON SERVE, sono riferiti tramite id e prima modifico le porte applicative!! portaApplicativaSA.setNome(sa.getNome());
 								// Inoltre anche se cambio il nome del soggetto, l'id del soggetto rimane lo stesso
 								
-								listaPA_SA.put(sa.getNome(), sa);
+								listaPAeSA.put(sa.getNome(), sa);
 								// ?? nei connettori multipli, salta break;
 							}
 						}
@@ -1456,7 +1453,7 @@ public class SoggettoUpdateUtilities {
 				
 				// effettuo controlli per le porte applicative che hanno un proprietario differente
 				
-				List<IDPortaApplicativa> listDaVerificare = new ArrayList<IDPortaApplicativa>();
+				List<IDPortaApplicativa> listDaVerificare = new ArrayList<>();
 				
 				// controllo SoggettoVirtuale
 				List<PortaApplicativa> tmpListSoggettiVirtuali = this.porteApplicativeCore.getPorteApplicativeBySoggettoVirtuale(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
@@ -1540,7 +1537,7 @@ public class SoggettoUpdateUtilities {
 				
 				// Controllo policy di Rate Limiting
 				
-				List<AttivazionePolicy> listPolicyDaVerificare = new ArrayList<AttivazionePolicy>();
+				List<AttivazionePolicy> listPolicyDaVerificare = new ArrayList<>();
 				
 				IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
 				ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
@@ -1602,7 +1599,7 @@ public class SoggettoUpdateUtilities {
 				if(this.confCore.isConfigurazioneAllarmiEnabled()) {
 					// Controllo allarmi
 					
-					List<ConfigurazioneAllarmeBean> listAllarmiDaVerificare = new ArrayList<ConfigurazioneAllarmeBean>();
+					List<ConfigurazioneAllarmeBean> listAllarmiDaVerificare = new ArrayList<>();
 					
 					filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
 					ConsoleSearch ricercaAllarmi = new ConsoleSearch(true);
@@ -1672,8 +1669,8 @@ public class SoggettoUpdateUtilities {
 				}
 			}
 			// aggiorno i servizi applicativi associati alle porte applicative (vanno aggiornati dopo le PA poiche sono riferiti con i vecchi nomi dentro le pa)
-			if(listaPA_SA!=null && !listaPA_SA.isEmpty()) {
-				for (ServizioApplicativo sa : listaPA_SA.values()) {
+			if(listaPAeSA!=null && !listaPAeSA.isEmpty()) {
+				for (ServizioApplicativo sa : listaPAeSA.values()) {
 					this.oggettiDaAggiornare.add(sa);
 				}
 			}
@@ -1850,7 +1847,7 @@ public class SoggettoUpdateUtilities {
 			
 			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
 			
-				Map<String, AttivazionePolicy> listaPolicyPA = new HashMap<String, AttivazionePolicy>();
+				Map<String, AttivazionePolicy> listaPolicyPA = new HashMap<>();
 				
 				
 				IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);

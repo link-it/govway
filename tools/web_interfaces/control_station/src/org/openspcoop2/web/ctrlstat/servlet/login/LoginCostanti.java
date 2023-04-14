@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * LoginCostanti
@@ -29,6 +30,9 @@ import java.util.Vector;
  * @version $Rev$, $Date$
  */
 public class LoginCostanti {
+	
+	private LoginCostanti() {}
+	
 
 	/* OBJECT NAME */
 	
@@ -43,19 +47,28 @@ public class LoginCostanti {
 	/* SERVLET NAME */
 	
 	public static final String SERVLET_NAME_LOGIN = OBJECT_NAME_LOGIN+".do";
-	public static final Vector<String> SERVLET_LOGIN = new Vector<String>();
+	private static final List<String> SERVLET_LOGIN = new ArrayList<>();
+	public static List<String> getServletLogin() {
+		return SERVLET_LOGIN;
+	}
 	static{
 		SERVLET_LOGIN.add(SERVLET_NAME_LOGIN);
 	}
 	
 	public static final String SERVLET_NAME_LOGIN_AS_SU = OBJECT_NAME_LOGIN_AS_SU+".do";
-	public static final Vector<String> SERVLET_LOGIN_AS_SU = new Vector<String>();
+	private static final List<String> SERVLET_LOGIN_AS_SU = new ArrayList<>();
+	public static List<String> getServletLoginAsSu() {
+		return SERVLET_LOGIN_AS_SU;
+	}
 	static{
 		SERVLET_LOGIN_AS_SU.add(SERVLET_NAME_LOGIN_AS_SU);
 	}
 	
 	public static final String SERVLET_NAME_LOGOUT = OBJECT_NAME_LOGOUT+".do";
-	public static final Vector<String> SERVLET_LOGOUT = new Vector<String>();
+	private static final List<String> SERVLET_LOGOUT = new ArrayList<>();
+	public static List<String> getServletLogout() {
+		return SERVLET_LOGOUT;
+	}
 	static{
 		SERVLET_LOGOUT.add(SERVLET_NAME_LOGOUT);
 	}
@@ -63,7 +76,10 @@ public class LoginCostanti {
 	public static final String SERVLET_NAME_LOGIN_MESSAGE_PAGE = OBJECT_NAME_LOGIN_MESSAGE_PAGE+".do";
 	public static final String SERVLET_NAME_MESSAGE_PAGE = OBJECT_NAME_MESSAGE_PAGE+".do";
 	
-	public static final Vector<String> SERVLET_MESSAGE_PAGE = new Vector<String>();
+	private static final List<String> SERVLET_MESSAGE_PAGE = new ArrayList<>();
+	public static List<String> getServletMessagePage() {
+		return SERVLET_MESSAGE_PAGE;
+	}
 	static{
 		SERVLET_MESSAGE_PAGE.add(SERVLET_NAME_MESSAGE_PAGE);
 		SERVLET_MESSAGE_PAGE.add(SERVLET_NAME_LOGIN_MESSAGE_PAGE);

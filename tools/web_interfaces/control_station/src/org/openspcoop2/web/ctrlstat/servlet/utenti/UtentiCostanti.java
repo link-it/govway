@@ -19,9 +19,11 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
  * UtentiCostanti
@@ -31,6 +33,8 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
  * @version $Rev$, $Date$
  */
 public class UtentiCostanti {
+	
+	private UtentiCostanti() {}
 
 	/* OBJECT NAME */
 	
@@ -46,11 +50,14 @@ public class UtentiCostanti {
 	
 	/* SERVLET NAME */
 	
-	public static final String SERVLET_NAME_UTENTI_ADD = OBJECT_NAME_UTENTI+"Add.do";
-	public static final String SERVLET_NAME_UTENTI_CHANGE = OBJECT_NAME_UTENTI+"Change.do";
-	public static final String SERVLET_NAME_UTENTI_DELETE = OBJECT_NAME_UTENTI+"Del.do";
-	public static final String SERVLET_NAME_UTENTI_LIST = OBJECT_NAME_UTENTI+"List.do";
-	public static final Vector<String> SERVLET_UTENTI = new Vector<String>();
+	public static final String SERVLET_NAME_UTENTI_ADD = OBJECT_NAME_UTENTI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_UTENTI_CHANGE = OBJECT_NAME_UTENTI+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_UTENTI_DELETE = OBJECT_NAME_UTENTI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_UTENTI_LIST = OBJECT_NAME_UTENTI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_UTENTI = new ArrayList<>();
+	public static List<String> getServletUtenti() {
+		return SERVLET_UTENTI;
+	}
 	static{
 		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_ADD);
 		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_CHANGE);
@@ -58,28 +65,37 @@ public class UtentiCostanti {
 		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_LIST);
 	}
 	
-	public static final String SERVLET_NAME_UTENTE_CHANGE = OBJECT_NAME_UTENTE+"Change.do";
-	public static final String SERVLET_NAME_UTENTE_PASSWORD_CHANGE = OBJECT_NAME_UTENTE_PASSWORD+"Change.do";
-	public static final Vector<String> SERVLET_UTENTE = new Vector<String>();
+	public static final String SERVLET_NAME_UTENTE_CHANGE = OBJECT_NAME_UTENTE+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_UTENTE_PASSWORD_CHANGE = OBJECT_NAME_UTENTE_PASSWORD+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	private static final List<String> SERVLET_UTENTE = new ArrayList<>();
+	public static List<String> getServletUtente() {
+		return SERVLET_UTENTE;
+	}
 	static{
 		SERVLET_UTENTE.add(SERVLET_NAME_UTENTE_CHANGE);
 		SERVLET_UTENTE.add(SERVLET_NAME_UTENTE_PASSWORD_CHANGE);
 	}
 	
-	public static final String SERVLET_NAME_UTENTI_SERVIZI_ADD = OBJECT_NAME_UTENTI_SERVIZI+"Add.do";
-	public static final String SERVLET_NAME_UTENTI_SERVIZI_DELETE = OBJECT_NAME_UTENTI_SERVIZI+"Del.do";
-	public static final String SERVLET_NAME_UTENTI_SERVIZI_LIST = OBJECT_NAME_UTENTI_SERVIZI+"List.do";
-	public static final Vector<String> SERVLET_UTENTI_SERVIZI = new Vector<String>();
+	public static final String SERVLET_NAME_UTENTI_SERVIZI_ADD = OBJECT_NAME_UTENTI_SERVIZI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_UTENTI_SERVIZI_DELETE = OBJECT_NAME_UTENTI_SERVIZI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_UTENTI_SERVIZI_LIST = OBJECT_NAME_UTENTI_SERVIZI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_UTENTI_SERVIZI = new ArrayList<>();
+	public static List<String> getServletUtentiServizi() {
+		return SERVLET_UTENTI_SERVIZI;
+	}
 	static{
 		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SERVIZI_ADD);
 		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SERVIZI_DELETE);
 		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SERVIZI_LIST);
 	}
 	
-	public static final String SERVLET_NAME_UTENTI_SOGGETTI_ADD = OBJECT_NAME_UTENTI_SOGGETTI+"Add.do";
-	public static final String SERVLET_NAME_UTENTI_SOGGETTI_DELETE = OBJECT_NAME_UTENTI_SOGGETTI+"Del.do";
-	public static final String SERVLET_NAME_UTENTI_SOGGETTI_LIST = OBJECT_NAME_UTENTI_SOGGETTI+"List.do";
-	public static final Vector<String> SERVLET_UTENTI_SOGGETTI = new Vector<String>();
+	public static final String SERVLET_NAME_UTENTI_SOGGETTI_ADD = OBJECT_NAME_UTENTI_SOGGETTI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_UTENTI_SOGGETTI_DELETE = OBJECT_NAME_UTENTI_SOGGETTI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_UTENTI_SOGGETTI_LIST = OBJECT_NAME_UTENTI_SOGGETTI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_UTENTI_SOGGETTI = new ArrayList<>();
+	public static List<String> getServletUtentiSoggetti() {
+		return SERVLET_UTENTI_SOGGETTI;
+	}
 	static{
 		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SOGGETTI_ADD);
 		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SOGGETTI_DELETE);
@@ -185,11 +201,13 @@ public class UtentiCostanti {
 	public static final String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI = "transazioni";
 	public static final String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE = "summary";
 	
-	public static final String [] VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO = { 
+	private static final String [] VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO = { 
 			UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI,
 			UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE
 	};
-	
+	public static String[] getValuesParametroUtentiHomePageMonitoraggio() {
+		return VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO;
+	}
 	public static final String PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO = "int_temp_mon";
 	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO = "--";
 	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE = "Ultime 24 ore";
@@ -197,13 +215,16 @@ public class UtentiCostanti {
 	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI = "Ultimi 30 giorni";
 	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO = "Ultimo anno";
 	
-	public static final String[]  VALUES_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO = {
+	private static final String[]  VALUES_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO = {
 			UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO, 
 			UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE, 
 			UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI, 
 			UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI, 
 			UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO
 	};
+	public static String[] getValuesParametroUtentiIntervalloTemporaleHomePageMonitoraggio() {
+		return VALUES_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO;
+	}
 	
 	/* LABEL PARAMETRI */
 	
@@ -252,7 +273,7 @@ public class UtentiCostanti {
 	public static final String LABEL_UTENTE_PERMESSI_SERVIZI_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_SERVIZI+"'";
 	public static final String LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE+"'";
 	
-	public static final String LABEL_PARAMETRO_MODALITA_ALL = "Tutti";//CostantiControlStation.LABEL_QUALSIASI;
+	public static final String LABEL_PARAMETRO_MODALITA_ALL = "Tutti";
 	
 	public static final String LABEL_PARAMETRO_SOGGETTI_OPERATIVI = "Soggetti Operativi";
 	public static final String LABEL_PARAMETRO_SOGGETTO_OPERATIVO = "Soggetto Operativo";

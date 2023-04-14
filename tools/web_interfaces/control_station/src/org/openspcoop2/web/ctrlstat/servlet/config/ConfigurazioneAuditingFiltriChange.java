@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,10 +33,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
 import org.openspcoop2.web.lib.audit.log.constants.Stato;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
@@ -114,7 +113,7 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 			// dati
 			if (confHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 
 				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, 
 						AuditCostanti.SERVLET_NAME_AUDIT));
@@ -141,12 +140,12 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = ah.addFiltroToDati(
+				List<DataElement> dati = ah.addFiltroToDati(
 						Tipologia.CHANGE, utente, tipooperazione, tipiOgg,
 						tipooggetto, statooperazione, stato, tipofiltro,
 						dump, statoazione, dumpazione, id);
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
@@ -166,7 +165,7 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 				pd.setMessage(msg);
 
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 
 				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, 
 						AuditCostanti.SERVLET_NAME_AUDIT));
@@ -177,12 +176,12 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = ah.addFiltroToDati(
+				List<DataElement> dati = ah.addFiltroToDati(
 						Tipologia.CHANGE, utente, tipooperazione, tipiOgg,
 						tipooggetto, statooperazione, stato, tipofiltro,
 						dump, statoazione, dumpazione, id);
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				pd.setDati(dati);
 
@@ -211,17 +210,14 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 			else
 				f.setStatoOperazione(null);
 			if (stato.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO)) {
-				if (tipofiltro.equals(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TIPO_FILTRO_NORMALE))
-					f.setDumpExprRegular(false);
-				else
-					f.setDumpExprRegular(true);
+				f.setDumpExprRegular(!tipofiltro.equals(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TIPO_FILTRO_NORMALE));
 				f.setDump(dump);
 			} else {
 				f.setDumpExprRegular(false);
 				f.setDump(null);
 			}
-			f.setAuditEnabled(statoazione.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO) ? true : false);
-			f.setDumpEnabled(dumpazione.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO) ? true : false);
+			f.setAuditEnabled(statoazione.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO));
+			f.setDumpEnabled(dumpazione.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO));
 
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), f);
 

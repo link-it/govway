@@ -19,8 +19,10 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.operazioni;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -31,6 +33,9 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class OperazioniCostanti {
+	
+	private OperazioniCostanti() {}
+	
 
 	/* OBJECT NAME */
 
@@ -42,9 +47,12 @@ public class OperazioniCostanti {
 	/* SERVLET NAME */
 	public static final String SERVLET_NAME_OPERAZIONI = OBJECT_NAME_OPERAZIONI+".do";
 	
-	public static final String SERVLET_NAME_OPERAZIONI_DELETE = OBJECT_NAME_OPERAZIONI+"Del.do";
-	public static final String SERVLET_NAME_OPERAZIONI_LIST = OBJECT_NAME_OPERAZIONI+"List.do";
-	public static final Vector<String> SERVLET_OPERAZIONI = new Vector<String>();
+	public static final String SERVLET_NAME_OPERAZIONI_DELETE = OBJECT_NAME_OPERAZIONI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_OPERAZIONI_LIST = OBJECT_NAME_OPERAZIONI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_OPERAZIONI = new ArrayList<>();
+	public static List<String> getServletOperazioni() {
+		return SERVLET_OPERAZIONI;
+	}
 	static{
 		SERVLET_OPERAZIONI.add(SERVLET_NAME_OPERAZIONI);
 		SERVLET_OPERAZIONI.add(SERVLET_NAME_OPERAZIONI_DELETE);
@@ -96,14 +104,18 @@ public class OperazioniCostanti {
 	public static final String LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_INVALIDE = "Invalide";
 	public static final String LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_FALLITE = "Fallite";
 	
-	public static final String[] LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_LIST = {
+	private static final String[] LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_LIST = {
 		LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_IN_CODA,
 		LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_ESEGUITE,
 		LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_ATTESA, 
 		LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_INVALIDE, 
 		LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_FALLITE
 	};
-	
+	public static String[] getLabelParametroOperazioniOperazioneList() {
+		return LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_LIST;
+	}
+
+
 	public static final String LABEL_PARAMETRO_OPERAZIONI_WAITING_TIME = "Waiting Time";
 	public static final String LABEL_PARAMETRO_OPERAZIONI_NUOVA_PASSWORD = "NuovaPassword";
 	public static final String LABEL_PARAMETRO_OPERAZIONI_PASSWORD = "Password";
@@ -138,15 +150,18 @@ public class OperazioniCostanti {
 	public static final String PARAMETRO_OPERAZIONI_OPERAZIONE_INVALIDE = "invalide";
 	public static final String PARAMETRO_OPERAZIONI_OPERAZIONE_FALLITE = "fallite";
 	
-	public static final String[] PARAMETRO_OPERAZIONI_OPERAZIONE_LIST = {
+	private static final String[] PARAMETRO_OPERAZIONI_OPERAZIONE_LIST = {
 		PARAMETRO_OPERAZIONI_OPERAZIONE_IN_CODA,
 		PARAMETRO_OPERAZIONI_OPERAZIONE_ESEGUITE,
 		PARAMETRO_OPERAZIONI_OPERAZIONE_ATTESA, 
 		PARAMETRO_OPERAZIONI_OPERAZIONE_INVALIDE, 
 		PARAMETRO_OPERAZIONI_OPERAZIONE_FALLITE
 	};
-	
-	
+	public static String[] getParametroOperazioniOperazioneList() {
+		return PARAMETRO_OPERAZIONI_OPERAZIONE_LIST;
+	}
+
+
 	public static final String DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS = "details";
 	public static final String DEFAULT_VALUE_FORM_BEAN_METHOD_FORM = "form";
 	

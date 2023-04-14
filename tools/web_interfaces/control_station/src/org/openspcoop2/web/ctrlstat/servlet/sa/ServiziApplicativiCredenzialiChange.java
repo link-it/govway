@@ -25,7 +25,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -100,7 +99,7 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
+			boolean useIdSogg = (parentSA!=null && parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO);
 			
 			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
@@ -127,7 +126,7 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			}
 			BinaryParameter tipoCredenzialiSSLFileCertificato = saHelper.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
 			String tipoCredenzialiSSLFileCertificatoPassword = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-			List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+			List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 			String tipoCredenzialiSSLAliasCertificato = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
 			if (tipoCredenzialiSSLAliasCertificato == null) {
 				tipoCredenzialiSSLAliasCertificato = "";
@@ -170,7 +169,6 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			
 			String aggiornatoCertificatoPrecaricatoTmp = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_MULTI_AGGIORNA);
 			
-//			Integer numeroCertificati = null;
 			String toCall = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_CHANGE;
 			
 			// Preparo il menu
@@ -188,15 +186,13 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			InvocazionePorta ip = sa.getInvocazionePorta();
 			Credenziali credenziali = null;
 			Credenziali oldCredenziali = null;
-			if (ip != null) {
-//				numeroCertificati = ip.sizeCredenzialiList();
-				if(ip.sizeCredenzialiList()>0) {
-					oldCredenziali = ip.getCredenziali(idxCredenziale);
-					credenziali = ip.getCredenziali(idxCredenziale);
-				}
+			if (ip != null &&
+				ip.sizeCredenzialiList()>0) {
+				oldCredenziali = ip.getCredenziali(idxCredenziale);
+				credenziali = ip.getCredenziali(idxCredenziale);
 			}
 			
-			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSAChange = new ArrayList<>();
 			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
 			parametersServletSAChange.add(pIdSA);
 			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProv+"");
@@ -205,7 +201,7 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 				Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
 				parametersServletSAChange.add(pDominio);
 			}
-			List<Parameter> parametersServletCredenzialiChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletCredenzialiChange = new ArrayList<>();
 			Parameter pIdCredenziale = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_CREDENZIALI_ID, idCredenziale);
 			parametersServletCredenzialiChange.add(pIdCredenziale);
 			parametersServletCredenzialiChange.addAll(parametersServletSAChange);
@@ -213,8 +209,6 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			String nomeProtocollo = null;
 			String tipoENomeSoggetto = null;
 			String nomePdd = null;
-//			@SuppressWarnings("unused")
-//			IDSoggetto idSoggetto = null;
 			if(saCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(idProv);
 				if(soggetto==null) {
@@ -223,7 +217,6 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
 				nomePdd = soggetto.getPortaDominio();
-//				idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
 			}
 			else{
 				Soggetto soggetto = soggettiCore.getSoggetto(idProv);
@@ -232,7 +225,6 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 				}
 				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
-//				idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
 			}
 
 			if(dominio==null) {
@@ -245,7 +237,7 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
-			if(saHelper.isModalitaCompleta()==false) {
+			if(!saHelper.isModalitaCompleta()) {
 				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
@@ -259,7 +251,7 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 				// tipo di configurazione SSL
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL) || 
 						postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_MODIFICA)) {
-					listaAliasEstrattiCertificato = new ArrayList<String>();
+					listaAliasEstrattiCertificato = new ArrayList<>();
 					tipoCredenzialiSSLTipoArchivio = ArchiveType.CER;
 					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 					tipoCredenzialiSSLAliasCertificato = "";
@@ -294,7 +286,7 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 					tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
 					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
-					listaAliasEstrattiCertificato = new ArrayList<String>();
+					listaAliasEstrattiCertificato = new ArrayList<>();
 					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 					tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
 				}
@@ -482,9 +474,9 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = saHelper.addServizioApplicativoHiddenToDati(dati, id, idProv+"", dominio, sa.getNome());
 				
@@ -603,9 +595,9 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = saHelper.addServizioApplicativoHiddenToDati(dati, id, idProv+"", dominio, sa.getNome());
 				
@@ -652,9 +644,9 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = saHelper.addServizioApplicativoHiddenToDati(dati, id, idProv+"", dominio, sa.getNome());
 				
@@ -679,7 +671,6 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 
 			
 			// Aggiorno credenziali
-			//credenziali = new Credenziali();
 			credenziali.setTipo(CredenzialeTipo.toEnumConstant(tipoauthSA));
 			credenziali.setUser("");
 			credenziali.setPassword("");
@@ -715,16 +706,15 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 				}
 			}
 			
-			if(actionConfirm != null ) {
-				if(actionConfirm.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
-					// switch tra le posizioni
-					// Rimuovo la credenziale principale dalla posizione 0
-					Credenziali exCredenzialiPrincipali = sa.getInvocazionePorta().getCredenzialiList().remove(0);
-					// imposto l'attuale credenziale in posizione 0
-					sa.getInvocazionePorta().getCredenzialiList().add(0, credenziali); // promozione = set in posizione 0
-					// assegno la posizione attuale all'ex credenziale principale
-					sa.getInvocazionePorta().getCredenzialiList().set(idxCredenziale, exCredenzialiPrincipali);
-				}
+			if(actionConfirm != null &&
+				actionConfirm.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+				// switch tra le posizioni
+				// Rimuovo la credenziale principale dalla posizione 0
+				Credenziali exCredenzialiPrincipali = sa.getInvocazionePorta().getCredenzialiList().remove(0);
+				// imposto l'attuale credenziale in posizione 0
+				sa.getInvocazionePorta().getCredenzialiList().add(0, credenziali); // promozione = set in posizione 0
+				// assegno la posizione attuale all'ex credenziale principale
+				sa.getInvocazionePorta().getCredenzialiList().set(idxCredenziale, exCredenzialiPrincipali);
 			}
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);

@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -116,13 +115,13 @@ public final class SoggettiAdd extends Action {
 			strutsBean.descr = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
 			strutsBean.versioneProtocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
 			strutsBean.pdd = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
-			String is_router = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
-			String is_privato = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO);
-			strutsBean.privato = ServletUtils.isCheckBoxEnabled(is_privato);
+			String isRouterParameter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
+			String isPrivatoParameter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO);
+			strutsBean.privato = ServletUtils.isCheckBoxEnabled(isPrivatoParameter);
 			strutsBean.codiceIpa = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
 			strutsBean.pd_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
 			strutsBean.pa_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
-			strutsBean.isRouter = ServletUtils.isCheckBoxEnabled(is_router);
+			strutsBean.isRouter = ServletUtils.isCheckBoxEnabled(isRouterParameter);
 			strutsBean.dominio = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
@@ -151,7 +150,7 @@ public final class SoggettiAdd extends Action {
 			}
 			BinaryParameter tipoCredenzialiSSLFileCertificato = soggettiHelper.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
 			String tipoCredenzialiSSLFileCertificatoPassword = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-			List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+			List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 			String tipoCredenzialiSSLAliasCertificato = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
 			if (tipoCredenzialiSSLAliasCertificato == null) {
 				tipoCredenzialiSSLAliasCertificato = "";
@@ -198,7 +197,7 @@ public final class SoggettiAdd extends Action {
 			Integer numeroCertificati = 0;
 			String servletCredenzialiAdd = null;
 			
-			boolean isRouter = ServletUtils.isCheckBoxEnabled(is_router);
+			boolean isRouter = ServletUtils.isCheckBoxEnabled(isRouterParameter);
 
 			// Preparo il menu
 			soggettiHelper.makeMenu();
@@ -222,7 +221,7 @@ public final class SoggettiAdd extends Action {
 			}
 
 			if(soggettiCore.isRegistroServiziLocale()){
-				List<PdDControlStation> lista = new ArrayList<PdDControlStation>();
+				List<PdDControlStation> lista = new ArrayList<>();
 
 				// aggiungo un elemento di comodo
 				PdDControlStation tmp = new PdDControlStation();
@@ -246,10 +245,10 @@ public final class SoggettiAdd extends Action {
 				for (PdDControlStation pddTmp : lista) {
 					pddList[i] = pddTmp.getNome();
 					i++;
-					if(strutsBean.singlePdD && (nomePddGestioneLocale==null) && (PddTipologia.OPERATIVO.toString().equals(pddTmp.getTipo())) ){
+					if(strutsBean.singlePdD!=null && strutsBean.singlePdD.booleanValue() && (nomePddGestioneLocale==null) && (PddTipologia.OPERATIVO.toString().equals(pddTmp.getTipo())) ){
 						nomePddGestioneLocale = pddTmp.getNome();
 					}
-					if(strutsBean.singlePdD && PddTipologia.ESTERNO.toString().equals(pddTmp.getTipo())){
+					if(strutsBean.singlePdD!=null && strutsBean.singlePdD.booleanValue() && PddTipologia.ESTERNO.toString().equals(pddTmp.getTipo())){
 						pddEsterne.add(pddTmp.getNome());
 					}
 				}
@@ -316,7 +315,7 @@ public final class SoggettiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
 						tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 						tipoCredenzialiSSLAliasCertificatoNotAfter = "";
-						listaAliasEstrattiCertificato = new ArrayList<String>();
+						listaAliasEstrattiCertificato = new ArrayList<>();
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
 					} else {
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD;
@@ -326,7 +325,7 @@ public final class SoggettiAdd extends Action {
 				// tipo di configurazione SSL
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL) || 
 						postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_MODIFICA)) {
-					listaAliasEstrattiCertificato = new ArrayList<String>();
+					listaAliasEstrattiCertificato = new ArrayList<>();
 					tipoCredenzialiSSLTipoArchivio = ArchiveType.CER;
 					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 					tipoCredenzialiSSLAliasCertificato = "";
@@ -361,7 +360,7 @@ public final class SoggettiAdd extends Action {
 					tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
 					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
-					listaAliasEstrattiCertificato = new ArrayList<String>();
+					listaAliasEstrattiCertificato = new ArrayList<>();
 					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 					tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
 				}
@@ -390,7 +389,6 @@ public final class SoggettiAdd extends Action {
 				}
 			}
 
-			//			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
 			if(strutsBean.versioneProtocollo == null){
 				strutsBean.versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(strutsBean.protocollo);
 			}
@@ -398,8 +396,7 @@ public final class SoggettiAdd extends Action {
 			if(soggettiHelper.isModalitaAvanzata()){
 				versioniProtocollo = soggettiCore.getVersioniProtocollo(strutsBean.protocollo);
 			}else {
-				versioniProtocollo = new ArrayList<String>();
-				//				versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(protocollo);
+				versioniProtocollo = new ArrayList<>();
 				versioniProtocollo.add(strutsBean.versioneProtocollo);
 			}
 			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(strutsBean.protocollo); 
@@ -593,9 +590,9 @@ public final class SoggettiAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				if(strutsBean.nomeprov==null){
 					strutsBean.nomeprov = "";
@@ -641,22 +638,21 @@ public final class SoggettiAdd extends Action {
 			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, null, strutsBean.tipoprov, strutsBean.nomeprov, strutsBean.codiceIpa, strutsBean.pd_url_prefix_rewriter, strutsBean.pa_url_prefix_rewriter,
 					null, false, strutsBean.descr);
 
-			if (isOk) {
-				if(soggettiCore.isRegistroServiziLocale()){
-					if (!strutsBean.singlePdD) {
-						isOk = false;
-						// Controllo che pdd appartenga alla lista di pdd
-						// esistenti
-						for (int i = 0; i < totPdd; i++) {
-							String tmpPdd = pddList[i];
-							if (tmpPdd.equals(strutsBean.pdd) && !strutsBean.pdd.equals("-")) {
-								isOk = true;
-							}
-						}
-						if (!isOk) {
-							pd.setMessage("La Porta di Dominio dev'essere scelta tra quelle definite nel pannello Porte di Dominio");
-						}
+			boolean singlePdD = strutsBean.singlePdD!=null && strutsBean.singlePdD.booleanValue();
+			if (isOk &&
+				soggettiCore.isRegistroServiziLocale() &&
+					!singlePdD) {
+				isOk = false;
+				// Controllo che pdd appartenga alla lista di pdd
+				// esistenti
+				for (int i = 0; i < totPdd; i++) {
+					String tmpPdd = pddList[i];
+					if (tmpPdd.equals(strutsBean.pdd) && !strutsBean.pdd.equals("-")) {
+						isOk = true;
 					}
+				}
+				if (!isOk) {
+					pd.setMessage("La Porta di Dominio dev'essere scelta tra quelle definite nel pannello Porte di Dominio");
 				}
 			}
 
@@ -696,9 +692,9 @@ public final class SoggettiAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
 				strutsBean.consoleDynamicConfiguration.updateDynamicConfigSoggetto(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, soggettiHelper, strutsBean.protocolProperties, 
@@ -740,9 +736,9 @@ public final class SoggettiAdd extends Action {
 			}
 
 			boolean secret = false;
-			String secret_password  = null;
-			String secret_user = null;
-			boolean secret_appId = false;
+			String secretPassword  = null;
+			String secretUser = null;
+			boolean secretAppId = false;
 			
 			// utilizzo il soggetto del registro che e' un
 			// sovrainsieme di quello del config
@@ -761,7 +757,7 @@ public final class SoggettiAdd extends Action {
 				soggettoRegistro.setIdentificativoPorta(strutsBean.portadom);
 				soggettoRegistro.setCodiceIpa(strutsBean.codiceIpa);
 
-				if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
+				if(!pddCore.isGestionePddAbilitata(soggettiHelper)){
 					if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(strutsBean.dominio)) {
 						strutsBean.pdd = nomePddGestioneLocale;
 					}
@@ -814,14 +810,14 @@ public final class SoggettiAdd extends Action {
 						if(soggettiCore.isSoggettiPasswordEncryptEnabled()) {
 							if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(strutsBean.tipoauthSoggetto) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(strutsBean.tipoauthSoggetto)) {
 								secret = true;
-								secret_user = credenziali.getUser();
+								secretUser = credenziali.getUser();
 								if (apiKeyGenerated!=null) {
-									secret_password = apiKeyGenerated.getApiKey();
+									secretPassword = apiKeyGenerated.getApiKey();
 								}
 								else {
-									secret_password = credenziali.getPassword();
+									secretPassword = credenziali.getPassword();
 								}
-								secret_appId = credenziali.isAppId();
+								secretAppId = credenziali.isAppId();
 							}
 						}
 						
@@ -862,7 +858,8 @@ public final class SoggettiAdd extends Action {
 				connettore.setTipo(CostantiDB.CONNETTORE_TIPO_DISABILITATO);
 			}
 
-			if ( !strutsBean.singlePdD && soggettiCore.isRegistroServiziLocale() && !strutsBean.pdd.equals("-")) {
+			singlePdD = strutsBean.singlePdD!=null && strutsBean.singlePdD.booleanValue();
+			if ( !singlePdD && soggettiCore.isRegistroServiziLocale() && !strutsBean.pdd.equals("-")) {
 
 				PdDControlStation aPdD = pddCore.getPdDControlStation(strutsBean.pdd);
 				int porta = aPdD.getPorta() <= 0 ? 80 : aPdD.getPorta();
@@ -916,7 +913,7 @@ public final class SoggettiAdd extends Action {
 
 			// Messaggio 'Please Copy'
 			if(secret) {
-				soggettiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, strutsBean.tipoauthSoggetto, OggettoDialogEnum.SOGGETTO, sog.getNome());
+				soggettiHelper.setSecretPleaseCopy(secretPassword, secretUser, secretAppId, strutsBean.tipoauthSoggetto, OggettoDialogEnum.SOGGETTO, sog.getNome());
 			}
 									
 			// recupero la lista dei soggetti

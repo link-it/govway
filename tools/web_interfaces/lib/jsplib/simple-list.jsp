@@ -92,7 +92,7 @@ if(csrfTokenFromSession == null)
 				%></tr><%
 				
 				//inizio entries
-				Vector v = pd.getDati();
+				List v = pd.getDati();
 				String stile;
 				for (int i = 0; i < v.size(); i++) {
 					//per ogni entry:
@@ -104,9 +104,9 @@ if(csrfTokenFromSession == null)
 					  stile = "table01dispari";
 					}
 				
-					Vector e = (Vector) v.elementAt(i);
+					List e = (List) v.get(i);
 					for (int j = 0; j < labels.length; j++) {
-						DataElement de = (DataElement) e.elementAt(j);
+						DataElement de = (DataElement) e.get(j);
 						
 						if (!de.getType().equals("hidden")) {
 						  %><td class="<%= stile %>"><%
@@ -232,15 +232,15 @@ if(csrfTokenFromSession == null)
 				</table>
 			</td>
 			<%
-			Vector areaBottoni = pd.getAreaBottoni();
+			List areaBottoni = pd.getAreaBottoni();
 			if (areaBottoni != null) {
 				%>
 					<td valign="top"><img src="images/spacer.gif" style="width:10px; height:1px;" alt="-"></td>
 			  		<td class="table01dispari" valign="top" nowrap><%
 					for (int i = 0; i < areaBottoni.size(); i++) {
-			    		AreaBottoni area = (AreaBottoni) areaBottoni.elementAt(i);
+			    		AreaBottoni area = (AreaBottoni) areaBottoni.get(i);
 			    		String title = area.getTitle();
-			    		Vector bottoni = area.getBottoni();
+			    		List bottoni = area.getBottoni();
 			    		%><p><%
 			    		if (!title.equals("")) {
 			      			%><strong><%= title %></strong><br>
@@ -248,7 +248,7 @@ if(csrfTokenFromSession == null)
 			    		}
 				
 			    		for (int b = 0; b < bottoni.size(); b++) {
-			      			DataElement bottone = (DataElement) bottoni.elementAt(b);
+			      			DataElement bottone = (DataElement) bottoni.get(b);
 			      			String id = "areaBottonBtn_" + i + "_" + b;
 			      			%>
 			      			<input id="<%=id %>" type="button" value='&gt;'/>

@@ -78,15 +78,6 @@ public final class ConfigurazioneRegistriDel extends Action {
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			// Elimino i registri dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
-
 			String nome = "";
 
 			// Prendo l'accesso registro
@@ -94,9 +85,6 @@ public final class ConfigurazioneRegistriDel extends Action {
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nome = de.getValue();
 				nome = idsToRemove.get(i);
 
 				for (int j = 0; j < ar.sizeRegistroList(); j++) {

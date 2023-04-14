@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -111,7 +111,7 @@ public class RestTest extends ConfigLoader {
 		requestNonFiltrata.setUsername(nonFiltrate.username);
 		requestNonFiltrata.setPassword(nonFiltrate.password);
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
 		
 		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -127,13 +127,13 @@ public class RestTest extends ConfigLoader {
 		requestFiltrata.setPassword(filtrate.password);
 		
 		
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkOkRequests(filtrateResponsesOk, windowSize, maxRequests);
 		
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		
@@ -210,7 +210,7 @@ public class RestTest extends ConfigLoader {
 		requestNonFiltrata.setUrl(urlServizio);
 		requestNonFiltrata.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenNonFiltrato);
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
 		
 		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -227,13 +227,13 @@ public class RestTest extends ConfigLoader {
 		requestFiltrata.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenFiltrato);
 		
 		
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkOkRequests(filtrateResponsesOk, windowSize, maxRequests);
 		
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		
@@ -280,7 +280,7 @@ public class RestTest extends ConfigLoader {
 		requestFiltrata.setUsername(Credenziali.soggettoRuoloFiltrato.username);
 		requestFiltrata.setPassword(Credenziali.soggettoRuoloFiltrato.password);
 		
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, 1);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, 1);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 1, 0);
 		
@@ -295,7 +295,7 @@ public class RestTest extends ConfigLoader {
 		requestNonFiltrata.setUsername(Credenziali.nonFiltrateSoggetto.username);
 		requestNonFiltrata.setPassword(Credenziali.nonFiltrateSoggetto.password);
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
 		
 		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -350,7 +350,7 @@ public class RestTest extends ConfigLoader {
 		
 		// Faccio altre n richieste che devono essere tutte bloccate. 
 		
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		
@@ -411,7 +411,7 @@ public class RestTest extends ConfigLoader {
 		requestFiltrata.setUsername(Credenziali.applicativoSITFRuoloFiltrato.username);
 		requestFiltrata.setPassword(Credenziali.applicativoSITFRuoloFiltrato.password);
 
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		
@@ -426,7 +426,7 @@ public class RestTest extends ConfigLoader {
 		requestNonFiltrata.setUsername(Credenziali.applicativoSITFRuoloNonFiltrato.username);
 		requestNonFiltrata.setPassword(Credenziali.applicativoSITFRuoloNonFiltrato.password);
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
 		
 		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -435,7 +435,7 @@ public class RestTest extends ConfigLoader {
 		
 		// Faccio altre n richieste che devono essere tutte bloccate.
 		
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		
@@ -659,16 +659,16 @@ public class RestTest extends ConfigLoader {
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
 				
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests);
 		assertEquals(maxRequests, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeParallelRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeParallelRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest
 				.checkOkRequests(filtrateResponsesOk, windowSize, maxRequests);
 
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest
@@ -775,7 +775,7 @@ public class RestTest extends ConfigLoader {
 		requestNonFiltrata.setUrl(urlServizio);
 		requestNonFiltrata.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenSigned_nonFiltrato);
 		
-		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		List<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
 		
 		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -790,13 +790,13 @@ public class RestTest extends ConfigLoader {
 		requestFiltrata.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenSigned_filtrato);
 		
 		
-		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
 
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkOkRequests(filtrateResponsesOk, windowSize, maxRequests);
 		
-		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		List<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		

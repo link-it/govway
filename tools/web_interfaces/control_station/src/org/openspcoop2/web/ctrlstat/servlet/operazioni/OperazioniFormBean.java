@@ -20,7 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.operazioni;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.openspcoop2.web.lib.queue.costanti.OperationStatus;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -86,10 +86,9 @@ public class OperazioniFormBean {
 		return this.listaUtenti;
 	}
 
-	public Vector<String> getUtenti(){
-		Vector<String> values = new Vector<String>();
+	public List<String> getUtenti(){
+		List<String> values = new ArrayList<>();
 		if(this.listaUser != null){
-			values = new Vector<String>();
 			for (User user : this.listaUser) {
 				values.add(user.getLogin());
 			}

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -156,13 +155,13 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			String servletTrasformazioniRispostaList = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_LIST;
 			int numeroTrasformazioniRisposte = oldRegola.sizeRispostaList();
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdAsps);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdFruizione);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdTrasformazione);
-			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRisposta.add(pId);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdAsps);
@@ -170,7 +169,7 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdTrasformazione);
 			
 			String servletTrasformazioniAutorizzazioneAutenticati =  PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_LIST;
-			List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pId);
 			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdAsps);
@@ -195,7 +194,7 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
-			Map<String,String> azioniAccordo = porteDelegateCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioniAccordo = porteDelegateCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 			
 			if(azioniAccordo!=null && azioniAccordo.size()>0) {
 				// porte ridefinite
@@ -276,8 +275,8 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			// dati
 			if (porteDelegateHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// primo accesso
 				if(first == null) {
@@ -325,18 +324,18 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck, null,
+			TrasformazioneRegola trasformazioneDBCheckCriteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck, null,
 					applicabilitaApplicativi);
-			TrasformazioneRegola trasformazioneDBCheck_nome = porteDelegateCore.getTrasformazione(Long.parseLong(id), nome);
+			TrasformazioneRegola trasformazioneDBCheckNome = porteDelegateCore.getTrasformazione(Long.parseLong(id), nome);
 			
-			boolean isOk = porteDelegateHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(id), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, oldRegola,
+			boolean isOk = porteDelegateHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(id), nome, trasformazioneDBCheckCriteri, trasformazioneDBCheckNome, oldRegola,
 					serviceBinding);
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, portaDelegata, idTrasformazioneS, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,

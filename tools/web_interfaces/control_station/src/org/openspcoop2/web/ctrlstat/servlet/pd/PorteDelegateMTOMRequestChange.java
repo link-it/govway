@@ -20,7 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -144,23 +144,26 @@ public class PorteDelegateMTOMRequestChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// primo accesso 
-				if(nome == null)
-					if(flowParameterOld != null)
-						nome  = flowParameterOld.getNome();
+				if(nome == null &&
+					flowParameterOld != null) {
+					nome  = flowParameterOld.getNome();
+				}
 				
-				if(pattern == null)
-					if(flowParameterOld != null)
-						pattern  = flowParameterOld.getPattern();
+				if(pattern == null &&
+					flowParameterOld != null) {
+					pattern  = flowParameterOld.getPattern();
+				}
 				
-				if(contentType == null)
-					if(flowParameterOld != null)
-						contentType  = flowParameterOld.getContentType();
+				if(contentType == null &&
+					flowParameterOld != null) {
+					contentType  = flowParameterOld.getContentType();
+				}
 				
-				if(obbligatorio == null)
-					if(flowParameterOld != null){
-						boolean b = flowParameterOld.getRequired();
-						obbligatorio = b ? "yes" : ""; 
-					}
+				if(obbligatorio == null &&
+					flowParameterOld != null){
+					boolean b = flowParameterOld.getRequired();
+					obbligatorio = b ? "yes" : ""; 
+				}
 				
 				if(nome == null)
 					nome = "";
@@ -175,8 +178,8 @@ public class PorteDelegateMTOMRequestChange extends Action {
 					obbligatorio = "";
 					
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addMTOMParameterToDati(TipoOperazione.CHANGE, dati, false, nome, pattern, contentType, obbligatorio,
 						pde.getMtomProcessor().getRequestFlow().getMode());
@@ -199,9 +202,9 @@ public class PorteDelegateMTOMRequestChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addMTOMParameterToDati(TipoOperazione.CHANGE, dati, false, nome, pattern, contentType, obbligatorio,
 						pde.getMtomProcessor().getRequestFlow().getMode());

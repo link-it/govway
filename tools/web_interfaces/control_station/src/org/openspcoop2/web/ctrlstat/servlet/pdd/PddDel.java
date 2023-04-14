@@ -72,13 +72,10 @@ public final class PddDel extends Action {
 			
 			PddHelper pddHelper = new PddHelper(request, pd, session);
 			
-			// ctrlstatHelper ch = new ctrlstatHelper (request, pd, session);
 			String objToRemove = pddHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 	
 			// Elimino i pdd dal db
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-	
-			// String nome = "";
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
@@ -91,12 +88,9 @@ public final class PddDel extends Action {
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nome = de.getValue();
 				pdd = pddCore.getPdDControlStation(Long.parseLong(idsToRemove.get(i)));
 
-				ArrayList<String> infos = new ArrayList<String>();
+				ArrayList<String> infos = new ArrayList<>();
 				boolean normalizeObjectIds = !pddHelper.isModalitaCompleta();
 				if (pddCore.isPddInUso(pdd, infos, normalizeObjectIds)) {
 					isInUso = true;

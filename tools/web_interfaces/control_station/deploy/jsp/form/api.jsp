@@ -22,7 +22,7 @@
 <%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
 <%@page import="java.util.List"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti"%>
-<%@ page session="true" import="java.util.Vector, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, java.util.ArrayList, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 	String iddati = "";
@@ -44,18 +44,18 @@
 	PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 	String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 	
-	Vector<?> datiConGruppi = pd.getDati();
-	Vector<?> dati = (Vector<?>) datiConGruppi.elementAt(0);
+	List<?> datiConGruppi = pd.getDati();
+	List<?> dati = (List<?>) datiConGruppi.get(0);
 	
 	boolean visualizzaPanelLista = !pd.isPageBodyEmpty();
 	
 	String classDivPanelLista = visualizzaPanelLista  ? "panelLista" : "";
 	String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
 	
-	Vector<GeneralLink> titlelist = pd.getTitleList();
+	List<GeneralLink> titlelist = pd.getTitleList();
 	String titoloSezione = null;
 	if (titlelist != null && titlelist.size() > 0) {
-		GeneralLink l = titlelist.elementAt(titlelist.size() -1);
+		GeneralLink l = titlelist.get(titlelist.size() -1);
 		titoloSezione = l.getLabel();
 		
 		if(titoloSezione != null && titoloSezione.equals(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI))
@@ -66,16 +66,16 @@
 	int colFormHeader = (mostraComandiHeader ? 2 : 1);
 	String classPanelTitolo = "panelDettaglioNoForm";
 	
-	Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
-	Vector<DataElement> vectorLink = new Vector<DataElement>();
+	List<DataElement> listRiepilogo = new ArrayList<DataElement>();
+	List<DataElement> listLink = new ArrayList<DataElement>();
 	
 	for (int j = 0; j < dati.size(); j++) {
-	    DataElement de = (DataElement) dati.elementAt(j);
+	    DataElement de = (DataElement) dati.get(j);
 	    
 	    if (de.getType().equals("link")) {
-	    	vectorLink.add(de);
+	    	listLink.add(de);
 	    } else {
-	    	vectorRiepilogo.add(de);
+	    	listRiepilogo.add(de);
 	    }
 	}
 	
@@ -271,8 +271,8 @@
 							<table class="<%=classTabellaPanelLista %>">
 								<%
 									boolean firstText = true;
-							for (int i = 0; i < vectorRiepilogo.size(); i++) {
-								DataElement de = (DataElement) vectorRiepilogo.elementAt(i);
+							for (int i = 0; i < listRiepilogo.size(); i++) {
+								DataElement de = (DataElement) listRiepilogo.get(i);
 							  
 								String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 							  	String type = de.getType();
@@ -651,8 +651,8 @@
 										<div class="riepilogo-links">
 											
 											<%	
-											for (int i = 0; i < vectorLink.size(); i++) {
-												DataElement de = (DataElement) vectorLink.elementAt(i);
+											for (int i = 0; i < listLink.size(); i++) {
+												DataElement de = (DataElement) listLink.get(i);
 											  
 												String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 											  	String type = de.getType();

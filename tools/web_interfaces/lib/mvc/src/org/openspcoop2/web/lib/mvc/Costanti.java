@@ -137,6 +137,11 @@ public class Costanti {
 	public static final String STRUTS_FORWARD_OK = "Ok";
 	public static final String STRUTS_FORWARD_CHECK_ERROR = "CheckError";	
 	public static final String STRUTS_FORWARD_ERRORE_GENERALE = "Error";
+	
+	public static final String STRUTS_ACTION_SUFFIX_ADD = "Add.do";
+	public static final String STRUTS_ACTION_SUFFIX_CHANGE = "Change.do";
+	public static final String STRUTS_ACTION_SUFFIX_DELETE = "Del.do";
+	public static final String STRUTS_ACTION_SUFFIX_LIST = "List.do";
 
 	
 	

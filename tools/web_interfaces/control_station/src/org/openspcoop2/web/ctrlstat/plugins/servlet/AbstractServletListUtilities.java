@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.plugins.servlet;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -176,7 +175,7 @@ public abstract class AbstractServletListUtilities extends Action {
 			pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			pd.setAddButton(true); // prima della chiamata ad addDatiToList, in modo da permettere di disattivarlo
 			
@@ -185,12 +184,12 @@ public abstract class AbstractServletListUtilities extends Action {
 				while (it.hasNext()) {
 					IExtendedBean extendendBean = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<DataElement>();
 
 					extendedServlet.addDatiToList(e, tipoOperazione, consoleHelper, consoleCore, object, extendendBean, 
 							this.getUrlExtendedChange(consoleHelper));
 										
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 

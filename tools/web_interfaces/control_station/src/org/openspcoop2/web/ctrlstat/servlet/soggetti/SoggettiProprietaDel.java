@@ -90,7 +90,6 @@ public final class SoggettiProprietaDel extends Action {
 			
 			if(soggettiCore.isRegistroServiziLocale()){
 				soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);// core.getSoggettoRegistro(new
-				// IDSoggetto(tipoprov,nomeprov));
 			}
 
 			soggettoConfig = soggettiCore.getSoggetto(idSogg);// core.getSoggetto(new
@@ -99,9 +98,6 @@ public final class SoggettiProprietaDel extends Action {
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nome = de.getValue();
 				nome = idsToRemove.get(i);
 
 				for (int j = 0; j < soggettoRegistry.sizeProprietaList(); j++) {

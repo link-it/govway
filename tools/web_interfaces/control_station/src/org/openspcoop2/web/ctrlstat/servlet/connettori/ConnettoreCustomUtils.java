@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
@@ -34,8 +34,10 @@ import org.openspcoop2.web.lib.mvc.DataElementType;
  * @version $Rev$, $Date$
  */
 public class ConnettoreCustomUtils {
+	
+	private ConnettoreCustomUtils() {}
 
-	public static void addProprietaConnettoriCustom(Vector<DataElement> dati,
+	public static void addProprietaConnettoriCustom(List<DataElement> dati,
 			String nome, String valore,
 			String servlet, String id, String nomeprov, String tipoprov,String nomeservizio,String tiposervizio, String versioneservizio,
 			String myId, String correlato, String idSoggErogatore, String nomeservizioApplicativo,String idsil,String tipoAccordo,
@@ -44,7 +46,7 @@ public class ConnettoreCustomUtils {
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(ConnettoriCostanti.LABEL_SEZIONE_CONNETTORE_CUSTOM_PROPRIETA);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME);
@@ -56,7 +58,7 @@ public class ConnettoreCustomUtils {
 		else
 			de.setValue(nome);
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE);
@@ -68,109 +70,109 @@ public class ConnettoreCustomUtils {
 		else
 			de.setValue(valore);
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(servlet);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(id);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(nomeprov);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(tipoprov);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(nomeservizio);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(tiposervizio);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(versioneservizio);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_VERSIONE_SERVIZIO);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(myId);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(correlato);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(idSoggErogatore);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(nomeservizioApplicativo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(idsil);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(tipoAccordo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_ACCORDO);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue(provider);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PROVIDER);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(accessoDaAPSParametro);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(idPorta);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(azioneConnettoreIdPorta);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA);
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
 }

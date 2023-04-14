@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -597,7 +596,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<?> it = lista.iterator();
@@ -617,18 +616,18 @@ public class ConnettoriHelper extends ConsoleHelper {
 						valore = cp.getValore();
 					}
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setValue(nome);
 					de.setIdToRemove(nome);
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(valore);
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -660,7 +659,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 	}
 	
-	public Vector<DataElement> addEndPointToDati(Vector<DataElement> dati,String connettoreDebug,
+	public List<DataElement> addEndPointToDati(List<DataElement> dati,String connettoreDebug,
 			String endpointtype, String autenticazioneHttp, String prefix, String url, String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
@@ -893,7 +892,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return endpointtype;
 	}
 	
-	public Vector<DataElement> addOpzioniAvanzateHttpToDati(Vector<DataElement> dati,
+	public List<DataElement> addOpzioniAvanzateHttpToDati(List<DataElement> dati,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop){
 		
 		boolean showOpzioniAvanzate = this.isModalitaAvanzata()
@@ -903,7 +902,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			DataElement de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_OPZIONI_AVANZATE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		else{
 			if(this.isModalitaAvanzata() &&
@@ -933,7 +932,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(transfer_mode);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
@@ -946,7 +945,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(transfer_mode_chunk_size);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		// Redirect
@@ -967,7 +966,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(redirect_mode);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
@@ -980,12 +979,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(redirect_max_hop);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addOpzioniAvanzateHttpToDatiAsHidden(Vector<DataElement> dati,
+	public List<DataElement> addOpzioniAvanzateHttpToDatiAsHidden(List<DataElement> dati,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop){
 		
 		boolean showOpzioniAvanzate = this.isModalitaAvanzata()
@@ -1006,13 +1005,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(transfer_mode);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(transfer_mode_chunk_size);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		// Redirect
@@ -1020,24 +1019,24 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(redirect_mode);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(redirect_max_hop);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addTokenPolicyToDatiAsHidden(Vector<DataElement> dati, boolean autenticazioneToken, String tokenPolicy){
+	public List<DataElement> addTokenPolicyToDatiAsHidden(List<DataElement> dati, boolean autenticazioneToken, String tokenPolicy){
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(autenticazioneToken? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Token Autenticazione
 		if (autenticazioneToken) {
@@ -1046,19 +1045,19 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			de.setValue(tokenPolicy);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addProxyToDati(Vector<DataElement> dati,
+	public List<DataElement> addProxyToDati(List<DataElement> dati,
 			String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword){
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -1067,7 +1066,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 		de.setSize(this.getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT);
@@ -1076,7 +1075,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 		de.setSize(this.getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME);
@@ -1085,7 +1084,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 		de.setSize(this.getSize());
 		de.setRequired(false);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD);
@@ -1094,48 +1093,48 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 		de.setSize(this.getSize());
 		de.setRequired(false);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addProxyToDatiAsHidden(Vector<DataElement> dati,
+	public List<DataElement> addProxyToDatiAsHidden(List<DataElement> dati,
 			String proxyEnabled, String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword){
 		
 		DataElement de = new DataElement();
 		de.setValue(proxyEnabled);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(proxyHostname);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(proxyPort);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(StringEscapeUtils.escapeHtml(proxyUsername));
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(StringEscapeUtils.escapeHtml(proxyPassword));
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addTokenPolicy(Vector<DataElement> dati, String tokenPolicy) throws DriverConfigurazioneException{
+	public List<DataElement> addTokenPolicy(List<DataElement> dati, String tokenPolicy) throws DriverConfigurazioneException{
 	
 		List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, null);
 		String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
@@ -1153,7 +1152,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
@@ -1164,7 +1163,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setSelected(tokenPolicy);
 		de.setRequired(true);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
@@ -1184,13 +1183,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return false;
 	}
 	
-	public Vector<DataElement> addTempiRispostaToDati(Vector<DataElement> dati,
+	public List<DataElement> addTempiRispostaToDati(List<DataElement> dati,
 			String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta){
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
@@ -1200,7 +1199,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
 		de.setSize(this.getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
@@ -1210,7 +1209,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
 		de.setSize(this.getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
@@ -1220,43 +1219,43 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 		de.setSize(this.getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addTempiRispostaToDatiAsHidden(Vector<DataElement> dati,
+	public List<DataElement> addTempiRispostaToDatiAsHidden(List<DataElement> dati,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta){
 		
 		DataElement de = new DataElement();
 		de.setValue(tempiRisposta_enabled);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(tempiRisposta_connectionTimeout);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(tempiRisposta_readTimeout);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(tempiRisposta_tempoMedioRisposta);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
 	
 	
-	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
+	public List<DataElement> addCredenzialiToDati(List<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata) throws Exception {
 		return this.addCredenzialiToDati(null, dati, tipoauth, null, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
@@ -1267,7 +1266,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				false, null,null,false,
 				false, null);
 	}
-	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
+	public List<DataElement> addCredenzialiToDati(List<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata,
 			String subtitleConfigurazione) throws Exception {
@@ -1280,7 +1279,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				false, null);
 	} 
 	
-	public Vector<DataElement> addCredenzialiToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String tipoauth, String oldtipoauth, String utente, String password, String subject, String principal,
+	public List<DataElement> addCredenzialiToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String tipoauth, String oldtipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata,String tipoCredenzialiSSLSorgente, ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
 			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -1305,7 +1304,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				credenzialiToken, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
 				dominioEsterno, protocollo);
 	}
-	public Vector<DataElement> addCredenzialiToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String tipoauth, String oldtipoauth, String utente, String password, String subject, String principal,
+	public List<DataElement> addCredenzialiToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String tipoauth, String oldtipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata,String tipoCredenzialiSSLSorgente, ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
 			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -1442,7 +1441,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setLabel(prefix+ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_PORTA);
 				}
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			de = new DataElement();
@@ -1472,7 +1471,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tipoauth);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoauth)) {
 				de = new DataElement();
@@ -1487,7 +1486,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				de.setSize(this.getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 
 				
 				
@@ -1531,7 +1530,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						deModifica.setPostBack(true);
 						deModifica.setSelected(changepwd);
 						deModifica.setSize(this.getSize());
-						dati.addElement(deModifica);
+						dati.add(deModifica);
 						
 						de.setType(DataElementType.HIDDEN);
 						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -1579,7 +1578,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				de.setSize(this.getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 
 			}
 			
@@ -1647,7 +1646,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setLabel(subtitleConfigurazione);
 				}
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// OP-816
 				// 1. Select List - Upload Certificato / Configurazione Manuale
@@ -1665,7 +1664,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(tipoCredenzialiSSLSorgente);
 				}
-				dati.addElement(de);
+				dati.add(de);
 
 				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
 					// 1a. Select List Tipo Archivio
@@ -1696,7 +1695,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(tipoCredenzialiSSLTipoArchivio.name());
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
@@ -1711,7 +1710,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 					}
 					
-					dati.addElement(de);
+					dati.add(de);
 					
 					// 1a. File Upload
 					String labelCertificato = null;
@@ -1740,7 +1739,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						// Imposto # per valorizzare la url, non viene utilizzata ma viene scatenata la post back
 						de.setUrl("#");
 						de.setType(DataElementType.LINK);
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 					// link aggiungi certificato
@@ -1751,7 +1750,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							de.setUrl(servletCredenzialiAdd, parametersServletCredenzialiList.toArray(new Parameter[parametersServletCredenzialiList.size()]));
 						} else {
 							Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-							if(contaListe) {
+							if(contaListe!=null && contaListe.booleanValue()) {
 								de.setValue(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_ELENCO_CERTIFICATI +" (" + numeroCertificati + ")");
 							} else {
 								de.setValue(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_ELENCO_CERTIFICATI);
@@ -1759,7 +1758,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							de.setUrl(servletCredenzialiList, parametersServletCredenzialiList.toArray(new Parameter[parametersServletCredenzialiList.size()]));
 						}
 						de.setType(DataElementType.LINK);
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 					// 1a. Eventuale Select per selezionare l'alias
@@ -1789,7 +1788,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(tipoCredenzialiSSLAliasCertificato);
 					}
-					dati.addElement(de);
+					dati.add(de);
 
 					// 1a. Pannello Recap info certificato.
 					
@@ -1800,7 +1799,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setLabel(ConnettoriCostanti.LABEL_CONFIGURAZIONE_SSL_TITLE_INFORMAZIONI_CERTIFICATO+" "+
 						tipoCredenzialiSSLAliasCertificatoType+" v"+tipoCredenzialiSSLAliasCertificatoVersion);
 						de.setType(DataElementType.SUBTITLE);
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 					// link al download
@@ -1827,7 +1826,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setValue(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_DOWNLOAD);
 						de.setType(DataElementType.LINK);
 						de.setDisabilitaAjaxStatus();
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 					
@@ -2010,7 +2009,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 					de.setSize(this.getSize());
 					de.setRequired(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					// 1b. TextArea Issuer
 					de = new DataElement();
@@ -2025,7 +2024,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue("");
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			
@@ -2080,7 +2079,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							deLabel.setType(DataElementType.HIDDEN); // faccio vedere sotto direttamente l'app id
 						}
 						deLabel.setValue(multipleApiKeysEnabled? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
-						dati.addElement(deLabel);						
+						dati.add(deLabel);						
 					}
 				}
 				else {
@@ -2088,7 +2087,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setSelected(multipleApiKeysEnabled);
 					de.setPostBack(true);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+suffixOld);
@@ -2112,7 +2111,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}else {
 					de.setType(DataElementType.HIDDEN);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(change && !modificaApiKey && !encryptPassword && !passwordCifrata) {
 					de = new DataElement();
@@ -2126,7 +2125,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					else {
 						de.setValue(ApiKeyUtilities.encodeApiKey(utente, password));
 					}
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				if(change) {
@@ -2137,7 +2136,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					deModifica.setPostBack(true);
 					deModifica.setSelected(changepwd);
 					deModifica.setSize(this.getSize());
-					dati.addElement(deModifica);
+					dati.add(deModifica);
 				}
 				
 				if(modificaApiKey) {
@@ -2145,7 +2144,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_API_KEY);
 					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
@@ -2153,7 +2152,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(multipleApiKeysEnabled);
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
@@ -2171,7 +2170,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					}else {
 						de.setType(DataElementType.HIDDEN);
 					}
-					dati.addElement(de);
+					dati.add(de);
 									
 				}
 				
@@ -2179,7 +2178,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
 				de.setValue(StringEscapeUtils.escapeHtml(apiKey));
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 
@@ -2191,7 +2190,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 				de.setSize(this.getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			
@@ -2226,7 +2225,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_DESCR);
 					}
 					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
+					dati.add(de);
 				}
 
 				// Token Policy
@@ -2295,7 +2294,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setLabels(policyLabels);
 				de.setSize(this.getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
@@ -2304,7 +2303,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
 				de.setSize(this.getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 
@@ -2314,13 +2313,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			de.setValue(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addEndPointToDati(Vector<DataElement> dati,String connettoreDebug,
+	public List<DataElement> addEndPointToDati(List<DataElement> dati,String connettoreDebug,
 			String endpointtype, String autenticazioneHttp,String prefix, String url, String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
@@ -2400,7 +2399,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			DataElement de = new DataElement();
 			de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		boolean soloConnettoriHttp = false;
@@ -2427,7 +2426,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setType(DataElementType.CHECKBOX);
 			de.setSelected(servizioApplicativoServerEnabled);
 			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
@@ -2440,7 +2439,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(servizioApplicativoServer);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(servizioApplicativoServerEnabled) {
 				dati = this.addEndPointToDatiAsHidden(dati, connettoreDebug,
@@ -2522,7 +2521,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setPostBack(true);
 					//				de.setOnClick("AbilitaEndPointHTTP(\"" + tipoOp + "\")");
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				
 				de = new DataElement();
@@ -2537,7 +2536,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setValue(TipiConnettore.DISABILITATO.toString());
 				}
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 	
 				
 				de = new DataElement();
@@ -2558,7 +2557,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				else{
 					de.setValue("false");
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				
 				de = new DataElement();
@@ -2593,7 +2592,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				
 	//			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 	//				de = new DataElement();
@@ -2601,7 +2600,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	//				de.setValue(tmpUrl);
 	//				de.setType(DataElementType.HIDDEN);
 	//				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
-	//				dati.addElement(de);
+	//				dati.add(de);
 	//			}
 				
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
@@ -2628,7 +2627,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setValue(Costanti.CHECK_BOX_DISABLED);
 						autenticazioneHttp = Costanti.CHECK_BOX_DISABLED;
 					}
-					dati.addElement(de);		
+					dati.add(de);		
 					//}
 					
 					de = new DataElement();
@@ -2637,7 +2636,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(autenticazioneToken);
 					de.setPostBack(true);
-					dati.addElement(de);	
+					dati.add(de);	
 					
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTPS);
@@ -2647,7 +2646,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setSelected(true);
 					}
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					// Proxy
 					de = new DataElement();
@@ -2658,7 +2657,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setSelected(true);
 					}
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					// TempiRisposta
 					de = new DataElement();
@@ -2669,13 +2668,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setSelected(true);
 					}
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 				}	
 				
 				// Extended
-				if(configurazioneNonVisualizzabile==false) {
-					if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
+				if(!configurazioneNonVisualizzabile) {
+					if(listExtendedConnettore!=null && !listExtendedConnettore.isEmpty()){
 						ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
 					}
 				}
@@ -2696,7 +2695,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setValue(Costanti.CHECK_BOX_DISABLED);
 					}
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				// Http Autenticazione
@@ -2819,7 +2818,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				//		    de.setOnChange("CambiaEndPoint('" + tipoOp + "')");
 				de.setPostBack(true);
-				dati.addElement(de);
+				dati.add(de);
 	
 				boolean connettoreCustomHidden = (endpointtype == null || !endpointtype.equals(TipiConnettore.CUSTOM.toString()));
 				this.addCustomField(TipoPlugin.CONNETTORE,
@@ -2864,7 +2863,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				
 	//			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 	//				de = new DataElement();
@@ -2872,7 +2871,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	//				de.setValue(tmpUrl);
 	//				de.setType(DataElementType.HIDDEN);
 	//				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
-	//				dati.addElement(de);
+	//				dati.add(de);
 	//			}
 	
 				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)){
@@ -2899,7 +2898,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setValue(Costanti.CHECK_BOX_DISABLED);
 						autenticazioneHttp = Costanti.CHECK_BOX_DISABLED;
 					}
-					dati.addElement(de);		
+					dati.add(de);		
 					//}
 					
 					de = new DataElement();
@@ -2908,7 +2907,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(autenticazioneToken);
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
@@ -2918,7 +2917,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setSelected(true);
 					}
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					// TempiRisposta
 					de = new DataElement();
@@ -2929,7 +2928,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setSelected(true);
 					}
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 				}
 								
 				// Extended
@@ -2953,7 +2952,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setValue(Costanti.CHECK_BOX_DISABLED);
 					}
 					de.setPostBack(true);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				// Debug
@@ -2977,7 +2976,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				else{
 					de.setValue("false");
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				// Autenticazione http
 				if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
@@ -3184,7 +3183,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						this.log.error("Exception: " + ex.getMessage(), ex);
 					}
 					de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_PROPRIETA+"("+numProp+")");
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				// Https
@@ -3245,23 +3244,23 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addEndPointSAServerToDatiAsHidden(Vector<DataElement> dati, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer){
+	public List<DataElement> addEndPointSAServerToDatiAsHidden(List<DataElement> dati, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer){
 		DataElement de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
 		de.setValue(servizioApplicativoServerEnabled + "");
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
 		de.setValue(servizioApplicativoServer);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
 
-	public Vector<DataElement> addEndPointToDatiAsHidden(Vector<DataElement> dati, String connettoreDebug,
+	public List<DataElement> addEndPointToDatiAsHidden(List<DataElement> dati, String connettoreDebug,
 			String endpointtype, String autenticazioneHttp, 
 			String url, String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
@@ -3305,7 +3304,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		DataElement de = new DataElement();
 //		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE);
 //		de.setType(DataElementType.TITLE);
-//		dati.addElement(de);
+//		dati.add(de);
 
 
 		de = new DataElement();
@@ -3318,7 +3317,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		else{
 			de.setValue("false");
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		/** VISUALIZZAZIONE HTTP ONLY MODE */
@@ -3360,7 +3359,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //				de.setPostBack(true);
 				//				de.setOnClick("AbilitaEndPointHTTP(\"" + tipoOp + "\")");
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
@@ -3373,7 +3372,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setValue(TipiConnettore.DISABILITATO.toString());
 			}
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
@@ -3384,7 +3383,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setValue((url != null) && !"".equals(url) && !"http://".equals(url) && !"https://".equals(url) ? url : defaultPrefixValue);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
-			dati.addElement(de);
+			dati.add(de);
 
 		} else {
 
@@ -3417,7 +3416,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setValue(endpointtype);
 			//		    de.setOnChange("CambiaEndPoint('" + tipoOp + "')");
 //			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
@@ -3435,7 +3434,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //		}
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
@@ -3447,7 +3446,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //			}
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 			de.setValue(tipoconn);
-			dati.addElement(de);
+			dati.add(de);
 
 //			if (endpointtype != null && endpointtype.equals(TipiConnettore.CUSTOM.toString()) &&
 //					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD) &&
@@ -3507,20 +3506,20 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(autenticazioneHttp);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(StringEscapeUtils.escapeHtml(user));
-				dati.addElement(de);
+				dati.add(de);
 
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(StringEscapeUtils.escapeHtml(password));
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -5290,11 +5289,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return true;
 	}
 	
-	public Vector<DataElement> addConnettoreDefaultRidefinitoToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String modalita, String[] modalitaValues, String[] modalitaLabels, boolean servletRidefinito, String servletConnettore, Parameter[] parametriServletConnettore) {
+	public List<DataElement> addConnettoreDefaultRidefinitoToDati(List<DataElement> dati, TipoOperazione tipoOp, String modalita, String[] modalitaValues, String[] modalitaLabels, boolean servletRidefinito, String servletConnettore, Parameter[] parametriServletConnettore) {
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA);
@@ -5304,7 +5303,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setLabels(modalitaLabels);
 		de.setPostBack(true);
 		de.setSelected(modalita);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// link visualizza
 		if(servletRidefinito && modalita.equals(ConnettoriCostanti.VALUE_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO)) {
@@ -5313,7 +5312,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA);
 			de.setUrl(servletConnettore, parametriServletConnettore);
 			ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);	
+			dati.add(de);	
 		}
 		
 		return dati;
@@ -5329,7 +5328,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return true;
 	}
 	
-	public Vector<DataElement> addCredenzialiCertificatiToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String idCredenziale, String tipoauth, String subject, String toCall,
+	public List<DataElement> addCredenzialiCertificatiToDati(List<DataElement> dati, TipoOperazione tipoOperazione, String idCredenziale, String tipoauth, String subject, String toCall,
 			String tipoCredenzialiSSLSorgente, ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
 			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
 			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
@@ -5343,13 +5342,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CREDENZIALI_ID);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idCredenziale);
-		dati.addElement(de);
+		dati.add(de);
 
 		// Titolo Sezione Certificato
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONFIGURAZIONE_SSL_TITLE_INFORMAZIONI_CERTIFICATO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 
 		// tipoAutenticazione Hidden forzato ad https
@@ -5357,13 +5356,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(tipoauth);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_MULTI_AGGIORNA);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(aggiornaCertificatoCaricato);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauth)) {
 			boolean add = ( SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_ADD.equals(toCall) 
@@ -5416,7 +5415,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(subtitleConfigurazione);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// OP-816
 			// 1. Hidden - valorizzato come Upload Certificato 
@@ -5425,7 +5424,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(tipoCredenzialiSSLSorgente);
-			dati.addElement(de);
+			dati.add(de);
 
 			if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
 				// 1a. Select List Tipo Archivio
@@ -5456,7 +5455,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(tipoCredenzialiSSLTipoArchivio.name());
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
@@ -5471,7 +5470,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.HIDDEN);
 				}
 				
-				dati.addElement(de);
+				dati.add(de);
 				
 				// 1a. File Upload
 				String labelCertificato = null;
@@ -5500,7 +5499,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					// Imposto # per valorizzare la url, non viene utilizzata ma viene scatenata la post back
 					de.setUrl("#");
 					de.setType(DataElementType.LINK);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				// link promuovi certificato
@@ -5514,7 +5513,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setUrl("#");
 //						de.setUrl(servletCredenzialiChange, parametersServletCredenzialiChange.toArray(new Parameter[parametersServletCredenzialiChange.size()]));
 						de.setType(DataElementType.LINK);
-						dati.addElement(de);
+						dati.add(de);
 					}
 				}
 				
@@ -5545,7 +5544,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(tipoCredenzialiSSLAliasCertificato);
 				}
-				dati.addElement(de);
+				dati.add(de);
 
 				// 1a. Pannello Recap info certificato.
 				
@@ -5554,7 +5553,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setLabel(ConnettoriCostanti.LABEL_CONFIGURAZIONE_SSL_TITLE_INFORMAZIONI_CERTIFICATO+" "+
 					tipoCredenzialiSSLAliasCertificatoType+" v"+tipoCredenzialiSSLAliasCertificatoVersion);
 					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				// link al download
@@ -5583,7 +5582,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setValue(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_DOWNLOAD);
 					de.setType(DataElementType.LINK);
 					de.setDisabilitaAjaxStatus();
-					dati.addElement(de);
+					dati.add(de);
 				}
 								
 				// 1a. Checkbox 'Verifica tutti i campi' + nota: attenzione questa opzione richiede l'aggiornamento del certificato a scadenza
@@ -5744,7 +5743,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PROMUOVI);
 							de.setValue(promuoviCertificato);
 							de.setType(DataElementType.CHECKBOX);
-							dati.addElement(de);
+							dati.add(de);
 						}
 					}
 				}
@@ -5781,7 +5780,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 				de.setSize(this.getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// 1b. TextArea Issuer
 				de = new DataElement();
@@ -5796,14 +5795,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setValue("");
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addCredenzialiCertificatiToDatiAsHidden(Vector<DataElement> dati, TipoOperazione tipoOperazione, String idCredenziale, String tipoauth, String subject, String toCall, 
+	public List<DataElement> addCredenzialiCertificatiToDatiAsHidden(List<DataElement> dati, TipoOperazione tipoOperazione, String idCredenziale, String tipoauth, String subject, String toCall, 
 			String tipoCredenzialiSSLSorgente, ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
 			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
 			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
@@ -5817,14 +5816,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CREDENZIALI_ID);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idCredenziale);
-		dati.addElement(de);
+		dati.add(de);
 
 		// tipoAutenticazione Hidden forzato ad https
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(tipoauth);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauth)) {
 			// OP-816
@@ -5834,7 +5833,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(tipoCredenzialiSSLSorgente);
-			dati.addElement(de);
+			dati.add(de);
 
 			if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
 				// 1a. Select List Tipo Archivio
@@ -5843,14 +5842,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tipoCredenzialiSSLTipoArchivio.name());
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLFileCertificatoPassword));
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// 1a. File Upload
 				String labelCertificato = null;
@@ -5874,7 +5873,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tipoCredenzialiSSLAliasCertificato);
-				dati.addElement(de);
+				dati.add(de);
 
 				// 1a. Pannello Recap info certificato.
 
@@ -5981,7 +5980,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 				de.setSize(this.getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// 1b. TextArea Issuer
 				de = new DataElement();
@@ -5989,7 +5988,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 				de.setValue(StringEscapeUtils.escapeHtml(issuer));
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		

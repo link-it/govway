@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -168,7 +167,7 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterAdd extends Acti
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps), pIdTrasformazione));
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiesta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			parametriInvocazioneServletTrasformazioniRichiesta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			parametriInvocazioneServletTrasformazioniRichiesta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
@@ -177,7 +176,7 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterAdd extends Acti
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA,parametriInvocazioneServletTrasformazioniRichiesta));
 						
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaUrlParameters = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaUrlParameters = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaUrlParameters.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			parametriInvocazioneServletTrasformazioniRichiestaUrlParameters.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			parametriInvocazioneServletTrasformazioniRichiestaUrlParameters.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
@@ -194,8 +193,8 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterAdd extends Acti
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione.ADD, protocollo, false, dati, idTrasformazioneS, null, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				
@@ -223,9 +222,9 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterAdd extends Acti
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione.ADD, protocollo, false, dati, idTrasformazioneS, null, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				
@@ -265,8 +264,8 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterAdd extends Acti
 			
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 			
-			// ricaricare id trasformazione
-			pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta));
+			/** ricaricare id trasformazione
+			pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); */
 
 			TrasformazioneRegola trasformazioneAggiornata = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), regola.getNome());
 

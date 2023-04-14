@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.spcoop.testsuite.units.others;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.soap.SOAPException;
 
@@ -93,7 +93,7 @@ public class RiconoscimentoProfiloGestione {
 	public void  init() throws Exception{
 		try{
 			File[] dir =  new java.io.File(Utilities.testSuiteProperties.getPathBusteLineeGuida11()).listFiles();
-			Vector<File> dirV = new Vector<File>();
+			List<File> dirV = new java.util.ArrayList<>();
 			for(int i=0; i<dir.length; i++){
 					dirV.add(dir[i]);
 			}

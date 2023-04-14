@@ -36,7 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -854,7 +853,7 @@ public class SessioneStickyTest extends ConfigLoader {
 
 		var futureBlockingResponses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeBackgroundRequests(requestBalanced, 2, delayRichiesteBackground);
 
-		Vector<HttpResponse> balancedResponses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.awaitResponses(futureBlockingResponses);
+		List<HttpResponse> balancedResponses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.awaitResponses(futureBlockingResponses);
 
 		var howManys = Common.contaConnettoriUtilizzati(balancedResponses);
 		Common.printMap(howManys);
@@ -987,7 +986,7 @@ public class SessioneStickyTest extends ConfigLoader {
 			
 			int index = i%richieste.size();
 			if (!responsesByKind.containsKey(index)) {
-				responsesByKind.put(index, new Vector<HttpResponse>());
+				responsesByKind.put(index, new ArrayList<HttpResponse>());
 			}
 			
 			executor.execute(() -> {

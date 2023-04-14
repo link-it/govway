@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -141,8 +140,8 @@ public class PorteApplicativeConfigurazioneChange extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				porteApplicativeHelper.configurazioneCambiaNome(dati, TipoOperazione.OTHER, nomeGruppo,isPortaDelegata);
 				
@@ -161,9 +160,9 @@ public class PorteApplicativeConfigurazioneChange extends Action {
 					
 			if (!isOk) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				porteApplicativeHelper.configurazioneCambiaNome(dati, TipoOperazione.OTHER, nomeGruppo,isPortaDelegata);
 				
@@ -198,10 +197,9 @@ public class PorteApplicativeConfigurazioneChange extends Action {
 					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 					
 					String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-					if(tipologia!=null) {
-						if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
-							ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
-						}
+					if(tipologia!=null &&
+						AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
 					}
 					
 					boolean [] permessi = new boolean[2];

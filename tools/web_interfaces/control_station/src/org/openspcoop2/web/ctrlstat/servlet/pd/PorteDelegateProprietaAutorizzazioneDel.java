@@ -77,14 +77,6 @@ public final class PorteDelegateProprietaAutorizzazioneDel extends Action {
 			int idInt = Integer.parseInt(idPorta);
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			// Elimino le properties della porta applicativa dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 
 			// Prendo la porta applicativa
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
@@ -92,9 +84,6 @@ public final class PorteDelegateProprietaAutorizzazioneDel extends Action {
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nome = de.getValue();
 				long idToRemove = Long.parseLong(idsToRemove.get(i));
 
 				for (int j = 0; j < pde.sizeProprietaAutorizzazioneList(); j++) {
