@@ -3,6 +3,8 @@ Bug Fix
 
 Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
 
+- CVE-2023-20863: aggiornata libreria 'org.springframework:spring-expression' alla versione 5.3.27
+
 - CVE-2023-1436: aggiornata libreria 'org.codehaus.jettison:jettison' alla versione 1.5.4
 
 - CVE-2023-1370: aggiornata libreria 'net.minidev:json-smart' alla versione 2.4.10
