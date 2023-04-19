@@ -641,8 +641,12 @@
 				</if>
 
 				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/mvc/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.mvc.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/mvc/enum.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.mvc.enum.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/mvc/security_hotspots.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.mvc.sec.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="web-lib-mvc"/>
